@@ -34,7 +34,9 @@
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.3.0"
+    "prettier": "^2.3.0",
+    "autoprefixer": "^9",
+    "postcss": "^7"
   },
   "scripts": {
     "start": "craco start",
@@ -69,9 +71,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "autoprefixer": "^9",
-    "postcss": "^7"
   }
 }
