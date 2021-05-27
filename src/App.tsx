@@ -1,6 +1,6 @@
-import { NotFound } from "pages/NotFound";
-import { Swap } from "pages/Swap";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { NotFound } from 'pages/NotFound';
+import { Swap } from 'pages/Swap';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 export const App = () => {
   return (
