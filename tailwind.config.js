@@ -534,6 +534,12 @@ module.exports = {
       disc: 'disc',
       decimal: 'decimal',
     },
+
+    margin: (theme, { negative }) => ({
+      auto: 'auto',
+      ...theme('spacing'),
+      ...negative(theme('spacing')),
+    }),
   },
   plugins: [],
 };
