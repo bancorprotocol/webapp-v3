@@ -721,6 +721,15 @@ module.exports = {
       ...theme('spacing'),
       ...negative(theme('spacing')),
     }),
+
+    stroke: {
+      current: 'currentColor',
+    },
+    strokeWidth: {
+      0: '0',
+      1: '1',
+      2: '2',
+    },
   },
   plugins: [],
 };
