@@ -528,6 +528,12 @@ module.exports = {
         },
       },
     },
+
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      decimal: 'decimal',
+    },
   },
   plugins: [],
 };
