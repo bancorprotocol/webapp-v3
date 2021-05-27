@@ -230,6 +230,11 @@ module.exports = {
       90: '90deg',
       180: '180deg',
     },
+
+    invert: {
+      0: '0',
+      DEFAULT: '100%',
+    },
   },
   plugins: [],
 };
