@@ -313,6 +313,8 @@ module.exports = {
       extrabold: '800',
       black: '900',
     },
+
+    gradientColorStops: (theme) => theme('colors'),
   },
   plugins: [],
 };
