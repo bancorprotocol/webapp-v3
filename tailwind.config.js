@@ -342,6 +342,9 @@ module.exports = {
     placeholderColor: (theme) => theme('colors'),
     placeholderOpacity: (theme) => theme('opacity'),
 
+    textColor: (theme) => theme('colors'),
+    textOpacity: (theme) => theme('opacity'),
+
     gradientColorStops: (theme) => theme('colors'),
 
     gap: (theme) => theme('spacing'),
