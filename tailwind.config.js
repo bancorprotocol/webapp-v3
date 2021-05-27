@@ -62,6 +62,16 @@ module.exports = {
       pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       bounce: 'bounce 1s infinite',
     },
+
+    backdropBlur: (theme) => theme('blur'),
+    backdropBrightness: (theme) => theme('brightness'),
+    backdropContrast: (theme) => theme('contrast'),
+    backdropGrayscale: (theme) => theme('grayscale'),
+    backdropHueRotate: (theme) => theme('hueRotate'),
+    backdropInvert: (theme) => theme('invert'),
+    backdropOpacity: (theme) => theme('opacity'),
+    backdropSaturate: (theme) => theme('saturate'),
+    backdropSepia: (theme) => theme('sepia'),
   },
   plugins: [],
 };
