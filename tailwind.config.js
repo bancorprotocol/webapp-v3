@@ -484,6 +484,11 @@ module.exports = {
       full: '100%',
       screen: '100vh',
     }),
+    minHeight: {
+      0: '0px',
+      full: '100%',
+      screen: '100vh',
+    },
 
     maxWidth: (theme, { breakpoints }) => ({
       none: 'none',
