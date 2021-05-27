@@ -235,6 +235,21 @@ module.exports = {
       0: '0',
       DEFAULT: '100%',
     },
+
+    flex: {
+      1: '1 1 0%',
+      auto: '1 1 auto',
+      initial: '0 1 auto',
+      none: 'none',
+    },
+    flexGrow: {
+      0: '0',
+      DEFAULT: '1',
+    },
+    flexShrink: {
+      0: '0',
+      DEFAULT: '1',
+    },
   },
   plugins: [],
 };
