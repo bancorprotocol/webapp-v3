@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors')
+const colors = require('tailwindcss/colors');
 
 module.exports = {
   mode: 'jit',
@@ -12,6 +12,7 @@ module.exports = {
       xl: '1280px',
       '2xl': '1536px',
     },
+
     spacing: {
       px: '1px',
       0: '0px',
@@ -49,6 +50,14 @@ module.exports = {
       80: '20rem',
       96: '24rem',
     },
+
+    animation: {
+      none: 'none',
+      spin: 'spin 1s linear infinite',
+      ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
+      pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      bounce: 'bounce 1s infinite',
+    },
   },
   plugins: [],
-}
+};
