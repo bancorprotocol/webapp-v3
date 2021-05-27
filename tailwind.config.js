@@ -193,6 +193,10 @@ module.exports = {
       help: 'help',
       'not-allowed': 'not-allowed',
     },
+
+    divideColor: (theme) => theme('borderColor'),
+    divideOpacity: (theme) => theme('borderOpacity'),
+    divideWidth: (theme) => theme('borderWidth'),
   },
   plugins: [],
 };
