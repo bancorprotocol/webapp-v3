@@ -510,6 +510,12 @@ module.exports = {
       prose: '65ch',
       ...breakpoints(theme('screens')),
     }),
+    minWidth: {
+      0: '0px',
+      full: '100%',
+      min: 'min-content',
+      max: 'max-content',
+    },
 
     inset: (theme, { negative }) => ({
       auto: 'auto',
