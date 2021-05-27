@@ -716,6 +716,11 @@ module.exports = {
       6: '6deg',
       12: '12deg',
     },
+
+    space: (theme, { negative }) => ({
+      ...theme('spacing'),
+      ...negative(theme('spacing')),
+    }),
   },
   plugins: [],
 };
