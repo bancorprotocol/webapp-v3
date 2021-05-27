@@ -1,25 +1,19 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 
-export const BaseModal = () => {
-  let [isOpen, setIsOpen] = useState(false);
-
+export const BaseModal = ({
+  setIsOpen,
+  isOpen,
+}: {
+  setIsOpen: any;
+  isOpen: any;
+}) => {
   const closeModal = () => {
     setIsOpen(false);
   };
 
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
   return (
     <>
-      <div className="mb-10">
-        <button type="button" onClick={openModal} className="btn-primary">
-          Open Modal
-        </button>
-      </div>
-
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -61,6 +55,7 @@ export const BaseModal = () => {
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
                   Modal Title
+                  {isOpen}
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
