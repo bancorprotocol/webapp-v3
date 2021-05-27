@@ -595,6 +595,7 @@ module.exports = {
       ...theme('spacing'),
       ...negative(theme('spacing')),
     }),
+    padding: (theme) => theme('spacing'),
 
     objectPosition: {
       bottom: 'bottom',
