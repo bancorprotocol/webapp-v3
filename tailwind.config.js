@@ -339,6 +339,9 @@ module.exports = {
       10: '2.5rem',
     },
 
+    placeholderColor: (theme) => theme('colors'),
+    placeholderOpacity: (theme) => theme('opacity'),
+
     gradientColorStops: (theme) => theme('colors'),
 
     gap: (theme) => theme('spacing'),
