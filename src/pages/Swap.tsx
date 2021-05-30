@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/base/BaseModal';
 import { Dropdown } from 'components/Dropdown';
 import { InputField } from 'components/InputField';
+import { TokensOverlap } from 'components/TokensOverlap';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +27,18 @@ export const Swap = () => {
         <button className="btn-pink">Button Samples</button>
       </Link>
       <InputField format placeholder="Input field" />
+      <TokensOverlap
+        tokens={[
+          {
+            id: '1',
+            logo: 'https://assets.coingecko.com/coins/images/279/thumb_2x/ethereum.png?1595348880',
+          },
+          {
+            id: '2',
+            logo: 'https://assets.coingecko.com/coins/images/736/thumb_2x/bancor.png?1547034477',
+          },
+        ]}
+      />
       <Dropdown
         title={'Dropdown'}
         items={[
