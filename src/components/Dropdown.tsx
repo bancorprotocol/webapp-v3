@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import 'components/Dropdown.css';
 
 export const Dropdown = ({
@@ -33,7 +35,11 @@ export const Dropdown = ({
               >
                 {({ selected }) => (
                   <div className="flex">
-                    {selected && <span className="pl-2">V</span>}
+                    {selected && (
+                      <span className="pl-2">
+                        <FontAwesomeIcon icon={faCheck} />
+                      </span>
+                    )}
                     <span
                       className={`
                     ${item.disabled && 'opacity-75'}
