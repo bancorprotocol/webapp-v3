@@ -15,7 +15,7 @@ export const InputField = ({
     setInput(
       format
         ? text
-            .replace(/[^\d\.]/g, '')
+            .replace(/[^\d.]/g, '')
             .replace(/\./, 'x')
             .replace(/\./g, '')
             .replace(/x/, '.')
@@ -27,6 +27,7 @@ export const InputField = ({
     <>
       <input
         type="text"
+        value={input}
         placeholder={placeholder}
         className="focus:outline-none focus:border-blue-300 border-2 border-gray-600 rounded px-4 h-10"
         onChange={(event) => handleChange(event.target.value)}
