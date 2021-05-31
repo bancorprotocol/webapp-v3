@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/base/BaseModal';
-import { Dropdown } from 'components/Dropdown';
-import { InputField } from 'components/InputField';
+import { Dropdown } from 'components/dropdown/Dropdown';
+import { InputField } from 'components/InputField/InputField';
 import { TokensOverlap } from 'components/TokensOverlap';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="grid justify-center space-y-5">
+    <div className="grid justify-center space-y-20">
       <div>
         <h1>H1 Headline</h1>
         <h2>H2 Headline</h2>
@@ -38,10 +38,10 @@ export const Swap = () => {
           <div className="mt-4">
             <button
               type="button"
-              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
               onClick={() => setIsOpen(false)}
             >
-              Confirm!
+              Close
             </button>
           </div>
         </BaseModal>
@@ -58,19 +58,27 @@ export const Swap = () => {
       <Link to="/buttons">
         <button className="btn-pink">Button Samples</button>
       </Link>
-      <InputField format placeholder="Input field" />
-      <TokensOverlap
-        tokens={[
-          {
-            id: '1',
-            logo: 'https://assets.coingecko.com/coins/images/279/thumb_2x/ethereum.png?1595348880',
-          },
-          {
-            id: '2',
-            logo: 'https://assets.coingecko.com/coins/images/736/thumb_2x/bancor.png?1547034477',
-          },
-        ]}
-      />
+
+      <div className="widget">
+        <input type="text" className="input-field" />
+        <div className="widget-block">
+          <InputField format placeholder="Input field" />
+          <TokensOverlap
+            tokens={[
+              {
+                id: '1',
+                logo: 'https://assets.coingecko.com/coins/images/279/thumb_2x/ethereum.png?1595348880',
+              },
+              {
+                id: '2',
+                logo: 'https://assets.coingecko.com/coins/images/736/thumb_2x/bancor.png?1547034477',
+              },
+            ]}
+          />
+          <button className="btn-primary rounded w-full">Swap</button>
+        </div>
+      </div>
+
       <Dropdown
         title={'Dropdown'}
         items={[

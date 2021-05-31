@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import 'components/InputField/InputField.css';
 
 export const InputField = ({
   placeholder,
@@ -29,7 +30,7 @@ export const InputField = ({
         type="text"
         value={input}
         placeholder={placeholder}
-        className="focus:outline-none focus:border-blue-300 border-2 border-gray-600 rounded px-4 h-10"
+        className="input-field"
         onChange={(event) => handleChange(event.target.value)}
       />
     </>
