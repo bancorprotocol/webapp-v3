@@ -4,6 +4,8 @@ import { BaseModal } from 'components/base/BaseModal';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { InputField } from 'components/InputField/InputField';
 import { TokensOverlap } from 'components/TokensOverlap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,12 +13,20 @@ export const Swap = () => {
   return (
     <div className="space-y-20 p-20">
       <div className="widget mx-auto">
-        <div>
-          <span>Market</span>
-          <span>|</span>
-          <span>Limit</span>
+        <div className="flex justify-between text-grey-3 text-20 py-16 px-20">
+          <div>
+            <span className="text-blue-4 font-semibold">Market</span>
+            <span className="mx-20">|</span>
+            <span>Limit</span>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faCog} />
+          </div>
         </div>
+
         <hr className="widget-separator" />
+
+        <div className="h-100">You Pay</div>
 
         <div className="widget-block">
           <div className="flex items-center">
