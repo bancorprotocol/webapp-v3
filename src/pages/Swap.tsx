@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/base/BaseModal';
 import { Dropdown } from 'components/dropdown/Dropdown';
-import { InputField } from 'components/InputField';
+import { InputField } from 'components/InputField/InputField';
 import { TokensOverlap } from 'components/TokensOverlap';
 
 export const Swap = () => {
@@ -38,7 +38,7 @@ export const Swap = () => {
           <div className="mt-4">
             <button
               type="button"
-              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
               onClick={() => setIsOpen(false)}
             >
               Close
