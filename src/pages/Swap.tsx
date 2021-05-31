@@ -9,23 +9,19 @@ export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="grid justify-center space-y-20">
-      <div>
-        <h1>H1 Headline</h1>
-        <h2>H2 Headline</h2>
-        <p>
-          Body - 14px - Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi asperiores debitis error est exercitationem repellendus
-          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
-          minus molestiae neque qui repellat repudiandae suscipit.
-        </p>
-        <p className="text-12">
-          Text - 12px - Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi asperiores debitis error est exercitationem repellendus
-          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
-          minus molestiae neque qui repellat repudiandae suscipit.
-        </p>
+    <div className="space-y-20 p-20">
+      <div className="widget mx-auto">
+        <div className="h-100"></div>
+
+        <div className="widget-block">
+          <div className="flex items-center">
+            <div>BNT</div>
+            <InputField format placeholder="Input field" />
+          </div>
+          <button className="btn-primary rounded w-full mt-16">Swap</button>
+        </div>
       </div>
+
       <div>
         <BaseModal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
           <p>
@@ -59,25 +55,18 @@ export const Swap = () => {
         <button className="btn-pink">Button Samples</button>
       </Link>
 
-      <div className="widget">
-        <input type="text" className="input-field" />
-        <div className="widget-block">
-          <InputField format placeholder="Input field" />
-          <TokensOverlap
-            tokens={[
-              {
-                id: '1',
-                logo: 'https://assets.coingecko.com/coins/images/279/thumb_2x/ethereum.png?1595348880',
-              },
-              {
-                id: '2',
-                logo: 'https://assets.coingecko.com/coins/images/736/thumb_2x/bancor.png?1547034477',
-              },
-            ]}
-          />
-          <button className="btn-primary rounded w-full">Swap</button>
-        </div>
-      </div>
+      <TokensOverlap
+        tokens={[
+          {
+            id: '1',
+            logo: 'https://assets.coingecko.com/coins/images/279/thumb_2x/ethereum.png?1595348880',
+          },
+          {
+            id: '2',
+            logo: 'https://assets.coingecko.com/coins/images/736/thumb_2x/bancor.png?1547034477',
+          },
+        ]}
+      />
 
       <Dropdown
         title={'Dropdown'}
