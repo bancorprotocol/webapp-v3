@@ -4,6 +4,7 @@ on:
   pull_request:
     types:
       [opened, closed, edited, ready_for_review, review_requested, reopened]
+  push:
 
 jobs:
   build:
