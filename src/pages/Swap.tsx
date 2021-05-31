@@ -11,7 +11,12 @@ export const Swap = () => {
   return (
     <div className="space-y-20 p-20">
       <div className="widget mx-auto">
-        <div className="h-100"></div>
+        <div>
+          <span>Market</span>
+          <span>|</span>
+          <span>Limit</span>
+        </div>
+        <hr className="widget-separator" />
 
         <div className="widget-block">
           <div className="flex items-center">
