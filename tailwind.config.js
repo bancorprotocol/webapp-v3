@@ -4,12 +4,15 @@ const buttons = require('./src/styles/plugins/buttons');
 module.exports = {
   mode: 'jit',
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: 'class', // or 'media' or 'class'
+  darkMode: 'media', // or 'media' or 'class'
   plugins: [buttons()],
   theme: {
     colors: {
+      ...colors,
+
       primary: {
         DEFAULT: '#3A86FF',
+        light: '#80B0FF',
         50: '#f5f9ff',
         100: '#ebf3ff',
         200: '#cee1ff',
@@ -78,7 +81,22 @@ module.exports = {
         900: '#7d1f2a',
       },
 
-      ...colors,
+      blue: {
+        0: '#ECF4FE',
+        1: '#213B55',
+        2: '#1C344D',
+        3: '#132D47',
+        4: '#0A2540',
+        5: '#0E3154',
+      },
+
+      grey: {
+        0: '#F5F5F5',
+        1: '#F2F5F9',
+        2: '#E6EBF2',
+        3: '#97A5B8',
+        4: '#5A687C',
+      },
     },
 
     screens: {
