@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import 'components/Dropdown.css';
+import 'components/dropdown/Dropdown.css';
 
 export const Dropdown = ({
   title,

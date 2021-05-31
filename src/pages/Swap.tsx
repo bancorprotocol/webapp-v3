@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/base/BaseModal';
-import { Dropdown } from 'components/Dropdown';
+import { Dropdown } from 'components/dropdown/Dropdown';
 import { InputField } from 'components/InputField';
 import { TokensOverlap } from 'components/TokensOverlap';
 
