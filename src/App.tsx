@@ -1,7 +1,7 @@
-import { NotFound } from "pages/NotFound";
-import { Swap } from "pages/Swap";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { ButtonSamples } from './pages/ButtonSamples';
+import { NotFound } from 'pages/NotFound';
+import { Swap } from 'pages/Swap';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { ButtonSamples } from 'pages/ButtonSamples';
 
 export const App = () => {
   return (
