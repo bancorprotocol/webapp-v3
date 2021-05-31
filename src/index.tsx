@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { App } from 'App';
 import { store } from 'redux/index';
 import reportWebVitals from 'reportWebVitals';
-import './styles/index.css';
+import 'styles/index.css';
 
 ReactDOM.render(
   <Provider store={store}>
