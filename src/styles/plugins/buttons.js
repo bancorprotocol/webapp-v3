@@ -5,25 +5,25 @@ const defaultOptions = (theme) => {
     btnStyle: {
       fontWeight: theme('fontWeight.600'),
       height: '51px',
-      fontSize: theme('fontSize.lg'),
+      fontSize: theme('fontSize.base'),
       '@apply flex items-center px-10 rounded-full border-2 transition-all duration-300 focus:outline-none outline-none focus:ring-4':
         '',
     },
     sizes: {
       xs: {
-        fontSize: theme('fontSize.xs'),
+        fontSize: theme('fontSize.12'),
         height: '28px',
       },
       sm: {
-        fontSize: theme('fontSize.sm'),
+        fontSize: theme('fontSize.14'),
         height: '32px',
       },
       lg: {
-        fontSize: theme('fontSize.lg'),
+        fontSize: theme('fontSize.18'),
         height: '44px',
       },
       xl: {
-        fontSize: theme('fontSize.xl'),
+        fontSize: theme('fontSize.20'),
         height: '60px',
       },
     },

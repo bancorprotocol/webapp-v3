@@ -10,9 +10,41 @@ export const Swap = () => {
 
   return (
     <div className="grid justify-center space-y-5">
-      <h1>Samples</h1>
       <div>
-        <BaseModal setIsOpen={setIsOpen} isOpen={isOpen} />
+        <h1>H1 Headline</h1>
+        <h2>H2 Headline</h2>
+        <p>
+          Body - 14px - Lorem ipsum dolor sit amet, consectetur adipisicing
+          elit. Animi asperiores debitis error est exercitationem repellendus
+          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
+          minus molestiae neque qui repellat repudiandae suscipit.
+        </p>
+        <p className="text-12">
+          Text - 12px - Lorem ipsum dolor sit amet, consectetur adipisicing
+          elit. Animi asperiores debitis error est exercitationem repellendus
+          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
+          minus molestiae neque qui repellat repudiandae suscipit.
+        </p>
+      </div>
+      <div>
+        <BaseModal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. At
+            deleniti deserunt dolor eveniet, expedita facere impedit iste maxime
+            modi nihil quae quo similique tempore temporibus, voluptas. Ad
+            aspernatur corporis esse?
+          </p>
+
+          <div className="mt-4">
+            <button
+              type="button"
+              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              onClick={() => setIsOpen(false)}
+            >
+              Confirm!
+            </button>
+          </div>
+        </BaseModal>
       </div>
       <div className="mb-10">
         <button

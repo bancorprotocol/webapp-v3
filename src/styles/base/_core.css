@@ -1,0 +1,7 @@
+@import 'tailwindcss/base';
+
+@layer base {
+   body, #root {
+       @apply text-14 font-inter font-normal;
+   }
+}
