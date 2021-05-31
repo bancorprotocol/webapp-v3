@@ -31,7 +31,7 @@ export const BaseModal = ({
           onClose={() => setIsOpen(false)}
         >
           <div className="min-h-screen px-4 text-center">
-            <Dialog.Overlay className="fixed inset-0 bg-primary bg-opacity-40" />
+            <Dialog.Overlay className="fixed inset-0 bg-blue-3 bg-opacity-70" />
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span
