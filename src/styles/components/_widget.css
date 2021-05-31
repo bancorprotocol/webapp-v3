@@ -1,0 +1,7 @@
+@import 'tailwindcss/components';
+
+@layer components {
+    .widget {
+        @apply bg-white shadow-widget;
+    }
+}
