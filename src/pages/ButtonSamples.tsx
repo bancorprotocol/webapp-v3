@@ -65,27 +65,25 @@ export const ButtonSamples = () => {
       <h1>Buttons Semi Round</h1>
       <div className="grid grid-cols-5 gap-10">
         <div className="mx-auto">
-          <button className="btn-primary btn-xs rounded-lg">
+          <button className="btn-primary btn-xs rounded">
             Btn Extra Small
           </button>
         </div>
 
         <div className="mx-auto">
-          <button className="btn-info btn-sm rounded-lg">Btn Small</button>
+          <button className="btn-info btn-sm rounded">Btn Small</button>
         </div>
 
         <div className="mx-auto">
-          <button className="btn-warning rounded-lg">Btn Regular</button>
+          <button className="btn-warning rounded">Btn Regular</button>
         </div>
 
         <div className="mx-auto">
-          <button className="btn-error btn-lg rounded-lg">Btn Large</button>
+          <button className="btn-error btn-lg rounded">Btn Large</button>
         </div>
 
         <div className="mx-auto">
-          <button className="btn-error btn-xl rounded-lg">
-            Btn Extra Large
-          </button>
+          <button className="btn-error btn-xl rounded">Btn Extra Large</button>
         </div>
       </div>
     </div>

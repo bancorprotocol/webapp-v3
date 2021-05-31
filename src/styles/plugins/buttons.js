@@ -3,10 +3,10 @@ const merge = require('lodash/merge');
 const defaultOptions = (theme) => {
   return {
     btnStyle: {
-      fontWeight: theme('fontWeight.600'),
-      height: '51px',
+      fontWeight: theme('fontWeight.500'),
+      height: '54px',
       fontSize: theme('fontSize.base'),
-      '@apply flex items-center px-10 rounded-full border-2 transition-all duration-300 focus:outline-none outline-none focus:ring-4':
+      '@apply flex items-center justify-center px-30 rounded-full border-2 transition-all duration-300 focus:outline-none outline-none focus:ring-4':
         '',
     },
     sizes: {

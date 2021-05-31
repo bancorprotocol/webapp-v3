@@ -1,31 +1,42 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/base/BaseModal';
-import { Dropdown } from 'components/Dropdown';
-import { InputField } from 'components/InputField';
+import { Dropdown } from 'components/dropdown/Dropdown';
+import { InputField } from 'components/InputField/InputField';
 import { TokensOverlap } from 'components/TokensOverlap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="grid justify-center space-y-5">
-      <div>
-        <h1>H1 Headline</h1>
-        <h2>H2 Headline</h2>
-        <p>
-          Body - 14px - Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi asperiores debitis error est exercitationem repellendus
-          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
-          minus molestiae neque qui repellat repudiandae suscipit.
-        </p>
-        <p className="text-12">
-          Text - 12px - Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi asperiores debitis error est exercitationem repellendus
-          tempore vero! Accusamus amet beatae, consequuntur dolorum maiores
-          minus molestiae neque qui repellat repudiandae suscipit.
-        </p>
+    <div className="space-y-20 p-20">
+      <div className="widget mx-auto">
+        <div className="flex justify-between text-grey-3 text-20 py-16 px-20">
+          <div>
+            <span className="text-blue-4 font-semibold">Market</span>
+            <span className="mx-20">|</span>
+            <span>Limit</span>
+          </div>
+          <div>
+            <FontAwesomeIcon icon={faCog} />
+          </div>
+        </div>
+
+        <hr className="widget-separator" />
+
+        <div className="h-100">You Pay</div>
+
+        <div className="widget-block">
+          <div className="flex items-center">
+            <div>BNT</div>
+            <InputField format placeholder="Input field" />
+          </div>
+          <button className="btn-primary rounded w-full mt-16">Swap</button>
+        </div>
       </div>
+
       <div>
         <BaseModal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
           <p>
@@ -38,10 +49,10 @@ export const Swap = () => {
           <div className="mt-4">
             <button
               type="button"
-              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
               onClick={() => setIsOpen(false)}
             >
-              Confirm!
+              Close
             </button>
           </div>
         </BaseModal>
@@ -58,7 +69,7 @@ export const Swap = () => {
       <Link to="/buttons">
         <button className="btn-pink">Button Samples</button>
       </Link>
-      <InputField format placeholder="Input field" />
+
       <TokensOverlap
         tokens={[
           {
@@ -71,6 +82,7 @@ export const Swap = () => {
           },
         ]}
       />
+
       <Dropdown
         title={'Dropdown'}
         items={[
