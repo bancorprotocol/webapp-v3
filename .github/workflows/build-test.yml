@@ -7,8 +7,8 @@ on:
   push:
 
 jobs:
-  build:
-
+  build-test:
+    name: Build Test
     runs-on: ubuntu-latest
 
     strategy:
