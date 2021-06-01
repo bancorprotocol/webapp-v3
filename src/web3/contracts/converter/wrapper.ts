@@ -3,7 +3,7 @@ import { CallReturn } from 'eth-multicall';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'web3/types';
 import { buildContract } from 'web3/contracts';
-import { ABIConverter } from './abi';
+import { ABIConverter } from 'web3/contracts/converter/abi';
 
 export const buildConverterContract = (
   contractAddress?: string,

@@ -1,7 +1,7 @@
 import { buildContract } from 'web3/contracts';
 import { ContractMethods } from 'web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
-import { ABIExchangeProxy } from './abi';
+import { ABIExchangeProxy } from 'web3/contracts/exchangeProxy/abi';
 
 export interface StringRfq {
   makerToken: string;

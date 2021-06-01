@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BaseModal } from 'components/modal/Modal';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
-import { SwapMarketWidget } from '../elements/swapMarket/SwapMarket';
+import { SwapMarketWidget } from 'elements/swapMarket/SwapMarket';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);

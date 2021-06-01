@@ -1,7 +1,7 @@
 import { ContractMethods, RegisteredContracts } from 'web3/types';
 import { CallReturn, MultiCall } from 'eth-multicall';
 import { asciiToHex, isAddress } from 'web3-utils';
-import { ABIContractRegistry } from './abi';
+import { ABIContractRegistry } from 'web3/contracts/addressLookup/abi';
 import { buildContract, web3 } from 'web3/contracts';
 import { toPairs } from 'lodash';
 

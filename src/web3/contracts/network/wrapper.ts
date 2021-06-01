@@ -3,7 +3,7 @@ import { ContractMethods } from 'web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
 import Web3 from 'web3';
 import { buildContract } from 'web3/contracts';
-import { ABINetworkContract } from './abi';
+import { ABINetworkContract } from 'web3/contracts/network/abi';
 
 export const buildNetworkContract = (
   contractAddress: string,

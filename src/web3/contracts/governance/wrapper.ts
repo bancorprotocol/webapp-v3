@@ -4,7 +4,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import Web3 from 'web3';
 import { buildContract } from 'web3/contracts';
 import { EthAddress } from 'web3/types';
-import { ABIBancorGovernance } from './abi';
+import { ABIBancorGovernance } from 'web3/contracts/governance/abi';
 
 export interface Votes {
   voted: undefined | 'for' | 'against';
