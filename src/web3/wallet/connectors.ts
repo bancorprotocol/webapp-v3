@@ -50,13 +50,13 @@ export const ledger = new LedgerConnector({
   pollingInterval: POLLING_INTERVAL,
 });
 
-// export const trezor = new TrezorConnector({
-//   chainId: 1,
-//   url: RPC_URLS[1],
-//   pollingInterval: POLLING_INTERVAL,
-//   manifestEmail: '',
-//   manifestAppUrl: '',
-// });
+export const trezor = new TrezorConnector({
+  chainId: 1,
+  url: RPC_URLS[1],
+  pollingInterval: POLLING_INTERVAL,
+  manifestEmail: '',
+  manifestAppUrl: '',
+});
 
 export const lattice = new LatticeConnector({
   chainId: 4,
@@ -68,20 +68,20 @@ export const frame = new FrameConnector({ supportedChainIds: [1] });
 
 export const authereum = new AuthereumConnector({ chainId: 42 });
 
-// export const fortmatic = new FortmaticConnector({
-//   apiKey: process.env.FORTMATIC_API_KEY as string,
-//   chainId: 4,
-// });
+export const fortmatic = new FortmaticConnector({
+  apiKey: process.env.FORTMATIC_API_KEY as string,
+  chainId: 4,
+});
 
-// export const magic = new MagicConnector({
-//   apiKey: process.env.MAGIC_API_KEY as string,
-//   chainId: 4,
-//   email: '',
-// });
+export const magic = new MagicConnector({
+  apiKey: process.env.MAGIC_API_KEY as string,
+  chainId: 4,
+  email: 'mail@mail.com',
+});
 
-// export const portis = new PortisConnector({
-//   dAppId: process.env.PORTIS_DAPP_ID as string,
-//   networks: [1, 100],
-// });
+export const portis = new PortisConnector({
+  dAppId: process.env.PORTIS_DAPP_ID as string,
+  networks: [1, 100],
+});
 
 export const torus = new TorusConnector({ chainId: 1 });

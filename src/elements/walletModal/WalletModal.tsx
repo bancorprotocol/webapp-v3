@@ -27,11 +27,10 @@ export const WalletModal = () => {
 
   return (
     <>
-      {Object.keys(SUPPORTED_WALLETS).map((key) => {
-        const option = SUPPORTED_WALLETS[key];
+      {SUPPORTED_WALLETS.map((wallet, index) => {
         return (
-          <button key={key} onClick={() => tryConnecting(option.connector)}>
-            <div>{option.name}</div>
+          <button key={index} onClick={() => tryConnecting(wallet.connector)}>
+            <div>{wallet.name}</div>
           </button>
         );
       })}

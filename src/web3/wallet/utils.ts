@@ -1,11 +1,15 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import {
-  //fortmatic,
   injected,
-  //portis,
   walletconnect,
   walletlink,
+  ledger,
+  trezor,
+  lattice,
+  frame,
+  fortmatic,
+  portis,
 } from 'web3/wallet/connectors';
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -31,33 +35,51 @@ export interface WalletInfo {
   mobileOnly?: true;
 }
 
-export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
-  INJECTED: {
-    connector: injected,
-    name: 'Injected',
-    icon: 'INJECTED_ICON_URL',
-    description: 'Injected web3 provider.',
-  },
-  METAMASK: {
+export const SUPPORTED_WALLETS: WalletInfo[] = [
+  {
     connector: injected,
     name: 'MetaMask',
     icon: 'METAMASK_ICON_URL',
     description: 'MetaMask description',
   },
-  WALLET_CONNECT: {
+  {
     connector: walletconnect,
     name: 'WalletConnect',
     icon: 'WALLETCONNECT_ICON_URL',
     description: 'WalletConnect description',
     mobile: true,
   },
-  WALLET_LINK: {
+  {
     connector: walletlink,
     name: 'Coinbase Wallet',
     icon: 'COINBASE_ICON_URL',
     description: 'Coinbase Wallet description',
   },
-  COINBASE_LINK: {
+  {
+    connector: ledger,
+    name: 'Ledger',
+    icon: 'LEDGER_ICON_URL',
+    description: 'Ledger description',
+  },
+  {
+    connector: trezor,
+    name: 'Trezor',
+    icon: 'TREZOR_ICON_URL',
+    description: 'Trezor description',
+  },
+  {
+    connector: lattice,
+    name: 'Lattice',
+    icon: 'LATTICE_ICON_URL',
+    description: 'Lattice description',
+  },
+  {
+    connector: frame,
+    name: 'Frame',
+    icon: 'FRAME_ICON_URL',
+    description: 'Frame description',
+  },
+  {
     name: 'Open in Coinbase Wallet',
     icon: 'COINBASE_ICON_URL',
     description: 'Open in Coinbase Wallet app.',
@@ -65,18 +87,18 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     mobile: true,
     mobileOnly: true,
   },
-  // FORTMATIC: {
-  //   connector: fortmatic,
-  //   name: 'Fortmatic',
-  //   icon: 'FORTMATIC_ICON_URL',
-  //   description: 'Login using Fortmatic hosted wallet',
-  //   mobile: true,
-  // },
-  // Portis: {
-  //   connector: portis,
-  //   name: 'Portis',
-  //   icon: 'PORTIS_ICON_URL',
-  //   description: 'Login using Portis hosted wallet',
-  //   mobile: true,
-  // },
-};
+  {
+    connector: fortmatic,
+    name: 'Fortmatic',
+    icon: 'FORTMATIC_ICON_URL',
+    description: 'Fortmatic description',
+    mobile: true,
+  },
+  {
+    connector: portis,
+    name: 'Portis',
+    icon: 'PORTIS_ICON_URL',
+    description: 'Portis description',
+    mobile: true,
+  },
+];
