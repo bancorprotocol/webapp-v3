@@ -4,15 +4,15 @@ export interface UserState {
   darkMode: boolean;
 }
 
-export const initialState = {
+export const initialState: UserState = {
   darkMode: false,
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: 'user',
-  initialState: initialState,
+  initialState,
   reducers: {
-    setDarkMode: (user, action) => {
+    setDarkMode: (currentState, action) => {
       user.darkMode = action.payload;
     },
   },
