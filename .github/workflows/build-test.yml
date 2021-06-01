@@ -24,4 +24,7 @@ jobs:
     - name: Install Dependencies
       run: yarn
     - name: Build
+      env:
+        ALCHEMY_MAINNET: ${{ secrets.ALCHEMY_MAINNET }}
+        ALCHEMY_ROPSTEN: ${{ secrets.ALCHEMY_ROPSTEN }}
       run: yarn build
