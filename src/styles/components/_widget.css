@@ -14,7 +14,7 @@
     }
 
     .widget-separator {
-        @apply border-t mb-10 -mx-10;
+        @apply border-t mb-20 -mx-10;
         @apply border-grey-2;
         @apply dark:border-blue-1;
     }
