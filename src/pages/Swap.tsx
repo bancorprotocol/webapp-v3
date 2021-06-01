@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BaseModal } from 'components/base/BaseModal';
+import { BaseModal } from 'components/modal/Modal';
 import { Dropdown } from 'components/dropdown/Dropdown';
-import { TokensOverlap } from 'components/TokensOverlap';
+import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { SwapMarketWidget } from '../widgets/swap/SwapMarketWidget';
 
 export const Swap = () => {

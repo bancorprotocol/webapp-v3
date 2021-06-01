@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SUPPORTED_WALLETS } from 'web3/utils';
+import { SUPPORTED_WALLETS } from 'web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';

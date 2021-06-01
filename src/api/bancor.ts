@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EthNetworks } from '../types';
+import { EthNetworks } from '../web3/types';
 import { toChecksumAddress } from 'web3-utils';
 
 interface TokenMeta {

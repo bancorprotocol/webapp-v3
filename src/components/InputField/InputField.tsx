@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import 'components/InputField/InputField.css';
+import 'components/inputField/InputField.css';
 
 interface InputFieldProps {
   placeholder?: string;

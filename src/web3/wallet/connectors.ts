@@ -14,13 +14,6 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 const POLLING_INTERVAL = 15000;
 
-export enum EthNetworks {
-  Mainnet = 1,
-  Ropsten = 3,
-  Rinkeby = 4,
-  Goerli = 5,
-}
-
 const buildAlchemyUrl = (network: string, projectId: string) =>
   `https://eth-${network}.alchemyapi.io/v2/${projectId}`;
 

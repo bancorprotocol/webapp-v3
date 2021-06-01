@@ -1,7 +1,6 @@
-import { InputField } from 'components/InputField/InputField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
-import { TokenInputField } from '../../components/TokenInputField/TokenInputField';
+import { TokenInputField } from '../../components/tokenInputField/TokenInputField';
 
 export const SwapMarketWidget = () => {
   return (

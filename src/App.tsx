@@ -2,7 +2,7 @@ import { NotFound } from 'pages/NotFound';
 import { Swap } from 'pages/Swap';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ButtonSamples } from 'pages/ButtonSamples';
-import { WalletModal } from 'elements/WalletModal';
+import { WalletModal } from 'elements/walletModal/WalletModal';
 
 export const App = () => {
   return (

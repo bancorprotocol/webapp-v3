@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import 'components/TokenInputField/TokenInputField.css';
-import { InputField } from '../InputField/InputField';
+import { InputField } from 'components/inputField/InputField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
+import 'components/tokenInputField/TokenInputField.css';
 
 interface TokenInputFieldProps {
   label: string;

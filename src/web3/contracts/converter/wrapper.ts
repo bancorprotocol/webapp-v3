@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import { CallReturn } from 'eth-multicall';
 import { ContractSendMethod } from 'web3-eth-contract';
-import { ContractMethods } from 'types';
-import { buildContract } from 'contracts';
+import { ContractMethods } from 'web3/types';
+import { buildContract } from 'web3/contracts';
 import { ABIConverter } from './abi';
 
 export const buildConverterContract = (

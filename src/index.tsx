@@ -6,7 +6,7 @@ import { store } from 'redux/index';
 import reportWebVitals from 'reportWebVitals';
 import { IntlProvider } from 'react-intl';
 import { messages, locale } from 'i18n';
-import { getLibrary } from 'web3/utils';
+import { getLibrary } from 'web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 

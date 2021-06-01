@@ -6,7 +6,7 @@ import {
   //portis,
   walletconnect,
   walletlink,
-} from 'web3/connectors';
+} from 'web3/wallet/connectors';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(

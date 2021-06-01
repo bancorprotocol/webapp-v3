@@ -1,9 +1,9 @@
 import { CallReturn } from 'eth-multicall';
-import { ContractMethods } from 'types';
+import { ContractMethods } from 'web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
 import Web3 from 'web3';
-import { buildContract } from 'contracts';
-import { EthAddress } from 'types';
+import { buildContract } from 'web3/contracts';
+import { EthAddress } from 'web3/types';
 import { ABIBancorGovernance } from './abi';
 
 export interface Votes {

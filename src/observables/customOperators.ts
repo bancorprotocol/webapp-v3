@@ -1,4 +1,4 @@
-import { web3 } from 'contracts';
+import { web3 } from 'web3/contracts';
 import { differenceWith, isEqual } from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import {

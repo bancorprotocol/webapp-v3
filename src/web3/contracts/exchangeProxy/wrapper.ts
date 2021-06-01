@@ -1,5 +1,5 @@
-import { buildContract } from 'contracts';
-import { ContractMethods } from 'types';
+import { buildContract } from 'web3/contracts';
+import { ContractMethods } from 'web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ABIExchangeProxy } from './abi';
 
