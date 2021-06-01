@@ -1,38 +1,44 @@
 import { useState } from 'react';
 import 'components/InputField/InputField.css';
 
+interface InputFieldProps {
+  placeholder?: string;
+  disabled?: boolean;
+  format?: boolean;
+  bgGrey?: boolean;
+}
+
 export const InputField = ({
   placeholder,
   disabled,
   format,
-}: {
-  placeholder?: string;
-  disabled?: boolean;
-  format?: boolean;
-}) => {
+  bgGrey,
+}: InputFieldProps) => {
   const [input, setInput] = useState('');
 
+  const inputFieldStyles = bgGrey
+    ? 'input-field input-field-bg-grey'
+    : 'input-field';
+
   const handleChange = (text: string) => {
+    if (!format) setInput(text);
+
     setInput(
-      format
-        ? text
-            .replace(/[^\d.]/g, '')
-            .replace(/\./, 'x')
-            .replace(/\./g, '')
-            .replace(/x/, '.')
-        : text
+      text
+        .replace(/[^\d.]/g, '')
+        .replace(/\./, 'x')
+        .replace(/\./g, '')
+        .replace(/x/, '.')
     );
   };
 
   return (
-    <>
-      <input
-        type="text"
-        value={input}
-        placeholder={placeholder}
-        className="input-field"
-        onChange={(event) => handleChange(event.target.value)}
-      />
-    </>
+    <input
+      type="text"
+      value={input}
+      placeholder={placeholder}
+      className={inputFieldStyles}
+      onChange={(event) => handleChange(event.target.value)}
+    />
   );
 };
