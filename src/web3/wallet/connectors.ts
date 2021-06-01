@@ -18,8 +18,8 @@ const buildAlchemyUrl = (network: string, projectId: string) =>
   `https://eth-${network}.alchemyapi.io/v2/${projectId}`;
 
 const RPC_URLS: { [chainId: number]: string } = {
-  1: buildAlchemyUrl('mainnet', process.env.VUE_APP_ALCHEMY_MAINNET as string),
-  3: buildAlchemyUrl('ropstan', process.env.VUE_APP_ALCHEMY_ROPSTEN as string),
+  1: buildAlchemyUrl('mainnet', process.env.ALCHEMY_MAINNET as string),
+  3: buildAlchemyUrl('ropstan', process.env.ALCHEMY_ROPSTEN as string),
 };
 
 const appName = 'phoenix';
