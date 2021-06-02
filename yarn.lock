@@ -25,6 +25,11 @@
     lodash "^4.17.11"
     valid-url "^1.0.9"
 
+"@0x/contract-addresses@^6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@0x/contract-addresses/-/contract-addresses-6.3.0.tgz#41a8e6691eaf6c4a25b62a69f7d9de7661f80e9f"
+  integrity sha512-mZW66XavXbr9LsaMJy1bsCwsNWsnqOkCtCpxBYqtCScxRVa8h3QWSO8U0+EjFwMxkJDWSxBhg+SQK7Y4jPwU4Q==
+
 "@0x/json-schemas@^4.0.2":
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@0x/json-schemas/-/json-schemas-4.0.2.tgz#6f7c1dcde04d3acc3e8ca2f24177b9705c10e772"

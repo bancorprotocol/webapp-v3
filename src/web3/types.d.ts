@@ -20,3 +20,14 @@ export interface RegisteredContracts {
   LiquidityProtectionStore: string;
   StakingRewards: string;
 }
+
+export interface ConverterAndAnchor {
+  converterAddress: string;
+  anchorAddress: string;
+}
+
+export interface MinimalPool {
+  anchorAddress: string;
+  converterAddress: string;
+  reserves: string[];
+}

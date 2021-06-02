@@ -84,7 +84,7 @@ export const getWelcomeData = async (
   }
   try {
     const { data } = await axios.get<WelcomeData>(
-      network == EthNetworks.Mainnet
+      network === EthNetworks.Mainnet
         ? 'https://api-v2.bancor.network/welcome'
         : 'https://ropsten-ptdczarhfq-nw.a.run.app/welcome'
     );

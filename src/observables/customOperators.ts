@@ -1,4 +1,3 @@
-import { web3 } from 'web3/contracts';
 import { differenceWith, isEqual } from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import {
@@ -133,7 +132,7 @@ const getCachedPositions = (): string[] | false => {
 
 export const compareIdArray = (a: string[], b: string[]) => {
   const sameLength = a.length == b.length;
-  const allFound = a.every((id) => b.some((i) => id == i));
+  const allFound = a.every((id) => b.some((i) => id === i));
   return sameLength && allFound;
 };
 
