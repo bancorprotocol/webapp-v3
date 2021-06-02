@@ -15,18 +15,9 @@ export const TokenInputField = ({
   label,
   balance,
   balanceUsd,
-  dualInput,
   bgGrey,
 }: TokenInputFieldProps) => {
   const placeholder = 'Enter token amount';
-  const placeholderUsd = 'Enter dollar amount';
-
-  const InputAmount = () => {
-    if (dualInput) {
-      return <div>dual input</div>;
-    }
-    return <InputField format placeholder={placeholder} bgGrey={bgGrey} />;
-  };
 
   return (
     <div>
@@ -40,11 +31,11 @@ export const TokenInputField = ({
 
       <div className="flex items-center">
         <div className="flex items-center mr-24">
-          <div className="bg-grey-2 rounded-full h-24 w-24"></div>
+          <div className="bg-grey-2 rounded-full h-24 w-24">&#8203;</div>
           <span className="text-20 mx-6">BNT</span>
           <FontAwesomeIcon icon={faChevronDown} />
         </div>
-        <InputAmount />
+        <InputField format placeholder={placeholder} bgGrey={bgGrey} />
       </div>
     </div>
   );
