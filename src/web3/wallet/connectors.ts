@@ -1,5 +1,4 @@
 import { FrameConnector } from '@web3-react/frame-connector';
-import { MagicConnector } from '@web3-react/magic-connector';
 import { TorusConnector } from '@web3-react/torus-connector';
 import { LedgerConnector } from '@web3-react/ledger-connector';
 import { TrezorConnector } from '@web3-react/trezor-connector';
@@ -9,7 +8,6 @@ import { LatticeConnector } from '@web3-react/lattice-connector';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { AuthereumConnector } from '@web3-react/authereum-connector';
-import { SquarelinkConnector } from '@web3-react/squarelink-connector';
 import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
@@ -74,20 +72,9 @@ export const fortmatic = new FortmaticConnector({
   chainId: 4,
 });
 
-export const magic = new MagicConnector({
-  apiKey: process.env.MAGIC_API_KEY as string,
-  chainId: 4,
-  email: 'mail@mail.com',
-});
-
 export const portis = new PortisConnector({
   dAppId: process.env.PORTIS_DAPP_ID as string,
   networks: [1, 100],
 });
 
 export const torus = new TorusConnector({ chainId: 1 });
-
-export const squarelink = new SquarelinkConnector({
-  clientId: '',
-  networks: [1],
-});
