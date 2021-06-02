@@ -1,9 +1,26 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { SwapHeader } from '../swapHeader/SwapHeader';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { SwapMarket } from '../swapMarket/SwapMarket';
+import { SwapLimit } from '../swapLimit/SwapLimit';
 
-export const SwapMarket = () => {
+export const SwapWidget = () => {
+  let { path } = useRouteMatch();
+
   return (
-    <div>
-      <div className="px-20">
+    <div className="widget mx-auto">
+      <SwapHeader />
+
+      <hr className="widget-separator" />
+
+      {path}
+
+      <Switch>
+        <Route strict path={`/market`} component={SwapMarket} />
+        <Route path={`/limit`} component={SwapLimit} />
+      </Switch>
+
+      {/* <div className="px-20">
         <TokenInputField
           label="You Pay"
           balance={123.4567}
@@ -32,7 +49,7 @@ export const SwapMarket = () => {
         </div>
 
         <button className="btn-primary rounded w-full">Swap</button>
-      </div>
+      </div>*/}
     </div>
   );
 };

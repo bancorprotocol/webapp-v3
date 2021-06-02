@@ -1,6 +1,6 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 
-export const SwapMarket = () => {
+export const SwapLimit = () => {
   return (
     <div>
       <div className="px-20">

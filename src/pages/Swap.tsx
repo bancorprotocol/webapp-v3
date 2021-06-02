@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { Modal } from 'components/modal/Modal';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
-import { SwapMarketWidget } from 'elements/swapMarket/SwapMarket';
 import { InputField } from '../components/inputField/InputField';
+import { SwapWidget } from '../elements/swapWidget/SwapWidget';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="space-y-20 p-20">
-      <SwapMarketWidget />
+      <SwapWidget />
 
       <div>
         <Modal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
@@ -47,6 +47,9 @@ export const Swap = () => {
       </div>
       <Link to="/buttons">
         <button className="btn-pink">Button Samples</button>
+      </Link>
+      <Link to="/swap/market">
+        <button className="btn-pink">Swap</button>
       </Link>
 
       <TokensOverlap
