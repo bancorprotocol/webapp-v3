@@ -1,38 +1,42 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
+import { classNameGenerator } from 'utils/pureFunctions';
+import 'elements/swapHeader/SwapHeader.css';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+
+interface SwapHeaderProps {
+  isLimit: boolean;
+  setIsLimit: Function;
+  isUsd: boolean;
+  setIsUsd: Function;
+}
 
 export const SwapHeader = ({
   isLimit,
   setIsLimit,
-}: {
-  isLimit: boolean;
-  setIsLimit: Function;
-}) => {
+  isUsd,
+  setIsUsd,
+}: SwapHeaderProps) => {
+  const marketActive = classNameGenerator({
+    'swap-header-active': !isLimit,
+  });
+
+  const limitActive = classNameGenerator({
+    'swap-header-active': isLimit,
+  });
+
   return (
     <div>
-      <div className="flex justify-between text-grey-3 text-20 py-16 px-20">
+      <div className="swap-header">
         <div>
-          <button
-            className={
-              isLimit ? '' : 'text-blue-4 font-semibold dark:text-grey-0'
-            }
-            onClick={() => setIsLimit(false)}
-          >
+          <button className={marketActive} onClick={() => setIsLimit(false)}>
             Market
           </button>
-          <span className="mx-20">|</span>
-          <button
-            onClick={() => setIsLimit(true)}
-            className={
-              isLimit ? 'text-blue-4 font-semibold dark:text-grey-0' : ''
-            }
-          >
+          <span className="ml-15 mr-10">|</span>
+          <button className={limitActive} onClick={() => setIsLimit(true)}>
             Limit
           </button>
         </div>
-        <div>
-          <FontAwesomeIcon icon={faCog} />
-        </div>
+
+        <SwapSwitch isEnabled={isUsd} setIsEnabled={setIsUsd} />
       </div>
     </div>
   );
