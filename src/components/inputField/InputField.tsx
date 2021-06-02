@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import 'components/inputField/InputField.css';
+import {classNameGenerator, sanitizeNumberInput} from "../../utils/pureFunctions";
 
 interface InputFieldProps {
   placeholder?: string;
@@ -16,20 +17,11 @@ export const InputField = ({
 }: InputFieldProps) => {
   const [input, setInput] = useState('');
 
-  const inputFieldStyles = bgGrey
-    ? 'input-field input-field-bg-grey'
-    : 'input-field';
+  const inputFieldStyles = `input-field ${classNameGenerator({ 'input-field-bg-grey': bgGrey })}`
 
   const handleChange = (text: string) => {
     if (!format) setInput(text);
-
-    setInput(
-      text
-        .replace(/[^\d.]/g, '')
-        .replace(/\./, 'x')
-        .replace(/\./g, '')
-        .replace(/x/, '.')
-    );
+    setInput(sanitizeNumberInput(text))
   };
 
   return (
