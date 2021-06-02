@@ -1,3 +1,16 @@
-.content {
-  @apply inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-30;
+.modal {
+  @apply fixed inset-0 z-10 overflow-y-auto;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 bg-blue-3 bg-opacity-70;
+}
+
+.modal-title {
+  @apply flex justify-between text-20 font-semibold px-10 pt-28 pb-12;
+}
+
+.modal-content {
+  @apply inline-block w-full max-w-[353px] px-18 overflow-hidden text-left align-middle transition-all transform rounded-20;
+  @apply bg-white dark:bg-blue-4;
 }

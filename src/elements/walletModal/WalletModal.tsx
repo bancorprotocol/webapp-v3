@@ -34,13 +34,15 @@ export const WalletModal = ({
 
   return (
     <Modal title="Select a wallet" isOpen={isOpen} setIsOpen={setIsOpen}>
-      {SUPPORTED_WALLETS.map((wallet, index) => {
-        return (
-          <button key={index} onClick={() => tryConnecting(wallet.connector)}>
-            <div>{wallet.name}</div>
-          </button>
-        );
-      })}
+      <>
+        {SUPPORTED_WALLETS.map((wallet, index) => {
+          return (
+            <button key={index} onClick={() => tryConnecting(wallet.connector)}>
+              <div>{wallet.name}</div>
+            </button>
+          );
+        })}
+      </>
     </Modal>
   );
 };
