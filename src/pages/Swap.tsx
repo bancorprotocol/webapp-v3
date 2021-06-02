@@ -48,9 +48,6 @@ export const Swap = () => {
       <Link to="/buttons">
         <button className="btn-pink">Button Samples</button>
       </Link>
-      <Link to="/swap/market">
-        <button className="btn-pink">Swap</button>
-      </Link>
 
       <TokensOverlap
         tokens={[

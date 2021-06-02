@@ -1,25 +1,17 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { SwapHeader } from '../swapHeader/SwapHeader';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import { SwapMarket } from '../swapMarket/SwapMarket';
-import { SwapLimit } from '../swapLimit/SwapLimit';
+import { SwapHeader } from 'elements/swapHeader/SwapHeader';
+import { SwapMarket } from 'elements/swapMarket/SwapMarket';
+import { SwapLimit } from 'elements/swapLimit/SwapLimit';
+import { useState } from 'react';
 
 export const SwapWidget = () => {
-  let { path } = useRouteMatch();
+  const [isLimit, setIsLimit] = useState(false);
 
   return (
     <div className="widget mx-auto">
-      <SwapHeader />
-
+      <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
       <hr className="widget-separator" />
-
-      {path}
-
-      <Switch>
-        <Route strict path={`/market`} component={SwapMarket} />
-        <Route path={`/limit`} component={SwapLimit} />
-      </Switch>
-
+      {isLimit ? <SwapLimit /> : <SwapMarket />}
       {/* <div className="px-20">
         <TokenInputField
           label="You Pay"

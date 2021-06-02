@@ -31,7 +31,7 @@ export const SwapLimit = () => {
           </div>
         </div>
 
-        <button className="btn-primary rounded w-full">Swap</button>
+        <button className="btn-primary rounded w-full">Swap Limit</button>
       </div>
     </div>
   );
