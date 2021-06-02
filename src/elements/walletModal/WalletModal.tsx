@@ -3,8 +3,15 @@ import { SUPPORTED_WALLETS } from 'web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { Modal } from 'components/modal/Modal';
 
-export const WalletModal = () => {
+export const WalletModal = ({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean;
+  setIsOpen: Function;
+}) => {
   const { activate } = useWeb3React();
   const [pending, setPending] = useState<AbstractConnector | undefined>();
   const [error, setError] = useState<boolean>(false);
@@ -26,7 +33,7 @@ export const WalletModal = () => {
   };
 
   return (
-    <>
+    <Modal title="Select a wallet" isOpen={isOpen} setIsOpen={setIsOpen}>
       {SUPPORTED_WALLETS.map((wallet, index) => {
         return (
           <button key={index} onClick={() => tryConnecting(wallet.connector)}>
@@ -34,6 +41,6 @@ export const WalletModal = () => {
           </button>
         );
       })}
-    </>
+    </Modal>
   );
 };

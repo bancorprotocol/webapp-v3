@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BaseModal } from 'components/modal/Modal';
+import { Modal } from 'components/modal/Modal';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { SwapMarketWidget } from 'elements/swapMarket/SwapMarket';
@@ -13,7 +13,7 @@ export const Swap = () => {
       <SwapMarketWidget />
 
       <div>
-        <BaseModal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
+        <Modal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. At
             deleniti deserunt dolor eveniet, expedita facere impedit iste maxime
@@ -30,7 +30,7 @@ export const Swap = () => {
               Close
             </button>
           </div>
-        </BaseModal>
+        </Modal>
       </div>
       <div className="mb-10">
         <button

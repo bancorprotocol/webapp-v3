@@ -7,7 +7,6 @@ import { WalletModal } from 'elements/walletModal/WalletModal';
 export const App = () => {
   return (
     <BrowserRouter>
-      <WalletModal />
       <Switch>
         <Route exact strict path="/" component={Swap} />
         <Route exact strict path="/buttons" component={ButtonSamples} />

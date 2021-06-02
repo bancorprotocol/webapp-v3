@@ -1,7 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
-export const BaseModal = ({
+export const Modal = ({
   title,
   children,
   setIsOpen,

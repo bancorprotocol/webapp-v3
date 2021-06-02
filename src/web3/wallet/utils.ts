@@ -10,6 +10,8 @@ import {
   frame,
   fortmatic,
   portis,
+  authereum,
+  torus,
 } from 'web3/wallet/connectors';
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -99,6 +101,19 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'Portis',
     icon: 'PORTIS_ICON_URL',
     description: 'Portis description',
+    mobile: true,
+  },
+  {
+    connector: authereum,
+    name: 'Authereum',
+    icon: 'AUTHEREUM_ICON_URL',
+    description: 'Authereum description',
+  },
+  {
+    connector: torus,
+    name: 'Torus',
+    icon: 'TORUS_ICON_URL',
+    description: 'Torus description',
     mobile: true,
   },
 ];
