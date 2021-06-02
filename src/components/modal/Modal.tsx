@@ -1,17 +1,17 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import 'components/modal/Modal.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 
-export const BaseModal = ({
-  title,
-  children,
-  setIsOpen,
-  isOpen,
-}: {
+interface ModalProps {
   title: string;
-  children: any;
+  children: JSX.Element;
   setIsOpen: Function;
   isOpen: boolean;
-}) => {
+}
+
+export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
   return (
     <>
       <Transition
@@ -25,25 +25,26 @@ export const BaseModal = ({
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        <Dialog
-          as="div"
-          className="fixed inset-0 z-10 overflow-y-auto"
-          onClose={() => setIsOpen(false)}
-        >
+        <Dialog as="div" className="modal" onClose={() => setIsOpen(false)}>
           <div className="min-h-screen px-4 text-center">
-            <Dialog.Overlay className="fixed inset-0 bg-blue-3 bg-opacity-70" />
+            <Dialog.Overlay className="modal-overlay" />
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
               &#8203;
             </span>
-            <div className="content">
-              <Dialog.Title as="h5">
+
+            <div className="modal-content">
+              <Dialog.Title className="modal-title">
                 {title}
-                {isOpen}
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  onClick={() => setIsOpen(false)}
+                  className="cursor-pointer"
+                />
               </Dialog.Title>
-              <div className="mt-2">{children}</div>
+              <div>{children}</div>
             </div>
           </div>
         </Dialog>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BaseModal } from 'components/modal/Modal';
+import { Modal } from 'components/modal/Modal';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { SwapMarketWidget } from 'elements/swapMarket/SwapMarket';
+import { InputField } from '../components/inputField/InputField';
 
 export const Swap = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,24 +14,27 @@ export const Swap = () => {
       <SwapMarketWidget />
 
       <div>
-        <BaseModal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. At
-            deleniti deserunt dolor eveniet, expedita facere impedit iste maxime
-            modi nihil quae quo similique tempore temporibus, voluptas. Ad
-            aspernatur corporis esse?
-          </p>
+        <Modal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
+          <div>
+            <InputField bgGrey placeholder="Search name or paste address" />
+            <p className="my-10">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. At
+              deleniti deserunt dolor eveniet, expedita facere impedit iste
+              maxime modi nihil quae quo similique tempore temporibus, voluptas.
+              Ad aspernatur corporis esse?
+            </p>
 
-          <div className="mt-4">
-            <button
-              type="button"
-              className="inline-flex justify-center px-4 py-2 font-medium text-blue-900 bg-blue-100 border border-transparent rounded hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-              onClick={() => setIsOpen(false)}
-            >
-              Close
-            </button>
+            <div className="mt-4">
+              <button
+                type="button"
+                className="btn-primary rounded w-full mb-18"
+                onClick={() => setIsOpen(false)}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        </BaseModal>
+        </Modal>
       </div>
       <div className="mb-10">
         <button
