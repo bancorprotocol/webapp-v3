@@ -41,7 +41,7 @@ export const TokenInputField = ({
       <div className="flex items-center">
         <div className="flex items-center mr-24">
           <div className="bg-grey-2 rounded-full h-24 w-24">&#8203;</div>
-          <span className="text-20 mx-6">{}</span>
+          <span className="text-20 mx-6">BNT</span>
           <FontAwesomeIcon icon={faChevronDown} />
         </div>
 
