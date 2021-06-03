@@ -8,7 +8,7 @@ export const SwapLimit = () => {
           label="You Pay"
           balance={123.4567}
           balanceUsd={98.76}
-          bgGrey
+          border
         />
       </div>
 
