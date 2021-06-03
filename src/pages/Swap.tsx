@@ -16,7 +16,6 @@ export const Swap = () => {
       <div>
         <Modal title="Some Title" setIsOpen={setIsOpen} isOpen={isOpen}>
           <div>
-            <InputField bgGrey placeholder="Search name or paste address" />
             <p className="my-10">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. At
               deleniti deserunt dolor eveniet, expedita facere impedit iste

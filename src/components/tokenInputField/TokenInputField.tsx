@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Token } from 'api/bancor';
 
 import 'components/tokenInputField/TokenInputField.css';
+import { Modal } from 'components/modal/Modal';
+import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 
 interface TokenInputFieldProps {
   label: string;
@@ -25,6 +27,7 @@ export const TokenInputField = ({
 }: TokenInputFieldProps) => {
   const [input, setInput] = useState('');
   const [token, setToken] = useState(initialToken);
+  const [isOpen, setIsOpen] = useState(false);
   const handleChange = (text: string) => setInput(sanitizeNumberInput(text));
 
   const placeholder = 'Enter token amount';
@@ -43,7 +46,10 @@ export const TokenInputField = ({
       </div>
 
       <div className="flex items-center">
-        <div className="flex items-center mr-24">
+        <div
+          className="flex items-center mr-24"
+          onClick={() => setIsOpen(true)}
+        >
           <div className="bg-grey-2 rounded-full h-24 w-24">&#8203;</div>
           <span className="text-20 mx-6">{token?.symbol}</span>
           {selectable && <FontAwesomeIcon icon={faChevronDown} />}
@@ -62,6 +68,14 @@ export const TokenInputField = ({
           />
         </div>
       </div>
+      <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
+        <SearchableTokenList
+          onClick={(token: Token) => {
+            setToken(token);
+            setIsOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 };
