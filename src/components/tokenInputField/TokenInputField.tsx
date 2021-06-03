@@ -1,26 +1,30 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
-import 'components/tokenInputField/TokenInputField.css';
 import { useState } from 'react';
-import {
-  classNameGenerator,
-  sanitizeNumberInput,
-} from '../../utils/pureFunctions';
+import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Token } from 'api/bancor';
+
+import 'components/tokenInputField/TokenInputField.css';
 
 interface TokenInputFieldProps {
   label: string;
+  initialToken?: Token;
   balance: number;
   balanceUsd: number;
   border?: boolean;
+  selectable?: boolean;
 }
 
 export const TokenInputField = ({
   label,
+  initialToken,
   balance,
   balanceUsd,
   border,
+  selectable,
 }: TokenInputFieldProps) => {
   const [input, setInput] = useState('');
+  const [token, setToken] = useState(initialToken);
   const handleChange = (text: string) => setInput(sanitizeNumberInput(text));
 
   const placeholder = 'Enter token amount';
@@ -41,8 +45,8 @@ export const TokenInputField = ({
       <div className="flex items-center">
         <div className="flex items-center mr-24">
           <div className="bg-grey-2 rounded-full h-24 w-24">&#8203;</div>
-          <span className="text-20 mx-6">{}</span>
-          <FontAwesomeIcon icon={faChevronDown} />
+          <span className="text-20 mx-6">{token?.symbol}</span>
+          {selectable && <FontAwesomeIcon icon={faChevronDown} />}
         </div>
 
         <div className="relative w-full">

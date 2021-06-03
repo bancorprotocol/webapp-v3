@@ -77,7 +77,7 @@ export interface NewPool extends Pool {
 }
 
 export const getWelcomeData = async (
-  network: EthNetworks
+  network: EthNetworks = EthNetworks.Mainnet
 ): Promise<WelcomeData> => {
   if (!(network === EthNetworks.Mainnet || network === EthNetworks.Ropsten)) {
     throw new Error('API does not support this network');
