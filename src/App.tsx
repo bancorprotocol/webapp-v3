@@ -8,12 +8,15 @@ import { useWeb3React } from '@web3-react/core';
 
 export const App = () => {
   const [walletOpen, setWalletOpen] = useState(false);
-  const { account } = useWeb3React();
+  const { account, deactivate } = useWeb3React();
 
   return (
     <BrowserRouter>
       {account ? (
-        <div>{account}</div>
+        <div>
+          <div>{account}</div>
+          <button onClick={() => deactivate()}>Logout</button>
+        </div>
       ) : (
         <button onClick={() => setWalletOpen(true)}>Connect a wallet</button>
       )}

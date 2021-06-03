@@ -37,9 +37,11 @@ export const WalletModal = ({
       <>
         {SUPPORTED_WALLETS.map((wallet, index) => {
           return (
-            <button key={index} onClick={() => tryConnecting(wallet.connector)}>
-              <div>{wallet.name}</div>
-            </button>
+            <div key={index}>
+              <button onClick={() => tryConnecting(wallet.connector)}>
+                {wallet.name}
+              </button>
+            </div>
           );
         })}
       </>
