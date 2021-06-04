@@ -5,6 +5,7 @@ import cogIcon from 'assets/icons/cog.svg';
 import { useState } from 'react';
 import { WalletModal } from '../walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
+import { shortenString } from '../../utils/pureFunctions';
 
 export const LayoutHeader = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
@@ -35,7 +36,7 @@ export const LayoutHeader = () => {
               alt="Connect Wallet Icon"
               className="-ml-14 mr-16"
             />
-            {account ? account : 'Connect Wallet'}
+            {account ? shortenString(account) : 'Connect Wallet'}
           </button>
 
           <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
