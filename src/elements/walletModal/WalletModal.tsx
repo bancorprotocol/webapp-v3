@@ -3,8 +3,14 @@ import { SUPPORTED_WALLETS } from 'web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { Modal } from '../../components/modal/Modal';
 
-export const WalletModal = () => {
+interface WalletModalProps {
+  isOpen: boolean;
+  setIsOpen: Function;
+}
+
+export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
   const { activate } = useWeb3React();
   const [pending, setPending] = useState<AbstractConnector | undefined>();
   const [error, setError] = useState<boolean>(false);
@@ -26,14 +32,21 @@ export const WalletModal = () => {
   };
 
   return (
-    <>
-      {SUPPORTED_WALLETS.map((wallet, index) => {
-        return (
-          <button key={index} onClick={() => tryConnecting(wallet.connector)}>
-            <div>{wallet.name}</div>
-          </button>
-        );
-      })}
-    </>
+    <Modal title="Connect Wallet" setIsOpen={setIsOpen} isOpen={isOpen}>
+      <div className="flex flex-col mb-20">
+        <>
+          {SUPPORTED_WALLETS.map((wallet, index) => {
+            return (
+              <button
+                key={index}
+                onClick={() => tryConnecting(wallet.connector)}
+              >
+                {wallet.name}
+              </button>
+            );
+          })}
+        </>
+      </div>
+    </Modal>
   );
 };
