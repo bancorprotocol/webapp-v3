@@ -13,6 +13,15 @@ import {
   authereum,
   torus,
 } from 'web3/wallet/connectors';
+import metamaskLogo from 'assets/logos/metamask.png';
+import fortmaticLogo from 'assets/logos/fortmatic.svg';
+import portisLogo from 'assets/logos/portis.png';
+import walletConnectLogo from 'assets/logos/walletConnect.svg';
+import coinbaseWalletLogo from 'assets/logos/coinbaseWallet.svg';
+import ledgerLogo from 'assets/logos/ledger.svg';
+import trezorLogo from 'assets/logos/trezor.svg';
+import frameLogo from 'assets/logos/frame.png';
+import lattisLogo from 'assets/logos/lattis.png';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -41,49 +50,49 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
   {
     connector: injected,
     name: 'MetaMask',
-    icon: 'METAMASK_ICON_URL',
+    icon: metamaskLogo,
     description: 'MetaMask description',
   },
   {
     connector: walletconnect,
     name: 'WalletConnect',
-    icon: 'WALLETCONNECT_ICON_URL',
+    icon: walletConnectLogo,
     description: 'WalletConnect description',
     mobile: true,
   },
   {
     connector: walletlink,
     name: 'Coinbase Wallet',
-    icon: 'COINBASE_ICON_URL',
+    icon: coinbaseWalletLogo,
     description: 'Coinbase Wallet description',
   },
   {
     connector: ledger,
     name: 'Ledger',
-    icon: 'LEDGER_ICON_URL',
+    icon: ledgerLogo,
     description: 'Ledger description',
   },
   {
     connector: trezor,
     name: 'Trezor',
-    icon: 'TREZOR_ICON_URL',
+    icon: trezorLogo,
     description: 'Trezor description',
   },
   {
     connector: lattice,
     name: 'Lattice',
-    icon: 'LATTICE_ICON_URL',
+    icon: lattisLogo,
     description: 'Lattice description',
   },
   {
     connector: frame,
     name: 'Frame',
-    icon: 'FRAME_ICON_URL',
+    icon: frameLogo,
     description: 'Frame description',
   },
   {
     name: 'Open in Coinbase Wallet',
-    icon: 'COINBASE_ICON_URL',
+    icon: coinbaseWalletLogo,
     description: 'Open in Coinbase Wallet app.',
     href: 'https://go.cb-w.com/mtUDhEZPy1',
     mobile: true,
@@ -92,14 +101,14 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
   {
     connector: fortmatic,
     name: 'Fortmatic',
-    icon: 'FORTMATIC_ICON_URL',
+    icon: fortmaticLogo,
     description: 'Fortmatic description',
     mobile: true,
   },
   {
     connector: portis,
     name: 'Portis',
-    icon: 'PORTIS_ICON_URL',
+    icon: portisLogo,
     description: 'Portis description',
     mobile: true,
   },
