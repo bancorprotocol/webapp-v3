@@ -33,22 +33,28 @@ export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
 
   return (
     <Modal title="Connect Wallet" setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div className="flex flex-col mb-20 mt-10 space-y-15">
-        <>
-          {SUPPORTED_WALLETS.map((wallet, index) => {
-            return (
-              <button
-                key={index}
-                onClick={() => tryConnecting(wallet.connector)}
-                className="flex items-center w-full px-16 py-10 border-2 border-grey-2 rounded-20 focus:outline-none focus:border-primary"
-              >
-                <img src={wallet.icon} alt="" className="w-32 h-32 mr-20" />
-                {wallet.name}
-              </button>
-            );
-          })}
-        </>
-      </div>
+      {error ? (
+        <div>error</div>
+      ) : pending ? (
+        <div>pending</div>
+      ) : (
+        <div className="flex flex-col mb-20 mt-10 space-y-15">
+          <>
+            {SUPPORTED_WALLETS.map((wallet, index) => {
+              return (
+                <button
+                  key={index}
+                  onClick={() => tryConnecting(wallet.connector)}
+                  className="flex items-center w-full px-16 py-10 border-2 border-grey-2 rounded-20 hover:border-primary focus:outline-none focus:border-primary"
+                >
+                  <img src={wallet.icon} alt="" className="w-32 h-32 mr-20" />
+                  {wallet.name}
+                </button>
+              );
+            })}
+          </>
+        </div>
+      )}
     </Modal>
   );
 };
