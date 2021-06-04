@@ -45,7 +45,7 @@ export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
                   <FontAwesomeIcon icon={faTimes} className="cursor-pointer" />
                 </button>
               </Dialog.Title>
-              <div>{children}</div>
+              <div className="max-h-[70vh] overflow-auto">{children}</div>
             </div>
           </div>
         </Dialog>

@@ -22,6 +22,8 @@ import ledgerLogo from 'assets/logos/ledger.svg';
 import trezorLogo from 'assets/logos/trezor.svg';
 import frameLogo from 'assets/logos/frame.png';
 import lattisLogo from 'assets/logos/lattis.png';
+import torusLogo from 'assets/logos/torus.svg';
+import authereumLogo from 'assets/logos/authereum.svg';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -115,13 +117,13 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
   {
     connector: authereum,
     name: 'Authereum',
-    icon: 'AUTHEREUM_ICON_URL',
+    icon: authereumLogo,
     description: 'Authereum description',
   },
   {
     connector: torus,
     name: 'Torus',
-    icon: 'TORUS_ICON_URL',
+    icon: torusLogo,
     description: 'Torus description',
     mobile: true,
   },
