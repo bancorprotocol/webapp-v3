@@ -25,6 +25,8 @@ module.exports = {
         900: '#1c427d',
       },
 
+      secondary: '#F2F5F9',
+
       info: {
         DEFAULT: '#3A86FF',
         50: '#f5f9ff',
@@ -248,6 +250,8 @@ module.exports = {
       DEFAULT:
         '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
       widget: '2px 4px 14px rgba(58, 134, 255, 0.3)',
+      header:
+        '0px 2px 19px rgba(82, 105, 141, 0.12), 0px 2px 22px rgba(15, 89, 209, 0.12)',
       md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
