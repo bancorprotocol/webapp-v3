@@ -4,9 +4,16 @@ import bellIcon from 'assets/icons/bell.svg';
 import cogIcon from 'assets/icons/cog.svg';
 import { useState } from 'react';
 import { WalletModal } from '../walletModal/WalletModal';
+import { useWeb3React } from '@web3-react/core';
 
 export const LayoutHeader = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isWalletOpen, setWalletOpen] = useState(false);
+  const { account, deactivate } = useWeb3React();
+
+  const connectButton = () => {
+    if (account) deactivate();
+    else setWalletOpen(true);
+  };
 
   return (
     <div className="layout-header">
@@ -20,7 +27,7 @@ export const LayoutHeader = () => {
 
         <div className="flex items-center">
           <button
-            onClick={() => setIsOpen(true)}
+            onClick={connectButton}
             className="btn-outline-secondary btn-sm"
           >
             <img
@@ -28,10 +35,10 @@ export const LayoutHeader = () => {
               alt="Connect Wallet Icon"
               className="-ml-14 mr-16"
             />
-            Connect Wallet
+            {account ? account : 'Connect Wallet'}
           </button>
 
-          <WalletModal isOpen={isOpen} setIsOpen={setIsOpen} />
+          <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
 
           <button className="ml-40">
             <img src={bellIcon} alt="Notification Icon" />
