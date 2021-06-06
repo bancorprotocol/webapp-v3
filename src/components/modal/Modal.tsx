@@ -38,11 +38,12 @@ export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
             <div className="modal-content">
               <Dialog.Title className="modal-title">
                 {title}
-                <FontAwesomeIcon
-                  icon={faTimes}
+                <button
                   onClick={() => setIsOpen(false)}
-                  className="cursor-pointer"
-                />
+                  className="focus:outline-none"
+                >
+                  <FontAwesomeIcon icon={faTimes} className="cursor-pointer" />
+                </button>
               </Dialog.Title>
               <div>{children}</div>
             </div>
