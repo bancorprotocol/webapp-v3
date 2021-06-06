@@ -50,7 +50,7 @@ export const TokenInputField = ({
           className="flex items-center mr-24"
           onClick={() => setIsOpen(true)}
         >
-          <div className="bg-grey-2 rounded-full h-24 w-24">&#8203;</div>
+          <div className="bg-grey-2 rounded-full h-24 w-24"></div>
           <span className="text-20 mx-6">{token?.symbol}</span>
           {selectable && <FontAwesomeIcon icon={faChevronDown} />}
         </div>
