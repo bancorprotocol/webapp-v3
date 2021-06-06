@@ -36,7 +36,7 @@ export const TokenInputField = ({
   })}`;
 
   return (
-    <div>
+    <div className={selectable ? 'cursor-pointer' : ''}>
       <div className="flex justify-between pr-10">
         <span className="font-medium">{label}</span>
         <span className="text-12">

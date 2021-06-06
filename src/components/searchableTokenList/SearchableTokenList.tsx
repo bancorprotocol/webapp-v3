@@ -30,7 +30,7 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
               className="flex items-center justify-between w-full px-16 py-10 my-5"
             >
               <div className="flex items-center">
-                <img className="bg-grey-2 rounded-full h-28 w-28" />
+                <div className="bg-grey-2 rounded-full h-28 w-28" />
                 <div className="grid justify-items-start ml-5">
                   <div className="text-16">{token.symbol}</div>
                   <div className="text-12 text-grey-3">Bancor</div>
