@@ -1,67 +1,34 @@
 import { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'web3/wallet/connectors';
+import { isAutoLogin, setAutoLogin } from 'utils/pureFunctions';
 
-export const useEagerConnect = () => {
+export const useAutoConnect = () => {
   const { activate, active } = useWeb3React();
 
-  const [tried, setTried] = useState(false);
+  const [triedAutoLogin, setTriedAutoLogin] = useState(false);
 
   useEffect(() => {
-    injected.isAuthorized().then((isAuthorized: boolean) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true);
-        });
-      } else {
-        setTried(true);
-      }
-    });
+    if (isAutoLogin())
+      injected.isAuthorized().then((isAuthorized: boolean) => {
+        if (isAuthorized) {
+          activate(injected, undefined, true)
+            .then(() => {
+              setAutoLogin(true);
+              setTriedAutoLogin(true);
+            })
+            .catch(() => console.error('Failed to auto login'));
+        }
+      });
+
+    setTriedAutoLogin(true);
   }, [activate]);
 
   useEffect(() => {
-    if (!tried && active) {
-      setTried(true);
+    if (!triedAutoLogin && active) {
+      setTriedAutoLogin(true);
     }
-  }, [tried, active]);
+  }, [triedAutoLogin, active]);
 
-  return tried;
-};
-
-export const useInactiveListener = (suppress: boolean = false) => {
-  const { active, error, activate } = useWeb3React();
-
-  useEffect((): any => {
-    const { ethereum } = window as any;
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleConnect = () => {
-        activate(injected);
-      };
-      const handleChainChanged = (chainId: string | number) => {
-        activate(injected);
-      };
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length > 0) {
-          activate(injected);
-        }
-      };
-      const handleNetworkChanged = (networkId: string | number) => {
-        activate(injected);
-      };
-
-      ethereum.on('connect', handleConnect);
-      ethereum.on('chainChanged', handleChainChanged);
-      ethereum.on('accountsChanged', handleAccountsChanged);
-      ethereum.on('networkChanged', handleNetworkChanged);
-
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener('connect', handleConnect);
-          ethereum.removeListener('chainChanged', handleChainChanged);
-          ethereum.removeListener('accountsChanged', handleAccountsChanged);
-          ethereum.removeListener('networkChanged', handleNetworkChanged);
-        }
-      };
-    }
-  }, [active, error, suppress, activate]);
+  return triedAutoLogin;
 };

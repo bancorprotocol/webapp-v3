@@ -25,3 +25,14 @@ export const sanitizeNumberInput = (input: string): string => {
     .replace(/\./g, '')
     .replace(/x/, '.');
 };
+
+const autoLogin: string = 'autoLogin';
+
+export const setAutoLogin = (flag: boolean) => {
+  if (flag) localStorage.setItem(autoLogin, 'true');
+  else localStorage.removeItem(autoLogin);
+};
+
+export const isAutoLogin = (): boolean => {
+  return localStorage.getItem(autoLogin) === 'true';
+};

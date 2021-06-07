@@ -4,17 +4,19 @@ import walletIcon from 'assets/icons/wallet.svg';
 import bellIcon from 'assets/icons/bell.svg';
 import cogIcon from 'assets/icons/cog.svg';
 import { useState } from 'react';
-import { WalletModal } from '../walletModal/WalletModal';
+import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
-import { shortenString } from '../../utils/pureFunctions';
+import { setAutoLogin, shortenString } from 'utils/pureFunctions';
 
 export const LayoutHeader = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
   const { account, deactivate } = useWeb3React();
 
   const connectButton = () => {
-    if (account) deactivate();
-    else setWalletOpen(true);
+    if (account) {
+      deactivate();
+      setAutoLogin(false);
+    } else setWalletOpen(true);
   };
 
   return (
