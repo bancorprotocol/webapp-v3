@@ -7,7 +7,6 @@ import reportWebVitals from 'reportWebVitals';
 import { IntlProvider } from 'react-intl';
 import { messages, locale } from 'i18n';
 import { getLibrary } from 'web3/wallet/utils';
-import { Web3Manager } from 'elements/Web3Manager/Web3Manager';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 
@@ -15,11 +14,9 @@ ReactDOM.render(
   <Provider store={store}>
     <IntlProvider locale={locale} messages={messages} defaultLocale="en">
       <Web3ReactProvider getLibrary={getLibrary}>
-        <Web3Manager>
-          <StrictMode>
-            <App />
-          </StrictMode>
-        </Web3Manager>
+        <StrictMode>
+          <App />
+        </StrictMode>
       </Web3ReactProvider>
     </IntlProvider>
   </Provider>,
