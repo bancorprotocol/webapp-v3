@@ -1,3 +1,5 @@
+import { EthNetworks } from 'web3/types';
+
 export const shortenString = (
   string: string,
   separator = '...',
@@ -24,6 +26,23 @@ export const sanitizeNumberInput = (input: string): string => {
     .replace(/\./, 'x')
     .replace(/\./g, '')
     .replace(/x/, '.');
+};
+
+export const getNetworkName = (network: EthNetworks): string => {
+  switch (network) {
+    case EthNetworks.Mainnet:
+      return 'Ethereum Mainnet';
+    case EthNetworks.Ropsten:
+      return 'Ropsten Test Network';
+    default:
+      return 'Unsupported network';
+  }
+};
+
+export const isUnsupportedNetwork = (
+  network: EthNetworks | undefined
+): boolean => {
+  return network !== undefined && EthNetworks[network] === undefined;
 };
 
 const autoLogin: string = 'autoLogin';

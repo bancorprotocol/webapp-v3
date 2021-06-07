@@ -6,11 +6,16 @@ import cogIcon from 'assets/icons/cog.svg';
 import { useState } from 'react';
 import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
-import { setAutoLogin, shortenString } from 'utils/pureFunctions';
+import {
+  getNetworkName,
+  setAutoLogin,
+  shortenString,
+} from 'utils/pureFunctions';
+import { EthNetworks } from 'web3/types';
 
 export const LayoutHeader = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
-  const { account, deactivate } = useWeb3React();
+  const { account, deactivate, chainId } = useWeb3React();
 
   const connectButton = () => {
     if (account) {
@@ -31,8 +36,16 @@ export const LayoutHeader = () => {
             Go back to Bancor V2
           </a>
           <button className="btn-secondary btn-sm">
-            <div className="bg-success w-6 h-6 rounded-full mr-10">&#8203;</div>
-            Ethereum Mainnet
+            <div
+              className={`${
+                !chainId || chainId === EthNetworks.Mainnet
+                  ? 'bg-success'
+                  : chainId === EthNetworks.Ropsten
+                  ? 'bg-error'
+                  : 'bg-warning'
+              } w-6 h-6 rounded-full mr-10`}
+            />
+            {getNetworkName(chainId ? chainId : EthNetworks.Mainnet)}
           </button>
         </div>
 
