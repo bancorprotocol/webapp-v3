@@ -11,6 +11,7 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { fetchWelcomeData } from 'redux/bancorAPI/bancorAPI';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
+import { trigger } from 'observables/pools';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export const App = () => {
   const triedAutoLogin = useAutoConnect();
 
   useEffect(() => {
+    trigger();
     dispatch(fetchWelcomeData());
   }, [dispatch]);
 
