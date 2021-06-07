@@ -6,11 +6,13 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchWelcomeData } from 'redux/bancorAPI/bancorAPI';
 import { LayoutHeader } from './elements/layoutHeader/LayoutHeader';
+import { trigger } from 'observables/pools';
 
 export const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    trigger();
     dispatch(fetchWelcomeData());
   }, [dispatch]);
 

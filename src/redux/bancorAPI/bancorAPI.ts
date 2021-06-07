@@ -1,7 +1,21 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getWelcomeData, WelcomeData } from 'api/bancor';
 
-export const initialState: { welcomeData: WelcomeData } = {
+interface ViewToken {
+  symbol: string;
+  name: string;
+  logoURI: string;
+}
+
+interface ViewPool {}
+
+interface InitialState {
+  welcomeData: WelcomeData;
+  tokens: ViewToken[];
+  pools: ViewPool[];
+}
+
+export const initialState: InitialState = {
   welcomeData: {
     total_liquidity: { usd: null },
     total_volume_24h: { usd: null },
@@ -12,6 +26,8 @@ export const initialState: { welcomeData: WelcomeData } = {
     pools: [],
     tokens: [],
   },
+  tokens: [],
+  pools: [],
 };
 
 export const fetchWelcomeData = createAsyncThunk(
@@ -28,6 +44,12 @@ const userSlice = createSlice({
     setWelcomeData: (bancorAPI, action) => {
       bancorAPI.welcomeData = action.payload;
     },
+    setTokens: (state, action) => {
+      state.welcomeData.tokens = action.payload;
+    },
+    setPools: (state, action) => {
+      state.welcomeData.pools = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchWelcomeData.fulfilled, (state, action) => {
@@ -36,6 +58,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setWelcomeData } = userSlice.actions;
+export const { setWelcomeData, setTokens, setPools } = userSlice.actions;
 
 export const bancorAPI = userSlice.reducer;

@@ -1,6 +1,6 @@
 import { getWelcomeData, WelcomeData } from 'api/bancor';
 import { isEqual, zip } from 'lodash';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, of, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
   map,
@@ -21,6 +21,7 @@ import {
 import { web3 } from 'web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
 import { updateArray } from 'helpers';
+import { setTokens } from 'redux/bancorAPI/bancorAPI';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -107,8 +108,15 @@ export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
   shareReplay(1)
 );
 
-export const tokens$ = apiData$.pipe(
+export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
   share()
 );
+
+export const trigger = () => {
+  apiTokens$.subscribe((tokens) => {
+    console.log(tokens, 'are the tokens');
+    setTokens(tokens);
+  });
+};
