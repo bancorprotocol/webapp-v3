@@ -1,5 +1,4 @@
 import { FrameConnector } from '@web3-react/frame-connector';
-import { MagicConnector } from '@web3-react/magic-connector';
 import { TorusConnector } from '@web3-react/torus-connector';
 import { LedgerConnector } from '@web3-react/ledger-connector';
 import { TrezorConnector } from '@web3-react/trezor-connector';
@@ -61,7 +60,7 @@ export const trezor = new TrezorConnector({
 export const lattice = new LatticeConnector({
   chainId: 4,
   appName: appName,
-  url: RPC_URLS[4],
+  url: RPC_URLS[3],
 });
 
 export const frame = new FrameConnector({ supportedChainIds: [1] });
@@ -71,12 +70,6 @@ export const authereum = new AuthereumConnector({ chainId: 42 });
 export const fortmatic = new FortmaticConnector({
   apiKey: process.env.FORTMATIC_API_KEY as string,
   chainId: 4,
-});
-
-export const magic = new MagicConnector({
-  apiKey: process.env.MAGIC_API_KEY as string,
-  chainId: 4,
-  email: 'mail@mail.com',
 });
 
 export const portis = new PortisConnector({

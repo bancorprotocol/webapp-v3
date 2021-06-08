@@ -9,8 +9,6 @@ export interface ContractMethods<T> extends Contract {
 export enum EthNetworks {
   Mainnet = 1,
   Ropsten = 3,
-  Rinkeby = 4,
-  Goerli = 5,
 }
 
 export interface RegisteredContracts {
