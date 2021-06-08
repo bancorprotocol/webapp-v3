@@ -14,8 +14,9 @@ export const SwapLimit = () => {
           label="You Pay"
           balance={123.4567}
           balanceUsd={98.76}
-          border
           initialToken={welcomeData.tokens[0]}
+          border
+          selectable
         />
       </div>
 
@@ -25,7 +26,8 @@ export const SwapLimit = () => {
             label="You Receive"
             balance={123.4567}
             balanceUsd={98.76}
-            initialToken={welcomeData.tokens[3]}
+            initialToken={welcomeData.tokens[1]}
+            selectable
           />
 
           <div className="flex justify-between mt-15">
