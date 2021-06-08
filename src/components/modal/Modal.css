@@ -11,6 +11,6 @@
 }
 
 .modal-content {
-  @apply inline-block w-full max-w-[353px] px-18 overflow-hidden text-left align-middle transition-all transform rounded-20;
+  @apply inline-block w-full max-w-[353px] px-18 text-left align-middle transition-all transform rounded-20;
   @apply bg-white dark:bg-blue-4;
 }

@@ -1,6 +1,12 @@
+import { WelcomeData } from 'api/bancor';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { useAppSelector } from 'redux/index';
 
 export const SwapMarket = () => {
+  const welcomeData = useAppSelector<WelcomeData>(
+    (state) => state.bancorAPI.welcomeData
+  );
+
   return (
     <div>
       <div className="px-20">
@@ -8,7 +14,9 @@ export const SwapMarket = () => {
           label="You Pay"
           balance={123.4567}
           balanceUsd={98.76}
+          initialToken={welcomeData.tokens[0]}
           border
+          selectable
         />
       </div>
 
@@ -18,6 +26,8 @@ export const SwapMarket = () => {
             label="You Receive"
             balance={123.4567}
             balanceUsd={98.76}
+            initialToken={welcomeData.tokens[1]}
+            selectable
           />
 
           <div className="flex justify-between mt-15">

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SUPPORTED_WALLETS } from 'web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-import { Modal } from '../../components/modal/Modal';
+import { Modal } from 'components/modal/Modal';
+import { setAutoLogin } from 'utils/pureFunctions';
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -11,12 +12,12 @@ interface WalletModalProps {
 }
 
 export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
-  const { activate } = useWeb3React();
-  const [pending, setPending] = useState<AbstractConnector | undefined>();
+  const { activate, account } = useWeb3React();
+  const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
   const tryConnecting = async (connector: AbstractConnector | undefined) => {
-    setPending(connector);
+    setPending(true);
 
     if (
       connector instanceof WalletConnectConnector &&
@@ -25,11 +26,29 @@ export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
       connector.walletConnectProvider = undefined;
 
     connector &&
-      activate(connector, undefined, true).catch((error) => {
-        if (error instanceof UnsupportedChainIdError) activate(connector);
-        else setError(true);
-      });
+      activate(connector, undefined, true)
+        .then(() => {
+          setIsOpen(false);
+          setAutoLogin(true);
+        })
+        .catch((error) => {
+          if (error instanceof UnsupportedChainIdError) {
+            activate(connector);
+            setAutoLogin(true);
+          } else setError(true);
+        });
   };
+
+  useEffect(() => {
+    if (account) setIsOpen(false);
+  }, [account, setIsOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setError(false);
+      setPending(false);
+    }
+  }, [isOpen]);
 
   return (
     <Modal title="Connect Wallet" setIsOpen={setIsOpen} isOpen={isOpen}>
