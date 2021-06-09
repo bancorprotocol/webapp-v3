@@ -9,7 +9,7 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
   const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
   return (
     <>
-      <div className="my-20">
+      <div className="m-20">
         <InputField
           input={search}
           setInput={setSearch}

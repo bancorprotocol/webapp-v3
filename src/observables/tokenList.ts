@@ -2,7 +2,6 @@ import axios from 'axios';
 import { combineLatest, from, of } from 'rxjs';
 import { map, pluck, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'web3/types';
-import { toChecksumAddress } from 'web3-utils';
 import { uniqWith } from 'lodash';
 
 export interface TokenListItem {
