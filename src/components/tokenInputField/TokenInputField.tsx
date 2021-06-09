@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Token } from 'api/bancor';
 
 import 'components/tokenInputField/TokenInputField.css';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
+import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 
 interface TokenInputFieldProps {
   label: string;
-  initialToken?: Token;
+  initialToken?: ViewToken;
   balance: number;
   balanceUsd: number;
   border?: boolean;
@@ -70,7 +70,7 @@ export const TokenInputField = ({
       </div>
       <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
         <SearchableTokenList
-          onClick={(token: Token) => {
+          onClick={(token: ViewToken) => {
             setToken(token);
             setIsOpen(false);
           }}

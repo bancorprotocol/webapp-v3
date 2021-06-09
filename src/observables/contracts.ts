@@ -1,17 +1,7 @@
 import { fetchContractAddresses } from 'web3/contracts/addressLookup/wrapper';
-import {
-  logger,
-  optimisticContract,
-  switchMapIgnoreThrow,
-} from './customOperators';
+import { optimisticContract, switchMapIgnoreThrow } from './customOperators';
 import { networkVars$, supportedNetworkVersion$ } from './network';
-import {
-  distinctUntilChanged,
-  map,
-  pluck,
-  shareReplay,
-  tap,
-} from 'rxjs/operators';
+import { distinctUntilChanged, map, pluck, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
 import {

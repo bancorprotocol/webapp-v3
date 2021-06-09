@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getWelcomeData, WelcomeData } from 'api/bancor';
 
-interface ViewToken {
+export interface ViewToken {
   symbol: string;
   name: string;
   logoURI: string;
@@ -44,11 +44,11 @@ const userSlice = createSlice({
     setWelcomeData: (bancorAPI, action) => {
       bancorAPI.welcomeData = action.payload;
     },
-    setTokens: (state, action) => {
-      state.welcomeData.tokens = action.payload;
+    setTokens: (bancorAPI, action) => {
+      bancorAPI.tokens = action.payload;
     },
-    setPools: (state, action) => {
-      state.welcomeData.pools = action.payload;
+    setPools: (bancorAPI, action) => {
+      bancorAPI.pools = action.payload;
     },
   },
   extraReducers: (builder) => {

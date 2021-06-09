@@ -19,27 +19,15 @@ export interface MinimalTokenListItem {
   logoURI: string;
 }
 
-const tokenListToMinimal = (item: TokenListItem): MinimalTokenListItem => ({
-  address: toChecksumAddress(item.address),
-  logoURI: item.logoURI,
-});
-
 const defaultTokenList$ = from(
   axios.get<{ tokens: TokenListItem[] }>(
     'https://wispy-bird-88a7.uniswap.workers.dev/?url=http://tokens.1inch.eth.link'
   )
-).pipe(
-  pluck('data'),
-  pluck('tokens'),
-  map((tokens) => tokens.map(tokenListToMinimal)),
-  shareReplay(1)
-);
+).pipe(pluck('data'), pluck('tokens'), shareReplay(1));
 
-const userPicked$ = of<TokenListItem[]>([]).pipe(
-  map((tokens) => tokens.map(tokenListToMinimal))
-);
+const userPicked$ = of<TokenListItem[]>([]).pipe(map((tokens) => tokens));
 
-const tokenList$ = combineLatest([userPicked$, defaultTokenList$]).pipe(
+export const tokenList$ = combineLatest([userPicked$, defaultTokenList$]).pipe(
   map(([userPicked, tokenList]) => {
     const mixed = [...userPicked, ...tokenList];
     return uniqWith(mixed, (a, b) => a.address === b.address);
