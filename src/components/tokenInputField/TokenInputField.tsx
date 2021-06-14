@@ -58,7 +58,7 @@ export const TokenInputField = ({
             src={token?.logoURI}
             alt="Token"
             className="bg-grey-2 rounded-full h-24 w-24"
-          ></img>
+          />
           <span className="text-20 mx-6">{token?.symbol}</span>
           {selectable && <FontAwesomeIcon icon={faChevronDown} />}
         </div>

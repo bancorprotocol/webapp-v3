@@ -9,19 +9,12 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { loadSwapData } from 'observables/triggers';
-import { useDispatch } from 'react-redux';
 
 export const App = () => {
   const { chainId } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const triedAutoLogin = useAutoConnect();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
