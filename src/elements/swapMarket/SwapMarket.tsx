@@ -1,20 +1,28 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
+import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
-import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
 
 export const SwapMarket = () => {
-  const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancorAPI.tokens
+  );
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
+  const [rate, setRate] = useState('');
 
   useEffect(() => {
-    //getRate(fromToken., to,);
+    (async () => {
+      if (fromToken && toToken && fromDebounce)
+        setRate(
+          await getRate(fromToken.address, toToken.address, fromDebounce)
+        );
+    })();
   }, [fromToken, toToken, fromDebounce]);
 
   useEffect(() => {

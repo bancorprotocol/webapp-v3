@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
+import { TokenListItem } from 'observables/tokenList';
+
 import arrowDown from 'assets/icons/arrowDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 
@@ -15,7 +17,7 @@ interface TokenInputFieldProps {
   disabled?: boolean;
   input: string;
   setInput: Function;
-  token: ViewToken;
+  token: TokenListItem;
   setToken: Function;
   debounce?: Function;
 }

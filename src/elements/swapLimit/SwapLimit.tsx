@@ -1,10 +1,12 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { TokenListItem } from 'observables/tokenList';
 import { useState } from 'react';
-import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { useAppSelector } from 'redux/index';
 
 export const SwapLimit = () => {
-  const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancorAPI.tokens
+  );
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);
   const [fromAmount, setFromAmount] = useState('');

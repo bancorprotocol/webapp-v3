@@ -24,18 +24,18 @@ export const buildNetworkContract = (
   ) => CallReturn<string[]>;
 }> => buildContract(ABINetworkContract, contractAddress, web3);
 
-export const getReturnByPath = async ({
-  networkContract,
+export const getRateByPath = async ({
+  networkContractAddress,
   path,
   amount,
   web3,
 }: {
-  networkContract: string;
+  networkContractAddress: string;
   path: string[];
   amount: string;
   web3: Web3;
 }): Promise<string> => {
-  const contract = buildNetworkContract(networkContract, web3);
+  const contract = buildNetworkContract(networkContractAddress, web3);
   return contract.methods.rateByPath(path, amount).call();
 };
 
@@ -50,6 +50,6 @@ export const conversionPath = async ({
   to: string;
   web3: Web3;
 }) => {
-  const networkContract = buildNetworkContract(networkContractAddress, web3);
-  return networkContract.methods.conversionPath(from, to).call();
+  const contract = buildNetworkContract(networkContractAddress, web3);
+  return contract.methods.conversionPath(from, to).call();
 };
