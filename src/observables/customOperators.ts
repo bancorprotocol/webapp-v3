@@ -131,7 +131,7 @@ const getCachedPositions = (): string[] | false => {
 };
 
 export const compareIdArray = (a: string[], b: string[]) => {
-  const sameLength = a.length == b.length;
+  const sameLength = a.length === b.length;
   const allFound = a.every((id) => b.some((i) => id === i));
   return sameLength && allFound;
 };

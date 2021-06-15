@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Token } from 'api/bancor';
 
 import 'components/tokenInputField/TokenInputField.css';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
+import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 
 interface TokenInputFieldProps {
   label: string;
-  initialToken?: Token;
+  initialToken?: ViewToken;
   balance: number;
   balanceUsd: number;
   border?: boolean;
@@ -35,6 +35,10 @@ export const TokenInputField = ({
     'input-field-bg-grey': border,
   })}`;
 
+  useEffect(() => {
+    setToken(initialToken);
+  }, [initialToken, setToken]);
+
   return (
     <div className={selectable ? 'cursor-pointer' : ''}>
       <div className="flex justify-between pr-10">
@@ -50,7 +54,11 @@ export const TokenInputField = ({
           className="flex items-center mr-24"
           onClick={() => setIsOpen(true)}
         >
-          <div className="bg-grey-2 rounded-full h-24 w-24"></div>
+          <img
+            src={token?.logoURI}
+            alt="Token"
+            className="bg-grey-2 rounded-full h-24 w-24"
+          />
           <span className="text-20 mx-6">{token?.symbol}</span>
           {selectable && <FontAwesomeIcon icon={faChevronDown} />}
         </div>
@@ -70,7 +78,7 @@ export const TokenInputField = ({
       </div>
       <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
         <SearchableTokenList
-          onClick={(token: Token) => {
+          onClick={(token: ViewToken) => {
             setToken(token);
             setIsOpen(false);
           }}

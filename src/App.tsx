@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { Loading } from 'pages/Loading';
@@ -9,25 +8,17 @@ import { ButtonSamples } from 'pages/ButtonSamples';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
-import { fetchWelcomeData } from 'redux/bancorAPI/bancorAPI';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { trigger } from 'observables/pools';
 
 export const App = () => {
-  const dispatch = useDispatch();
   const { chainId } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const triedAutoLogin = useAutoConnect();
 
   useEffect(() => {
-    trigger();
-    dispatch(fetchWelcomeData());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
-  }, [setLoading, chainId, isAutoLogin]);
+  }, [setLoading, chainId, triedAutoLogin]);
 
   return (
     <BrowserRouter>
