@@ -8,34 +8,42 @@ import 'components/tokenInputField/TokenInputField.css';
 
 interface TokenInputFieldProps {
   label: string;
-  initialToken?: ViewToken;
   balance: number;
   balanceUsd: number;
   border?: boolean;
   selectable?: boolean;
+  disabled?: boolean;
+  input: string;
+  setInput: Function;
+  token: ViewToken;
+  setToken: Function;
+  debounce?: Function;
 }
 
 export const TokenInputField = ({
   label,
-  initialToken,
   balance,
   balanceUsd,
   border,
   selectable,
+  token,
+  setToken,
+  input,
+  setInput,
+  disabled,
+  debounce,
 }: TokenInputFieldProps) => {
-  const [input, setInput] = useState('');
-  const [token, setToken] = useState(initialToken);
   const [isOpen, setIsOpen] = useState(false);
-  const handleChange = (text: string) => setInput(sanitizeNumberInput(text));
+  const handleChange = (text: string) => {
+    const txt = sanitizeNumberInput(text);
+    setInput(txt);
+    if (debounce) debounce(txt);
+  };
 
   const placeholder = 'Enter token amount';
   const inputFieldStyles = `token-input-field ${classNameGenerator({
     'input-field-bg-grey': border,
   })}`;
-
-  useEffect(() => {
-    setToken(initialToken);
-  }, [initialToken, setToken]);
 
   return (
     <div className={selectable ? 'cursor-pointer' : ''}>
@@ -68,6 +76,7 @@ export const TokenInputField = ({
           <input
             type="number"
             value={input}
+            disabled={disabled}
             placeholder={placeholder}
             className={inputFieldStyles}
             onChange={(event) => handleChange(event.target.value)}

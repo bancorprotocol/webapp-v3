@@ -1,9 +1,14 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { useState } from 'react';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { useAppSelector } from 'redux/index';
 
 export const SwapLimit = () => {
   const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
+  const [fromToken, setFromToken] = useState(tokens[0]);
+  const [toToken, setToToken] = useState(tokens[1]);
+  const [fromAmount, setFromAmount] = useState('');
+  const [toAmount, setToAmount] = useState('');
 
   return (
     <div>
@@ -12,7 +17,10 @@ export const SwapLimit = () => {
           label="You Pay"
           balance={123.4567}
           balanceUsd={98.76}
-          initialToken={tokens[0]}
+          token={fromToken}
+          setToken={setFromToken}
+          input={fromAmount}
+          setInput={setFromAmount}
           border
           selectable
         />
@@ -24,7 +32,10 @@ export const SwapLimit = () => {
             label="You Receive"
             balance={123.4567}
             balanceUsd={98.76}
-            initialToken={tokens[1]}
+            token={toToken}
+            setToken={setToToken}
+            input={toAmount}
+            setInput={setToAmount}
             selectable
           />
 

@@ -1,9 +1,26 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { useDebounce } from 'hooks/useDebounce';
+import { useEffect, useState } from 'react';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { useAppSelector } from 'redux/index';
+import { getRate } from 'web3/swap/methods';
 
 export const SwapMarket = () => {
   const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
+  const [fromToken, setFromToken] = useState(tokens[0]);
+  const [toToken, setToToken] = useState(tokens[1]);
+  const [fromAmount, setFromAmount] = useState('');
+  const [fromDebounce, setFromDebounce] = useDebounce('');
+  const [toAmount, setToAmount] = useState('');
+
+  useEffect(() => {
+    //getRate(fromToken., to,);
+  }, [fromToken, toToken, fromDebounce]);
+
+  useEffect(() => {
+    setFromToken(tokens[0]);
+    setToToken(tokens[1]);
+  }, [tokens]);
 
   return (
     <div>
@@ -12,7 +29,11 @@ export const SwapMarket = () => {
           label="You Pay"
           balance={123.4567}
           balanceUsd={98.76}
-          initialToken={tokens[0]}
+          token={fromToken}
+          setToken={setFromToken}
+          input={fromAmount}
+          setInput={setFromAmount}
+          debounce={setFromDebounce}
           border
           selectable
         />
@@ -24,7 +45,11 @@ export const SwapMarket = () => {
             label="You Receive"
             balance={123.4567}
             balanceUsd={98.76}
-            initialToken={tokens[1]}
+            token={toToken}
+            setToken={setToToken}
+            input={toAmount}
+            setInput={setToAmount}
+            disabled
             selectable
           />
 
