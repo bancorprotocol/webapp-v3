@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import 'components/tokenInputField/TokenInputField.css';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
+import arrowDown from 'assets/icons/arrowDown.svg';
+import 'components/tokenInputField/TokenInputField.css';
 
 interface TokenInputFieldProps {
   label: string;
@@ -60,7 +58,7 @@ export const TokenInputField = ({
             className="bg-grey-2 rounded-full h-24 w-24"
           />
           <span className="text-20 mx-6">{token?.symbol}</span>
-          {selectable && <FontAwesomeIcon icon={faChevronDown} />}
+          {selectable && <img src={arrowDown} alt="Arrow Down" />}
         </div>
 
         <div className="relative w-full">

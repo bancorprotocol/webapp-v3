@@ -1,8 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import times from 'assets/icons/times.svg';
 import 'components/modal/Modal.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 
 interface ModalProps {
   title: string;
@@ -42,7 +41,7 @@ export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
                   onClick={() => setIsOpen(false)}
                   className="focus:outline-none"
                 >
-                  <FontAwesomeIcon icon={faTimes} className="cursor-pointer" />
+                  <img src={times} alt="Times" className="cursor-pointer" />
                 </button>
               </Dialog.Title>
               <div className="max-h-[70vh] overflow-auto">{children}</div>

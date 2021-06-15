@@ -172,7 +172,7 @@ export const switchMapIgnoreThrow =
       switchMap((whatever) =>
         switchMapProm(whatever).catch(() => 'DONT THROW' as unknown as Y)
       ),
-      filter((x) => !(typeof x == 'string' && x === 'DONT THROW'))
+      filter((x) => !(typeof x === 'string' && x === 'DONT THROW'))
     );
 
 export const distinctArrayItem =
