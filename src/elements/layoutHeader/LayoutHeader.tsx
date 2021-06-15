@@ -12,6 +12,7 @@ import {
   shortenString,
 } from 'utils/pureFunctions';
 import { EthNetworks } from 'web3/types';
+import { FormattedMessage } from 'react-intl';
 
 export const LayoutHeader = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
@@ -59,7 +60,11 @@ export const LayoutHeader = () => {
               alt="Connect Wallet Icon"
               className="-ml-14 mr-16"
             />
-            {account ? shortenString(account) : 'Connect Wallet'}
+            {account ? (
+              shortenString(account)
+            ) : (
+              <FormattedMessage id="connect_wallet" />
+            )}
           </button>
 
           <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
