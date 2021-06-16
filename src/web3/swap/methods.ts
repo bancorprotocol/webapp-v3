@@ -7,6 +7,7 @@ export const getRate = async (
   to: string,
   amount: string
 ): Promise<string> => {
+  // @ts-ignore
   const networkContractAddress = (await contractAddresses$.toPromise())
     .BancorNetwork;
   const path = await conversionPath({
