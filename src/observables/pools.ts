@@ -23,11 +23,13 @@ import {
 import { web3 } from 'web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
 import {
+  expandToken,
   findNewPath,
   findOrThrow,
   mapIgnoreThrown,
   updateArray,
 } from 'helpers';
+import { getRateByPath } from 'web3/contracts/network/wrapper';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -269,8 +271,8 @@ const rate$ = tradeAndPath$.pipe(
     const fromToken = findOrThrow(tokens, hasTokenId(trade.trade.fromId));
     const toToken = findOrThrow(tokens, hasTokenId(trade.trade.toId));
 
-    const fromWei = expandToken;
-    trade.path;
+    const fromWei = expandToken(trade.trade.decAmount, fromToken.decimals);
+    // const rate = await getRateByPath({ })
   })
 );
 
