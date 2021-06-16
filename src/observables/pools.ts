@@ -110,5 +110,5 @@ export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
-  share()
+  shareReplay(1)
 );
