@@ -80,8 +80,8 @@ const anchorAndConverters$ = combineLatest([
     );
     return anchorsAndConverters;
   }),
-  startWith([]),
-  shareReplay<ConverterAndAnchor[]>(1)
+  startWith([] as ConverterAndAnchor[]),
+  shareReplay(1)
 );
 
 const apiPools$ = apiData$.pipe(
