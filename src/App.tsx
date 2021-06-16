@@ -9,13 +9,6 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { startSubsriptions } from 'observables/subscriptions';
-
-const main = () => {
-  startSubsriptions();
-};
-
-main();
 
 export const App = () => {
   const { chainId } = useWeb3React();
