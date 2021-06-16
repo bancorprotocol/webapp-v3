@@ -12,7 +12,7 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'web3/types';
-import { bancorConverterRegistry$ } from './contracts';
+import { bancorConverterRegistry$, bancorNetwork$ } from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
 import { supportedNetworkVersion$ } from './network';
 import { fifteenSeconds$ } from './timers';
@@ -27,9 +27,10 @@ import {
   findNewPath,
   findOrThrow,
   mapIgnoreThrown,
+  shrinkToken,
   updateArray,
 } from 'helpers';
-import { getRateByPath } from 'web3/contracts/network/wrapper';
+import { getRateByPath as getReturnByPath } from 'web3/contracts/network/wrapper';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -266,13 +267,21 @@ const tradeAndPath$ = swapReceiver$.pipe(
 );
 
 const rate$ = tradeAndPath$.pipe(
-  withLatestFrom(apiTokens$),
-  switchMapIgnoreThrow(async ([trade, tokens]) => {
+  withLatestFrom(apiTokens$, bancorNetwork$),
+  switchMapIgnoreThrow(async ([trade, tokens, networkContractAddress]) => {
     const fromToken = findOrThrow(tokens, hasTokenId(trade.trade.fromId));
     const toToken = findOrThrow(tokens, hasTokenId(trade.trade.toId));
 
     const fromWei = expandToken(trade.trade.decAmount, fromToken.decimals);
-    // const rate = await getRateByPath({ })
+    const expectedReturnWei = await getReturnByPath({
+      networkContractAddress,
+      amount: fromWei,
+      path: trade.path.map((pool) => pool.anchorAddress),
+      web3,
+    });
+    const expectedReturnDec = shrinkToken(expectedReturnWei, toToken.decimals);
+
+    return expectedReturnDec;
   })
 );
 
