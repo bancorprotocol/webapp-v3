@@ -20,10 +20,10 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
         .filter((token) =>
           token.symbol?.toLowerCase().includes(search.toLowerCase())
         )
-        .map((token, index) => {
+        .map((token) => {
           return (
             <button
-              key={'token' + index}
+              key={token.id}
               onClick={() => onClick(token)}
               className="flex items-center justify-between w-full px-16 py-10 my-5"
             >
