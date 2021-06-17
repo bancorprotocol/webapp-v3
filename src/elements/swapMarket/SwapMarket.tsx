@@ -5,12 +5,19 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
 
-export const SwapMarket = () => {
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
-  );
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState(tokens[1]);
+interface SwapMarketProps {
+  fromToken: TokenListItem;
+  setFromToken: Function;
+  toToken: TokenListItem;
+  setToToken: Function;
+}
+
+export const SwapMarket = ({
+  fromToken,
+  setFromToken,
+  toToken,
+  setToToken,
+}: SwapMarketProps) => {
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
@@ -24,11 +31,6 @@ export const SwapMarket = () => {
         );
     })();
   }, [fromToken, toToken, fromDebounce]);
-
-  useEffect(() => {
-    setFromToken(tokens[0]);
-    setToToken(tokens[1]);
-  }, [tokens]);
 
   return (
     <div>

@@ -25,6 +25,7 @@ export const InputField = ({
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
+    'text-right': format,
   })}`;
 
   return (

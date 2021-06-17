@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { TokenListItem } from 'observables/tokenList';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 
 enum Field {
@@ -11,15 +11,24 @@ enum Field {
   rate,
 }
 
-export const SwapLimit = () => {
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
-  );
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState(tokens[1]);
+interface SwapLimitProps {
+  fromToken: TokenListItem;
+  setFromToken: Function;
+  toToken: TokenListItem;
+  setToToken: Function;
+}
+
+export const SwapLimit = ({
+  fromToken,
+  setFromToken,
+  toToken,
+  setToToken,
+}: SwapLimitProps) => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
+  const [slippage, setSlippage] = useState('');
+  const [rateText, setRateText] = useState('');
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
@@ -27,12 +36,14 @@ export const SwapLimit = () => {
   const fromImmed = useRef<string>();
   const toImmed = useRef<string>();
 
+  const sliipageOptions = [1, 3, 5];
+
   const calcFrom = () => {
     if (rateImmed.current && toImmed.current) {
       setFromAmount(
         new BigNumber(rateImmed.current)
           .div(new BigNumber(toImmed.current))
-          .toFixed(2)
+          .toFixed(6)
       );
     }
   };
@@ -40,16 +51,16 @@ export const SwapLimit = () => {
     if (rateImmed.current && fromImmed.current)
       setToAmount(
         new BigNumber(rateImmed.current)
-          .div(new BigNumber(fromImmed.current))
-          .toFixed(2)
+          .times(new BigNumber(fromImmed.current))
+          .toFixed(6)
       );
   };
   const calcRate = () => {
     if (fromImmed.current && toImmed.current)
       setRate(
         new BigNumber(fromImmed.current)
-          .times(new BigNumber(toImmed.current))
-          .toFixed(2)
+          .div(new BigNumber(toImmed.current))
+          .toFixed(6)
       );
   };
 
@@ -74,6 +85,10 @@ export const SwapLimit = () => {
         else calcFrom();
         break;
     }
+  };
+
+  const changeRateText = () => {
+    setRateText(`1 ${fromToken.symbol} = ${toToken.symbol}`);
   };
 
   return (
@@ -112,9 +127,8 @@ export const SwapLimit = () => {
             }}
             selectable
           />
-
           <div className="flex justify-between items-center my-15">
-            <div className="whitespace-nowrap mr-15">{`1 BNT =`}</div>
+            <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
             <InputField
               format
               input={rate}
@@ -125,12 +139,24 @@ export const SwapLimit = () => {
               }}
             />
           </div>
+          <div className="flex justify-between items-center">
+            {sliipageOptions.map((slip) => (
+              <button
+                key={'slippage' + slip}
+                onClick={() => setSlippage(slip.toString())}
+              >
+                +{slip}%
+              </button>
+            ))}
+            <div className="w-96">
+              <InputField input={slippage} setInput={setSlippage} format />
+            </div>
+          </div>
 
           <div className="flex justify-between mt-15">
             <span>Rate</span>
-            <span>1 BNT = 0.00155432 ETH</span>
+            <span>{`1 ${fromToken?.symbol} = 0.00155432 `}</span>
           </div>
-
           <div className="flex justify-between">
             <span>Price Impact</span>
             <span>0.2000%</span>
