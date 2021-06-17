@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenListItem } from 'observables/tokenList';
-import { useEffect, useRef, useState } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useRef, useState } from 'react';
+import dayjs from 'utils/dayjs';
 
 enum Field {
   from,
@@ -29,6 +30,9 @@ export const SwapLimit = ({
   const [rate, setRate] = useState('');
   const [slippage, setSlippage] = useState('');
   const [rateText, setRateText] = useState('');
+  const [duration, setDuration] = useState(
+    dayjs.duration({ days: 7, hours: 0, minutes: 0 })
+  );
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
@@ -153,6 +157,7 @@ export const SwapLimit = ({
             </div>
           </div>
 
+          <ModalDuration duration={duration} setDuration={setDuration} />
           <div className="flex justify-between mt-15">
             <span>Rate</span>
             <span>{`1 ${fromToken?.symbol} = 0.00155432 `}</span>

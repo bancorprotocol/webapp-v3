@@ -2,7 +2,6 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
 
 interface SwapMarketProps {
