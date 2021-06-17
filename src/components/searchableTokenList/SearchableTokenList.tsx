@@ -9,11 +9,12 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
   const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
   return (
     <>
-      <div className="m-20">
+      <div className="mb-20">
         <InputField
           input={search}
           setInput={setSearch}
           placeholder="Search name or paste address"
+          borderGrey
         />
       </div>
       {tokens
@@ -25,7 +26,7 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
             <button
               key={'token' + index}
               onClick={() => onClick(token)}
-              className="flex items-center justify-between w-full px-16 py-10 my-5"
+              className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
             >
               <div className="flex items-center">
                 <img
