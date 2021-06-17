@@ -2,8 +2,8 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
+import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -50,7 +50,10 @@ export const SwapMarket = ({
       </div>
 
       <div className="widget-block mt-20">
-        <div className="mx-10 mb-16">
+        <div className="widget-block-icon">
+          <IconSync className="w-[25px] text-primary dark:text-primary-light" />
+        </div>
+        <div className="mx-10 mb-16 pt-16">
           <TokenInputField
             label="You Receive"
             balance={123.4567}
@@ -65,7 +68,9 @@ export const SwapMarket = ({
 
           <div className="flex justify-between mt-15">
             <span>Rate</span>
-            <span>1 BNT = 0.00155432 ETH</span>
+            <span>
+              1 {fromToken.symbol} = {rate} {toToken.symbol}
+            </span>
           </div>
 
           <div className="flex justify-between">
