@@ -2,8 +2,8 @@
 
 @layer components {
     .widget {
-        @apply max-w-[483px] p-10 rounded-30;
-        @apply bg-white shadow-widget;
+        @apply max-w-[483px] p-10 md:rounded-30;
+        @apply bg-white md:shadow-widget;
         @apply dark:bg-blue-4 dark:shadow-none;
     }
 

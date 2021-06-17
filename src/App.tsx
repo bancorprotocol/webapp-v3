@@ -9,6 +9,7 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
+import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 
 export const App = () => {
   const { chainId } = useWeb3React();
@@ -23,6 +24,7 @@ export const App = () => {
   return (
     <BrowserRouter>
       <LayoutHeader />
+      <LayoutHeaderMobile />
       {loading ? (
         <Loading />
       ) : unsupportedNetwork ? (
