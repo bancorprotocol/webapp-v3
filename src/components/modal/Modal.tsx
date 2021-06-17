@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import times from 'assets/icons/times.svg';
+import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import 'components/modal/Modal.css';
 
 interface ModalProps {
@@ -39,12 +39,13 @@ export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
                 {title}
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="focus:outline-none"
+                  className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <img src={times} alt="Times" className="cursor-pointer" />
+                  <IconTimes className="w-14" />
                 </button>
               </Dialog.Title>
-              <div className="max-h-[70vh] overflow-auto">{children}</div>
+
+              <div className="p-2 max-h-[70vh] overflow-auto">{children}</div>
             </div>
           </div>
         </Dialog>
