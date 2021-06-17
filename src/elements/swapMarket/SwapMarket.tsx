@@ -49,7 +49,7 @@ export const SwapMarket = ({
         />
       </div>
 
-      <div className="widget-block mt-20">
+      <div className="widget-block">
         <div className="widget-block-icon">
           <IconSync className="w-[25px] text-primary dark:text-primary-light" />
         </div>
@@ -69,7 +69,7 @@ export const SwapMarket = ({
           <div className="flex justify-between mt-15">
             <span>Rate</span>
             <span>
-              1 {fromToken.symbol} = {rate} {toToken.symbol}
+              1 {fromToken?.symbol} = {rate} {toToken?.symbol}
             </span>
           </div>
 

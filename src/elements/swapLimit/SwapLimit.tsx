@@ -112,7 +112,7 @@ export const SwapLimit = ({
         />
       </div>
 
-      <div className="widget-block mt-20">
+      <div className="widget-block">
         <div className="widget-block-icon">
           <IconSync className="w-[25px] text-primary dark:text-primary-light" />
         </div>

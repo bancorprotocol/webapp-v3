@@ -1,5 +1,7 @@
 import { Switch } from '@headlessui/react';
 import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
+import { ReactComponent as IconDollar } from 'assets/icons/dollar.svg';
+
 import 'elements/swapSwitch/SwapSwitch.css';
 
 interface SwapSwitchProps {
@@ -39,7 +41,7 @@ export const SwapSwitch = ({ isEnabled, setIsEnabled }: SwapSwitchProps) => {
         <span aria-hidden="true" className={switchToggleStyles} />
       </Switch>
 
-      <div className={dollarIconStyles}>$</div>
+      <IconDollar className={`w-[9px] ${dollarIconStyles}`} />
     </div>
   );
 };
