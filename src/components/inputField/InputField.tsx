@@ -1,8 +1,5 @@
 import 'components/inputField/InputField.css';
-import {
-  classNameGenerator,
-  sanitizeNumberInput,
-} from '../../utils/pureFunctions';
+import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 
 interface InputFieldProps {
   input: string;
@@ -11,6 +8,7 @@ interface InputFieldProps {
   disabled?: boolean;
   format?: boolean;
   bgGrey?: boolean;
+  borderGrey?: boolean;
   onChange?: Function;
 }
 
@@ -18,13 +16,14 @@ export const InputField = ({
   input,
   setInput,
   placeholder,
-  disabled,
   format,
   bgGrey,
+  borderGrey,
   onChange,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
+    'input-field-border': borderGrey,
     'text-right': format,
   })}`;
 

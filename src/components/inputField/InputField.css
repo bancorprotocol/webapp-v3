@@ -8,3 +8,8 @@
   @apply bg-grey-0;
   @apply dark:bg-blue-1;
 }
+
+.input-field-border {
+  @apply border-2 border-blue-0;
+  @apply dark:border-blue-1;
+}

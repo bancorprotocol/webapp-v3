@@ -4,9 +4,9 @@ import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { TokenListItem } from 'observables/tokenList';
-
-import arrowDown from 'assets/icons/arrowDown.svg';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
+import 'components/inputField/InputField.css';
 
 interface TokenInputFieldProps {
   label: string;
@@ -45,22 +45,27 @@ export const TokenInputField = ({
 
   const placeholder = 'Enter token amount';
   const inputFieldStyles = `token-input-field ${classNameGenerator({
-    'input-field-bg-grey': border,
+    'input-field-border': border,
   })}`;
 
   return (
-    <div className={selectable ? 'cursor-pointer' : ''}>
+    <div>
       <div className="flex justify-between pr-10">
         <span className="font-medium">{label}</span>
-        <span className="text-12">
-          Balance: {balance}{' '}
-          <span className="text-primary">(~${balanceUsd})</span>
-        </span>
+        <button
+          onClick={() => handleChange(balance.toString())}
+          className="text-12 cursor-pointer focus:outline-none"
+        >
+          Balance: {balance}
+          <span className="text-primary ml-4">(~${balanceUsd})</span>
+        </button>
       </div>
 
       <div className="flex items-center">
         <div
-          className="flex items-center mr-24"
+          className={`flex items-center mr-24 ${classNameGenerator({
+            'cursor-pointer': selectable,
+          })}`}
           onClick={() => setIsOpen(true)}
         >
           <img
@@ -68,8 +73,12 @@ export const TokenInputField = ({
             alt="Token"
             className="bg-grey-2 rounded-full h-24 w-24"
           />
-          <span className="text-20 mx-6">{token?.symbol}</span>
-          {selectable && <img src={arrowDown} alt="Arrow Down" />}
+          <span className="text-20 mx-10">{token?.symbol}</span>
+          {selectable && (
+            <div>
+              <IconChevronDown className="w-[10px] h-[6px] mr-10 text-grey-4 dark:text-grey-3" />
+            </div>
+          )}
         </div>
 
         <div className="relative w-full">
@@ -77,7 +86,7 @@ export const TokenInputField = ({
             ~$123.56
           </div>
           <input
-            type="number"
+            type="text"
             value={input}
             disabled={disabled}
             placeholder={placeholder}
