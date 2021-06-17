@@ -2,15 +2,19 @@
 
 @layer components {
     .widget {
-        @apply max-w-[483px] p-10 rounded-30;
-        @apply bg-white shadow-widget;
+        @apply max-w-[483px] p-10 md:rounded-30;
+        @apply bg-white md:shadow-widget;
         @apply dark:bg-blue-4 dark:shadow-none;
     }
 
     .widget-block {
-        @apply rounded-30 p-12;
+        @apply rounded-30 mt-12 p-12;
         @apply bg-blue-0;
         @apply dark:bg-blue-5;
+    }
+
+    .widget-block-icon {
+        @apply absolute mt-[-35px] ml-[16px] flex justify-center items-center w-[42px] h-[42px] bg-white dark:bg-blue-4 border-2 border-blue-0 dark:border-blue-5 rounded-full;
     }
 
     .widget-separator {

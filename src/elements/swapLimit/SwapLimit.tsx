@@ -1,10 +1,11 @@
+import { useRef, useState } from 'react';
+import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenListItem } from 'observables/tokenList';
-import { useRef, useState } from 'react';
-import dayjs from 'utils/dayjs';
+import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 
 enum Field {
   from,
@@ -115,8 +116,11 @@ export const SwapLimit = ({
         />
       </div>
 
-      <div className="widget-block mt-20">
-        <div className="mx-10 mb-16">
+      <div className="widget-block">
+        <div className="widget-block-icon">
+          <IconSync className="w-[25px] text-primary dark:text-primary-light" />
+        </div>
+        <div className="mx-10 mb-16 pt-16">
           <TokenInputField
             label="You Receive"
             balance={123.4567}
