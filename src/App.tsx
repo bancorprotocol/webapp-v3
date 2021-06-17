@@ -9,9 +9,10 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
+import { setChainId, setUser } from 'observables/currentUser';
 
 export const App = () => {
-  const { chainId } = useWeb3React();
+  const { chainId, account } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const triedAutoLogin = useAutoConnect();
@@ -19,6 +20,11 @@ export const App = () => {
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
   }, [setLoading, chainId, triedAutoLogin]);
+
+  useEffect(() => {
+    setUser(account);
+    setChainId(chainId);
+  }, [account, chainId]);
 
   return (
     <BrowserRouter>
