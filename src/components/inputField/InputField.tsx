@@ -6,11 +6,12 @@ import {
 
 interface InputFieldProps {
   input: string;
-  setInput: Function;
+  setInput?: Function;
   placeholder?: string;
   disabled?: boolean;
   format?: boolean;
   bgGrey?: boolean;
+  onChange?: Function;
 }
 
 export const InputField = ({
@@ -20,15 +21,11 @@ export const InputField = ({
   disabled,
   format,
   bgGrey,
+  onChange,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
   })}`;
-
-  const handleChange = (text: string) => {
-    if (format) setInput(sanitizeNumberInput(text));
-    else setInput(text);
-  };
 
   return (
     <input
@@ -36,7 +33,12 @@ export const InputField = ({
       value={input}
       placeholder={placeholder}
       className={inputFieldStyles}
-      onChange={(event) => handleChange(event.target.value)}
+      onChange={(event) => {
+        const val = format
+          ? sanitizeNumberInput(event.target.value)
+          : event.target.value;
+        onChange ? onChange(val) : setInput && setInput(val);
+      }}
     />
   );
 };

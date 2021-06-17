@@ -16,7 +16,8 @@ interface TokenInputFieldProps {
   selectable?: boolean;
   disabled?: boolean;
   input: string;
-  setInput: Function;
+  setInput?: Function;
+  onChange?: Function;
   token: TokenListItem;
   setToken: Function;
   debounce?: Function;
@@ -32,14 +33,14 @@ export const TokenInputField = ({
   setToken,
   input,
   setInput,
+  onChange,
   disabled,
   debounce,
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleChange = (text: string) => {
-    const txt = sanitizeNumberInput(text);
-    setInput(txt);
-    if (debounce) debounce(txt);
+    if (setInput) setInput(text);
+    if (debounce) debounce(text);
   };
 
   const placeholder = 'Enter token amount';
@@ -81,7 +82,10 @@ export const TokenInputField = ({
             disabled={disabled}
             placeholder={placeholder}
             className={inputFieldStyles}
-            onChange={(event) => handleChange(event.target.value)}
+            onChange={(event) => {
+              const val = sanitizeNumberInput(event.target.value);
+              onChange ? onChange(val) : handleChange(val);
+            }}
           />
         </div>
       </div>
