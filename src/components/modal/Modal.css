@@ -7,10 +7,10 @@
 }
 
 .modal-title {
-  @apply flex justify-between text-20 font-semibold px-10 pt-28 pb-12;
+  @apply flex justify-between text-20 font-semibold px-12 pt-28 pb-12;
 }
 
 .modal-content {
-  @apply inline-block w-full max-w-[353px] px-18 text-left align-middle transition-all transform rounded-20;
+  @apply inline-block w-full max-w-[353px] px-16 text-left align-middle transition-all transform rounded-20;
   @apply bg-white dark:bg-blue-4;
 }

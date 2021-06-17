@@ -6,6 +6,7 @@ import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
+import 'components/inputField/InputField.css';
 
 interface TokenInputFieldProps {
   label: string;
