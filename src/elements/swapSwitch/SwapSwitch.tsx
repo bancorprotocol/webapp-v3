@@ -1,5 +1,5 @@
 import { Switch } from '@headlessui/react';
-import coins from 'assets/icons/coins.svg';
+import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
 import 'elements/swapSwitch/SwapSwitch.css';
 
 interface SwapSwitchProps {
@@ -19,7 +19,7 @@ export const SwapSwitch = ({ isEnabled, setIsEnabled }: SwapSwitchProps) => {
   }`;
 
   const coinIconStyles = isEnabled
-    ? 'dark:stroke-current text-grey-4'
+    ? 'text-grey-4'
     : 'text-blue-4 dark:text-grey-3';
 
   const dollarIconStyles = isEnabled
@@ -28,7 +28,7 @@ export const SwapSwitch = ({ isEnabled, setIsEnabled }: SwapSwitchProps) => {
 
   return (
     <div className="flex  items-center space-x-4 text-14">
-      <img src={coins} alt="Coins" className={coinIconStyles} />
+      <IconCoins className={`w-[13px] ${coinIconStyles}`} />
 
       <Switch
         checked={isEnabled}
