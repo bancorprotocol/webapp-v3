@@ -1,6 +1,6 @@
 import { getWelcomeData, Pool, Token, WelcomeData } from 'api/bancor';
 import { isEqual, partition, uniq, uniqBy, zip } from 'lodash';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
   map,
@@ -34,6 +34,7 @@ import {
   getRateByPath,
   getRateByPath as getReturnByPath,
 } from 'web3/contracts/network/wrapper';
+import { ContractSendMethod } from 'web3-eth-contract';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -288,21 +289,24 @@ const rate$ = tradeAndPath$.pipe(
   })
 );
 
+// create an observable that processes a transaction
+// first emission is hash
+// second emission completes with hash?
+
+const processTx = ({
+  tx,
+  gas,
+  value,
+}: {
+  tx: ContractSendMethod;
+  gas?: number;
+  value?: string;
+}): Observable<string> => {};
+
 const swapTx$ = tradeAndPath$.pipe(
   withLatestFrom(apiTokens$, bancorNetwork$),
   switchMap(async ([{ path, trade }, tokens, networkContractAddress]) => {
-    const fromToken = findOrThrow(
-      tokens,
-      (token) => token.dlt_id === trade.fromId,
-      'failed finding from token in tokens observable'
-    );
-
-    const rate = await getRateByPath({
-      networkContractAddress,
-      web3,
-      amount: fromWei,
-      path: path.map((pool) => pool.anchorAddress),
-    });
+    const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
 
     // insert error handling here
   })
