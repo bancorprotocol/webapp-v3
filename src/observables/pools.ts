@@ -30,7 +30,10 @@ import {
   shrinkToken,
   updateArray,
 } from 'helpers';
-import { getRateByPath as getReturnByPath } from 'web3/contracts/network/wrapper';
+import {
+  getRateByPath,
+  getRateByPath as getReturnByPath,
+} from 'web3/contracts/network/wrapper';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -286,13 +289,20 @@ const rate$ = tradeAndPath$.pipe(
 );
 
 const swapTx$ = tradeAndPath$.pipe(
-  withLatestFrom(apiTokens$),
-  switchMap(async ([{ path, trade }, tokens]) => {
-    const fromWei = findOrThrow(
+  withLatestFrom(apiTokens$, bancorNetwork$),
+  switchMap(async ([{ path, trade }, tokens, networkContractAddress]) => {
+    const fromToken = findOrThrow(
       tokens,
       (token) => token.dlt_id === trade.fromId,
       'failed finding from token in tokens observable'
     );
+
+    const rate = await getRateByPath({
+      networkContractAddress,
+      web3,
+      amount: fromWei,
+      path: path.map((pool) => pool.anchorAddress),
+    });
 
     // insert error handling here
   })
