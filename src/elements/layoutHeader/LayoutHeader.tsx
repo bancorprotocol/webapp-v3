@@ -1,7 +1,6 @@
 import 'elements/layoutHeader/LayoutHeader.css';
 import bancorLogo from 'assets/logos/bancor.svg';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
 
 import { useState } from 'react';
@@ -14,6 +13,8 @@ import {
 } from 'utils/pureFunctions';
 import { EthNetworks } from 'web3/types';
 import { FormattedMessage } from 'react-intl';
+import { NotificationsMenu } from 'elements/layoutHeader/notificationsMenu/NotificationsMenu';
+import { SettingsMenu } from 'elements/layoutHeader/settingsMenu/SettingsMenu';
 
 export const LayoutHeader = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
@@ -54,7 +55,7 @@ export const LayoutHeader = () => {
         <div className="flex items-center">
           <button
             onClick={connectButton}
-            className="btn-outline-secondary btn-sm"
+            className="btn-outline-secondary btn-sm mr-40"
           >
             <IconWallet className="-ml-14 mr-16 text-primary dark:text-primary-light w-[22px]" />
 
@@ -67,13 +68,10 @@ export const LayoutHeader = () => {
 
           <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
 
-          <button className="ml-40">
-            <IconBell className="w-[20px]" />
-          </button>
+          <NotificationsMenu />
+
           <span className="text-grey-3 text-20 mx-16">|</span>
-          <button>
-            <IconCog className="w-[20px]" />
-          </button>
+          <SettingsMenu />
         </div>
       </div>
     </div>
