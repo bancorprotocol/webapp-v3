@@ -1,6 +1,6 @@
 import { getWelcomeData, Pool, Token, WelcomeData } from 'api/bancor';
 import { isEqual, partition, uniq, uniqBy, zip } from 'lodash';
-import { combineLatest, Subject } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
   map,
@@ -12,7 +12,7 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'web3/types';
-import { bancorConverterRegistry$ } from './contracts';
+import { bancorConverterRegistry$, bancorNetwork$ } from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
 import { supportedNetworkVersion$ } from './network';
 import { fifteenSeconds$ } from './timers';
@@ -30,6 +30,7 @@ import {
   updateArray,
 } from 'helpers';
 import { getRateByPath } from 'web3/contracts/network/wrapper';
+import { ContractSendMethod } from 'web3-eth-contract';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -79,8 +80,8 @@ const anchorAndConverters$ = combineLatest([
     );
     return anchorsAndConverters;
   }),
-  startWith([]),
-  shareReplay<ConverterAndAnchor[]>(1)
+  startWith([] as ConverterAndAnchor[]),
+  shareReplay(1)
 );
 
 const apiPools$ = apiData$.pipe(
@@ -265,25 +266,139 @@ const tradeAndPath$ = swapReceiver$.pipe(
   shareReplay(1)
 );
 
+interface SwapOptions {
+  fromId: string;
+  toId: string;
+  decAmount: string;
+}
+
+interface MinimalPool {
+  anchorAddress: string;
+  contract: string;
+  reserves: string[];
+}
+
+const toMinimal = (pool: Pool): MinimalPool => ({
+  anchorAddress: pool.pool_dlt_id,
+  contract: pool.converter_dlt_id,
+  reserves: pool.reserves.map((reserve) => reserve.address),
+});
+
+const swapReceiver$ = new Subject<SwapOptions>();
+
+const sortByLiqDepth = (a: Pool, b: Pool) =>
+  Number(b.liquidity.usd) - Number(a.liquidity.usd);
+
+const dropDuplicateReservesByHigherLiquidity = (pools: Pool[]) => {
+  const sortedByLiquidityDepth = pools.sort(sortByLiqDepth);
+  const uniquePools = uniqBy(sortedByLiquidityDepth, 'pool_dlt_id');
+
+  return uniquePools;
+};
+
+const poolHasBalances = (pool: Pool) =>
+  pool.reserves.every((reserve) => reserve.balance !== '0');
+
+const filterTradeWorthyPools = (pools: Pool[]) => {
+  const poolsWithBalances = pools.filter(poolHasBalances);
+  const removedDuplicates =
+    dropDuplicateReservesByHigherLiquidity(poolsWithBalances);
+  return removedDuplicates;
+};
+
+const minimalPoolReserves = (pool: MinimalPool): [string, string] => {
+  if (pool.reserves.length !== 2)
+    throw new Error('Was expecting a pool of 2 reserves');
+  return pool.reserves as [string, string];
+};
+
+type TradePath = MinimalPool[];
+
+const possiblePaths = async (
+  from: string,
+  to: string,
+  pools: MinimalPool[]
+): Promise<TradePath[]> => {
+  const singlePool = pools.find((pool) =>
+    [from, to].every((tradedToken) =>
+      pool.reserves.some((reserve) => tradedToken === reserve)
+    )
+  );
+  if (singlePool) {
+    return [[singlePool]];
+  }
+
+  const [validStartingPools, remainingPools] = partition(pools, (pool) =>
+    pool.reserves.some((reserve) => reserve === from)
+  );
+  const isValidTerminatingPool = pools.some((relay) =>
+    relay.reserves.some((reserve) => reserve === to)
+  );
+  const areSufficientPools =
+    validStartingPools.length > 0 && isValidTerminatingPool;
+
+  if (!areSufficientPools)
+    throw new Error(`No pools found containing both the from and to target`);
+
+  const moreThanOneStartingPool = validStartingPools.length > 1;
+  if (moreThanOneStartingPool) {
+    const results = await mapIgnoreThrown(
+      validStartingPools,
+      async (validStartingPool) => {
+        const isolatedPools = [validStartingPool, ...remainingPools];
+        const poolPath = await findNewPath(
+          from,
+          to,
+          isolatedPools,
+          minimalPoolReserves
+        );
+        return poolPath.hops.flatMap((hop) => hop[0]);
+      }
+    );
+    return results;
+  } else {
+    const res = await findNewPath(from, to, pools, minimalPoolReserves);
+    return [res.hops.flatMap((hop) => hop[0])];
+  }
+};
+
 const rate$ = tradeAndPath$.pipe(
-  withLatestFrom(apiTokens$),
-  switchMapIgnoreThrow(async ([trade, tokens]) => {
+  withLatestFrom(apiTokens$, bancorNetwork$),
+  switchMapIgnoreThrow(async ([trade, tokens, networkContractAddress]) => {
     const fromToken = findOrThrow(tokens, hasTokenId(trade.trade.fromId));
     const toToken = findOrThrow(tokens, hasTokenId(trade.trade.toId));
 
     const fromWei = expandToken(trade.trade.decAmount, fromToken.decimals);
-    // const rate = await getRateByPath({ })
+    const expectedReturnWei = await getRateByPath({
+      networkContractAddress,
+      amount: fromWei,
+      path: trade.path.map((pool) => pool.anchorAddress),
+      web3,
+    });
+    const expectedReturnDec = shrinkToken(expectedReturnWei, toToken.decimals);
+
+    return expectedReturnDec;
   })
 );
 
+// create an observable that processes a transaction
+// first emission is hash
+// second emission completes with hash?
+
+const processTx = ({
+  tx,
+  gas,
+  value,
+}: {
+  tx: ContractSendMethod;
+  gas?: number;
+  value?: string;
+}): Observable<string> => {};
+
 const swapTx$ = tradeAndPath$.pipe(
-  withLatestFrom(apiTokens$),
-  switchMap(async ([{ path, trade }, tokens]) => {
-    const fromWei = findOrThrow(
-      tokens,
-      (token) => token.dlt_id === trade.fromId,
-      'failed finding from token in tokens observable'
-    );
+  withLatestFrom(apiTokens$, bancorNetwork$),
+  switchMap(async ([{ path, trade }, tokens, networkContractAddress]) => {
+    const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
 
     // insert error handling here
   })
