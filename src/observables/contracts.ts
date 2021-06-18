@@ -10,6 +10,7 @@ import {
 } from 'web3/contracts/liquidityProtection/wrapper';
 import { toChecksumAddress } from 'web3-utils';
 import { RegisteredContracts } from 'web3/types';
+import { Observable } from 'rxjs';
 
 const zeroXContracts$ = supportedNetworkVersion$.pipe(
   switchMapIgnoreThrow(async (networkVersion) =>
@@ -19,6 +20,7 @@ const zeroXContracts$ = supportedNetworkVersion$.pipe(
 
 export const exchangeProxy$ = zeroXContracts$.pipe(
   pluck('exchangeProxy'),
+  map(toChecksumAddress),
   shareReplay(1)
 );
 
@@ -30,10 +32,30 @@ export const contractAddresses$ = networkVars$.pipe(
   shareReplay(1)
 );
 
+const pluckAndCache =
+  (key: keyof RegisteredContracts) =>
+  (contractsObj$: Observable<RegisteredContracts>) =>
+    contractsObj$.pipe(
+      pluck(key),
+      map(toChecksumAddress),
+      optimisticContract(key),
+      shareReplay(1)
+    );
+
+export const bancorNetwork$ = contractAddresses$.pipe(
+  pluckAndCache('BancorNetwork')
+);
+
 export const liquidityProtection$ = contractAddresses$.pipe(
-  pluck('LiquidityProtection'),
-  optimisticContract('LiquidityProtection'),
-  shareReplay(1)
+  pluckAndCache('LiquidityProtection')
+);
+
+export const bancorConverterRegistry$ = contractAddresses$.pipe(
+  pluckAndCache('BancorConverterRegistry')
+);
+
+export const stakingRewards$ = contractAddresses$.pipe(
+  pluckAndCache('StakingRewards')
 );
 
 export const liquidityProtectionStore$ = liquidityProtection$.pipe(
@@ -46,27 +68,17 @@ export const liquidityProtectionStore$ = liquidityProtection$.pipe(
   shareReplay(1)
 );
 
-export const bancorConverterRegistry$ = contractAddresses$.pipe(
-  pluck('BancorConverterRegistry'),
-  optimisticContract('BancorConverterRegistry'),
-  shareReplay(1)
-);
-
-export const stakingRewards$ = contractAddresses$.pipe(
-  pluck('StakingRewards'),
-  optimisticContract('StakingRewards'),
-  shareReplay(1)
-);
-
 export const settingsContractAddress$ = liquidityProtection$.pipe(
   switchMapIgnoreThrow((protectionAddress) =>
     fetchLiquidityProtectionSettingsContract(protectionAddress)
   ),
+  map(toChecksumAddress),
   optimisticContract('LiquiditySettings'),
   shareReplay(1)
 );
 
 export const govTokenAddress$ = networkVars$.pipe(
   pluck('govToken'),
+  map(toChecksumAddress),
   shareReplay(1)
 );
