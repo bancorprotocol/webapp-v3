@@ -3,12 +3,14 @@ import { isEqual, partition, uniq, uniqBy, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
+  first,
   map,
   pluck,
   share,
   shareReplay,
   startWith,
   switchMap,
+  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'web3/types';
@@ -27,10 +29,19 @@ import {
   findNewPath,
   findOrThrow,
   mapIgnoreThrown,
+  shrinkToken,
   updateArray,
 } from 'helpers';
 import { getRateByPath } from 'web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
+import { toHex } from 'web3-utils';
+
+import { current } from 'immer';
+import { currentUser$ } from './currentUser';
+import {
+  approvedStatus,
+  buildTokenContract,
+} from 'web3/contracts/token/wrapper';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -278,90 +289,6 @@ interface MinimalPool {
   reserves: string[];
 }
 
-const toMinimal = (pool: Pool): MinimalPool => ({
-  anchorAddress: pool.pool_dlt_id,
-  contract: pool.converter_dlt_id,
-  reserves: pool.reserves.map((reserve) => reserve.address),
-});
-
-const swapReceiver$ = new Subject<SwapOptions>();
-
-const sortByLiqDepth = (a: Pool, b: Pool) =>
-  Number(b.liquidity.usd) - Number(a.liquidity.usd);
-
-const dropDuplicateReservesByHigherLiquidity = (pools: Pool[]) => {
-  const sortedByLiquidityDepth = pools.sort(sortByLiqDepth);
-  const uniquePools = uniqBy(sortedByLiquidityDepth, 'pool_dlt_id');
-
-  return uniquePools;
-};
-
-const poolHasBalances = (pool: Pool) =>
-  pool.reserves.every((reserve) => reserve.balance !== '0');
-
-const filterTradeWorthyPools = (pools: Pool[]) => {
-  const poolsWithBalances = pools.filter(poolHasBalances);
-  const removedDuplicates =
-    dropDuplicateReservesByHigherLiquidity(poolsWithBalances);
-  return removedDuplicates;
-};
-
-const minimalPoolReserves = (pool: MinimalPool): [string, string] => {
-  if (pool.reserves.length !== 2)
-    throw new Error('Was expecting a pool of 2 reserves');
-  return pool.reserves as [string, string];
-};
-
-type TradePath = MinimalPool[];
-
-const possiblePaths = async (
-  from: string,
-  to: string,
-  pools: MinimalPool[]
-): Promise<TradePath[]> => {
-  const singlePool = pools.find((pool) =>
-    [from, to].every((tradedToken) =>
-      pool.reserves.some((reserve) => tradedToken === reserve)
-    )
-  );
-  if (singlePool) {
-    return [[singlePool]];
-  }
-
-  const [validStartingPools, remainingPools] = partition(pools, (pool) =>
-    pool.reserves.some((reserve) => reserve === from)
-  );
-  const isValidTerminatingPool = pools.some((relay) =>
-    relay.reserves.some((reserve) => reserve === to)
-  );
-  const areSufficientPools =
-    validStartingPools.length > 0 && isValidTerminatingPool;
-
-  if (!areSufficientPools)
-    throw new Error(`No pools found containing both the from and to target`);
-
-  const moreThanOneStartingPool = validStartingPools.length > 1;
-  if (moreThanOneStartingPool) {
-    const results = await mapIgnoreThrown(
-      validStartingPools,
-      async (validStartingPool) => {
-        const isolatedPools = [validStartingPool, ...remainingPools];
-        const poolPath = await findNewPath(
-          from,
-          to,
-          isolatedPools,
-          minimalPoolReserves
-        );
-        return poolPath.hops.flatMap((hop) => hop[0]);
-      }
-    );
-    return results;
-  } else {
-    const res = await findNewPath(from, to, pools, minimalPoolReserves);
-    return [res.hops.flatMap((hop) => hop[0])];
-  }
-};
-
 const rate$ = tradeAndPath$.pipe(
   withLatestFrom(apiTokens$, bancorNetwork$),
   switchMapIgnoreThrow(async ([trade, tokens, networkContractAddress]) => {
@@ -385,23 +312,122 @@ const rate$ = tradeAndPath$.pipe(
 // first emission is hash
 // second emission completes with hash?
 
-const processTx = ({
+const txFactory = ({
   tx,
   gas,
   value,
+  currentUser,
 }: {
   tx: ContractSendMethod;
   gas?: number;
   value?: string;
-}): Observable<string> => {};
+  currentUser: string;
+}): Observable<string> => {
+  let adjustedGas: number | false = false;
+
+  return new Observable((subscriber) => {
+    tx.send({
+      from: currentUser,
+      ...(adjustedGas && { gas: adjustedGas as number }),
+      ...(value && { value: toHex(value) }),
+    })
+      .on('transactionHash', (hash: string) => {
+        subscriber.next(hash);
+      })
+      .on('confirmation', (confirmationNumber: number) => {
+        subscriber.complete();
+      })
+      .on('error', subscriber.error);
+  });
+};
+
+export const ethReserveAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+const unlimitedApprovalReceiver$ = new Subject<boolean>();
+
+const unlimitedApprove = (unlimitedApprove: boolean) =>
+  unlimitedApprovalReceiver$.next(unlimitedApprove);
+
+interface TxStatus {
+  status: string;
+  error: string;
+  success: string;
+  queryUnlimitedApprove: boolean;
+}
+
+const txStatusReceiver$ = new Subject<TxStatus>();
+
+const txStatus$ = txStatusReceiver$.pipe(
+  distinctUntilChanged(),
+  shareReplay(1)
+);
+
+const approvalFactory = async ({
+  owner,
+  amount,
+  spender,
+  tokenAddress,
+}: {
+  owner: string;
+  amount: string;
+  spender: string;
+  tokenAddress: string;
+}) => {
+  if (tokenAddress === ethReserveAddress)
+    return new Observable((sub) => sub.complete());
+
+  const { currentApprovedBalance, isApprovalRequired } = await approvedStatus(
+    owner,
+    spender,
+    amount,
+    tokenAddress
+  );
+
+  if (!isApprovalRequired) {
+    return new Observable((sub) => sub.complete());
+  }
+
+  const tokenContract = buildTokenContract(tokenAddress, web3);
+
+  // tokenContract.methods.approve();
+};
 
 const swapTx$ = tradeAndPath$.pipe(
-  withLatestFrom(apiTokens$, bancorNetwork$),
-  switchMap(async ([{ path, trade }, tokens, networkContractAddress]) => {
-    const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
+  tap(() =>
+    txStatusReceiver$.next({
+      error: '',
+      queryUnlimitedApprove: false,
+      status: 'Loading...',
+      success: '',
+    })
+  ),
+  withLatestFrom(apiTokens$, bancorNetwork$, currentUser$),
+  switchMap(
+    async ([{ path, trade }, tokens, networkContractAddress, currentUser]) => {
+      const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
+      const fromWei = expandToken(trade.decAmount, fromToken.decimals);
 
-    // insert error handling here
-  })
+      // insert error handling here
+      const { currentApprovedBalance, isApprovalRequired } =
+        await approvedStatus(
+          currentUser,
+          networkContractAddress,
+          fromWei,
+          fromToken.dlt_id
+        );
+      if (isApprovalRequired) {
+        txStatusReceiver$.next({
+          queryUnlimitedApprove: true,
+          success: '',
+          status: 'UnlimitedApprove',
+          error: '',
+        });
+        const unlimitedApprove = await unlimitedApprovalReceiver$
+          .pipe(first())
+          .toPromise();
+      }
+    }
+  )
 );
 
 export const tx = {
