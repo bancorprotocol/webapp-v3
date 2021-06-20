@@ -10,6 +10,7 @@ interface SwapMarketProps {
   setFromToken: Function;
   toToken: TokenListItem;
   setToToken: Function;
+  switchTokens: Function;
 }
 
 export const SwapMarket = ({
@@ -17,6 +18,7 @@ export const SwapMarket = ({
   setFromToken,
   toToken,
   setToToken,
+  switchTokens,
 }: SwapMarketProps) => {
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
@@ -50,8 +52,11 @@ export const SwapMarket = ({
       </div>
 
       <div className="widget-block">
-        <div className="widget-block-icon">
-          <IconSync className="w-[25px] text-primary dark:text-primary-light" />
+        <div className="widget-block-icon cursor-pointer">
+          <IconSync
+            className="w-[25px] text-primary dark:text-primary-light"
+            onClick={() => switchTokens()}
+          />
         </div>
         <div className="mx-10 mb-16 pt-16">
           <TokenInputField

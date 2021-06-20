@@ -18,6 +18,7 @@ interface SwapLimitProps {
   setFromToken: Function;
   toToken: TokenListItem;
   setToToken: Function;
+  switchTokens: Function;
 }
 
 export const SwapLimit = ({
@@ -25,6 +26,7 @@ export const SwapLimit = ({
   setFromToken,
   toToken,
   setToToken,
+  switchTokens,
 }: SwapLimitProps) => {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -117,8 +119,11 @@ export const SwapLimit = ({
       </div>
 
       <div className="widget-block">
-        <div className="widget-block-icon">
-          <IconSync className="w-[25px] text-primary dark:text-primary-light" />
+        <div className="widget-block-icon cursor-pointer">
+          <IconSync
+            className="w-[25px] text-primary dark:text-primary-light"
+            onClick={() => switchTokens()}
+          />
         </div>
         <div className="mx-10 mb-16 pt-16">
           <TokenInputField

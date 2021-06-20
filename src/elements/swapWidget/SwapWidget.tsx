@@ -27,6 +27,11 @@ export const SwapWidget = () => {
     setToToken(tokens[1]);
   }, [tokens]);
 
+  const switchTokens = () => {
+    setFromToken(toToken);
+    setToToken(fromToken);
+  };
+
   return (
     <div className="widget mx-auto">
       <SwapHeader
@@ -42,6 +47,7 @@ export const SwapWidget = () => {
           setFromToken={setFromToken}
           toToken={toToken}
           setToToken={setToToken}
+          switchTokens={switchTokens}
         />
       ) : (
         <SwapMarket
@@ -49,6 +55,7 @@ export const SwapWidget = () => {
           setFromToken={setFromToken}
           toToken={toToken}
           setToToken={setToToken}
+          switchTokens={switchTokens}
         />
       )}
     </div>

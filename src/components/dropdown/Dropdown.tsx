@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import check from 'assets/icons/check.svg';
 import 'components/dropdown/Dropdown.css';
