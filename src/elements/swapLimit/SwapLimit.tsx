@@ -32,7 +32,6 @@ export const SwapLimit = ({
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
   const [slippage, setSlippage] = useState('');
-  const [rateText, setRateText] = useState('');
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -42,14 +41,13 @@ export const SwapLimit = ({
   const rateImmed = useRef<string>();
   const fromImmed = useRef<string>();
   const toImmed = useRef<string>();
-
   const sliipageOptions = [1, 3, 5];
 
   const calcFrom = () => {
     if (rateImmed.current && toImmed.current) {
       setFromAmount(
-        new BigNumber(rateImmed.current)
-          .div(new BigNumber(toImmed.current))
+        new BigNumber(toImmed.current)
+          .div(new BigNumber(rateImmed.current))
           .toFixed(6)
       );
     }
@@ -65,8 +63,8 @@ export const SwapLimit = ({
   const calcRate = () => {
     if (fromImmed.current && toImmed.current)
       setRate(
-        new BigNumber(fromImmed.current)
-          .div(new BigNumber(toImmed.current))
+        new BigNumber(toImmed.current)
+          .div(new BigNumber(fromImmed.current))
           .toFixed(6)
       );
   };
@@ -92,10 +90,6 @@ export const SwapLimit = ({
         else calcFrom();
         break;
     }
-  };
-
-  const changeRateText = () => {
-    setRateText(`1 ${fromToken.symbol} = ${toToken.symbol}`);
   };
 
   return (
@@ -165,19 +159,13 @@ export const SwapLimit = ({
               <InputField input={slippage} setInput={setSlippage} format />
             </div>
           </div>
-
-          <ModalDuration duration={duration} setDuration={setDuration} />
           <div className="flex justify-between mt-15">
-            <span>Rate</span>
-            <span>{`1 ${fromToken?.symbol} = 0.00155432 `}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Price Impact</span>
-            <span>0.2000%</span>
+            <span>Expires in</span>
+            <ModalDuration duration={duration} setDuration={setDuration} />
           </div>
         </div>
 
-        <button className="btn-primary rounded w-full">Swap Limit</button>
+        <button className="btn-primary rounded w-full">Swap</button>
       </div>
     </div>
   );
