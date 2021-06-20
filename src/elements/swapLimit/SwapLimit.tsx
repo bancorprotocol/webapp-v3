@@ -6,6 +6,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 enum Field {
   from,
@@ -31,26 +32,27 @@ export const SwapLimit = ({
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
-  const [slippage, setSlippage] = useState('');
+  const [percentage, setPercentage] = useState('');
+  const [selPercentage, setSelPercentage] = useState(1);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
+
   const rateImmed = useRef<string>();
   const fromImmed = useRef<string>();
   const toImmed = useRef<string>();
-  const sliipageOptions = [1, 3, 5];
+  const percentages = [1, 3, 5];
 
   const calcFrom = () => {
-    if (rateImmed.current && toImmed.current) {
+    if (rateImmed.current && toImmed.current)
       setFromAmount(
         new BigNumber(toImmed.current)
           .div(new BigNumber(rateImmed.current))
           .toFixed(6)
       );
-    }
   };
   const calcTo = () => {
     if (rateImmed.current && fromImmed.current)
@@ -76,6 +78,7 @@ export const SwapLimit = ({
     )
       previousField.current = lastChangedField.current;
     lastChangedField.current = field;
+
     switch (field) {
       case Field.from:
         if (previousField.current === Field.to) calcRate();
@@ -147,16 +150,33 @@ export const SwapLimit = ({
             />
           </div>
           <div className="flex justify-between items-center">
-            {sliipageOptions.map((slip) => (
+            {percentages.map((slip, index) => (
               <button
                 key={'slippage' + slip}
-                onClick={() => setSlippage(slip.toString())}
+                className={classNameGenerator({
+                  'text-primary': selPercentage === index,
+                })}
+                onClick={() => {
+                  setSelPercentage(index);
+                  setPercentage('');
+                }}
               >
                 +{slip}%
               </button>
             ))}
             <div className="w-96">
-              <InputField input={slippage} setInput={setSlippage} format />
+              <InputField
+                input={percentage}
+                onBlur={() => {
+                  const index = percentages.indexOf(Number(percentage));
+                  if (index !== -1) {
+                    setPercentage('');
+                    setSelPercentage(index);
+                  }
+                }}
+                setInput={setPercentage}
+                format
+              />
             </div>
           </div>
           <div className="flex justify-between mt-15">

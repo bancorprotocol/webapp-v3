@@ -1,5 +1,5 @@
-import 'components/inputField/InputField.css';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
+import 'components/inputField/InputField.css';
 
 interface InputFieldProps {
   input: string;
@@ -10,6 +10,7 @@ interface InputFieldProps {
   bgGrey?: boolean;
   borderGrey?: boolean;
   onChange?: Function;
+  onBlur?: Function;
 }
 
 export const InputField = ({
@@ -20,6 +21,7 @@ export const InputField = ({
   bgGrey,
   borderGrey,
   onChange,
+  onBlur,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
@@ -39,6 +41,7 @@ export const InputField = ({
           : event.target.value;
         onChange ? onChange(val) : setInput && setInput(val);
       }}
+      onBlur={() => onBlur && onBlur()}
     />
   );
 };
