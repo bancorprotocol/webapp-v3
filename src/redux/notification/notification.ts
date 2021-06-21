@@ -4,10 +4,10 @@ import dayjs from 'dayjs';
 type NotificationType = 'info' | 'success' | 'error' | 'pending';
 
 export interface BaseNotification {
-  type: NotificationType;
+  type?: NotificationType;
   title: string;
   msg: string;
-  showSeconds: number;
+  showSeconds?: number;
   txHash?: string;
 }
 
@@ -21,40 +21,7 @@ export interface NotificationState {
 }
 
 export const initialState: NotificationState = {
-  notifications: [
-    {
-      id: nanoid(),
-      type: 'success',
-      title: 'Transaction in Progress',
-      msg: 'Some sample message here',
-      showSeconds: 8,
-      timestamp: 1624271663,
-    },
-    {
-      id: nanoid(),
-      type: 'pending',
-      title: 'Transaction in Progress',
-      msg: 'Some sample message here',
-      showSeconds: 8,
-      timestamp: 1624271663,
-    },
-    {
-      id: nanoid(),
-      type: 'error',
-      title: 'Transaction in Progress',
-      msg: 'Some sample message here',
-      showSeconds: 8,
-      timestamp: 1624271663,
-    },
-    {
-      id: nanoid(),
-      type: 'info',
-      title: 'Transaction in Progress',
-      msg: 'Some sample message here',
-      showSeconds: 8,
-      timestamp: 1624271663,
-    },
-  ],
+  notifications: [],
 };
 
 const notificationSlice = createSlice({
@@ -67,7 +34,9 @@ const notificationSlice = createSlice({
     addNotification: (state, action: PayloadAction<BaseNotification>) => {
       state.notifications.push({
         id: nanoid(),
+        type: 'info',
         timestamp: dayjs().unix(),
+        showSeconds: 8,
         ...action.payload,
       });
     },
@@ -77,10 +46,20 @@ const notificationSlice = createSlice({
       );
       if (index > -1) state.notifications.splice(index, 1);
     },
+    hideAlert: (state, action: PayloadAction<string>) => {
+      const index = state.notifications.findIndex(
+        (notification) => notification.id === action.payload
+      );
+      if (index > -1) state.notifications[index].showSeconds = 0;
+    },
   },
 });
 
-export const { setNotifications, addNotification, removeNotification } =
-  notificationSlice.actions;
+export const {
+  setNotifications,
+  addNotification,
+  removeNotification,
+  hideAlert,
+} = notificationSlice.actions;
 
 export const notification = notificationSlice.reducer;

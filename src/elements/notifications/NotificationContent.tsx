@@ -1,8 +1,10 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { Notification } from 'redux/notification/notification';
+import { hideAlert, Notification } from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 interface NotificationContentProps {
   data: Notification;
@@ -13,7 +15,15 @@ export const NotificationContent = ({
   data,
   onRemove,
 }: NotificationContentProps) => {
+  const dispatch = useDispatch();
+
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
+
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(hideAlert(id));
+    }, showSeconds! * 1000);
+  }, []);
 
   const StatusIcon = () => {
     switch (type) {

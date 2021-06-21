@@ -4,8 +4,12 @@ import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
+import { useDispatch } from 'react-redux';
+import { addNotification } from 'redux/notification/notification';
 
 export const SwapMarket = () => {
+  const dispatch = useDispatch();
+
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancorAPI.tokens
   );
@@ -72,7 +76,20 @@ export const SwapMarket = () => {
           </div>
         </div>
 
-        <button className="btn-primary rounded w-full">Swap</button>
+        <button
+          onClick={() =>
+            dispatch(
+              addNotification({
+                type: 'pending',
+                title: 'Test Notification',
+                msg: 'Some message here...',
+              })
+            )
+          }
+          className="btn-primary rounded w-full"
+        >
+          Swap
+        </button>
       </div>
     </div>
   );

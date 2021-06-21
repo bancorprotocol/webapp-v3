@@ -5,9 +5,11 @@ import { useAppSelector } from 'redux/index';
 import {
   Notification,
   removeNotification,
+  setNotifications,
 } from 'redux/notification/notification';
 import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();
@@ -15,6 +17,15 @@ export const NotificationsMenu = () => {
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
+
+  useEffect(() => {
+    const restored = localStorage.getItem('notifications');
+    if (restored) dispatch(setNotifications(JSON.parse(restored)));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  }, [notifications]);
 
   return (
     <Popover className="relative">
@@ -28,7 +39,12 @@ export const NotificationsMenu = () => {
 
           <div className="dropdown-header flex justify-between">
             <h3 className="text-16 font-semibold">Notifications</h3>
-            <button className="text-12 underline">clear</button>
+            <button
+              onClick={() => dispatch(setNotifications([]))}
+              className="text-12 underline"
+            >
+              clear
+            </button>
           </div>
 
           {notifications.map((notification, index) => {
