@@ -5,6 +5,29 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import updateLocale from 'dayjs/plugin/updateLocale';
+dayjs.extend(relativeTime);
+dayjs.extend(updateLocale);
+
+dayjs.updateLocale('en', {
+  relativeTime: {
+    future: 'in %s',
+    past: '%s ago',
+    s: 'now',
+    m: 'now',
+    mm: '%d min ago',
+    h: 'an hour ago',
+    hh: '%d hours ago',
+    d: 'a day ago',
+    dd: '%d days ago',
+    M: 'a month ago',
+    MM: '%d months ago',
+    y: 'a year ago',
+    yy: '%d years ago',
+  },
+});
 
 interface NotificationContentProps {
   data: Notification;
@@ -15,9 +38,9 @@ export const NotificationContent = ({
   data,
   onRemove,
 }: NotificationContentProps) => {
-  const dispatch = useDispatch();
-
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTimeout(() => {
@@ -60,7 +83,9 @@ export const NotificationContent = ({
           </div>
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
-          <span className="text-grey-4">3 min ago</span>
+          <span className="text-grey-4">
+            {dayjs.unix(timestamp).fromNow(true)}
+          </span>
         </div>
         <button onClick={() => onRemove(id)}>
           <IconTimes className="w-8" />
