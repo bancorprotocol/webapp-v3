@@ -1,8 +1,6 @@
 import 'elements/layoutHeader/LayoutHeader.css';
 import bancorLogo from 'assets/logos/bancor.svg';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
-
 import { useState } from 'react';
 import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
@@ -65,11 +63,8 @@ export const LayoutHeader = () => {
               <FormattedMessage id="connect_wallet" />
             )}
           </button>
-
           <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
-
           <NotificationsMenu />
-
           <span className="text-grey-3 text-20 mx-16">|</span>
           <SettingsMenu />
         </div>

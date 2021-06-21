@@ -11,6 +11,7 @@ import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setChainId, setUser } from 'observables/currentUser';
 import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
+import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 
 export const App = () => {
   const { chainId, account } = useWeb3React();
@@ -42,6 +43,7 @@ export const App = () => {
           <Route component={NotFound} />
         </Switch>
       )}
+      <NotificationAlerts />
     </BrowserRouter>
   );
 };
