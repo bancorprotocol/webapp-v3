@@ -6,7 +6,10 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { classNameGenerator } from 'utils/pureFunctions';
+import {
+  calculatePercentageChange,
+  classNameGenerator,
+} from 'utils/pureFunctions';
 import { random } from 'lodash';
 import { useInterval } from 'hooks/useInterval';
 
@@ -77,12 +80,12 @@ export const SwapLimit = ({
   );
 
   const calculateRateByMarket = useCallback(
-    (mRate: number, selPercentage: number, percentage: string) => {
+    (marketRate: number, selPercentage: number, percentage: string) => {
       const perc =
         selPercentage === -1
           ? Number(percentage) / 100
           : percentages[selPercentage] / 100;
-      const rate = (mRate * (1 + perc)).toFixed(6);
+      const rate = (marketRate * (1 + perc)).toFixed(6);
       handleFieldChanged(Field.rate, fromAmount, toAmount, rate);
       setRate(rate);
     },
@@ -94,11 +97,21 @@ export const SwapLimit = ({
     const mRate = random(10, 20);
 
     if (marketRate === -1) {
-      calculateRateByMarket(mRate, selPercentage, percentage);
+      calculateRateByMarket(marketRate, selPercentage, percentage);
     }
 
     setMarketRate(mRate);
   }, [marketRate, calculateRateByMarket, selPercentage, percentage]);
+
+  const calculatePercentageByRate = (marketRate: number, rate: string) => {
+    const percentage = calculatePercentageChange(Number(rate), marketRate);
+    const index = percentages.indexOf(percentage);
+    if (index === -1) setPercentage(percentage.toFixed(2));
+    else {
+      setPercentage('');
+      setSelPercentage(index);
+    }
+  };
 
   const calcFrom = (to: string, rate: string) => {
     if (rate && to)
@@ -109,8 +122,11 @@ export const SwapLimit = ({
       setToAmount(new BigNumber(rate).times(new BigNumber(from)).toFixed(6));
   };
   const calcRate = (from: string, to: string) => {
-    if (from && to)
-      setRate(new BigNumber(to).div(new BigNumber(from)).toFixed(6));
+    if (from && to) {
+      const rate = new BigNumber(to).div(new BigNumber(from)).toFixed(6);
+      setRate(rate);
+      calculatePercentageByRate(marketRate, rate);
+    }
   };
 
   return (
@@ -160,6 +176,7 @@ export const SwapLimit = ({
               input={rate}
               onChange={(val: string) => {
                 setRate(val);
+                calculatePercentageByRate(marketRate, val);
                 handleFieldChanged(Field.rate, fromAmount, toAmount, val);
               }}
             />
@@ -184,9 +201,17 @@ export const SwapLimit = ({
               <InputField
                 input={percentage}
                 onBlur={() => {
-                  const index = percentages.indexOf(Number(percentage));
-                  if (index !== -1) setPercentage('');
-                  setSelPercentage(index);
+                  const percNum = Number(percentage);
+                  const index = percentages.indexOf(percNum);
+                  if (index !== -1 || !percNum) setPercentage('');
+
+                  const sel = percNum
+                    ? index
+                    : selPercentage === -1
+                    ? 1
+                    : selPercentage;
+                  calculateRateByMarket(marketRate, sel, percentage);
+                  setSelPercentage(sel);
                 }}
                 onChange={(val: string) => {
                   calculateRateByMarket(marketRate, -1, val);
