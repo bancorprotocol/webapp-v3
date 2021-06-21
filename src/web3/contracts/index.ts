@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-export const web3 = new Web3();
+export const web3 = new Web3(Web3.givenProvider);
 
 export const buildContract = (
   abi: AbiItem[],

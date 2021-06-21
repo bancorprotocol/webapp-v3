@@ -25,7 +25,7 @@ export const initialState: NotificationState = {
 };
 
 const notificationSlice = createSlice({
-  name: 'no',
+  name: 'notification',
   initialState,
   reducers: {
     setNotifications: (state, action) => {
@@ -52,6 +52,15 @@ const notificationSlice = createSlice({
       );
       if (index > -1) state.notifications[index].showSeconds = 0;
     },
+    setStatus: (
+      state,
+      action: PayloadAction<{ id: string; type: NotificationType }>
+    ) => {
+      const index = state.notifications.findIndex(
+        (notification) => notification.id === action.payload.id
+      );
+      if (index > -1) state.notifications[index].type = action.payload.type;
+    },
   },
 });
 
@@ -60,6 +69,7 @@ export const {
   addNotification,
   removeNotification,
   hideAlert,
+  setStatus,
 } = notificationSlice.actions;
 
 export const notification = notificationSlice.reducer;

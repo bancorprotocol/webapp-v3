@@ -1,6 +1,10 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { hideAlert, Notification } from 'redux/notification/notification';
+import {
+  hideAlert,
+  Notification,
+  setStatus,
+} from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect } from 'react';
@@ -8,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import { web3 } from 'web3/contracts';
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 
@@ -43,6 +48,20 @@ export const NotificationContent = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
+    const interval: NodeJS.Timeout = setInterval(async () => {
+      if (!txHash) return clearInterval(interval);
+      try {
+        console.log('interval');
+        const tx = await web3.eth.getTransactionReceipt(txHash);
+        if (tx) {
+          dispatch(setStatus({ id, type: tx.status ? 'success' : 'error' }));
+          clearInterval(interval);
+        }
+      } catch (e) {
+        console.error('web3 failed: getTransactionReceipt', e);
+      }
+    }, 2000);
+
     setTimeout(() => {
       dispatch(hideAlert(id));
     }, showSeconds! * 1000);

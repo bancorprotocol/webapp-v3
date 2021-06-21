@@ -83,6 +83,8 @@ export const SwapMarket = () => {
                 type: 'pending',
                 title: 'Test Notification',
                 msg: 'Some message here...',
+                txHash:
+                  '0x20d27ee47229981e5d8677387ca1d10cb0fe07b25861f09a37581a2ea916fb9c',
               })
             )
           }
