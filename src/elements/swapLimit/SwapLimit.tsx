@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
@@ -10,8 +10,9 @@ import {
   calculatePercentageChange,
   classNameGenerator,
 } from 'utils/pureFunctions';
-import { random } from 'lodash';
 import { useInterval } from 'hooks/useInterval';
+import { getRate } from 'web3/swap/methods';
+import usePrevious from 'hooks/usePrevious';
 
 enum Field {
   from,
@@ -38,6 +39,7 @@ export const SwapLimit = ({
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
   const [marketRate, setMarketRate] = useState(-1);
+  const prevMarket = usePrevious(marketRate);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
   const [duration, setDuration] = useState(
@@ -50,7 +52,39 @@ export const SwapLimit = ({
 
   useInterval(() => {
     fetchMarketRate();
-  }, 5000);
+  }, 15000);
+
+  const calculatePercentageByRate = useCallback(
+    (marketRate: number, rate: string) => {
+      const percentage = calculatePercentageChange(Number(rate), marketRate);
+      const index = percentages.indexOf(percentage);
+      if (index === -1) setPercentage(percentage.toFixed(2));
+      else {
+        setPercentage('');
+        setSelPercentage(index);
+      }
+    },
+    [percentages]
+  );
+
+  const calcFrom = (to: string, rate: string) => {
+    if (rate && to)
+      setFromAmount(new BigNumber(to).div(new BigNumber(rate)).toFixed(6));
+  };
+  const calcTo = (from: string, rate: string) => {
+    if (rate && from)
+      setToAmount(new BigNumber(rate).times(new BigNumber(from)).toFixed(6));
+  };
+  const calcRate = useCallback(
+    (from: string, to: string) => {
+      if (from && to) {
+        const rate = new BigNumber(to).div(new BigNumber(from)).toFixed(6);
+        setRate(rate);
+        calculatePercentageByRate(marketRate, rate);
+      }
+    },
+    [calculatePercentageByRate, marketRate]
+  );
 
   const handleFieldChanged = useCallback(
     (field: Field, from: string, to: string, rate: string) => {
@@ -76,7 +110,7 @@ export const SwapLimit = ({
           break;
       }
     },
-    []
+    [calcRate]
   );
 
   const calculateRateByMarket = useCallback(
@@ -93,41 +127,25 @@ export const SwapLimit = ({
   );
 
   const fetchMarketRate = useCallback(async () => {
-    //Fetch market rate
-    const mRate = random(10, 20);
+    if (!fromToken || !toToken) return;
 
-    if (marketRate === -1) {
-      calculateRateByMarket(marketRate, selPercentage, percentage);
-    }
+    const mRate = Number(
+      await getRate(fromToken.address, toToken.address, '1')
+    );
 
     setMarketRate(mRate);
-  }, [marketRate, calculateRateByMarket, selPercentage, percentage]);
+  }, [fromToken, toToken]);
 
-  const calculatePercentageByRate = (marketRate: number, rate: string) => {
-    const percentage = calculatePercentageChange(Number(rate), marketRate);
-    const index = percentages.indexOf(percentage);
-    if (index === -1) setPercentage(percentage.toFixed(2));
-    else {
-      setPercentage('');
-      setSelPercentage(index);
-    }
-  };
-
-  const calcFrom = (to: string, rate: string) => {
-    if (rate && to)
-      setFromAmount(new BigNumber(to).div(new BigNumber(rate)).toFixed(6));
-  };
-  const calcTo = (from: string, rate: string) => {
-    if (rate && from)
-      setToAmount(new BigNumber(rate).times(new BigNumber(from)).toFixed(6));
-  };
-  const calcRate = (from: string, to: string) => {
-    if (from && to) {
-      const rate = new BigNumber(to).div(new BigNumber(from)).toFixed(6);
-      setRate(rate);
-      calculatePercentageByRate(marketRate, rate);
-    }
-  };
+  useEffect(() => {
+    if (prevMarket === -1)
+      calculateRateByMarket(marketRate, selPercentage, percentage);
+  }, [
+    calculateRateByMarket,
+    marketRate,
+    selPercentage,
+    percentage,
+    prevMarket,
+  ]);
 
   return (
     <div>

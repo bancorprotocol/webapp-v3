@@ -45,7 +45,6 @@ export const fetchContractAddresses = async (
       hardCodedShape(contractRegistry, label, ascii)
     );
     const [contractAddresses] = await ethMulti.all([hardCodedShapes]);
-
     const registeredContracts = Object.assign(
       {},
       ...contractAddresses
@@ -54,9 +53,9 @@ export const fetchContractAddresses = async (
       ([key, data]) => data === undefined
     );
     if (allUndefined) throw new Error('All requests returned undefined');
-
     return registeredContracts;
   } catch (e) {
+    console.error(e.message);
     throw new Error(e.message);
   }
 };

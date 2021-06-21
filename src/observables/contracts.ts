@@ -1,7 +1,13 @@
 import { fetchContractAddresses } from 'web3/contracts/addressLookup/wrapper';
 import { optimisticContract, switchMapIgnoreThrow } from './customOperators';
 import { networkVars$, supportedNetworkVersion$ } from './network';
-import { distinctUntilChanged, map, pluck, shareReplay } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  map,
+  pluck,
+  shareReplay,
+  switchMap,
+} from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
 import {
@@ -25,7 +31,7 @@ export const exchangeProxy$ = zeroXContracts$.pipe(
 );
 
 export const contractAddresses$ = networkVars$.pipe(
-  switchMapIgnoreThrow((networkVariables) => {
+  switchMap((networkVariables) => {
     return fetchContractAddresses(networkVariables.contractRegistry);
   }),
   distinctUntilChanged<RegisteredContracts>(isEqual),

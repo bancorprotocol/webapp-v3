@@ -12,8 +12,8 @@ export const SwapWidget = () => {
     (state) => state.bancorAPI.tokens
   );
 
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState(tokens[1]);
+  const [fromToken, setFromToken] = useState(tokens[25]);
+  const [toToken, setToToken] = useState(tokens[770]);
   const [isLimit, setIsLimit] = useState(false);
   const [isUsd, setIsUsd] = useState(false);
   const dispatch = useDispatch();
@@ -23,8 +23,8 @@ export const SwapWidget = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setFromToken(tokens[0]);
-    setToToken(tokens[1]);
+    setFromToken(tokens[25]);
+    setToToken(tokens[770]);
   }, [tokens]);
 
   const switchTokens = () => {
