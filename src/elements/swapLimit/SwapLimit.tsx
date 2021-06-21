@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
@@ -7,6 +7,8 @@ import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { random } from 'lodash';
+import { useInterval } from 'hooks/useInterval';
 
 enum Field {
   from,
@@ -32,67 +34,83 @@ export const SwapLimit = ({
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
+  const [marketRate, setMarketRate] = useState(-1);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
-
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
 
-  const rateImmed = useRef<string>();
-  const fromImmed = useRef<string>();
-  const toImmed = useRef<string>();
-  const percentages = [1, 3, 5];
+  const percentages = useMemo(() => [1, 3, 5], []);
 
-  const calcFrom = () => {
-    if (rateImmed.current && toImmed.current)
-      setFromAmount(
-        new BigNumber(toImmed.current)
-          .div(new BigNumber(rateImmed.current))
-          .toFixed(6)
-      );
-  };
-  const calcTo = () => {
-    if (rateImmed.current && fromImmed.current)
-      setToAmount(
-        new BigNumber(rateImmed.current)
-          .times(new BigNumber(fromImmed.current))
-          .toFixed(6)
-      );
-  };
-  const calcRate = () => {
-    if (fromImmed.current && toImmed.current)
-      setRate(
-        new BigNumber(toImmed.current)
-          .div(new BigNumber(fromImmed.current))
-          .toFixed(6)
-      );
-  };
+  useInterval(() => {
+    fetchMarketRate();
+  }, 5000);
 
-  const handleFieldChanged = (field: Field) => {
-    if (
-      previousField.current !== lastChangedField.current &&
-      lastChangedField.current !== field
-    )
-      previousField.current = lastChangedField.current;
-    lastChangedField.current = field;
+  const handleFieldChanged = useCallback(
+    (field: Field, from: string, to: string, rate: string) => {
+      if (
+        previousField.current !== lastChangedField.current &&
+        lastChangedField.current !== field
+      )
+        previousField.current = lastChangedField.current;
+      lastChangedField.current = field;
 
-    switch (field) {
-      case Field.from:
-        if (previousField.current === Field.to) calcRate();
-        else calcTo();
-        break;
-      case Field.to:
-        if (previousField.current === Field.from) calcRate();
-        else calcFrom();
-        break;
-      case Field.rate:
-        if (previousField.current === Field.from) calcTo();
-        else calcFrom();
-        break;
+      switch (field) {
+        case Field.from:
+          if (previousField.current === Field.to) calcRate(from, to);
+          else calcTo(from, rate);
+          break;
+        case Field.to:
+          if (previousField.current === Field.from) calcRate(from, to);
+          else calcFrom(to, rate);
+          break;
+        case Field.rate:
+          if (previousField.current === Field.from) calcTo(from, rate);
+          else calcFrom(to, rate);
+          break;
+      }
+    },
+    []
+  );
+
+  const calculateRateByMarket = useCallback(
+    (mRate: number, selPercentage: number, percentage: string) => {
+      const perc =
+        selPercentage === -1
+          ? Number(percentage) / 100
+          : percentages[selPercentage] / 100;
+      const rate = (mRate * (1 + perc)).toFixed(6);
+      handleFieldChanged(Field.rate, fromAmount, toAmount, rate);
+      setRate(rate);
+    },
+    [percentages, fromAmount, toAmount, handleFieldChanged]
+  );
+
+  const fetchMarketRate = useCallback(async () => {
+    //Fetch market rate
+    const mRate = random(10, 20);
+
+    if (marketRate === -1) {
+      calculateRateByMarket(mRate, selPercentage, percentage);
     }
+
+    setMarketRate(mRate);
+  }, [marketRate, calculateRateByMarket, selPercentage, percentage]);
+
+  const calcFrom = (to: string, rate: string) => {
+    if (rate && to)
+      setFromAmount(new BigNumber(to).div(new BigNumber(rate)).toFixed(6));
+  };
+  const calcTo = (from: string, rate: string) => {
+    if (rate && from)
+      setToAmount(new BigNumber(rate).times(new BigNumber(from)).toFixed(6));
+  };
+  const calcRate = (from: string, to: string) => {
+    if (from && to)
+      setRate(new BigNumber(to).div(new BigNumber(from)).toFixed(6));
   };
 
   return (
@@ -107,8 +125,7 @@ export const SwapLimit = ({
           input={fromAmount}
           onChange={(val: string) => {
             setFromAmount(val);
-            fromImmed.current = val;
-            handleFieldChanged(Field.from);
+            handleFieldChanged(Field.from, val, toAmount, rate);
           }}
           border
           selectable
@@ -132,8 +149,7 @@ export const SwapLimit = ({
             input={toAmount}
             onChange={(val: string) => {
               setToAmount(val);
-              toImmed.current = val;
-              handleFieldChanged(Field.to);
+              handleFieldChanged(Field.to, fromAmount, val, rate);
             }}
             selectable
           />
@@ -144,8 +160,7 @@ export const SwapLimit = ({
               input={rate}
               onChange={(val: string) => {
                 setRate(val);
-                rateImmed.current = val;
-                handleFieldChanged(Field.rate);
+                handleFieldChanged(Field.rate, fromAmount, toAmount, val);
               }}
             />
           </div>
@@ -157,6 +172,7 @@ export const SwapLimit = ({
                   'text-primary': selPercentage === index,
                 })}
                 onClick={() => {
+                  calculateRateByMarket(marketRate, index, '');
                   setSelPercentage(index);
                   setPercentage('');
                 }}
@@ -169,12 +185,13 @@ export const SwapLimit = ({
                 input={percentage}
                 onBlur={() => {
                   const index = percentages.indexOf(Number(percentage));
-                  if (index !== -1) {
-                    setPercentage('');
-                    setSelPercentage(index);
-                  }
+                  if (index !== -1) setPercentage('');
+                  setSelPercentage(index);
                 }}
-                setInput={setPercentage}
+                onChange={(val: string) => {
+                  calculateRateByMarket(marketRate, -1, val);
+                  setPercentage(val);
+                }}
                 format
               />
             </div>
