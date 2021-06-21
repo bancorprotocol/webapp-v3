@@ -147,6 +147,10 @@ export const SwapLimit = ({
     prevMarket,
   ]);
 
+  useEffect(() => {
+    fetchMarketRate();
+  }, [fetchMarketRate, fromToken, toToken]);
+
   return (
     <div>
       <div className="px-20">

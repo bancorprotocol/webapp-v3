@@ -21,7 +21,7 @@ export const SwapMarket = ({
   switchTokens,
 }: SwapMarketProps) => {
   const [fromAmount, setFromAmount] = useState('');
-  const [fromDebounce, setFromDebounce] = useDebounce('');
+  const [fromDebounce, setFromDebounce] = useDebounce('1');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
 
