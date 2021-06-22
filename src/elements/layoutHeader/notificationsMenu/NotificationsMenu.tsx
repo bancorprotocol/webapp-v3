@@ -21,7 +21,7 @@ export const NotificationsMenu = () => {
   useEffect(() => {
     const restored = localStorage.getItem('notifications');
     if (restored) dispatch(setNotifications(JSON.parse(restored)));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     localStorage.setItem('notifications', JSON.stringify(notifications));
