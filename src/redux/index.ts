@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 import { user } from 'redux/user/user';
 import { bancorAPI } from 'redux/bancorAPI/bancorAPI';
+import { bancor } from 'redux/bancor/bancor';
 
 export const store = configureStore({
   reducer: {
     user,
     bancorAPI,
+    bancor,
   },
 });
 

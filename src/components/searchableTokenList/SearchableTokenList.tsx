@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
+import { getLogoURI, TokenListItem } from 'observables/tokenList';
 
 export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
   const [search, setSearch] = useState('');
 
-  const tokens = useAppSelector<ViewToken[]>((state) => state.bancorAPI.tokens);
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancorAPI.tokens
+  );
   return (
     <>
       <div className="mb-20">
@@ -30,7 +33,7 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
             >
               <div className="flex items-center">
                 <img
-                  src={token.logoURI}
+                  src={getLogoURI(token)}
                   alt={'Token'}
                   className="bg-grey-2 rounded-full h-28 w-28"
                 />

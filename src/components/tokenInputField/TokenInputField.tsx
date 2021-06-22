@@ -3,7 +3,7 @@ import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ViewToken } from 'redux/bancorAPI/bancorAPI';
-import { TokenListItem } from 'observables/tokenList';
+import { getLogoURI, TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -67,12 +67,16 @@ export const TokenInputField = ({
           })}`}
           onClick={() => setIsOpen(true)}
         >
-          <img
-            src={token?.logoURI}
-            alt="Token"
-            className="bg-grey-2 rounded-full h-24 w-24"
-          />
-          <span className="text-20 mx-10">{token?.symbol}</span>
+          {token && (
+            <>
+              <img
+                src={getLogoURI(token)}
+                alt="Token"
+                className="bg-grey-2 rounded-full h-24 w-24"
+              />
+              )<span className="text-20 mx-10">{token.symbol}</span>
+            </>
+          )}
           {selectable && (
             <div>
               <IconChevronDown className="w-[10px] h-[6px] mr-10 text-grey-4 dark:text-grey-3" />

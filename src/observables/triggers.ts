@@ -1,9 +1,9 @@
-import { tokenList$ } from 'observables/tokenList';
-import { setPools, setTokens } from 'redux/bancorAPI/bancorAPI';
-import { pools$ } from 'observables/pools';
+import { tokenLists$, tokenList$, TokenListItem } from 'observables/tokenList';
+import { setTokenLists } from 'redux/bancor/bancor';
+import { setTokens } from 'redux/bancorAPI/bancorAPI';
+import { apiTokens$ } from './pools';
 
-export const loadSwapData = (dispatch: any) => {
-  tokenList$.subscribe((tokens) => {
-    dispatch(setTokens(tokens));
-  });
+export const loadSwapData = async (dispatch: any) => {
+  tokenLists$.subscribe((tokenList) => dispatch(setTokenLists(tokenList)));
+  tokenList$.subscribe((tokens) => dispatch(setTokens(tokens)));
 };
