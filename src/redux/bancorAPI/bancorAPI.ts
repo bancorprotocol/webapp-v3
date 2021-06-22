@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { WelcomeData } from 'api/bancor';
 
 export interface ViewToken {
+  id: string;
   symbol: string;
   name: string;
   logoURI: string;

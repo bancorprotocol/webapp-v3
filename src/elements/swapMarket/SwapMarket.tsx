@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { getRate } from 'web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import BigNumber from 'bignumber.js';
+import { useDispatch } from 'react-redux';
+import { addNotification } from 'redux/notification/notification';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -21,6 +23,8 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
+  const dispatch = useDispatch();
+
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
@@ -105,7 +109,22 @@ export const SwapMarket = ({
           </div>
         </div>
 
-        <button className="btn-primary rounded w-full">Swap</button>
+        <button
+          onClick={() =>
+            dispatch(
+              addNotification({
+                type: 'pending',
+                title: 'Test Notification',
+                msg: 'Some message here...',
+                txHash:
+                  '0x20d27ee47229981e5d8677387ca1d10cb0fe07b25861f09a37581a2ea916fb9c',
+              })
+            )
+          }
+          className="btn-primary rounded w-full"
+        >
+          Swap
+        </button>
       </div>
     </div>
   );
