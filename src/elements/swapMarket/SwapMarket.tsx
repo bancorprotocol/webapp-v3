@@ -4,6 +4,7 @@ import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
 import { getRate } from 'web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import BigNumber from 'bignumber.js';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -21,16 +22,36 @@ export const SwapMarket = ({
   switchTokens,
 }: SwapMarketProps) => {
   const [fromAmount, setFromAmount] = useState('');
-  const [fromDebounce, setFromDebounce] = useDebounce('1');
+  const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
+  const [priceImpact, setPriceImpact] = useState('');
 
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken && fromDebounce)
-        setRate(
-          await getRate(fromToken.address, toToken.address, fromDebounce)
-        );
+      if (fromToken && toToken) {
+        const baseRate = await getRate(fromToken, toToken, '1');
+        const rate = (Number(baseRate) / 1).toFixed(4);
+        setRate(rate);
+
+        const priceImpact = new BigNumber(baseRate)
+          .minus(rate)
+          .div(baseRate)
+          .times(100);
+        setPriceImpact(priceImpact.toFixed(5));
+      }
+    })();
+  }, [fromToken, toToken]);
+
+  useEffect(() => {
+    (async () => {
+      if (!fromDebounce) setToAmount('');
+      else if (fromToken && toToken) {
+        const result = await getRate(fromToken, toToken, fromDebounce);
+        const rate = (Number(result) / fromDebounce).toFixed(4);
+        setToAmount((fromDebounce * Number(rate)).toFixed(2));
+        setRate(rate);
+      }
     })();
   }, [fromToken, toToken, fromDebounce]);
 
@@ -80,7 +101,7 @@ export const SwapMarket = ({
 
           <div className="flex justify-between">
             <span>Price Impact</span>
-            <span>0.2000%</span>
+            <span>{priceImpact}%</span>
           </div>
         </div>
 

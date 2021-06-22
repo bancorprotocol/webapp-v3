@@ -129,9 +129,7 @@ export const SwapLimit = ({
   const fetchMarketRate = useCallback(async () => {
     if (!fromToken || !toToken) return;
 
-    const mRate = Number(
-      await getRate(fromToken.address, toToken.address, '1')
-    );
+    const mRate = Number(await getRate(fromToken, toToken, '1'));
 
     setMarketRate(mRate);
   }, [fromToken, toToken]);
