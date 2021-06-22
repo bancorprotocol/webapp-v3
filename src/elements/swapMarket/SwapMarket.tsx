@@ -22,26 +22,18 @@ export const SwapMarket = ({
   switchTokens,
 }: SwapMarketProps) => {
   const [fromAmount, setFromAmount] = useState('');
-  const [fromDebounce, setFromDebounce] = useDebounce('1');
+  const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
-  const [baseRate, setBaseRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
 
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken)
-        setBaseRate(await getRate(fromToken, toToken, '1'));
-    })();
-  }, [fromToken, toToken]);
-
-  useEffect(() => {
-    (async () => {
-      if (fromToken && toToken && fromDebounce) {
-        const result = await getRate(fromToken, toToken, fromDebounce);
-        setToAmount(result);
-        const rate = (Number(result) / fromDebounce).toFixed(4);
+      if (fromToken && toToken) {
+        const baseRate = await getRate(fromToken, toToken, '1');
+        const rate = (Number(baseRate) / 1).toFixed(4);
         setRate(rate);
+
         const priceImpact = new BigNumber(baseRate)
           .minus(rate)
           .div(baseRate)
@@ -49,7 +41,19 @@ export const SwapMarket = ({
         setPriceImpact(priceImpact.toFixed(5));
       }
     })();
-  }, [fromToken, toToken, fromDebounce, baseRate]);
+  }, [fromToken, toToken]);
+
+  useEffect(() => {
+    (async () => {
+      if (!fromDebounce) setToAmount('');
+      else if (fromToken && toToken) {
+        const result = await getRate(fromToken, toToken, fromDebounce);
+        const rate = (Number(result) / fromDebounce).toFixed(4);
+        setToAmount((fromDebounce * Number(rate)).toFixed(2));
+        setRate(rate);
+      }
+    })();
+  }, [fromToken, toToken, fromDebounce]);
 
   return (
     <div>
