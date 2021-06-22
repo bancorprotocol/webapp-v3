@@ -27,10 +27,11 @@ export const SwapMarket = ({
 
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken && fromDebounce)
-        setRate(
-          await getRate(fromToken.address, toToken.address, fromDebounce)
-        );
+      if (fromToken && toToken && fromDebounce) {
+        const result = await getRate(fromToken, toToken, fromDebounce);
+        setToAmount(result);
+        setRate((Number(result) / fromDebounce).toFixed(4));
+      }
     })();
   }, [fromToken, toToken, fromDebounce]);
 
