@@ -1,0 +1,18 @@
+@import 'tailwindcss/components';
+
+@layer components {
+    .dropdown-menu {
+        @apply absolute w-[306px] mt-40 py-20 px-24 -right-30 rounded z-10;
+        @apply bg-white dark:bg-blue-2;
+        @apply shadow-header dark:shadow-none;
+    }
+
+    .dropdown-bubble {
+        @apply absolute h-14 w-14 transform rotate-45 mt-[-26px] right-32;
+        @apply bg-white dark:bg-blue-2;
+    }
+
+    .dropdown-header {
+        @apply border-b border-grey-3 pb-15 mb-15 text-16 font-semibold;
+    }
+}
