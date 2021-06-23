@@ -23,8 +23,9 @@ export const SwapWidget = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setFromToken(tokens[25]);
-    setToToken(tokens[770]);
+    console.log('tokens', tokens);
+    setFromToken(tokens[0]);
+    setToToken(tokens[1]);
   }, [tokens]);
 
   const switchTokens = () => {

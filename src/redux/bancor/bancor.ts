@@ -19,7 +19,7 @@ const bancorSlice = createSlice({
       state.tokens_lists = action.payload;
     },
     setTokenList: (state, action) => {
-      state.tokens_lists = action.payload;
+      state.tokens = action.payload;
     },
   },
 });
