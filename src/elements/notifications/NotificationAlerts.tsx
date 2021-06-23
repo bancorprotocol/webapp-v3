@@ -1,9 +1,8 @@
 import { useAppSelector } from 'redux/index';
 import { Notification, hideAlert } from 'redux/notification/notification';
-import { Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
+import wait from 'waait';
+import { NotificationAlert } from 'elements/notifications/NotificationAlert';
 
 export const NotificationAlerts = () => {
   const dispatch = useDispatch();
@@ -11,6 +10,11 @@ export const NotificationAlerts = () => {
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
+
+  const hide = async (id: string) => {
+    await wait(1000);
+    dispatch(hideAlert(id));
+  };
 
   return (
     <div
@@ -20,26 +24,13 @@ export const NotificationAlerts = () => {
       <div className="w-full flex flex-col items-center space-y-15 sm:items-end">
         {notifications
           .filter((x) => x.showSeconds)
-          .map((notification, index) => {
+          .map((notification) => {
             return (
-              <Transition
+              <NotificationAlert
                 key={notification.id}
-                show={true}
-                as={Fragment}
-                enter="transform ease-out duration-300 transition"
-                enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-                enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-                leave="transition ease-in duration-100"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <div className="px-20 py-20 max-w-sm w-full bg-white shadow-header rounded pointer-events-auto overflow-hidden">
-                  <NotificationContent
-                    data={notification}
-                    onRemove={(id: string) => dispatch(hideAlert(id))}
-                  />
-                </div>
-              </Transition>
+                data={notification}
+                onRemove={hide}
+              />
             );
           })}
       </div>
