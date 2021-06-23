@@ -19,7 +19,7 @@ export interface WelcomeData {
   bnt_supply: string;
   swaps: Swap[];
   pools: Pool[];
-  tokens: Token[];
+  tokens: APIToken[];
 }
 
 export interface BntPrice {
@@ -57,7 +57,7 @@ export interface Swap {
   account_dlt_id: string;
 }
 
-export interface Token {
+export interface APIToken {
   symbol: string;
   dlt_id: string;
   liquidity: BntPrice;

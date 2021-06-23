@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/index';
 
 export const SwapWidget = () => {
   const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
+    (state) => state.bancor.tokens
   );
 
   const [fromToken, setFromToken] = useState(tokens[25]);
@@ -23,8 +23,9 @@ export const SwapWidget = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    setFromToken(tokens[25]);
-    setToToken(tokens[770]);
+    console.log('tokens', tokens);
+    setFromToken(tokens[0]);
+    setToToken(tokens[1]);
   }, [tokens]);
 
   const switchTokens = () => {

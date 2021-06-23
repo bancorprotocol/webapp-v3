@@ -128,7 +128,7 @@ export interface InfoResponse {
 
 export interface Result {
   orderDetails: OrderDetails;
-  tokenList: TokenList;
+  tokenList: DaoTokenList;
   recommendedMinTradeAmounts: RecommendedMinTradeAmounts;
 }
 
@@ -144,7 +144,7 @@ export interface RecommendedMinTradeAmounts {
   TODO: number;
 }
 
-export interface TokenList {
+export interface DaoTokenList {
   keywords: string[];
   logoURI: string;
   name: string;

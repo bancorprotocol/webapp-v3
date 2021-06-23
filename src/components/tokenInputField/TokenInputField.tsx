@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { ViewToken } from 'redux/bancorAPI/bancorAPI';
-import { TokenListItem } from 'observables/tokenList';
+import { getLogoURI, TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -68,11 +67,13 @@ export const TokenInputField = ({
           })}`}
           onClick={() => setIsOpen(true)}
         >
-          <img
-            src={token?.logoURI}
-            alt="Token"
-            className="bg-grey-2 rounded-full h-28 w-28"
-          />
+          {token && (
+            <img
+              src={getLogoURI(token)}
+              alt="Token"
+              className="bg-grey-2 rounded-full h-28 w-28"
+            />
+          )}
           <span className="text-20 mx-10">{token?.symbol}</span>
           {selectable && (
             <div>
@@ -98,14 +99,14 @@ export const TokenInputField = ({
           />
         </div>
       </div>
-      <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
-        <SearchableTokenList
-          onClick={(token: ViewToken) => {
-            setToken(token);
-            setIsOpen(false);
-          }}
-        />
-      </Modal>
+      <SearchableTokenList
+        onClick={(token: TokenListItem) => {
+          setToken(token);
+          setIsOpen(false);
+        }}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </div>
   );
 };
