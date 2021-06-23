@@ -1,10 +1,6 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import {
-  hideAlert,
-  Notification,
-  setStatus,
-} from 'redux/notification/notification';
+import { Notification, setStatus } from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect, useState } from 'react';
@@ -35,14 +31,16 @@ dayjs.updateLocale('en', {
   },
 });
 
-interface NotificationContentProps {
+export interface NotificationContentProps {
   data: Notification;
   onRemove: Function;
+  isAlert?: boolean;
 }
 
 export const NotificationContent = ({
   data,
   onRemove,
+  isAlert,
 }: NotificationContentProps) => {
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
 
@@ -65,24 +63,25 @@ export const NotificationContent = ({
       }
     };
 
-    checkStatus();
+    void checkStatus();
   }, delay);
 
   useEffect(() => {
+    if (!isAlert) return;
     setTimeout(() => {
-      dispatch(hideAlert(id));
+      onRemove(id);
     }, showSeconds! * 1000);
-  }, [dispatch, showSeconds, id]);
+  }, [isAlert, onRemove, showSeconds, id]);
 
   const StatusIcon = () => {
     switch (type) {
       case 'pending':
         return (
-          <>
+          <div className="relative flex justify-center items-center">
             <IconBancor className="absolute w-5 text-primary" />
             <div className="absolute w-14 h-14 border border-grey-1 rounded-full" />
             <div className="w-14 h-14 border-t border-r border-primary rounded-full animate-spin" />
-          </>
+          </div>
         );
       case 'success':
         return <IconCheck className="w-8 text-white" />;

@@ -2,37 +2,62 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'observables/tokenList';
 import { useEffect, useState } from 'react';
-import { useAppSelector } from 'redux/index';
 import { getRate } from 'web3/swap/methods';
+import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 
-export const SwapMarket = () => {
+interface SwapMarketProps {
+  fromToken: TokenListItem;
+  setFromToken: Function;
+  toToken: TokenListItem;
+  setToToken: Function;
+  switchTokens: Function;
+}
+
+export const SwapMarket = ({
+  fromToken,
+  setFromToken,
+  toToken,
+  setToToken,
+  switchTokens,
+}: SwapMarketProps) => {
   const dispatch = useDispatch();
 
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
-  );
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState(tokens[1]);
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
+  const [priceImpact, setPriceImpact] = useState('');
 
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken && fromDebounce)
-        setRate(
-          await getRate(fromToken.address, toToken.address, fromDebounce)
-        );
+      if (fromToken && toToken) {
+        const baseRate = await getRate(fromToken, toToken, '1');
+        const rate = (Number(baseRate) / 1).toFixed(4);
+        setRate(rate);
+
+        const priceImpact = new BigNumber(baseRate)
+          .minus(rate)
+          .div(baseRate)
+          .times(100);
+        setPriceImpact(priceImpact.toFixed(5));
+      }
     })();
-  }, [fromToken, toToken, fromDebounce]);
+  }, [fromToken, toToken]);
 
   useEffect(() => {
-    setFromToken(tokens[0]);
-    setToToken(tokens[1]);
-  }, [tokens]);
+    (async () => {
+      if (!fromDebounce) setToAmount('');
+      else if (fromToken && toToken) {
+        const result = await getRate(fromToken, toToken, fromDebounce);
+        const rate = (Number(result) / fromDebounce).toFixed(4);
+        setToAmount((fromDebounce * Number(rate)).toFixed(2));
+        setRate(rate);
+      }
+    })();
+  }, [fromToken, toToken, fromDebounce]);
 
   return (
     <div>
@@ -51,8 +76,14 @@ export const SwapMarket = () => {
         />
       </div>
 
-      <div className="widget-block mt-20">
-        <div className="mx-10 mb-16">
+      <div className="widget-block">
+        <div className="widget-block-icon cursor-pointer">
+          <IconSync
+            className="w-[25px] text-primary dark:text-primary-light"
+            onClick={() => switchTokens()}
+          />
+        </div>
+        <div className="mx-10 mb-16 pt-16">
           <TokenInputField
             label="You Receive"
             balance={123.4567}
@@ -67,12 +98,14 @@ export const SwapMarket = () => {
 
           <div className="flex justify-between mt-15">
             <span>Rate</span>
-            <span>1 BNT = 0.00155432 ETH</span>
+            <span>
+              1 {fromToken?.symbol} = {rate} {toToken?.symbol}
+            </span>
           </div>
 
           <div className="flex justify-between">
             <span>Price Impact</span>
-            <span>0.2000%</span>
+            <span>{priceImpact}%</span>
           </div>
         </div>
 

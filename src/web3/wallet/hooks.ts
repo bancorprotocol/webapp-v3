@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'web3/wallet/connectors';
 import { isAutoLogin, setAutoLogin } from 'utils/pureFunctions';
+import { web3 } from 'web3/contracts';
 
 export const useAutoConnect = () => {
   const { activate, active } = useWeb3React();
@@ -13,7 +14,8 @@ export const useAutoConnect = () => {
       injected.isAuthorized().then((isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true)
-            .then(() => {
+            .then(async () => {
+              web3.setProvider(await injected.getProvider());
               setAutoLogin(true);
               setTriedAutoLogin(true);
             })

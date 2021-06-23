@@ -5,6 +5,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { Modal } from 'components/modal/Modal';
 import { setAutoLogin } from 'utils/pureFunctions';
+import { web3 } from 'web3/contracts';
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -27,9 +28,10 @@ export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
 
     connector &&
       activate(connector, undefined, true)
-        .then(() => {
+        .then(async () => {
           setIsOpen(false);
           setAutoLogin(true);
+          web3.setProvider(await connector.getProvider());
         })
         .catch((error) => {
           if (error instanceof UnsupportedChainIdError) {

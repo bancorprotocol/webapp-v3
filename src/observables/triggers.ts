@@ -1,6 +1,5 @@
 import { tokenList$ } from 'observables/tokenList';
-import { setPools, setTokens } from 'redux/bancorAPI/bancorAPI';
-import { pools$ } from 'observables/pools';
+import { setTokens } from 'redux/bancorAPI/bancorAPI';
 
 export const loadSwapData = (dispatch: any) => {
   tokenList$.subscribe((tokens) => {
