@@ -2,12 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { TokenList, TokenListItem } from 'observables/tokenList';
 
 interface BancorState {
-  tokens_lists: TokenList[];
+  tokenLists: TokenList[];
   tokens: TokenListItem[];
 }
 
 export const initialState: BancorState = {
-  tokens_lists: [],
+  tokenLists: [],
   tokens: [],
 };
 
@@ -16,7 +16,7 @@ const bancorSlice = createSlice({
   initialState,
   reducers: {
     setTokenLists: (state, action) => {
-      state.tokens_lists = action.payload;
+      state.tokenLists = action.payload;
     },
     setTokenList: (state, action) => {
       state.tokens = action.payload;

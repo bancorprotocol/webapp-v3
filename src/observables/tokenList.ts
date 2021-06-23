@@ -76,6 +76,8 @@ export const getLogoURI = (token: TokenListItem) => {
 };
 
 export const getTokenListByUser = async (indexes: number[]) => {
+  if (indexes.length === 0) indexes = [0];
+
   const tokenLists = await tokenLists$.pipe(take(1)).toPromise();
   const apiTokens = (await apiTokens$.pipe(take(1)).toPromise()).map((x) => ({
     address: x.dlt_id,

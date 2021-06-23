@@ -99,14 +99,14 @@ export const TokenInputField = ({
           />
         </div>
       </div>
-      <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
-        <SearchableTokenList
-          onClick={(token: TokenListItem) => {
-            setToken(token);
-            setIsOpen(false);
-          }}
-        />
-      </Modal>
+      <SearchableTokenList
+        onClick={(token: TokenListItem) => {
+          setToken(token);
+          setIsOpen(false);
+        }}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </div>
   );
 };
