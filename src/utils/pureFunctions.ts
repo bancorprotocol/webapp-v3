@@ -28,6 +28,13 @@ export const sanitizeNumberInput = (input: string): string => {
     .replace(/x/, '.');
 };
 
+export const calculatePercentageChange = (
+  numberNow: number,
+  numberBefore: number
+): number => {
+  return Number(((numberNow / numberBefore - 1) * 100).toFixed(2));
+};
+
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {
     case EthNetworks.Mainnet:

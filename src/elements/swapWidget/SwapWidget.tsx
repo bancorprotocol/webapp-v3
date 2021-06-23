@@ -4,16 +4,33 @@ import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { loadSwapData } from 'observables/triggers';
 import { useDispatch } from 'react-redux';
+import { TokenListItem } from 'observables/tokenList';
+import { useAppSelector } from 'redux/index';
 
 export const SwapWidget = () => {
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancor.tokens
+  );
+
+  const [fromToken, setFromToken] = useState(tokens[25]);
+  const [toToken, setToToken] = useState(tokens[770]);
   const [isLimit, setIsLimit] = useState(false);
   const [isUsd, setIsUsd] = useState(false);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
     loadSwapData(dispatch);
   }, [dispatch]);
+
+  useEffect(() => {
+    setFromToken(tokens[25]);
+    setToToken(tokens[770]);
+  }, [tokens]);
+
+  const switchTokens = () => {
+    setFromToken(toToken);
+    setToToken(fromToken);
+  };
 
   return (
     <div className="widget mx-auto">
@@ -24,7 +41,23 @@ export const SwapWidget = () => {
         setIsUsd={setIsUsd}
       />
       <hr className="widget-separator" />
-      {isLimit ? <SwapLimit /> : <SwapMarket />}
+      {isLimit ? (
+        <SwapLimit
+          fromToken={fromToken}
+          setFromToken={setFromToken}
+          toToken={toToken}
+          setToToken={setToToken}
+          switchTokens={switchTokens}
+        />
+      ) : (
+        <SwapMarket
+          fromToken={fromToken}
+          setFromToken={setFromToken}
+          toToken={toToken}
+          setToToken={setToToken}
+          switchTokens={switchTokens}
+        />
+      )}
     </div>
   );
 };

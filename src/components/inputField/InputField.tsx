@@ -1,14 +1,16 @@
-import 'components/inputField/InputField.css';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
+import 'components/inputField/InputField.css';
 
 interface InputFieldProps {
   input: string;
-  setInput: Function;
+  setInput?: Function;
   placeholder?: string;
   disabled?: boolean;
   format?: boolean;
   bgGrey?: boolean;
   borderGrey?: boolean;
+  onChange?: Function;
+  onBlur?: Function;
 }
 
 export const InputField = ({
@@ -18,16 +20,14 @@ export const InputField = ({
   format,
   bgGrey,
   borderGrey,
+  onChange,
+  onBlur,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
     'input-field-border': borderGrey,
+    'text-right': format,
   })}`;
-
-  const handleChange = (text: string) => {
-    if (format) setInput(sanitizeNumberInput(text));
-    else setInput(text);
-  };
 
   return (
     <input
@@ -35,7 +35,13 @@ export const InputField = ({
       value={input}
       placeholder={placeholder}
       className={inputFieldStyles}
-      onChange={(event) => handleChange(event.target.value)}
+      onChange={(event) => {
+        const val = format
+          ? sanitizeNumberInput(event.target.value)
+          : event.target.value;
+        onChange ? onChange(val) : setInput && setInput(val);
+      }}
+      onBlur={() => onBlur && onBlur()}
     />
   );
 };

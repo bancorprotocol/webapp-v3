@@ -26,7 +26,7 @@ export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
         .map((token, index) => {
           return (
             <button
-              key={index}
+              key={'token_' + index}
               onClick={() => onClick(token)}
               className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
             >

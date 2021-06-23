@@ -1,19 +1,22 @@
-import { useState } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import check from 'assets/icons/check.svg';
 import 'components/dropdown/Dropdown.css';
 
+interface DropdownProps {
+  title: string;
+  items: { id: string; title: string; disabled?: boolean }[];
+  selected: any;
+  setSelected: Function;
+}
+
 export const Dropdown = ({
   title,
   items,
-}: {
-  title: string;
-  items: { id: string; title: string; disabled?: boolean }[];
-}) => {
-  const [selected, setSelected] = useState(items[0]);
-
+  selected,
+  setSelected,
+}: DropdownProps) => {
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected} onChange={(val) => setSelected(val)}>
       <Listbox.Button className="menu-button">{title}</Listbox.Button>
       <Transition
         enter="transition ease-out duration-100"

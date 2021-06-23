@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getLogoURI, TokenListItem } from 'observables/tokenList';
+import { TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -15,7 +15,8 @@ interface TokenInputFieldProps {
   selectable?: boolean;
   disabled?: boolean;
   input: string;
-  setInput: Function;
+  setInput?: Function;
+  onChange?: Function;
   token: TokenListItem;
   setToken: Function;
   debounce?: Function;
@@ -31,14 +32,14 @@ export const TokenInputField = ({
   setToken,
   input,
   setInput,
+  onChange,
   disabled,
   debounce,
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleChange = (text: string) => {
-    const txt = sanitizeNumberInput(text);
-    setInput(txt);
-    if (debounce) debounce(txt);
+    if (setInput) setInput(text);
+    if (debounce) debounce(text);
   };
 
   const placeholder = 'Enter token amount';
@@ -66,16 +67,12 @@ export const TokenInputField = ({
           })}`}
           onClick={() => setIsOpen(true)}
         >
-          {token && (
-            <>
-              <img
-                src={getLogoURI(token)}
-                alt="Token"
-                className="bg-grey-2 rounded-full h-24 w-24"
-              />
-              )<span className="text-20 mx-10">{token.symbol}</span>
-            </>
-          )}
+          <img
+            src={token?.logoURI}
+            alt="Token"
+            className="bg-grey-2 rounded-full h-28 w-28"
+          />
+          <span className="text-20 mx-10">{token?.symbol}</span>
           {selectable && (
             <div>
               <IconChevronDown className="w-[10px] h-[6px] mr-10 text-grey-4 dark:text-grey-3" />
@@ -93,7 +90,10 @@ export const TokenInputField = ({
             disabled={disabled}
             placeholder={placeholder}
             className={inputFieldStyles}
-            onChange={(event) => handleChange(event.target.value)}
+            onChange={(event) => {
+              const val = sanitizeNumberInput(event.target.value);
+              onChange ? onChange(val) : handleChange(val);
+            }}
           />
         </div>
       </div>
