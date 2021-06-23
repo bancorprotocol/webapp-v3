@@ -1,17 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { WelcomeData } from 'api/bancor';
 
-export interface ViewToken {
-  symbol: string;
-  name: string;
-  logoURI: string;
-}
-
 interface ViewPool {}
 
 interface InitialState {
   welcomeData: WelcomeData;
-  tokens: ViewToken[];
   pools: ViewPool[];
 }
 
@@ -26,7 +19,6 @@ export const initialState: InitialState = {
     pools: [],
     tokens: [],
   },
-  tokens: [],
   pools: [],
 };
 
@@ -37,15 +29,12 @@ const userSlice = createSlice({
     setWelcomeData: (bancorAPI, action) => {
       bancorAPI.welcomeData = action.payload;
     },
-    setTokens: (bancorAPI, action) => {
-      bancorAPI.tokens = action.payload;
-    },
     setPools: (bancorAPI, action) => {
       bancorAPI.pools = action.payload;
     },
   },
 });
 
-export const { setWelcomeData, setTokens, setPools } = userSlice.actions;
+export const { setWelcomeData, setPools } = userSlice.actions;
 
 export const bancorAPI = userSlice.reducer;

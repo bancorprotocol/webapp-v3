@@ -5,7 +5,7 @@ import { useAppSelector } from 'redux/index';
 
 export const SwapLimit = () => {
   const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
+    (state) => state.bancor.tokens
   );
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);

@@ -7,7 +7,7 @@ import { getRate } from 'web3/swap/methods';
 
 export const SwapMarket = () => {
   const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
+    (state) => state.bancor.tokens
   );
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);

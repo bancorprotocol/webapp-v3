@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { getLogoURI, TokenListItem } from 'observables/tokenList';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
@@ -100,7 +99,7 @@ export const TokenInputField = ({
       </div>
       <Modal title="Select a Token" isOpen={isOpen} setIsOpen={setIsOpen}>
         <SearchableTokenList
-          onClick={(token: ViewToken) => {
+          onClick={(token: TokenListItem) => {
             setToken(token);
             setIsOpen(false);
           }}

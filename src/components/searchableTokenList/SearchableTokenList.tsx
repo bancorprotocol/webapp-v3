@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import { ViewToken } from 'redux/bancorAPI/bancorAPI';
 import { getLogoURI, TokenListItem } from 'observables/tokenList';
 
 export const SearchableTokenList = ({ onClick }: { onClick: Function }) => {
   const [search, setSearch] = useState('');
 
   const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancorAPI.tokens
+    (state) => state.bancor.tokens
   );
   return (
     <>

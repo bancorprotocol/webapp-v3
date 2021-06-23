@@ -1,9 +1,16 @@
 import axios from 'axios';
 import { combineLatest, from, of } from 'rxjs';
-import { map, pluck, shareReplay } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  map,
+  pluck,
+  shareReplay,
+  take,
+} from 'rxjs/operators';
 import { EthNetworks } from 'web3/types';
-import { escapeRegExp, uniqWith } from 'lodash';
+import { differenceBy, differenceWith, uniqBy, uniqWith } from 'lodash';
 import { toChecksumAddress } from 'web3-utils';
+import { apiTokens$ } from './pools';
 
 export interface TokenList {
   name: string;
@@ -18,22 +25,18 @@ export interface TokenListItem {
   symbol: string;
   decimals: number;
   logoURI: string;
-}
-
-export interface MinimalTokenListItem {
-  address: string;
-  logoURI: string;
+  usdPrice: string | null;
 }
 
 const list_of_lists = [
   'https://tokens.1inch.eth.link',
+  'https://tokens.coingecko.com/uniswap/all.json',
   'https://tokenlist.aave.eth.link',
   'https://datafi.theagora.eth.link',
   'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
   'https://defi.cmc.eth.link',
   'https://stablecoin.cmc.eth.link',
   'https://erc20.cmc.eth.link',
-  'https://tokens.coingecko.com/uniswap/all.json',
   'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
   'https://defiprime.com/defiprime.tokenlist.json',
   'https://tokenlist.dharma.eth.link',
@@ -72,15 +75,32 @@ export const getLogoURI = (token: TokenListItem) => {
       )}/logo.png`;
 };
 
-const defaultTokenList$ = from(
-  axios.get<{ tokens: TokenListItem[] }>('https://tokens.1inch.eth.link')
-).pipe(pluck('data'), pluck('tokens'), shareReplay(1));
+export const getTokenListByUser = async (indexes: number[]) => {
+  const tokenLists = await tokenLists$.pipe(take(1)).toPromise();
+  const apiTokens = (await apiTokens$.pipe(take(1)).toPromise()).map((x) => ({
+    address: x.dlt_id,
+    symbol: x.symbol,
+    decimals: x.decimals,
+    usdPrice: x.rate.usd,
+  }));
+  let userPicked: TokenListItem[] = [];
+  tokenLists.forEach((list, index) => {
+    if (indexes.includes(index)) userPicked.push(...list.tokens);
+  });
 
-const userPicked$ = of<TokenListItem[]>([]).pipe(map((tokens) => tokens));
+  let overlappingTokens: TokenListItem[] = [];
+  apiTokens.forEach((apiToken) => {
+    const found = userPicked.find(
+      (userToken) =>
+        userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+    );
 
-export const tokenList$ = combineLatest([userPicked$, defaultTokenList$]).pipe(
-  map(([userPicked, tokenList]) => {
-    const mixed = [...userPicked, ...tokenList];
-    return uniqWith(mixed, (a, b) => a.address === b.address);
-  })
-);
+    if (found)
+      overlappingTokens.push({
+        ...found,
+        ...apiToken,
+      });
+  });
+
+  return overlappingTokens;
+};

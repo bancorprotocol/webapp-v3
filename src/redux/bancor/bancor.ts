@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TokenList } from 'api/keeperDao';
+import { TokenList, TokenListItem } from 'observables/tokenList';
 
 interface BancorState {
   tokens_lists: TokenList[];
+  tokens: TokenListItem[];
 }
 
 export const initialState: BancorState = {
   tokens_lists: [],
+  tokens: [],
 };
 
 const bancorSlice = createSlice({
@@ -16,9 +18,12 @@ const bancorSlice = createSlice({
     setTokenLists: (state, action) => {
       state.tokens_lists = action.payload;
     },
+    setTokenList: (state, action) => {
+      state.tokens_lists = action.payload;
+    },
   },
 });
 
-export const { setTokenLists } = bancorSlice.actions;
+export const { setTokenLists, setTokenList } = bancorSlice.actions;
 
 export const bancor = bancorSlice.reducer;
