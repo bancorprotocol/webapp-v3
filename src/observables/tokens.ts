@@ -1,16 +1,10 @@
 import axios from 'axios';
-import { combineLatest, from, of } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  pluck,
-  shareReplay,
-  take,
-} from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from, Subject } from 'rxjs';
+import { map, shareReplay, take } from 'rxjs/operators';
 import { EthNetworks } from 'web3/types';
-import { differenceBy, differenceWith, uniqBy, uniqWith } from 'lodash';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
+import { currentUser$ } from './currentUser';
 
 export interface TokenList {
   name: string;
@@ -56,6 +50,8 @@ const list_of_lists = [
   'https://tokenlist.zerion.eth.link',
 ];
 
+export const userLists$ = new BehaviorSubject<number[]>([]);
+
 export const tokenLists$ = from(
   Promise.all(
     list_of_lists.map(async (list) => {
@@ -65,6 +61,44 @@ export const tokenLists$ = from(
   )
 ).pipe(shareReplay(1));
 
+export const tokenList$ = combineLatest([
+  tokenLists$,
+  apiTokens$,
+  userLists$,
+]).pipe(
+  map(([tokenLists, apiTokens, userLists]) => {
+    if (userLists.length === 0) userLists = [0];
+
+    const newApiTokens = apiTokens.map((x) => ({
+      address: x.dlt_id,
+      symbol: x.symbol,
+      decimals: x.decimals,
+      usdPrice: x.rate.usd,
+    }));
+    let userPicked: TokenListItem[] = [];
+    tokenLists.forEach((list, index) => {
+      if (userLists.includes(index)) userPicked.push(...list.tokens);
+    });
+
+    let overlappingTokens: TokenListItem[] = [];
+    newApiTokens.forEach((apiToken) => {
+      const found = userPicked.find(
+        (userToken) =>
+          userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+      );
+
+      if (found)
+        overlappingTokens.push({
+          ...found,
+          ...apiToken,
+        });
+    });
+
+    return overlappingTokens;
+  }),
+  shareReplay(1)
+);
+
 export const getLogoURI = (token: TokenListItem) => {
   return token.logoURI
     ? token.logoURI.startsWith('ipfs')
@@ -73,36 +107,4 @@ export const getLogoURI = (token: TokenListItem) => {
     : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${toChecksumAddress(
         token.address
       )}/logo.png`;
-};
-
-export const getTokenListByUser = async (indexes: number[]) => {
-  if (indexes.length === 0) indexes = [0];
-
-  const tokenLists = await tokenLists$.pipe(take(1)).toPromise();
-  const apiTokens = (await apiTokens$.pipe(take(1)).toPromise()).map((x) => ({
-    address: x.dlt_id,
-    symbol: x.symbol,
-    decimals: x.decimals,
-    usdPrice: x.rate.usd,
-  }));
-  let userPicked: TokenListItem[] = [];
-  tokenLists.forEach((list, index) => {
-    if (indexes.includes(index)) userPicked.push(...list.tokens);
-  });
-
-  let overlappingTokens: TokenListItem[] = [];
-  apiTokens.forEach((apiToken) => {
-    const found = userPicked.find(
-      (userToken) =>
-        userToken.address.toLowerCase() === apiToken.address.toLowerCase()
-    );
-
-    if (found)
-      overlappingTokens.push({
-        ...found,
-        ...apiToken,
-      });
-  });
-
-  return overlappingTokens;
 };

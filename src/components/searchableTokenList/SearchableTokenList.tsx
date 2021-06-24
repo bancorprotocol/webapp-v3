@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import { getLogoURI, TokenList, TokenListItem } from 'observables/tokenList';
+import { getLogoURI, TokenList, TokenListItem } from 'observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
 import { useDispatch } from 'react-redux';

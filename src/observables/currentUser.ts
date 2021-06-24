@@ -3,10 +3,10 @@ import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 
 const currentUserReceiver$ = new Subject<string>();
 const chainIdReceiver$ = new Subject<number>();
-
-// const chainId$ = chainIdReceiver$.pipe(startWith(1));
 const onLogoutReceiver$ = new Subject<boolean>();
-// const onLogout$ = onLogoutReceiver$.pipe(distinctUntilChanged());
+
+//const chainId$ = chainIdReceiver$.pipe(startWith(1));
+//const onLogout$ = onLogoutReceiver$.pipe(distinctUntilChanged());
 
 export const currentUser$ = currentUserReceiver$.pipe(
   distinctUntilChanged(),
