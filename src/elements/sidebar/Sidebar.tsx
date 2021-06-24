@@ -119,6 +119,7 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
                   {...item}
                   isActive={activeNav === index}
                   isMinimized={isMinimized}
+                  setIsSidebarOpen={setIsSidebarOpen}
                 />
               );
             })}

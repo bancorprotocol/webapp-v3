@@ -7,6 +7,7 @@ import { classNameGenerator } from 'utils/pureFunctions';
 interface NavItemProps extends MenuItem {
   isActive: boolean;
   isMinimized: boolean;
+  setIsSidebarOpen?: Function;
 }
 
 export const NavItem = ({
@@ -16,6 +17,7 @@ export const NavItem = ({
   subMenu,
   isActive,
   isMinimized,
+  setIsSidebarOpen,
 }: NavItemProps) => {
   return (
     <>
@@ -52,7 +54,13 @@ export const NavItem = ({
         }}
       >
         {subMenu.map((subItem, index) => {
-          return <NavSubItem {...subItem} key={index} />;
+          return (
+            <NavSubItem
+              key={index}
+              {...subItem}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+          );
         })}
       </div>
     </>
