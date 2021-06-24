@@ -1,16 +1,16 @@
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { NavLink } from 'react-router-dom';
-import { MenuItem } from 'elements/sidebar/Sidebar';
-import { NavSubItem } from 'elements/sidebar/NavSubItem';
+import { MenuPrimaryItemSub } from 'elements/sidebar/menuPrimary/MenuPrimaryItemSub';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { MenuItem } from 'elements/sidebar/menuPrimary/MenuPrimary';
 
-interface NavItemProps extends MenuItem {
+interface MenuPrimaryItemProps extends MenuItem {
   isActive: boolean;
   isMinimized: boolean;
   setIsSidebarOpen?: Function;
 }
 
-export const NavItem = ({
+export const MenuPrimaryItem = ({
   label,
   to,
   icon,
@@ -18,7 +18,7 @@ export const NavItem = ({
   isActive,
   isMinimized,
   setIsSidebarOpen,
-}: NavItemProps) => {
+}: MenuPrimaryItemProps) => {
   return (
     <>
       <NavLink
@@ -55,7 +55,7 @@ export const NavItem = ({
       >
         {subMenu.map((subItem, index) => {
           return (
-            <NavSubItem
+            <MenuPrimaryItemSub
               key={index}
               {...subItem}
               setIsSidebarOpen={setIsSidebarOpen}

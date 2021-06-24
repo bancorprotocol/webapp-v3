@@ -382,6 +382,7 @@ module.exports = {
       ],
     },
     fontSize: {
+      10: ['0.625rem', { lineHeight: '1rem' }],
       12: ['0.75rem', { lineHeight: '1rem' }],
       14: ['0.875rem', { lineHeight: '1.25rem' }],
       base: ['1rem', { lineHeight: '1.5rem' }],

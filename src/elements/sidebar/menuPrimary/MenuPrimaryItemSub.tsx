@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router-dom';
-import { BaseMenuItem } from 'elements/sidebar/Sidebar';
+import { BaseMenuItem } from 'elements/sidebar/menuPrimary/MenuPrimary';
 
 interface NavSubItemProps extends BaseMenuItem {
   setIsSidebarOpen?: Function;
 }
 
-export const NavSubItem = ({
+export const MenuPrimaryItemSub = ({
   label,
   to,
   setIsSidebarOpen,

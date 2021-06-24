@@ -1,80 +1,15 @@
-import { useEffect, useState } from 'react';
-import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import { ReactComponent as IconBancorText } from 'assets/icons/bancorText.svg';
-import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
-import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { ReactComponent as IconEarn } from 'assets/icons/earn.svg';
-import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
-import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
-import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { classNameGenerator } from 'utils/pureFunctions';
-import { NavItem } from 'elements/sidebar/NavItem';
-import { useLocation } from 'react-router-dom';
-
-export interface BaseMenuItem {
-  label: string;
-  to: string;
-}
-
-export interface MenuItem extends BaseMenuItem {
-  icon: JSX.Element;
-  subMenu: BaseMenuItem[];
-}
+import { useState } from 'react';
+import { MenuPrimary } from 'elements/sidebar/menuPrimary/MenuPrimary';
+import { SidebarHeader } from 'elements/sidebar/SidebarHeader';
+import { MenuSecondary } from 'elements/sidebar/menuSecondary/MenuSecondary';
+import { SidebarFooter } from 'elements/sidebar/SidebarFooter';
 
 interface SidebarProps {
   setIsSidebarOpen?: Function;
 }
 
-const menu: MenuItem[] = [
-  {
-    label: 'Trade',
-    to: '/',
-    icon: <IconSync />,
-    subMenu: [
-      { label: 'Swap', to: '/' },
-      { label: 'Tokens', to: '/tokens' },
-    ],
-  },
-  {
-    label: 'Earn',
-    to: '/portfolio',
-    icon: <IconEarn />,
-    subMenu: [
-      { label: 'Pools', to: '/pools' },
-      { label: 'Portfolio', to: '/portfolio' },
-    ],
-  },
-  {
-    label: 'DAO',
-    to: '/governance',
-    icon: <IconVote />,
-    subMenu: [
-      { label: 'Governance', to: '/governance' },
-      { label: 'Vote', to: '/vote' },
-    ],
-  },
-  {
-    label: 'Fiat',
-    to: '/fiat',
-    icon: <IconFiat />,
-    subMenu: [],
-  },
-];
-
 export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
   const [isMinimized, setIsMinimized] = useState(false);
-  const [activeNav, setActiveNav] = useState(0);
-  const location = useLocation();
-
-  useEffect(() => {
-    setActiveNav(
-      menu.findIndex(
-        (x) =>
-          location.pathname === x.to ||
-          x.subMenu.some((sub) => sub.to === location.pathname)
-      )
-    );
-  }, [location]);
 
   return (
     <div
@@ -83,47 +18,27 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
       }`}
     >
       <div className="pt-[25px] h-screen bg-blue-4 rounded-r overflow-hidden">
-        <div className="w-[200px]">
-          <div className={'flex justify-between items-center'}>
-            <div className="flex items-center mb-5 pl-[25px] ">
-              <IconBancor className="w-[18px] mr-20" />
-              <IconBancorText className="w-[76px]" />
-            </div>
-            {setIsSidebarOpen ? (
-              <button onClick={() => setIsSidebarOpen(false)} className="mr-14">
-                <IconTimes className="w-15" />
-              </button>
-            ) : (
-              ''
-            )}
-          </div>
+        <div className="flex flex-col justify-between w-[200px] h-full">
+          <section>
+            <SidebarHeader
+              isMinimized={isMinimized}
+              setIsMinimized={setIsMinimized}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
 
-          <button
-            onClick={() => setIsMinimized(!isMinimized)}
-            className={'hidden md:block'}
-          >
-            <div
-              className={`sidebar-toggle ${classNameGenerator({
-                'rotate-180': !isMinimized,
-              })}`}
-            >
-              <IconChevron className={`w-[16px] text-white`} />
-            </div>
-          </button>
+            <MenuPrimary
+              isMinimized={isMinimized}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+          </section>
 
-          <nav className="mt-40">
-            {menu.map((item, index) => {
-              return (
-                <NavItem
-                  key={index}
-                  {...item}
-                  isActive={activeNav === index}
-                  isMinimized={isMinimized}
-                  setIsSidebarOpen={setIsSidebarOpen}
-                />
-              );
-            })}
-          </nav>
+          <section>
+            <MenuSecondary
+              isMinimized={isMinimized}
+              setIsSidebarOpen={setIsSidebarOpen}
+            />
+            <SidebarFooter isMinimized={isMinimized} />
+          </section>
         </div>
       </div>
     </div>
