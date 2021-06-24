@@ -1,4 +1,4 @@
-import { getWelcomeData, Pool, Token, WelcomeData } from 'api/bancor';
+import { getWelcomeData, Pool, APIToken, WelcomeData } from 'api/bancor';
 import { isEqual, partition, uniq, uniqBy, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
@@ -233,7 +233,7 @@ const possiblePaths = async (
 const hasAnchor = (anchor: string) => (pool: Pool) =>
   pool.pool_dlt_id === anchor;
 
-const hasTokenId = (tokenAddress: string) => (token: Token) =>
+const hasTokenId = (tokenAddress: string) => (token: APIToken) =>
   token.dlt_id === tokenAddress;
 
 const sortPathByBiggestStartingPool = (paths: TradePath[], pools: Pool[]) => {
