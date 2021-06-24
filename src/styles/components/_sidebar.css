@@ -1,0 +1,9 @@
+@import 'tailwindcss/components';
+
+@layer components {
+    .sidebar-toggle {
+        @apply absolute flex justify-center items-center right-0 -mr-12 w-[25px] h-[25px];
+        @apply transition-transform ease-in-out duration-700 transform transform-gpu;
+        @apply border-2 border-white rounded-full bg-blue-4;
+    }
+}

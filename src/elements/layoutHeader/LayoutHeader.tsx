@@ -1,5 +1,4 @@
 import 'elements/layoutHeader/LayoutHeader.css';
-import bancorLogo from 'assets/logos/bancor.svg';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { useState } from 'react';
 import { WalletModal } from 'elements/walletModal/WalletModal';
