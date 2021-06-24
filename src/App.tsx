@@ -12,6 +12,8 @@ import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setChainId, setUser } from 'observables/currentUser';
 import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
+import { Sidebar } from 'elements/sidebar/Sidebar';
+import { Tokens } from 'pages/Tokens';
 
 export const App = () => {
   const { chainId, account } = useWeb3React();
@@ -30,6 +32,7 @@ export const App = () => {
 
   return (
     <BrowserRouter>
+      <Sidebar />
       <LayoutHeader />
       <LayoutHeaderMobile />
       {loading ? (
@@ -37,11 +40,14 @@ export const App = () => {
       ) : unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <Switch>
-          <Route exact strict path="/" component={Swap} />
-          <Route exact strict path="/buttons" component={ButtonSamples} />
-          <Route component={NotFound} />
-        </Switch>
+        <main className="pt-[145px]">
+          <Switch>
+            <Route exact strict path="/" component={Swap} />
+            <Route exact strict path="/tokens" component={Tokens} />
+            <Route exact strict path="/buttons" component={ButtonSamples} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
       )}
       <NotificationAlerts />
     </BrowserRouter>

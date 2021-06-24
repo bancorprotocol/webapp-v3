@@ -1,9 +1,9 @@
 .layout-header {
-    @apply hidden md:flex items-center h-60 md:mb-[95px];
+    @apply hidden md:fixed w-full md:flex items-center h-60 z-10;
     @apply bg-white shadow-header;
     @apply dark:bg-blue-1 dark:shadow-none;
 }
 
 .layout-header-content {
-    @apply container mx-auto flex justify-between
+    @apply flex justify-between w-full pl-[240px] pr-40;
 }

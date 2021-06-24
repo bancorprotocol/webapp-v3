@@ -29,13 +29,6 @@ export const LayoutHeader = () => {
     <div className="layout-header">
       <div className="layout-header-content">
         <div className="flex items-center">
-          <a
-            href="https://app.bancor.network"
-            className="hover:underline text-12 text-primary mr-40"
-          >
-            <img src={bancorLogo} alt="Bancor Logo" className="h-24" />
-            Go back to Bancor V2
-          </a>
           <button className="btn-secondary btn-sm">
             <div
               className={`${
