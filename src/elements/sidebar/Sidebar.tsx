@@ -5,6 +5,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { MenuItem, NavItem } from 'elements/sidebar/NavItem';
+import { useLocation } from 'react-router-dom';
 
 const menu: MenuItem[] = [
   {
@@ -31,9 +32,19 @@ const menu: MenuItem[] = [
 
 export const Sidebar = () => {
   const [isMinimized, setIsMinimized] = useState(false);
-  const [activeNav, setActiveNav] = useState(
-    menu.findIndex((x) => window.location.pathname === x.to)
-  );
+  const [activeNav, setActiveNav] = useState(0);
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log('location.pathname', location.pathname);
+    setActiveNav(
+      menu.findIndex(
+        (x) =>
+          location.pathname === x.to ||
+          x.subMenu.some((sub) => sub.to === location.pathname)
+      )
+    );
+  }, [location]);
 
   return (
     <div
