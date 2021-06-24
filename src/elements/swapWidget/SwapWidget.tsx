@@ -4,7 +4,7 @@ import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { loadSwapData } from 'observables/triggers';
 import { useDispatch } from 'react-redux';
-import { TokenListItem } from 'observables/tokenList';
+import { TokenListItem } from 'observables/tokens';
 import { useAppSelector } from 'redux/index';
 
 export const SwapWidget = () => {
@@ -23,7 +23,6 @@ export const SwapWidget = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log('tokens', tokens);
     setFromToken(tokens[0]);
     setToToken(tokens[1]);
   }, [tokens]);

@@ -1,5 +1,6 @@
-import { getTokenListByUser, tokenLists$ } from 'observables/tokenList';
+import { tokenList$, tokenLists$, userLists$ } from 'observables/tokens';
 import { setTokenList, setTokenLists } from 'redux/bancor/bancor';
+import { take } from 'rxjs/operators';
 
 export const loadSwapData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -10,7 +11,8 @@ export const loadSwapData = (dispatch: any) => {
 };
 
 export const refreshTokenList = async (dispatch: any, userLists: number[]) => {
-  dispatch(setTokenList(await getTokenListByUser(userLists)));
+  userLists$.next(userLists);
+  dispatch(setTokenList(await tokenList$.pipe(take(1)).toPromise()));
 };
 
 const selected_lists = 'selected_lists';

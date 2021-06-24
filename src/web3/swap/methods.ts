@@ -2,7 +2,7 @@ import { conversionPath, getRateByPath } from 'web3/contracts/network/wrapper';
 import { web3 } from 'web3/contracts/index';
 import { contractAddresses$ } from 'observables/contracts';
 import { take } from 'rxjs/operators';
-import { TokenListItem } from 'observables/tokenList';
+import { TokenListItem } from 'observables/tokens';
 import { expandToken, shrinkToken } from 'helpers';
 
 export const getRate = async (

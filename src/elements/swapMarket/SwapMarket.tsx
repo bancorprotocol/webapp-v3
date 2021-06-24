@@ -1,6 +1,6 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
-import { TokenListItem } from 'observables/tokenList';
+import { TokenListItem } from 'observables/tokens';
 import { useEffect, useState } from 'react';
 import { getRate } from 'web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
