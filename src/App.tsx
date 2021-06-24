@@ -19,12 +19,14 @@ import { Portfolio } from 'pages/Portfolio';
 import { Governance } from 'pages/Governance';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
+import { Slideover } from 'components/slideover/Slideover';
 
 export const App = () => {
   const { chainId, account } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const triedAutoLogin = useAutoConnect();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
@@ -37,15 +39,24 @@ export const App = () => {
 
   return (
     <BrowserRouter>
-      <Sidebar />
+      <section className={'hidden md:block'}>
+        <Sidebar />
+      </section>
+      <section className={'md:hidden'}>
+        <Slideover isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}>
+          <div className="w-full w-[200px]">
+            <Sidebar setIsSidebarOpen={setIsSidebarOpen} />
+          </div>
+        </Slideover>
+      </section>
       <LayoutHeader />
-      <LayoutHeaderMobile />
+      <LayoutHeaderMobile setIsSidebarOpen={setIsSidebarOpen} />
       {loading ? (
         <Loading />
       ) : unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <main className="pt-[145px]">
+        <main className="pt-12 md:pt-[145px]">
           <Switch>
             <Route exact strict path="/" component={Swap} />
             <Route exact strict path="/tokens" component={Tokens} />
