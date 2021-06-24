@@ -1,5 +1,4 @@
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface MenuSubItem {
@@ -17,9 +16,13 @@ export interface MenuItem {
   subMenu: MenuSubItem[];
 }
 
-export const NavItem = ({ item }: { item: MenuItem }) => {
-  const [isActive, setIsActive] = useState(false);
-
+export const NavItem = ({
+  item,
+  isActive,
+}: {
+  item: MenuItem;
+  isActive: boolean;
+}) => {
   return (
     <div>
       <NavLink
@@ -27,16 +30,6 @@ export const NavItem = ({ item }: { item: MenuItem }) => {
         exact
         strict
         activeClassName="text-primary-light border-primary-light"
-        isActive={(match, location) => {
-          console.log('test');
-          if (!match) {
-            setIsActive(false);
-            return false;
-          }
-
-          setIsActive(true);
-          return true;
-        }}
         className={`flex items-center justify-between w-full text-16 font-semibold border-l-[5px] h-[44px] transition-all duration-500 ${
           isActive ? 'text-primary-light border-primary-light' : 'border-blue-4'
         }`}
@@ -62,6 +55,9 @@ export const NavItem = ({ item }: { item: MenuItem }) => {
         {item.subMenu.map((subItem) => {
           return (
             <NavLink
+              exact
+              strict
+              key={subItem.id}
               to={subItem.to}
               activeClassName="border-primary-light text-primary-light"
               className={`w-full flex items-center text-left border-l-2 border-grey-4 h-[28px] pl-30`}

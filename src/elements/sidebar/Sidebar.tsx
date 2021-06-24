@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { ReactComponent as IconBancorText } from 'assets/icons/bancorText.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
@@ -6,43 +6,34 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { MenuItem, NavItem } from 'elements/sidebar/NavItem';
 
+const menu: MenuItem[] = [
+  {
+    id: 0,
+    label: 'Trade',
+    to: '/',
+    icon: <IconSync />,
+    subMenu: [
+      { id: 0, label: 'Swap', to: '/' },
+      { id: 1, label: 'Tokens', to: '/tokens' },
+    ],
+  },
+  {
+    id: 1,
+    label: 'Earn',
+    to: '/404',
+    icon: <IconSync />,
+    subMenu: [
+      { id: 0, label: 'Pools', to: '/pools' },
+      { id: 1, label: 'Portfolio', to: '/portfolio' },
+    ],
+  },
+];
+
 export const Sidebar = () => {
   const [isMinimized, setIsMinimized] = useState(false);
-
-  const menu: MenuItem[] = [
-    {
-      id: 0,
-      label: 'Trade',
-      to: '/',
-      icon: <IconSync />,
-      subMenu: [
-        { id: 0, label: 'Swap', to: '/' },
-        { id: 1, label: 'Tokens', to: '/tokens' },
-      ],
-    },
-    {
-      id: 1,
-      label: 'Earn',
-      to: '/404',
-      icon: <IconSync />,
-      subMenu: [
-        { id: 0, label: 'Pools', to: '/' },
-        { id: 1, label: 'Portfolio', to: '/tokens' },
-      ],
-    },
-    {
-      id: 2,
-      label: 'Earn',
-      to: '/404',
-      icon: <IconSync />,
-      subMenu: [
-        { id: 0, label: 'Pools', to: '/' },
-        { id: 1, label: 'Portfolio', to: '/tokens' },
-      ],
-    },
-  ];
-
-  console.log(menu);
+  const [activeNav, setActiveNav] = useState(
+    menu.findIndex((x) => window.location.pathname === x.to)
+  );
 
   return (
     <div
@@ -70,8 +61,14 @@ export const Sidebar = () => {
           </button>
 
           <nav className="mt-40">
-            {menu.map((item) => {
-              return <NavItem key={item.id} item={item} />;
+            {menu.map((item, index) => {
+              return (
+                <NavItem
+                  key={item.id}
+                  item={item}
+                  isActive={activeNav === index}
+                />
+              );
             })}
           </nav>
         </div>
