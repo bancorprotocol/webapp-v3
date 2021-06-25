@@ -1,7 +1,7 @@
 export const SidebarFooter = ({ isMinimized }: { isMinimized: boolean }) => {
   return (
     <div
-      className={`flex justify-center items-center h-40 text-10 bg-black whitespace-nowrap bg-opacity-30 rounded-br`}
+      className={`flex justify-center items-center h-40 text-10 bg-black bg-opacity-30 rounded-br`}
     >
       <span
         className={`transition-all duration-500 ease-in-out ${

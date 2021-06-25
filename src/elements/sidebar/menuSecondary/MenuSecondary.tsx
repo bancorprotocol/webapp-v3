@@ -62,22 +62,22 @@ const menu: SecondaryMenuItem[] = [
     subMenu: [
       {
         label: 'Twitter',
-        to: 'https://x.bancor.network',
+        to: 'https://twitter.com/Bancor',
         icon: <IconTwitter />,
       },
       {
         label: 'Reddit',
-        to: 'https://x.bancor.network',
+        to: 'https://www.reddit.com/r/Bancor/',
         icon: <IconReddit />,
       },
       {
         label: 'Telegram',
-        to: 'https://x.bancor.network',
+        to: 'https://t.me/bancor',
         icon: <IconTelegram />,
       },
       {
         label: 'Discord',
-        to: 'https://x.bancor.network',
+        to: 'https://discord.gg/CAm3Ncyrxk',
         icon: <IconDiscord />,
       },
     ],
@@ -88,17 +88,17 @@ const menu: SecondaryMenuItem[] = [
     subMenu: [
       {
         label: 'Docs',
-        to: 'https://x.bancor.network',
+        to: 'https://docs.bancor.network/',
         icon: <IconDocument />,
       },
       {
         label: 'GitHub',
-        to: 'https://x.bancor.network',
+        to: 'https://github.com/bancorprotocol/',
         icon: <IconGithub />,
       },
       {
         label: 'Telegram',
-        to: 'https://x.bancor.network',
+        to: 'https://t.me/BancorDevelopers',
         icon: <IconTelegram />,
       },
     ],
