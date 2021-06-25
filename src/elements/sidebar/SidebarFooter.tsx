@@ -1,5 +1,3 @@
-import { classNameGenerator } from 'utils/pureFunctions';
-
 export const SidebarFooter = ({ isMinimized }: { isMinimized: boolean }) => {
   return (
     <div
