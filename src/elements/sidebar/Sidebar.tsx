@@ -17,9 +17,9 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
         isMinimized ? 'w-[66px]' : 'w-[200px]'
       }`}
     >
-      <div className="pt-[25px] h-screen bg-blue-4 rounded-r overflow-hidden">
-        <div className="flex flex-col justify-between w-[200px] h-full">
-          <section>
+      <div className="pt-[25px] h-screen bg-blue-4 rounded-r ">
+        <div className="flex flex-col justify-between h-full">
+          <section className="overflow-hidden">
             <SidebarHeader
               isMinimized={isMinimized}
               setIsMinimized={setIsMinimized}

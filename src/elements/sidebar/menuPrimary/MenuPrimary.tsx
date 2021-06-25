@@ -75,7 +75,7 @@ export const MenuPrimary = ({
   }, [location]);
 
   return (
-    <nav className="mt-40">
+    <nav className="mt-30">
       {menu.map((item, index) => {
         return (
           <MenuPrimaryItem
