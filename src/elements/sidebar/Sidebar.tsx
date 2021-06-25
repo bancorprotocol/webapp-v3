@@ -13,7 +13,7 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
 
   return (
     <div
-      className={`fixed text-grey-2 transition-all duration-700 ease-in-out z-20 ${
+      className={`fixed text-grey-2 transition-all duration-500 ease-in-out z-20 ${
         isMinimized ? 'w-[66px]' : 'w-[200px]'
       }`}
     >
@@ -33,10 +33,7 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
           </section>
 
           <section>
-            <MenuSecondary
-              isMinimized={isMinimized}
-              setIsSidebarOpen={setIsSidebarOpen}
-            />
+            <MenuSecondary isMinimized={isMinimized} />
             <SidebarFooter isMinimized={isMinimized} />
           </section>
         </div>
