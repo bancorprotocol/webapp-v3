@@ -6,19 +6,20 @@ import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
 import { ButtonSamples } from 'pages/ButtonSamples';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
-import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
-import { useAutoConnect } from 'web3/wallet/hooks';
-import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { setChainId, setUser } from 'observables/currentUser';
-import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
-import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
-import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Tokens } from 'pages/Tokens';
 import { Pools } from 'pages/Pools';
 import { Portfolio } from 'pages/Portfolio';
 import { Governance } from 'pages/Governance';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
+import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
+import { useAutoConnect } from 'web3/wallet/hooks';
+import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
+import { setUser } from 'observables/user';
+import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
+import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
+import { setNetwork } from 'observables/network';
+import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 
 export const App = () => {
@@ -34,7 +35,7 @@ export const App = () => {
 
   useEffect(() => {
     setUser(account);
-    setChainId(chainId);
+    if (chainId) setNetwork(chainId);
   }, [account, chainId]);
 
   return (

@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import { getLogoURI, TokenList, TokenListItem } from 'observables/tokens';
+import {
+  getLogoURI,
+  TokenList,
+  TokenListItem,
+  userLists$,
+} from 'observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
 import { useDispatch } from 'react-redux';
-import {
-  getLSTokenList,
-  refreshTokenList,
-  setLSTokenList,
-} from 'observables/triggers';
+import { getLSTokenList, setLSTokenList } from 'observables/triggers';
 
 export const SearchableTokenList = ({
   onClick,
@@ -41,7 +42,7 @@ export const SearchableTokenList = ({
 
     setLSTokenList(newUserLists);
     setUserLists(newUserLists);
-    refreshTokenList(dispatch, newUserLists);
+    userLists$.next(userLists);
   };
 
   return (
@@ -110,7 +111,7 @@ export const SearchableTokenList = ({
                         <div className="text-12 text-grey-3">{token.name}</div>
                       </div>
                     </div>
-                    <div>230.345</div>
+                    <div>{token.balance}</div>
                   </button>
                 );
               })}

@@ -16,7 +16,7 @@ import {
 import { ConverterAndAnchor } from 'web3/types';
 import { bancorConverterRegistry$, bancorNetwork$ } from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
-import { supportedNetworkVersion$ } from './network';
+import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
 import {
   getAnchors,
@@ -36,8 +36,7 @@ import { getRateByPath } from 'web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
 
-import { current } from 'immer';
-import { currentUser$ } from './currentUser';
+import { user$ } from './user';
 import {
   approvedStatus,
   buildTokenContract,
@@ -59,10 +58,7 @@ const zipAnchorAndConverters = (
   }));
 };
 
-export const apiData$ = combineLatest([
-  supportedNetworkVersion$,
-  fifteenSeconds$,
-]).pipe(
+export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
   distinctUntilChanged<WelcomeData>(isEqual),
   share()
@@ -401,7 +397,7 @@ const swapTx$ = tradeAndPath$.pipe(
       success: '',
     })
   ),
-  withLatestFrom(apiTokens$, bancorNetwork$, currentUser$),
+  withLatestFrom(apiTokens$, bancorNetwork$, user$),
   switchMap(
     async ([{ path, trade }, tokens, networkContractAddress, currentUser]) => {
       const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));

@@ -1,6 +1,6 @@
 import { conversionPath, getRateByPath } from 'web3/contracts/network/wrapper';
-import { web3 } from 'web3/contracts/index';
-import { contractAddresses$ } from 'observables/contracts';
+import { web3 } from 'web3/contracts';
+import { bancorNetwork$ } from 'observables/contracts';
 import { take } from 'rxjs/operators';
 import { TokenListItem } from 'observables/tokens';
 import { expandToken, shrinkToken } from 'helpers';
@@ -10,9 +10,7 @@ export const getRate = async (
   toToken: TokenListItem,
   amount: string
 ): Promise<string> => {
-  const networkContractAddress = (
-    await contractAddresses$.pipe(take(1)).toPromise()
-  ).BancorNetwork;
+  const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const path = await conversionPath({
     from: fromToken.address,
