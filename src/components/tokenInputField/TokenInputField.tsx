@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
+import {
+  classNameGenerator,
+  sanitizeNumberInput,
+  usdByToken,
+} from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { getLogoURI, TokenListItem } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
@@ -8,8 +12,8 @@ import 'components/inputField/InputField.css';
 
 interface TokenInputFieldProps {
   label: string;
-  balance: number;
-  balanceUsd: number;
+  balance: string | null;
+  balanceUsd: string | null;
   border?: boolean;
   selectable?: boolean;
   disabled?: boolean;
@@ -50,13 +54,15 @@ export const TokenInputField = ({
     <div>
       <div className="flex justify-between pr-10">
         <span className="font-medium">{label}</span>
-        <button
-          onClick={() => handleChange(balance.toString())}
-          className="text-12 cursor-pointer focus:outline-none"
-        >
-          Balance: {balance}
-          <span className="text-primary ml-4">(~${balanceUsd})</span>
-        </button>
+        {balance && (
+          <button
+            onClick={() => handleChange(balance.toString())}
+            className="text-12 cursor-pointer focus:outline-none"
+          >
+            Balance: {balance}
+            <span className="text-primary ml-4">(~${balanceUsd})</span>
+          </button>
+        )}
       </div>
 
       <div className="flex items-center">
@@ -83,7 +89,7 @@ export const TokenInputField = ({
 
         <div className="relative w-full">
           <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-            ~$123.56
+            {input !== '' && `~$${usdByToken(token, input)}`}
           </div>
           <input
             type="text"

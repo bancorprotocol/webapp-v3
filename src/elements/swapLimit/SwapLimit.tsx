@@ -9,6 +9,7 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import {
   calculatePercentageChange,
   classNameGenerator,
+  usdByToken,
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/methods';
@@ -154,8 +155,8 @@ export const SwapLimit = ({
       <div className="px-20">
         <TokenInputField
           label="You Pay"
-          balance={123.4567}
-          balanceUsd={98.76}
+          balance={fromToken ? fromToken.balance : null}
+          balanceUsd={usdByToken(fromToken)}
           token={fromToken}
           setToken={setFromToken}
           input={fromAmount}
@@ -178,8 +179,8 @@ export const SwapLimit = ({
         <div className="mx-10 mb-16 pt-16">
           <TokenInputField
             label="You Receive"
-            balance={123.4567}
-            balanceUsd={98.76}
+            balance={toToken ? toToken.balance : null}
+            balanceUsd={usdByToken(toToken)}
             token={toToken}
             setToken={setToToken}
             input={toAmount}
