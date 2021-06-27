@@ -1,5 +1,5 @@
 import { conversionPath, getRateByPath } from 'web3/contracts/network/wrapper';
-import { web3 } from 'web3/contracts/index';
+import { web3 } from 'web3/contracts';
 import { contractAddresses$ } from 'observables/contracts';
 import { take } from 'rxjs/operators';
 import { TokenListItem } from 'observables/tokens';

@@ -13,6 +13,8 @@ import { setUser } from 'observables/user';
 import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'observables/network';
+import { web3 } from 'web3/contracts';
+import { provider } from 'web3/wallet/connectors';
 
 export const App = () => {
   const { chainId, account } = useWeb3React();
@@ -23,6 +25,10 @@ export const App = () => {
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
   }, [setLoading, chainId, triedAutoLogin]);
+
+  useEffect(() => {
+    web3.setProvider(provider);
+  }, []);
 
   useEffect(() => {
     setUser(account);

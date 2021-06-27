@@ -1,6 +1,6 @@
 import { EthNetworks } from 'web3/types';
 import { buildTokenContract } from 'web3/contracts/token/wrapper';
-import { web3 } from 'web3/contracts/index';
+import { web3 } from 'web3/contracts';
 import { DataTypes, MultiCall, ShapeWithLabel } from 'eth-multicall';
 import { getNetworkVariables } from 'web3/config';
 

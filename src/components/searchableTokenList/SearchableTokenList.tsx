@@ -110,7 +110,7 @@ export const SearchableTokenList = ({
                         <div className="text-12 text-grey-3">{token.name}</div>
                       </div>
                     </div>
-                    <div>230.345</div>
+                    <div>{token.balance}</div>
                   </button>
                 );
               })}

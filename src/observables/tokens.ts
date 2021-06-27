@@ -105,7 +105,6 @@ export const tokenList$ = combineLatest([
           user,
           currentNetwork
         );
-      console.log('overlappingTokens', overlappingTokens);
 
       return overlappingTokens;
     }
