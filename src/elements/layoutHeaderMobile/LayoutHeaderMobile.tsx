@@ -4,13 +4,18 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 
-export const LayoutHeaderMobile = () => {
+interface LayoutHeaderMobileProps {
+  setIsSidebarOpen: Function;
+}
+export const LayoutHeaderMobile = ({
+  setIsSidebarOpen,
+}: LayoutHeaderMobileProps) => {
   return (
     <div className="layout-header-mobile">
       <div className="layout-header-mobile-content text-white">
-        <div>
+        <button onClick={() => setIsSidebarOpen(true)}>
           <IconHamburger className="w-[27px]" />
-        </div>
+        </button>
         <div className="flex justify-center">
           <IconBancor className="w-[23px]" />
         </div>
