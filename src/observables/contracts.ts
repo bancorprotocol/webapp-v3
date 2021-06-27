@@ -1,6 +1,6 @@
 import { fetchContractAddresses } from 'web3/contracts/addressLookup/wrapper';
 import { optimisticContract, switchMapIgnoreThrow } from './customOperators';
-import { networkVars$, supportedNetworkVersion$ } from './network';
+import { currentNetwork$, networkVars$ } from './network';
 import {
   distinctUntilChanged,
   map,
@@ -18,9 +18,9 @@ import { toChecksumAddress } from 'web3-utils';
 import { RegisteredContracts } from 'web3/types';
 import { Observable } from 'rxjs';
 
-const zeroXContracts$ = supportedNetworkVersion$.pipe(
-  switchMapIgnoreThrow(async (networkVersion) =>
-    getContractAddressesForChainOrThrow(networkVersion as number)
+const zeroXContracts$ = currentNetwork$.pipe(
+  switchMapIgnoreThrow(async (currentNetwork) =>
+    getContractAddressesForChainOrThrow(currentNetwork as number)
   )
 );
 

@@ -1,10 +1,13 @@
 import axios from 'axios';
-import { BehaviorSubject, combineLatest, from, Subject } from 'rxjs';
-import { map, shareReplay, take } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
-import { currentUser$ } from './currentUser';
+import { user$ } from './user';
+import { fetchTokenBalances } from './balances';
+import { switchMapIgnoreThrow } from './customOperators';
+import { currentNetwork$ } from './network';
 
 export interface TokenList {
   name: string;
@@ -20,6 +23,7 @@ export interface TokenListItem {
   decimals: number;
   logoURI: string;
   usdPrice: string | null;
+  balance: string | null;
 }
 
 const list_of_lists = [
@@ -65,37 +69,47 @@ export const tokenList$ = combineLatest([
   tokenLists$,
   apiTokens$,
   userLists$,
+  user$,
+  currentNetwork$,
 ]).pipe(
-  map(([tokenLists, apiTokens, userLists]) => {
-    if (userLists.length === 0) userLists = [0];
+  switchMapIgnoreThrow(
+    async ([tokenLists, apiTokens, userLists, user, currentNetwork]) => {
+      if (userLists.length === 0) userLists = [0];
 
-    const newApiTokens = apiTokens.map((x) => ({
-      address: x.dlt_id,
-      symbol: x.symbol,
-      decimals: x.decimals,
-      usdPrice: x.rate.usd,
-    }));
-    let userPicked: TokenListItem[] = [];
-    tokenLists.forEach((list, index) => {
-      if (userLists.includes(index)) userPicked.push(...list.tokens);
-    });
+      const newApiTokens = apiTokens.map((x) => ({
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice: x.rate.usd,
+      }));
+      let userPicked: TokenListItem[] = [];
+      tokenLists.forEach((list, index) => {
+        if (userLists.includes(index)) userPicked.push(...list.tokens);
+      });
 
-    let overlappingTokens: TokenListItem[] = [];
-    newApiTokens.forEach((apiToken) => {
-      const found = userPicked.find(
-        (userToken) =>
-          userToken.address.toLowerCase() === apiToken.address.toLowerCase()
-      );
+      let overlappingTokens: TokenListItem[] = [];
+      newApiTokens.forEach((apiToken) => {
+        const found = userPicked.find(
+          (userToken) =>
+            userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+        );
+        if (found)
+          overlappingTokens.push({
+            ...found,
+            ...apiToken,
+          });
+      });
+      if (user)
+        overlappingTokens = await fetchTokenBalances(
+          overlappingTokens,
+          user,
+          currentNetwork
+        );
+      console.log('overlappingTokens', overlappingTokens);
 
-      if (found)
-        overlappingTokens.push({
-          ...found,
-          ...apiToken,
-        });
-    });
-
-    return overlappingTokens;
-  }),
+      return overlappingTokens;
+    }
+  ),
   shareReplay(1)
 );
 

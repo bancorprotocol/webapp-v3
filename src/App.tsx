@@ -9,9 +9,10 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { setChainId, setUser } from 'observables/currentUser';
+import { setUser } from 'observables/user';
 import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
+import { setNetwork } from 'observables/network';
 
 export const App = () => {
   const { chainId, account } = useWeb3React();
@@ -25,7 +26,7 @@ export const App = () => {
 
   useEffect(() => {
     setUser(account);
-    setChainId(chainId);
+    if (chainId) setNetwork(chainId);
   }, [account, chainId]);
 
   return (

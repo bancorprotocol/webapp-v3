@@ -1,7 +1,6 @@
+import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import { CallReturn } from 'eth-multicall';
-import { current } from 'immer';
-import Web3 from 'web3';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'web3/types';
 import { buildContract, web3 } from '..';
