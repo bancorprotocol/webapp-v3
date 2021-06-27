@@ -5,7 +5,7 @@ import { App } from 'App';
 import { store } from 'redux/index';
 import reportWebVitals from 'reportWebVitals';
 import { I18nProvider } from 'i18n/i18nProvider';
-import { getLibrary } from 'web3/wallet/utils';
+import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 

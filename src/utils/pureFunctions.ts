@@ -1,4 +1,5 @@
-import { EthNetworks } from 'web3/types';
+import BigNumber from 'bignumber.js';
+import { EthNetworks } from 'services/web3/types';
 
 export const shortenString = (
   string: string,
@@ -61,4 +62,56 @@ export const setAutoLogin = (flag: boolean) => {
 
 export const isAutoLogin = (): boolean => {
   return localStorage.getItem(autoLogin) === 'true';
+};
+
+export const findOrThrow = <T>(
+  arr: readonly T[],
+  iteratee: (obj: T, index: number, arr: readonly T[]) => unknown,
+  message?: string
+) => {
+  const res = arr.find(iteratee);
+  if (!res)
+    throw new Error(message || 'Failed to find object in find or throw');
+  return res;
+};
+
+export const expandToken = (amount: string | number, precision: number) => {
+  const trimmed = new BigNumber(amount).toFixed(precision, 1);
+  const inWei = new BigNumber(trimmed)
+    .times(new BigNumber(10).pow(precision))
+    .toFixed(0);
+  return inWei;
+};
+
+export const shrinkToken = (
+  amount: string | number,
+  precision: number,
+  chopZeros = false
+) => {
+  if (!Number.isInteger(precision))
+    throw new Error(
+      `Must be passed integer to shrink token, received ${precision}`
+    );
+  const res = new BigNumber(amount)
+    .div(new BigNumber(10).pow(precision))
+    .toFixed(precision, BigNumber.ROUND_DOWN);
+
+  return chopZeros ? new BigNumber(res).toString() : res;
+};
+
+export const updateArray = <T>(
+  arr: T[],
+  conditioner: (element: T) => boolean,
+  updater: (element: T) => T
+) => arr.map((element) => (conditioner(element) ? updater(element) : element));
+
+export const mapIgnoreThrown = async <T, V>(
+  input: readonly T[],
+  iteratee: (value: T, index: number) => Promise<V>
+): Promise<V[]> => {
+  const IGNORE_TOKEN = 'IGNORE_TOKEN';
+  const res = await Promise.all(
+    input.map((val, index) => iteratee(val, index).catch(() => IGNORE_TOKEN))
+  );
+  return res.filter((res) => res !== IGNORE_TOKEN) as V[];
 };

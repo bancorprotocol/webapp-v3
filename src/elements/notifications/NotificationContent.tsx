@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { web3 } from 'web3/contracts';
+import { web3 } from 'services/web3/contracts';
 import { useInterval } from 'hooks/useInterval';
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);

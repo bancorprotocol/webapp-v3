@@ -8,7 +8,7 @@ import {
   setAutoLogin,
   shortenString,
 } from 'utils/pureFunctions';
-import { EthNetworks } from 'web3/types';
+import { EthNetworks } from 'services/web3/types';
 import { FormattedMessage } from 'react-intl';
 import { NotificationsMenu } from 'elements/layoutHeader/notificationsMenu/NotificationsMenu';
 import { SettingsMenu } from 'elements/layoutHeader/settingsMenu/SettingsMenu';

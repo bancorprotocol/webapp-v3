@@ -13,12 +13,12 @@ import { Governance } from 'pages/Governance';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
-import { useAutoConnect } from 'web3/wallet/hooks';
+import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
-import { setUser } from 'observables/user';
+import { setUser } from 'services/observables/user';
 import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
-import { setNetwork } from 'observables/network';
+import { setNetwork } from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 

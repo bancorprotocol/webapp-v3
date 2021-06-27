@@ -4,14 +4,14 @@ import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
-import { TokenListItem } from 'observables/tokens';
+import { TokenListItem } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import {
   calculatePercentageChange,
   classNameGenerator,
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
-import { getRate } from 'web3/swap/methods';
+import { getRate } from 'services/web3/swap/methods';
 import usePrevious from 'hooks/usePrevious';
 
 enum Field {

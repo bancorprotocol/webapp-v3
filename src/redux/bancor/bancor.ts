@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TokenList, TokenListItem } from 'observables/tokens';
+import { TokenList, TokenListItem } from 'services/observables/tokens';
 
 interface BancorState {
   tokenLists: TokenList[];

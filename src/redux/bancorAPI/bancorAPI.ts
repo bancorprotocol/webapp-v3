@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { WelcomeData } from 'api/bancor';
+import { WelcomeData } from 'services/api/bancor';
 
 interface ViewPool {}
 

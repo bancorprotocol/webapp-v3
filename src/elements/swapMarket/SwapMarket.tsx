@@ -1,8 +1,8 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
-import { TokenListItem } from 'observables/tokens';
+import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getRate } from 'web3/swap/methods';
+import { getRate } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';

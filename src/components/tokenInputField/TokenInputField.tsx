@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getLogoURI, TokenListItem } from 'observables/tokens';
+import { getLogoURI, TokenListItem } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';

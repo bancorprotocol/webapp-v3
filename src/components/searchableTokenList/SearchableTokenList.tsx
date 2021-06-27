@@ -6,11 +6,11 @@ import {
   TokenList,
   TokenListItem,
   userLists$,
-} from 'observables/tokens';
+} from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
 import { useDispatch } from 'react-redux';
-import { getLSTokenList, setLSTokenList } from 'observables/triggers';
+import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 
 export const SearchableTokenList = ({
   onClick,

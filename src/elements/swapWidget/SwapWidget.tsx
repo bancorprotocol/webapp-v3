@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
-import { loadSwapData } from 'observables/triggers';
+import { loadSwapData } from 'services/observables/triggers';
 import { useDispatch } from 'react-redux';
-import { TokenListItem } from 'observables/tokens';
+import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 
 export const SwapWidget = () => {
