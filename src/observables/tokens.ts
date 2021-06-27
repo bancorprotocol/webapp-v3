@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import { shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
@@ -99,6 +99,7 @@ export const tokenList$ = combineLatest([
             ...apiToken,
           });
       });
+
       if (user)
         overlappingTokens = await fetchTokenBalances(
           overlappingTokens,

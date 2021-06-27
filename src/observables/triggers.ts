@@ -1,18 +1,17 @@
 import { tokenList$, tokenLists$, userLists$ } from 'observables/tokens';
 import { setTokenList, setTokenLists } from 'redux/bancor/bancor';
-import { take } from 'rxjs/operators';
 
 export const loadSwapData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });
-  const userLists: number[] = getLSTokenList();
-  refreshTokenList(dispatch, userLists);
-};
 
-export const refreshTokenList = async (dispatch: any, userLists: number[]) => {
+  const userLists: number[] = getLSTokenList();
   userLists$.next(userLists);
-  dispatch(setTokenList(await tokenList$.pipe(take(1)).toPromise()));
+
+  tokenList$.subscribe((tokenList) => {
+    dispatch(setTokenList(tokenList));
+  });
 };
 
 const selected_lists = 'selected_lists';
