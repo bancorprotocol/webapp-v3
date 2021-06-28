@@ -61,7 +61,7 @@ export const MenuPrimary = ({
   isMinimized,
   setIsSidebarOpen,
 }: MenuPrimaryProps) => {
-  const [activeNav, setActiveNav] = useState(0);
+  const [activeNav, setActiveNav] = useState<number | null>(null);
   const location = useLocation();
 
   useEffect(() => {
