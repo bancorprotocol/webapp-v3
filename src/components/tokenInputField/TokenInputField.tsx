@@ -45,7 +45,7 @@ export const TokenInputField = ({
     if (debounce) debounce(text);
   };
 
-  const placeholder = 'Enter token amount';
+  const placeholder = '0.0';
   const inputFieldStyles = `token-input-field ${classNameGenerator({
     'input-field-border': border,
   })}`;
@@ -89,7 +89,7 @@ export const TokenInputField = ({
 
         <div className="relative w-full">
           <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-            {input !== '' && `~$${usdByToken(token, input)}`}
+            {`~$${input !== '' ? usdByToken(token, input) : '0.00'}`}
           </div>
           <input
             type="text"

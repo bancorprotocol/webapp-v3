@@ -6,26 +6,30 @@ import { loadSwapData } from 'services/observables/triggers';
 import { useDispatch } from 'react-redux';
 import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
+import usePrevious from 'hooks/usePrevious';
 
 export const SwapWidget = () => {
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
   );
 
-  const [fromToken, setFromToken] = useState(tokens[25]);
-  const [toToken, setToToken] = useState(tokens[770]);
+  const [fromToken, setFromToken] = useState(tokens[0]);
+  const [toToken, setToToken] = useState(tokens[1]);
   const [isLimit, setIsLimit] = useState(false);
   const [isUsd, setIsUsd] = useState(false);
   const dispatch = useDispatch();
+  const previousTokens = usePrevious(tokens);
 
   useEffect(() => {
     loadSwapData(dispatch);
   }, [dispatch]);
 
   useEffect(() => {
-    setFromToken(tokens[0]);
-    setToToken(tokens[1]);
-  }, [tokens]);
+    if (previousTokens && previousTokens.length === 0) {
+      setFromToken(tokens[0]);
+      setToToken(tokens[1]);
+    }
+  }, [tokens, previousTokens]);
 
   const switchTokens = () => {
     setFromToken(toToken);
