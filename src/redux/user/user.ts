@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserState {
   darkMode: boolean;
@@ -16,8 +16,14 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setDarkMode: (state, action) => {
+    setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload;
+
+      const root = window.document.documentElement;
+      if (action.payload) root.classList.add('dark');
+      else root.classList.remove('dark');
+
+      localStorage.setItem('darkMode', JSON.stringify(action.payload));
     },
     setSlippageTolerance: (state, action) => {
       state.slippageTolerance = action.payload;

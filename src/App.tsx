@@ -21,8 +21,11 @@ import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
+import { useDispatch } from 'react-redux';
+import { setDarkMode } from 'redux/user/user';
 
 export const App = () => {
+  const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
   const [loading, setLoading] = useState(true);
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
@@ -32,6 +35,11 @@ export const App = () => {
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
   }, [setLoading, chainId, triedAutoLogin]);
+
+  useEffect(() => {
+    const restored = localStorage.getItem('darkMode');
+    if (restored) dispatch(setDarkMode(JSON.parse(restored)));
+  });
 
   useEffect(() => {
     setUser(account);
