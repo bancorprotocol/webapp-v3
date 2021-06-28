@@ -13,11 +13,11 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
 
   return (
     <div
-      className={`fixed text-grey-2 transition-all duration-500 ease-in-out z-20 ${
+      className={`fixed h-full text-grey-2 transition-all duration-500 ease-in-out z-20 ${
         isMinimized ? 'w-[66px]' : 'w-[200px]'
       }`}
     >
-      <div className="pt-[25px] h-screen bg-blue-4 rounded-r ">
+      <div className="pt-[25px] h-full bg-blue-4 rounded-r">
         <div className="flex flex-col justify-between h-full">
           <section className="overflow-hidden">
             <SidebarHeader
@@ -31,7 +31,6 @@ export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
               setIsSidebarOpen={setIsSidebarOpen}
             />
           </section>
-
           <section>
             <MenuSecondary isMinimized={isMinimized} />
             <SidebarFooter isMinimized={isMinimized} />
