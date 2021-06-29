@@ -377,8 +377,25 @@ let relayss: ViewRelay[] = [];
 const relaysList: readonly Relay[] = [];
 const ORIGIN_ADDRESS = DataTypes.originAddress;
 
-export const loadSwapInfo = () => {
+export const loadSwapInfo = async () => {
   setRelays();
+  apiDataa = await apiData$.pipe(take(1)).toPromise();
+
+  apiData$.subscribe((data) => {
+    const minimalPools = data.pools.map(
+      (pool): MinimalPool => ({
+        anchorAddress: pool.pool_dlt_id,
+        converterAddress: pool.converter_dlt_id,
+        reserves: pool.reserves.map((r) => r.address),
+      })
+    );
+    minimalPoolBalanceReceiver$.next(minimalPools);
+  });
+
+  decimalReserveBalances$.subscribe((pools) => updateReserveBalances(pools));
+  whitelistedPools$.subscribe((whitelistedPoolss) => {
+    whiteListedPools = whitelistedPoolss;
+  });
 };
 
 const fetchWhiteListedV1Pools = async (
@@ -404,10 +421,6 @@ const whitelistedPools$ = settingsContractAddress$.pipe(
   switchMapIgnoreThrow((address) => fetchWhiteListedV1Pools(address)),
   share()
 );
-
-whitelistedPools$.subscribe((whitelistedPoolss) => {
-  whiteListedPools = whitelistedPoolss;
-});
 
 const oneMillion = new BigNumber(1000000);
 const defaultImage = 'https://ropsten.etherscan.io/images/main/empty-token.png';
@@ -450,7 +463,7 @@ const newApiPools$ = apiData$.pipe(
 
     const passedPools = filterAndWarn(
       betterPools,
-      (pool) => pool.reserveTokens.length == 2,
+      (pool) => pool.reserveTokens.length === 2,
       'lost pools'
     ) as NewPool[];
 
@@ -463,7 +476,7 @@ const tokenMetaDataEndpoint =
 
 const getTokenMeta = async (currentNetwork: EthNetworks) => {
   const networkVars = getNetworkVariables(currentNetwork);
-  if (currentNetwork == EthNetworks.Ropsten) {
+  if (currentNetwork === EthNetworks.Ropsten) {
     return [
       {
         symbol: 'BNT',
@@ -712,7 +725,7 @@ const fetchPoolLiqMiningApr = async (
     )
   );
 
-  if (highTierPools.length == 0) return [];
+  if (highTierPools.length === 0) return [];
 
   const storeAddress = protectionStoreAddress;
 
@@ -901,7 +914,7 @@ combineLatest([
   .subscribe((apr) => updateLiqMiningApr(apr));
 
 const updateLiqMiningApr = (liqMiningApr: PoolLiqMiningApr[]) => {
-  if (liqMiningApr.length == 0) return;
+  if (liqMiningApr.length === 0) return;
   const existing = poolLiqMiningAprs;
   const withoutOld = existing.filter(
     (apr) => !liqMiningApr.some((a) => compareString(a.poolId, apr.poolId))
@@ -912,7 +925,6 @@ const updateLiqMiningApr = (liqMiningApr: PoolLiqMiningApr[]) => {
 export const minimalPoolBalanceReceiver$ = new Subject<MinimalPool[]>();
 
 const freshReserveBalances$ = minimalPoolBalanceReceiver$.pipe(
-  throttleTime(5000),
   switchMapIgnoreThrow((minimalPools) => getReserveBalances(minimalPools))
 );
 
@@ -1009,8 +1021,6 @@ const decimalReserveBalances$ = freshReserveBalances$.pipe(
     );
   })
 );
-
-decimalReserveBalances$.subscribe((pools) => updateReserveBalances(pools));
 
 const updateReserveBalances = async (
   pools: MinimalPoolWithReserveBalances[]
@@ -1406,8 +1416,6 @@ async function findNewPath<T>(
   const startExists = adjacencyList.get(fromId);
   const goalExists = adjacencyList.get(toId);
 
-  console.log('goalExists', goalExists);
-  console.log('startExists', startExists);
   if (!(startExists && goalExists))
     throw new Error(
       `Start ${fromId} or goal ${toId} does not exist in adjacency list`
