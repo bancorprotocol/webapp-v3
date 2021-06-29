@@ -46,6 +46,7 @@ import {
   buildTokenContract,
 } from 'services/web3/contracts/token/wrapper';
 import wait from 'waait';
+import { ethToken } from 'services/web3/config';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -342,8 +343,6 @@ const txFactory = ({
   });
 };
 
-export const ethReserveAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
-
 const unlimitedApprovalReceiver$ = new Subject<boolean>();
 
 const unlimitedApprove = (unlimitedApprove: boolean) =>
@@ -374,8 +373,7 @@ const approvalFactory = async ({
   spender: string;
   tokenAddress: string;
 }) => {
-  if (tokenAddress === ethReserveAddress)
-    return new Observable((sub) => sub.complete());
+  if (tokenAddress === ethToken) return new Observable((sub) => sub.complete());
 
   const { currentApprovedBalance, isApprovalRequired } = await approvedStatus(
     owner,

@@ -13,11 +13,12 @@ interface EthNetworkVariables {
   alchemyKey: string;
   govToken: string;
 }
+export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 
 export const getNetworkVariables = (
   ethNetwork: EthNetworks
 ): EthNetworkVariables => {
-  const ethToken = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
   switch (ethNetwork) {
     case EthNetworks.Mainnet:
       return {
