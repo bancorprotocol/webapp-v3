@@ -39,7 +39,7 @@ export const App = () => {
   useEffect(() => {
     const restored = localStorage.getItem('darkMode');
     if (restored) dispatch(setDarkMode(JSON.parse(restored)));
-  });
+  }, [dispatch]);
 
   useEffect(() => {
     setUser(account);
