@@ -4,8 +4,11 @@ import {
   userLists$,
 } from 'services/observables/tokens';
 import { setTokenList, setTokenLists } from 'redux/bancor/bancor';
+import { loadSwapInfo } from 'services/web3/swap/methods';
 
 export const loadSwapData = (dispatch: any) => {
+  loadSwapInfo();
+
   tokenLists$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });

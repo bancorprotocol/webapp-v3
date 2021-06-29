@@ -6,25 +6,51 @@ import {
 import { web3 } from 'services/web3/contracts';
 import {
   bancorNetwork$,
+  contractAddresses$,
+  liquidityProtectionStore$,
   settingsContractAddress$,
+  stakingRewards$,
 } from 'services/observables/contracts';
-import { filter, take } from 'rxjs/operators';
+import {
+  filter,
+  map,
+  share,
+  startWith,
+  take,
+  throttleTime,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { TokenListItem } from 'services/observables/tokens';
-import { expandToken, mapIgnoreThrown, shrinkToken } from 'utils/pureFunctions';
+import {
+  expandToken,
+  mapIgnoreThrown,
+  shrinkToken,
+  updateArray,
+} from 'utils/pureFunctions';
 import { ethToken, getNetworkVariables, zeroAddress } from '../config';
 import BigNumber from 'bignumber.js';
-import { apiData$ } from 'services/observables/pools';
-import { networkVars$ } from 'services/observables/network';
-import { uniqWith } from 'lodash';
+import { apiData$, apiTokens$ } from 'services/observables/pools';
+import { currentNetwork$, networkVars$ } from 'services/observables/network';
+import { partition, uniqWith, zip } from 'lodash';
 import _ from 'lodash';
 import wait from 'waait';
-import { Subject } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { fromWei, toHex, toWei } from 'web3-utils';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { EthNetworks } from '../types';
-import { network } from '../wallet/connectors';
 import { buildTokenContract } from '../contracts/token/wrapper';
-import { buildLiquidityProtectionSettingsContract } from '../contracts/swap/wrapper';
+import {
+  buildLiquidityProtectionSettingsContract,
+  buildLiquidityProtectionStoreContract,
+  buildStakingRewardsContract,
+  buildStakingRewardsStoreContract,
+} from '../contracts/swap/wrapper';
+import { WelcomeData } from 'services/api/bancor';
+import { switchMapIgnoreThrow } from 'services/observables/customOperators';
+import { buildConverterContract } from '../contracts/converter/wrapper';
+import { DataTypes, MultiCall } from 'eth-multicall';
+import { multi } from '../contracts/shapes';
+import axios, { AxiosResponse } from 'axios';
 
 export const getRate = async (
   fromToken: TokenListItem,
@@ -101,16 +127,19 @@ export const swap = async ({
       description: 'Done!',
     },
   ];
+
   onUpdate!(0, steps);
 
   const minimalRelays = await winningMinimalRelays();
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const relays = await findBestPath({
-    relayss: minimalRelays,
+    relays: minimalRelays,
     fromId: fromToken.address,
     toId: toToken.address,
   });
+
+  console.log('1');
 
   const ethPath = generateEthPath(fromToken.symbol, relays);
 
@@ -309,6 +338,25 @@ interface TokenWithdrawParam {
   amount: string;
   currentApprovedBalance?: string;
 }
+interface ViewAmount {
+  id: string;
+  amount: string;
+}
+interface MinimalPool {
+  anchorAddress: string;
+  converterAddress: string;
+  reserves: string[];
+}
+interface MinimalPoolWithReserveBalances extends MinimalPool {
+  reserveBalances: ViewAmount[];
+}
+interface RawAbiReserveBalance {
+  converterAddress: string;
+  reserveOne: string;
+  reserveOneAddress: string;
+  reserveTwoAddress: string;
+  reserveTwo: string;
+}
 
 type EosAccount = string;
 type EthereumAddress = string;
@@ -319,6 +367,705 @@ type Edge = [string, string];
 type AdjacencyList = Map<string, string[]>;
 type OnPrompt = (prompt: Prompt) => void;
 type Node = string;
+
+let newPools: NewPool[] = [];
+let apiDataa: WelcomeData;
+let poolLiqMiningAprs: PoolLiqMiningApr[] = [];
+
+let whiteListedPools: string[] = [];
+let relayss: ViewRelay[] = [];
+const relaysList: readonly Relay[] = [];
+const ORIGIN_ADDRESS = DataTypes.originAddress;
+
+export const loadSwapInfo = () => {
+  setRelays();
+};
+
+const fetchWhiteListedV1Pools = async (
+  liquidityProtectionSettingsAddress: string
+) => {
+  try {
+    const liquidityProtection = buildLiquidityProtectionSettingsContract(
+      liquidityProtectionSettingsAddress
+    );
+    const whitelistedPools = await liquidityProtection.methods
+      .poolWhitelist()
+      .call();
+
+    return whitelistedPools;
+  } catch (e) {
+    throw new Error(
+      `Failed fetching whitelisted pools with address ${liquidityProtectionSettingsAddress}`
+    );
+  }
+};
+
+const whitelistedPools$ = settingsContractAddress$.pipe(
+  switchMapIgnoreThrow((address) => fetchWhiteListedV1Pools(address)),
+  share()
+);
+
+whitelistedPools$.subscribe((whitelistedPoolss) => {
+  whiteListedPools = whitelistedPoolss;
+});
+
+const oneMillion = new BigNumber(1000000);
+const defaultImage = 'https://ropsten.etherscan.io/images/main/empty-token.png';
+const ppmToDec = (ppm: number | string): number =>
+  new BigNumber(ppm).dividedBy(oneMillion).toNumber();
+
+const newApiPools$ = apiData$.pipe(
+  map((apiData) => {
+    const pools = apiData.pools;
+    const tokens = apiData.tokens;
+
+    const betterPools = pools.map((pool) => {
+      const reserveTokens = pool.reserves.map(
+        (reserve): TokenMetaWithReserve => {
+          const token = findOrThrow(
+            tokens,
+            (token) => compareString(token.dlt_id, reserve.address),
+            'was expecting a token for a known reserve in API data'
+          );
+
+          return {
+            id: reserve.address,
+            contract: reserve.address,
+            reserveWeight: ppmToDec(reserve.weight),
+            decBalance: reserve.balance,
+            name: token.symbol,
+            symbol: token.symbol,
+            image: defaultImage,
+            precision: token.decimals,
+          };
+        }
+      );
+      const decFee = ppmToDec(pool.fee);
+      return {
+        ...pool,
+        decFee,
+        reserveTokens,
+      };
+    });
+
+    const passedPools = filterAndWarn(
+      betterPools,
+      (pool) => pool.reserveTokens.length == 2,
+      'lost pools'
+    ) as NewPool[];
+
+    return passedPools;
+  })
+);
+
+const tokenMetaDataEndpoint =
+  'https://raw.githubusercontent.com/eoscafe/eos-airdrops/master/tokens.json';
+
+const getTokenMeta = async (currentNetwork: EthNetworks) => {
+  const networkVars = getNetworkVariables(currentNetwork);
+  if (currentNetwork == EthNetworks.Ropsten) {
+    return [
+      {
+        symbol: 'BNT',
+        contract: networkVars.bntToken,
+        precision: 18,
+      },
+      {
+        symbol: 'DAI',
+        contract: '0xc2118d4d90b274016cb7a54c03ef52e6c537d957',
+        precision: 18,
+      },
+      {
+        symbol: 'WBTC',
+        contract: '0xbde8bb00a7ef67007a96945b3a3621177b615c44',
+        precision: 8,
+      },
+      {
+        symbol: 'BAT',
+        contract: '0x443fd8d5766169416ae42b8e050fe9422f628419',
+        precision: 18,
+      },
+      {
+        symbol: 'LINK',
+        contract: '0x20fe562d797a42dcb3399062ae9546cd06f63280',
+        precision: 18,
+      },
+      {
+        contract: '0x4F5e60A76530ac44e0A318cbc9760A2587c34Da6',
+        symbol: 'YYYY',
+      },
+      {
+        contract: '0x63B75DfA4E87d3B949e876dF2Cd2e656Ec963466',
+        symbol: 'YYY',
+      },
+      {
+        contract: '0xAa2A908Ca3E38ECEfdbf8a14A3bbE7F2cA2a1BE4',
+        symbol: 'XXX',
+      },
+      {
+        contract: '0xe4158797A5D87FB3080846e019b9Efc4353F58cC',
+        symbol: 'XXX',
+      },
+    ].map(
+      (x): TokenMeta => ({
+        ...x,
+        id: x.contract,
+        image: defaultImage,
+        name: x.symbol,
+      })
+    );
+  }
+
+  const res: AxiosResponse<TokenMeta[]> = await axios.get(
+    tokenMetaDataEndpoint
+  );
+
+  const drafted = res.data
+    .filter(({ symbol, contract, image }) =>
+      [symbol, contract, image].every(Boolean)
+    )
+    .map((x) => ({ ...x, id: x.contract }));
+
+  const existingEth = drafted.find((x) => compareString(x.symbol, 'eth'))!;
+
+  const withoutEth = drafted.filter(
+    (meta) => !compareString(meta.symbol, 'eth')
+  );
+  const addedEth = {
+    ...existingEth,
+    id: ethToken,
+    contract: ethToken,
+  };
+  const final = [addedEth, existingEth, ...withoutEth];
+  return uniqWith(final, (a, b) => compareString(a.id, b.id));
+};
+
+const tokenMeta$ = currentNetwork$.pipe(
+  switchMapIgnoreThrow((network) => getTokenMeta(network)),
+  share()
+);
+export const immediateTokenMeta$ = tokenMeta$.pipe(startWith(undefined));
+
+const newPools$ = combineLatest([newApiPools$, immediateTokenMeta$]).pipe(
+  map(([pools, tokenMeta]) =>
+    pools.map(
+      (pool): NewPool => ({
+        ...pool,
+        reserveTokens: pool.reserveTokens.map((reserve) => {
+          const meta =
+            tokenMeta &&
+            tokenMeta.find((meta) =>
+              compareString(meta.contract, reserve.contract)
+            );
+
+          return {
+            ...reserve,
+            image: (meta && meta.image) || defaultImage,
+          };
+        }),
+      })
+    )
+  )
+);
+
+interface RewardShare {
+  reserveId: string;
+  rewardShare: string;
+}
+
+const storeRewards$ = stakingRewards$.pipe(
+  switchMapIgnoreThrow((stakingRewardsContract) => {
+    const contract = buildStakingRewardsContract(stakingRewardsContract);
+    return contract.methods.store().call();
+  }),
+  share()
+);
+
+interface PoolProgram {
+  poolToken: string;
+  startTimes: string;
+  endTimes: string;
+  rewardRate: string;
+  reserves: RewardShare[];
+}
+
+let poolPrograms: PoolProgram[] = [];
+
+const fetchPoolPrograms = async (
+  rewardsStoreContract?: string
+): Promise<PoolProgram[]> => {
+  if (poolPrograms) {
+    return poolPrograms;
+  }
+
+  const storeContract =
+    rewardsStoreContract ||
+    (await buildStakingRewardsContract(
+      (
+        await contractAddresses$.pipe(take(1)).toPromise()
+      ).StakingRewards
+    )
+      .methods.store()
+      .call());
+  try {
+    const store = buildStakingRewardsStoreContract(storeContract);
+    const result = await store.methods.poolPrograms().call();
+
+    const poolProgram: PoolProgram[] = [];
+
+    for (let i = 0; i < result[0].length; i++) {
+      const reserveTokens = result[4][i];
+      const rewardShares = result[5][i];
+      const reservesTuple = zip(reserveTokens, rewardShares) as [
+        string,
+        string
+      ][];
+      const reserves: RewardShare[] = reservesTuple.map(
+        ([reserveId, rewardShare]) => ({ reserveId, rewardShare })
+      );
+
+      poolProgram.push({
+        poolToken: result[0][i],
+        startTimes: result[1][i],
+        endTimes: result[2][i],
+        rewardRate: result[3][i],
+        reserves,
+      });
+    }
+    poolPrograms = poolProgram;
+
+    return poolProgram;
+  } catch (e) {
+    throw new Error(
+      `Failed fetching pool programs ${e.message} ${storeContract}`
+    );
+  }
+};
+
+const miningBntReward = (
+  protectedBnt: string,
+  rewardRate: string,
+  rewardShare: number
+) => {
+  return new BigNumber(rewardRate)
+    .multipliedBy(86400)
+    .multipliedBy(2)
+    .multipliedBy(rewardShare)
+    .multipliedBy(365)
+    .dividedBy(protectedBnt)
+    .toNumber();
+};
+const miningTknReward = (
+  tknReserveBalance: string,
+  bntReserveBalance: string,
+  protectedTkn: string,
+  rewardRate: string,
+  rewardShare: number
+) => {
+  return new BigNumber(rewardRate)
+    .multipliedBy(86400)
+    .multipliedBy(2)
+    .multipliedBy(rewardShare)
+    .multipliedBy(new BigNumber(tknReserveBalance).dividedBy(bntReserveBalance))
+    .multipliedBy(365)
+    .dividedBy(protectedTkn)
+    .toNumber();
+};
+const protectedReservesShape = (
+  storeAddress: string,
+  anchorAddress: string,
+  reserveOneAddress: string,
+  reserveTwoAddress: string
+) => {
+  const contract = buildLiquidityProtectionStoreContract(storeAddress);
+  return {
+    anchorAddress,
+    reserveOneAddress,
+    reserveTwoAddress,
+    reserveOneProtected: contract.methods.totalProtectedReserveAmount(
+      anchorAddress,
+      reserveOneAddress
+    ),
+    reserveTwoProtected: contract.methods.totalProtectedReserveAmount(
+      anchorAddress,
+      reserveTwoAddress
+    ),
+  };
+};
+
+const fetchPoolLiqMiningApr = async (
+  multiCallAddress: string,
+  poolPrograms: PoolProgram[],
+  relays: MinimalPoolWithReserveBalances[],
+  protectionStoreAddress: string,
+  liquidityNetworkToken: string
+) => {
+  const ethMulti = new MultiCall(
+    web3,
+    multiCallAddress,
+    [500, 300, 100, 50, 20, 1]
+  );
+
+  const highTierPools = relays.filter((relay) =>
+    poolPrograms.some((poolProgram) =>
+      compareString(relay.anchorAddress, poolProgram.poolToken)
+    )
+  );
+
+  if (highTierPools.length == 0) return [];
+
+  const storeAddress = protectionStoreAddress;
+
+  const protectedShapes = highTierPools.map((pool) => {
+    const [reserveOne, reserveTwo] = pool.reserveBalances;
+    return protectedReservesShape(
+      storeAddress,
+      pool.anchorAddress,
+      reserveOne.id,
+      reserveTwo.id
+    );
+  });
+
+  const [protectedReserves] = (await ethMulti.all([
+    protectedShapes,
+  ])) as unknown[] as {
+    anchorAddress: string;
+    reserveOneAddress: string;
+    reserveTwoAddress: string;
+    reserveOneProtected: string;
+    reserveTwoProtected: string;
+  }[][];
+
+  const zippedProtectedReserves = protectedReserves.map((protectedReserve) => ({
+    anchorAddress: protectedReserve.anchorAddress,
+    reserves: [
+      {
+        contract: protectedReserve.reserveOneAddress,
+        amount: protectedReserve.reserveOneProtected,
+      },
+      {
+        contract: protectedReserve.reserveTwoAddress,
+        amount: protectedReserve.reserveTwoProtected,
+      },
+    ],
+  }));
+
+  const res = zippedProtectedReserves.map((pool) => {
+    const poolProgram: PoolProgram = findOrThrow(poolPrograms, (pp) =>
+      compareString(pool.anchorAddress, pp.poolToken)
+    );
+
+    const poolReserveBalances = findOrThrow(highTierPools, (p) =>
+      compareString(pool.anchorAddress, p.anchorAddress)
+    );
+
+    const networkToken = liquidityNetworkToken;
+
+    const [bntReserve, tknReserve] = sortAlongSide(
+      poolReserveBalances.reserveBalances,
+      (reserve) => reserve.id,
+      [networkToken]
+    );
+
+    const [bntProtected, tknProtected] = sortAlongSide(
+      pool.reserves,
+      (reserve) => reserve.contract,
+      [networkToken]
+    );
+
+    const [bntProtectedShare, tknProtectedShare] = sortAlongSide(
+      poolProgram.reserves,
+      (reserve) => reserve.reserveId,
+      [networkToken]
+    );
+
+    const poolRewardRate = poolProgram.rewardRate;
+
+    const bntReward = miningBntReward(
+      bntProtected.amount,
+      poolRewardRate,
+      ppmToDec(bntProtectedShare.rewardShare)
+    );
+
+    const tknReward = miningTknReward(
+      tknReserve.amount,
+      bntReserve.amount,
+      tknProtected.amount,
+      poolRewardRate,
+      ppmToDec(tknProtectedShare.rewardShare)
+    );
+
+    return {
+      ...pool,
+      bntReward,
+      tknReward,
+      endTime: poolProgram.endTimes,
+    };
+  });
+
+  const liqMiningApr = res.map((calculated) => {
+    const [bntReserve, tknReserve] = sortAlongSide(
+      calculated.reserves,
+      (reserve) => reserve.contract,
+      [liquidityNetworkToken]
+    );
+
+    return {
+      poolId: calculated.anchorAddress,
+      endTime: Number(calculated.endTime),
+      rewards: [
+        {
+          address: bntReserve.contract,
+          amount: bntReserve.amount,
+          reward: calculated.bntReward,
+        },
+        {
+          address: tknReserve.contract,
+          amount: tknReserve.amount,
+          reward: calculated.tknReward,
+        },
+      ],
+    };
+  });
+
+  return liqMiningApr;
+};
+
+const poolPrograms$ = storeRewards$.pipe(
+  switchMapIgnoreThrow((storeRewardContract) =>
+    fetchPoolPrograms(storeRewardContract)
+  ),
+  share()
+);
+
+combineLatest([
+  newPools$,
+  apiTokens$,
+  networkVars$,
+  poolPrograms$,
+  liquidityProtectionStore$,
+])
+  .pipe(
+    switchMapIgnoreThrow(
+      async ([
+        pools,
+        tokens,
+        networkVars,
+
+        poolPrograms,
+        liquidityProtectionStore,
+      ]) => {
+        const minimalPools = pools.map(
+          (pool): MinimalPoolWithReserveBalances => ({
+            anchorAddress: pool.pool_dlt_id,
+            converterAddress: pool.converter_dlt_id,
+            reserves: pool.reserves.map((r) => r.address),
+            reserveBalances: pool.reserves.map((reserve) => ({
+              amount: expandToken(
+                reserve.balance,
+                findOrThrow(tokens, (token) =>
+                  compareString(token.dlt_id, reserve.address)
+                ).decimals
+              ),
+              id: reserve.address,
+            })),
+          })
+        );
+        const liquidityProtectionNetworkToken =
+          getNetworkVariables(currentNetwork).bntToken;
+
+        const liqApr = await fetchPoolLiqMiningApr(
+          networkVars.multiCall,
+          poolPrograms,
+          minimalPools,
+          liquidityProtectionStore,
+          liquidityProtectionNetworkToken
+        );
+
+        const complementSymbols = liqApr.map(
+          (apr): PoolLiqMiningApr => ({
+            ...apr,
+            rewards: apr.rewards.map((r) => ({
+              ...r,
+              symbol: findOrThrow(tokens, (token) =>
+                compareString(token.dlt_id, r.address)
+              ).symbol,
+            })),
+          })
+        );
+
+        return complementSymbols;
+      }
+    )
+  )
+  .subscribe((apr) => updateLiqMiningApr(apr));
+
+const updateLiqMiningApr = (liqMiningApr: PoolLiqMiningApr[]) => {
+  if (liqMiningApr.length == 0) return;
+  const existing = poolLiqMiningAprs;
+  const withoutOld = existing.filter(
+    (apr) => !liqMiningApr.some((a) => compareString(a.poolId, apr.poolId))
+  );
+  poolLiqMiningAprs = [...withoutOld, ...liqMiningApr];
+};
+
+export const minimalPoolBalanceReceiver$ = new Subject<MinimalPool[]>();
+
+const freshReserveBalances$ = minimalPoolBalanceReceiver$.pipe(
+  throttleTime(5000),
+  switchMapIgnoreThrow((minimalPools) => getReserveBalances(minimalPools))
+);
+
+const reserveBalanceShape = (contractAddress: string, reserves: string[]) => {
+  const contract = buildConverterContract(contractAddress);
+  const [reserveOne, reserveTwo] = reserves;
+  return {
+    converterAddress: ORIGIN_ADDRESS,
+    reserveOneAddress: reserveOne,
+    reserveTwoAddress: reserveTwo,
+    reserveOne: contract.methods.getConnectorBalance(reserveOne),
+    reserveTwo: contract.methods.getConnectorBalance(reserveTwo),
+  };
+};
+
+const getReserveBalances = async (
+  relays: MinimalPool[]
+): Promise<MinimalPoolWithReserveBalances[]> => {
+  const [pools] = (await multi({
+    groupsOfShapes: [
+      relays.map((v1Pool) =>
+        reserveBalanceShape(v1Pool.converterAddress, v1Pool.reserves)
+      ),
+    ],
+    currentNetwork,
+  })) as unknown[] as [RawAbiReserveBalance[]];
+
+  const zipped = pools.map((pool) => ({
+    reserves: [
+      { id: pool.reserveOneAddress, amount: pool.reserveOne },
+      { id: pool.reserveTwoAddress, amount: pool.reserveTwo },
+    ],
+    converterAddress: pool.converterAddress,
+  }));
+
+  return relays.map((relay): MinimalPoolWithReserveBalances => {
+    const zippedPool = findOrThrow(
+      zipped,
+      (pool) => compareString(pool.converterAddress, relay.converterAddress),
+      'failed to find zipped pool...'
+    );
+    return {
+      ...relay,
+      reserveBalances: sortAlongSide(
+        zippedPool.reserves,
+        (r) => r.id,
+        relay.reserves
+      ),
+    };
+  });
+};
+const filterAndWarn = <T>(
+  arr: T[],
+  conditioner: (item: T) => boolean,
+  reason?: string
+): T[] => {
+  const [passed, dropped] = partition(arr, conditioner);
+  if (dropped.length > 0) {
+    console.warn(
+      'Dropped',
+      dropped,
+      'items from array',
+      reason ? `because ${reason}` : ''
+    );
+  }
+  return passed;
+};
+
+const decimalReserveBalances$ = freshReserveBalances$.pipe(
+  withLatestFrom(apiTokens$),
+  map(([pools, tokens]) => {
+    const poolsCovered = filterAndWarn(
+      pools,
+      (pool) =>
+        pool.reserveBalances.every((balance) =>
+          tokens.some((token) => compareString(balance.id, token.dlt_id))
+        ),
+      'lost reserve balances because it was not covered in API tokens'
+    );
+
+    return poolsCovered.map(
+      (pool): MinimalPoolWithReserveBalances => ({
+        ...pool,
+        reserveBalances: pool.reserveBalances.map((reserveBalance) => {
+          const token = findOrThrow(tokens, (token) =>
+            compareString(token.dlt_id, reserveBalance.id)
+          );
+          return {
+            ...reserveBalance,
+            amount: shrinkToken(reserveBalance.amount, token.decimals),
+          };
+        }),
+      })
+    );
+  })
+);
+
+decimalReserveBalances$.subscribe((pools) => updateReserveBalances(pools));
+
+const updateReserveBalances = async (
+  pools: MinimalPoolWithReserveBalances[]
+) => {
+  newPools = updateArray(
+    newPools,
+    (pool) =>
+      pools.some((p) => compareString(pool.pool_dlt_id, p.anchorAddress)),
+    (pool) => {
+      const newBalances = findOrThrow(pools, (p) =>
+        compareString(p.anchorAddress, pool.pool_dlt_id)
+      );
+      return {
+        ...pool,
+        reserves: pool.reserves.map((reserve) => {
+          const newBalance = findOrThrow(
+            newBalances.reserveBalances,
+            (balance) => compareString(balance.id, reserve.address)
+          );
+          return {
+            ...reserve,
+            balance: newBalance.amount,
+          };
+        }),
+      };
+    }
+  );
+  const apiData = await apiData$.pipe(take(1)).toPromise();
+  apiDataa = {
+    ...apiData,
+    pools: updateArray(
+      apiDataa!.pools,
+      (pool) =>
+        pools.some((p) => compareString(pool.pool_dlt_id, p.anchorAddress)),
+      (pool) => {
+        const newBalances = findOrThrow(pools, (p) =>
+          compareString(p.anchorAddress, pool.pool_dlt_id)
+        );
+        return {
+          ...pool,
+          reserves: pool.reserves.map((reserve) => {
+            const newBalance = findOrThrow(
+              newBalances.reserveBalances,
+              (balance) => compareString(balance.id, reserve.address)
+            );
+            return {
+              ...reserve,
+              balance: newBalance.amount,
+            };
+          }),
+        };
+      }
+    ),
+  };
+};
 
 const sortByLiqDepth = (a: LiqDepth, b: LiqDepth) => {
   if (a.liqDepth === undefined && b.liqDepth === undefined) return 0;
@@ -349,8 +1096,6 @@ const compareString = (stringOne: string, stringTwo: string): boolean => {
 const isChainLink = (relay: Relay): boolean =>
   Array.isArray((relay.anchor as PoolContainer).poolTokens) &&
   relay.converterType === PoolType.ChainLink;
-
-const relaysList: readonly Relay[] = [];
 
 const chainkLinkRelays: ViewRelay[] = (
   relaysList.filter(isChainLink) as ChainLinkRelay[]
@@ -430,12 +1175,6 @@ const sortAlongSide = <T>(
 
   return res;
 };
-
-const newPools: NewPool[] = [];
-
-const poolLiqMiningAprs: PoolLiqMiningApr[] = [];
-
-const whiteListedPools: string[] = [];
 
 const fetchMinLiqForMinting = async (protectionSettingsContract: string) => {
   const contract = buildLiquidityProtectionSettingsContract(
@@ -560,21 +1299,20 @@ const viewRelayConverterToMinimal = (
   })),
 });
 
-const relays = async () => {
-  const wqdqw = [...chainkLinkRelays, ...(await getRelays())]
+export const setRelays = async () => {
+  relayss = [...chainkLinkRelays, ...(await getRelays())]
     .sort(sortByLiqDepth)
     .sort(prioritiseV2Pools);
-  return wqdqw;
 };
 
 const winningMinimalRelays = async (): Promise<MinimalRelay[]> => {
-  const apiData = await apiData$.pipe(take(1)).toPromise();
+  const apiData = apiDataa;
   const relaysWithBalances = apiData.pools.filter((pool) =>
     pool.reserves.every((reserve) => reserve.balance !== '0')
   );
 
-  const relayss = await relays();
-  const relaysByLiqDepth = relayss
+  const relays = relayss;
+  const relaysByLiqDepth = relays
     .sort(sortByLiqDepth)
     .filter((relay) =>
       relaysWithBalances.some((r) => compareString(relay.id, r.pool_dlt_id))
@@ -668,6 +1406,8 @@ async function findNewPath<T>(
   const startExists = adjacencyList.get(fromId);
   const goalExists = adjacencyList.get(toId);
 
+  console.log('goalExists', goalExists);
+  console.log('startExists', startExists);
   if (!(startExists && goalExists))
     throw new Error(
       `Start ${fromId} or goal ${toId} does not exist in adjacency list`
@@ -701,19 +1441,20 @@ async function findNewPath<T>(
 const findPath = async ({
   fromId,
   toId,
-  relayss,
+  relays,
 }: {
   fromId: string;
   toId: string;
-  relayss: readonly MinimalRelay[];
+  relays: readonly MinimalRelay[];
 }): Promise<MinimalRelay[]> => {
-  const lowerCased = relayss.map((relay) => ({
+  const lowerCased = relays.map((relay) => ({
     ...relay,
     reserves: relay.reserves.map((reserve) => ({
       ...reserve,
       contract: reserve.contract.toLowerCase(),
     })),
   }));
+  console.log('lowerCased', lowerCased);
   const path = await findNewPath(
     fromId.toLowerCase(),
     toId.toLowerCase(),
@@ -724,7 +1465,7 @@ const findPath = async ({
   const flattened = path.hops.flatMap((hop) => hop[0]);
   return flattened.map((flat) =>
     findOrThrow(
-      relayss,
+      relays,
       (relay) => compareString(relay.contract, flat.contract),
       'failed to find relays used in pathing'
     )
@@ -742,17 +1483,17 @@ const throwAfter = async (
 const findBestPath = async ({
   fromId,
   toId,
-  relayss,
+  relays,
 }: {
   fromId: string;
   toId: string;
-  relayss: readonly MinimalRelay[];
+  relays: readonly MinimalRelay[];
 }): Promise<MinimalRelay[]> => {
-  const possibleStartingRelays = relayss.filter((relay) =>
+  const possibleStartingRelays = relays.filter((relay) =>
     relay.reserves.some((reserve) => compareString(reserve.contract, fromId))
   );
   const moreThanOneReserveOut = possibleStartingRelays.length > 1;
-  const onlyOneHopNeeded = relayss.some((relay) =>
+  const onlyOneHopNeeded = relays.some((relay) =>
     [fromId, toId].every((id) =>
       relay.reserves.some((reserve) => compareString(reserve.contract, id))
     )
@@ -764,8 +1505,8 @@ const findBestPath = async ({
   const checkMultiplePaths =
     moreThanOneReserveOut && !onlyOneHopNeeded && !fromIsBnt;
 
-  const allViewRelays = await relays();
-  const apiData = await apiData$.pipe(take(1)).toPromise();
+  const allViewRelays = relayss;
+  const apiData = apiDataa;
 
   if (checkMultiplePaths) {
     const fromSymbol = findOrThrow(
@@ -773,7 +1514,7 @@ const findBestPath = async ({
       (token) => compareString(token.dlt_id, fromId),
       'failed finding token....'
     ).symbol;
-    const excludedRelays = relayss.filter(
+    const excludedRelays = relays.filter(
       (relay) =>
         !possibleStartingRelays.some((r) =>
           compareString(r.anchorAddress, relay.anchorAddress)
@@ -787,7 +1528,7 @@ const findBestPath = async ({
         const relayPath = await Promise.race([
           findPath({
             fromId,
-            relayss: isolatedRelays,
+            relays: isolatedRelays,
             toId,
           }),
           throwAfter(1000),
@@ -818,7 +1559,7 @@ const findBestPath = async ({
     const bestReturn = sortedReturns[0];
     return bestReturn.relays;
   } else {
-    return findPath({ fromId, toId, relayss });
+    return findPath({ fromId, toId, relays });
   }
 };
 

@@ -2,12 +2,13 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getRate } from 'services/web3/swap/methods';
+import { getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
+import { useWeb3React } from '@web3-react/core';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -26,6 +27,7 @@ export const SwapMarket = ({
 }: SwapMarketProps) => {
   const dispatch = useDispatch();
 
+  const { chainId, account } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
@@ -59,6 +61,36 @@ export const SwapMarket = ({
       }
     })();
   }, [fromToken, toToken, fromDebounce]);
+
+  const onUpdate = () => {
+    console.log('update');
+  };
+
+  const onPrompt = () => {
+    console.log('prompt');
+  };
+
+  const handleSwap = async () => {
+    if (!chainId || !account) return;
+    const result = await swap({
+      net: chainId,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      user: account,
+      onUpdate,
+      onPrompt,
+    });
+    dispatch(
+      addNotification({
+        type: 'pending',
+        title: 'Test Notification',
+        msg: 'Some message here...',
+        txHash: result,
+      })
+    );
+  };
 
   return (
     <div>
@@ -111,17 +143,7 @@ export const SwapMarket = ({
         </div>
 
         <button
-          onClick={() =>
-            dispatch(
-              addNotification({
-                type: 'pending',
-                title: 'Test Notification',
-                msg: 'Some message here...',
-                txHash:
-                  '0x20d27ee47229981e5d8677387ca1d10cb0fe07b25861f09a37581a2ea916fb9c',
-              })
-            )
-          }
+          onClick={() => handleSwap()}
           className="btn-primary rounded w-full"
         >
           Swap
