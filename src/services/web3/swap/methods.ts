@@ -1,8 +1,4 @@
-import {
-  conversionPath,
-  getRateByPath,
-  getReturnByPath,
-} from 'services/web3/contracts/network/wrapper';
+import { conversionPath, getRateByPath, getReturnByPath } from 'services/web3/contracts/network/wrapper';
 import { web3 } from 'services/web3/contracts';
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
@@ -40,12 +36,7 @@ export const getPriceImpact = async (
   amount: string
 ) => {
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
-
-  console.log('--- INPUT ---');
-  console.log('fromToken: ', fromToken.address);
-  console.log('toToken: ', toToken.address);
-  console.log('inputAmountWei: ', expandToken(amount, fromToken.decimals));
-  console.log('--- INPUT END ---');
+  const amountWei = expandToken(amount, fromToken.decimals)
 
   const path = await conversionPath({
     from: fromToken.address,
@@ -54,20 +45,12 @@ export const getPriceImpact = async (
     web3,
   });
 
-  console.log('--- CONVERSION PATH ---');
-  console.log(path);
-  console.log('--- CONVERSION PATH END ---');
-
   const result = await getReturnByPath({
     networkContractAddress,
-    amount: expandToken(amount, fromToken.decimals),
+    amount: amountWei,
     path,
     web3,
   });
-
-  console.log('--- GETRETURNPATH METHOD ---');
-  console.log('outputAmountWei: ', result['0']);
-  console.log('--- GETRETURNPATH METHOD END ---');
 
   const pathInverted = await conversionPath({
     from: toToken.address,
@@ -76,10 +59,6 @@ export const getPriceImpact = async (
     web3,
   });
 
-  console.log('--- INVERTED CONVERSION PATH ---');
-  console.log(pathInverted);
-  console.log('--- INVERTED CONVERSION PATH END ---');
-
   const resultInverted = await getReturnByPath({
     networkContractAddress,
     amount: result['0'],
@@ -87,17 +66,8 @@ export const getPriceImpact = async (
     web3,
   });
 
-  console.log('--- INVERTED GETRETURNPATH METHOD ---');
-  console.log('invertedOutputAmountWei: ', resultInverted['0']);
-  console.log('--- INVERTED GETRETURNPATH METHOD END ---');
-
   const output = Number(resultInverted['0']);
-  const input = Number(expandToken(amount, fromToken.decimals));
+  const input = Number(amountWei);
 
-  const priceImpact = ((1 - output / input) * 100) / 2;
-  console.log('--- RESULT PRICE IMPACT ---');
-  console.log('priceImpact: ', priceImpact);
-  console.log('--- RESULT PRICE IMPACT END ---');
-
-  return priceImpact;
+  return ((1 - output / input) * 100) / 2;
 };
