@@ -2,7 +2,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getRate, swap } from 'services/web3/swap/methods';
+import { ApproveTypes, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';
@@ -66,8 +66,15 @@ export const SwapMarket = ({
     console.log('update');
   };
 
-  const onPrompt = () => {
-    console.log('prompt');
+  const onPrompt = async (
+    info: {
+      id: string;
+      label: ApproveTypes;
+    }[]
+  ) => {
+    console.log('info', info);
+
+    return info[0].id;
   };
 
   const handleSwap = async () => {

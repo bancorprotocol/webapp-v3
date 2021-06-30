@@ -77,9 +77,6 @@ export const getRate = async (
   return shrinkToken(toAmountWei, toToken.decimals);
 };
 
-let currentNetwork = EthNetworks.Ropsten;
-let currentUser = '';
-
 //Temporary
 export const swap = async ({
   net,
@@ -98,7 +95,7 @@ export const swap = async ({
   toAmount: string;
   user: string;
   onUpdate: Function;
-  onPrompt: OnPrompt;
+  onPrompt: Function;
 }): Promise<string> => {
   currentNetwork = net;
   currentUser = user;
@@ -133,6 +130,8 @@ export const swap = async ({
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
   const minimalRelays = await winningMinimalRelays(apiData, allViewRelays);
+
+  console.log('minimalRelays', minimalRelays);
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const relays = await findBestPath({
@@ -373,7 +372,8 @@ let newPools: NewPool[] = [];
 let apiDataa: WelcomeData;
 let poolLiqMiningAprs: PoolLiqMiningApr[] = [];
 let allViewRelays: ViewRelay[];
-
+let currentNetwork = EthNetworks.Mainnet;
+let currentUser = '';
 let whiteListedPools: string[] = [];
 const relaysList: readonly Relay[] = [];
 const ORIGIN_ADDRESS = DataTypes.originAddress;
@@ -381,8 +381,7 @@ const ORIGIN_ADDRESS = DataTypes.originAddress;
 export const loadSwapInfo = async () => {
   apiDataa = await apiData$.pipe(take(1)).toPromise();
 
-  newPools = await newPools$.pipe(take(1)).toPromise();
-  console.log('newPools', newPools);
+  newPools = await getNewPools(apiDataa, currentNetwork);
 
   allViewRelays = [...chainkLinkRelays, ...(await getRelays())]
     .sort(sortByLiqDepth)
@@ -405,6 +404,59 @@ export const loadSwapInfo = async () => {
   });
 };
 
+const getNewPools = async (
+  apiData: WelcomeData,
+  currentNetwork: EthNetworks
+) => {
+  //const tokenMeta = await getTokenMeta(currentNetwork).catch();
+  const pools = apiData.pools;
+  const tokens = apiData.tokens;
+
+  const betterPools = pools.map((pool) => {
+    const reserveTokens = pool.reserves.map((reserve): TokenMetaWithReserve => {
+      const token = findOrThrow(
+        tokens,
+        (token) => compareString(token.dlt_id, reserve.address),
+        'was expecting a token for a known reserve in API data'
+      );
+
+      return {
+        id: reserve.address,
+        contract: reserve.address,
+        reserveWeight: ppmToDec(reserve.weight),
+        decBalance: reserve.balance,
+        name: token.symbol,
+        symbol: token.symbol,
+        image: defaultImage,
+        precision: token.decimals,
+      };
+    });
+    const decFee = ppmToDec(pool.fee);
+    return {
+      ...pool,
+      decFee,
+      reserveTokens,
+    };
+  });
+
+  const passedPools = filterAndWarn(
+    betterPools,
+    (pool) => pool.reserveTokens.length === 2,
+    'lost pools'
+  ) as NewPool[];
+
+  return passedPools.map(
+    (pool): NewPool => ({
+      ...pool,
+      reserveTokens: pool.reserveTokens.map((reserve) => {
+        return {
+          ...reserve,
+          image: defaultImage,
+        };
+      }),
+    })
+  );
+};
 const fetchWhiteListedV1Pools = async (
   liquidityProtectionSettingsAddress: string
 ) => {
@@ -1659,7 +1711,7 @@ const isApprovalRequired = async ({
 
 const selectedPromptReceiver$ = new Subject<string>();
 
-const awaitConfirmation = async (onPrompt: OnPrompt) => {
+const awaitConfirmation = async (onPrompt: Function) => {
   const promptId = String(Date.now());
 
   enum ApproveTypes {
@@ -1838,12 +1890,17 @@ const approveTokenWithdrawal = async ({
 const unlimitedWei =
   '115792089237316195423570985008687907853269984665640564039457584007913129639935';
 
+export enum ApproveTypes {
+  limited = 'limited',
+  unlimited = 'unlimited',
+}
+
 const triggerApprovalIfRequired = async (tokenWithdrawal: {
   owner: string;
   spender: string;
   tokenAddress: string;
   amount: string;
-  onPrompt?: OnPrompt;
+  onPrompt?: Function;
 }) => {
   const fromIsEth = compareString(tokenWithdrawal.tokenAddress, ethToken);
   if (fromIsEth) {
@@ -1865,10 +1922,15 @@ const triggerApprovalIfRequired = async (tokenWithdrawal: {
     ...tokenWithdrawal,
     currentApprovedBalance,
   };
+
   if (tokenWithdrawal.onPrompt) {
-    const { unlimitedApproval } = await promptUserForApprovalType(
-      tokenWithdrawal.onPrompt
+    const promptId = String(Date.now());
+
+    const questions = [ApproveTypes.unlimited, ApproveTypes.limited].map(
+      (label) => ({ id: [promptId, label].join(':'), label })
     );
+
+    const { unlimitedApproval } = await tokenWithdrawal.onPrompt(questions);
     await approveTokenWithdrawal({
       ...withCurrentApprovedBalance,
       ...(unlimitedApproval && { amount: unlimitedWei }),
@@ -1884,10 +1946,6 @@ const promptUserForApprovalType = async (
 ): Promise<{ unlimitedApproval: boolean }> => {
   const promptId = String(Date.now());
 
-  enum ApproveTypes {
-    limited = 'limited',
-    unlimited = 'unlimited',
-  }
   const questions = [ApproveTypes.unlimited, ApproveTypes.limited].map(
     (label) => ({ id: [promptId, label].join(':'), label })
   );
