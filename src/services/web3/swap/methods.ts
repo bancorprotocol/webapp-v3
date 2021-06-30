@@ -130,16 +130,17 @@ export const swap = async ({
 
   onUpdate!(0, steps);
 
-  const minimalRelays = await winningMinimalRelays();
+  const apiData = await apiData$.pipe(take(1)).toPromise();
+
+  const minimalRelays = await winningMinimalRelays(apiData, allViewRelays);
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const relays = await findBestPath({
     relays: minimalRelays,
     fromId: fromToken.address,
     toId: toToken.address,
+    allViewRelays,
   });
-
-  console.log('1');
 
   const ethPath = generateEthPath(fromToken.symbol, relays);
 
@@ -371,15 +372,21 @@ type Node = string;
 let newPools: NewPool[] = [];
 let apiDataa: WelcomeData;
 let poolLiqMiningAprs: PoolLiqMiningApr[] = [];
+let allViewRelays: ViewRelay[];
 
 let whiteListedPools: string[] = [];
-let relayss: ViewRelay[] = [];
 const relaysList: readonly Relay[] = [];
 const ORIGIN_ADDRESS = DataTypes.originAddress;
 
 export const loadSwapInfo = async () => {
-  setRelays();
   apiDataa = await apiData$.pipe(take(1)).toPromise();
+
+  newPools = await newPools$.pipe(take(1)).toPromise();
+  console.log('newPools', newPools);
+
+  allViewRelays = [...chainkLinkRelays, ...(await getRelays())]
+    .sort(sortByLiqDepth)
+    .sort(prioritiseV2Pools);
 
   apiData$.subscribe((data) => {
     const minimalPools = data.pools.map(
@@ -1309,19 +1316,14 @@ const viewRelayConverterToMinimal = (
   })),
 });
 
-export const setRelays = async () => {
-  relayss = [...chainkLinkRelays, ...(await getRelays())]
-    .sort(sortByLiqDepth)
-    .sort(prioritiseV2Pools);
-};
-
-const winningMinimalRelays = async (): Promise<MinimalRelay[]> => {
-  const apiData = apiDataa;
+const winningMinimalRelays = async (
+  apiData: WelcomeData,
+  relays: ViewRelay[]
+): Promise<MinimalRelay[]> => {
   const relaysWithBalances = apiData.pools.filter((pool) =>
     pool.reserves.every((reserve) => reserve.balance !== '0')
   );
 
-  const relays = relayss;
   const relaysByLiqDepth = relays
     .sort(sortByLiqDepth)
     .filter((relay) =>
@@ -1330,7 +1332,6 @@ const winningMinimalRelays = async (): Promise<MinimalRelay[]> => {
   const winningRelays = uniqWith(relaysByLiqDepth, compareRelayByReserves);
 
   const relaysWithConverterAddress = winningRelays.map((relay) => {
-    apiData$.pipe(take(1)).toPromise();
     const apiRelay = findOrThrow(apiData.pools, (pool) =>
       compareString(pool.pool_dlt_id, relay.id)
     );
@@ -1462,7 +1463,6 @@ const findPath = async ({
       contract: reserve.contract.toLowerCase(),
     })),
   }));
-  console.log('lowerCased', lowerCased);
   const path = await findNewPath(
     fromId.toLowerCase(),
     toId.toLowerCase(),
@@ -1492,10 +1492,12 @@ const findBestPath = async ({
   fromId,
   toId,
   relays,
+  allViewRelays,
 }: {
   fromId: string;
   toId: string;
   relays: readonly MinimalRelay[];
+  allViewRelays: ViewRelay[];
 }): Promise<MinimalRelay[]> => {
   const possibleStartingRelays = relays.filter((relay) =>
     relay.reserves.some((reserve) => compareString(reserve.contract, fromId))
@@ -1513,7 +1515,6 @@ const findBestPath = async ({
   const checkMultiplePaths =
     moreThanOneReserveOut && !onlyOneHopNeeded && !fromIsBnt;
 
-  const allViewRelays = relayss;
   const apiData = apiDataa;
 
   if (checkMultiplePaths) {
