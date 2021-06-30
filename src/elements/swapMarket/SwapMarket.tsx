@@ -2,9 +2,8 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getRate } from 'services/web3/swap/methods';
+import { getPriceImpact, getRate } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
@@ -36,14 +35,9 @@ export const SwapMarket = ({
     (async () => {
       if (fromToken && toToken) {
         const baseRate = await getRate(fromToken, toToken, '1');
-        const rate = (Number(baseRate) / 1).toFixed(4);
-        setRate(rate);
-
-        const priceImpact = new BigNumber(baseRate)
-          .minus(rate)
-          .div(baseRate)
-          .times(100);
-        setPriceImpact(priceImpact.toFixed(5));
+        const priceImpact = await getPriceImpact(fromToken, toToken, '1');
+        setRate(Number(baseRate).toFixed(6));
+        setPriceImpact(priceImpact.toFixed(6));
       }
     })();
   }, [fromToken, toToken]);
@@ -56,6 +50,12 @@ export const SwapMarket = ({
         const rate = (Number(result) / fromDebounce).toFixed(4);
         setToAmount((fromDebounce * Number(rate)).toFixed(2));
         setRate(rate);
+        const priceImpact = await getPriceImpact(
+          fromToken,
+          toToken,
+          fromDebounce
+        );
+        setPriceImpact(priceImpact.toFixed(6));
       }
     })();
   }, [fromToken, toToken, fromDebounce]);

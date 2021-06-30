@@ -45,6 +45,7 @@ export const NotificationContent = ({
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
 
   const [delay, setDelay] = useState<number | null>(2000);
+  const [isHover, setIsHover] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -93,7 +94,11 @@ export const NotificationContent = ({
   };
 
   return (
-    <div className="text-12">
+    <div
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      className="text-12"
+    >
       <div className="flex justify-between items-center mb-4">
         <div className="flex">
           <div
@@ -107,10 +112,16 @@ export const NotificationContent = ({
             {StatusIcon()}
           </div>
 
-          <h4 className="text-12 font-medium mx-8">{title}</h4>
-          <span className="text-grey-4">
-            {dayjs.unix(timestamp).fromNow(true)}
-          </span>
+          <h4 className="text-12 font-medium mx-8">
+            {isHover ? 'View on Etherscan' : title}
+          </h4>
+          {!isHover ? (
+            <span className="text-grey-4">
+              {dayjs.unix(timestamp).fromNow(true)}
+            </span>
+          ) : (
+            ''
+          )}
         </div>
         <button onClick={() => onRemove(id)}>
           <IconTimes className="w-8" />

@@ -10,6 +10,10 @@ export const buildNetworkContract = (
   web3?: Web3
 ): ContractMethods<{
   rateByPath: (path: string[], amount: string) => CallReturn<string>;
+  getReturnByPath: (
+    path: string[],
+    amount: string
+  ) => CallReturn<{ '0': string; '1': string }>;
   convertByPath: (
     path: string[],
     amount: string,
@@ -52,4 +56,19 @@ export const conversionPath = async ({
 }) => {
   const contract = buildNetworkContract(networkContractAddress, web3);
   return contract.methods.conversionPath(from, to).call();
+};
+
+export const getReturnByPath = async ({
+  networkContractAddress,
+  path,
+  amount,
+  web3,
+}: {
+  networkContractAddress: string;
+  path: string[];
+  amount: string;
+  web3: Web3;
+}): Promise<{ '0': string; '1': string }> => {
+  const contract = buildNetworkContract(networkContractAddress, web3);
+  return contract.methods.getReturnByPath(path, amount).call();
 };
