@@ -1,6 +1,10 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { Notification, setStatus } from 'redux/notification/notification';
+import {
+  Notification,
+  NotificationType,
+  setStatus,
+} from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect, useState } from 'react';
@@ -60,7 +64,12 @@ export const NotificationContent = ({
         .getTransactionReceipt(txHash)
         .catch((e) => console.error('web3 failed: getTransactionReceipt', e));
       if (tx) {
-        dispatch(setStatus({ id, type: tx.status ? 'success' : 'error' }));
+        dispatch(
+          setStatus({
+            id,
+            type: tx.status ? NotificationType.success : NotificationType.error,
+          })
+        );
       }
     };
 
@@ -76,7 +85,7 @@ export const NotificationContent = ({
 
   const StatusIcon = () => {
     switch (type) {
-      case 'pending':
+      case NotificationType.pending:
         return (
           <div className="relative flex justify-center items-center">
             <IconBancor className="absolute w-5 text-primary" />
@@ -84,9 +93,9 @@ export const NotificationContent = ({
             <div className="w-14 h-14 border-t border-r border-primary rounded-full animate-spin" />
           </div>
         );
-      case 'success':
+      case NotificationType.success:
         return <IconCheck className="w-8 text-white" />;
-      case 'error':
+      case NotificationType.error:
         return <IconTimes className="w-6 text-white" />;
       default:
         return <span className="text-white">i</span>;
@@ -103,10 +112,10 @@ export const NotificationContent = ({
         <div className="flex">
           <div
             className={`flex items-center justify-center ${classNameGenerator({
-              'w-14 h-14 rounded-full': type !== 'pending',
-              'bg-success': type === 'success',
-              'bg-error': type === 'error',
-              'bg-info': type === 'info',
+              'w-14 h-14 rounded-full': type !== NotificationType.pending,
+              'bg-success': type === NotificationType.success,
+              'bg-error': type === NotificationType.error,
+              'bg-info': type === NotificationType.info,
             })}`}
           >
             {StatusIcon()}

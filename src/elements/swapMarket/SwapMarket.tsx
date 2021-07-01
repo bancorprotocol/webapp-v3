@@ -5,7 +5,10 @@ import { useEffect, useState } from 'react';
 import { getPriceImpact, getRate } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
-import { addNotification } from 'redux/notification/notification';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
 
 interface SwapMarketProps {
@@ -114,7 +117,7 @@ export const SwapMarket = ({
           onClick={() =>
             dispatch(
               addNotification({
-                type: 'pending',
+                type: NotificationType.pending,
                 title: 'Test Notification',
                 msg: 'Some message here...',
                 txHash:
