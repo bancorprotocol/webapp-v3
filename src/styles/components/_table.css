@@ -1,0 +1,22 @@
+@import 'tailwindcss/components';
+
+@layer components {
+    table {
+        @apply table-auto w-full;
+    }
+
+    thead tr {
+        @apply bg-grey-0 text-left text-grey-5 border-t border-b border-grey-2 font-medium h-[45px];
+    }
+    thead th {
+        @apply font-medium first:pl-20 last:pr-20;
+    }
+
+    tbody tr {
+        @apply h-[50px] border-b border-grey-2 last:border-0;
+    }
+
+    tbody td {
+        @apply first:pl-20 last:pr-20;
+    }
+}
