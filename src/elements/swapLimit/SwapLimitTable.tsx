@@ -1,7 +1,10 @@
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
+import { withdrawWeth } from 'services/web3/swap/limit';
+import { useWeb3React } from '@web3-react/core';
 
 export const SwapLimitTable = () => {
+  const { account } = useWeb3React();
   return (
     <div className="md:max-w-[1200px] mx-auto md:rounded-30 bg-white dark:bg-blue-4 md:shadow-widget my-40 pb-10">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:h-60 md:px-20">
@@ -19,14 +22,19 @@ export const SwapLimitTable = () => {
               className="block w-full border border-grey-3 rounded-10 pl-30 h-28 focus:outline-none focus:border-primary"
             />
           </div>
-          <div className={'flex'}>
-            <button className={'btn-outline-secondary btn-sm rounded-10'}>
-              Cancel All
-            </button>
-            <button className={'btn-outline-secondary btn-sm rounded-10'}>
-              Withdraw 1.00000 WETH
-            </button>
-          </div>
+          {account && (
+            <div className={'flex'}>
+              <button className={'btn-outline-secondary btn-sm rounded-10'}>
+                Cancel All
+              </button>
+              <button
+                className={'btn-outline-secondary btn-sm rounded-10'}
+                onClick={() => withdrawWeth('1', account)}
+              >
+                Withdraw 1.00000 WETH
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className={'overflow-x-scroll md:overflow-x-auto'}>

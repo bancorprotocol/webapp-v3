@@ -1,28 +1,22 @@
-import { wethToken } from 'services/web3/config';
 import { expandToken } from 'utils/pureFunctions';
-import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
-import { buildWethContract } from '../contracts/eth/wrapper';
-import BigNumber from 'bignumber.js';
-import {
-  getTxOrigin,
-  Signature,
-  RfqOrderJson,
-  sendOrders,
-} from 'services/api/keeperDao';
-import dayjs from 'utils/dayjs';
-import wait from 'waait';
-import { web3 } from '../contracts';
 import { TokenListItem } from 'services/observables/tokens';
 import { RfqOrder, SignatureType } from '@0x/protocol-utils';
-import { EthNetworks } from '../types';
+import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
+import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
+import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
+import { EthNetworks } from 'services/web3/types';
+import { wethToken } from 'services/web3/config';
+import { web3 } from 'services/web3/contracts';
+import BigNumber from 'bignumber.js';
+import dayjs from 'utils/dayjs';
 
 export const depositWeth = async (
-  decAmount: string,
+  amount: string,
   user: string,
   onPrompt: Function
 ) => {
   const tokenContract = buildWethContract(wethToken);
-  const wei = expandToken(decAmount, 18);
+  const wei = expandToken(amount, 18);
 
   const res = await onPrompt();
 
@@ -35,6 +29,18 @@ export const depositWeth = async (
     tx,
     user,
     gas: estimatedGas * manualBuffer,
+  });
+
+  return txHash;
+};
+
+export const withdrawWeth = async (amount: string, user: string) => {
+  const tokenContract = buildWethContract(wethToken);
+  const wei = expandToken(amount, 18);
+
+  const txHash = await resolveTxOnConfirmation({
+    tx: tokenContract.methods.withdraw(wei),
+    user,
   });
 
   return txHash;
