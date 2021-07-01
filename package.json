@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@0x/contract-addresses": "^6.3.0",
+    "@0x/protocol-utils": "^1.7.2",
     "@craco/craco": "^6.1.2",
     "@headlessui/react": "^1.2.0",
     "@reduxjs/toolkit": "^1.5.1",
