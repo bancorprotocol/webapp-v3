@@ -42,8 +42,8 @@ import { toHex } from 'web3-utils';
 
 import { user$ } from './user';
 import {
-  approvedStatus,
   buildTokenContract,
+  getApprovalRequired,
 } from 'services/web3/contracts/token/wrapper';
 import wait from 'waait';
 import { ethToken } from 'services/web3/config';
@@ -361,73 +361,72 @@ const txStatus$ = txStatusReceiver$.pipe(
   distinctUntilChanged(),
   shareReplay(1)
 );
+//
+// const approvalFactory = async ({
+//   owner,
+//   amount,
+//   spender,
+//   tokenAddress,
+// }: {
+//   owner: string;
+//   amount: string;
+//   spender: string;
+//   tokenAddress: string;
+// }) => {
+//   if (tokenAddress === ethToken) return new Observable((sub) => sub.complete());
+//
+//   const isApprovalRequired = await getApprovalRequired(
+//     owner,
+//     spender,
+//     amount,
+//     tokenAddress
+//   );
+//
+//   if (!isApprovalRequired) {
+//     return new Observable((sub) => sub.complete());
+//   }
+//
+//   const tokenContract = buildTokenContract(tokenAddress, web3);
+//
+//   // tokenContract.methods.approve();
+// };
 
-const approvalFactory = async ({
-  owner,
-  amount,
-  spender,
-  tokenAddress,
-}: {
-  owner: string;
-  amount: string;
-  spender: string;
-  tokenAddress: string;
-}) => {
-  if (tokenAddress === ethToken) return new Observable((sub) => sub.complete());
-
-  const { currentApprovedBalance, isApprovalRequired } = await approvedStatus(
-    owner,
-    spender,
-    amount,
-    tokenAddress
-  );
-
-  if (!isApprovalRequired) {
-    return new Observable((sub) => sub.complete());
-  }
-
-  const tokenContract = buildTokenContract(tokenAddress, web3);
-
-  // tokenContract.methods.approve();
-};
-
-const swapTx$ = tradeAndPath$.pipe(
-  tap(() =>
-    txStatusReceiver$.next({
-      error: '',
-      queryUnlimitedApprove: false,
-      status: 'Loading...',
-      success: '',
-    })
-  ),
-  withLatestFrom(apiTokens$, bancorNetwork$, user$),
-  switchMap(
-    async ([{ path, trade }, tokens, networkContractAddress, currentUser]) => {
-      const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
-      const fromWei = expandToken(trade.decAmount, fromToken.decimals);
-
-      // insert error handling here
-      const { currentApprovedBalance, isApprovalRequired } =
-        await approvedStatus(
-          currentUser,
-          networkContractAddress,
-          fromWei,
-          fromToken.dlt_id
-        );
-      if (isApprovalRequired) {
-        txStatusReceiver$.next({
-          queryUnlimitedApprove: true,
-          success: '',
-          status: 'UnlimitedApprove',
-          error: '',
-        });
-        const unlimitedApprove = await unlimitedApprovalReceiver$
-          .pipe(first())
-          .toPromise();
-      }
-    }
-  )
-);
+// const swapTx$ = tradeAndPath$.pipe(
+//   tap(() =>
+//     txStatusReceiver$.next({
+//       error: '',
+//       queryUnlimitedApprove: false,
+//       status: 'Loading...',
+//       success: '',
+//     })
+//   ),
+//   withLatestFrom(apiTokens$, bancorNetwork$, user$),
+//   switchMap(
+//     async ([{ path, trade }, tokens, networkContractAddress, currentUser]) => {
+//       const fromToken = findOrThrow(tokens, hasTokenId(trade.fromId));
+//       const fromWei = expandToken(trade.decAmount, fromToken.decimals);
+//
+//       // insert error handling here
+//       const isApprovalRequired = await getApprovalRequired(
+//         currentUser,
+//         networkContractAddress,
+//         fromWei,
+//         fromToken.dlt_id
+//       );
+//       if (isApprovalRequired) {
+//         txStatusReceiver$.next({
+//           queryUnlimitedApprove: true,
+//           success: '',
+//           status: 'UnlimitedApprove',
+//           error: '',
+//         });
+//         const unlimitedApprove = await unlimitedApprovalReceiver$
+//           .pipe(first())
+//           .toPromise();
+//       }
+//     }
+//   )
+// );
 
 export const tx = {
   swap: function (fromId: string, toId: string, decAmount: string) {

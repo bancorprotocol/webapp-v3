@@ -5,6 +5,12 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'services/web3/types';
 import { buildContract, web3 } from '..';
 import { ABISmartToken } from './abi';
+import { toHex } from 'web3-utils';
+import { bancorNetwork$ } from 'services/observables/contracts';
+import { take } from 'rxjs/operators';
+import { TokenListItem } from 'services/observables/tokens';
+import { expandToken } from 'utils/pureFunctions';
+import { UNLIMITED_WEI } from 'utils/constants';
 
 interface TokenContractType {
   symbol: () => CallReturn<string>;
@@ -27,26 +33,34 @@ export const buildTokenContract = (
 ): ContractMethods<TokenContractType> =>
   buildContract(ABISmartToken, contractAddress, web3);
 
-export const approvedStatus = async (
+export const getApprovalRequired = async (
+  token: TokenListItem,
+  amount: string,
   owner: string,
-  spender: string,
-  weiAmount: string,
-  tokenAddress: string
-): Promise<{
-  isApprovalRequired: boolean;
-  currentApprovedBalance: string;
-}> => {
-  const tokenContract = buildTokenContract(tokenAddress, web3);
+  spender: string
+): Promise<boolean> => {
+  const amountWei = expandToken(amount, token.decimals);
+
+  const tokenContract = buildTokenContract(token.address, web3);
   const currentApprovedBalance = await tokenContract.methods
     .allowance(owner, spender)
     .call();
 
-  const sufficientBalanceAlreadyApproved = new BigNumber(
-    currentApprovedBalance
-  ).isGreaterThanOrEqualTo(weiAmount);
+  return new BigNumber(amountWei).gt(currentApprovedBalance);
+};
 
-  return {
-    isApprovalRequired: !sufficientBalanceAlreadyApproved,
-    currentApprovedBalance,
-  };
+export const approveTokenSwap = async (
+  token: TokenListItem,
+  owner: string,
+  amount: string | null,
+  spender: string
+) => {
+  const amountWei = amount
+    ? expandToken(amount, token.decimals)
+    : UNLIMITED_WEI;
+  const tokenContract = buildTokenContract(token.address, web3);
+  const result = await tokenContract.methods
+    .approve(spender, amountWei)
+    .send({ from: owner });
+  console.log('approve tx result', result);
 };

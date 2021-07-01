@@ -9,6 +9,13 @@ import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
 import { useWeb3React } from '@web3-react/core';
+import {
+  approveTokenSwap,
+  getApprovalRequired,
+} from 'services/web3/contracts/token/wrapper';
+import { bancorNetwork$ } from 'services/observables/contracts';
+import { take } from 'rxjs/operators';
+import { Modal } from 'components/modal/Modal';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -33,6 +40,7 @@ export const SwapMarket = ({
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
+  const [approvalRequired, setApprovalRequired] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -62,8 +70,8 @@ export const SwapMarket = ({
     })();
   }, [fromToken, toToken, fromDebounce]);
 
-  const onUpdate = () => {
-    console.log('update');
+  const onUpdate = (id: any, step: any) => {
+    console.log('id', id, 'step', step);
   };
 
   const onPrompt = async (
@@ -77,85 +85,132 @@ export const SwapMarket = ({
     return info[0].id;
   };
 
+  const approveToken = async (amount: string | null) => {
+    if (!chainId || !account) return;
+
+    const networkContractAddress = await bancorNetwork$
+      .pipe(take(1))
+      .toPromise();
+
+    await approveTokenSwap(fromToken, account, amount, networkContractAddress);
+    console.log('amount is approved');
+  };
+
   const handleSwap = async () => {
     if (!chainId || !account) return;
-    const result = await swap({
-      net: chainId,
-      fromToken,
-      toToken,
-      fromAmount,
-      toAmount,
-      user: account,
-      onUpdate,
-      onPrompt,
-    });
-    dispatch(
-      addNotification({
-        type: 'pending',
-        title: 'Test Notification',
-        msg: 'Some message here...',
-        txHash: result,
-      })
-    );
+    try {
+      console.log('init swap');
+      const networkContractAddress = await bancorNetwork$
+        .pipe(take(1))
+        .toPromise();
+      console.log('check if approval required');
+      const isApprovalReq = await getApprovalRequired(
+        fromToken,
+        fromAmount,
+        account,
+        networkContractAddress
+      );
+      if (isApprovalReq) return setApprovalRequired(true);
+
+      const result = await swap({
+        net: chainId,
+        fromToken,
+        toToken,
+        fromAmount,
+        toAmount,
+        user: account,
+        onUpdate,
+        onPrompt,
+      });
+      dispatch(
+        addNotification({
+          type: 'pending',
+          title: 'Test Notification',
+          msg: 'Some message here...',
+          txHash: result,
+        })
+      );
+    } catch (e) {
+      console.error('Swap failed with error: ', e);
+    }
   };
 
   return (
-    <div>
-      <div className="px-20">
-        <TokenInputField
-          label="You Pay"
-          balance={fromToken ? fromToken.balance : null}
-          balanceUsd={usdByToken(fromToken)}
-          token={fromToken}
-          setToken={setFromToken}
-          input={fromAmount}
-          setInput={setFromAmount}
-          debounce={setFromDebounce}
-          border
-          selectable
-        />
-      </div>
-
-      <div className="widget-block">
-        <div className="widget-block-icon cursor-pointer">
-          <IconSync
-            className="w-[25px] text-primary dark:text-primary-light"
-            onClick={() => switchTokens()}
-          />
-        </div>
-        <div className="mx-10 mb-16 pt-16">
+    <>
+      <div>
+        <div className="px-20">
           <TokenInputField
-            label="You Receive"
-            balance={toToken ? toToken.balance : null}
-            balanceUsd={usdByToken(toToken)}
-            token={toToken}
-            setToken={setToToken}
-            input={toAmount}
-            setInput={setToAmount}
-            disabled
+            label="You Pay"
+            balance={fromToken ? fromToken.balance : null}
+            balanceUsd={usdByToken(fromToken)}
+            token={fromToken}
+            setToken={setFromToken}
+            input={fromAmount}
+            setInput={setFromAmount}
+            debounce={setFromDebounce}
+            border
             selectable
           />
-
-          <div className="flex justify-between mt-15">
-            <span>Rate</span>
-            <span>
-              1 {fromToken?.symbol} = {rate} {toToken?.symbol}
-            </span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Price Impact</span>
-            <span>{priceImpact}%</span>
-          </div>
         </div>
 
-        <button
-          onClick={() => handleSwap()}
-          className="btn-primary rounded w-full"
-        >
-          Swap
-        </button>
+        <div className="widget-block">
+          <div className="widget-block-icon cursor-pointer">
+            <IconSync
+              className="w-[25px] text-primary dark:text-primary-light"
+              onClick={() => switchTokens()}
+            />
+          </div>
+          <div className="mx-10 mb-16 pt-16">
+            <TokenInputField
+              label="You Receive"
+              balance={toToken ? toToken.balance : null}
+              balanceUsd={usdByToken(toToken)}
+              token={toToken}
+              setToken={setToToken}
+              input={toAmount}
+              setInput={setToAmount}
+              disabled
+              selectable
+            />
+
+            <div className="flex justify-between mt-15">
+              <span>Rate</span>
+              <span>
+                1 {fromToken?.symbol} = {rate} {toToken?.symbol}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Price Impact</span>
+              <span>{priceImpact}%</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => handleSwap()}
+            className="btn-primary rounded w-full"
+          >
+            Swap
+          </button>
+        </div>
       </div>
-    </div>
+      <Modal
+        title={'Approve'}
+        setIsOpen={setApprovalRequired}
+        isOpen={approvalRequired}
+      >
+        <div>
+          <button onClick={() => approveToken(null)} className={'btn-primary'}>
+            unlimited
+          </button>
+          <button
+            onClick={() => approveToken(fromAmount)}
+            className={'btn-primary'}
+          >
+            limited
+          </button>
+        </div>
+      </Modal>
+    </>
   );
 };

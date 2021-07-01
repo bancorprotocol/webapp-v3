@@ -144,13 +144,13 @@ export const swap = async ({
   const ethPath = generateEthPath(fromToken.symbol, relays);
 
   onUpdate!(1, steps);
-  await triggerApprovalIfRequired({
-    owner: user,
-    amount: fromWei,
-    spender: networkContractAddress,
-    tokenAddress: fromToken.address,
-    onPrompt,
-  });
+  // await triggerApprovalIfRequired({
+  //   owner: user,
+  //   amount: fromWei,
+  //   spender: networkContractAddress,
+  //   tokenAddress: fromToken.address,
+  //   onPrompt,
+  // });
   onUpdate!(2, steps);
 
   const networkContract = buildNetworkContract(networkContractAddress);
@@ -1722,7 +1722,7 @@ const awaitConfirmation = async (onPrompt: Function) => {
     label,
   }));
 
-  onPrompt({ questions });
+  onPrompt(questions);
 
   const receivedPromptId = await selectedPromptReceiver$
     .pipe(
