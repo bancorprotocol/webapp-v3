@@ -6,7 +6,7 @@ import { loadSwapData } from 'services/observables/triggers';
 import { useDispatch } from 'react-redux';
 import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
-import usePrevious from 'hooks/usePrevious';
+import { useWeb3React } from '@web3-react/core';
 
 export const Toggle = createContext(false);
 interface SwapWidgetProps {
@@ -23,18 +23,26 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const [toToken, setToToken] = useState(tokens[1]);
   const [toggle, setToggle] = useState(false);
   const dispatch = useDispatch();
-  const previousTokens = usePrevious(tokens);
 
   useEffect(() => {
     loadSwapData(dispatch);
   }, [dispatch]);
 
   useEffect(() => {
-    if (previousTokens && previousTokens.length === 0) {
-      setFromToken(tokens[0]);
-      setToToken(tokens[1]);
-    }
-  }, [tokens, previousTokens]);
+    const findSetToken = (token: TokenListItem) => {
+      if (token) {
+        const found = tokens.find((x) => x.address === token.address);
+        if (found && found.balance !== token.balance) return found;
+      }
+
+      return null;
+    };
+    const foundFrom = findSetToken(fromToken);
+    foundFrom ? setFromToken(foundFrom) : setFromToken(tokens[0]);
+
+    const foundTo = findSetToken(toToken);
+    foundTo ? setToToken(foundTo) : setToToken(tokens[1]);
+  }, [tokens, fromToken, toToken]);
 
   const switchTokens = () => {
     setFromToken(toToken);
