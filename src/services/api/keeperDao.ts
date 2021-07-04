@@ -54,11 +54,11 @@ export interface Version {
 }
 
 export interface OrderResponse {
-  orders: OrderElement[];
+  orders: LimitOrder[];
   message: string;
 }
 
-export interface OrderElement {
+export interface LimitOrder {
   order: OrderOrder;
   metaData: MetaData;
 }
@@ -164,7 +164,9 @@ export const getTokenList = async () => {
   return res.data;
 };
 
-export const getOrders = async (currentUser: string) => {
+export const getOrders = async (
+  currentUser: string
+): Promise<OrderResponse> => {
   const res = await axios.get<OrderResponse>(
     `${baseUrl}/orders?maker=${currentUser}`,
     { transformResponse: (res) => JSONbig.parse(res) }
