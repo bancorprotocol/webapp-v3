@@ -1,6 +1,7 @@
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import 'components/modal/Modal.css';
 
 interface ModalProps {
@@ -8,9 +9,18 @@ interface ModalProps {
   children: JSX.Element;
   setIsOpen: Function;
   isOpen: boolean;
+  onBackClick?: Function;
+  showBackButton?: boolean;
 }
 
-export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
+export const Modal = ({
+  title,
+  children,
+  setIsOpen,
+  isOpen,
+  showBackButton,
+  onBackClick,
+}: ModalProps) => {
   return (
     <>
       <Transition
@@ -36,6 +46,17 @@ export const Modal = ({ title, children, setIsOpen, isOpen }: ModalProps) => {
 
             <div className="modal-content">
               <Dialog.Title className="modal-title">
+                {showBackButton ? (
+                  <button
+                    onClick={() => (onBackClick ? onBackClick() : '')}
+                    className="rounded-10 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <IconChevron className="w-24 transform rotate-180" />
+                  </button>
+                ) : (
+                  ''
+                )}
+
                 {title}
                 <button
                   onClick={() => setIsOpen(false)}

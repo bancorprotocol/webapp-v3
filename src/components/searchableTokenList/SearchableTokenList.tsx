@@ -24,7 +24,6 @@ export const SearchableTokenList = ({
   const [search, setSearch] = useState('');
   const [manage, setMange] = useState(false);
   const [userLists, setUserLists] = useState<number[]>(getLSTokenList());
-  const dispatch = useDispatch();
 
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -32,6 +31,11 @@ export const SearchableTokenList = ({
   const tokensLists = useAppSelector<TokenList[]>(
     (state) => state.bancor.tokenLists
   );
+
+  const onClose = () => {
+    setIsOpen(false);
+    setMange(false);
+  };
 
   const handleTokenlistClick = (index: number) => {
     const foundIndex = userLists.indexOf(index);
@@ -47,38 +51,59 @@ export const SearchableTokenList = ({
 
   return (
     <Modal
-      title={manage ? 'Manage Token Lists' : 'Select a Token'}
+      title={manage ? 'Manage' : 'Select a Token'}
       isOpen={isOpen}
-      setIsOpen={setIsOpen}
+      setIsOpen={onClose}
+      showBackButton={manage}
+      onBackClick={() => setMange(false)}
     >
       {manage ? (
-        <>
+        <div className="space-y-15 mt-20">
           {tokensLists.map((tokenList, index) => (
             <div
-              className="flex justify-between items-center"
+              className="flex justify-between items-center border-2 border-grey-3 rounded px-15 py-6"
               key={'Tokenlist_' + index}
             >
-              <div>{tokenList.name}</div>
-              <img
-                alt="TokenList"
-                src={tokenList.logoURI}
-                className="bg-grey-2 rounded-full h-28 w-28"
-              />
-              <Switch
-                className={`swap-switch !min-w-[0px] ${
-                  userLists.includes(index)
-                    ? 'bg-primary border-primary dark:bg-primary-light dark:border-primary-light'
-                    : 'bg-blue-1 border-blue-1 dark:bg-grey-3 dark:border-grey-3'
-                }`}
-                checked={userLists.includes(index)}
-                onChange={() => handleTokenlistClick(index)}
-              />
-              <div>{tokenList.tokens.length} Tokens</div>
+              <div className="flex items-center">
+                <img
+                  alt="TokenList"
+                  src={tokenList.logoURI}
+                  className="bg-grey-2 rounded-full h-28 w-28"
+                />
+                <div className={'ml-15'}>
+                  <div className={'text-16'}>{tokenList.name}</div>
+                  <div className={'text-12'}>
+                    {tokenList.tokens.length} Tokens
+                  </div>
+                </div>
+              </div>
+              <div>
+                <Switch
+                  checked={userLists.includes(index)}
+                  onChange={() => handleTokenlistClick(index)}
+                  className={`${
+                    userLists.includes(index)
+                      ? 'bg-primary border-primary'
+                      : 'bg-grey-3 border-grey-3'
+                  } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
+                >
+                  <span className="sr-only">Use setting</span>
+                  <span
+                    aria-hidden="true"
+                    className={`${
+                      userLists.includes(index)
+                        ? 'translate-x-[20px]'
+                        : 'translate-x-0'
+                    }
+            pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
+                  />
+                </Switch>
+              </div>
             </div>
           ))}
-        </>
+        </div>
       ) : (
-        <>
+        <div>
           <div className="mb-20">
             <InputField
               input={search}
@@ -87,8 +112,7 @@ export const SearchableTokenList = ({
               borderGrey
             />
           </div>
-          <button onClick={() => setMange(true)}>Manage Token Lists</button>
-          <div>
+          <div className="max-h-[522px] overflow-scroll px-2">
             {tokens
               .filter((token) =>
                 token.symbol?.toLowerCase().includes(search.toLowerCase())
@@ -106,7 +130,7 @@ export const SearchableTokenList = ({
                         alt={'Token'}
                         className="bg-grey-2 rounded-full h-28 w-28"
                       />
-                      <div className="grid justify-items-start ml-5">
+                      <div className="grid justify-items-start ml-15">
                         <div className="text-16">{token.symbol}</div>
                         <div className="text-12 text-grey-3">{token.name}</div>
                       </div>
@@ -116,7 +140,16 @@ export const SearchableTokenList = ({
                 );
               })}
           </div>
-        </>
+          <div>
+            <hr />
+            <button
+              onClick={() => setMange(true)}
+              className="w-full py-20 text-center text-primary font-semibold"
+            >
+              Manage Token Lists
+            </button>
+          </div>
+        </div>
       )}
     </Modal>
   );

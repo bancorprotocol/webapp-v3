@@ -8,14 +8,18 @@ import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import usePrevious from 'hooks/usePrevious';
 
-export const SwapWidget = () => {
+interface SwapWidgetProps {
+  isLimit: boolean;
+  setIsLimit: Function;
+}
+
+export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
   );
 
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);
-  const [isLimit, setIsLimit] = useState(false);
   const [isUsd, setIsUsd] = useState(false);
   const dispatch = useDispatch();
   const previousTokens = usePrevious(tokens);
@@ -37,31 +41,40 @@ export const SwapWidget = () => {
   };
 
   return (
-    <div className="widget mx-auto">
-      <SwapHeader
-        isLimit={isLimit}
-        setIsLimit={setIsLimit}
-        isUsd={isUsd}
-        setIsUsd={setIsUsd}
-      />
-      <hr className="widget-separator" />
+    <>
+      <div className="widget mx-auto">
+        <SwapHeader
+          isLimit={isLimit}
+          setIsLimit={setIsLimit}
+          isUsd={isUsd}
+          setIsUsd={setIsUsd}
+        />
+        <hr className="widget-separator" />
+        {isLimit ? (
+          <SwapLimit
+            fromToken={fromToken}
+            setFromToken={setFromToken}
+            toToken={toToken}
+            setToToken={setToToken}
+            switchTokens={switchTokens}
+          />
+        ) : (
+          <SwapMarket
+            fromToken={fromToken}
+            setFromToken={setFromToken}
+            toToken={toToken}
+            setToToken={setToToken}
+            switchTokens={switchTokens}
+          />
+        )}
+      </div>
       {isLimit ? (
-        <SwapLimit
-          fromToken={fromToken}
-          setFromToken={setFromToken}
-          toToken={toToken}
-          setToToken={setToToken}
-          switchTokens={switchTokens}
-        />
+        <div className="text-center text-10 text-grey-4 mt-18">
+          Limit orders are powered by KeeperDAO
+        </div>
       ) : (
-        <SwapMarket
-          fromToken={fromToken}
-          setFromToken={setFromToken}
-          toToken={toToken}
-          setToToken={setToToken}
-          switchTokens={switchTokens}
-        />
+        ''
       )}
-    </div>
+    </>
   );
 };

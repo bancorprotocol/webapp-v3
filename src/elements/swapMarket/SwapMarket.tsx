@@ -2,11 +2,18 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { ApproveTypes, getRate, swap } from 'services/web3/swap/methods';
+import {
+  ApproveTypes,
+  getPriceImpact,
+  getRate,
+  swap,
+} from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import BigNumber from 'bignumber.js';
 import { useDispatch } from 'react-redux';
-import { addNotification } from 'redux/notification/notification';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
 import { useWeb3React } from '@web3-react/core';
 import {
@@ -49,11 +56,8 @@ export const SwapMarket = ({
         const rate = (Number(baseRate) / 1).toFixed(4);
         setRate(rate);
 
-        const priceImpact = new BigNumber(baseRate)
-          .minus(rate)
-          .div(baseRate)
-          .times(100);
-        setPriceImpact(priceImpact.toFixed(5));
+        const priceImpact = await getPriceImpact(fromToken, toToken, '1');
+        setPriceImpact(priceImpact.toFixed(6));
       }
     })();
   }, [fromToken, toToken]);
@@ -66,6 +70,13 @@ export const SwapMarket = ({
         const rate = (Number(result) / fromDebounce).toFixed(4);
         setToAmount((fromDebounce * Number(rate)).toFixed(2));
         setRate(rate);
+
+        const priceImpact = await getPriceImpact(
+          fromToken,
+          toToken,
+          fromDebounce
+        );
+        setPriceImpact(priceImpact.toFixed(6));
       }
     })();
   }, [fromToken, toToken, fromDebounce]);
@@ -93,17 +104,14 @@ export const SwapMarket = ({
       .toPromise();
 
     await approveTokenSwap(fromToken, account, amount, networkContractAddress);
-    console.log('amount is approved');
   };
 
   const handleSwap = async () => {
     if (!chainId || !account) return;
     try {
-      console.log('init swap');
       const networkContractAddress = await bancorNetwork$
         .pipe(take(1))
         .toPromise();
-      console.log('check if approval required');
       const isApprovalReq = await getApprovalRequired(
         fromToken,
         fromAmount,
@@ -124,7 +132,7 @@ export const SwapMarket = ({
       });
       dispatch(
         addNotification({
-          type: 'pending',
+          type: NotificationType.pending,
           title: 'Test Notification',
           msg: 'Some message here...',
           txHash: result,

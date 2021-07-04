@@ -2,6 +2,9 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 // @ts-ignore
 import JSONbig from 'json-bigint';
+import { TokenListItem } from 'services/observables/tokens';
+import { ethToken, wethToken } from 'services/web3/config';
+import { createOrder, depositWeth } from 'services/web3/swap/limit';
 
 export interface StringRfq {
   makerToken: string;
@@ -189,7 +192,7 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
     }>(url, rfqOrder);
 
     const succeededResponseMessage = 'Order creation succeeded';
-    if (res.data.message == succeededResponseMessage) {
+    if (res.data.message === succeededResponseMessage) {
       return res.data;
     } else {
       throw new Error(`Unexpected response from server, ${res.data.message}`);
@@ -197,4 +200,32 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
   } catch (e) {
     throw new Error(`Unexpected error during send order request ${e.message}`);
   }
+};
+
+export const swapLimit = async (
+  fromToken: TokenListItem,
+  toToken: TokenListItem,
+  from: string,
+  to: string,
+  user: string,
+  duration: plugin.Duration,
+  onPrompt: Function
+) => {
+  const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
+
+  if (fromIsEth) {
+    const success = await depositWeth(from, user, onPrompt);
+  }
+
+  const newFrom = fromIsEth ? { ...fromToken, address: wethToken } : fromToken;
+
+  await createOrder(
+    newFrom,
+    toToken,
+    from,
+    to,
+    user,
+    duration.asSeconds(),
+    onPrompt
+  );
 };

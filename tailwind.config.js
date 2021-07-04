@@ -4,7 +4,7 @@ const buttons = require('./src/styles/plugins/buttons');
 module.exports = {
   mode: 'jit',
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: 'media', // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   plugins: [buttons()],
   theme: {
     colors: {
@@ -98,6 +98,7 @@ module.exports = {
         2: '#E6EBF2',
         3: '#97A5B8',
         4: '#5A687C',
+        5: '#6B7C93',
       },
     },
 
