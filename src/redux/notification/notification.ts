@@ -1,7 +1,12 @@
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import dayjs from 'dayjs';
 
-type NotificationType = 'info' | 'success' | 'error' | 'pending';
+export enum NotificationType {
+  info,
+  success,
+  error,
+  pending,
+}
 
 export interface BaseNotification {
   type?: NotificationType;
@@ -34,7 +39,7 @@ const notificationSlice = createSlice({
     addNotification: (state, action: PayloadAction<BaseNotification>) => {
       state.notifications.push({
         id: nanoid(),
-        type: 'info',
+        type: NotificationType.info,
         timestamp: dayjs().unix(),
         showSeconds: 8,
         ...action.payload,

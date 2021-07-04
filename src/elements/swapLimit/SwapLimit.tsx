@@ -14,6 +14,13 @@ import {
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/methods';
 import usePrevious from 'hooks/usePrevious';
+import { swapLimit } from 'services/api/keeperDao';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
+import { useDispatch } from 'react-redux';
+import { useWeb3React } from '@web3-react/core';
 
 enum Field {
   from,
@@ -36,6 +43,8 @@ export const SwapLimit = ({
   setToToken,
   switchTokens,
 }: SwapLimitProps) => {
+  const dispatch = useDispatch();
+  const { account } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
@@ -150,6 +159,30 @@ export const SwapLimit = ({
     fetchMarketRate();
   }, [fetchMarketRate, fromToken, toToken]);
 
+  const onPromp = async () => {};
+
+  const handleSwap = async () => {
+    if (!account) return;
+
+    const res = await swapLimit(
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      account,
+      duration,
+      onPromp
+    );
+
+    dispatch(
+      addNotification({
+        type: NotificationType.success,
+        title: 'Test Notification',
+        msg: 'Some message here...',
+      })
+    );
+  };
+
   return (
     <div>
       <div className="px-20">
@@ -248,7 +281,12 @@ export const SwapLimit = ({
           </div>
         </div>
 
-        <button className="btn-primary rounded w-full">Swap</button>
+        <button
+          className="btn-primary rounded w-full"
+          onClick={() => handleSwap()}
+        >
+          Swap
+        </button>
       </div>
     </div>
   );
