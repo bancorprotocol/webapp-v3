@@ -91,7 +91,9 @@ export const TokenInputField = ({
 
         <div className="relative w-full">
           <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-            {`~$${input !== '' ? usdByToken(token, input) : '0.00'}`}
+            {`${!toggle ? '~$' : ''}${
+              input !== '' ? usdByToken(token, input, !toggle) : '0.00'
+            }`}
           </div>
           <input
             type="text"
