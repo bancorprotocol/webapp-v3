@@ -9,15 +9,18 @@ import { useAppSelector } from 'redux/index';
 import usePrevious from 'hooks/usePrevious';
 
 export const Toggle = createContext(false);
+interface SwapWidgetProps {
+  isLimit: boolean;
+  setIsLimit: Function;
+}
 
-export const SwapWidget = () => {
+export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
   );
 
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);
-  const [isLimit, setIsLimit] = useState(false);
   const [toggle, setToggle] = useState(true);
   const dispatch = useDispatch();
   const previousTokens = usePrevious(tokens);
@@ -65,6 +68,13 @@ export const SwapWidget = () => {
           />
         )}
       </div>
+      {isLimit ? (
+        <div className="text-center text-10 text-grey-4 mt-18">
+          Limit orders are powered by KeeperDAO
+        </div>
+      ) : (
+        ''
+      )}
     </Toggle.Provider>
   );
 };
