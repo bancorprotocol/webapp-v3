@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import {
-  getLogoURI,
+  getLogoByURI,
+  getTokenLogoURI,
   TokenList,
   TokenListItem,
   userLists$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
-import { useDispatch } from 'react-redux';
 import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 
 export const SearchableTokenList = ({
@@ -67,7 +67,7 @@ export const SearchableTokenList = ({
               <div className="flex items-center">
                 <img
                   alt="TokenList"
-                  src={tokenList.logoURI}
+                  src={getLogoByURI(tokenList.logoURI)}
                   className="bg-grey-2 rounded-full h-28 w-28"
                 />
                 <div className={'ml-15'}>
@@ -126,7 +126,7 @@ export const SearchableTokenList = ({
                   >
                     <div className="flex items-center">
                       <img
-                        src={getLogoURI(token)}
+                        src={getTokenLogoURI(token)}
                         alt={'Token'}
                         className="bg-grey-2 rounded-full h-28 w-28"
                       />

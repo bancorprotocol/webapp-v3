@@ -1,15 +1,13 @@
 import { Switch } from '@headlessui/react';
 import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
 import { ReactComponent as IconDollar } from 'assets/icons/dollar.svg';
-
 import 'elements/swapSwitch/SwapSwitch.css';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
+import { useContext } from 'react';
 
-interface SwapSwitchProps {
-  isEnabled: boolean;
-  setIsEnabled: Function;
-}
+export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
+  const isEnabled = useContext(Toggle);
 
-export const SwapSwitch = ({ isEnabled, setIsEnabled }: SwapSwitchProps) => {
   const switchStyles = `swap-switch !min-w-[0px] ${
     isEnabled
       ? 'bg-primary border-primary dark:bg-primary-light dark:border-primary-light'
@@ -31,7 +29,6 @@ export const SwapSwitch = ({ isEnabled, setIsEnabled }: SwapSwitchProps) => {
   return (
     <div className="flex  items-center space-x-4 text-14">
       <IconCoins className={`w-[13px] ${coinIconStyles}`} />
-
       <Switch
         checked={isEnabled}
         onChange={() => setIsEnabled(!isEnabled)}

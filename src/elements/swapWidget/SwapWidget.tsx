@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
@@ -8,6 +8,8 @@ import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import usePrevious from 'hooks/usePrevious';
 
+export const Toggle = createContext(false);
+
 export const SwapWidget = () => {
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -16,7 +18,7 @@ export const SwapWidget = () => {
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState(tokens[1]);
   const [isLimit, setIsLimit] = useState(false);
-  const [isUsd, setIsUsd] = useState(false);
+  const [toggle, setToggle] = useState(true);
   const dispatch = useDispatch();
   const previousTokens = usePrevious(tokens);
 
@@ -37,31 +39,32 @@ export const SwapWidget = () => {
   };
 
   return (
-    <div className="widget mx-auto">
-      <SwapHeader
-        isLimit={isLimit}
-        setIsLimit={setIsLimit}
-        isUsd={isUsd}
-        setIsUsd={setIsUsd}
-      />
-      <hr className="widget-separator" />
-      {isLimit ? (
-        <SwapLimit
-          fromToken={fromToken}
-          setFromToken={setFromToken}
-          toToken={toToken}
-          setToToken={setToToken}
-          switchTokens={switchTokens}
+    <Toggle.Provider value={toggle}>
+      <div className="widget mx-auto">
+        <SwapHeader
+          isLimit={isLimit}
+          setIsLimit={setIsLimit}
+          setToggle={setToggle}
         />
-      ) : (
-        <SwapMarket
-          fromToken={fromToken}
-          setFromToken={setFromToken}
-          toToken={toToken}
-          setToToken={setToToken}
-          switchTokens={switchTokens}
-        />
-      )}
-    </div>
+        <hr className="widget-separator" />
+        {isLimit ? (
+          <SwapLimit
+            fromToken={fromToken}
+            setFromToken={setFromToken}
+            toToken={toToken}
+            setToToken={setToToken}
+            switchTokens={switchTokens}
+          />
+        ) : (
+          <SwapMarket
+            fromToken={fromToken}
+            setFromToken={setFromToken}
+            toToken={toToken}
+            setToToken={setToToken}
+            switchTokens={switchTokens}
+          />
+        )}
+      </div>
+    </Toggle.Provider>
   );
 };
