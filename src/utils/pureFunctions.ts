@@ -119,10 +119,12 @@ export const mapIgnoreThrown = async <T, V>(
 
 export const usdByToken = (
   token: TokenListItem,
-  amount?: string
-): string | null =>
-  token && token.usdPrice && (amount || token.balance)
-    ? (
-        Number(amount ? amount : token.balance) * Number(token.usdPrice)
-      ).toFixed(2)
-    : null;
+  amount?: string,
+  isToken: boolean = true
+): string | null => {
+  if (!token || !token.usdPrice || (!amount && !token.balance)) return null;
+
+  const input = Number(amount ? amount : token.balance);
+  const tokenPrice = Number(token.usdPrice);
+  return (isToken ? input * tokenPrice : input / tokenPrice).toFixed(2);
+};

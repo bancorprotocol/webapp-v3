@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   classNameGenerator,
   sanitizeNumberInput,
   usdByToken,
 } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getLogoURI, TokenListItem } from 'services/observables/tokens';
+import { getTokenLogoURI, TokenListItem } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
 
 interface TokenInputFieldProps {
   label: string;
@@ -40,6 +41,7 @@ export const TokenInputField = ({
   debounce,
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const toggle = useContext(Toggle);
   const handleChange = (text: string) => {
     if (setInput) setInput(text);
     if (debounce) debounce(text);
@@ -74,7 +76,7 @@ export const TokenInputField = ({
         >
           {token && (
             <img
-              src={getLogoURI(token)}
+              src={getTokenLogoURI(token)}
               alt="Token"
               className="bg-grey-2 rounded-full h-28 w-28"
             />
@@ -89,7 +91,9 @@ export const TokenInputField = ({
 
         <div className="relative w-full">
           <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-            {`~$${input !== '' ? usdByToken(token, input) : '0.00'}`}
+            {`${!toggle ? '~$' : ''}${
+              input !== '' ? usdByToken(token, input, !toggle) : '0.00'
+            }`}
           </div>
           <input
             type="text"
