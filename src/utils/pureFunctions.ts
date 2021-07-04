@@ -122,9 +122,9 @@ export const usdByToken = (
   amount?: string,
   isToken: boolean = true
 ): string | null => {
+  if (!token || !token.usdPrice || (!amount && !token.balance)) return null;
+
   const input = Number(amount ? amount : token.balance);
   const tokenPrice = Number(token.usdPrice);
-  return token && token.usdPrice && (amount || token.balance)
-    ? (isToken ? input * tokenPrice : input / tokenPrice).toFixed(2)
-    : null;
+  return (isToken ? input * tokenPrice : input / tokenPrice).toFixed(2);
 };
