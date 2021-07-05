@@ -26,7 +26,7 @@ const getApproval = async (
   return new BigNumber(amountWei).gt(currentApprovedBalance);
 };
 
-// Prop AMOUNT set NULL for UNLIMITED
+// Prop AMOUNT set undefined for UNLIMITED
 const setApproval = async (
   token: TokenListItem,
   user: string,
@@ -50,8 +50,8 @@ export const getNetworkContractApproval = async (
   amount: string
 ): Promise<boolean> => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-
   const USER = await user$.pipe(take(1)).toPromise();
+
   return getApproval(token, amount, USER, BANCOR_NETWORK);
 };
 
@@ -61,7 +61,7 @@ export const setNetworkContractApproval = async (
   amount?: string
 ): Promise<void> => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-
   const USER = await user$.pipe(take(1)).toPromise();
+
   await setApproval(token, USER, BANCOR_NETWORK, amount);
 };

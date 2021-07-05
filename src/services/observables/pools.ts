@@ -39,14 +39,7 @@ import {
 import { getRateByPath } from 'services/web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
-
-import { user$ } from './user';
-import {
-  buildTokenContract,
-  getApprovalRequired,
-} from 'services/web3/contracts/token/wrapper';
 import wait from 'waait';
-import { ethToken } from 'services/web3/config';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
