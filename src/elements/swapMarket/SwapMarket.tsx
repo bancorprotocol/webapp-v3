@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   ApproveTypes,
   getPriceImpact,
@@ -23,6 +23,7 @@ import {
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { Modal } from 'components/modal/Modal';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -48,6 +49,7 @@ export const SwapMarket = ({
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [approvalRequired, setApprovalRequired] = useState(false);
+  const toggle = useContext(Toggle);
 
   useEffect(() => {
     (async () => {
@@ -68,7 +70,14 @@ export const SwapMarket = ({
       else if (fromToken && toToken) {
         const result = await getRate(fromToken, toToken, fromDebounce);
         const rate = (Number(result) / fromDebounce).toFixed(4);
-        setToAmount((fromDebounce * Number(rate)).toFixed(2));
+        setToAmount(
+          (
+            (fromDebounce /
+              (fromToken.usdPrice && toggle ? Number(fromToken.usdPrice) : 1)) *
+            Number(rate) *
+            (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
+          ).toFixed(2)
+        );
         setRate(rate);
 
         const priceImpact = await getPriceImpact(
@@ -79,7 +88,7 @@ export const SwapMarket = ({
         setPriceImpact(priceImpact.toFixed(6));
       }
     })();
-  }, [fromToken, toToken, fromDebounce]);
+  }, [fromToken, toToken, fromDebounce, toggle]);
 
   const onUpdate = (id: any, step: any) => {
     console.log('id', id, 'step', step);
