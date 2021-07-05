@@ -52,7 +52,7 @@ export const getNetworkContractApproval = async (
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
 
-  return getApproval(token, amount, USER, BANCOR_NETWORK);
+  return getApproval(token, USER, BANCOR_NETWORK, amount);
 };
 
 // Set BancorNetwork token approval - if prop AMOUNT is UNDEFINED set unlimited
