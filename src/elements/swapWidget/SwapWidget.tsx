@@ -32,7 +32,7 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
     const findSetToken = (token: TokenListItem) => {
       if (token) {
         const found = tokens.find((x) => x.address === token.address);
-        if (found && found.balance !== token.balance) return found;
+        if (found) return found;
       }
 
       return null;
