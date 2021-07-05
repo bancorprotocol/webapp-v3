@@ -60,21 +60,28 @@ const orderResToLimit = async (
   const tokens = await tokenList$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
-    const payToken = tokens.find(
-      (x) => x.address.toLowerCase() === res.order.makerToken.toLowerCase()
-    );
-    const getToken = tokens.find(
-      (x) => x.address.toLowerCase() === res.order.takerToken.toLowerCase()
-    );
+    const payToken =
+      tokens.find(
+        (x) => x.address.toLowerCase() === res.order.makerToken.toLowerCase()
+      ) ?? tokens[0];
+    const getToken =
+      tokens.find(
+        (x) => x.address.toLowerCase() === res.order.takerToken.toLowerCase()
+      ) ?? tokens[0];
+
     return {
       hash: res.metaData.orderHash,
       expiration: res.order.expiry,
-      payToken: payToken ?? tokens[0],
-      getToken: getToken ?? tokens[0],
+      payToken,
+      getToken,
       payAmount: res.order.makerAmount,
       getAmount: res.order.takerAmount,
-      rate: '-1',
-      filled: '-1',
+      rate: `1 ${payToken.symbol} = ${res.order.takerAmount
+        .div(res.order.makerAmount)
+        .toFixed(9)} ${getToken.symbol}`,
+      filled: new BigNumber(res.metaData.filledAmount_takerToken)
+        .div(res.metaData.remainingFillableAmount_takerToken)
+        .toFixed(2),
     };
   });
 };

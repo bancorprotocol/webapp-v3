@@ -44,7 +44,7 @@ export const SwapLimitTable = () => {
             />
           </div>
           <div className={'flex'}>
-            <button className={'btn-outline-secondary btn-sm rounded-10'}>
+            <button className={'btn-outline-secondary btn-sm rounded-10 mr-10'}>
               Cancel All
             </button>
             <button
@@ -85,7 +85,7 @@ export const SwapLimitTable = () => {
                       <img
                         src={getTokenLogoURI(order.payToken)}
                         alt="Token"
-                        className="bg-grey-2 rounded-full h-28 w-28"
+                        className="bg-grey-2 rounded-full h-28 w-28 mr-5"
                       />
                       {`${order.payToken.symbol} ${order.payAmount}`}
                     </div>
@@ -95,13 +95,13 @@ export const SwapLimitTable = () => {
                       <img
                         src={getTokenLogoURI(order.getToken)}
                         alt="Token"
-                        className="bg-grey-2 rounded-full h-28 w-28"
+                        className="bg-grey-2 rounded-full h-28 w-28 mr-5"
                       />
                       {`${order.getToken.symbol} ${order.getAmount}`}
                     </div>
                   </td>
-                  <td>1123 BNT = 1.123456 BNT</td>
-                  <td>0.00%</td>
+                  <td>{order.rate}</td>
+                  <td>{`${order.filled}%`}</td>
                   <td className={'w-15'}>
                     <button
                       className={
