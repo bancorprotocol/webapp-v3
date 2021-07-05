@@ -2,12 +2,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useContext, useEffect, useState } from 'react';
-import {
-  ApproveTypes,
-  getPriceImpact,
-  getRate,
-  swap,
-} from 'services/web3/swap/methods';
+import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
@@ -16,14 +11,12 @@ import {
 } from 'redux/notification/notification';
 import { usdByToken } from 'utils/pureFunctions';
 import { useWeb3React } from '@web3-react/core';
-import {
-  approveTokenSwap,
-  getApprovalRequired,
-} from 'services/web3/contracts/token/wrapper';
-import { bancorNetwork$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 import { Modal } from 'components/modal/Modal';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
+import {
+  getNetworkContractApproval,
+  setNetworkContractApproval,
+} from 'services/web3/approval';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -48,7 +41,8 @@ export const SwapMarket = ({
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
-  const [approvalRequired, setApprovalRequired] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [step, setStep] = useState(0);
   const toggle = useContext(Toggle);
 
   useEffect(() => {
@@ -90,67 +84,96 @@ export const SwapMarket = ({
     })();
   }, [fromToken, toToken, fromDebounce, toggle]);
 
-  const onUpdate = (id: any, step: any) => {
-    console.log('id', id, 'step', step);
+  const closeModal = () => {
+    setStep(0);
+    setShowModal(false);
   };
 
-  const onPrompt = async (
-    info: {
-      id: string;
-      label: ApproveTypes;
-    }[]
-  ) => {
-    console.log('info', info);
-
-    return info[0].id;
-  };
-
-  const approveToken = async (amount: string | null) => {
-    if (!chainId || !account) return;
-
-    const networkContractAddress = await bancorNetwork$
-      .pipe(take(1))
-      .toPromise();
-
-    await approveTokenSwap(fromToken, account, amount, networkContractAddress);
-  };
-
-  const handleSwap = async () => {
-    if (!chainId || !account) return;
+  // Step 0 Check allowance
+  const checkAllowance = async () => {
     try {
-      const networkContractAddress = await bancorNetwork$
-        .pipe(take(1))
-        .toPromise();
-      const isApprovalReq = await getApprovalRequired(
+      const isApprovalReq = await getNetworkContractApproval(
         fromToken,
-        fromAmount,
-        account,
-        networkContractAddress
+        fromAmount
       );
-      if (isApprovalReq) return setApprovalRequired(true);
+      if (isApprovalReq) return setStep(1);
+      setStep(3);
+      await handleSwap(3);
+    } catch (e) {
+      console.error('getNetworkContractApproval failed', e);
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Check Allowance',
+          msg: 'Unkown error - check console log.',
+        })
+      );
+    }
+  };
 
-      const result = await swap({
+  // Step 1 Wait for user to choose approval
+  // Step 2 Proceed with approval based on user selection
+  // Prop amount is UNDEFINED when UNLIMITED
+  const approveToken = async (amount?: string) => {
+    setStep(2);
+    try {
+      await setNetworkContractApproval(fromToken, amount);
+      setStep(3);
+      await handleSwap(3);
+    } catch (e) {
+      console.error('setNetworkContractApproval failed', e);
+      closeModal();
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Approve Token',
+          msg: 'Unkown error - check console log.',
+        })
+      );
+    }
+  };
+
+  const handleSwap = async (step = 0) => {
+    if (!chainId || !account) return;
+    setShowModal(true);
+    if (step < 3) return checkAllowance();
+    try {
+      const txHash = await swap({
         net: chainId,
         fromToken,
         toToken,
         fromAmount,
         toAmount,
         user: account,
-        onUpdate,
-        onPrompt,
       });
       dispatch(
         addNotification({
           type: NotificationType.pending,
           title: 'Test Notification',
           msg: 'Some message here...',
-          txHash: result,
+          txHash,
         })
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Swap Failed',
+          msg: e.message,
+        })
+      );
+    } finally {
+      closeModal();
     }
   };
+
+  const steps = [
+    'checking allowance ...',
+    'choose approval',
+    'setting approval amount ...',
+    'processing swap',
+  ];
 
   return (
     <>
@@ -211,21 +234,25 @@ export const SwapMarket = ({
           </button>
         </div>
       </div>
-      <Modal
-        title={'Approve'}
-        setIsOpen={setApprovalRequired}
-        isOpen={approvalRequired}
-      >
+      <Modal title={'Approve'} setIsOpen={closeModal} isOpen={showModal}>
         <div>
-          <button onClick={() => approveToken(null)} className={'btn-primary'}>
-            unlimited
-          </button>
-          <button
-            onClick={() => approveToken(fromAmount)}
-            className={'btn-primary'}
-          >
-            limited
-          </button>
+          {'current step' + step}
+          <br />
+          {steps[step]}
+
+          {step === 1 && (
+            <div>
+              <button onClick={() => approveToken()} className={'btn-primary'}>
+                unlimited
+              </button>
+              <button
+                onClick={() => approveToken(fromAmount)}
+                className={'btn-primary'}
+              >
+                limited
+              </button>
+            </div>
+          )}
         </div>
       </Modal>
     </>
