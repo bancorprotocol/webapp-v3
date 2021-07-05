@@ -85,6 +85,9 @@
       "@typescript-eslint/no-unused-vars": 0
     }
   },
+  "resolutions": {
+    "immer": "9.0.3"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
