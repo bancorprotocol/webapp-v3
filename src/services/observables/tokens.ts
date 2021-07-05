@@ -8,6 +8,7 @@ import { user$ } from './user';
 import { fetchTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
+import { getWethAPIToken } from 'services/web3/config';
 
 export interface TokenList {
   name: string;
@@ -76,12 +77,14 @@ export const tokenList$ = combineLatest([
     async ([tokenLists, apiTokens, userLists, user, currentNetwork]) => {
       if (userLists.length === 0) userLists = [0];
 
-      const newApiTokens = apiTokens.map((x) => ({
-        address: x.dlt_id,
-        symbol: x.symbol,
-        decimals: x.decimals,
-        usdPrice: x.rate.usd,
-      }));
+      const newApiTokens = [...apiTokens, getWethAPIToken(apiTokens)].map(
+        (x) => ({
+          address: x.dlt_id,
+          symbol: x.symbol,
+          decimals: x.decimals,
+          usdPrice: x.rate.usd,
+        })
+      );
       let userPicked: TokenListItem[] = [];
       tokenLists.forEach((list, index) => {
         if (userLists.includes(index)) userPicked.push(...list.tokens);

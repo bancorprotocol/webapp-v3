@@ -1,3 +1,4 @@
+import { APIToken } from 'services/api/bancor';
 import { EthNetworks } from './types';
 
 interface EthNetworkVariables {
@@ -16,6 +17,21 @@ interface EthNetworkVariables {
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+
+export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
+  const eth = apiTokens.find(
+    (x) => x.dlt_id.toLowerCase() === ethToken.toLowerCase()
+  );
+
+  return {
+    symbol: 'WETH',
+    dlt_id: wethToken,
+    liquidity: eth ? eth.liquidity : { usd: null },
+    rate: eth ? eth.rate : { usd: null },
+    rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
+    decimals: eth ? eth.decimals : 18,
+  };
+};
 
 export const getNetworkVariables = (
   ethNetwork: EthNetworks
