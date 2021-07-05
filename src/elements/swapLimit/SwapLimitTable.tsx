@@ -4,20 +4,25 @@ import { withdrawWeth } from 'services/web3/swap/limit';
 import { useWeb3React } from '@web3-react/core';
 import { useInterval } from 'hooks/useInterval';
 import { getOrders, LimitOrder } from 'services/api/keeperDao';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { getTokenLogoURI } from 'services/observables/tokens';
 
 export const SwapLimitTable = () => {
   const { account } = useWeb3React();
   const [orders, setOrders] = useState<LimitOrder[]>([]);
 
+  const refreshOrders = useCallback(async () => {
+    if (account) setOrders(await getOrders(account));
+  }, [account]);
+
   useInterval(() => {
-    (async () => {
-      if (account) {
-        const res = await getOrders(account);
-        setOrders(res.orders);
-      }
-    })();
+    refreshOrders();
   }, 60000);
+
+  useEffect(() => {
+    refreshOrders();
+  }, [refreshOrders]);
 
   if (!account || orders.length === 0) return null;
 
@@ -66,23 +71,33 @@ export const SwapLimitTable = () => {
           <tbody>
             {orders.map((order) => {
               return (
-                <tr key={order.metaData.orderHash}>
+                <tr key={order.hash}>
                   <td>
                     <span className="text-primary mr-12">
-                      {order.order.expiry}
+                      {dayjs.unix(order.expiration).format('DD/MM/YYYY')}
                     </span>
-                    <span>12:10:07 PM</span>
+                    <span>
+                      {dayjs.unix(order.expiration).format('h:mm:ss A')}
+                    </span>
                   </td>
                   <td>
                     <div className={'flex items-center'}>
-                      <div className="h-24 w-24 bg-grey-2 rounded-full mr-10"></div>
-                      {`${order.order.makerToken} ${order.order.makerAmount}`}
+                      <img
+                        src={getTokenLogoURI(order.payToken)}
+                        alt="Token"
+                        className="bg-grey-2 rounded-full h-28 w-28"
+                      />
+                      {`${order.payToken.symbol} ${order.payAmount}`}
                     </div>
                   </td>
                   <td>
                     <div className={'flex items-center'}>
-                      <div className="h-24 w-24 bg-grey-2 rounded-full mr-10"></div>
-                      {`${order.order.takerToken} ${order.order.takerAmount}`}
+                      <img
+                        src={getTokenLogoURI(order.getToken)}
+                        alt="Token"
+                        className="bg-grey-2 rounded-full h-28 w-28"
+                      />
+                      {`${order.getToken.symbol} ${order.getAmount}`}
                     </div>
                   </td>
                   <td>1123 BNT = 1.123456 BNT</td>
