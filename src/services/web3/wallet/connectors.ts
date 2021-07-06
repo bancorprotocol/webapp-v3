@@ -15,8 +15,8 @@ import Web3 from 'web3';
 
 const POLLING_INTERVAL = 15000;
 
-const buildAlchemyUrl = (network: EthNetworks, wss: boolean = false) => {
-  const net = EthNetworks.Mainnet === network ? 'mainnet' : 'ropstan';
+export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = false) => {
+  const net = EthNetworks.Mainnet === network ? 'mainnet' : 'ropsten';
   const id =
     network === EthNetworks.Mainnet
       ? (process.env.REACT_APP_ALCHEMY_MAINNET as string)
@@ -33,9 +33,8 @@ const RPC_URLS: { [chainId: number]: string } = {
 
 const appName = 'phoenix';
 
-export const provider = new Web3.providers.WebsocketProvider(
-  buildAlchemyUrl(EthNetworks.Mainnet, true),
-  {
+export const provider = (network: EthNetworks = EthNetworks.Ropsten) =>
+  new Web3.providers.WebsocketProvider(buildAlchemyUrl(network, true), {
     timeout: 100 * 1000,
     clientConfig: {
       keepalive: true,
@@ -46,8 +45,7 @@ export const provider = new Web3.providers.WebsocketProvider(
       delay: 15000,
       onTimeout: true,
     },
-  }
-);
+  });
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
