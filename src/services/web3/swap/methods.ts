@@ -52,6 +52,7 @@ import { buildConverterContract } from '../contracts/converter/wrapper';
 import { DataTypes, MultiCall } from 'eth-multicall';
 import { multi } from '../contracts/shapes';
 import axios, { AxiosResponse } from 'axios';
+import { resolveTxOnConfirmation } from 'services/web3/index';
 
 export const getRate = async (
   fromToken: TokenListItem,
@@ -100,6 +101,8 @@ export const getPriceImpact = async (
     web3,
   });
 
+  console.log('result', result);
+
   const pathInverted = await conversionPath({
     from: toToken.address,
     to: fromToken.address,
@@ -114,6 +117,8 @@ export const getPriceImpact = async (
     web3,
   });
 
+  console.log('resultInverted', resultInverted);
+
   const output = Number(resultInverted['0']);
   const input = Number(amountWei);
 
@@ -121,6 +126,7 @@ export const getPriceImpact = async (
 };
 
 //Temporary
+
 export const swap = async ({
   net,
   fromToken,
@@ -128,8 +134,6 @@ export const swap = async ({
   fromAmount,
   toAmount,
   user,
-  onUpdate,
-  onPrompt,
 }: {
   net: EthNetworks;
   fromToken: TokenListItem;
@@ -137,40 +141,17 @@ export const swap = async ({
   fromAmount: string;
   toAmount: string;
   user: string;
-  onUpdate: Function;
-  onPrompt: Function;
 }): Promise<string> => {
+  console.log('swap start');
+
   currentNetwork = net;
   currentUser = user;
   const fromIsEth = fromToken.address.toLowerCase() === ethToken.toLowerCase();
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
-  const steps: any[] = [
-    {
-      name: 'Pathing',
-      description: 'Finding path...',
-    },
-    {
-      name: 'SetApprovalAmount',
-      description: 'Setting approval amount...',
-    },
-    {
-      name: 'ConvertProcessing',
-      description: 'Processing conversion...',
-    },
-    {
-      name: 'WaitingTxConf',
-      description: 'Awaiting block confirmation...',
-    },
-    {
-      name: 'Done',
-      description: 'Done!',
-    },
-  ];
-
-  onUpdate!(0, steps);
-
+  console.log('before apiData');
   const apiData = await apiData$.pipe(take(1)).toPromise();
+  console.log('apiData');
 
   const minimalRelays = await winningMinimalRelays(apiData, allViewRelays);
 
@@ -186,21 +167,11 @@ export const swap = async ({
 
   const ethPath = generateEthPath(fromToken.symbol, relays);
 
-  onUpdate!(1, steps);
-  // await triggerApprovalIfRequired({
-  //   owner: user,
-  //   amount: fromWei,
-  //   spender: networkContractAddress,
-  //   tokenAddress: fromToken.address,
-  //   onPrompt,
-  // });
-  onUpdate!(2, steps);
-
   const networkContract = buildNetworkContract(networkContractAddress);
 
   const expectedReturnWei = expandToken(toAmount, toToken.decimals);
 
-  const confirmedHash = await resolveTxOnConfirmation({
+  return resolveTxOnConfirmation({
     tx: networkContract.methods.convertByPath(
       ethPath.path,
       fromWei,
@@ -209,15 +180,12 @@ export const swap = async ({
       zeroAddress,
       0
     ),
+    user: currentUser,
     onConfirmation: () => {}, //spamBalances([fromTokenContract, toTokenContract]),
     resolveImmediately: true,
     ...(fromIsEth && { value: fromWei }),
-    onHash: () => onUpdate!(3, steps),
+    onHash: () => console.log('onhash'),
   });
-
-  onUpdate!(4, steps);
-
-  return confirmedHash;
 };
 
 enum PoolType {
@@ -1881,6 +1849,7 @@ const approveTokenWithdrawals = async (
           approval.approvedAddress,
           approval.amount
         ),
+        user: currentUser,
       });
     })
   );
@@ -2013,73 +1982,4 @@ const promptUserForApprovalType = async (
 
   const unlimitedApproval = selectedQuestion.label === ApproveTypes.unlimited;
   return { unlimitedApproval };
-};
-
-const determineTxGas = async (tx: ContractSendMethod): Promise<number> => {
-  const from = currentUser;
-  if (!from) throw new Error('Cannot estimate gas without being authenticated');
-  const buffer = 1.1;
-
-  let adjustedGas: number;
-  try {
-    const withUser = await tx.estimateGas({ from });
-    adjustedGas = withUser;
-  } catch (e) {
-    try {
-      const withoutUser = await tx.estimateGas();
-      adjustedGas = withoutUser;
-    } catch (e) {
-      throw new Error(`Failed estimating gas for tx ${e}`);
-    }
-  }
-  const bufferedResult = adjustedGas * buffer;
-  return new BigNumber(bufferedResult.toFixed(0)).toNumber();
-};
-
-const resolveTxOnConfirmation = async ({
-  tx,
-  gas,
-  value,
-  resolveImmediately = false,
-  onHash,
-  onConfirmation,
-}: {
-  tx: ContractSendMethod;
-  value?: string;
-  gas?: number;
-  resolveImmediately?: boolean;
-  onHash?: (hash: string) => void;
-  onConfirmation?: (hash: string) => void;
-}): Promise<string> => {
-  let adjustedGas: number | boolean = false;
-  if (gas) {
-    adjustedGas = gas;
-  } else {
-    try {
-      adjustedGas = await determineTxGas(tx);
-    } catch (e) {}
-  }
-
-  return new Promise((resolve, reject) => {
-    let txHash: string;
-    tx.send({
-      from: currentUser,
-      ...(adjustedGas && { gas: adjustedGas as number }),
-      ...(value && { value: toHex(value) }),
-    })
-      .on('transactionHash', (hash: string) => {
-        txHash = hash;
-        if (onHash) onHash(hash);
-        if (resolveImmediately) {
-          resolve(txHash);
-        }
-      })
-      .on('confirmation', (confirmationNumber: number) => {
-        if (confirmationNumber === 1) {
-          if (onConfirmation) onConfirmation(txHash);
-          resolve(txHash);
-        }
-      })
-      .on('error', (error: any) => reject(error));
-  });
 };
