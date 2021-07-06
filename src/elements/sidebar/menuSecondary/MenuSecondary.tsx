@@ -11,11 +11,16 @@ import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { ReactComponent as IconDocument } from 'assets/icons/document.svg';
 import { ReactComponent as IconGithub } from 'assets/icons/github.svg';
 import { ReactComponent as IconBntee } from 'assets/icons/bnteeshop.svg';
+import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { MenuSecondaryItemSub } from 'elements/sidebar/menuSecondary/MenuSecondaryItemSub';
+import { useState } from 'react';
+import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
+import 'elements/layoutHeaderMobile/LayoutHeaderMobile.css';
 
 export interface SecondarySubMenuItem {
   label: string;
@@ -110,14 +115,24 @@ interface MenuSecondaryProps {
 }
 
 export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const [menuIndex, setMenuIndex] = useState(0);
+
+  const openMobileMenu = (index: number) => {
+    setMenuIndex(index);
+    setShowModal(true);
+  };
+
   return (
     <>
       <hr className="mx-20" />
-      <div className="p-20 text-12 space-y-16">
+      <nav className="hidden md:block p-20 text-12 space-y-16">
         {menu.map((item, index) => {
           return (
             <Popover key={index} className="relative">
-              <MenuSecondaryItem {...item} />
+              <Popover.Button className="w-full">
+                <MenuSecondaryItem {...item} />
+              </Popover.Button>
 
               <DropdownTransition>
                 <Popover.Panel
@@ -144,7 +159,44 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
             </Popover>
           );
         })}
-      </div>
+      </nav>
+
+      <nav className="md:hidden p-20 text-12 space-y-16">
+        {menu.map((item, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => openMobileMenu(index)}
+              className="w-full"
+            >
+              <MenuSecondaryItem {...item} />
+            </button>
+          );
+        })}
+      </nav>
+
+      <ModalFullscreen setIsOpen={setShowModal} isOpen={showModal}>
+        <div className="layout-header-mobile mb-20">
+          <div className="layout-header-mobile-content text-white">
+            <button onClick={() => setShowModal(false)}>
+              <IconChevron className="w-[30px] transform rotate-180" />
+            </button>
+            <div className="flex justify-center">
+              <IconBancor className="w-[23px]" />
+            </div>
+          </div>
+        </div>
+        <nav className="px-20">
+          <div className="flex justify-between border-b border-grey-2 dark:border-grey-4 pb-10 mb-20">
+            <h3 className="text-20 font-semibold">{menu[menuIndex].label}</h3>
+          </div>
+          <div className="space-y-20">
+            {menu[menuIndex].subMenu.map((subItem, index) => {
+              return <MenuSecondaryItemSub key={index} {...subItem} />;
+            })}
+          </div>
+        </nav>
+      </ModalFullscreen>
     </>
   );
 };
