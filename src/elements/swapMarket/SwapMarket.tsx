@@ -4,6 +4,7 @@ import { TokenListItem } from 'services/observables/tokens';
 import { useContext, useEffect, useState } from 'react';
 import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
@@ -244,22 +245,39 @@ export const SwapMarket = ({
           </button>
         </div>
       </div>
-      <Modal title={'Approve'} setIsOpen={closeModal} isOpen={showModal}>
+      <Modal title={'Swap'} setIsOpen={closeModal} isOpen={showModal}>
         <div>
-          {'current step' + step}
-          <br />
-          {steps[step]}
+          {step !== 1 && (
+            <>
+              {'current step' + step}
+              <br />
+              {steps[step]}
+            </>
+          )}
 
           {step === 1 && (
-            <div>
-              <button onClick={() => approveToken()} className={'btn-primary'}>
-                unlimited
+            <div className="flex flex-col items-center text-12 mb-20">
+              <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
+                <IconLock className="w-[22px] text-white" />
+              </div>
+              <h2 className="text-20 font-semibold mb-8">Approve BNT</h2>
+              <p className="text-center text-grey-5">
+                Before you can proceed, you need to approve BNT spending.
+              </p>
+              <button
+                onClick={() => approveToken()}
+                className={'btn-primary w-full my-15'}
+              >
+                Approve
               </button>
+              <p className="text-center text-grey-5">
+                Want to approve before each transaction?
+              </p>
               <button
                 onClick={() => approveToken(fromAmount)}
-                className={'btn-primary'}
+                className="underline"
               >
-                limited
+                Approve limited permission
               </button>
             </div>
           )}
