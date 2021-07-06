@@ -117,8 +117,18 @@ export const SwapMarket = ({
   const approveToken = async (amount?: string) => {
     setStep(2);
     try {
-      await setNetworkContractApproval(fromToken, amount);
+      const txHash = await setNetworkContractApproval(fromToken, amount);
       setStep(3);
+
+      dispatch(
+        addNotification({
+          type: NotificationType.success,
+          title: `Approve ${fromToken.symbol}`,
+          msg: `${amount || 'Unlimited'} Swap approval set for ${
+            fromToken.symbol
+          }.`,
+        })
+      );
       await handleSwap(3);
     } catch (e) {
       console.error('setNetworkContractApproval failed', e);

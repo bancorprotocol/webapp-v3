@@ -1,47 +1,82 @@
 import { TokenListItem } from 'services/observables/tokens';
-import { expandToken } from 'utils/pureFunctions';
+import { compareString, expandToken, shrinkToken } from 'utils/pureFunctions';
 import { web3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
-import { UNLIMITED_WEI } from 'utils/constants';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
 import { resolveTxOnConfirmation } from 'services/web3/index';
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
+import { NULL_APPROVAL_CONTRACTS, UNLIMITED_WEI } from 'services/web3/config';
+
+interface GetApprovalReturn {
+  allowanceWei: string;
+  isApprovalRequired: boolean;
+}
 
 // returns true if approval is required, else false
 const getApproval = async (
-  token: TokenListItem,
+  token: string,
   user: string,
   spender: string,
-  amount: string
-): Promise<boolean> => {
-  const amountWei = expandToken(amount, token.decimals);
-
-  const tokenContract = buildTokenContract(token.address, web3);
-  const currentApprovedBalance = await tokenContract.methods
+  amountWei: string
+): Promise<GetApprovalReturn> => {
+  const tokenContract = buildTokenContract(token, web3);
+  const allowanceWei = await tokenContract.methods
     .allowance(user, spender)
     .call();
-
-  return new BigNumber(amountWei).gt(currentApprovedBalance);
+  const isApprovalRequired = new BigNumber(amountWei).gt(allowanceWei);
+  return { allowanceWei, isApprovalRequired };
 };
 
-// Prop AMOUNT set undefined for UNLIMITED
+// Generic set approval method. Returns tx hash. Prop AMOUNT set undefined for UNLIMITED
 const setApproval = async (
-  token: TokenListItem,
+  token: string,
   user: string,
   spender: string,
-  amount?: string
-): Promise<void> => {
-  const amountWei = amount
-    ? expandToken(amount, token.decimals)
-    : UNLIMITED_WEI;
-  const tokenContract = buildTokenContract(token.address, web3);
-  const tx = tokenContract.methods.approve(spender, amountWei);
-  await resolveTxOnConfirmation({
-    tx,
-    user,
-  });
+  amountWei?: string
+): Promise<string> => {
+  const tokenContract = buildTokenContract(token, web3);
+
+  // set limited or unlimited amount
+  const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
+
+  // check if nulling allowance required for this contract
+  const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.some((contract) =>
+    compareString(contract, token)
+  );
+
+  // if nulling required, call null approval method
+  if (isNullApprovalContract) {
+    const { allowanceWei } = await getApproval(
+      token,
+      user,
+      spender,
+      amountFinal
+    );
+    if (Number(allowanceWei) !== 0) {
+      const tx = await tokenContract.methods.approve(spender, '0');
+      await resolveTxOnConfirmation({ tx, user });
+    }
+  }
+
+  // set final approval amount
+  const tx = await tokenContract.methods.approve(spender, amountFinal);
+  try {
+    return await resolveTxOnConfirmation({ tx, user });
+  } catch (e) {
+    const isTxDenied = e.message.toLowerCase().includes('denied');
+    // if tx fails because other than user denied, add token to null approval list for next try in case contract is missing in list
+    if (!isTxDenied) {
+      // TODO send this error with failed contract to Sentry or GTM
+      NULL_APPROVAL_CONTRACTS.push(token);
+      console.error(
+        'Approval had failed, next try forcing a zero approval in case required',
+        e.message
+      );
+    }
+    throw e;
+  }
 };
 
 // Check BancorNetwork token approval
@@ -51,17 +86,29 @@ export const getNetworkContractApproval = async (
 ): Promise<boolean> => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
-
-  return getApproval(token, USER, BANCOR_NETWORK, amount);
+  const amountWei = expandToken(amount, token.decimals);
+  const { isApprovalRequired } = await getApproval(
+    token.address,
+    USER,
+    BANCOR_NETWORK,
+    amountWei
+  );
+  return isApprovalRequired;
 };
 
-// Set BancorNetwork token approval - if prop AMOUNT is UNDEFINED set unlimited
+// Set approval method for BancorNetwork contract. Returns tx hash. if prop AMOUNT is UNDEFINED set unlimited approval
 export const setNetworkContractApproval = async (
   token: TokenListItem,
   amount?: string
-): Promise<void> => {
+) => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
-
-  await setApproval(token, USER, BANCOR_NETWORK, amount);
+  const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
+  const txHash = await setApproval(
+    token.address,
+    USER,
+    BANCOR_NETWORK,
+    amountWei
+  );
+  return txHash;
 };
