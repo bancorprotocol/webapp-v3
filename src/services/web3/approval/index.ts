@@ -14,7 +14,7 @@ interface GetApprovalReturn {
   isApprovalRequired: boolean;
 }
 
-// returns true if approval is required, else false
+// Generic method that returns allowance in wei and isApprovalRequired as bool
 const getApproval = async (
   token: string,
   user: string,

@@ -260,9 +260,12 @@ export const SwapMarket = ({
               <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
                 <IconLock className="w-[22px] text-white" />
               </div>
-              <h2 className="text-20 font-semibold mb-8">Approve BNT</h2>
+              <h2 className="text-20 font-semibold mb-8">
+                Approve {fromToken.symbol}
+              </h2>
               <p className="text-center text-grey-5">
-                Before you can proceed, you need to approve BNT spending.
+                Before you can proceed, you need to approve {fromToken.symbol}{' '}
+                spending.
               </p>
               <button
                 onClick={() => approveToken()}
