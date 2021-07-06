@@ -51,7 +51,9 @@ export const fetchTokenBalances = async (
     }));
     const mergedWei = [...rebuiltDecimals, ...parsedNumbers];
     return mergedWei.map((token) => {
-      const inedx = tokens.findIndex((t) => t.address === token.contract);
+      const inedx = tokens.findIndex(
+        (t) => t.address.toLowerCase() === token.contract.toLowerCase()
+      );
       return {
         ...tokens[inedx],
         balance: token.balance

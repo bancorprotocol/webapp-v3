@@ -1,7 +1,7 @@
 import { expandToken } from 'utils/pureFunctions';
 import { TokenListItem } from 'services/observables/tokens';
-import { RfqOrder, SignatureType } from '@0x/protocol-utils';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
+import { RfqOrder, SignatureType } from '@0x/protocol-utils';
 import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
 import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
 import { EthNetworks } from 'services/web3/types';
