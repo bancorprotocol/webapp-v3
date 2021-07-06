@@ -20,7 +20,6 @@ import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryI
 import { MenuSecondaryItemSub } from 'elements/sidebar/menuSecondary/MenuSecondaryItemSub';
 import { useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
-import 'elements/layoutHeaderMobile/LayoutHeaderMobile.css';
 
 export interface SecondarySubMenuItem {
   label: string;
@@ -175,27 +174,17 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
         })}
       </nav>
 
-      <ModalFullscreen setIsOpen={setShowModal} isOpen={showModal}>
-        <div className="layout-header-mobile mb-20">
-          <div className="layout-header-mobile-content text-white">
-            <button onClick={() => setShowModal(false)}>
-              <IconChevron className="w-[30px] transform rotate-180" />
-            </button>
-            <div className="flex justify-center">
-              <IconBancor className="w-[23px]" />
-            </div>
-          </div>
+      <ModalFullscreen
+        title={menu[menuIndex].label}
+        setIsOpen={setShowModal}
+        isOpen={showModal}
+        showHeader
+      >
+        <div className="space-y-20">
+          {menu[menuIndex].subMenu.map((subItem, index) => {
+            return <MenuSecondaryItemSub key={index} {...subItem} />;
+          })}
         </div>
-        <nav className="px-20">
-          <div className="flex justify-between border-b border-grey-2 dark:border-grey-4 pb-10 mb-20">
-            <h3 className="text-20 font-semibold">{menu[menuIndex].label}</h3>
-          </div>
-          <div className="space-y-20">
-            {menu[menuIndex].subMenu.map((subItem, index) => {
-              return <MenuSecondaryItemSub key={index} {...subItem} />;
-            })}
-          </div>
-        </nav>
       </ModalFullscreen>
     </>
   );
