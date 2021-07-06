@@ -2,13 +2,14 @@ import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
-import { toChecksumAddress } from 'web3-utils';
+import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
 import { fetchTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
-import { getWethAPIToken } from 'services/web3/config';
+import { ethToken, getEthToken, getWethAPIToken } from 'services/web3/config';
+import { web3 } from 'services/web3/contracts';
 
 export interface TokenList {
   name: string;
@@ -91,6 +92,9 @@ export const tokenList$ = combineLatest([
       });
 
       let overlappingTokens: TokenListItem[] = [];
+      const eth = getEthToken(apiTokens);
+      if (eth) overlappingTokens.push(eth);
+
       newApiTokens.forEach((apiToken) => {
         const found = userPicked.find(
           (userToken) =>
@@ -103,12 +107,21 @@ export const tokenList$ = combineLatest([
           });
       });
 
-      if (user)
+      if (user) {
         overlappingTokens = await fetchTokenBalances(
           overlappingTokens,
           user,
           currentNetwork
         );
+        const index = overlappingTokens.findIndex(
+          (x) => x.address.toLowerCase() === ethToken.toLowerCase()
+        );
+        if (index !== -1)
+          overlappingTokens[index] = {
+            ...overlappingTokens[index],
+            balance: fromWei(await web3.eth.getBalance(user)),
+          };
+      }
 
       return overlappingTokens;
     }

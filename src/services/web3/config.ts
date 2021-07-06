@@ -1,4 +1,5 @@
 import { APIToken } from 'services/api/bancor';
+import { TokenListItem } from 'services/observables/tokens';
 import { EthNetworks } from './types';
 
 interface EthNetworkVariables {
@@ -31,6 +32,26 @@ export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
     rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
     decimals: eth ? eth.decimals : 18,
   };
+};
+
+export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
+  const eth = apiTokens.find(
+    (apiToken) => apiToken.dlt_id.toLowerCase() === ethToken.toLowerCase()
+  );
+  if (eth)
+    return {
+      address: eth.dlt_id,
+      logoURI:
+        'https://ethereum.org/static/6b935ac0e6194247347855dc3d328e83/31987/eth-diamond-black.png',
+      name: 'Ethereum',
+      chainId: 1,
+      balance: null,
+      symbol: eth.symbol,
+      decimals: eth.decimals,
+      usdPrice: eth.rate.usd,
+    };
+
+  return null;
 };
 
 export const getNetworkVariables = (
