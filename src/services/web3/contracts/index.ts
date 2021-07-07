@@ -1,9 +1,7 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
-import { EthNetworks } from '../types';
-import { provider } from '../wallet/connectors';
 
-export const web3 = new Web3(provider(EthNetworks.Ropsten));
+export const web3 = new Web3(Web3.givenProvider);
 
 export const buildContract = (
   abi: AbiItem[],
