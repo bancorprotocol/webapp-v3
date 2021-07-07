@@ -69,9 +69,11 @@ export const TokenInputField = ({
 
       <div className="flex items-center">
         <div
-          className={`flex items-center mr-24 ${classNameGenerator({
-            'cursor-pointer': selectable,
-          })}`}
+          className={`flex items-center mr-24 min-w-[110px] ${classNameGenerator(
+            {
+              'cursor-pointer': selectable,
+            }
+          )}`}
           onClick={() => setIsOpen(true)}
         >
           {token && (

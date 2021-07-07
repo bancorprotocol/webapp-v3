@@ -16,13 +16,17 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
-import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
 import { setDarkMode } from 'redux/user/user';
+import {
+  Notification,
+  setNotifications,
+} from 'redux/notification/notification';
+import { useAppSelector } from 'redux/index';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -31,6 +35,9 @@ export const App = () => {
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const triedAutoLogin = useAutoConnect();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const notifications = useAppSelector<Notification[]>(
+    (state) => state.notification.notifications
+  );
 
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
@@ -42,30 +49,40 @@ export const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    const restored = localStorage.getItem('notifications');
+    if (restored) dispatch(setNotifications(JSON.parse(restored)));
+  }, [dispatch]);
+
+  useEffect(() => {
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+  }, [notifications]);
+
+  useEffect(() => {
     setUser(account);
     if (chainId) setNetwork(chainId);
   }, [account, chainId]);
 
   return (
     <BrowserRouter>
-      <section className={'hidden md:block'}>
+      <nav className={'hidden md:block'}>
         <Sidebar />
-      </section>
-      <section className={'md:hidden'}>
+      </nav>
+      <nav className={'md:hidden'}>
         <Slideover isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}>
           <div className="w-full w-[200px]">
             <Sidebar setIsSidebarOpen={setIsSidebarOpen} />
           </div>
         </Slideover>
-      </section>
-      <LayoutHeader />
-      <LayoutHeaderMobile setIsSidebarOpen={setIsSidebarOpen} />
+      </nav>
+
+      <LayoutHeader setIsSidebarOpen={setIsSidebarOpen} />
+
       {loading ? (
         <Loading />
       ) : unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <main className="pt-12 md:pt-[145px]">
+        <main className="pt-[80px] md:pt-[145px]">
           <Switch>
             <Route exact strict path="/" component={Swap} />
             <Route exact strict path="/tokens" component={Tokens} />
