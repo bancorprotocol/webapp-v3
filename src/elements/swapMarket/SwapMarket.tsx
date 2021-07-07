@@ -23,7 +23,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 interface SwapMarketProps {
   fromToken: TokenListItem;
   setFromToken: Function;
-  toToken: TokenListItem;
+  toToken: TokenListItem | null;
   setToToken: Function;
   switchTokens: Function;
 }
@@ -145,7 +145,7 @@ export const SwapMarket = ({
   };
 
   const handleSwap = async (step = 0) => {
-    if (!chainId || !account) return;
+    if (!chainId || !account || !toToken) return;
     setShowModal(true);
     if (step < 3) return checkAllowance();
     try {
@@ -215,26 +215,30 @@ export const SwapMarket = ({
             <TokenInputField
               label="You Receive"
               balance={toToken ? toToken.balance : null}
-              balanceUsd={usdByToken(toToken)}
+              balanceUsd={toToken && usdByToken(toToken)}
               token={toToken}
               setToken={setToToken}
               input={toAmount}
               setInput={setToAmount}
               disabled
               selectable
+              startEmpty
             />
-
-            <div className="flex justify-between mt-15">
-              <span>Rate</span>
-              <span>
-                1 {fromToken?.symbol} = {prettifyNumber(rate)} {toToken?.symbol}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Price Impact</span>
-              <span>{priceImpact}%</span>
-            </div>
+            {toToken && (
+              <>
+                <div className="flex justify-between mt-15">
+                  <span>Rate</span>
+                  <span>
+                    1 {fromToken?.symbol} = {prettifyNumber(rate)}{' '}
+                    {toToken?.symbol}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Price Impact</span>
+                  <span>{priceImpact}%</span>
+                </div>{' '}
+              </>
+            )}
           </div>
 
           <button

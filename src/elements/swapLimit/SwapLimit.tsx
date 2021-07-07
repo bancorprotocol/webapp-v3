@@ -31,7 +31,7 @@ enum Field {
 interface SwapLimitProps {
   fromToken: TokenListItem;
   setFromToken: Function;
-  toToken: TokenListItem;
+  toToken: TokenListItem | null;
   setToToken: Function;
   switchTokens: Function;
 }
@@ -162,7 +162,7 @@ export const SwapLimit = ({
   const onPromp = async () => {};
 
   const handleSwap = async () => {
-    if (!account) return;
+    if (!account || !toToken) return;
 
     const res = await swapLimit(
       fromToken,
@@ -213,7 +213,7 @@ export const SwapLimit = ({
           <TokenInputField
             label="You Receive"
             balance={toToken ? toToken.balance : null}
-            balanceUsd={usdByToken(toToken)}
+            balanceUsd={toToken ? usdByToken(toToken) : null}
             token={toToken}
             setToken={setToToken}
             input={toAmount}
