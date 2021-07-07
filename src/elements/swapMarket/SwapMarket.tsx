@@ -51,8 +51,7 @@ export const SwapMarket = ({
     (async () => {
       if (fromToken && toToken) {
         const baseRate = await getRate(fromToken, toToken, '1');
-        const rate = (Number(baseRate) / 1).toFixed(4);
-        setRate(rate);
+        setRate(baseRate);
 
         const priceImpact = await getPriceImpact(fromToken, toToken, '1');
         setPriceImpact(priceImpact.toFixed(6));
@@ -65,7 +64,7 @@ export const SwapMarket = ({
       if (!fromDebounce) setToAmount('');
       else if (fromToken && toToken) {
         const result = await getRate(fromToken, toToken, fromDebounce);
-        const rate = (Number(result) / fromDebounce).toFixed(4);
+        const rate = (Number(result) / fromDebounce).toString();
         setToAmount(
           (
             (fromDebounce /
