@@ -18,6 +18,7 @@ import {
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -227,7 +228,7 @@ export const SwapMarket = ({
             <div className="flex justify-between mt-15">
               <span>Rate</span>
               <span>
-                1 {fromToken?.symbol} = {rate} {toToken?.symbol}
+                1 {fromToken?.symbol} = {prettifyNumber(rate)} {toToken?.symbol}
               </span>
             </div>
 

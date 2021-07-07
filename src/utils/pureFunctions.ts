@@ -121,8 +121,8 @@ export const usdByToken = (
   token: TokenListItem,
   amount?: string,
   isToken: boolean = true
-): string | null => {
-  if (!token || !token.usdPrice || (!amount && !token.balance)) return null;
+): string => {
+  if (!token || !token.usdPrice || (!amount && !token.balance)) return '';
 
   const input = Number(amount ? amount : token.balance);
   const tokenPrice = Number(token.usdPrice);
