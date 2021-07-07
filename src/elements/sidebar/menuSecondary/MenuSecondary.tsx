@@ -16,6 +16,9 @@ import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { MenuSecondaryItemSub } from 'elements/sidebar/menuSecondary/MenuSecondaryItemSub';
+import { useState } from 'react';
+import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
+import { SettingsMenu } from 'elements/settings/SettingsMenu';
 
 export interface SecondarySubMenuItem {
   label: string;
@@ -110,14 +113,24 @@ interface MenuSecondaryProps {
 }
 
 export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const [menuIndex, setMenuIndex] = useState(0);
+
+  const openMobileMenu = (index: number) => {
+    setMenuIndex(index);
+    setShowModal(true);
+  };
+
   return (
     <>
       <hr className="mx-20" />
-      <div className="p-20 text-12 space-y-16">
+      <nav className="hidden md:block p-20 text-12 space-y-16">
         {menu.map((item, index) => {
           return (
             <Popover key={index} className="relative">
-              <MenuSecondaryItem {...item} />
+              <Popover.Button className="w-full">
+                <MenuSecondaryItem {...item} />
+              </Popover.Button>
 
               <DropdownTransition>
                 <Popover.Panel
@@ -144,7 +157,36 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
             </Popover>
           );
         })}
-      </div>
+      </nav>
+
+      <nav className="md:hidden p-20 pt-4 text-12 space-y-16">
+        <SettingsMenu />
+
+        {menu.map((item, index) => {
+          return (
+            <button
+              key={index}
+              onClick={() => openMobileMenu(index)}
+              className="w-full"
+            >
+              <MenuSecondaryItem {...item} />
+            </button>
+          );
+        })}
+      </nav>
+
+      <ModalFullscreen
+        title={menu[menuIndex].label}
+        setIsOpen={setShowModal}
+        isOpen={showModal}
+        showHeader
+      >
+        <div className="space-y-20">
+          {menu[menuIndex].subMenu.map((subItem, index) => {
+            return <MenuSecondaryItemSub key={index} {...subItem} />;
+          })}
+        </div>
+      </ModalFullscreen>
     </>
   );
 };

@@ -121,10 +121,22 @@ export const usdByToken = (
   token: TokenListItem,
   amount?: string,
   isToken: boolean = true
-): string | null => {
-  if (!token || !token.usdPrice || (!amount && !token.balance)) return null;
+): string => {
+  if (!token || !token.usdPrice || (!amount && !token.balance)) return '';
 
   const input = Number(amount ? amount : token.balance);
   const tokenPrice = Number(token.usdPrice);
   return (isToken ? input * tokenPrice : input / tokenPrice).toFixed(2);
+};
+
+export const compareString = (
+  stringOne: string,
+  stringTwo: string
+): boolean => {
+  const strings = [stringOne, stringTwo];
+  if (!strings.every((str) => typeof str === 'string'))
+    throw new Error(
+      `String one: ${stringOne} String two: ${stringTwo} one of them are falsy or not a string`
+    );
+  return stringOne.toLowerCase() === stringTwo.toLowerCase();
 };
