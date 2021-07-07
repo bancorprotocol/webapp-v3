@@ -1,9 +1,14 @@
-import { ContractMethods, RegisteredContracts } from 'services/web3/types';
+import {
+  ContractMethods,
+  EthNetworks,
+  RegisteredContracts,
+} from 'services/web3/types';
 import { CallReturn, MultiCall } from 'eth-multicall';
 import { asciiToHex, isAddress } from 'web3-utils';
 import { ABIContractRegistry } from 'services/web3/contracts/addressLookup/abi';
 import { buildContract, web3 } from 'services/web3/contracts';
 import { toPairs } from 'lodash';
+import { EthNetworkVariables, getNetworkVariables } from 'services/web3/config';
 
 export const buildAddressLookupContract = (
   contractAddress: string
@@ -12,12 +17,12 @@ export const buildAddressLookupContract = (
 }> => buildContract(ABIContractRegistry, contractAddress);
 
 export const fetchContractAddresses = async (
-  contractRegistry: string
+  networkVariables: EthNetworkVariables
 ): Promise<RegisteredContracts> => {
-  if (!contractRegistry || !isAddress(contractRegistry))
-    throw new Error('Must pass valid address');
-
-  const ethMulti = new MultiCall(web3);
+  const ethMulti =
+    networkVariables.network === EthNetworks.Mainnet
+      ? new MultiCall(web3)
+      : new MultiCall(web3, networkVariables.multiCall, [500, 100, 50, 10, 1]);
 
   const hardCodedBytes: RegisteredContracts = {
     BancorNetwork: asciiToHex('BancorNetwork'),
@@ -42,7 +47,7 @@ export const fetchContractAddresses = async (
 
   try {
     const hardCodedShapes = arrBytes.map(([label, ascii]) =>
-      hardCodedShape(contractRegistry, label, ascii)
+      hardCodedShape(networkVariables.contractRegistry, label, ascii)
     );
     const [contractAddresses] = await ethMulti.all([hardCodedShapes]);
     const registeredContracts = Object.assign(

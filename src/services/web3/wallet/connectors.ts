@@ -33,19 +33,25 @@ const RPC_URLS: { [chainId: number]: string } = {
 
 const appName = 'phoenix';
 
-export const provider = (network: EthNetworks = EthNetworks.Ropsten) =>
-  new Web3.providers.WebsocketProvider(buildAlchemyUrl(network, true), {
-    timeout: 100 * 1000,
-    clientConfig: {
-      keepalive: true,
-      keepaliveInterval: 60000,
-    },
-    reconnect: {
-      auto: true,
-      delay: 15000,
-      onTimeout: true,
-    },
-  });
+export const provider = (network: EthNetworks) => {
+  if (network === EthNetworks.Ropsten) return buildAlchemyUrl(network);
+  else
+    return new Web3.providers.WebsocketProvider(
+      buildAlchemyUrl(network, true),
+      {
+        timeout: 100 * 1000,
+        clientConfig: {
+          keepalive: true,
+          keepaliveInterval: 60000,
+        },
+        reconnect: {
+          auto: true,
+          delay: 15000,
+          onTimeout: true,
+        },
+      }
+    );
+};
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
