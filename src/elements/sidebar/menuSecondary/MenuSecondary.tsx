@@ -11,8 +11,6 @@ import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { ReactComponent as IconDocument } from 'assets/icons/document.svg';
 import { ReactComponent as IconGithub } from 'assets/icons/github.svg';
 import { ReactComponent as IconBntee } from 'assets/icons/bnteeshop.svg';
-import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
@@ -20,6 +18,7 @@ import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryI
 import { MenuSecondaryItemSub } from 'elements/sidebar/menuSecondary/MenuSecondaryItemSub';
 import { useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
+import { SettingsMenu } from 'elements/settings/SettingsMenu';
 
 export interface SecondarySubMenuItem {
   label: string;
@@ -160,7 +159,9 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
         })}
       </nav>
 
-      <nav className="md:hidden p-20 text-12 space-y-16">
+      <nav className="md:hidden p-20 pt-4 text-12 space-y-16">
+        <SettingsMenu />
+
         {menu.map((item, index) => {
           return (
             <button

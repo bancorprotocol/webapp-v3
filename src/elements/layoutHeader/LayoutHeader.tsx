@@ -11,7 +11,7 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { FormattedMessage } from 'react-intl';
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
-import { SettingsMenu } from 'elements/layoutHeader/settingsMenu/SettingsMenu';
+import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';

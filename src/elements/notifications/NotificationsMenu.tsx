@@ -70,7 +70,10 @@ export const NotificationsMenu = () => {
       </Popover>
 
       <div className="md:hidden">
-        <button onClick={() => setShowModal(true)}>
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center"
+        >
           <IconBell className="w-[22px]" />
         </button>
 
