@@ -117,7 +117,7 @@ export const NotificationContent = ({
           </div>
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
-          <span className="text-grey-4">
+          <span className="text-grey-4 dark:text-grey-3">
             {dayjs.unix(timestamp).fromNow(true)}
           </span>
         </div>
@@ -125,7 +125,7 @@ export const NotificationContent = ({
           <IconTimes className="w-8" />
         </button>
       </div>
-      <p className="ml-[22px] text-grey-4">{msg}</p>
+      <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
     </div>
   );
 };
