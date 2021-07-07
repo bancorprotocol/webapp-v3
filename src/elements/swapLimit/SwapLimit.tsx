@@ -222,6 +222,7 @@ export const SwapLimit = ({
               handleFieldChanged(Field.to, fromAmount, val, rate);
             }}
             selectable
+            startEmpty
           />
           <div className="flex justify-between items-center my-15">
             <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
