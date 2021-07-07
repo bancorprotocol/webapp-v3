@@ -2,7 +2,8 @@ import { APIToken } from 'services/api/bancor';
 import { TokenListItem } from 'services/observables/tokens';
 import { EthNetworks } from './types';
 
-interface EthNetworkVariables {
+export interface EthNetworkVariables {
+  network: EthNetworks;
   contractRegistry: string;
   bntToken: string;
   ethToken: string;
@@ -18,6 +19,8 @@ interface EthNetworkVariables {
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+export const ropstenImage: string =
+  'https://ropsten.etherscan.io/images/main/empty-token.png';
 
 export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
   const eth = apiTokens.find(
@@ -60,6 +63,7 @@ export const getNetworkVariables = (
   switch (ethNetwork) {
     case EthNetworks.Mainnet:
       return {
+        network: EthNetworks.Mainnet,
         contractRegistry: '0x52Ae12ABe5D8BD778BD5397F99cA900624CfADD4',
         bntToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
         govToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
@@ -74,6 +78,7 @@ export const getNetworkVariables = (
       };
     case EthNetworks.Ropsten:
       return {
+        network: EthNetworks.Ropsten,
         contractRegistry: '0xA6DB4B0963C37Bc959CbC0a874B5bDDf2250f26F',
         bntToken: '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5',
         govToken: '0x83ec8129b1f54ba5b0f47bd902a79c803e20a249',
@@ -86,7 +91,5 @@ export const getNetworkVariables = (
         etherscanUrl: 'https://ropsten.etherscan.io/',
         alchemyKey: process.env.REACT_APP_ALCHEMY_ROPSTEN || '',
       };
-    default:
-      throw new Error('Information not stored');
   }
 };

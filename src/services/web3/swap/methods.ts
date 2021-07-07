@@ -28,7 +28,12 @@ import {
   shrinkToken,
   updateArray,
 } from 'utils/pureFunctions';
-import { ethToken, getNetworkVariables, zeroAddress } from '../config';
+import {
+  ethToken,
+  getNetworkVariables,
+  wethToken,
+  zeroAddress,
+} from '../config';
 import BigNumber from 'bignumber.js';
 import { apiData$, apiTokens$ } from 'services/observables/pools';
 import { currentNetwork$, networkVars$ } from 'services/observables/network';

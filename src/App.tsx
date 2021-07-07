@@ -17,7 +17,10 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
-import { setNetwork } from 'services/observables/network';
+import {
+  currentNetworkReceiver$,
+  setNetwork,
+} from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
@@ -27,6 +30,8 @@ import {
   setNotifications,
 } from 'redux/notification/notification';
 import { useAppSelector } from 'redux/index';
+import { web3 } from 'services/web3/contracts';
+import { provider } from 'services/web3/wallet/connectors';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -61,6 +66,14 @@ export const App = () => {
     setUser(account);
     if (chainId) setNetwork(chainId);
   }, [account, chainId]);
+
+  useEffect(() => {
+    (async () => {
+      const chainID = await web3.eth.net.getId();
+      web3.setProvider(provider(chainID));
+      currentNetworkReceiver$.next(chainID);
+    })();
+  }, []);
 
   return (
     <BrowserRouter>
