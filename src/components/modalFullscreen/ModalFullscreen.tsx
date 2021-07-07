@@ -3,6 +3,7 @@ import { Fragment } from 'react';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
+import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 
 interface ModalFullscreenProps {
   title?: string | JSX.Element | JSX.Element[];
@@ -39,19 +40,17 @@ export const ModalFullscreen = ({
         >
           <div className="inline-block min-w-full min-h-full text-left align-middle transition-all transform bg-white dark:bg-blue-3">
             {showHeader && (
-              <div className="layout-header-mobile mb-20">
-                <div className="layout-header-mobile-content text-white">
-                  <button onClick={() => setIsOpen(false)}>
-                    <IconChevron className="w-[30px] transform rotate-180" />
-                  </button>
-                  <div className="flex justify-center">
-                    <IconBancor className="w-[23px]" />
-                  </div>
+              <LayoutHeaderMobile>
+                <button onClick={() => setIsOpen(false)}>
+                  <IconChevron className="w-[30px] transform rotate-180" />
+                </button>
+                <div className="flex justify-center">
+                  <IconBancor className="w-[23px]" />
                 </div>
-              </div>
+              </LayoutHeaderMobile>
             )}
 
-            <main className="px-20">
+            <main className={`px-20 ${showHeader ? 'pt-[100px]' : ''}`}>
               {title && (
                 <div className="flex justify-between border-b border-grey-2 dark:border-grey-4 pb-10 mb-20 text-20 font-semibold">
                   {title}

@@ -9,7 +9,7 @@
 }
 
 .layout-header-mobile {
-    @apply flex items-center bg-blue-4 md:hidden h-[75px] px-20;
+    @apply fixed w-full flex items-center bg-blue-4 md:hidden h-[75px] px-20 z-10;
     filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
 }
 

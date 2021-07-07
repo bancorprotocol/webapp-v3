@@ -9,7 +9,7 @@ import {
 } from 'redux/notification/notification';
 import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 
 export const NotificationsMenu = () => {
@@ -20,15 +20,6 @@ export const NotificationsMenu = () => {
   );
 
   const sorted = useMemo(() => [...notifications].reverse(), [notifications]);
-
-  useEffect(() => {
-    const restored = localStorage.getItem('notifications');
-    if (restored) dispatch(setNotifications(JSON.parse(restored)));
-  }, [dispatch]);
-
-  useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-  }, [notifications]);
 
   const title = (
     <>
