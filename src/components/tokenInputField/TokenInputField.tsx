@@ -69,21 +69,27 @@ export const TokenInputField = ({
 
       <div className="flex items-center">
         <div
-          className={`flex items-center mr-24 min-w-[110px] ${classNameGenerator(
-            {
-              'cursor-pointer': selectable,
-            }
-          )}`}
+          className={`flex items-center min-w-[135px] ${classNameGenerator({
+            'cursor-pointer': selectable,
+          })}`}
           onClick={() => setIsOpen(true)}
         >
-          {token && (
-            <img
-              src={getTokenLogoURI(token)}
-              alt="Token"
-              className="bg-grey-2 rounded-full h-28 w-28"
-            />
+          {token ? (
+            <>
+              <img
+                src={getTokenLogoURI(token)}
+                alt="Token"
+                className="bg-grey-2 rounded-full h-28 w-28"
+              />
+              <span className="text-20 mx-10">{token.symbol}</span>
+            </>
+          ) : (
+            <>
+              <div className="bg-grey-2 rounded-full h-28 w-28 animate-pulse"></div>
+              <div className="mx-10 h-16 w-50 bg-grey-2 animate-pulse rounded-full"></div>
+            </>
           )}
-          <span className="text-20 mx-10">{token?.symbol}</span>
+
           {selectable && (
             <div>
               <IconChevronDown className="w-[10px] h-[6px] mr-10 text-grey-4 dark:text-grey-3" />
