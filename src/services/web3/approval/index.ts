@@ -27,7 +27,7 @@ const getApproval = async (
 ): Promise<GetApprovalReturn> => {
   // if token is ETH no approval is required
   const isEth = compareString(token, ethToken);
-  if (isEth) return { allowanceWei: "", isApprovalRequired: false };
+  if (isEth) return { allowanceWei: '', isApprovalRequired: false };
 
   const tokenContract = buildTokenContract(token, web3);
   const allowanceWei = await tokenContract.methods
