@@ -16,7 +16,7 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
-import { LayoutHeaderMobile } from 'elements/layoutHeaderMobile/LayoutHeaderMobile';
+import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
@@ -48,16 +48,16 @@ export const App = () => {
 
   return (
     <BrowserRouter>
-      <section className={'hidden md:block'}>
+      <nav className={'hidden md:block'}>
         <Sidebar />
-      </section>
-      <section className={'md:hidden'}>
+      </nav>
+      <nav className={'md:hidden'}>
         <Slideover isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}>
           <div className="w-full w-[200px]">
             <Sidebar setIsSidebarOpen={setIsSidebarOpen} />
           </div>
         </Slideover>
-      </section>
+      </nav>
       <LayoutHeader />
       <LayoutHeaderMobile setIsSidebarOpen={setIsSidebarOpen} />
       {loading ? (

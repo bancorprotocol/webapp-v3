@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import 'elements/layoutHeaderMobile/LayoutHeaderMobile.css';
+import 'elements/layoutHeader/LayoutHeader.css';
 
 interface ModalFullscreenProps {
   title?: string | JSX.Element | JSX.Element[];

@@ -10,7 +10,7 @@ import {
 } from 'utils/pureFunctions';
 import { EthNetworks } from 'services/web3/types';
 import { FormattedMessage } from 'react-intl';
-import { NotificationsMenu } from 'elements/layoutHeader/notificationsMenu/NotificationsMenu';
+import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/layoutHeader/settingsMenu/SettingsMenu';
 
 export const LayoutHeader = () => {
@@ -25,7 +25,7 @@ export const LayoutHeader = () => {
   };
 
   return (
-    <div className="layout-header">
+    <header className="layout-header">
       <div className="layout-header-content">
         <div className="flex items-center">
           <button className="btn-secondary btn-sm">
@@ -61,6 +61,6 @@ export const LayoutHeader = () => {
           <SettingsMenu />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
