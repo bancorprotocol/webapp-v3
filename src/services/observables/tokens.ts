@@ -8,7 +8,12 @@ import { user$ } from './user';
 import { fetchTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
-import { ethToken, getEthToken, getWethAPIToken } from 'services/web3/config';
+import {
+  ethToken,
+  getEthToken,
+  getWethAPIToken,
+  ropstenImage,
+} from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 
 export interface TokenList {
@@ -96,15 +101,25 @@ export const tokenList$ = combineLatest([
       if (eth) overlappingTokens.push(eth);
 
       newApiTokens.forEach((apiToken) => {
-        const found = userPicked.find(
-          (userToken) =>
-            userToken.address.toLowerCase() === apiToken.address.toLowerCase()
-        );
-        if (found)
+        if (currentNetwork === EthNetworks.Mainnet) {
+          const found = userPicked.find(
+            (userToken) =>
+              userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+          );
+          if (found)
+            overlappingTokens.push({
+              ...found,
+              ...apiToken,
+            });
+        } else {
           overlappingTokens.push({
-            ...found,
+            chainId: EthNetworks.Ropsten,
+            name: apiToken.symbol,
+            logoURI: ropstenImage,
+            balance: null,
             ...apiToken,
           });
+        }
       });
 
       if (user) {

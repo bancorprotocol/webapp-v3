@@ -19,6 +19,8 @@ export interface EthNetworkVariables {
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+export const ropstenImage: string =
+  'https://ropsten.etherscan.io/images/main/empty-token.png';
 
 export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
   const eth = apiTokens.find(

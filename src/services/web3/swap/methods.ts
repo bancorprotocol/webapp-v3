@@ -63,8 +63,6 @@ export const getRate = async (
   toToken: TokenListItem,
   amount: string
 ): Promise<string> => {
-  return '';
-
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const path = await conversionPath({
@@ -90,8 +88,6 @@ export const getPriceImpact = async (
   toToken: TokenListItem,
   amount: string
 ) => {
-  return 2;
-
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
   const amountWei = expandToken(amount, fromToken.decimals);
 
