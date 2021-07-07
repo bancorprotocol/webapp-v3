@@ -18,6 +18,7 @@ import {
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -50,8 +51,7 @@ export const SwapMarket = ({
     (async () => {
       if (fromToken && toToken) {
         const baseRate = await getRate(fromToken, toToken, '1');
-        const rate = (Number(baseRate) / 1).toFixed(4);
-        setRate(rate);
+        setRate(baseRate);
 
         const priceImpact = await getPriceImpact(fromToken, toToken, '1');
         setPriceImpact(priceImpact.toFixed(6));
@@ -64,7 +64,7 @@ export const SwapMarket = ({
       if (!fromDebounce) setToAmount('');
       else if (fromToken && toToken) {
         const result = await getRate(fromToken, toToken, fromDebounce);
-        const rate = (Number(result) / fromDebounce).toFixed(4);
+        const rate = (Number(result) / fromDebounce).toString();
         setToAmount(
           (
             (fromDebounce /
@@ -227,7 +227,7 @@ export const SwapMarket = ({
             <div className="flex justify-between mt-15">
               <span>Rate</span>
               <span>
-                1 {fromToken?.symbol} = {rate} {toToken?.symbol}
+                1 {fromToken?.symbol} = {prettifyNumber(rate)} {toToken?.symbol}
               </span>
             </div>
 

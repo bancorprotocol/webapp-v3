@@ -10,6 +10,7 @@ import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg'
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface TokenInputFieldProps {
   label: string;
@@ -56,13 +57,15 @@ export const TokenInputField = ({
     <div>
       <div className="flex justify-between pr-10">
         <span className="font-medium">{label}</span>
-        {balance && (
+        {balance && balanceUsd && (
           <button
             onClick={() => handleChange(balance.toString())}
             className="text-12 cursor-pointer focus:outline-none"
           >
-            Balance: {balance}
-            <span className="text-primary ml-4">(~${balanceUsd})</span>
+            Balance: {prettifyNumber(balance)}
+            <span className="text-primary ml-4">
+              (~{prettifyNumber(balanceUsd, true)})
+            </span>
           </button>
         )}
       </div>
@@ -99,8 +102,10 @@ export const TokenInputField = ({
 
         <div className="relative w-full">
           <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-            {`${!toggle ? '~$' : ''}${
-              input !== '' ? usdByToken(token, input, !toggle) : '0.00'
+            {`${!toggle && '~'}${
+              input !== ''
+                ? prettifyNumber(usdByToken(token, input, !toggle), true)
+                : '0.00'
             }`}
           </div>
           <input
