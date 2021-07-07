@@ -11,6 +11,7 @@ import {
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
 import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export const SearchableTokenList = ({
   onClick,
@@ -135,7 +136,7 @@ export const SearchableTokenList = ({
                         <div className="text-12 text-grey-3">{token.name}</div>
                       </div>
                     </div>
-                    <div>{token.balance}</div>
+                    <div>{token.balance && prettifyNumber(token.balance)}</div>
                   </button>
                 );
               })}

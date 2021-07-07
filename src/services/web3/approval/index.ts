@@ -1,5 +1,5 @@
 import { TokenListItem } from 'services/observables/tokens';
-import { compareString, expandToken, shrinkToken } from 'utils/pureFunctions';
+import { compareString, expandToken } from 'utils/pureFunctions';
 import { web3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
@@ -7,7 +7,11 @@ import { resolveTxOnConfirmation } from 'services/web3/index';
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
-import { NULL_APPROVAL_CONTRACTS, UNLIMITED_WEI } from 'services/web3/config';
+import {
+  NULL_APPROVAL_CONTRACTS,
+  UNLIMITED_WEI,
+} from 'services/web3/approval/constants';
+import { ethToken } from 'services/web3/config';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -36,6 +40,10 @@ const setApproval = async (
   spender: string,
   amountWei?: string
 ): Promise<string> => {
+  // if token is ETH dont set approval
+  const isEth = compareString(token, ethToken);
+  if (isEth) return '';
+
   const tokenContract = buildTokenContract(token, web3);
 
   // set limited or unlimited amount
@@ -104,11 +112,5 @@ export const setNetworkContractApproval = async (
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
   const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
-  const txHash = await setApproval(
-    token.address,
-    USER,
-    BANCOR_NETWORK,
-    amountWei
-  );
-  return txHash;
+  return await setApproval(token.address, USER, BANCOR_NETWORK, amountWei);
 };
