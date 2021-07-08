@@ -1,7 +1,7 @@
 import { CallReturn } from 'eth-multicall';
 import { ContractMethods } from 'services/web3/types';
 import Web3 from 'web3';
-import { buildContract } from '..';
+import { buildContract, writeWeb3 } from '..';
 import { ABIBancorGovernance } from '../governance/abi';
 import { Proposal } from '../governance/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
@@ -29,10 +29,9 @@ interface WethContractType extends TokenContractType {
 }
 
 export const buildWethContract = (
-  contractAddress?: string,
-  web3?: Web3
+  contractAddress?: string
 ): ContractMethods<WethContractType> =>
-  buildContract(ABIWethToken, contractAddress, web3);
+  buildContract(ABIWethToken, contractAddress, writeWeb3);
 
 export const buildGovernanceContract = (
   contractAddress?: string,

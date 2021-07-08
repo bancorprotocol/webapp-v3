@@ -44,8 +44,7 @@ export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
   if (eth)
     return {
       address: eth.dlt_id,
-      logoURI:
-        'https://ethereum.org/static/6b935ac0e6194247347855dc3d328e83/31987/eth-diamond-black.png',
+      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
       name: 'Ethereum',
       chainId: 1,
       balance: null,

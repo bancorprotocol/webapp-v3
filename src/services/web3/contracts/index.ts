@@ -7,6 +7,8 @@ export const web3 = new Web3(
   Web3.givenProvider || provider(EthNetworks.Mainnet)
 );
 
+export const writeWeb3 = new Web3(Web3.givenProvider);
+
 export const buildContract = (
   abi: AbiItem[],
   contractAddress?: string,

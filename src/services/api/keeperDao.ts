@@ -19,21 +19,25 @@ export const swapLimit = async (
 ) => {
   const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
 
-  if (fromIsEth) {
-    const success = await depositWeth(from, user, onPrompt);
+  try {
+    if (fromIsEth) await depositWeth(from, user, onPrompt);
+
+    const newFrom = fromIsEth
+      ? { ...fromToken, address: wethToken }
+      : fromToken;
+
+    await createOrder(
+      newFrom,
+      toToken,
+      from,
+      to,
+      user,
+      duration.asSeconds(),
+      onPrompt
+    );
+  } catch (error) {
+    console.error(error);
   }
-
-  const newFrom = fromIsEth ? { ...fromToken, address: wethToken } : fromToken;
-
-  await createOrder(
-    newFrom,
-    toToken,
-    from,
-    to,
-    user,
-    duration.asSeconds(),
-    onPrompt
-  );
 };
 
 export const getTxOrigin = async (): Promise<string> => {

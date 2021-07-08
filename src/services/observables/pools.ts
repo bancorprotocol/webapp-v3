@@ -59,7 +59,6 @@ const zipAnchorAndConverters = (
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
-  distinctUntilChanged<WelcomeData>(isEqual),
   share()
 );
 
