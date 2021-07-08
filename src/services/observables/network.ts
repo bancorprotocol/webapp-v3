@@ -19,7 +19,7 @@ const handleChainChanged = (chain: string | number) => {
   currentNetworkReceiver$.next(chainID);
 };
 
-ethereum.on('chainChanged', handleChainChanged);
+if (ethereum && ethereum.on) ethereum.on('chainChanged', handleChainChanged);
 
 export const currentNetwork$ = currentNetworkReceiver$.pipe(
   distinctUntilChanged(),
