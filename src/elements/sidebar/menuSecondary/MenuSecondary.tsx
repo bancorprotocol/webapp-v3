@@ -134,7 +134,7 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
 
               <DropdownTransition>
                 <Popover.Panel
-                  className={`absolute w-[225px] py-20 bg-blue-4 bottom-[-23px] px-24 left-0 rounded z-10 ${
+                  className={`absolute w-[225px] py-20 bg-blue-4 bottom-[-18px] px-24 left-0 rounded z-10 ${
                     isMinimized ? 'ml-[66px]' : 'ml-[200px]'
                   }`}
                 >
