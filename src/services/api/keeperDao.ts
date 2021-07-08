@@ -69,16 +69,18 @@ const orderResToLimit = async (
         (x) => x.address.toLowerCase() === res.order.takerToken.toLowerCase()
       ) ?? tokens[0];
 
+    const payAmount = new BigNumber(res.order.makerAmount);
+    const getAmount = new BigNumber(res.order.takerAmount);
     return {
       hash: res.metaData.orderHash,
       expiration: res.order.expiry,
       payToken,
       getToken,
-      payAmount: res.order.makerAmount,
-      getAmount: res.order.takerAmount,
-      rate: `1 ${payToken.symbol} = ${res.order.takerAmount
-        .div(res.order.makerAmount)
-        .toFixed(9)} ${getToken.symbol}`,
+      payAmount,
+      getAmount,
+      rate: `1 ${payToken.symbol} = ${payAmount.div(getAmount).toFixed(9)} ${
+        getToken.symbol
+      }`,
       filled: new BigNumber(res.metaData.filledAmount_takerToken)
         .div(res.metaData.remainingFillableAmount_takerToken)
         .toFixed(2),

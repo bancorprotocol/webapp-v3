@@ -19,6 +19,7 @@ import {
   setNetworkContractApproval,
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { wethToken } from 'services/web3/config';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -201,6 +202,7 @@ export const SwapMarket = ({
             debounce={setFromDebounce}
             border
             selectable
+            excludedTokens={[wethToken]}
           />
         </div>
 
@@ -223,6 +225,7 @@ export const SwapMarket = ({
               disabled
               selectable
               startEmpty
+              excludedTokens={[wethToken]}
             />
             {toToken && (
               <>
