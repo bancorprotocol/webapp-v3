@@ -9,6 +9,7 @@ import { wethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
+import Web3 from 'web3';
 
 export const depositWeth = async (
   amount: string,
@@ -87,8 +88,7 @@ export const createOrder = async (
   //   });
 
   const signature = await order.getSignatureWithProviderAsync(
-    // @ts-ignore
-    web3.currentProvider,
+    Web3.givenProvider,
     SignatureType.EIP712
   );
 

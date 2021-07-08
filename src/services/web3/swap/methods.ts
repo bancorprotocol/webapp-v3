@@ -4,7 +4,7 @@ import {
   getRateByPath,
   getReturnByPath,
 } from 'services/web3/contracts/network/wrapper';
-import { web3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3/contracts';
 import {
   bancorNetwork$,
   contractAddresses$,
@@ -172,7 +172,10 @@ export const swap = async ({
 
   const ethPath = generateEthPath(fromToken.symbol, relays);
 
-  const networkContract = buildNetworkContract(networkContractAddress);
+  const networkContract = buildNetworkContract(
+    networkContractAddress,
+    writeWeb3
+  );
 
   const expectedReturnWei = expandToken(toAmount, toToken.decimals);
 

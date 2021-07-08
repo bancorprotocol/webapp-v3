@@ -13,15 +13,19 @@ import { Switch } from '@headlessui/react';
 import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 import { prettifyNumber } from 'utils/helperFunctions';
 
+interface SearchableTokenListProps {
+  onClick: Function;
+  isOpen: boolean;
+  setIsOpen: Function;
+  excludedTokens: string[];
+}
+
 export const SearchableTokenList = ({
   onClick,
   isOpen,
   setIsOpen,
-}: {
-  onClick: Function;
-  isOpen: boolean;
-  setIsOpen: Function;
-}) => {
+  excludedTokens = [],
+}: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setMange] = useState(false);
   const [userLists, setUserLists] = useState<number[]>(getLSTokenList());
@@ -115,8 +119,10 @@ export const SearchableTokenList = ({
           </div>
           <div className="max-h-[522px] overflow-scroll px-2">
             {tokens
-              .filter((token) =>
-                token.symbol?.toLowerCase().includes(search.toLowerCase())
+              .filter(
+                (token) =>
+                  !excludedTokens.includes(token.address) &&
+                  token.symbol?.toLowerCase().includes(search.toLowerCase())
               )
               .map((token, index) => {
                 return (
