@@ -67,7 +67,7 @@ export const getRate = async (
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const path = await conversionPath({
-    from: fromToken.address,
+    from: fromToken.address === wethToken ? ethToken : fromToken.address,
     to: toToken.address,
     networkContractAddress,
     web3,

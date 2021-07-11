@@ -19,7 +19,8 @@ import {
   setNetworkContractApproval,
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { wethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
+import { useAppSelector } from 'redux/index';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -48,9 +49,13 @@ export const SwapMarket = ({
   const [step, setStep] = useState(0);
   const toggle = useContext(Toggle);
 
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancor.tokens
+  );
+
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken) {
+      if (fromToken && toToken && fromToken.address !== wethToken) {
         const baseRate = await getRate(fromToken, toToken, '1');
         setRate(baseRate);
 
@@ -61,30 +66,42 @@ export const SwapMarket = ({
   }, [fromToken, toToken]);
 
   useEffect(() => {
-    (async () => {
-      if (!fromDebounce) setToAmount('');
-      else if (fromToken && toToken) {
-        const result = await getRate(fromToken, toToken, fromDebounce);
-        const rate = (Number(result) / fromDebounce).toString();
-        setToAmount(
-          (
-            (fromDebounce /
-              (fromToken.usdPrice && toggle ? Number(fromToken.usdPrice) : 1)) *
-            Number(rate) *
-            (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
-          ).toFixed(2)
-        );
-        setRate(rate);
+    if (fromToken && fromToken.address === wethToken) {
+      const eth = tokens.find(
+        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
+      );
+      setRate('1');
+      setPriceImpact('0.0000');
+      setToToken(eth);
+      setToAmount(fromDebounce);
+    } else {
+      (async () => {
+        if (!fromDebounce) setToAmount('');
+        else if (fromToken && toToken) {
+          const result = await getRate(fromToken, toToken, fromDebounce);
+          const rate = (Number(result) / fromDebounce).toString();
+          setToAmount(
+            (
+              (fromDebounce /
+                (fromToken.usdPrice && toggle
+                  ? Number(fromToken.usdPrice)
+                  : 1)) *
+              Number(rate) *
+              (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
+            ).toFixed(2)
+          );
+          setRate(rate);
 
-        const priceImpact = await getPriceImpact(
-          fromToken,
-          toToken,
-          fromDebounce
-        );
-        setPriceImpact(priceImpact.toFixed(6));
-      }
-    })();
-  }, [fromToken, toToken, fromDebounce, toggle]);
+          const priceImpact = await getPriceImpact(
+            fromToken,
+            toToken,
+            fromDebounce
+          );
+          setPriceImpact(priceImpact.toFixed(6));
+        }
+      })();
+    }
+  }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
 
   const closeModal = () => {
     setStep(0);
@@ -202,7 +219,7 @@ export const SwapMarket = ({
             debounce={setFromDebounce}
             border
             selectable
-            excludedTokens={[wethToken]}
+            excludedTokens={toToken ? [toToken.address] : []}
           />
         </div>
 
@@ -210,7 +227,9 @@ export const SwapMarket = ({
           <div className="widget-block-icon cursor-pointer">
             <IconSync
               className="w-[25px] text-primary dark:text-primary-light"
-              onClick={() => switchTokens()}
+              onClick={() =>
+                fromToken.address !== wethToken ? switchTokens() : {}
+              }
             />
           </div>
           <div className="mx-10 mb-16 pt-16">
@@ -223,9 +242,9 @@ export const SwapMarket = ({
               input={toAmount}
               setInput={setToAmount}
               disabled
-              selectable
+              selectable={fromToken && fromToken.address !== wethToken}
               startEmpty
-              excludedTokens={[wethToken]}
+              excludedTokens={[fromToken && fromToken.address, wethToken]}
             />
             {toToken && (
               <>

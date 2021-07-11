@@ -81,7 +81,7 @@ export const TokenInputField = ({
             className={`flex items-center min-w-[135px] ${classNameGenerator({
               'cursor-pointer': selectable,
             })}`}
-            onClick={() => setIsOpen(true)}
+            onClick={() => (selectable ? setIsOpen(true) : {})}
           >
             {token ? (
               <>
@@ -129,7 +129,7 @@ export const TokenInputField = ({
         </div>
       ) : (
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={() => (selectable ? setIsOpen(true) : {})}
           className="flex items-center text-primary uppercase font-semibold text-20 mt-10 mb-30 py-5"
         >
           Select a Token

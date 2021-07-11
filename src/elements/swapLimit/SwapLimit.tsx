@@ -21,6 +21,7 @@ import {
 } from 'redux/notification/notification';
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
+import { ethToken, wethToken } from 'services/web3/config';
 
 enum Field {
   from,
@@ -138,9 +139,9 @@ export const SwapLimit = ({
 
   const fetchMarketRate = useCallback(async () => {
     if (!fromToken || !toToken) return;
+    if (toToken.address === ethToken) return;
 
     const mRate = Number(await getRate(fromToken, toToken, '1'));
-
     setMarketRate(mRate);
   }, [fromToken, toToken]);
 
@@ -156,8 +157,9 @@ export const SwapLimit = ({
   ]);
 
   useEffect(() => {
+    if (toToken && toToken.address === ethToken) setToToken(undefined);
     fetchMarketRate();
-  }, [fetchMarketRate, fromToken, toToken]);
+  }, [fetchMarketRate, fromToken, toToken, setToToken]);
 
   const onPromp = async () => {};
 
@@ -199,6 +201,17 @@ export const SwapLimit = ({
           }}
           border
           selectable
+          excludedTokens={
+            toToken
+              ? [
+                  toToken.address,
+                  ...(toToken.address === ethToken ||
+                  toToken.address === wethToken
+                    ? [ethToken, wethToken]
+                    : []),
+                ]
+              : []
+          }
         />
       </div>
 
@@ -223,6 +236,17 @@ export const SwapLimit = ({
             }}
             selectable
             startEmpty
+            excludedTokens={
+              fromToken
+                ? [
+                    fromToken.address,
+                    ...(fromToken.address === ethToken ||
+                    fromToken.address === wethToken
+                      ? [ethToken, wethToken]
+                      : []),
+                  ]
+                : []
+            }
           />
           <div className="flex justify-between items-center my-15">
             <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
