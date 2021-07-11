@@ -59,7 +59,7 @@ const zipAnchorAndConverters = (
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
-  share()
+  shareReplay(1)
 );
 
 const trueAnchors$ = bancorConverterRegistry$.pipe(
