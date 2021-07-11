@@ -3,13 +3,8 @@ import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { useState } from 'react';
 import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
-import {
-  getNetworkName,
-  setAutoLogin,
-  shortenString,
-} from 'utils/pureFunctions';
+import { getNetworkName } from 'utils/pureFunctions';
 import { EthNetworks } from 'services/web3/types';
-import { FormattedMessage } from 'react-intl';
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
@@ -22,14 +17,7 @@ interface LayoutHeaderProps {
 
 export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
   const [isWalletOpen, setWalletOpen] = useState(false);
-  const { account, deactivate, chainId } = useWeb3React();
-
-  const connectButton = () => {
-    if (account) {
-      deactivate();
-      setAutoLogin(false);
-    } else setWalletOpen(true);
-  };
+  const { chainId } = useWeb3React();
 
   return (
     <>
@@ -51,18 +39,6 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
           </div>
 
           <div className="flex items-center">
-            <button
-              onClick={connectButton}
-              className="btn-outline-secondary btn-sm mr-40"
-            >
-              <IconWallet className="-ml-14 mr-16 text-primary dark:text-primary-light w-[22px]" />
-
-              {account ? (
-                shortenString(account)
-              ) : (
-                <FormattedMessage id="connect_wallet" />
-              )}
-            </button>
             <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
             <NotificationsMenu />
             <span className="text-grey-3 text-20 mx-16">|</span>
