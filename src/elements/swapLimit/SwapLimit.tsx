@@ -22,6 +22,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
+import { useAppSelector } from 'redux/index';
 
 enum Field {
   from,
@@ -58,6 +59,9 @@ export const SwapLimit = ({
   );
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancor.tokens
+  );
 
   const percentages = useMemo(() => [1, 3, 5], []);
 
@@ -157,9 +161,14 @@ export const SwapLimit = ({
   ]);
 
   useEffect(() => {
-    if (toToken && toToken.address === ethToken) setToToken(undefined);
+    if (toToken && toToken.address === ethToken)
+      if (fromToken.address === wethToken) setToToken(undefined);
+      else {
+        const weth = tokens.find((x) => x.address === wethToken);
+        setToToken(weth);
+      }
     fetchMarketRate();
-  }, [fetchMarketRate, fromToken, toToken, setToToken]);
+  }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
 
   const onPromp = async () => {};
 
@@ -248,62 +257,67 @@ export const SwapLimit = ({
                 : []
             }
           />
-          <div className="flex justify-between items-center my-15">
-            <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
-            <InputField
-              format
-              input={rate}
-              onChange={(val: string) => {
-                setRate(val);
-                calculatePercentageByRate(marketRate, val);
-                handleFieldChanged(Field.rate, fromAmount, toAmount, val);
-              }}
-            />
-          </div>
-          <div className="flex justify-between items-center">
-            {percentages.map((slip, index) => (
-              <button
-                key={'slippage' + slip}
-                className={classNameGenerator({
-                  'text-primary': selPercentage === index,
-                })}
-                onClick={() => {
-                  calculateRateByMarket(marketRate, index, '');
-                  setSelPercentage(index);
-                  setPercentage('');
-                }}
-              >
-                +{slip}%
-              </button>
-            ))}
-            <div className="w-96">
-              <InputField
-                input={percentage}
-                onBlur={() => {
-                  const percNum = Number(percentage);
-                  const index = percentages.indexOf(percNum);
-                  if (index !== -1 || !percNum) setPercentage('');
+          {toToken && (
+            <>
+              <div className="flex justify-between items-center my-15">
+                <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
+                <InputField
+                  format
+                  input={rate}
+                  onChange={(val: string) => {
+                    setRate(val);
+                    calculatePercentageByRate(marketRate, val);
+                    handleFieldChanged(Field.rate, fromAmount, toAmount, val);
+                  }}
+                />
+              </div>
+              <div className="flex justify-between items-center">
+                {percentages.map((slip, index) => (
+                  <button
+                    key={'slippage' + slip}
+                    className={classNameGenerator({
+                      'text-primary': selPercentage === index,
+                    })}
+                    onClick={() => {
+                      calculateRateByMarket(marketRate, index, '');
+                      setSelPercentage(index);
+                      setPercentage('');
+                    }}
+                  >
+                    +{slip}%
+                  </button>
+                ))}
+                <div className="w-96">
+                  <InputField
+                    input={percentage}
+                    onBlur={() => {
+                      const percNum = Number(percentage);
+                      const index = percentages.indexOf(percNum);
+                      if (index !== -1 || !percNum) setPercentage('');
 
-                  const sel = percNum
-                    ? index
-                    : selPercentage === -1
-                    ? 1
-                    : selPercentage;
-                  calculateRateByMarket(marketRate, sel, percentage);
-                  setSelPercentage(sel);
-                }}
-                onChange={(val: string) => {
-                  calculateRateByMarket(marketRate, -1, val);
-                  setPercentage(val);
-                }}
-                format
-              />
-            </div>
-          </div>
-          <div className="flex justify-between mt-15">
-            <span>Expires in</span>
-            <ModalDuration duration={duration} setDuration={setDuration} />
-          </div>
+                      const sel = percNum
+                        ? index
+                        : selPercentage === -1
+                        ? 1
+                        : selPercentage;
+                      calculateRateByMarket(marketRate, sel, percentage);
+                      setSelPercentage(sel);
+                    }}
+                    onChange={(val: string) => {
+                      calculateRateByMarket(marketRate, -1, val);
+                      setPercentage(val);
+                    }}
+                    format
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between mt-15">
+                <span>Expires in</span>
+                <ModalDuration duration={duration} setDuration={setDuration} />
+              </div>
+            </>
+          )}
         </div>
 
         <button

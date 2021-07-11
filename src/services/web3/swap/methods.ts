@@ -68,7 +68,7 @@ export const getRate = async (
 
   const path = await conversionPath({
     from: fromToken.address === wethToken ? ethToken : fromToken.address,
-    to: toToken.address,
+    to: toToken.address === wethToken ? ethToken : toToken.address,
     networkContractAddress,
     web3,
   });

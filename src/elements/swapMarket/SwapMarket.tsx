@@ -55,7 +55,8 @@ export const SwapMarket = ({
 
   useEffect(() => {
     (async () => {
-      if (fromToken && toToken && fromToken.address !== wethToken) {
+      if (toToken && toToken.address === wethToken) setToToken(undefined);
+      else if (fromToken && toToken && fromToken.address !== wethToken) {
         const baseRate = await getRate(fromToken, toToken, '1');
         setRate(baseRate);
 
@@ -63,7 +64,7 @@ export const SwapMarket = ({
         setPriceImpact(priceImpact.toFixed(6));
       }
     })();
-  }, [fromToken, toToken]);
+  }, [fromToken, toToken, setToToken]);
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {

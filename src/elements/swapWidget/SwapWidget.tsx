@@ -6,7 +6,7 @@ import { loadSwapData } from 'services/observables/triggers';
 import { useDispatch } from 'react-redux';
 import { TokenListItem } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
-import { wethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
 
 export const Toggle = createContext(false);
 interface SwapWidgetProps {
@@ -41,7 +41,12 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
     const foundFrom = findSetToken(fromToken);
     foundFrom ? setFromToken(foundFrom) : setFromToken(tokens[0]);
 
-    if (toToken && fromToken && fromToken.address !== wethToken) {
+    if (
+      toToken &&
+      fromToken &&
+      fromToken.address !== wethToken &&
+      toToken.address !== ethToken
+    ) {
       const foundTo = findSetToken(toToken);
       foundTo ? setToToken(foundTo) : setToToken(tokens[1]);
     }
