@@ -108,10 +108,10 @@ export const TokenInputField = ({
 
           <div className="relative w-full">
             <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-              {`${!toggle && '~'}${
+              {`${!toggle ? '~' : ''}${
                 input !== '' && token
                   ? prettifyNumber(usdByToken(token, input, !toggle), true)
-                  : '0.00'
+                  : '$0.00'
               }`}
             </div>
             <input
