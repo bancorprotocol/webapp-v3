@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { BehaviorSubject, combineLatest, from, of, zip } from 'rxjs';
-import { map, share, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
@@ -33,7 +33,7 @@ export interface TokenListItem {
   balance: string | null;
 }
 
-const list_of_lists$ = new BehaviorSubject<string[]>([
+const list_of_lists = [
   'https://tokens.1inch.eth.link',
   'https://tokens.coingecko.com/uniswap/all.json',
   'https://tokenlist.aave.eth.link',
@@ -59,25 +59,18 @@ const list_of_lists$ = new BehaviorSubject<string[]>([
   'https://yearn.science/static/tokenlist.json',
   'https://zapper.fi/api/token-list',
   'https://tokenlist.zerion.eth.link',
-]);
+];
 
 export const userLists$ = new BehaviorSubject<number[]>([]);
 
-const fetchTokenLists = (lists: string[]) => {
-  const tokenLists = <TokenList[]>[];
-
-  lists.map(async (list) => {
-    try {
+export const tokenLists$ = from(
+  Promise.all(
+    list_of_lists.map(async (list) => {
       const res = await axios.get<TokenList>(list);
-      tokenLists.push(res.data);
-    } catch (error) {}
-  });
-  return tokenLists;
-};
-
-export const tokenLists$ = list_of_lists$.pipe(
-  map((lists) => fetchTokenLists(lists))
-);
+      return res.data;
+    })
+  )
+).pipe(shareReplay(1));
 
 export const tokenList$ = combineLatest([
   tokenLists$,
