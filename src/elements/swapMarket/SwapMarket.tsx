@@ -62,7 +62,7 @@ export const SwapMarket = ({
         setRate(baseRate);
 
         const priceImpact = await getPriceImpact(fromToken, toToken, '1');
-        setPriceImpact(priceImpact.toFixed(6));
+        setPriceImpact(priceImpact.toFixed(4));
       }
     })();
   }, [fromToken, toToken, setToToken]);
@@ -206,7 +206,10 @@ export const SwapMarket = ({
     'processing swap',
   ];
 
+  // handle input errors
   useEffect(() => {
+    const isZeroInput = new BigNumber(fromAmount).eq(0);
+    if (isZeroInput) return setFromError('Alert: No Zero allowed');
     const isInsufficient =
       fromToken &&
       fromToken.balance &&

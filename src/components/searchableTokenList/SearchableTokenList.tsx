@@ -122,7 +122,8 @@ export const SearchableTokenList = ({
               .filter(
                 (token) =>
                   !excludedTokens.includes(token.address) &&
-                  token.symbol?.toLowerCase().includes(search.toLowerCase())
+                  (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
+                    token.name.toLowerCase().includes(search.toLowerCase()))
               )
               .map((token, index) => {
                 return (
