@@ -18,7 +18,7 @@ export const SidebarHeader = ({
     <>
       <div className={'flex justify-between items-center mb-12'}>
         <div className="flex items-center mb-5 pl-[25px] ">
-          <IconBancor className="w-[18px] mr-20" />
+          <IconBancor className="w-[18px] mr-24" />
           <IconBancorText className="w-[76px]" />
         </div>
         {setIsSidebarOpen ? (
