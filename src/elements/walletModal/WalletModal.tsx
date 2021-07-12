@@ -7,13 +7,9 @@ import { setAutoLogin, shortenString } from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
 
-interface WalletModalProps {
-  isOpen: boolean;
-  setIsOpen: Function;
-}
-
-export const WalletModal = ({ isOpen, setIsOpen }: WalletModalProps) => {
+export const WalletModal = () => {
   const { activate, deactivate, account } = useWeb3React();
+  const [isOpen, setIsOpen] = useState(false);
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo | null>(null);
