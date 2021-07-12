@@ -20,6 +20,14 @@ import { shrinkToken } from 'utils/pureFunctions';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
+enum OrderStatus {
+  Invalid,
+  Fillable,
+  Filled,
+  Cancelled,
+  Expired,
+}
+
 export const swapLimit = async (
   fromToken: TokenListItem,
   toToken: TokenListItem,
@@ -223,14 +231,6 @@ interface MetaData {
   status: OrderStatus;
   filledAmount_takerToken: number;
   remainingFillableAmount_takerToken: BigNumber;
-}
-
-enum OrderStatus {
-  INVALID,
-  FILLABLE,
-  FILLED,
-  CANCELLED,
-  EXPIRED,
 }
 
 interface Order {
