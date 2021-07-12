@@ -3,18 +3,33 @@ import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { useWeb3React } from '@web3-react/core';
 import { useInterval } from 'hooks/useInterval';
-import { getOrders, LimitOrder } from 'services/api/keeperDao';
+import { cancelOrders, getOrders, LimitOrder } from 'services/api/keeperDao';
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { getTokenLogoURI } from 'services/observables/tokens';
+import { getTokenLogoURI, TokenListItem } from 'services/observables/tokens';
+import { useDispatch } from 'react-redux';
+import { addNotification } from 'redux/notification/notification';
+import { useAppSelector } from 'redux/index';
+import { wethToken } from 'services/web3/config';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export const SwapLimitTable = () => {
   const { account } = useWeb3React();
   const [orders, setOrders] = useState<LimitOrder[]>([]);
+  const [weth, setWeth] = useState<TokenListItem>();
+  const dispatch = useDispatch();
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancor.tokens
+  );
 
   const refreshOrders = useCallback(async () => {
     if (account) setOrders(await getOrders(account));
   }, [account]);
+
+  useEffect(() => {
+    const weth = tokens.find((x) => x.address === wethToken);
+    if (weth) setWeth(weth);
+  }, [tokens]);
 
   useInterval(() => {
     refreshOrders();
@@ -44,15 +59,34 @@ export const SwapLimitTable = () => {
             />
           </div>
           <div className={'flex'}>
-            <button className={'btn-outline-secondary btn-sm rounded-10 mr-10'}>
+            <button
+              className={'btn-outline-secondary btn-sm rounded-10 mr-10'}
+              onClick={async () =>
+                dispatch(
+                  addNotification(
+                    await cancelOrders(
+                      orders.map((x) => x.orderRes),
+                      account
+                    )
+                  )
+                )
+              }
+            >
               Cancel All
             </button>
-            <button
-              className={'btn-outline-secondary btn-sm rounded-10'}
-              onClick={() => withdrawWeth('1', account)}
-            >
-              Withdraw 1.00000 WETH
-            </button>
+            {weth && weth.balance && (
+              <button
+                className={'btn-outline-secondary btn-sm rounded-10'}
+                onClick={async () =>
+                  weth.balance &&
+                  dispatch(
+                    addNotification(await withdrawWeth(weth.balance, account))
+                  )
+                }
+              >
+                Withdraw {prettifyNumber(weth.balance)} WETH
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -106,6 +140,13 @@ export const SwapLimitTable = () => {
                     <button
                       className={
                         'hover:text-error py-5 pl-5 transition duration-200'
+                      }
+                      onClick={async () =>
+                        dispatch(
+                          addNotification(
+                            await cancelOrders([order.orderRes], account)
+                          )
+                        )
                       }
                     >
                       <IconTimes className={'w-10'} />

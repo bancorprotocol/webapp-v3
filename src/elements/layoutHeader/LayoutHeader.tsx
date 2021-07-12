@@ -16,7 +16,6 @@ interface LayoutHeaderProps {
 }
 
 export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
-  const [isWalletOpen, setWalletOpen] = useState(false);
   const { chainId } = useWeb3React();
 
   return (
@@ -39,7 +38,7 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
           </div>
 
           <div className="flex items-center">
-            <WalletModal isOpen={isWalletOpen} setIsOpen={setWalletOpen} />
+            <WalletModal />
             <NotificationsMenu />
             <span className="text-grey-3 text-20 mx-16">|</span>
             <SettingsMenu />

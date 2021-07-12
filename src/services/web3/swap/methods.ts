@@ -106,8 +106,6 @@ export const getPriceImpact = async (
     web3,
   });
 
-  console.log('result', result);
-
   const pathInverted = await conversionPath({
     from: toToken.address,
     to: fromToken.address,
@@ -121,8 +119,6 @@ export const getPriceImpact = async (
     path: pathInverted,
     web3,
   });
-
-  console.log('resultInverted', resultInverted);
 
   const output = Number(resultInverted['0']);
   const input = Number(amountWei);
@@ -147,20 +143,13 @@ export const swap = async ({
   toAmount: string;
   user: string;
 }): Promise<string> => {
-  console.log('swap start');
-
   currentNetwork = net;
   currentUser = user;
   const fromIsEth = fromToken.address.toLowerCase() === ethToken.toLowerCase();
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
-  console.log('before apiData');
   const apiData = await apiData$.pipe(take(1)).toPromise();
-  console.log('apiData');
-
   const minimalRelays = await winningMinimalRelays(apiData, allViewRelays);
-
-  console.log('minimalRelays', minimalRelays);
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const relays = await findBestPath({
