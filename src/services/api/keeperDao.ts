@@ -79,7 +79,7 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 
   return orderResToLimit(
     res.data.orders.filter(
-      (order) => order.metaData.status !== OrderStatus.CANCELLED
+      (order) => order.metaData.status !== OrderStatus.Cancelled
     )
   );
 };
