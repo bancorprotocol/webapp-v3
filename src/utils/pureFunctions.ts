@@ -126,7 +126,7 @@ export const usdByToken = (
 
   const input = Number(amount ? amount : token.balance);
   const tokenPrice = Number(token.usdPrice);
-  return (isToken ? input * tokenPrice : input / tokenPrice).toFixed(2);
+  return (isToken ? input * tokenPrice : input / tokenPrice).toString();
 };
 
 export const compareString = (

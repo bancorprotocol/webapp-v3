@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import {
   classNameGenerator,
   sanitizeNumberInput,
@@ -11,7 +11,6 @@ import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { prettifyNumber } from 'utils/helperFunctions';
-import BigNumber from 'bignumber.js';
 
 interface TokenInputFieldProps {
   label: string;
@@ -46,6 +45,7 @@ export const TokenInputField = ({
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
+  const [usdInput, setUsdInput] = useState('');
 
   const balance = token ? token.balance : null;
   const balanceUsd = token ? usdByToken(token) : null;
@@ -54,6 +54,22 @@ export const TokenInputField = ({
   const handleChange = (text: string) => {
     if (setInput) setInput(text);
     if (debounce) debounce(text);
+  };
+
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const val = sanitizeNumberInput(event.target.value);
+    if (onChange) onChange(val);
+    else {
+      if (toggle) {
+        const amount = (Number(val) / Number(token?.usdPrice)).toString();
+        handleChange(Number(amount) ? amount : '');
+        setUsdInput(Number(val) ? val : '');
+      } else {
+        const amount = (Number(val) * Number(token?.usdPrice)).toString();
+        handleChange(Number(val) ? val : '');
+        setUsdInput(Number(amount) ? amount : '');
+      }
+    }
   };
 
   const placeholder = '0.0';
@@ -110,25 +126,22 @@ export const TokenInputField = ({
               </div>
             )}
           </div>
-          <div>
+          <div className="w-full">
             <div className="relative w-full">
               <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
                 {`${!toggle ? '~' : ''}${
-                  input !== '' && token
-                    ? prettifyNumber(usdByToken(token, input, !toggle), true)
+                  (input !== '' || usdInput !== '') && token
+                    ? prettifyNumber(!toggle ? usdInput : input, !toggle)
                     : '$0.00'
                 }`}
               </div>
               <input
                 type="text"
-                value={input}
+                value={toggle ? (usdInput ? `$${usdInput}` : usdInput) : input}
                 disabled={disabled}
                 placeholder={placeholder}
                 className={inputFieldStyles}
-                onChange={(event) => {
-                  const val = sanitizeNumberInput(event.target.value);
-                  onChange ? onChange(val) : handleChange(val);
-                }}
+                onChange={onInputChange}
               />
             </div>
             {errorMsg && (
