@@ -15,6 +15,9 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 
+//Web3 estimation is too low doubling it to be safe
+const manualBuffer = 2;
+
 export const depositWeth = async (
   amount: string,
   user: string,
@@ -27,7 +30,6 @@ export const depositWeth = async (
 
   const tx = tokenContract.methods.deposit();
   const estimatedGas = await determineTxGas(tx, user);
-  const manualBuffer = 2;
 
   const txHash = await resolveTxOnConfirmation({
     value: wei,

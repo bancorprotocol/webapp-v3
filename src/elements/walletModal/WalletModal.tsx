@@ -8,7 +8,7 @@ import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
 
 export const WalletModal = () => {
-  const { activate, deactivate, account } = useWeb3React();
+  const { activate, deactivate, account, connector } = useWeb3React();
   const [isOpen, setIsOpen] = useState(false);
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -16,6 +16,7 @@ export const WalletModal = () => {
 
   const tryConnecting = async (wallet: WalletInfo) => {
     setPending(true);
+    setSelectedWallet(wallet);
     const { connector } = wallet;
 
     if (
@@ -29,7 +30,6 @@ export const WalletModal = () => {
         .then(async () => {
           setIsOpen(false);
           setAutoLogin(true);
-          setSelectedWallet(wallet);
         })
         .catch((error) => {
           if (error instanceof UnsupportedChainIdError) {
@@ -44,20 +44,21 @@ export const WalletModal = () => {
       deactivate();
       setAutoLogin(false);
       setSelectedWallet(null);
-    } else setIsOpen(true);
+    } else {
+      setError(false);
+      setPending(false);
+      setIsOpen(true);
+    }
   };
 
   useEffect(() => {
-    if (account) setIsOpen(false);
-  }, [account, setIsOpen]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setError(false);
-      setPending(false);
-      setSelectedWallet(null);
-    }
-  }, [isOpen]);
+    if (connector) {
+      const wallet = SUPPORTED_WALLETS.find(
+        (x) => typeof x.connector === typeof connector
+      );
+      if (wallet) setSelectedWallet(wallet);
+    } else setSelectedWallet(null);
+  }, [isOpen, connector]);
 
   const title = error
     ? 'Wallet Error'
@@ -89,7 +90,12 @@ export const WalletModal = () => {
 
       <Modal title={title} setIsOpen={setIsOpen} isOpen={isOpen}>
         <div>
-          {selectedWallet ? (
+          {error ? (
+            <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
+              <p className="font-semibold mb-5">Failed to connect to wallet.</p>
+              <p className="text-12">Please try again or contact support.</p>
+            </div>
+          ) : pending ? (
             <>
               <div
                 className={`flex justify-center items-center mt-20 mb-40 ${
@@ -97,22 +103,12 @@ export const WalletModal = () => {
                 }`}
               >
                 <img
-                  src={selectedWallet.icon}
+                  src={selectedWallet?.icon}
                   alt=""
                   className="w-64 h-64 mr-30"
                 />
-                <h2 className="font-bold text-20">{selectedWallet.name}</h2>
+                <h2 className="font-bold text-20">{selectedWallet?.name}</h2>
               </div>
-              {error && (
-                <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
-                  <p className="font-semibold mb-5">
-                    Failed to connect to wallet.
-                  </p>
-                  <p className="text-12">
-                    Please try again or contact support.
-                  </p>
-                </div>
-              )}
             </>
           ) : (
             <div className="flex flex-col mb-20 mt-10 space-y-15">
