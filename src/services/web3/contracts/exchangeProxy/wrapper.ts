@@ -1,4 +1,4 @@
-import { buildContract } from 'services/web3/contracts';
+import { buildContract, writeWeb3 } from 'services/web3/contracts';
 import { ContractMethods } from 'services/web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ABIExchangeProxy } from 'services/web3/contracts/exchangeProxy/abi';
@@ -21,4 +21,4 @@ export const buildExchangeProxyContract = (
 ): ContractMethods<{
   cancelRfqOrder: (order: StringRfq) => ContractSendMethod;
   batchCancelRfqOrders: (orders: StringRfq[]) => ContractSendMethod;
-}> => buildContract(ABIExchangeProxy, contractAddress);
+}> => buildContract(ABIExchangeProxy, contractAddress, writeWeb3);

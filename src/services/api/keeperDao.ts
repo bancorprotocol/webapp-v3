@@ -68,7 +68,12 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
       transformResponse: (res) => JSONbig.parse(res),
     }
   );
-  return orderResToLimit(res.data.orders);
+
+  return orderResToLimit(
+    res.data.orders.filter(
+      (order) => order.metaData.status !== OrderStatus.CANCELLED
+    )
+  );
 };
 const orderResToLimit = async (
   orders: OrderResponse[]
@@ -102,6 +107,7 @@ const orderResToLimit = async (
           res.metaData.remainingFillableAmount_takerToken
         )
       ),
+      orderRes: res,
     };
   });
 };
@@ -126,13 +132,10 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
   }
 };
 
-export const cancelOrders = async ({
-  orders,
-  user,
-}: {
-  orders: OrderResponse[];
-  user: string;
-}): Promise<BaseNotification> => {
+export const cancelOrders = async (
+  orders: OrderResponse[],
+  user: string
+): Promise<BaseNotification> => {
   const stringOrders = orders.map((limitOrder) =>
     orderToStringOrder(limitOrder.order)
   );
@@ -184,6 +187,7 @@ export interface LimitOrder {
   getAmount: string;
   rate: string;
   filled: string;
+  orderRes: OrderResponse;
 }
 export interface RfqOrderJson {
   maker: string;
