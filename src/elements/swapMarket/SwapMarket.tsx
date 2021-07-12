@@ -10,7 +10,6 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { usdByToken } from 'utils/pureFunctions';
 import { useWeb3React } from '@web3-react/core';
 import { Modal } from 'components/modal/Modal';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
@@ -21,6 +20,7 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
+import BigNumber from 'bignumber.js';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -47,6 +47,7 @@ export const SwapMarket = ({
   const [priceImpact, setPriceImpact] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [step, setStep] = useState(0);
+  const [fromError, setFromError] = useState('');
   const toggle = useContext(Toggle);
 
   const tokens = useAppSelector<TokenListItem[]>(
@@ -205,6 +206,16 @@ export const SwapMarket = ({
     'processing swap',
   ];
 
+  useEffect(() => {
+    const isInsufficient =
+      fromToken &&
+      fromToken.balance &&
+      new BigNumber(fromAmount).gt(fromToken.balance);
+    if (isInsufficient)
+      setFromError('Alert: Token balance is currently insufficient');
+    else setFromError('');
+  }, [fromAmount, fromToken]);
+
   return (
     <>
       <div>
@@ -219,6 +230,7 @@ export const SwapMarket = ({
             border
             selectable
             excludedTokens={toToken ? [toToken.address] : []}
+            errorMsg={fromError}
           />
         </div>
 
@@ -263,6 +275,7 @@ export const SwapMarket = ({
           <button
             onClick={() => handleSwap()}
             className="btn-primary rounded w-full"
+            disabled={fromError !== ''}
           >
             Swap
           </button>

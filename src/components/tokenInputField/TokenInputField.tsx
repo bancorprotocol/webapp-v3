@@ -11,6 +11,7 @@ import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { prettifyNumber } from 'utils/helperFunctions';
+import BigNumber from 'bignumber.js';
 
 interface TokenInputFieldProps {
   label: string;
@@ -41,6 +42,7 @@ export const TokenInputField = ({
   debounce,
   startEmpty,
   excludedTokens = [],
+  errorMsg,
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
@@ -57,6 +59,7 @@ export const TokenInputField = ({
   const placeholder = '0.0';
   const inputFieldStyles = `token-input-field ${classNameGenerator({
     'border-blue-0 dark:border-blue-1': border,
+    '!border-error': errorMsg,
   })}`;
 
   return (
@@ -76,11 +79,13 @@ export const TokenInputField = ({
         )}
       </div>
       {!showSelectToken || token ? (
-        <div className="flex items-center">
+        <div className="flex items-start">
           <div
-            className={`flex items-center min-w-[135px] ${classNameGenerator({
-              'cursor-pointer': selectable,
-            })}`}
+            className={`flex items-center mt-15 min-w-[135px] ${classNameGenerator(
+              {
+                'cursor-pointer': selectable,
+              }
+            )}`}
             onClick={() => (selectable ? setIsOpen(true) : {})}
           >
             {token ? (
@@ -105,26 +110,30 @@ export const TokenInputField = ({
               </div>
             )}
           </div>
-
-          <div className="relative w-full">
-            <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-              {`${!toggle ? '~' : ''}${
-                input !== '' && token
-                  ? prettifyNumber(usdByToken(token, input, !toggle), true)
-                  : '$0.00'
-              }`}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
+                {`${!toggle ? '~' : ''}${
+                  input !== '' && token
+                    ? prettifyNumber(usdByToken(token, input, !toggle), true)
+                    : '$0.00'
+                }`}
+              </div>
+              <input
+                type="text"
+                value={input}
+                disabled={disabled}
+                placeholder={placeholder}
+                className={inputFieldStyles}
+                onChange={(event) => {
+                  const val = sanitizeNumberInput(event.target.value);
+                  onChange ? onChange(val) : handleChange(val);
+                }}
+              />
             </div>
-            <input
-              type="text"
-              value={input}
-              disabled={disabled}
-              placeholder={placeholder}
-              className={inputFieldStyles}
-              onChange={(event) => {
-                const val = sanitizeNumberInput(event.target.value);
-                onChange ? onChange(val) : handleChange(val);
-              }}
-            />
+            {errorMsg && (
+              <div className="text-error text-12 px-10 pt-5">{errorMsg}</div>
+            )}
           </div>
         </div>
       ) : (

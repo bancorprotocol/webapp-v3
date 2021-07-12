@@ -9,7 +9,6 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import {
   calculatePercentageChange,
   classNameGenerator,
-  usdByToken,
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/methods';
