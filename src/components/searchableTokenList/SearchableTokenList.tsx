@@ -27,7 +27,7 @@ export const SearchableTokenList = ({
   excludedTokens = [],
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
-  const [manage, setMange] = useState(false);
+  const [manage, setManage] = useState(false);
   const [userLists, setUserLists] = useState<number[]>(getLSTokenList());
 
   const tokens = useAppSelector<TokenListItem[]>(
@@ -39,7 +39,8 @@ export const SearchableTokenList = ({
 
   const onClose = () => {
     setIsOpen(false);
-    setMange(false);
+    setManage(false);
+    setSearch('');
   };
 
   const handleTokenlistClick = (index: number) => {
@@ -60,7 +61,7 @@ export const SearchableTokenList = ({
       isOpen={isOpen}
       setIsOpen={onClose}
       showBackButton={manage}
-      onBackClick={() => setMange(false)}
+      onBackClick={() => setManage(false)}
     >
       {manage ? (
         <div className="space-y-15 mt-20">
@@ -151,7 +152,7 @@ export const SearchableTokenList = ({
           <div>
             <hr />
             <button
-              onClick={() => setMange(true)}
+              onClick={() => setManage(true)}
               className="w-full py-20 text-center text-primary font-semibold"
             >
               Manage Token Lists
