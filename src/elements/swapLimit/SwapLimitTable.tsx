@@ -6,11 +6,18 @@ import { useInterval } from 'hooks/useInterval';
 import { getOrders, LimitOrder } from 'services/api/keeperDao';
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { getTokenLogoURI } from 'services/observables/tokens';
+import { getTokenLogoURI, TokenListItem } from 'services/observables/tokens';
+import { useDispatch } from 'react-redux';
+import { addNotification } from 'redux/notification/notification';
+import { useAppSelector } from 'redux/index';
 
 export const SwapLimitTable = () => {
   const { account } = useWeb3React();
   const [orders, setOrders] = useState<LimitOrder[]>([]);
+  const dispatch = useDispatch();
+  const tokens = useAppSelector<TokenListItem[]>(
+    (state) => state.bancor.tokens
+  );
 
   const refreshOrders = useCallback(async () => {
     if (account) setOrders(await getOrders(account));
@@ -49,7 +56,9 @@ export const SwapLimitTable = () => {
             </button>
             <button
               className={'btn-outline-secondary btn-sm rounded-10'}
-              onClick={() => withdrawWeth('1', account)}
+              onClick={async () =>
+                dispatch(addNotification(await withdrawWeth('1', account)))
+              }
             >
               Withdraw 1.00000 WETH
             </button>

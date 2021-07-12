@@ -10,6 +10,10 @@ import { web3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
 import Web3 from 'web3';
+import {
+  BaseNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 
 export const depositWeth = async (
   amount: string,
@@ -35,16 +39,31 @@ export const depositWeth = async (
   return txHash;
 };
 
-export const withdrawWeth = async (amount: string, user: string) => {
+export const withdrawWeth = async (
+  amount: string,
+  user: string
+): Promise<BaseNotification> => {
   const tokenContract = buildWethContract(wethToken);
   const wei = expandToken(amount, 18);
 
-  const txHash = await resolveTxOnConfirmation({
-    tx: tokenContract.methods.withdraw(wei),
-    user,
-  });
-
-  return txHash;
+  try {
+    const txHash = await resolveTxOnConfirmation({
+      tx: tokenContract.methods.withdraw(wei),
+      user,
+    });
+    return {
+      type: NotificationType.success,
+      title: 'Title',
+      msg: 'Message',
+      txHash,
+    };
+  } catch (error) {
+    return {
+      type: NotificationType.error,
+      title: 'Title',
+      msg: 'Message',
+    };
+  }
 };
 
 export const createOrder = async (
