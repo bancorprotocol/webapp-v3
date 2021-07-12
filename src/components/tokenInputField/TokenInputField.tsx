@@ -14,8 +14,6 @@ import { prettifyNumber } from 'utils/helperFunctions';
 
 interface TokenInputFieldProps {
   label: string;
-  balance: string | null;
-  balanceUsd: string | null;
   border?: boolean;
   selectable?: boolean;
   disabled?: boolean;
@@ -27,12 +25,11 @@ interface TokenInputFieldProps {
   debounce?: Function;
   startEmpty?: boolean;
   excludedTokens?: string[];
+  errorMsg?: string;
 }
 
 export const TokenInputField = ({
   label,
-  balance,
-  balanceUsd,
   border,
   selectable,
   token,
@@ -47,6 +44,9 @@ export const TokenInputField = ({
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
+
+  const balance = token ? token.balance : null;
+  const balanceUsd = token ? usdByToken(token) : null;
 
   const toggle = useContext(Toggle);
   const handleChange = (text: string) => {

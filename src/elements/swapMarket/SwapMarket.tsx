@@ -211,8 +211,6 @@ export const SwapMarket = ({
         <div className="px-20">
           <TokenInputField
             label="You Pay"
-            balance={fromToken ? fromToken.balance : null}
-            balanceUsd={usdByToken(fromToken)}
             token={fromToken}
             setToken={setFromToken}
             input={fromAmount}
@@ -236,8 +234,6 @@ export const SwapMarket = ({
           <div className="mx-10 mb-16 pt-16">
             <TokenInputField
               label="You Receive"
-              balance={toToken ? toToken.balance : null}
-              balanceUsd={toToken && usdByToken(toToken)}
               token={toToken}
               setToken={setToToken}
               input={toAmount}
