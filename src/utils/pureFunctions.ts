@@ -85,7 +85,7 @@ export const expandToken = (amount: string | number, precision: number) => {
 };
 
 export const shrinkToken = (
-  amount: string | number,
+  amount: string | number | BigNumber,
   precision: number,
   chopZeros = false
 ) => {

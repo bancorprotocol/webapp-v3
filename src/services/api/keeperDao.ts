@@ -1,10 +1,22 @@
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import JSONbig from 'json-bigint';
+import {
+  BaseNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
+import { exchangeProxy$ } from 'services/observables/contracts';
 import { tokenList$, TokenListItem } from 'services/observables/tokens';
+import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
+import {
+  buildExchangeProxyContract,
+  StringRfq,
+} from 'services/web3/contracts/exchangeProxy/wrapper';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { shrinkToken } from 'utils/pureFunctions';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -80,14 +92,16 @@ const orderResToLimit = async (
       expiration: res.order.expiry,
       payToken,
       getToken,
-      payAmount,
-      getAmount,
-      rate: `1 ${payToken.symbol} = ${payAmount.div(getAmount).toFixed(9)} ${
-        getToken.symbol
-      }`,
-      filled: new BigNumber(res.metaData.filledAmount_takerToken)
-        .div(res.metaData.remainingFillableAmount_takerToken)
-        .toFixed(2),
+      payAmount: prettifyNumber(shrinkToken(payAmount, payToken.decimals)),
+      getAmount: prettifyNumber(shrinkToken(getAmount, getToken.decimals)),
+      rate: `1 ${payToken.symbol} = ${prettifyNumber(
+        getAmount.div(payAmount)
+      )} ${getToken.symbol}`,
+      filled: prettifyNumber(
+        new BigNumber(res.metaData.filledAmount_takerToken).div(
+          res.metaData.remainingFillableAmount_takerToken
+        )
+      ),
     };
   });
 };
@@ -112,13 +126,62 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
   }
 };
 
+export const cancelOrders = async ({
+  orders,
+  user,
+}: {
+  orders: OrderResponse[];
+  user: string;
+}): Promise<BaseNotification> => {
+  const stringOrders = orders.map((limitOrder) =>
+    orderToStringOrder(limitOrder.order)
+  );
+  const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
+  const contract = buildExchangeProxyContract(exchangeProxyAddress);
+
+  try {
+    const txHash = await resolveTxOnConfirmation({
+      tx:
+        stringOrders.length === 1
+          ? contract.methods.cancelRfqOrder(stringOrders[0])
+          : contract.methods.batchCancelRfqOrders(stringOrders),
+      user,
+    });
+    return {
+      type: NotificationType.success,
+      title: 'Title',
+      msg: 'Message',
+      txHash,
+    };
+  } catch (error) {
+    return {
+      type: NotificationType.error,
+      title: 'Title',
+      msg: 'Message',
+    };
+  }
+};
+
+const orderToStringOrder = (order: Order): StringRfq => ({
+  expiry: String(order.expiry),
+  makerAmount: order.makerAmount.toString(),
+  salt: String(order.salt),
+  takerAmount: order.takerAmount.toString(),
+  maker: order.maker,
+  makerToken: order.makerToken,
+  pool: order.pool,
+  taker: order.taker,
+  takerToken: order.takerToken,
+  txOrigin: order.txOrigin,
+});
+
 export interface LimitOrder {
   hash: string;
   expiration: number;
   payToken: TokenListItem;
   getToken: TokenListItem;
-  payAmount: BigNumber;
-  getAmount: BigNumber;
+  payAmount: string;
+  getAmount: string;
   rate: string;
   filled: string;
 }
@@ -137,6 +200,7 @@ export interface RfqOrderJson {
   verifyingContract: string; // Address of the contract where the transaction should be sent.
   signature: Signature;
 }
+
 interface Signature {
   signatureType: number;
   v: number;
