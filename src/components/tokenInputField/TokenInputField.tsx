@@ -162,7 +162,6 @@ export const TokenInputField = ({
       <SearchableTokenList
         onClick={(token: TokenListItem) => {
           setToken(token);
-          setIsOpen(false);
           setSelectToken(false);
         }}
         isOpen={isOpen}

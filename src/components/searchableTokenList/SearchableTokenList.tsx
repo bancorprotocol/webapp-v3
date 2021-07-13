@@ -137,7 +137,10 @@ export const SearchableTokenList = ({
                 return (
                   <button
                     key={'token_' + index}
-                    onClick={() => onClick(token)}
+                    onClick={() => {
+                      onClick(token);
+                      onClose();
+                    }}
                     className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
                   >
                     <div className="flex items-center">

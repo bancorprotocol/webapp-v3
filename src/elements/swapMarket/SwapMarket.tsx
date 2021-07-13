@@ -22,6 +22,7 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
+import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -213,10 +214,10 @@ export const SwapMarket = ({
   };
 
   const steps = [
-    'checking allowance ...',
-    'choose approval',
-    'setting approval amount ...',
-    'processing swap',
+    'Checking allowance ...',
+    'Choose approval',
+    'Setting approval amount ...',
+    'Processing Swap ...',
   ];
 
   // handle input errors
@@ -298,17 +299,22 @@ export const SwapMarket = ({
         </div>
       </div>
       <Modal title={'Swap'} setIsOpen={closeModal} isOpen={showModal}>
-        <div>
+        <div className="px-20 pb-20">
           {step !== 1 && (
             <>
-              {'current step' + step}
-              <br />
-              {steps[step]}
+              <div className="relative flex justify-center items-center">
+                <IconBancor className="absolute w-24 text-primary" />
+                <div className="absolute w-[60px] h-[60px] border border-grey-1 rounded-full" />
+                <div className="w-[60px] h-[60px] border-t border-r border-primary rounded-full animate-spin" />
+              </div>
+              <h1 className="text-center mt-20">
+                <div>{steps[step]}</div>
+              </h1>
             </>
           )}
 
           {step === 1 && (
-            <div className="flex flex-col items-center text-12 mb-20">
+            <div className="flex flex-col items-center text-12">
               <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
                 <IconLock className="w-[22px] text-white" />
               </div>
