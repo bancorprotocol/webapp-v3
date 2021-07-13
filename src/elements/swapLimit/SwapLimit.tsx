@@ -170,8 +170,6 @@ export const SwapLimit = ({
     fetchMarketRate();
   }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
 
-  const onPromp = async () => {};
-
   const handleSwap = async () => {
     if (!account) {
       dispatch(openWalletModal(true));
@@ -186,8 +184,7 @@ export const SwapLimit = ({
       fromAmount,
       toAmount,
       account,
-      duration,
-      onPromp
+      duration
     );
 
     dispatch(

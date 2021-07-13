@@ -38,8 +38,6 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
-  const dispatch = useDispatch();
-
   const { chainId, account } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
@@ -50,6 +48,8 @@ export const SwapMarket = ({
   const [step, setStep] = useState(0);
   const [fromError, setFromError] = useState('');
   const toggle = useContext(Toggle);
+  const [disableSwap, setDisableSwap] = useState(false);
+  const dispatch = useDispatch();
 
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -129,6 +129,7 @@ export const SwapMarket = ({
       await handleSwap(3);
     } catch (e) {
       console.error('getNetworkContractApproval failed', e);
+      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -161,6 +162,7 @@ export const SwapMarket = ({
     } catch (e) {
       console.error('setNetworkContractApproval failed', e);
       closeModal();
+      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -180,6 +182,7 @@ export const SwapMarket = ({
     if (!(chainId && toToken)) return;
 
     setShowModal(true);
+    setDisableSwap(true);
     if (step < 3) return checkAllowance();
     try {
       const txHash = await swap({
@@ -189,7 +192,10 @@ export const SwapMarket = ({
         fromAmount,
         toAmount,
         user: account,
+        onConfirmation,
       });
+      console.log('txHash', txHash);
+
       dispatch(
         addNotification({
           type: NotificationType.pending,
@@ -200,6 +206,7 @@ export const SwapMarket = ({
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
+      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -210,6 +217,11 @@ export const SwapMarket = ({
     } finally {
       closeModal();
     }
+  };
+
+  const onConfirmation = (hashj: string) => {
+    setDisableSwap(false);
+    console.log('Refresh balances');
   };
 
   const steps = [
@@ -291,7 +303,7 @@ export const SwapMarket = ({
           <button
             onClick={() => handleSwap()}
             className="btn-primary rounded w-full"
-            disabled={fromError !== ''}
+            disabled={fromError !== '' || disableSwap}
           >
             Swap
           </button>

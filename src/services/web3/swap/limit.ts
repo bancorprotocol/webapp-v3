@@ -18,15 +18,9 @@ import {
 //Web3 estimation is too low doubling it to be safe
 const manualBuffer = 2;
 
-export const depositWeth = async (
-  amount: string,
-  user: string,
-  onPrompt: Function
-) => {
+export const depositWeth = async (amount: string, user: string) => {
   const tokenContract = buildWethContract(wethToken);
   const wei = expandToken(amount, 18);
-
-  const res = await onPrompt();
 
   const tx = tokenContract.methods.deposit();
   const estimatedGas = await determineTxGas(tx, user);
@@ -74,8 +68,7 @@ export const createOrder = async (
   from: string,
   to: string,
   user: string,
-  seconds: number,
-  onPrompt: Function
+  seconds: number
 ): Promise<void> => {
   const now = dayjs().unix();
   const expiry = new BigNumber(now + seconds);

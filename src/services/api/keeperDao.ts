@@ -34,27 +34,18 @@ export const swapLimit = async (
   from: string,
   to: string,
   user: string,
-  duration: plugin.Duration,
-  onPrompt: Function
+  duration: plugin.Duration
 ) => {
   const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
 
   try {
-    if (fromIsEth) await depositWeth(from, user, onPrompt);
+    if (fromIsEth) await depositWeth(from, user);
 
     const newFrom = fromIsEth
       ? { ...fromToken, address: wethToken }
       : fromToken;
 
-    await createOrder(
-      newFrom,
-      toToken,
-      from,
-      to,
-      user,
-      duration.asSeconds(),
-      onPrompt
-    );
+    await createOrder(newFrom, toToken, from, to, user, duration.asSeconds());
   } catch (error) {
     console.error(error);
   }
