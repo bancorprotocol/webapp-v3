@@ -62,12 +62,12 @@ export const TokenInputField = ({
     else {
       if (toggle) {
         const amount = (Number(val) / Number(token?.usdPrice)).toString();
-        handleChange(Number(amount) ? amount : '');
-        setUsdInput(Number(val) ? val : '');
+        handleChange(amount);
+        setUsdInput(val);
       } else {
         const amount = (Number(val) * Number(token?.usdPrice)).toString();
-        handleChange(Number(val) ? val : '');
-        setUsdInput(Number(amount) ? amount : '');
+        handleChange(val);
+        setUsdInput(amount);
       }
     }
   };
