@@ -1,6 +1,6 @@
 import { TokenListItem } from 'services/observables/tokens';
 import { compareString, expandToken } from 'utils/pureFunctions';
-import { web3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
 import { resolveTxOnConfirmation } from 'services/web3/index';
@@ -48,7 +48,7 @@ const setApproval = async (
   const isEth = compareString(token, ethToken);
   if (isEth) return '';
 
-  const tokenContract = buildTokenContract(token, web3);
+  const tokenContract = buildTokenContract(token, writeWeb3);
 
   // set limited or unlimited amount
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
