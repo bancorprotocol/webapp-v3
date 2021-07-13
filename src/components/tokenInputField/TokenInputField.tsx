@@ -80,7 +80,7 @@ export const TokenInputField = ({
 
   return (
     <div>
-      <div className="flex justify-between pr-10">
+      <div className="flex justify-between pr-10 mb-4">
         <span className="font-medium">{label}</span>
         {balance && balanceUsd && token && (
           <button
