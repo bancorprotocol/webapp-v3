@@ -99,7 +99,7 @@ export const WalletModal = () => {
       </button>
 
       <Modal title={title} setIsOpen={setIsOpen} isOpen={walletModal}>
-        <div>
+        <div className="max-h-[calc(70vh-60px)] overflow-auto px-20">
           {error ? (
             <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
               <p className="font-semibold mb-5">Failed to connect to wallet.</p>
@@ -114,7 +114,7 @@ export const WalletModal = () => {
               >
                 <img
                   src={selectedWallet?.icon}
-                  alt=""
+                  alt="Wallet Logo"
                   className="w-64 h-64 mr-30"
                 />
                 <h2 className="font-bold text-20">{selectedWallet?.name}</h2>
