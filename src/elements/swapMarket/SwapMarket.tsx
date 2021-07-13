@@ -21,6 +21,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
+import { openWalletModal } from 'redux/user/user';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -171,7 +172,13 @@ export const SwapMarket = ({
   };
 
   const handleSwap = async (step = 0) => {
-    if (!chainId || !account || !toToken) return;
+    if (!account) {
+      dispatch(openWalletModal(true));
+      return;
+    }
+
+    if (!(chainId && toToken)) return;
+
     setShowModal(true);
     if (step < 3) return checkAllowance();
     try {
