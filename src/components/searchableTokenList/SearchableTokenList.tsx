@@ -100,7 +100,6 @@ export const SearchableTokenList = ({
                         : 'bg-grey-3 border-grey-3'
                     } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
                   >
-                    <span className="sr-only">Use setting</span>
                     <span
                       aria-hidden="true"
                       className={`${
@@ -122,7 +121,7 @@ export const SearchableTokenList = ({
             <InputField
               input={search}
               setInput={setSearch}
-              placeholder="Search name or paste address"
+              placeholder="Search name"
               borderGrey
             />
           </div>

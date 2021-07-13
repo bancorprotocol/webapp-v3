@@ -1,5 +1,5 @@
 .input-field {
-  @apply bg-white text-20 py-14 px-20 rounded w-full;
+  @apply bg-white text-12 py-14 px-20 rounded w-full;
   @apply dark:bg-blue-4;
   @apply focus:outline-none focus:ring-2 focus:ring-primary;
 }
