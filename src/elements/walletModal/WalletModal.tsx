@@ -6,13 +6,23 @@ import { Modal } from 'components/modal/Modal';
 import { setAutoLogin, shortenString } from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
+import { useAppSelector } from 'redux/index';
+import { useDispatch } from 'react-redux';
+import { openWalletModal } from 'redux/user/user';
 
 export const WalletModal = () => {
   const { activate, deactivate, account, connector } = useWeb3React();
-  const [isOpen, setIsOpen] = useState(false);
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo | null>(null);
+  const walletModal = useAppSelector<boolean>(
+    (state) => state.user.walletModal
+  );
+  const dispatch = useDispatch();
+
+  const setIsOpen = (value: boolean) => {
+    dispatch(openWalletModal(value));
+  };
 
   const tryConnecting = async (wallet: WalletInfo) => {
     setPending(true);
@@ -58,7 +68,7 @@ export const WalletModal = () => {
       );
       if (wallet) setSelectedWallet(wallet);
     } else setSelectedWallet(null);
-  }, [isOpen, connector]);
+  }, [walletModal, connector]);
 
   const title = error
     ? 'Wallet Error'
@@ -88,7 +98,7 @@ export const WalletModal = () => {
         )}
       </button>
 
-      <Modal title={title} setIsOpen={setIsOpen} isOpen={isOpen}>
+      <Modal title={title} setIsOpen={setIsOpen} isOpen={walletModal}>
         <div>
           {error ? (
             <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">

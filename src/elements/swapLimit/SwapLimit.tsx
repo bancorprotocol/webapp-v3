@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
+import { openWalletModal } from 'redux/user/user';
 
 enum Field {
   from,
@@ -172,7 +173,12 @@ export const SwapLimit = ({
   const onPromp = async () => {};
 
   const handleSwap = async () => {
-    if (!account || !toToken) return;
+    if (!account) {
+      dispatch(openWalletModal(true));
+      return;
+    }
+
+    if (!(toToken && fromAmount && toAmount)) return;
 
     const res = await swapLimit(
       fromToken,

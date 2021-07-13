@@ -2,12 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserState {
   darkMode: boolean;
+  walletModal: boolean;
   slippageTolerance: number;
   locale: string;
 }
 
 export const initialState: UserState = {
   darkMode: false,
+  walletModal: false,
   slippageTolerance: 0.005,
   locale: 'en',
 };
@@ -31,10 +33,13 @@ const userSlice = createSlice({
     setLocale: (state, action) => {
       state.locale = action.payload;
     },
+    openWalletModal: (state, action) => {
+      state.walletModal = action.payload;
+    },
   },
 });
 
-export const { setDarkMode, setSlippageTolerance, setLocale } =
+export const { setDarkMode, setSlippageTolerance, setLocale, openWalletModal } =
   userSlice.actions;
 
 export const user = userSlice.reducer;
