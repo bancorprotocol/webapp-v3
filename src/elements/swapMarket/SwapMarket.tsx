@@ -106,7 +106,7 @@ export const SwapMarket = ({
             toToken,
             fromDebounce
           );
-          setPriceImpact(priceImpact.toFixed(6));
+          setPriceImpact(priceImpact.toFixed(4));
         }
       })();
     }
