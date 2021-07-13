@@ -2,6 +2,7 @@ import { Dropdown } from 'components/dropdown/Dropdown';
 import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
 import { useState } from 'react';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
 interface ModalDurationProps {
   duration: Duration;
@@ -19,8 +20,12 @@ export const ModalDuration = ({
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)}>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center bg-white dark:bg-blue-4 rounded-10 px-40 py-8"
+      >
         {`${duration.asDays()} Days`}
+        <IconChevronDown className="w-10 ml-10" />
       </button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Select Duration">
         <>
