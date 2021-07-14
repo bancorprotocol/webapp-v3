@@ -71,17 +71,27 @@ export const tokenLists$ = from(
   })
 ).pipe(shareReplay(1));
 
+const tokenListMerged$ = combineLatest([userLists$, tokenLists$]).pipe(
+  switchMapIgnoreThrow(
+    async ([userLists, tokenLists]): Promise<TokenListItem[]> => {
+      if (userLists.length === 0) return tokenLists[0].tokens;
+      const filteredTokenLists = tokenLists.filter((list, index) =>
+        userLists.includes(index)
+      );
+      return filteredTokenLists.flatMap((list) => list.tokens);
+    }
+  ),
+  shareReplay()
+);
+
 export const tokenList$ = combineLatest([
-  tokenLists$,
+  tokenListMerged$,
   apiTokens$,
-  userLists$,
   user$,
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([tokenLists, apiTokens, userLists, user, currentNetwork]) => {
-      if (userLists.length === 0) userLists = [0];
-
+    async ([userPicked, apiTokens, user, currentNetwork]) => {
       const newApiTokens = [...apiTokens, getWethAPIToken(apiTokens)].map(
         (x) => ({
           address: x.dlt_id,
@@ -90,10 +100,6 @@ export const tokenList$ = combineLatest([
           usdPrice: x.rate.usd,
         })
       );
-      let userPicked: TokenListItem[] = [];
-      tokenLists.forEach((list, index) => {
-        if (userLists.includes(index)) userPicked.push(...list.tokens);
-      });
 
       let overlappingTokens: TokenListItem[] = [];
       const eth = getEthToken(apiTokens);
