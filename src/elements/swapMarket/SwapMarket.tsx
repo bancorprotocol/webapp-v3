@@ -4,14 +4,12 @@ import { TokenListItem } from 'services/observables/tokens';
 import { useContext, useEffect, useState } from 'react';
 import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
-import { Modal } from 'components/modal/Modal';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
 import {
   getNetworkContractApproval,
@@ -22,6 +20,7 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
+import { ModalApprove } from 'elements/modalApprove/modalApprove';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -309,47 +308,15 @@ export const SwapMarket = ({
           </button>
         </div>
       </div>
-      <Modal title={'Swap'} setIsOpen={closeModal} isOpen={showModal}>
-        <div>
-          {step !== 1 && (
-            <>
-              {'current step' + step}
-              <br />
-              {steps[step]}
-            </>
-          )}
-
-          {step === 1 && (
-            <div className="flex flex-col items-center text-12 mb-20">
-              <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
-                <IconLock className="w-[22px] text-white" />
-              </div>
-              <h2 className="text-20 font-semibold mb-8">
-                Approve {fromToken.symbol}
-              </h2>
-              <p className="text-center text-grey-5">
-                Before you can proceed, you need to approve {fromToken.symbol}{' '}
-                spending.
-              </p>
-              <button
-                onClick={() => approveToken()}
-                className={'btn-primary w-full my-15'}
-              >
-                Approve
-              </button>
-              <p className="text-center text-grey-5">
-                Want to approve before each transaction?
-              </p>
-              <button
-                onClick={() => approveToken(fromAmount)}
-                className="underline"
-              >
-                Approve limited permission
-              </button>
-            </div>
-          )}
-        </div>
-      </Modal>
+      <ModalApprove
+        setIsOpen={closeModal}
+        isOpen={showModal}
+        step={step}
+        steps={steps}
+        amount={fromAmount}
+        approve={approveToken}
+        symbol={fromToken.symbol}
+      />
     </>
   );
 };

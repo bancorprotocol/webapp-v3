@@ -35,7 +35,7 @@ export const swapLimit = async (
   to: string,
   user: string,
   duration: plugin.Duration
-) => {
+): Promise<BaseNotification> => {
   const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
 
   try {
@@ -46,8 +46,18 @@ export const swapLimit = async (
       : fromToken;
 
     await createOrder(newFrom, toToken, from, to, user, duration.asSeconds());
+
+    return {
+      type: NotificationType.success,
+      title: 'Title',
+      msg: 'Message',
+    };
   } catch (error) {
-    console.error(error);
+    return {
+      type: NotificationType.error,
+      title: 'Title',
+      msg: 'Message',
+    };
   }
 };
 
