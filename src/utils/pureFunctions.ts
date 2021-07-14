@@ -22,12 +22,19 @@ export const classNameGenerator = (object: {
     .join(' ');
 };
 
-export const sanitizeNumberInput = (input: string): string => {
-  return input
+export const sanitizeNumberInput = (
+  input: string,
+  precision?: number
+): string => {
+  const sanitized = input
     .replace(/[^\d.]/g, '')
     .replace(/\./, 'x')
     .replace(/\./g, '')
     .replace(/x/, '.');
+  if (!precision) return sanitized;
+  const [integer, decimals] = sanitized.split('.');
+  if (decimals) return `${integer}.${decimals.substring(0, precision)}`;
+  else return sanitized;
 };
 
 export const calculatePercentageChange = (

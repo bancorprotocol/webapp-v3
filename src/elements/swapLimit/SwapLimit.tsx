@@ -50,6 +50,8 @@ export const SwapLimit = ({
   const { account } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
+  const [toAmountUsd, setToAmountUsd] = useState('$0.00');
+  const [fromAmountUsd, setFromAmountUsd] = useState('$0.00');
   const [rate, setRate] = useState('');
   const [marketRate, setMarketRate] = useState(-1);
   const prevMarket = usePrevious(marketRate);
@@ -208,6 +210,8 @@ export const SwapLimit = ({
           token={fromToken}
           setToken={setFromToken}
           input={fromAmount}
+          amountUsd={fromAmountUsd}
+          setAmountUsd={setFromAmountUsd}
           onChange={(val: string) => {
             setFromAmount(val);
             handleFieldChanged(Field.from, val, toAmount, rate);
@@ -241,6 +245,8 @@ export const SwapLimit = ({
             token={toToken}
             setToken={setToToken}
             input={toAmount}
+            amountUsd={fromAmountUsd}
+            setAmountUsd={setFromAmountUsd}
             onChange={(val: string) => {
               setToAmount(val);
               handleFieldChanged(Field.to, fromAmount, val, rate);

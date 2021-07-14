@@ -23,6 +23,7 @@ import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { sanitizeNumberInput } from 'utils/pureFunctions';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -45,6 +46,8 @@ export const SwapMarket = ({
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
+  const [toAmountUsd, setToAmountUsd] = useState('');
+  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -82,6 +85,7 @@ export const SwapMarket = ({
       (async () => {
         if (!fromDebounce && fromToken && toToken) {
           setToAmount('');
+          setToAmountUsd('');
           const baseRate = await getRate(fromToken, toToken, '1');
           setRate(baseRate);
 
@@ -89,18 +93,19 @@ export const SwapMarket = ({
           setPriceImpact(priceImpact.toFixed(4));
         } else if (fromToken && toToken) {
           const result = await getRate(fromToken, toToken, fromDebounce);
-          const rate = (Number(result) / fromDebounce).toString();
+          const rate = new BigNumber(result).div(fromDebounce);
           setToAmount(
-            (
-              (fromDebounce /
-                (fromToken.usdPrice && toggle
-                  ? Number(fromToken.usdPrice)
-                  : 1)) *
-              Number(rate) *
-              (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
-            ).toFixed(2)
+            sanitizeNumberInput(
+              new BigNumber(fromDebounce).times(rate).toString(),
+              toToken.decimals
+            )
           );
-          setRate(rate);
+          const usdAmount = new BigNumber(fromDebounce)
+            .times(rate)
+            .times(toToken.usdPrice!)
+            .toString();
+          setToAmountUsd(usdAmount);
+          setRate(rate.toString());
 
           const priceImpact = await getPriceImpact(
             fromToken,
@@ -112,6 +117,16 @@ export const SwapMarket = ({
       })();
     }
   }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
+
+  const usdSlippage = () => {
+    if (!toAmountUsd || !fromAmountUsd) return;
+    const difference = new BigNumber(toAmountUsd).minus(fromAmountUsd);
+    const percentage = new BigNumber(difference)
+      .div(fromAmountUsd)
+      .times(100)
+      .toFixed(2);
+    return parseFloat(percentage);
+  };
 
   const closeModal = () => {
     setStep(0);
@@ -243,6 +258,8 @@ export const SwapMarket = ({
             setToken={setFromToken}
             input={fromAmount}
             setInput={setFromAmount}
+            amountUsd={fromAmountUsd}
+            setAmountUsd={setFromAmountUsd}
             debounce={setFromDebounce}
             border
             selectable
@@ -267,10 +284,13 @@ export const SwapMarket = ({
               setToken={setToToken}
               input={toAmount}
               setInput={setToAmount}
+              amountUsd={toAmountUsd}
+              setAmountUsd={setToAmountUsd}
               disabled
               selectable={fromToken && fromToken.address !== wethToken}
               startEmpty
               excludedTokens={[fromToken && fromToken.address, wethToken]}
+              usdSlippage={usdSlippage()}
             />
             {toToken && (
               <>
