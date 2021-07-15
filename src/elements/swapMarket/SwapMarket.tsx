@@ -169,7 +169,7 @@ export const SwapMarket = ({
           msg: `${amount || 'Unlimited'} Swap approval set for ${
             fromToken.symbol
           }.`,
-          txHash
+          txHash,
         })
       );
       await handleSwap(3);
