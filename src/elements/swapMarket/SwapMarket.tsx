@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
@@ -12,7 +12,6 @@ import {
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
 import { Modal } from 'components/modal/Modal';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import {
   getNetworkContractApproval,
   setNetworkContractApproval,
@@ -53,7 +52,6 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [step, setStep] = useState(0);
   const [fromError, setFromError] = useState('');
-  const toggle = useContext(Toggle);
 
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -116,7 +114,7 @@ export const SwapMarket = ({
         }
       })();
     }
-  }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
+  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
 
   const usdSlippage = () => {
     if (!toAmountUsd || !fromAmountUsd) return;
@@ -171,6 +169,7 @@ export const SwapMarket = ({
           msg: `${amount || 'Unlimited'} Swap approval set for ${
             fromToken.symbol
           }.`,
+          txHash
         })
       );
       await handleSwap(3);
@@ -237,8 +236,6 @@ export const SwapMarket = ({
 
   // handle input errors
   useEffect(() => {
-    const isZeroInput = new BigNumber(fromAmount).eq(0);
-    if (isZeroInput) return setFromError('Alert: No Zero allowed');
     const isInsufficient =
       fromToken &&
       fromToken.balance &&
@@ -272,9 +269,7 @@ export const SwapMarket = ({
           <div className="widget-block-icon cursor-pointer">
             <IconSync
               className="w-[25px] text-primary dark:text-primary-light"
-              onClick={() =>
-                fromToken.address !== wethToken ? switchTokens() : {}
-              }
+              onClick={() => fromToken.address !== wethToken && switchTokens()}
             />
           </div>
           <div className="mx-10 mb-16 pt-16">

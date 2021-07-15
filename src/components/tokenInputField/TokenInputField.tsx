@@ -82,6 +82,22 @@ export const TokenInputField = ({
     }
   };
 
+  const inputValue = () => {
+    if (!toggle) return input;
+    if (!amountUsd) return '';
+    return `~$${sanitizeNumberInput(amountUsd, 2)}`;
+  };
+
+  const convertedAmount = () => {
+    const prefix = toggle ? '' : '~';
+    const tokenAmount = prettifyNumber(input);
+    const usdAmount = prettifyNumber(amountUsd, true);
+    const amount = toggle ? tokenAmount : usdAmount;
+
+    if ((input || amountUsd) && token) return `${prefix}${amount}`;
+    else return `${prefix}0`;
+  };
+
   const inputFieldStyles = `token-input-field ${classNameGenerator({
     'border-blue-0 dark:border-blue-1': border,
     '!border-error': errorMsg,
@@ -138,26 +154,16 @@ export const TokenInputField = ({
           <div className="w-full">
             <div className="relative w-full">
               <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-                {`${!toggle ? '~' : ''}${
-                  (input !== '' || amountUsd !== '') && token
-                    ? prettifyNumber(!toggle ? amountUsd : input, !toggle)
-                    : '0.00'
-                }`}{' '}
+                {convertedAmount()}
                 {!toggle && usdSlippage && (
-                  <span className="text-grey-3">({usdSlippage}%)</span>
+                  <span className="text-grey-3 ml-4">({usdSlippage}%)</span>
                 )}
               </div>
               <input
                 type="text"
-                value={
-                  toggle
-                    ? amountUsd
-                      ? `$${sanitizeNumberInput(amountUsd, 2)}`
-                      : ''
-                    : input
-                }
+                value={inputValue()}
                 disabled={disabled}
-                placeholder={toggle ? '$0.00' : '0.00'}
+                placeholder={toggle ? '~$0.00' : '0.00'}
                 className={inputFieldStyles}
                 onChange={(event) => onInputChange(event.target.value)}
               />
