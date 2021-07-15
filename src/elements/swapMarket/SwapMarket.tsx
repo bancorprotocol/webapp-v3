@@ -11,10 +11,7 @@ import {
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
-import {
-  getNetworkContractApproval,
-  setNetworkContractApproval,
-} from 'services/web3/approval';
+import { getNetworkContractApproval } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
@@ -44,7 +41,6 @@ export const SwapMarket = ({
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [step, setStep] = useState(0);
   const [fromError, setFromError] = useState('');
   const toggle = useContext(Toggle);
   const [disableSwap, setDisableSwap] = useState(false);
@@ -111,21 +107,15 @@ export const SwapMarket = ({
     }
   }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
 
-  const closeModal = () => {
-    setStep(0);
-    setShowModal(false);
-  };
-
-  // Step 0 Check allowance
-  const checkAllowance = async () => {
+  //Check if approval is required
+  const checkApproval = async () => {
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
         fromAmount
       );
-      if (isApprovalReq) return setStep(1);
-      setStep(3);
-      await handleSwap(3);
+      if (isApprovalReq) setShowModal(true);
+      else await handleSwap(true);
     } catch (e) {
       console.error('getNetworkContractApproval failed', e);
       setDisableSwap(false);
@@ -139,40 +129,7 @@ export const SwapMarket = ({
     }
   };
 
-  // Step 1 Wait for user to choose approval
-  // Step 2 Proceed with approval based on user selection
-  // Prop amount is UNDEFINED when UNLIMITED
-  const approveToken = async (amount?: string) => {
-    setStep(2);
-    try {
-      const txHash = await setNetworkContractApproval(fromToken, amount);
-      setStep(3);
-
-      dispatch(
-        addNotification({
-          type: NotificationType.success,
-          title: `Approve ${fromToken.symbol}`,
-          msg: `${amount || 'Unlimited'} Swap approval set for ${
-            fromToken.symbol
-          }.`,
-        })
-      );
-      await handleSwap(3);
-    } catch (e) {
-      console.error('setNetworkContractApproval failed', e);
-      closeModal();
-      setDisableSwap(false);
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Approve Token',
-          msg: 'Unkown error - check console log.',
-        })
-      );
-    }
-  };
-
-  const handleSwap = async (step = 0) => {
+  const handleSwap = async (approved: boolean = false) => {
     if (!account) {
       dispatch(openWalletModal(true));
       return;
@@ -180,9 +137,9 @@ export const SwapMarket = ({
 
     if (!(chainId && toToken)) return;
 
-    setShowModal(true);
     setDisableSwap(true);
-    if (step < 3) return checkAllowance();
+    if (!approved) return checkApproval();
+
     try {
       const txHash = await swap({
         net: chainId,
@@ -214,7 +171,7 @@ export const SwapMarket = ({
         })
       );
     } finally {
-      closeModal();
+      setShowModal(false);
     }
   };
 
@@ -309,13 +266,12 @@ export const SwapMarket = ({
         </div>
       </div>
       <ModalApprove
-        setIsOpen={closeModal}
         isOpen={showModal}
-        step={step}
-        steps={steps}
+        setIsOpen={setShowModal}
         amount={fromAmount}
-        approve={approveToken}
-        symbol={fromToken.symbol}
+        fromToken={fromToken}
+        handleApproved={() => handleSwap(true)}
+        handleCatch={() => setDisableSwap(false)}
       />
     </>
   );
