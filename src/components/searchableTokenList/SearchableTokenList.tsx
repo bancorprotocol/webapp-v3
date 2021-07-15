@@ -133,10 +133,10 @@ export const SearchableTokenList = ({
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
                     token.name.toLowerCase().includes(search.toLowerCase()))
               )
-              .map((token, index) => {
+              .map((token) => {
                 return (
                   <button
-                    key={'token_' + index}
+                    key={'token_' + token.address}
                     onClick={() => {
                       onClick(token);
                       onClose();
