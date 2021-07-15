@@ -40,9 +40,9 @@ export const SwapMarket = ({
   const [toAmount, setToAmount] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
-  const [showModal, setShowModal] = useState(false);
   const [fromError, setFromError] = useState('');
   const toggle = useContext(Toggle);
+  const [showModal, setShowModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
   const dispatch = useDispatch();
 

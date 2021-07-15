@@ -23,6 +23,8 @@ import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
+import { ModalApprove } from 'elements/modalApprove/modalApprove';
+import { getNetworkContractApproval } from 'services/web3/approval';
 
 enum Field {
   from,
@@ -54,6 +56,8 @@ export const SwapLimit = ({
   const prevMarket = usePrevious(marketRate);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [disableSwap, setDisableSwap] = useState(false);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -170,21 +174,44 @@ export const SwapLimit = ({
     fetchMarketRate();
   }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
 
-  const handleSwap = async () => {
+  //Check if approval is required
+  const checkApproval = async (token: TokenListItem) => {
+    try {
+      const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
+      if (isApprovalReq) setShowModal(true);
+      else await handleSwap(true);
+    } catch (e) {
+      console.error('getNetworkContractApproval failed', e);
+      setDisableSwap(false);
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Check Allowance',
+          msg: 'Unkown error - check console log.',
+        })
+      );
+    }
+  };
+
+  const handleSwap = async (approved: boolean = false) => {
     if (!account) {
       dispatch(openWalletModal(true));
       return;
     }
 
-    if (!(toToken && fromAmount && toAmount)) return;
+    if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
-    const res = await swapLimit(
+    setDisableSwap(true);
+    if (!approved) return checkApproval(fromToken);
+
+    await swapLimit(
       fromToken,
       toToken,
       fromAmount,
       toAmount,
       account,
-      duration
+      duration,
+      !approved ? checkApproval : undefined
     );
 
     dispatch(
@@ -317,6 +344,15 @@ export const SwapLimit = ({
             </>
           )}
         </div>
+
+        <ModalApprove
+          isOpen={showModal}
+          setIsOpen={setShowModal}
+          amount={fromAmount}
+          fromToken={fromToken}
+          handleApproved={() => handleSwap(true)}
+          handleCatch={() => setDisableSwap(false)}
+        />
 
         <button
           className="btn-primary rounded w-full"

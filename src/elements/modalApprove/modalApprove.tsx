@@ -4,10 +4,7 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import {
-  getNetworkContractApproval,
-  setNetworkContractApproval,
-} from 'services/web3/approval';
+import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { TokenListItem } from 'services/observables/tokens';
 
