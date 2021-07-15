@@ -193,7 +193,10 @@ export const SwapLimit = ({
     }
   };
 
-  const handleSwap = async (approved: boolean = false) => {
+  const handleSwap = async (
+    approved: boolean = false,
+    weth: boolean = false
+  ) => {
     if (!account) {
       dispatch(openWalletModal(true));
       return;
@@ -204,23 +207,17 @@ export const SwapLimit = ({
     setDisableSwap(true);
     if (!approved) return checkApproval(fromToken);
 
-    await swapLimit(
-      fromToken,
+    const notification = await swapLimit(
+      weth ? { ...fromToken, address: wethToken } : fromToken,
       toToken,
       fromAmount,
       toAmount,
       account,
       duration,
-      !approved ? checkApproval : undefined
+      checkApproval
     );
 
-    dispatch(
-      addNotification({
-        type: NotificationType.success,
-        title: 'Test Notification',
-        msg: 'Some message here...',
-      })
-    );
+    if (notification) dispatch(addNotification(notification));
   };
 
   return (
@@ -350,7 +347,9 @@ export const SwapLimit = ({
           setIsOpen={setShowModal}
           amount={fromAmount}
           fromToken={fromToken}
-          handleApproved={() => handleSwap(true)}
+          handleApproved={() =>
+            handleSwap(true, fromToken.address === ethToken)
+          }
           handleCatch={() => setDisableSwap(false)}
         />
 

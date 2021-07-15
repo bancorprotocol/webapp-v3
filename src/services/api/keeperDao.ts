@@ -35,20 +35,23 @@ export const swapLimit = async (
   to: string,
   user: string,
   duration: plugin.Duration,
-  checkApproval?: Function
+  checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
 
   try {
-    if (fromIsEth) await depositWeth(from, user);
-
-    const newFrom = fromIsEth
-      ? { ...fromToken, address: wethToken }
-      : fromToken;
-
-    if (checkApproval) await checkApproval(wethToken);
-    else {
-      await createOrder(newFrom, toToken, from, to, user, duration.asSeconds());
+    if (fromIsEth) {
+      await depositWeth(from, user);
+      await checkApproval(wethToken);
+    } else {
+      await createOrder(
+        fromToken,
+        toToken,
+        from,
+        to,
+        user,
+        duration.asSeconds()
+      );
       return {
         type: NotificationType.success,
         title: 'Title',
