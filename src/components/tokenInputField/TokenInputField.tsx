@@ -58,18 +58,22 @@ export const TokenInputField = ({
   const toggle = useContext(Toggle);
 
   const onInputChange = (text: string) => {
-    const val = sanitizeNumberInput(text, token?.decimals);
+    text = sanitizeNumberInput(text);
     if (toggle) {
-      const tokenAmount = sanitizeNumberInput(new BigNumber(val).div(token?.usdPrice!).toString(), token?.decimals);
-      setAmountUsd(val !== 'NaN' ? sanitizeNumberInput(val, 2) : '');
+      const tokenAmount = sanitizeNumberInput(
+        new BigNumber(text).div(token?.usdPrice!).toString(),
+        token?.decimals
+      );
+      setAmountUsd(text !== 'NaN' ? text : '');
       if (onChange) onChange(tokenAmount);
       else {
         if (setInput) setInput(tokenAmount);
         if (debounce) debounce(tokenAmount);
       }
     } else {
-      const usdAmount = new BigNumber(val).times(token?.usdPrice!).toString();
+      const usdAmount = new BigNumber(text).times(token?.usdPrice!).toString();
       setAmountUsd(usdAmount !== '0' && usdAmount !== 'NaN' ? usdAmount : '');
+      const val = sanitizeNumberInput(text, token?.decimals);
       if (onChange) onChange(val);
       else {
         if (setInput) setInput(val);
@@ -139,20 +143,19 @@ export const TokenInputField = ({
                     ? prettifyNumber(!toggle ? amountUsd : input, !toggle)
                     : '0.00'
                 }`}{' '}
-                {toggle && usdSlippage && (
-                  <span
-                    className={classNameGenerator({
-                      'text-success': usdSlippage > 0,
-                      'text-error': usdSlippage < 0,
-                    })}
-                  >
-                    ({usdSlippage}%)
-                  </span>
+                {!toggle && usdSlippage && (
+                  <span className="text-grey-3">({usdSlippage}%)</span>
                 )}
               </div>
               <input
                 type="text"
-                value={toggle ? (amountUsd ? `$${amountUsd}` : '') : input}
+                value={
+                  toggle
+                    ? amountUsd
+                      ? `$${sanitizeNumberInput(amountUsd, 2)}`
+                      : ''
+                    : input
+                }
                 disabled={disabled}
                 placeholder={toggle ? '$0.00' : '0.00'}
                 className={inputFieldStyles}
