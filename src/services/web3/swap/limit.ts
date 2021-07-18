@@ -93,14 +93,6 @@ export const createOrder = async (
     pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
   });
 
-  //   await triggerApprovalIfRequired({
-  //     owner: currentUser,
-  //     amount: fromAmountWeiString,
-  //     spender: order.verifyingContract,
-  //     tokenAddress: from.id,
-  //     onPrompt,
-  //   });
-
   const signature = await order.getSignatureWithProviderAsync(
     Web3.givenProvider,
     SignatureType.EIP712

@@ -42,7 +42,7 @@ export const swapLimit = async (
   try {
     if (fromIsEth) {
       await depositWeth(from, user);
-      await checkApproval(wethToken);
+      await checkApproval({ ...fromToken, address: wethToken });
     } else {
       await createOrder(
         fromToken,

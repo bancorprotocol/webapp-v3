@@ -34,7 +34,7 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       await setNetworkContractApproval(fromToken, amount);
-
+      setIsOpen(false);
       dispatch(
         addNotification({
           type: NotificationType.success,

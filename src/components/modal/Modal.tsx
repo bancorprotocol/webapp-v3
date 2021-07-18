@@ -10,6 +10,7 @@ interface ModalProps {
   isOpen: boolean;
   onBackClick?: Function;
   showBackButton?: boolean;
+  onClose?: Function;
 }
 
 export const Modal = ({
@@ -19,6 +20,7 @@ export const Modal = ({
   isOpen,
   showBackButton,
   onBackClick,
+  onClose,
 }: ModalProps) => {
   return (
     <>
@@ -36,7 +38,7 @@ export const Modal = ({
         <Dialog
           as="div"
           className="fixed inset-0 z-50"
-          onClose={() => setIsOpen(false)}
+          onClose={() => (onClose ? onClose() : setIsOpen(false))}
         >
           <div className="min-h-screen px-4 text-center">
             <Dialog.Overlay className="fixed inset-0 bg-blue-3 bg-opacity-70" />

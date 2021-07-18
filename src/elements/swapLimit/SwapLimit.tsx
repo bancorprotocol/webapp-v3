@@ -25,6 +25,7 @@ import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
+import { Modal } from 'components/modal/Modal';
 
 enum Field {
   from,
@@ -56,7 +57,8 @@ export const SwapLimit = ({
   const prevMarket = usePrevious(marketRate);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
-  const [showModal, setShowModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showEthModal, setShowEthModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
@@ -178,7 +180,7 @@ export const SwapLimit = ({
   const checkApproval = async (token: TokenListItem) => {
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
-      if (isApprovalReq) setShowModal(true);
+      if (isApprovalReq) setShowApproveModal(true);
       else await handleSwap(true);
     } catch (e) {
       console.error('getNetworkContractApproval failed', e);
@@ -195,7 +197,8 @@ export const SwapLimit = ({
 
   const handleSwap = async (
     approved: boolean = false,
-    weth: boolean = false
+    weth: boolean = false,
+    showETHtoWETHModal: boolean = false
   ) => {
     if (!account) {
       dispatch(openWalletModal(true));
@@ -205,6 +208,8 @@ export const SwapLimit = ({
     if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
     setDisableSwap(true);
+    if (showETHtoWETHModal) return setShowEthModal(true);
+
     if (!approved) return checkApproval(fromToken);
 
     const notification = await swapLimit(
@@ -217,7 +222,10 @@ export const SwapLimit = ({
       checkApproval
     );
 
-    if (notification) dispatch(addNotification(notification));
+    if (notification) {
+      dispatch(addNotification(notification));
+      setDisableSwap(false);
+    }
   };
 
   return (
@@ -343,8 +351,8 @@ export const SwapLimit = ({
         </div>
 
         <ModalApprove
-          isOpen={showModal}
-          setIsOpen={setShowModal}
+          isOpen={showApproveModal}
+          setIsOpen={setShowApproveModal}
           amount={fromAmount}
           fromToken={fromToken}
           handleApproved={() =>
@@ -352,10 +360,35 @@ export const SwapLimit = ({
           }
           handleCatch={() => setDisableSwap(false)}
         />
+        <Modal
+          title="Deposit ETH to WETH"
+          isOpen={showEthModal}
+          setIsOpen={setShowEthModal}
+          onClose={() => {
+            setShowEthModal(false);
+            setDisableSwap(false);
+          }}
+        >
+          <>
+            <div>Deposited ETH Will Be Converted to WETH</div>
+            <button
+              className="btn-primary rounded w-full"
+              onClick={() => {
+                setShowEthModal(false);
+                handleSwap(true);
+              }}
+            >
+              Confirm
+            </button>
+          </>
+        </Modal>
 
         <button
           className="btn-primary rounded w-full"
-          onClick={() => handleSwap()}
+          onClick={() =>
+            handleSwap(false, false, fromToken.address === ethToken)
+          }
+          disabled={disableSwap}
         >
           Swap
         </button>
