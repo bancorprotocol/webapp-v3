@@ -18,7 +18,6 @@ import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
-
 interface SwapMarketProps {
   fromToken: TokenListItem;
   setFromToken: Function;
@@ -101,7 +100,7 @@ export const SwapMarket = ({
             toToken,
             fromDebounce
           );
-          setPriceImpact(priceImpact.toFixed(6));
+          setPriceImpact(priceImpact.toFixed(4));
         }
       })();
     }
@@ -181,10 +180,10 @@ export const SwapMarket = ({
   };
 
   const steps = [
-    'checking allowance ...',
-    'choose approval',
-    'setting approval amount ...',
-    'processing swap',
+    'Checking allowance ...',
+    'Choose approval',
+    'Setting approval amount ...',
+    'Processing Swap ...',
   ];
 
   // handle input errors

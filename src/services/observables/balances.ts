@@ -19,10 +19,10 @@ export const fetchTokenBalances = async (
   );
 
   const knownDecimalShapes = knownPrecisions.map((token) =>
-    slimBalanceShape(token.address, user, currentNetwork)
+    slimBalanceShape(token.address, user)
   );
   const unknownDecimalShapes = unknownPrecisions.map((token) =>
-    balanceShape(token.address, user, currentNetwork)
+    balanceShape(token.address, user)
   );
 
   try {

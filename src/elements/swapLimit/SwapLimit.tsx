@@ -26,6 +26,7 @@ import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 enum Field {
   from,
@@ -289,8 +290,17 @@ export const SwapLimit = ({
           />
           {toToken && (
             <>
-              <div className="flex justify-between items-center my-15">
-                <div className="whitespace-nowrap mr-15 text-20">{`1 ${fromToken?.symbol} =`}</div>
+              <div className="flex justify-between mt-28 mb-2">
+                <div className="font-medium">Rate</div>
+                <div className="text-12 pr-10">
+                  Market Rate:{' '}
+                  {`1 ${fromToken?.symbol} = ${prettifyNumber(marketRate)} ${
+                    toToken?.symbol
+                  }`}
+                </div>
+              </div>
+              <div className="flex justify-between items-center mb-15">
+                <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
                 <InputField
                   format
                   input={rate}
@@ -301,13 +311,16 @@ export const SwapLimit = ({
                   }}
                 />
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-end space-x-8">
                 {percentages.map((slip, index) => (
                   <button
                     key={'slippage' + slip}
-                    className={classNameGenerator({
-                      'text-primary': selPercentage === index,
-                    })}
+                    className={`btn-sm rounded-10 h-[34px] ${classNameGenerator(
+                      {
+                        'btn-outline-secondary': selPercentage !== index,
+                        'btn-primary': selPercentage === index,
+                      }
+                    )} bg-opacity-0`}
                     onClick={() => {
                       calculateRateByMarket(marketRate, index, '');
                       setSelPercentage(index);
@@ -338,12 +351,14 @@ export const SwapLimit = ({
                       setPercentage(val);
                     }}
                     format
+                    placeholder="Custom"
+                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-grey-3"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-between mt-15">
-                <span>Expires in</span>
+              <div className="flex justify-between items-center mt-15">
+                <span className="font-semibold">Expires in</span>
                 <ModalDuration duration={duration} setDuration={setDuration} />
               </div>
             </>

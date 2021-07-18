@@ -11,6 +11,7 @@ interface InputFieldProps {
   borderGrey?: boolean;
   onChange?: Function;
   onBlur?: Function;
+  customClass?: string;
 }
 
 export const InputField = ({
@@ -22,11 +23,13 @@ export const InputField = ({
   borderGrey,
   onChange,
   onBlur,
+  customClass,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
     'input-field-border': borderGrey,
     'text-right': format,
+    [`${customClass}`]: customClass,
   })}`;
 
   return (

@@ -15,6 +15,7 @@ import {
   ropstenImage,
 } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
+import { mapIgnoreThrown } from 'utils/pureFunctions';
 
 export interface TokenList {
   name: string;
@@ -33,7 +34,7 @@ export interface TokenListItem {
   balance: string | null;
 }
 
-const list_of_lists = [
+const listOfLists = [
   'https://tokens.1inch.eth.link',
   'https://tokens.coingecko.com/uniswap/all.json',
   'https://tokenlist.aave.eth.link',
@@ -64,25 +65,33 @@ const list_of_lists = [
 export const userLists$ = new BehaviorSubject<number[]>([]);
 
 export const tokenLists$ = from(
-  Promise.all(
-    list_of_lists.map(async (list) => {
-      const res = await axios.get<TokenList>(list);
-      return res.data;
-    })
-  )
+  mapIgnoreThrown(listOfLists, async (list) => {
+    const res = await axios.get<TokenList>(list);
+    return res.data;
+  })
 ).pipe(shareReplay(1));
 
+const tokenListMerged$ = combineLatest([userLists$, tokenLists$]).pipe(
+  switchMapIgnoreThrow(
+    async ([userLists, tokenLists]): Promise<TokenListItem[]> => {
+      if (userLists.length === 0) return tokenLists[0].tokens;
+      const filteredTokenLists = tokenLists.filter((list, index) =>
+        userLists.includes(index)
+      );
+      return filteredTokenLists.flatMap((list) => list.tokens);
+    }
+  ),
+  shareReplay()
+);
+
 export const tokenList$ = combineLatest([
-  tokenLists$,
+  tokenListMerged$,
   apiTokens$,
-  userLists$,
   user$,
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([tokenLists, apiTokens, userLists, user, currentNetwork]) => {
-      if (userLists.length === 0) userLists = [0];
-
+    async ([userPicked, apiTokens, user, currentNetwork]) => {
       const newApiTokens = [...apiTokens, getWethAPIToken(apiTokens)].map(
         (x) => ({
           address: x.dlt_id,
@@ -91,10 +100,6 @@ export const tokenList$ = combineLatest([
           usdPrice: x.rate.usd,
         })
       );
-      let userPicked: TokenListItem[] = [];
-      tokenLists.forEach((list, index) => {
-        if (userLists.includes(index)) userPicked.push(...list.tokens);
-      });
 
       let overlappingTokens: TokenListItem[] = [];
       const eth = getEthToken(apiTokens);
