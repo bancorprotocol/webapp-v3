@@ -42,6 +42,7 @@ export const WalletModal = () => {
           setAutoLogin(true);
         })
         .catch((error) => {
+          setSelectedWallet(null);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
             setAutoLogin(true);
@@ -67,7 +68,7 @@ export const WalletModal = () => {
         (x) => typeof x.connector === typeof connector
       );
       if (wallet) setSelectedWallet(wallet);
-    } else setSelectedWallet(null);
+    }
   }, [walletModal, connector]);
 
   const title = error
@@ -100,12 +101,7 @@ export const WalletModal = () => {
 
       <Modal title={title} setIsOpen={setIsOpen} isOpen={walletModal}>
         <div className="max-h-[calc(70vh-60px)] overflow-auto px-20">
-          {error ? (
-            <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
-              <p className="font-semibold mb-5">Failed to connect to wallet.</p>
-              <p className="text-12">Please try again or contact support.</p>
-            </div>
-          ) : pending ? (
+          {error || pending ? (
             <>
               <div
                 className={`flex justify-center items-center mt-20 mb-40 ${
@@ -119,6 +115,16 @@ export const WalletModal = () => {
                 />
                 <h2 className="font-bold text-20">{selectedWallet?.name}</h2>
               </div>
+              {error && (
+                <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
+                  <p className="font-semibold mb-5">
+                    Failed to connect to wallet.
+                  </p>
+                  <p className="text-12">
+                    Please try again or contact support.
+                  </p>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex flex-col mb-20 mt-10 space-y-15">
