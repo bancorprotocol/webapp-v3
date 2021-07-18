@@ -38,7 +38,7 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
           </div>
 
           <div className="flex items-center">
-            <WalletModal />
+            <WalletModal isMobile={false} />
             <NotificationsMenu />
             <span className="text-grey-3 text-20 mx-16">|</span>
             <SettingsMenu />
@@ -54,8 +54,8 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
         </div>
         <div className="flex items-center justify-end">
           <NotificationsMenu />
-          <div className="bg-grey-4 w-[1px] h-30 mx-10">&#8203;</div>
-          <IconWallet className="text-primary-light w-[22px]" />
+          <div className="bg-grey-4 w-[1px] h-30 mx-10" />
+          <WalletModal isMobile={true} />
         </div>
       </LayoutHeaderMobile>
     </>

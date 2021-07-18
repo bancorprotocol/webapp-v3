@@ -3,14 +3,18 @@ import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { Modal } from 'components/modal/Modal';
-import { setAutoLogin, shortenString } from 'utils/pureFunctions';
+import {
+  classNameGenerator,
+  setAutoLogin,
+  shortenString,
+} from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 
-export const WalletModal = () => {
+export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector } = useWeb3React();
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -80,22 +84,24 @@ export const WalletModal = () => {
   return (
     <>
       <button
-        onClick={connectButton}
-        className="btn-outline-secondary btn-sm mr-40"
+        onClick={() => connectButton()}
+        className={classNameGenerator({
+          'btn-outline-secondary btn-sm mr-40': !isMobile,
+        })}
       >
         {selectedWallet ? (
-          <img
-            src={selectedWallet.icon}
-            alt=""
-            className="-ml-10 mr-10 w-[15px]"
-          />
+          <img src={selectedWallet.icon} alt="" className="w-[22px]" />
         ) : (
-          <IconWallet className="-ml-14 mr-16 text-primary dark:text-primary-light w-[22px]" />
+          <IconWallet className="text-primary dark:text-primary-light w-[22px]" />
         )}
-        {account ? (
-          shortenString(account)
-        ) : (
-          <FormattedMessage id="connect_wallet" />
+        {!isMobile && (
+          <div className="mx-10">
+            {account ? (
+              shortenString(account)
+            ) : (
+              <FormattedMessage id="connect_wallet" />
+            )}
+          </div>
         )}
       </button>
 
