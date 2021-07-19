@@ -11,7 +11,7 @@ import { currentNetwork$ } from './network';
 import {
   ethToken,
   getEthToken,
-  getWethAPIToken,
+  buildWethToken,
   ropstenImage,
 } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
@@ -90,62 +90,58 @@ export const tokenList$ = combineLatest([
   user$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([userPicked, apiTokens, user, currentNetwork]) => {
-      const newApiTokens = [...apiTokens, getWethAPIToken(apiTokens)].map(
-        (x) => ({
-          address: x.dlt_id,
-          symbol: x.symbol,
-          decimals: x.decimals,
-          usdPrice: x.rate.usd,
-        })
-      );
+  switchMapIgnoreThrow(async ([tokenList, apiTokens, user, currentNetwork]) => {
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
+      address: x.dlt_id,
+      symbol: x.symbol,
+      decimals: x.decimals,
+      usdPrice: x.rate.usd,
+    }));
 
-      let overlappingTokens: TokenListItem[] = [];
-      const eth = getEthToken(apiTokens);
-      if (eth) overlappingTokens.push(eth);
+    let overlappingTokens: TokenListItem[] = [];
+    const eth = getEthToken(apiTokens);
+    if (eth) overlappingTokens.push(eth);
 
-      newApiTokens.forEach((apiToken) => {
-        if (currentNetwork === EthNetworks.Mainnet) {
-          const found = userPicked.find(
-            (userToken) =>
-              userToken.address.toLowerCase() === apiToken.address.toLowerCase()
-          );
-          if (found)
-            overlappingTokens.push({
-              ...found,
-              ...apiToken,
-            });
-        } else {
+    newApiTokens.forEach((apiToken) => {
+      if (currentNetwork === EthNetworks.Mainnet) {
+        const found = tokenList.find(
+          (userToken) =>
+            userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+        );
+        if (found)
           overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
+            ...found,
             ...apiToken,
           });
-        }
-      });
-
-      if (user) {
-        overlappingTokens = await fetchTokenBalances(
-          overlappingTokens,
-          user,
-          currentNetwork
-        );
-        const index = overlappingTokens.findIndex(
-          (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-        );
-        if (index !== -1)
-          overlappingTokens[index] = {
-            ...overlappingTokens[index],
-            balance: fromWei(await web3.eth.getBalance(user)),
-          };
+      } else {
+        overlappingTokens.push({
+          chainId: EthNetworks.Ropsten,
+          name: apiToken.symbol,
+          logoURI: ropstenImage,
+          balance: null,
+          ...apiToken,
+        });
       }
+    });
 
-      return overlappingTokens;
+    if (user) {
+      overlappingTokens = await fetchTokenBalances(
+        overlappingTokens,
+        user,
+        currentNetwork
+      );
+      const index = overlappingTokens.findIndex(
+        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
+      );
+      if (index !== -1)
+        overlappingTokens[index] = {
+          ...overlappingTokens[index],
+          balance: fromWei(await web3.eth.getBalance(user)),
+        };
     }
-  ),
+
+    return overlappingTokens;
+  }),
   shareReplay(1)
 );
 
