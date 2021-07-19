@@ -78,7 +78,9 @@ const tokenListMerged$ = combineLatest([userLists$, tokenLists$]).pipe(
       const filteredTokenLists = tokenLists.filter((list, index) =>
         userLists.includes(index)
       );
-      return filteredTokenLists.flatMap((list) => list.tokens);
+      return filteredTokenLists
+        .flatMap((list) => list.tokens)
+        .map((x) => ({ ...x, address: toChecksumAddress(x.address) }));
     }
   ),
   shareReplay()
@@ -105,8 +107,7 @@ export const tokenList$ = combineLatest([
     newApiTokens.forEach((apiToken) => {
       if (currentNetwork === EthNetworks.Mainnet) {
         const found = tokenList.find(
-          (userToken) =>
-            userToken.address.toLowerCase() === apiToken.address.toLowerCase()
+          (userToken) => userToken.address === apiToken.address
         );
         if (found)
           overlappingTokens.push({
@@ -130,9 +131,7 @@ export const tokenList$ = combineLatest([
         user,
         currentNetwork
       );
-      const index = overlappingTokens.findIndex(
-        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-      );
+      const index = overlappingTokens.findIndex((x) => x.address === ethToken);
       if (index !== -1)
         overlappingTokens[index] = {
           ...overlappingTokens[index],
@@ -150,9 +149,7 @@ export const getTokenLogoURI = (token: TokenListItem) => {
     ? token.logoURI.startsWith('ipfs')
       ? `https://ipfs.io/ipfs/${token.logoURI.split('//')[1]}`
       : token.logoURI
-    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${toChecksumAddress(
-        token.address
-      )}/logo.png`;
+    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
 };
 
 export const getLogoByURI = (uri: string | undefined) => {
