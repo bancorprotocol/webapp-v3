@@ -71,9 +71,7 @@ export const SwapMarket = ({
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
-      const eth = tokens.find(
-        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-      );
+      const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.0000');
       setToToken(eth);

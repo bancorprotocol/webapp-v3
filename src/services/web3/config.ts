@@ -36,9 +36,7 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
 };
 
 export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
-  const eth = apiTokens.find(
-    (apiToken) => apiToken.dlt_id.toLowerCase() === ethToken.toLowerCase()
-  );
+  const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth)
     return {
       address: eth.dlt_id,
