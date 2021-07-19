@@ -3,14 +3,18 @@ import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { Modal } from 'components/modal/Modal';
-import { setAutoLogin, shortenString } from 'utils/pureFunctions';
+import {
+  classNameGenerator,
+  setAutoLogin,
+  shortenString,
+} from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 
-export const WalletModal = () => {
+export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector } = useWeb3React();
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -42,6 +46,7 @@ export const WalletModal = () => {
           setAutoLogin(true);
         })
         .catch((error) => {
+          setSelectedWallet(null);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
             setAutoLogin(true);
@@ -67,7 +72,7 @@ export const WalletModal = () => {
         (x) => typeof x.connector === typeof connector
       );
       if (wallet) setSelectedWallet(wallet);
-    } else setSelectedWallet(null);
+    }
   }, [walletModal, connector]);
 
   const title = error
@@ -79,33 +84,30 @@ export const WalletModal = () => {
   return (
     <>
       <button
-        onClick={connectButton}
-        className="btn-outline-secondary btn-sm mr-40"
+        onClick={() => connectButton()}
+        className={classNameGenerator({
+          'btn-outline-secondary btn-sm mr-40': !isMobile,
+        })}
       >
         {selectedWallet ? (
-          <img
-            src={selectedWallet.icon}
-            alt=""
-            className="-ml-10 mr-10 w-[15px]"
-          />
+          <img src={selectedWallet.icon} alt="" className="w-[22px]" />
         ) : (
-          <IconWallet className="-ml-14 mr-16 text-primary dark:text-primary-light w-[22px]" />
+          <IconWallet className="text-primary dark:text-primary-light w-[22px]" />
         )}
-        {account ? (
-          shortenString(account)
-        ) : (
-          <FormattedMessage id="connect_wallet" />
+        {!isMobile && (
+          <div className="mx-10">
+            {account ? (
+              shortenString(account)
+            ) : (
+              <FormattedMessage id="connect_wallet" />
+            )}
+          </div>
         )}
       </button>
 
       <Modal title={title} setIsOpen={setIsOpen} isOpen={walletModal}>
         <div className="max-h-[calc(70vh-60px)] overflow-auto px-20">
-          {error ? (
-            <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
-              <p className="font-semibold mb-5">Failed to connect to wallet.</p>
-              <p className="text-12">Please try again or contact support.</p>
-            </div>
-          ) : pending ? (
+          {error || pending ? (
             <>
               <div
                 className={`flex justify-center items-center mt-20 mb-40 ${
@@ -119,6 +121,16 @@ export const WalletModal = () => {
                 />
                 <h2 className="font-bold text-20">{selectedWallet?.name}</h2>
               </div>
+              {error && (
+                <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
+                  <p className="font-semibold mb-5">
+                    Failed to connect to wallet.
+                  </p>
+                  <p className="text-12">
+                    Please try again or contact support.
+                  </p>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex flex-col mb-20 mt-10 space-y-15">
