@@ -1,6 +1,3 @@
-import 'elements/layoutHeader/LayoutHeader.css';
-import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { useState } from 'react';
 import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
 import { getNetworkName } from 'utils/pureFunctions';
@@ -10,6 +7,8 @@ import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { isMobile } from 'react-device-detect';
+import 'elements/layoutHeader/LayoutHeader.css';
 
 interface LayoutHeaderProps {
   setIsSidebarOpen: Function;
@@ -55,7 +54,7 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
         <div className="flex items-center justify-end">
           <NotificationsMenu />
           <div className="bg-grey-4 w-[1px] h-30 mx-10" />
-          <WalletModal isMobile={true} />
+          {isMobile && <WalletModal isMobile={true} />}
         </div>
       </LayoutHeaderMobile>
     </>
