@@ -18,14 +18,12 @@ interface GetApprovalReturn {
   isApprovalRequired: boolean;
 }
 
-// Generic method that returns allowance in wei and isApprovalRequired as bool
 const getApproval = async (
   token: string,
   user: string,
   spender: string,
   amountWei: string
 ): Promise<GetApprovalReturn> => {
-  // if token is ETH no approval is required
   const isEth = compareString(token, ethToken);
   if (isEth) return { allowanceWei: '', isApprovalRequired: false };
 
@@ -37,28 +35,23 @@ const getApproval = async (
   return { allowanceWei, isApprovalRequired };
 };
 
-// Generic set approval method. Returns tx hash. Prop AMOUNT set undefined for UNLIMITED
 const setApproval = async (
   token: string,
   user: string,
   spender: string,
   amountWei?: string
 ): Promise<string> => {
-  // if token is ETH dont set approval
-  const isEth = compareString(token, ethToken);
+  const isEth = token === ethToken;
   if (isEth) return '';
 
   const tokenContract = buildTokenContract(token, writeWeb3);
 
-  // set limited or unlimited amount
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 
-  // check if nulling allowance required for this contract
   const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.some((contract) =>
     compareString(contract, token)
   );
 
-  // if nulling required, call null approval method
   if (isNullApprovalContract) {
     const { allowanceWei } = await getApproval(
       token,
@@ -72,13 +65,11 @@ const setApproval = async (
     }
   }
 
-  // set final approval amount
   const tx = await tokenContract.methods.approve(spender, amountFinal);
   try {
     return await resolveTxOnConfirmation({ tx, user });
   } catch (e) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
-    // if tx fails because other than user denied, add token to null approval list for next try in case contract is missing in list
     if (!isTxDenied) {
       // TODO send this error with failed contract to Sentry or GTM
       NULL_APPROVAL_CONTRACTS.push(token);
@@ -91,7 +82,6 @@ const setApproval = async (
   }
 };
 
-// Check BancorNetwork token approval
 export const getNetworkContractApproval = async (
   token: TokenListItem,
   amount: string
@@ -108,7 +98,6 @@ export const getNetworkContractApproval = async (
   return isApprovalRequired;
 };
 
-// Set approval method for BancorNetwork contract. Returns tx hash. if prop AMOUNT is UNDEFINED set unlimited approval
 export const setNetworkContractApproval = async (
   token: TokenListItem,
   amount?: string
