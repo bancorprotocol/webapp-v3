@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
@@ -9,7 +9,6 @@ import { updateTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
-  ethToken,
   getEthToken,
   buildWethToken,
   ropstenImage,
@@ -156,10 +155,14 @@ const tokenListMerged$ = combineLatest([
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
       );
-      return filteredTokenLists
-        .flatMap((list) => list.tokens)
-        .map((x) => ({ ...x, address: toChecksumAddress(x.address) }));
+      return filteredTokenLists.flatMap((list) => list.tokens);
     }
+  ),
+  map((tokens) =>
+    tokens.map((token) => ({
+      ...token,
+      address: toChecksumAddress(token.address),
+    }))
   ),
   shareReplay()
 );
