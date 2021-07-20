@@ -15,7 +15,7 @@ import {
   ropstenImage,
 } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
-import { mapIgnoreThrown } from 'utils/pureFunctions';
+import { mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
 
 export interface TokenList {
   name: string;
@@ -126,20 +126,26 @@ export const tokenList$ = combineLatest([
     });
 
     if (user) {
-      overlappingTokens = await fetchTokenBalances(
-        overlappingTokens,
-        user,
-        currentNetwork
+      const includesEth = overlappingTokens.some(
+        (token) => token.address === ethToken
       );
-      const index = overlappingTokens.findIndex((x) => x.address === ethToken);
-      if (index !== -1)
-        overlappingTokens[index] = {
-          ...overlappingTokens[index],
-          balance: fromWei(await web3.eth.getBalance(user)),
-        };
-    }
 
-    return overlappingTokens;
+      const [updatedTokens, ethBalance] = await Promise.all([
+        fetchTokenBalances(overlappingTokens, user, currentNetwork),
+        (async () => includesEth && web3.eth.getBalance(user))(),
+      ]);
+
+      const finalTokens = includesEth
+        ? updateArray(
+            updatedTokens,
+            (token) => token.address === ethToken,
+            (token) => ({ ...token, balance: fromWei(ethBalance as string) })
+          )
+        : updatedTokens;
+      return finalTokens;
+    } else {
+      return overlappingTokens;
+    }
   }),
   shareReplay(1)
 );
