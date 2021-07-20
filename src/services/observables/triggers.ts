@@ -1,5 +1,5 @@
 import {
-  tokenList$,
+  tokens$,
   tokenLists$,
   userPreferredListIds$,
 } from 'services/observables/tokens';
@@ -16,7 +16,7 @@ export const loadSwapData = (dispatch: any) => {
   const userListIds = getLSTokenList();
   userPreferredListIds$.next(userListIds);
 
-  tokenList$.subscribe((tokenList) => {
+  tokens$.subscribe((tokenList) => {
     dispatch(setTokenList(tokenList));
   });
 };

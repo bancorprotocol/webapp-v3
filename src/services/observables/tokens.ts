@@ -154,7 +154,7 @@ const tokenListMerged$ = combineLatest([
     async ([userPreferredListIds, tokenLists]): Promise<TokenListItem[]> => {
       if (userPreferredListIds.length === 0) return tokenLists[0].tokens;
       const filteredTokenLists = tokenLists.filter((list) =>
-        userPreferredListIds.includes(list.name)
+        userPreferredListIds.some((id) => id === list.name)
       );
       return filteredTokenLists
         .flatMap((list) => list.tokens)
@@ -164,7 +164,7 @@ const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
-export const tokenList$ = combineLatest([
+export const tokens$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   user$,

@@ -56,7 +56,7 @@ export const SearchableTokenList = ({
 
     setLSTokenList(newUserPreferredListIds);
     setUserLists(newUserPreferredListIds);
-    userPreferredListIds$.next(userPreferredListIds);
+    userPreferredListIds$.next(newUserPreferredListIds);
   };
 
   return (

@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokenList$, TokenListItem } from 'services/observables/tokens';
+import { tokens$, TokenListItem } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import {
@@ -86,7 +86,7 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 const orderResToLimit = async (
   orders: OrderResponse[]
 ): Promise<LimitOrder[]> => {
-  const tokens = await tokenList$.pipe(take(1)).toPromise();
+  const tokens = await tokens$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
     const payToken =
