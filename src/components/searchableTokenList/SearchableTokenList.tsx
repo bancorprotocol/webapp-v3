@@ -46,9 +46,7 @@ export const SearchableTokenList = ({
   };
 
   const handleTokenlistClick = (listId: string) => {
-    const alreadyPreferred = userPreferredListIds.some(
-      (list) => list === listId
-    );
+    const alreadyPreferred = userPreferredListIds.includes(listId);
 
     const newUserPreferredListIds = alreadyPreferred
       ? userPreferredListIds.filter((list) => list !== listId)
