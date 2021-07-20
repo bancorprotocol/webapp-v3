@@ -5,7 +5,7 @@ import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
-import { fetchTokenBalances } from './balances';
+import { updateTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -15,7 +15,7 @@ import {
   ropstenImage,
 } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
-import { mapIgnoreThrown } from 'utils/pureFunctions';
+import { mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
 
 export interface TokenList {
   name: string;
@@ -204,34 +204,28 @@ export const tokens$ = combineLatest([
     });
 
     if (user) {
-      overlappingTokens = await fetchTokenBalances(
+      const updatedTokens = await updateTokenBalances(
         overlappingTokens,
         user,
         currentNetwork
       );
-      const index = overlappingTokens.findIndex((x) => x.address === ethToken);
-      if (index !== -1)
-        overlappingTokens[index] = {
-          ...overlappingTokens[index],
-          balance: fromWei(await web3.eth.getBalance(user)),
-        };
-    }
 
-    return overlappingTokens;
+      return updatedTokens;
+    } else {
+      return overlappingTokens;
+    }
   }),
   shareReplay(1)
 );
 
-export const getTokenLogoURI = (token: TokenListItem) => {
-  return token.logoURI
+const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
+
+export const getTokenLogoURI = (token: TokenListItem) =>
+  token.logoURI
     ? token.logoURI.startsWith('ipfs')
-      ? `https://ipfs.io/ipfs/${token.logoURI.split('//')[1]}`
+      ? buildIpfsUri(token.logoURI.split('//')[1])
       : token.logoURI
     : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
-};
 
-export const getLogoByURI = (uri: string | undefined) => {
-  return uri && uri.startsWith('ipfs')
-    ? `https://ipfs.io/ipfs/${uri.split('//')[1]}`
-    : uri;
-};
+export const getLogoByURI = (uri: string | undefined) =>
+  uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;

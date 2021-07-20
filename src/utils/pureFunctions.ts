@@ -93,7 +93,9 @@ export const shrinkToken = (
     throw new Error(
       `Must be passed integer to shrink token, received ${precision}`
     );
-  const res = new BigNumber(amount)
+  const bigNumAmount = new BigNumber(amount);
+  if (bigNumAmount.isEqualTo(0)) return '0';
+  const res = bigNumAmount
     .div(new BigNumber(10).pow(precision))
     .toFixed(precision, BigNumber.ROUND_DOWN);
 
