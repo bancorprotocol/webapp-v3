@@ -11,7 +11,7 @@ import { currentNetwork$ } from './network';
 import {
   ethToken,
   getEthToken,
-  getWethAPIToken,
+  buildWethToken,
   ropstenImage,
 } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
@@ -156,7 +156,9 @@ const tokenListMerged$ = combineLatest([
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.includes(list.name)
       );
-      return filteredTokenLists.flatMap((list) => list.tokens);
+      return filteredTokenLists
+        .flatMap((list) => list.tokens)
+        .map((x) => ({ ...x, address: toChecksumAddress(x.address) }));
     }
   ),
   shareReplay()
@@ -168,62 +170,55 @@ export const tokenList$ = combineLatest([
   user$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([userPicked, apiTokens, user, currentNetwork]) => {
-      const newApiTokens = [...apiTokens, getWethAPIToken(apiTokens)].map(
-        (x) => ({
-          address: x.dlt_id,
-          symbol: x.symbol,
-          decimals: x.decimals,
-          usdPrice: x.rate.usd,
-        })
-      );
+  switchMapIgnoreThrow(async ([tokenList, apiTokens, user, currentNetwork]) => {
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
+      address: x.dlt_id,
+      symbol: x.symbol,
+      decimals: x.decimals,
+      usdPrice: x.rate.usd,
+    }));
 
-      let overlappingTokens: TokenListItem[] = [];
-      const eth = getEthToken(apiTokens);
-      if (eth) overlappingTokens.push(eth);
+    let overlappingTokens: TokenListItem[] = [];
+    const eth = getEthToken(apiTokens);
+    if (eth) overlappingTokens.push(eth);
 
-      newApiTokens.forEach((apiToken) => {
-        if (currentNetwork === EthNetworks.Mainnet) {
-          const found = userPicked.find(
-            (userToken) =>
-              userToken.address.toLowerCase() === apiToken.address.toLowerCase()
-          );
-          if (found)
-            overlappingTokens.push({
-              ...found,
-              ...apiToken,
-            });
-        } else {
+    newApiTokens.forEach((apiToken) => {
+      if (currentNetwork === EthNetworks.Mainnet) {
+        const found = tokenList.find(
+          (userToken) => userToken.address === apiToken.address
+        );
+        if (found)
           overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
+            ...found,
             ...apiToken,
           });
-        }
-      });
-
-      if (user) {
-        overlappingTokens = await fetchTokenBalances(
-          overlappingTokens,
-          user,
-          currentNetwork
-        );
-        const index = overlappingTokens.findIndex(
-          (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-        );
-        if (index !== -1)
-          overlappingTokens[index] = {
-            ...overlappingTokens[index],
-            balance: fromWei(await web3.eth.getBalance(user)),
-          };
+      } else {
+        overlappingTokens.push({
+          chainId: EthNetworks.Ropsten,
+          name: apiToken.symbol,
+          logoURI: ropstenImage,
+          balance: null,
+          ...apiToken,
+        });
       }
+    });
 
-      return overlappingTokens;
+    if (user) {
+      overlappingTokens = await fetchTokenBalances(
+        overlappingTokens,
+        user,
+        currentNetwork
+      );
+      const index = overlappingTokens.findIndex((x) => x.address === ethToken);
+      if (index !== -1)
+        overlappingTokens[index] = {
+          ...overlappingTokens[index],
+          balance: fromWei(await web3.eth.getBalance(user)),
+        };
     }
-  ),
+
+    return overlappingTokens;
+  }),
   shareReplay(1)
 );
 
@@ -232,9 +227,7 @@ export const getTokenLogoURI = (token: TokenListItem) => {
     ? token.logoURI.startsWith('ipfs')
       ? `https://ipfs.io/ipfs/${token.logoURI.split('//')[1]}`
       : token.logoURI
-    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${toChecksumAddress(
-        token.address
-      )}/logo.png`;
+    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
 };
 
 export const getLogoByURI = (uri: string | undefined) => {

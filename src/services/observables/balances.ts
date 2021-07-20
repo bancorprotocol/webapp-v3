@@ -37,7 +37,7 @@ export const fetchTokenBalances = async (
     const rebuiltDecimals = knownDecimalsRes.map((token) => {
       const previouslyKnownPrecision = findOrThrow(
         knownPrecisions,
-        (t) => token.contract.toLowerCase() === t.address.toLowerCase()
+        (t) => token.contract === t.address
       );
       return {
         ...token,
@@ -51,9 +51,7 @@ export const fetchTokenBalances = async (
     }));
     const mergedWei = [...rebuiltDecimals, ...parsedNumbers];
     return mergedWei.map((token) => {
-      const inedx = tokens.findIndex(
-        (t) => t.address.toLowerCase() === token.contract.toLowerCase()
-      );
+      const inedx = tokens.findIndex((t) => t.address === token.contract);
       return {
         ...tokens[inedx],
         balance: token.balance

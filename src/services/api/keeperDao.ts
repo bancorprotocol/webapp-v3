@@ -37,7 +37,7 @@ export const swapLimit = async (
   duration: plugin.Duration,
   onPrompt: Function
 ) => {
-  const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
+  const fromIsEth = ethToken === fromToken.address;
 
   try {
     if (fromIsEth) await depositWeth(from, user, onPrompt);
@@ -90,13 +90,9 @@ const orderResToLimit = async (
 
   return orders.map((res) => {
     const payToken =
-      tokens.find(
-        (x) => x.address.toLowerCase() === res.order.makerToken.toLowerCase()
-      ) ?? tokens[0];
+      tokens.find((x) => x.address === res.order.makerToken) ?? tokens[0];
     const getToken =
-      tokens.find(
-        (x) => x.address.toLowerCase() === res.order.takerToken.toLowerCase()
-      ) ?? tokens[0];
+      tokens.find((x) => x.address === res.order.takerToken) ?? tokens[0];
 
     const payAmount = new BigNumber(res.order.makerAmount);
     const getAmount = new BigNumber(res.order.takerAmount);

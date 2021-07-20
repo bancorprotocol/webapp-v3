@@ -71,9 +71,7 @@ export const SwapMarket = ({
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
-      const eth = tokens.find(
-        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-      );
+      const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.0000');
       setToToken(eth);
@@ -118,7 +116,6 @@ export const SwapMarket = ({
     setShowModal(false);
   };
 
-  // Step 0 Check allowance
   const checkAllowance = async () => {
     try {
       const isApprovalReq = await getNetworkContractApproval(
@@ -142,7 +139,6 @@ export const SwapMarket = ({
 
   // Step 1 Wait for user to choose approval
   // Step 2 Proceed with approval based on user selection
-  // Prop amount is UNDEFINED when UNLIMITED
   const approveToken = async (amount?: string) => {
     setStep(2);
     try {
