@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import { shareReplay } from 'rxjs/operators';
+import { shareReplay, tap } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
@@ -35,48 +35,126 @@ export interface TokenListItem {
 }
 
 const listOfLists = [
-  'https://tokens.1inch.eth.link',
-  'https://tokens.coingecko.com/uniswap/all.json',
-  'https://tokenlist.aave.eth.link',
-  'https://datafi.theagora.eth.link',
-  'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
-  'https://defi.cmc.eth.link',
-  'https://stablecoin.cmc.eth.link',
-  'https://erc20.cmc.eth.link',
-  'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
-  'https://defiprime.com/defiprime.tokenlist.json',
-  'https://tokenlist.dharma.eth.link',
-  'https://cdn.furucombo.app/furucombo.tokenlist.json',
-  'https://www.gemini.com/uniswap/manifest.json',
-  'https://t2crtokens.eth.link',
-  'https://api.kyber.network/tokenlist',
-  'https://messari.io/tokenlist/messari-verified',
-  'https://uniswap.mycryptoapi.com',
-  'https://raw.githubusercontent.com/opynfinance/opyn-tokenlist/master/opyn-v1.tokenlist.json',
-  'https://app.tryroll.com/tokens.json',
-  'https://raw.githubusercontent.com/SetProtocol/uniswap-tokenlist/main/set.tokenlist.json',
-  'https://umaproject.org/uma.tokenlist.json',
-  'https://wrapped.tokensoft.eth.link',
-  'https://yearn.science/static/tokenlist.json',
-  'https://zapper.fi/api/token-list',
-  'https://tokenlist.zerion.eth.link',
+  {
+    uri: 'https://tokens.1inch.eth.link',
+    name: '1inch',
+  },
+  {
+    uri: 'https://tokens.coingecko.com/uniswap/all.json',
+    name: 'CoinGecko',
+  },
+  {
+    uri: 'https://tokenlist.aave.eth.link',
+    name: 'Aave Token List',
+  },
+  {
+    uri: 'https://datafi.theagora.eth.link',
+    name: 'Agora dataFi Tokens',
+  },
+  {
+    uri: 'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
+    name: 'BA ERC20 SEC Action',
+  },
+  {
+    uri: 'https://defi.cmc.eth.link',
+    name: 'CMC DeFi',
+  },
+  {
+    uri: 'https://stablecoin.cmc.eth.link',
+    name: 'CMC Stablecoin',
+  },
+  {
+    uri: 'https://erc20.cmc.eth.link',
+    name: 'CMC200 ERC20',
+  },
+  {
+    uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
+    name: 'Compound',
+  },
+  {
+    uri: 'https://defiprime.com/defiprime.tokenlist.json',
+    name: 'Defiprime',
+  },
+  {
+    uri: 'https://tokenlist.dharma.eth.link',
+    name: 'Dharma Token List',
+  },
+  {
+    uri: 'https://cdn.furucombo.app/furucombo.tokenlist.json',
+    name: 'Furucombo',
+  },
+  {
+    uri: 'https://www.gemini.com/uniswap/manifest.json',
+    name: 'Gemini Token List',
+  },
+  {
+    uri: 'https://t2crtokens.eth.link',
+    name: 'Kleros Tokens',
+  },
+  {
+    uri: 'https://api.kyber.network/tokenlist',
+    name: 'Kyber',
+  },
+  {
+    uri: 'https://messari.io/tokenlist/messari-verified',
+    name: 'Messari Verified',
+  },
+  {
+    uri: 'https://uniswap.mycryptoapi.com',
+    name: 'MyCrypto Token List',
+  },
+  {
+    uri: 'https://raw.githubusercontent.com/opynfinance/opyn-tokenlist/master/opyn-v1.tokenlist.json',
+    name: 'Opyn v1',
+  },
+  {
+    uri: 'https://app.tryroll.com/tokens.json',
+    name: 'Roll Social Money',
+  },
+  {
+    uri: 'https://raw.githubusercontent.com/SetProtocol/uniswap-tokenlist/main/set.tokenlist.json',
+    name: 'Set',
+  },
+  {
+    uri: 'https://umaproject.org/uma.tokenlist.json',
+    name: 'UMA',
+  },
+  {
+    uri: 'https://wrapped.tokensoft.eth.link',
+    name: 'Wrapped Tokens',
+  },
+  {
+    uri: 'https://yearn.science/static/tokenlist.json',
+    name: 'Yearn',
+  },
+  {
+    uri: 'https://zapper.fi/api/token-list',
+    name: 'Zapper Token List',
+  },
+  {
+    uri: 'https://tokenlist.zerion.eth.link',
+    name: 'Zerion',
+  },
 ];
 
-export const userLists$ = new BehaviorSubject<number[]>([]);
+export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 
 export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
-    const res = await axios.get<TokenList>(list);
+    const res = await axios.get<TokenList>(list.uri);
     return res.data;
   })
 ).pipe(shareReplay(1));
 
-const tokenListMerged$ = combineLatest([userLists$, tokenLists$]).pipe(
+const tokenListMerged$ = combineLatest([
+  userPreferredListIds$,
+  tokenLists$,
+]).pipe(
   switchMapIgnoreThrow(
-    async ([userLists, tokenLists]): Promise<TokenListItem[]> => {
-      if (userLists.length === 0) return tokenLists[0].tokens;
-      const filteredTokenLists = tokenLists.filter((list, index) =>
-        userLists.includes(index)
+    async ([userPreferredListIds, tokenLists]): Promise<TokenListItem[]> => {
+      if (userPreferredListIds.length === 0) return tokenLists[0].tokens;
+      const filteredTokenLists = tokenLists.filter((list) =>
+        userPreferredListIds.some((id) => id === list.name)
       );
       return filteredTokenLists
         .flatMap((list) => list.tokens)
@@ -86,7 +164,7 @@ const tokenListMerged$ = combineLatest([userLists$, tokenLists$]).pipe(
   shareReplay()
 );
 
-export const tokenList$ = combineLatest([
+export const tokens$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   user$,
