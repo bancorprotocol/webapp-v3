@@ -37,13 +37,17 @@ const notificationSlice = createSlice({
       state.notifications = action.payload;
     },
     addNotification: (state, action: PayloadAction<BaseNotification>) => {
-      state.notifications.push({
+      const length = state.notifications.unshift({
         id: nanoid(),
         type: NotificationType.info,
         timestamp: dayjs().unix(),
         showSeconds: 8,
         ...action.payload,
       });
+
+      if (length > 100) {
+        state.notifications.pop();
+      }
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       const index = state.notifications.findIndex(

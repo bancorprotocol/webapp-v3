@@ -1,19 +1,17 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import {
   Notification,
   NotificationType,
-  setStatus,
 } from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { web3 } from 'services/web3/contracts';
-import { useInterval } from 'hooks/useInterval';
+
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 
@@ -47,33 +45,7 @@ export const NotificationContent = ({
   isAlert,
 }: NotificationContentProps) => {
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
-
-  const [delay, setDelay] = useState<number | null>(2000);
-
-  const dispatch = useDispatch();
-
-  useInterval(() => {
-    if (txHash === undefined) {
-      setDelay(null);
-      return;
-    }
-
-    const checkStatus = async () => {
-      const tx = await web3.eth
-        .getTransactionReceipt(txHash)
-        .catch((e) => console.error('web3 failed: getTransactionReceipt', e));
-      if (tx) {
-        dispatch(
-          setStatus({
-            id,
-            type: tx.status ? NotificationType.success : NotificationType.error,
-          })
-        );
-      }
-    };
-
-    void checkStatus();
-  }, delay);
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     if (!isAlert) return;
@@ -102,19 +74,29 @@ export const NotificationContent = ({
   };
 
   return (
-    <div className="text-12">
+    <div
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className="text-12"
+    >
       <div className="flex justify-between items-center mb-4">
         <div className="flex">
-          <div
-            className={`flex items-center justify-center ${classNameGenerator({
-              'w-14 h-14 rounded-full': type !== NotificationType.pending,
-              'bg-success': type === NotificationType.success,
-              'bg-error': type === NotificationType.error,
-              'bg-info': type === NotificationType.info,
-            })}`}
-          >
-            {StatusIcon()}
-          </div>
+          {txHash && isHovering ? (
+            <IconLink className="w-14 text-primary" />
+          ) : (
+            <div
+              className={`flex items-center justify-center ${classNameGenerator(
+                {
+                  'w-14 h-14 rounded-full': type !== NotificationType.pending,
+                  'bg-success': type === NotificationType.success,
+                  'bg-error': type === NotificationType.error,
+                  'bg-info': type === NotificationType.info,
+                }
+              )}`}
+            >
+              {StatusIcon()}
+            </div>
+          )}
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
           <span className="text-grey-4 dark:text-grey-3">
