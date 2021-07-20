@@ -1,5 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react';
-import check from 'assets/icons/check.svg';
+import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+
 import 'components/dropdown/Dropdown.css';
 
 interface DropdownProps {
@@ -17,7 +19,9 @@ export const Dropdown = ({
 }: DropdownProps) => {
   return (
     <Listbox value={selected} onChange={(val) => setSelected(val)}>
-      <Listbox.Button className="menu-button">{title}</Listbox.Button>
+      <Listbox.Button className="menu-button">
+        <div>{title}</div> <IconChevronDown className="w-10 ml-10" />
+      </Listbox.Button>
       <Transition
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
@@ -39,7 +43,7 @@ export const Dropdown = ({
                   <div className="flex">
                     {selected && (
                       <span className="pl-2">
-                        <img src={check} alt="Check" />
+                        <IconCheck />
                       </span>
                     )}
                     <span

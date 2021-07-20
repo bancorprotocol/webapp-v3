@@ -3,6 +3,7 @@ import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
 import { useState } from 'react';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
 
 interface ModalDurationProps {
   duration: Duration;
@@ -27,9 +28,15 @@ export const ModalDuration = ({
         {`${duration.asDays()} Days`}
         <IconChevronDown className="w-10 ml-10" />
       </button>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Select Duration">
-        <>
-          <div className="p-10">
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+        <div className="flex flex-col w-full p-20">
+          <IconClock className="w-[52px] h-[52px] text-primary dark:text-primary-dark mb-14" />
+          <div className="font-semibold text-20 mb-10">Custom Time</div>
+          <div className="text-12 text-grey-4 mb-10">
+            Set up your custom time peroid
+          </div>
+
+          <div className="p-10 w-[80px]">
             <Dropdown
               selected={days}
               setSelected={setDays}
@@ -40,7 +47,7 @@ export const ModalDuration = ({
               }))}
             />
           </div>
-          <div className="p-10">
+          <div className="p-10 w-[80px]">
             <Dropdown
               selected={hours}
               setSelected={setHours}
@@ -62,7 +69,14 @@ export const ModalDuration = ({
               }))}
             />
           </div>
-        </>
+
+          <button
+            onClick={() => {}}
+            className="btn-primary rounded-full w-full"
+          >
+            Confirm
+          </button>
+        </div>
       </Modal>
     </>
   );
