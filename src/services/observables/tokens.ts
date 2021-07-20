@@ -150,16 +150,14 @@ export const tokenList$ = combineLatest([
   shareReplay(1)
 );
 
-export const getTokenLogoURI = (token: TokenListItem) => {
-  return token.logoURI
+const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
+
+export const getTokenLogoURI = (token: TokenListItem) =>
+  token.logoURI
     ? token.logoURI.startsWith('ipfs')
-      ? `https://ipfs.io/ipfs/${token.logoURI.split('//')[1]}`
+      ? buildIpfsUri(token.logoURI.split('//')[1])
       : token.logoURI
     : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
-};
 
-export const getLogoByURI = (uri: string | undefined) => {
-  return uri && uri.startsWith('ipfs')
-    ? `https://ipfs.io/ipfs/${uri.split('//')[1]}`
-    : uri;
-};
+export const getLogoByURI = (uri: string | undefined) =>
+  uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
