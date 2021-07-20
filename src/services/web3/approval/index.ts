@@ -49,7 +49,7 @@ const setApproval = async (
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 
   const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.some(
-    (contract) => contract.toLowerCase() === token.toLowerCase()
+    (contract) => contract === token
   );
 
   if (isNullApprovalContract) {
