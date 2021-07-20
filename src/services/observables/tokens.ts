@@ -5,7 +5,7 @@ import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress, fromWei } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
-import { fetchTokenBalances } from './balances';
+import { updateTokenBalances } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -126,23 +126,13 @@ export const tokenList$ = combineLatest([
     });
 
     if (user) {
-      const includesEth = overlappingTokens.some(
-        (token) => token.address === ethToken
+      const updatedTokens = await updateTokenBalances(
+        overlappingTokens,
+        user,
+        currentNetwork
       );
 
-      const [updatedTokens, ethBalance] = await Promise.all([
-        fetchTokenBalances(overlappingTokens, user, currentNetwork),
-        (async () => includesEth && web3.eth.getBalance(user))(),
-      ]);
-
-      const finalTokens = includesEth
-        ? updateArray(
-            updatedTokens,
-            (token) => token.address === ethToken,
-            (token) => ({ ...token, balance: fromWei(ethBalance as string) })
-          )
-        : updatedTokens;
-      return finalTokens;
+      return updatedTokens;
     } else {
       return overlappingTokens;
     }
