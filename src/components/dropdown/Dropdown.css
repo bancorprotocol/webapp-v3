@@ -1,5 +1,5 @@
 .menu-button {
-  @apply w-full flex items-center bg-white dark:bg-blue-4 rounded-10 border border-grey-2 dark:border-grey-4 p-10;
+  @apply relative w-full flex items-center justify-between bg-white dark:bg-blue-4 rounded-10 border border-grey-2 dark:border-grey-4 p-10;
 }
 
 .menu-options {

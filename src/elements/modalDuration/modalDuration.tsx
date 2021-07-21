@@ -29,50 +29,59 @@ export const ModalDuration = ({
         <IconChevronDown className="w-10 ml-10" />
       </button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-        <div className="flex flex-col w-full p-20">
+        <div className="flex flex-col items-center w-full px-20 pb-20">
           <IconClock className="w-[52px] h-[52px] text-primary dark:text-primary-dark mb-14" />
           <div className="font-semibold text-20 mb-10">Custom Time</div>
           <div className="text-12 text-grey-4 mb-10">
             Set up your custom time peroid
           </div>
-
-          <div className="p-10 w-[80px]">
-            <Dropdown
-              selected={days}
-              setSelected={setDays}
-              title={days?.toString()}
-              items={Array.from({ length: 30 }, (item, index: number) => ({
-                id: index.toString(),
-                title: index.toString(),
-              }))}
-            />
+          <div className="w-[150px] text-14 font-medium">
+            <div className="flex justify-between items-center">
+              Days
+              <div className="p-10 w-[100px]">
+                <Dropdown
+                  selected={days}
+                  setSelected={setDays}
+                  title={days?.toString()}
+                  items={Array.from({ length: 30 }, (item, index: number) => ({
+                    id: index.toString(),
+                    title: index.toString(),
+                  }))}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              Hours
+              <div className="p-10 w-[100px]">
+                <Dropdown
+                  selected={hours}
+                  setSelected={setHours}
+                  title={hours?.toString()}
+                  items={Array.from({ length: 24 }, (item, index: number) => ({
+                    id: index.toString(),
+                    title: index.toString(),
+                  }))}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between items-center">
+              Minutes
+              <div className="p-10 w-[100px]">
+                <Dropdown
+                  selected={minutes}
+                  setSelected={setMinutes}
+                  title={minutes?.toString()}
+                  items={Array.from({ length: 60 }, (item, index: number) => ({
+                    id: index.toString(),
+                    title: index.toString(),
+                  }))}
+                />
+              </div>
+            </div>
           </div>
-          <div className="p-10 w-[80px]">
-            <Dropdown
-              selected={hours}
-              setSelected={setHours}
-              title={hours?.toString()}
-              items={Array.from({ length: 24 }, (item, index: number) => ({
-                id: index.toString(),
-                title: index.toString(),
-              }))}
-            />
-          </div>
-          <div className="p-10">
-            <Dropdown
-              selected={minutes}
-              setSelected={setMinutes}
-              title={minutes?.toString()}
-              items={Array.from({ length: 60 }, (item, index: number) => ({
-                id: index.toString(),
-                title: index.toString(),
-              }))}
-            />
-          </div>
-
           <button
             onClick={() => {}}
-            className="btn-primary rounded-full w-full"
+            className="btn-primary rounded-full w-full mt-15"
           >
             Confirm
           </button>
