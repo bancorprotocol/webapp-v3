@@ -1,23 +1,56 @@
+import { useState } from 'react';
+import dayjs from 'utils/dayjs';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
-import { useState } from 'react';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
+import { formatDuration } from 'utils/helperFunctions';
 
 interface ModalDurationProps {
   duration: Duration;
   setDuration: Function;
+  maxDays?: number;
+}
+
+interface DurationItem {
+  id: string;
+  title: number;
 }
 
 export const ModalDuration = ({
   duration,
   setDuration,
+  maxDays = 30,
 }: ModalDurationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [days, setDays] = useState(duration.days());
   const [hours, setHours] = useState(duration.hours());
   const [minutes, setMinutes] = useState(duration.minutes());
+
+  const daysItems: DurationItem[] = Array.from(
+    { length: maxDays + 1 },
+    (item, index: number) => ({
+      id: index.toString(),
+      title: index,
+    })
+  );
+
+  const hoursItems: DurationItem[] = Array.from(
+    { length: 24 },
+    (item, index: number) => ({
+      id: index.toString(),
+      title: index,
+    })
+  );
+
+  const minutesItems: DurationItem[] = Array.from(
+    { length: 60 },
+    (item, index: number) => ({
+      id: index.toString(),
+      title: index,
+    })
+  );
 
   return (
     <>
@@ -25,7 +58,7 @@ export const ModalDuration = ({
         onClick={() => setIsOpen(true)}
         className="flex items-center bg-white dark:bg-blue-4 rounded-10 px-40 py-8"
       >
-        {`${duration.asDays()} Days`}
+        {formatDuration(duration)}
         <IconChevronDown className="w-10 ml-10" />
       </button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -41,12 +74,9 @@ export const ModalDuration = ({
               <div className="p-10 w-[100px]">
                 <Dropdown
                   selected={days}
-                  setSelected={setDays}
+                  setSelected={(x: DurationItem) => setDays(x.title)}
                   title={days?.toString()}
-                  items={Array.from({ length: 30 }, (item, index: number) => ({
-                    id: index.toString(),
-                    title: index.toString(),
-                  }))}
+                  items={daysItems}
                 />
               </div>
             </div>
@@ -55,12 +85,9 @@ export const ModalDuration = ({
               <div className="p-10 w-[100px]">
                 <Dropdown
                   selected={hours}
-                  setSelected={setHours}
+                  setSelected={(x: DurationItem) => setHours(x.title)}
                   title={hours?.toString()}
-                  items={Array.from({ length: 24 }, (item, index: number) => ({
-                    id: index.toString(),
-                    title: index.toString(),
-                  }))}
+                  items={hoursItems}
                 />
               </div>
             </div>
@@ -69,18 +96,20 @@ export const ModalDuration = ({
               <div className="p-10 w-[100px]">
                 <Dropdown
                   selected={minutes}
-                  setSelected={setMinutes}
+                  setSelected={(x: DurationItem) => setMinutes(x.title)}
                   title={minutes?.toString()}
-                  items={Array.from({ length: 60 }, (item, index: number) => ({
-                    id: index.toString(),
-                    title: index.toString(),
-                  }))}
+                  items={minutesItems}
                 />
               </div>
             </div>
           </div>
           <button
-            onClick={() => {}}
+            onClick={() => {
+              days === maxDays
+                ? setDuration(dayjs.duration({ days: maxDays }))
+                : setDuration(dayjs.duration({ days, hours, minutes }));
+              setIsOpen(false);
+            }}
             className="btn-primary rounded-full w-full mt-15"
           >
             Confirm

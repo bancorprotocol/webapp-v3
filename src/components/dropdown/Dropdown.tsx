@@ -6,7 +6,7 @@ import 'components/dropdown/Dropdown.css';
 
 interface DropdownProps {
   title: string;
-  items: { id: string; title: string; disabled?: boolean }[];
+  items: { id: string; title: any; disabled?: boolean }[];
   selected: any;
   setSelected: Function;
 }
