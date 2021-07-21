@@ -251,7 +251,7 @@ export const SwapMarket = ({
         <div className="widget-block">
           <div className="widget-block-icon cursor-pointer">
             <IconSync
-              className="w-[25px] text-primary dark:text-primary-light"
+              className="transform hover:rotate-180 transition duration-500 w-[25px] text-primary dark:text-primary-light"
               onClick={() =>
                 fromToken.address !== wethToken ? switchTokens() : {}
               }
