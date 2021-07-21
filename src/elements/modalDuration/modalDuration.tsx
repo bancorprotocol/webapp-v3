@@ -99,6 +99,7 @@ export const ModalDuration = ({
                   setSelected={(x: DurationItem) => setMinutes(x.title)}
                   title={minutes?.toString()}
                   items={minutesItems}
+                  openUp
                 />
               </div>
             </div>
