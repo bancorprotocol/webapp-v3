@@ -3,5 +3,5 @@
 }
 
 .menu-options {
-  @apply absolute w-full py-10 mt-10 overflow-auto text-base dark:bg-blue-3 rounded-20 shadow-lg z-50 bg-white max-h-[130px] ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-14;
+  @apply absolute w-full py-10 mt-10 z-10 overflow-auto text-base dark:bg-blue-3 rounded-20 shadow-lg bg-white max-h-[130px] ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-14;
 }

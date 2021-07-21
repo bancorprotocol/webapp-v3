@@ -3,6 +3,7 @@ import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
 import 'components/dropdown/Dropdown.css';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 interface DropdownProps {
   title: string;
@@ -29,12 +30,14 @@ export const Dropdown = ({
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
-          leave="t ransition ease-in duration-75"
+          leave="transition ease-in duration-75"
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
           <Listbox.Options
-            className={`menu-options ${openUp ? 'bottom-[50px]' : ''}`}
+            className={`menu-options ${classNameGenerator({
+              'bottom-[50px]': openUp,
+            })}`}
           >
             {items.map((item) => (
               <Listbox.Option
@@ -51,9 +54,9 @@ export const Dropdown = ({
                       </span>
                     )}
                     <span
-                      className={`${
-                        item.disabled ? 'opacity-75' : ''
-                      } block truncate pl-[20px]`}
+                      className={`${classNameGenerator({
+                        'opacity-75': item.disabled,
+                      })} block truncate pl-[20px]`}
                     >
                       {item.title}
                     </span>
