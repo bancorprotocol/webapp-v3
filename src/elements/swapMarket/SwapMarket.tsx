@@ -249,7 +249,7 @@ export const SwapMarket = ({
         </div>
 
         <div className="widget-block">
-          <div className="widget-block-icon cursor-pointer group">
+          <div className="widget-block-icon cursor-pointer">
             <IconSync
               className="transform hover:rotate-180 transition duration-500 w-[25px] text-primary dark:text-primary-light"
               onClick={() =>
