@@ -122,11 +122,15 @@ export const SearchableTokenList = ({
             <InputField
               input={search}
               setInput={setSearch}
+              dataCy="searchToken"
               placeholder="Search name"
               borderGrey
             />
           </div>
-          <div className="max-h-[calc(70vh-206px)] overflow-auto px-10 pb-10">
+          <div
+            data-cy="searchableTokensList"
+            className="max-h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+          >
             {tokens
               .filter(
                 (token) =>

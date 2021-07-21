@@ -234,6 +234,7 @@ export const SwapMarket = ({
       <div>
         <div className="px-20">
           <TokenInputField
+            dataCy="fromAmount"
             label="You Pay"
             token={fromToken}
             setToken={setFromToken}
@@ -259,6 +260,7 @@ export const SwapMarket = ({
           <div className="mx-10 mb-16 pt-16">
             <TokenInputField
               label="You Receive"
+              dataCy="toAmount"
               token={toToken}
               setToken={setToToken}
               input={toAmount}
@@ -272,14 +274,14 @@ export const SwapMarket = ({
               <>
                 <div className="flex justify-between mt-15">
                   <span>Rate</span>
-                  <span>
+                  <span data-cy="rateSpan">
                     1 {fromToken?.symbol} = {prettifyNumber(rate)}{' '}
                     {toToken?.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Price Impact</span>
-                  <span>{priceImpact}%</span>
+                  <span data-cy="priceImpact">{priceImpact}%</span>
                 </div>{' '}
               </>
             )}
