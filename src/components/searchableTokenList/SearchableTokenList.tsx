@@ -6,7 +6,7 @@ import {
   getTokenLogoURI,
   TokenList,
   TokenListItem,
-  userLists$,
+  userPreferredListIds$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
@@ -29,7 +29,7 @@ export const SearchableTokenList = ({
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
-  const [userLists, setUserLists] = useState<number[]>(getLSTokenList());
+  const [userPreferredListIds, setUserLists] = useState(getLSTokenList());
 
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -45,16 +45,16 @@ export const SearchableTokenList = ({
     setSearch('');
   };
 
-  const handleTokenlistClick = (index: number) => {
-    const foundIndex = userLists.indexOf(index);
-    const newUserLists =
-      foundIndex === -1
-        ? [...userLists, index]
-        : userLists.filter((x) => x !== index);
+  const handleTokenlistClick = (listId: string) => {
+    const alreadyPreferred = userPreferredListIds.includes(listId);
 
-    setLSTokenList(newUserLists);
-    setUserLists(newUserLists);
-    userLists$.next(userLists);
+    const newUserPreferredListIds = alreadyPreferred
+      ? userPreferredListIds.filter((list) => list !== listId)
+      : [...userPreferredListIds, listId];
+
+    setLSTokenList(newUserPreferredListIds);
+    setUserLists(newUserPreferredListIds);
+    userPreferredListIds$.next(newUserPreferredListIds);
   };
 
   return (
@@ -68,51 +68,52 @@ export const SearchableTokenList = ({
       {manage ? (
         <div className="max-h-[calc(70vh-100px)] overflow-auto mb-20">
           <div className="pt-10 px-20 space-y-15">
-            {tokensLists.map((tokenList, index) => (
-              <div
-                className={`flex justify-between items-center border-2 border-grey-2 dark:border-grey-4 rounded px-15 py-6 ${
-                  userLists.includes(index)
-                    ? 'border-primary dark:border-primary-light'
-                    : ''
-                }`}
-                key={'Tokenlist_' + index}
-              >
-                <div className="flex items-center">
-                  <img
-                    alt="TokenList"
-                    src={getLogoByURI(tokenList.logoURI)}
-                    className="bg-grey-2 rounded-full h-28 w-28"
-                  />
-                  <div className={'ml-15'}>
-                    <div className={'text-16'}>{tokenList.name}</div>
-                    <div className={'text-12 text-grey-3'}>
-                      {tokenList.tokens.length} Tokens
+            {tokensLists.map((tokenList) => {
+              const isSelected = userPreferredListIds.some(
+                (listId) => tokenList.name === listId
+              );
+              return (
+                <div
+                  className={`flex justify-between items-center border-2 border-grey-2 dark:border-grey-4 rounded px-15 py-6 ${
+                    isSelected ? 'border-primary dark:border-primary-light' : ''
+                  }`}
+                  key={tokenList.name}
+                >
+                  <div className="flex items-center">
+                    <img
+                      alt="TokenList"
+                      src={getLogoByURI(tokenList.logoURI)}
+                      className="bg-grey-2 rounded-full h-28 w-28"
+                    />
+                    <div className={'ml-15'}>
+                      <div className={'text-16'}>{tokenList.name}</div>
+                      <div className={'text-12 text-grey-3'}>
+                        {tokenList.tokens.length} Tokens
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div>
-                  <Switch
-                    checked={userLists.includes(index)}
-                    onChange={() => handleTokenlistClick(index)}
-                    className={`${
-                      userLists.includes(index)
-                        ? 'bg-primary border-primary'
-                        : 'bg-grey-3 border-grey-3'
-                    } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
-                  >
-                    <span
-                      aria-hidden="true"
+                  <div>
+                    <Switch
+                      checked={isSelected}
+                      onChange={() => handleTokenlistClick(tokenList.name)}
                       className={`${
-                        userLists.includes(index)
-                          ? 'translate-x-[20px]'
-                          : 'translate-x-0'
-                      }
+                        isSelected
+                          ? 'bg-primary border-primary'
+                          : 'bg-grey-3 border-grey-3'
+                      } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`${
+                          isSelected ? 'translate-x-[20px]' : 'translate-x-0'
+                        }
             pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
-                    />
-                  </Switch>
+                      />
+                    </Switch>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (
@@ -121,11 +122,15 @@ export const SearchableTokenList = ({
             <InputField
               input={search}
               setInput={setSearch}
+              dataCy="searchToken"
               placeholder="Search name"
               borderGrey
             />
           </div>
-          <div className="max-h-[calc(70vh-206px)] overflow-auto px-10 pb-10">
+          <div
+            data-cy="searchableTokensList"
+            className="max-h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+          >
             {tokens
               .filter(
                 (token) =>
@@ -133,10 +138,10 @@ export const SearchableTokenList = ({
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
                     token.name.toLowerCase().includes(search.toLowerCase()))
               )
-              .map((token, index) => {
+              .map((token) => {
                 return (
                   <button
-                    key={'token_' + index}
+                    key={token.address}
                     onClick={() => {
                       onClick(token);
                       onClose();
@@ -146,7 +151,7 @@ export const SearchableTokenList = ({
                     <div className="flex items-center">
                       <img
                         src={getTokenLogoURI(token)}
-                        alt={'Token'}
+                        alt={`${token.symbol} Token`}
                         className="bg-grey-2 rounded-full h-28 w-28"
                       />
                       <div className="grid justify-items-start ml-15">

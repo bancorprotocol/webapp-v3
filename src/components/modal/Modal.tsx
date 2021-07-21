@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
+import { Fragment, useRef } from 'react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 
@@ -20,15 +20,18 @@ export const Modal = ({
   showBackButton,
   onBackClick,
 }: ModalProps) => {
+  const refDiv = useRef(null);
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
+          initialFocus={refDiv}
           as="div"
           className="fixed inset-0 z-50"
           onClose={() => setIsOpen(false)}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div ref={refDiv} className="min-h-screen px-4 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -45,9 +48,7 @@ export const Modal = ({
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
-            >
-              &#8203;
-            </span>
+            ></span>
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

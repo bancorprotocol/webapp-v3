@@ -33,11 +33,7 @@ export const multi = async ({
   }
 };
 
-export const slimBalanceShape = (
-  contractAddress: string,
-  owner: string,
-  network: EthNetworks
-) => {
+export const slimBalanceShape = (contractAddress: string, owner: string) => {
   const contract = buildTokenContract(contractAddress, web3);
   const template = {
     contract: DataTypes.originAddress,
@@ -46,11 +42,7 @@ export const slimBalanceShape = (
   return template;
 };
 
-export const balanceShape = (
-  contractAddress: string,
-  owner: string,
-  network: EthNetworks
-) => {
+export const balanceShape = (contractAddress: string, owner: string) => {
   const contract = buildTokenContract(contractAddress, web3);
   const template = {
     contract: DataTypes.originAddress,

@@ -100,7 +100,9 @@ export const shrinkToken = (
     throw new Error(
       `Must be passed integer to shrink token, received ${precision}`
     );
-  const res = new BigNumber(amount)
+  const bigNumAmount = new BigNumber(amount);
+  if (bigNumAmount.isEqualTo(0)) return '0';
+  const res = bigNumAmount
     .div(new BigNumber(10).pow(precision))
     .toFixed(precision, BigNumber.ROUND_DOWN);
 
@@ -134,16 +136,4 @@ export const usdByToken = (
   const input = Number(amount ? amount : token.balance);
   const tokenPrice = Number(token.usdPrice);
   return (isToken ? input * tokenPrice : input / tokenPrice).toString();
-};
-
-export const compareString = (
-  stringOne: string,
-  stringTwo: string
-): boolean => {
-  const strings = [stringOne, stringTwo];
-  if (!strings.every((str) => typeof str === 'string'))
-    throw new Error(
-      `String one: ${stringOne} String two: ${stringTwo} one of them are falsy or not a string`
-    );
-  return stringOne.toLowerCase() === stringTwo.toLowerCase();
 };

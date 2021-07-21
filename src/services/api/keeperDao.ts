@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokenList$, TokenListItem } from 'services/observables/tokens';
+import { tokens$, TokenListItem } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import {
@@ -37,7 +37,7 @@ export const swapLimit = async (
   duration: plugin.Duration,
   onPrompt: Function
 ) => {
-  const fromIsEth = ethToken.toLowerCase() === fromToken.address.toLowerCase();
+  const fromIsEth = ethToken === fromToken.address;
 
   try {
     if (fromIsEth) await depositWeth(from, user, onPrompt);
@@ -86,17 +86,13 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 const orderResToLimit = async (
   orders: OrderResponse[]
 ): Promise<LimitOrder[]> => {
-  const tokens = await tokenList$.pipe(take(1)).toPromise();
+  const tokens = await tokens$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
     const payToken =
-      tokens.find(
-        (x) => x.address.toLowerCase() === res.order.makerToken.toLowerCase()
-      ) ?? tokens[0];
+      tokens.find((x) => x.address === res.order.makerToken) ?? tokens[0];
     const getToken =
-      tokens.find(
-        (x) => x.address.toLowerCase() === res.order.takerToken.toLowerCase()
-      ) ?? tokens[0];
+      tokens.find((x) => x.address === res.order.takerToken) ?? tokens[0];
 
     const payAmount = new BigNumber(res.order.makerAmount);
     const getAmount = new BigNumber(res.order.takerAmount);
