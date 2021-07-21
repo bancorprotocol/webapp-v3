@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
@@ -12,7 +12,6 @@ import {
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
 import { Modal } from 'components/modal/Modal';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import {
   getNetworkContractApproval,
   setNetworkContractApproval,
@@ -23,6 +22,7 @@ import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { sanitizeNumberInput } from 'utils/pureFunctions';
 
 interface SwapMarketProps {
   fromToken: TokenListItem;
@@ -45,12 +45,13 @@ export const SwapMarket = ({
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
+  const [toAmountUsd, setToAmountUsd] = useState('');
+  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [step, setStep] = useState(0);
   const [fromError, setFromError] = useState('');
-  const toggle = useContext(Toggle);
 
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
@@ -80,6 +81,7 @@ export const SwapMarket = ({
       (async () => {
         if (!fromDebounce && fromToken && toToken) {
           setToAmount('');
+          setToAmountUsd('');
           const baseRate = await getRate(fromToken, toToken, '1');
           setRate(baseRate);
 
@@ -87,18 +89,19 @@ export const SwapMarket = ({
           setPriceImpact(priceImpact.toFixed(4));
         } else if (fromToken && toToken) {
           const result = await getRate(fromToken, toToken, fromDebounce);
-          const rate = (Number(result) / fromDebounce).toString();
+          const rate = new BigNumber(result).div(fromDebounce);
           setToAmount(
-            (
-              (fromDebounce /
-                (fromToken.usdPrice && toggle
-                  ? Number(fromToken.usdPrice)
-                  : 1)) *
-              Number(rate) *
-              (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
-            ).toFixed(2)
+            sanitizeNumberInput(
+              new BigNumber(fromDebounce).times(rate).toString(),
+              toToken.decimals
+            )
           );
-          setRate(rate);
+          const usdAmount = new BigNumber(fromDebounce)
+            .times(rate)
+            .times(toToken.usdPrice!)
+            .toString();
+          setToAmountUsd(usdAmount);
+          setRate(rate.toString());
 
           const priceImpact = await getPriceImpact(
             fromToken,
@@ -109,7 +112,17 @@ export const SwapMarket = ({
         }
       })();
     }
-  }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
+  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
+
+  const usdSlippage = () => {
+    if (!toAmountUsd || !fromAmountUsd) return;
+    const difference = new BigNumber(toAmountUsd).minus(fromAmountUsd);
+    const percentage = new BigNumber(difference)
+      .div(fromAmountUsd)
+      .times(100)
+      .toFixed(2);
+    return parseFloat(percentage);
+  };
 
   const closeModal = () => {
     setStep(0);
@@ -152,6 +165,7 @@ export const SwapMarket = ({
           msg: `${amount || 'Unlimited'} Swap approval set for ${
             fromToken.symbol
           }.`,
+          txHash,
         })
       );
       await handleSwap(3);
@@ -218,8 +232,6 @@ export const SwapMarket = ({
 
   // handle input errors
   useEffect(() => {
-    const isZeroInput = new BigNumber(fromAmount).eq(0);
-    if (isZeroInput) return setFromError('Alert: No Zero allowed');
     const isInsufficient =
       fromToken &&
       fromToken.balance &&
@@ -240,6 +252,8 @@ export const SwapMarket = ({
             setToken={setFromToken}
             input={fromAmount}
             setInput={setFromAmount}
+            amountUsd={fromAmountUsd}
+            setAmountUsd={setFromAmountUsd}
             debounce={setFromDebounce}
             border
             selectable
@@ -265,10 +279,13 @@ export const SwapMarket = ({
               setToken={setToToken}
               input={toAmount}
               setInput={setToAmount}
+              amountUsd={toAmountUsd}
+              setAmountUsd={setToAmountUsd}
               disabled
               selectable={fromToken && fromToken.address !== wethToken}
               startEmpty
               excludedTokens={[fromToken && fromToken.address, wethToken]}
+              usdSlippage={usdSlippage()}
             />
             {toToken && (
               <>

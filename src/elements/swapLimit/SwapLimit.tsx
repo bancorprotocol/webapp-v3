@@ -50,6 +50,8 @@ export const SwapLimit = ({
   const { account } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
+  const [toAmountUsd, setToAmountUsd] = useState('');
+  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [marketRate, setMarketRate] = useState(-1);
   const prevMarket = usePrevious(marketRate);
@@ -83,18 +85,32 @@ export const SwapLimit = ({
     [percentages]
   );
 
-  const calcFrom = (to: string, rate: string) => {
-    if (rate && to)
-      setFromAmount(new BigNumber(to).div(new BigNumber(rate)).toFixed(6));
-  };
-  const calcTo = (from: string, rate: string) => {
-    if (rate && from)
-      setToAmount(new BigNumber(rate).times(new BigNumber(from)).toFixed(6));
-  };
+  const calcFrom = useCallback(
+    (to: string, rate: string) => {
+      if (rate && to) {
+        const amount = new BigNumber(to).div(rate);
+        setFromAmount(amount.toString());
+        const usdAmount = amount.times(fromToken!.usdPrice!).toString();
+        setFromAmountUsd(usdAmount);
+      }
+    },
+    [fromToken]
+  );
+  const calcTo = useCallback(
+    (from: string, rate: string) => {
+      if (rate && from && toToken) {
+        const amount = new BigNumber(rate).times(from);
+        setToAmount(amount.toString());
+        const usdAmount = amount.times(toToken.usdPrice!).toString();
+        setToAmountUsd(usdAmount);
+      }
+    },
+    [toToken]
+  );
   const calcRate = useCallback(
     (from: string, to: string) => {
       if (from && to) {
-        const rate = new BigNumber(to).div(new BigNumber(from)).toFixed(6);
+        const rate = new BigNumber(to).div(from).toString();
         setRate(rate);
         calculatePercentageByRate(marketRate, rate);
       }
@@ -126,7 +142,7 @@ export const SwapLimit = ({
           break;
       }
     },
-    [calcRate]
+    [calcRate, calcTo, calcFrom]
   );
 
   const calculateRateByMarket = useCallback(
@@ -208,6 +224,8 @@ export const SwapLimit = ({
           token={fromToken}
           setToken={setFromToken}
           input={fromAmount}
+          amountUsd={fromAmountUsd}
+          setAmountUsd={setFromAmountUsd}
           onChange={(val: string) => {
             setFromAmount(val);
             handleFieldChanged(Field.from, val, toAmount, rate);
@@ -241,6 +259,8 @@ export const SwapLimit = ({
             token={toToken}
             setToken={setToToken}
             input={toAmount}
+            amountUsd={toAmountUsd}
+            setAmountUsd={setToAmountUsd}
             onChange={(val: string) => {
               setToAmount(val);
               handleFieldChanged(Field.to, fromAmount, val, rate);
