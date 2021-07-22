@@ -12,6 +12,7 @@ import { addNotification } from 'redux/notification/notification';
 import { useAppSelector } from 'redux/index';
 import { wethToken } from 'services/web3/config';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { Image } from 'components/image/Image';
 
 export const SwapLimitTable = () => {
   const { account } = useWeb3React();
@@ -116,7 +117,7 @@ export const SwapLimitTable = () => {
                   </td>
                   <td>
                     <div className={'flex items-center'}>
-                      <img
+                      <Image
                         src={getTokenLogoURI(order.payToken)}
                         alt="Token"
                         className="bg-grey-2 rounded-full h-28 w-28 mr-5"
@@ -126,7 +127,7 @@ export const SwapLimitTable = () => {
                   </td>
                   <td>
                     <div className={'flex items-center'}>
-                      <img
+                      <Image
                         src={getTokenLogoURI(order.getToken)}
                         alt="Token"
                         className="bg-grey-2 rounded-full h-28 w-28 mr-5"

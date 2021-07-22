@@ -8,6 +8,7 @@ import 'components/inputField/InputField.css';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
+import { Image } from 'components/image/Image';
 
 interface TokenInputFieldProps {
   label: string;
@@ -133,7 +134,7 @@ export const TokenInputField = ({
           >
             {token ? (
               <>
-                <img
+                <Image
                   src={getTokenLogoURI(token)}
                   alt="Token"
                   className="bg-grey-2 rounded-full h-28 w-28"
