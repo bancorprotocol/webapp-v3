@@ -12,6 +12,7 @@ interface InputFieldProps {
   onChange?: Function;
   onBlur?: Function;
   customClass?: string;
+  dataCy?: string;
 }
 
 export const InputField = ({
@@ -23,6 +24,7 @@ export const InputField = ({
   borderGrey,
   onChange,
   onBlur,
+  dataCy,
   customClass,
 }: InputFieldProps) => {
   const inputFieldStyles = `input-field ${classNameGenerator({
@@ -35,6 +37,7 @@ export const InputField = ({
   return (
     <input
       type="text"
+      data-cy={dataCy}
       value={input}
       placeholder={placeholder}
       className={inputFieldStyles}

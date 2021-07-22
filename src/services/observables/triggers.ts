@@ -1,7 +1,7 @@
 import {
-  tokenList$,
+  tokens$,
   tokenLists$,
-  userLists$,
+  userPreferredListIds$,
 } from 'services/observables/tokens';
 import { setTokenList, setTokenLists } from 'redux/bancor/bancor';
 import { loadSwapInfo } from 'services/web3/swap/methods';
@@ -13,22 +13,20 @@ export const loadSwapData = (dispatch: any) => {
     dispatch(setTokenLists(tokenLists));
   });
 
-  const userLists: number[] = getLSTokenList();
-  userLists$.next(userLists);
+  const userListIds = getLSTokenList();
+  userPreferredListIds$.next(userListIds);
 
-  tokenList$.subscribe((tokenList) => {
+  tokens$.subscribe((tokenList) => {
     dispatch(setTokenList(tokenList));
   });
 };
 
-const selected_lists = 'selected_lists';
-export const setLSTokenList = (userLists: number[]) => {
-  localStorage.setItem(selected_lists, userLists.join(','));
+const selected_lists = 'selected_list_ids';
+export const setLSTokenList = (userListIds: string[]) => {
+  localStorage.setItem(selected_lists, JSON.stringify(userListIds));
 };
 
-export const getLSTokenList = (): number[] => {
+export const getLSTokenList = (): string[] => {
   const list = localStorage.getItem(selected_lists);
-  if (list) return list.split(',').map((x) => Number(x));
-
-  return [];
+  return list ? JSON.parse(list) : [];
 };

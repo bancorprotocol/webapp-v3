@@ -18,14 +18,12 @@ export interface EthNetworkVariables {
 }
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
-export const wethToken: string = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const ropstenImage: string =
   'https://ropsten.etherscan.io/images/main/empty-token.png';
 
-export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
-  const eth = apiTokens.find(
-    (x) => x.dlt_id.toLowerCase() === ethToken.toLowerCase()
-  );
+export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
+  const eth = apiTokens && apiTokens.find((x) => x.dlt_id === ethToken);
 
   return {
     symbol: 'WETH',
@@ -38,9 +36,7 @@ export const getWethAPIToken = (apiTokens: APIToken[]): APIToken => {
 };
 
 export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
-  const eth = apiTokens.find(
-    (apiToken) => apiToken.dlt_id.toLowerCase() === ethToken.toLowerCase()
-  );
+  const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth)
     return {
       address: eth.dlt_id,

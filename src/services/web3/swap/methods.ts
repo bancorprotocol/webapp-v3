@@ -147,7 +147,7 @@ export const swap = async ({
 }): Promise<string> => {
   currentNetwork = net;
   currentUser = user;
-  const fromIsEth = fromToken.address.toLowerCase() === ethToken.toLowerCase();
+  const fromIsEth = fromToken.address === ethToken;
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const apiData = await apiData$.pipe(take(1)).toPromise();

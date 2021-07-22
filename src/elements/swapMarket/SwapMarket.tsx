@@ -18,6 +18,7 @@ import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
+import { sanitizeNumberInput } from 'utils/pureFunctions';
 interface SwapMarketProps {
   fromToken: TokenListItem;
   setFromToken: Function;
@@ -37,6 +38,8 @@ export const SwapMarket = ({
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
+  const [toAmountUsd, setToAmountUsd] = useState('');
+  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [fromError, setFromError] = useState('');
@@ -64,9 +67,7 @@ export const SwapMarket = ({
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
-      const eth = tokens.find(
-        (x) => x.address.toLowerCase() === ethToken.toLowerCase()
-      );
+      const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.0000');
       setToToken(eth);
@@ -75,6 +76,7 @@ export const SwapMarket = ({
       (async () => {
         if (!fromDebounce && fromToken && toToken) {
           setToAmount('');
+          setToAmountUsd('');
           const baseRate = await getRate(fromToken, toToken, '1');
           setRate(baseRate);
 
@@ -82,18 +84,19 @@ export const SwapMarket = ({
           setPriceImpact(priceImpact.toFixed(4));
         } else if (fromToken && toToken) {
           const result = await getRate(fromToken, toToken, fromDebounce);
-          const rate = (Number(result) / fromDebounce).toString();
+          const rate = new BigNumber(result).div(fromDebounce);
           setToAmount(
-            (
-              (fromDebounce /
-                (fromToken.usdPrice && toggle
-                  ? Number(fromToken.usdPrice)
-                  : 1)) *
-              Number(rate) *
-              (toToken.usdPrice && toggle ? Number(toToken.usdPrice) : 1)
-            ).toFixed(2)
+            sanitizeNumberInput(
+              new BigNumber(fromDebounce).times(rate).toString(),
+              toToken.decimals
+            )
           );
-          setRate(rate);
+          const usdAmount = new BigNumber(fromDebounce)
+            .times(rate)
+            .times(toToken.usdPrice!)
+            .toString();
+          setToAmountUsd(usdAmount);
+          setRate(rate.toString());
 
           const priceImpact = await getPriceImpact(
             fromToken,
@@ -104,7 +107,17 @@ export const SwapMarket = ({
         }
       })();
     }
-  }, [fromToken, toToken, setToToken, fromDebounce, toggle, tokens]);
+  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
+
+  const usdSlippage = () => {
+    if (!toAmountUsd || !fromAmountUsd) return;
+    const difference = new BigNumber(toAmountUsd).minus(fromAmountUsd);
+    const percentage = new BigNumber(difference)
+      .div(fromAmountUsd)
+      .times(100)
+      .toFixed(2);
+    return parseFloat(percentage);
+  };
 
   //Check if approval is required
   const checkApproval = async () => {
@@ -188,8 +201,6 @@ export const SwapMarket = ({
 
   // handle input errors
   useEffect(() => {
-    const isZeroInput = new BigNumber(fromAmount).eq(0);
-    if (isZeroInput) return setFromError('Alert: No Zero allowed');
     const isInsufficient =
       fromToken &&
       fromToken.balance &&
@@ -204,11 +215,14 @@ export const SwapMarket = ({
       <div>
         <div className="px-20">
           <TokenInputField
+            dataCy="fromAmount"
             label="You Pay"
             token={fromToken}
             setToken={setFromToken}
             input={fromAmount}
             setInput={setFromAmount}
+            amountUsd={fromAmountUsd}
+            setAmountUsd={setFromAmountUsd}
             debounce={setFromDebounce}
             border
             selectable
@@ -220,7 +234,7 @@ export const SwapMarket = ({
         <div className="widget-block">
           <div className="widget-block-icon cursor-pointer">
             <IconSync
-              className="w-[25px] text-primary dark:text-primary-light"
+              className="transform hover:rotate-180 transition duration-500 w-[25px] text-primary dark:text-primary-light"
               onClick={() =>
                 fromToken.address !== wethToken ? switchTokens() : {}
               }
@@ -229,27 +243,31 @@ export const SwapMarket = ({
           <div className="mx-10 mb-16 pt-16">
             <TokenInputField
               label="You Receive"
+              dataCy="toAmount"
               token={toToken}
               setToken={setToToken}
               input={toAmount}
               setInput={setToAmount}
+              amountUsd={toAmountUsd}
+              setAmountUsd={setToAmountUsd}
               disabled
               selectable={fromToken && fromToken.address !== wethToken}
               startEmpty
               excludedTokens={[fromToken && fromToken.address, wethToken]}
+              usdSlippage={usdSlippage()}
             />
             {toToken && (
               <>
                 <div className="flex justify-between mt-15">
                   <span>Rate</span>
-                  <span>
+                  <span data-cy="rateSpan">
                     1 {fromToken?.symbol} = {prettifyNumber(rate)}{' '}
                     {toToken?.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Price Impact</span>
-                  <span>{priceImpact}%</span>
+                  <span data-cy="priceImpact">{priceImpact}%</span>
                 </div>{' '}
               </>
             )}

@@ -20,3 +20,14 @@ export const prettifyNumber = (
     else return numeral(bigNum).format('0.[000000]', Math.floor);
   }
 };
+
+export const formatDuration = (duration: plugin.Duration): string => {
+  let sentence = '';
+  const days = duration.days();
+  const minutes = duration.minutes();
+  const hours = duration.hours();
+  if (days > 0) sentence += days + ' Days';
+  if (hours > 0) sentence += ' ' + hours + ' Hours';
+  if (minutes > 0) sentence += ' ' + minutes + ' Minutes';
+  return sentence;
+};

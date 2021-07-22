@@ -1,7 +1,7 @@
 .menu-button {
-  @apply w-full py-2 pl-10 pr-10 text-left dark:bg-blue-3 rounded-20 shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-14;
+  @apply relative w-full flex items-center justify-between bg-white dark:bg-blue-4 rounded-10 border border-grey-2 dark:border-grey-4 p-10;
 }
 
 .menu-options {
-  @apply w-full py-10 mt-10 overflow-auto text-base dark:bg-blue-3 rounded-20 shadow-lg max-h-40 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-14;
+  @apply absolute w-full py-10 mt-10 z-10 overflow-auto text-base dark:bg-blue-3 rounded-20 shadow-lg bg-white max-h-[130px] ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-14;
 }

@@ -1,5 +1,5 @@
 import { TokenListItem } from 'services/observables/tokens';
-import { compareString, expandToken } from 'utils/pureFunctions';
+import { expandToken } from 'utils/pureFunctions';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
@@ -24,8 +24,8 @@ const getApproval = async (
   spender: string,
   amountWei: string
 ): Promise<GetApprovalReturn> => {
-  const isEth = compareString(token, ethToken);
-  if (isEth) return { allowanceWei: '', isApprovalRequired: false };
+  if (token === ethToken)
+    return { allowanceWei: '', isApprovalRequired: false };
 
   const tokenContract = buildTokenContract(token, web3);
   const allowanceWei = await tokenContract.methods
@@ -48,9 +48,7 @@ const setApproval = async (
 
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 
-  const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.some((contract) =>
-    compareString(contract, token)
-  );
+  const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.includes(token);
 
   if (isNullApprovalContract) {
     const { allowanceWei } = await getApproval(

@@ -1,19 +1,20 @@
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import {
   Notification,
   NotificationType,
-  setStatus,
 } from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { web3 } from 'services/web3/contracts';
-import { useInterval } from 'hooks/useInterval';
+import { useWeb3React } from '@web3-react/core';
+import { getNetworkVariables } from 'services/web3/config';
+import { EthNetworks } from 'services/web3/types';
+
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
 
@@ -47,33 +48,7 @@ export const NotificationContent = ({
   isAlert,
 }: NotificationContentProps) => {
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
-
-  const [delay, setDelay] = useState<number | null>(2000);
-
-  const dispatch = useDispatch();
-
-  useInterval(() => {
-    if (txHash === undefined) {
-      setDelay(null);
-      return;
-    }
-
-    const checkStatus = async () => {
-      const tx = await web3.eth
-        .getTransactionReceipt(txHash)
-        .catch((e) => console.error('web3 failed: getTransactionReceipt', e));
-      if (tx) {
-        dispatch(
-          setStatus({
-            id,
-            type: tx.status ? NotificationType.success : NotificationType.error,
-          })
-        );
-      }
-    };
-
-    void checkStatus();
-  }, delay);
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     if (!isAlert) return;
@@ -101,8 +76,22 @@ export const NotificationContent = ({
     }
   };
 
+  const { chainId } = useWeb3React();
+  const etherscanUrl = () => {
+    const currentNetwork =
+      chainId === EthNetworks.Ropsten
+        ? EthNetworks.Ropsten
+        : EthNetworks.Mainnet;
+    const baseUrl = getNetworkVariables(currentNetwork).etherscanUrl;
+    return `${baseUrl}/tx/${txHash}`;
+  };
+
   return (
-    <div className="text-12">
+    <div
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+      className="text-12"
+    >
       <div className="flex justify-between items-center mb-4">
         <div className="flex">
           <div
@@ -125,7 +114,18 @@ export const NotificationContent = ({
           <IconTimes className="w-8" />
         </button>
       </div>
-      <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
+      {txHash && isHovering ? (
+        <a
+          href={etherscanUrl()}
+          target="_blank"
+          className="ml-[22px] flex text-primary font-semibold"
+          rel="noreferrer"
+        >
+          View on Etherscan <IconLink className="w-14 ml-6" />
+        </a>
+      ) : (
+        <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
+      )}
     </div>
   );
 };
