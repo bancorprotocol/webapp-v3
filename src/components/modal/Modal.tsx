@@ -10,6 +10,7 @@ interface ModalProps {
   isOpen: boolean;
   onBackClick?: Function;
   showBackButton?: boolean;
+  onClose?: Function;
 }
 
 export const Modal = ({
@@ -19,6 +20,7 @@ export const Modal = ({
   isOpen,
   showBackButton,
   onBackClick,
+  onClose,
 }: ModalProps) => {
   const refDiv = useRef(null);
 
@@ -29,7 +31,7 @@ export const Modal = ({
           initialFocus={refDiv}
           as="div"
           className="fixed inset-0 z-50"
-          onClose={() => setIsOpen(false)}
+          onClose={() => (onClose ? onClose() : setIsOpen(false))}
         >
           <div ref={refDiv} className="min-h-screen px-4 text-center">
             <Transition.Child

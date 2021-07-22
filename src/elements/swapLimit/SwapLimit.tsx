@@ -23,6 +23,9 @@ import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
+import { ModalApprove } from 'elements/modalApprove/modalApprove';
+import { getNetworkContractApproval } from 'services/web3/approval';
+import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 
 enum Field {
@@ -57,6 +60,9 @@ export const SwapLimit = ({
   const prevMarket = usePrevious(marketRate);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showEthModal, setShowEthModal] = useState(false);
+  const [disableSwap, setDisableSwap] = useState(false);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -187,33 +193,56 @@ export const SwapLimit = ({
     fetchMarketRate();
   }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
 
-  const onPromp = async () => {};
+  //Check if approval is required
+  const checkApproval = async (token: TokenListItem) => {
+    try {
+      const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
+      if (isApprovalReq) setShowApproveModal(true);
+      else await handleSwap(true);
+    } catch (e) {
+      console.error('getNetworkContractApproval failed', e);
+      setDisableSwap(false);
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Check Allowance',
+          msg: 'Unkown error - check console log.',
+        })
+      );
+    }
+  };
 
-  const handleSwap = async () => {
+  const handleSwap = async (
+    approved: boolean = false,
+    weth: boolean = false,
+    showETHtoWETHModal: boolean = false
+  ) => {
     if (!account) {
       dispatch(openWalletModal(true));
       return;
     }
 
-    if (!(toToken && fromAmount && toAmount)) return;
+    if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
-    const res = await swapLimit(
-      fromToken,
+    setDisableSwap(true);
+    if (showETHtoWETHModal) return setShowEthModal(true);
+
+    if (!approved) return checkApproval(fromToken);
+
+    const notification = await swapLimit(
+      weth ? { ...fromToken, address: wethToken } : fromToken,
       toToken,
       fromAmount,
       toAmount,
       account,
       duration,
-      onPromp
+      checkApproval
     );
 
-    dispatch(
-      addNotification({
-        type: NotificationType.success,
-        title: 'Test Notification',
-        msg: 'Some message here...',
-      })
-    );
+    if (notification) {
+      dispatch(addNotification(notification));
+      setDisableSwap(false);
+    }
   };
 
   return (
@@ -356,9 +385,45 @@ export const SwapLimit = ({
           )}
         </div>
 
+        <ModalApprove
+          isOpen={showApproveModal}
+          setIsOpen={setShowApproveModal}
+          amount={fromAmount}
+          fromToken={fromToken}
+          handleApproved={() =>
+            handleSwap(true, fromToken.address === ethToken)
+          }
+          handleCatch={() => setDisableSwap(false)}
+        />
+        <Modal
+          title="Deposit ETH to WETH"
+          isOpen={showEthModal}
+          setIsOpen={setShowEthModal}
+          onClose={() => {
+            setShowEthModal(false);
+            setDisableSwap(false);
+          }}
+        >
+          <>
+            <div>Deposited ETH Will Be Converted to WETH</div>
+            <button
+              className="btn-primary rounded w-full"
+              onClick={() => {
+                setShowEthModal(false);
+                handleSwap(true);
+              }}
+            >
+              Confirm
+            </button>
+          </>
+        </Modal>
+
         <button
           className="btn-primary rounded w-full"
-          onClick={() => handleSwap()}
+          onClick={() =>
+            handleSwap(false, false, fromToken.address === ethToken)
+          }
+          disabled={disableSwap}
         >
           Swap
         </button>
