@@ -4,13 +4,17 @@ import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { useAppSelector } from 'redux/index';
 import {
   Notification,
+  NotificationType,
   removeNotification,
   setNotifications,
+  setStatus,
 } from 'redux/notification/notification';
 import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
+import { useInterval } from 'hooks/useInterval';
+import { web3 } from 'services/web3/contracts';
 
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();
@@ -19,7 +23,26 @@ export const NotificationsMenu = () => {
     (state) => state.notification.notifications
   );
 
-  const sorted = useMemo(() => [...notifications].reverse(), [notifications]);
+  const checkStatus = async (notification: Notification) => {
+    if (!notification.txHash) return;
+    try {
+      const tx = await web3.eth.getTransactionReceipt(notification.txHash);
+      dispatch(
+        setStatus({
+          id: notification.id,
+          type: tx.status ? NotificationType.success : NotificationType.error,
+        })
+      );
+    } catch (e) {
+      console.error('web3 failed: getTransactionReceipt', e.message);
+    }
+  };
+
+  useInterval(async () => {
+    notifications
+      .filter((n) => n.type === NotificationType.pending)
+      .forEach((n) => checkStatus(n));
+  }, 2000);
 
   const title = (
     <>
@@ -33,9 +56,9 @@ export const NotificationsMenu = () => {
     </>
   );
 
-  const history = sorted.map((notification, index) => {
+  const history = notifications.map((notification, index) => {
     return (
-      <div key={index}>
+      <div key={notification.id}>
         <NotificationContent
           data={notification}
           onRemove={(id: string) => dispatch(removeNotification(id))}
@@ -47,10 +70,24 @@ export const NotificationsMenu = () => {
     );
   });
 
+  const hasPendingTx = () =>
+    notifications.some((n) => n.type === NotificationType.pending);
+
   return (
     <>
       <Popover className="hidden md:block relative">
-        <Popover.Button className="flex items-center">
+        <Popover.Button className="relative flex items-center">
+          {hasPendingTx() && (
+            <span className="absolute flex items-center justify-center h-[8px] w-[8px] top-[-5px] right-[-5px]">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75">
+                &nbsp;
+              </span>
+              <span className="relative inline-flex rounded-full h-[6px] w-[6px] bg-error">
+                &nbsp;
+              </span>
+            </span>
+          )}
+
           <IconBell className="w-[20px]" />
         </Popover.Button>
 
