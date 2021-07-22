@@ -15,7 +15,7 @@ export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
   }`;
 
   const switchToggleStyles = `swap-switch-toggle ${
-    isEnabled ? 'translate-x-14' : 'translate-x-0'
+    isEnabled ? 'md:translate-x-14 translate-x-20' : 'translate-x-0'
   }`;
 
   const coinIconStyles = isEnabled
@@ -27,8 +27,8 @@ export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
     : 'dark:text-grey-4';
 
   return (
-    <div className="flex  items-center space-x-4 text-14">
-      <IconCoins className={`w-[13px] ${coinIconStyles}`} />
+    <div className="flex items-center space-x-4 text-14">
+      <IconCoins className={`md:w-[13px] w-[20px] ${coinIconStyles}`} />
       <Switch
         checked={isEnabled}
         onChange={() => setIsEnabled(!isEnabled)}
@@ -38,7 +38,9 @@ export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
         <span aria-hidden="true" className={switchToggleStyles} />
       </Switch>
 
-      <IconDollar className={`w-[9px] ${dollarIconStyles}`} />
+      <IconDollar
+        className={`md:w-[9px] w-[14px] h-[23px] ${dollarIconStyles}`}
+      />
     </div>
   );
 };

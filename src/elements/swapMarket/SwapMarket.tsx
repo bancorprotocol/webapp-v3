@@ -205,8 +205,7 @@ export const SwapMarket = ({
       fromToken &&
       fromToken.balance &&
       new BigNumber(fromAmount).gt(fromToken.balance);
-    if (isInsufficient)
-      setFromError('Alert: Token balance is currently insufficient');
+    if (isInsufficient) setFromError('Token balance is currently insufficient');
     else setFromError('');
   }, [fromAmount, fromToken]);
 

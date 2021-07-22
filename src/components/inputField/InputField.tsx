@@ -27,7 +27,7 @@ export const InputField = ({
   dataCy,
   customClass,
 }: InputFieldProps) => {
-  const inputFieldStyles = `input-field ${classNameGenerator({
+  const inputFieldStyles = `input-field justify-center ${classNameGenerator({
     'input-field-bg-grey': bgGrey,
     'input-field-border': borderGrey,
     'text-right': format,

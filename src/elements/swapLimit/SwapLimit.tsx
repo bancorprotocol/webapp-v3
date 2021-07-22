@@ -335,7 +335,7 @@ export const SwapLimit = ({
                 {percentages.map((slip, index) => (
                   <button
                     key={'slippage' + slip}
-                    className={`btn-sm rounded-10 h-[34px] ${classNameGenerator(
+                    className={`btn-sm rounded-10 h-[34px] text-14 ${classNameGenerator(
                       {
                         'btn-outline-secondary': selPercentage !== index,
                         'btn-primary': selPercentage === index,
@@ -350,7 +350,7 @@ export const SwapLimit = ({
                     +{slip}%
                   </button>
                 ))}
-                <div className="w-96">
+                <div className="w-[65px]">
                   <InputField
                     input={percentage}
                     onBlur={() => {
@@ -372,7 +372,7 @@ export const SwapLimit = ({
                     }}
                     format
                     placeholder="Custom"
-                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-grey-3"
+                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-grey-3 p-6"
                   />
                 </div>
               </div>

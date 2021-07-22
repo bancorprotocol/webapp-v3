@@ -1,12 +1,12 @@
 .swap-header {
-    @apply flex justify-between text-grey-3 text-20 py-16 px-20;
+  @apply flex justify-between text-grey-3 text-20 py-16 px-20;
 }
 
 .swap-header button {
-    @apply focus:outline-none min-w-[70px];
+  @apply focus:outline-none;
 }
 
 .swap-header-active {
-    @apply text-blue-4 font-semibold;
-    @apply dark:text-grey-0;
+  @apply text-blue-4 font-semibold;
+  @apply dark:text-grey-0;
 }
