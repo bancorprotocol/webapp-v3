@@ -26,8 +26,10 @@ export const MenuPrimaryItem = ({
         exact
         strict
         activeClassName="text-primary-light border-primary-light"
-        className={`flex items-center justify-between w-full text-16 font-semibold border-l-[5px] h-[44px] transition-all duration-500 ${
-          isActive ? 'text-primary-light border-primary-light' : 'border-blue-4'
+        className={`flex items-center justify-between w-full text-16 font-medium border-l-[5px] h-[44px] transition-all duration-500 ${
+          isActive
+            ? 'text-primary-light border-primary-light'
+            : 'border-blue-4 border-l-[5px] hover:border-grey-0'
         }`}
       >
         <span className="flex items-center">

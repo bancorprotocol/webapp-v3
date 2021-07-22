@@ -28,7 +28,7 @@ export const SwapHeader = ({
           <button className={marketActive} onClick={() => setIsLimit(false)}>
             Market
           </button>
-          <span className="ml-18 mr-10">|</span>
+          <span className="mx-12">|</span>
           <button className={limitActive} onClick={() => setIsLimit(true)}>
             Limit
           </button>

@@ -18,7 +18,6 @@ import {
   share,
   startWith,
   take,
-  throttleTime,
   withLatestFrom,
 } from 'rxjs/operators';
 import { TokenListItem } from 'services/observables/tokens';
@@ -41,8 +40,7 @@ import { partition, uniqWith, zip } from 'lodash';
 import _ from 'lodash';
 import wait from 'waait';
 import { combineLatest, Subject } from 'rxjs';
-import { fromWei, toHex, toWei } from 'web3-utils';
-import { ContractSendMethod } from 'web3-eth-contract';
+import { fromWei, toWei } from 'web3-utils';
 import { EthNetworks } from '../types';
 import { buildTokenContract } from '../contracts/token/wrapper';
 import {
@@ -125,6 +123,167 @@ export const getPriceImpact = async (
 
   return ((1 - output / input) * 100) / 2;
 };
+
+// const buildRate = (amountEntered: BigNumber, returnAmount: BigNumber) =>
+//   returnAmount.div(amountEntered);
+
+// const calculateSlippage = (
+//   slippageLessRate: BigNumber,
+//   slippagedRate: BigNumber
+// ): BigNumber => {
+//   if (slippagedRate.gt(slippageLessRate)) throw new Error('Rates are bad');
+//   const result = slippageLessRate.minus(slippagedRate).abs();
+//   return result.div(slippageLessRate);
+// };
+
+// const getReturn = async (
+//   fromToken: TokenListItem,
+//   toToken: TokenListItem,
+//   amount: string
+// ): Promise<ConvertReturn> => {
+//   const apiData = await apiData$.pipe(take(1)).toPromise();
+//   const minimalRelays = await winningMinimalRelays(apiData, allViewRelays);
+//   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
+//   const fromWei = expandToken(amount, fromToken.decimals);
+
+//   const relays = await findBestPath({
+//     fromId: fromToken.address,
+//     toId: toToken.address,
+//     relays: minimalRelays,
+//     allViewRelays,
+//   });
+
+//   minimalPoolBalanceReceiver$.next(
+//     relays.map(
+//       (relay): MinimalPool => ({
+//         anchorAddress: relay.anchorAddress,
+//         converterAddress: relay.contract,
+//         reserves: relay.reserves.map((r) => r.contract),
+//       })
+//     )
+//   );
+
+//   const wholePath = generateEthPath(fromToken.symbol, relays);
+//   const path = wholePath.path;
+
+//   const sortedPools = wholePath.sortedRelays.map((relay) => {
+//     const pool = findOrThrow(apiData!.pools, (pool) =>
+//       compareString(pool.pool_dlt_id, relay.anchorAddress)
+//     );
+
+//     const updatedReserves = sortAlongSide(
+//       pool.reserves,
+//       (reserve) => reserve.address,
+//       relay.reserves.map((r) => r.contract)
+//     );
+//     return {
+//       ...pool,
+//       reserves: updatedReserves,
+//     };
+//   }, 'failed finding pools');
+
+//   interface SpotPriceWithFee {
+//     rate: string;
+//     decFee: number;
+//   }
+
+//   const spotPrices = (sortedPools: Pool[]): SpotPriceWithFee[] =>
+//     sortedPools.map((pool) => {
+//       const [fromReserve, toReserve] = pool.reserves;
+//       const rate = new BigNumber(toReserve.balance)
+//         .div(fromReserve.balance)
+//         .toString();
+
+//       const decFee = ppmToDec(pool.fee);
+//       return { rate, decFee };
+//     });
+
+//   const spotPriceReturn = (rates: SpotPriceWithFee[], amount: string) =>
+//     rates.reduce((acc, item) => {
+//       const spotReturn = new BigNumber(item.rate).times(acc);
+//       const feeCharged = spotReturn.times(new BigNumber(1).minus(item.decFee));
+//       return feeCharged;
+//     }, new BigNumber(amount));
+
+//   const calculateSpotPriceReturn = (
+//     sortedPools: Pool[],
+//     amount: string
+//   ): BigNumber => {
+//     const prices = spotPrices(sortedPools);
+//     return spotPriceReturn(prices, amount);
+//   };
+
+//   try {
+//     const slippageWeiReturn = await getRateByPath({
+//       networkContractAddress,
+//       path,
+//       amount: fromWei,
+//       web3,
+//     });
+
+//     const expectedReturnDec = shrinkToken(slippageWeiReturn, toToken.decimals);
+
+//     const slippageLessReturn = calculateSpotPriceReturn(sortedPools, amount);
+//     const slippageLessReturnRate = buildRate(
+//       new BigNumber(amount),
+//       slippageLessReturn
+//     );
+//     const userReturnRate = buildRate(
+//       new BigNumber(amount),
+//       new BigNumber(expectedReturnDec)
+//     );
+
+//     let slippage: number | undefined;
+//     try {
+//       const slippageBigNumber = calculateSlippage(
+//         slippageLessReturnRate,
+//         userReturnRate
+//       );
+
+//       const slippageNumber = slippageBigNumber.toNumber();
+//       slippage = slippageNumber;
+//     } catch (e) {
+//       console.error('Failed calculating slippage', e.message);
+//     }
+
+//     return {
+//       amount: shrinkToken(slippageWeiReturn, toToken.decimals),
+//       slippage,
+//     };
+//   } catch (e) {
+//     console.error(e, 'was caught in here...');
+//     if (
+//       e.message.includes(
+//         `Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from`
+//       )
+//     ) {
+//       const relayBalances = await Promise.all(
+//         relays.map(async (relay) => ({
+//           relay,
+//           balances: relayBalances await fetchRelayBalances({
+//             poolId: relay.anchorAddress,
+//           }),
+//         }))
+//       );
+//       const relaysWithNoBalances = relayBalances.filter(
+//         (relay) =>
+//           !relay.balances.reserves.every((reserve) => reserve.weiAmount !== '0')
+//       );
+//       if (relaysWithNoBalances.length > 0) {
+//         const moreThanOne = relayBalances.length > 1;
+//         throw new Error(
+//           moreThanOne
+//             ? 'Pool does not have sufficient reserve balances'
+//             : 'Pool does not have a sufficient reserve balance'
+//         );
+//       } else {
+//         throw new Error(e);
+//       }
+//     } else {
+//       throw new Error(e);
+//     }
+//   }
+// };
 
 //Temporary
 
