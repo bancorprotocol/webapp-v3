@@ -61,7 +61,7 @@ export const ModalApprove = ({
 
   return (
     <Modal title={'Swap'} setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div>
+      <div className="p-10">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
             <IconLock className="w-[22px] text-white" />

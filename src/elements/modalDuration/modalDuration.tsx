@@ -10,7 +10,6 @@ import { formatDuration } from 'utils/helperFunctions';
 interface ModalDurationProps {
   duration: Duration;
   setDuration: Function;
-  maxDays?: number;
 }
 
 interface DurationItem {
@@ -21,7 +20,6 @@ interface DurationItem {
 export const ModalDuration = ({
   duration,
   setDuration,
-  maxDays = 30,
 }: ModalDurationProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [days, setDays] = useState(duration.days());
@@ -29,7 +27,7 @@ export const ModalDuration = ({
   const [minutes, setMinutes] = useState(duration.minutes());
 
   const daysItems: DurationItem[] = Array.from(
-    { length: maxDays + 1 },
+    { length: 31 },
     (item, index: number) => ({
       id: index.toString(),
       title: index,
@@ -68,7 +66,7 @@ export const ModalDuration = ({
           <div className="text-12 text-grey-4 mb-10">
             Set up your custom time peroid
           </div>
-          <div className="w-[150px] text-14 font-medium">
+          <div className="w-[160px] text-14 font-medium">
             <div className="flex justify-between items-center">
               Days
               <div className="p-10 w-[100px]">
@@ -106,9 +104,7 @@ export const ModalDuration = ({
           </div>
           <button
             onClick={() => {
-              days === maxDays
-                ? setDuration(dayjs.duration({ days: maxDays }))
-                : setDuration(dayjs.duration({ days, hours, minutes }));
+              setDuration(dayjs.duration({ days, hours, minutes }));
               setIsOpen(false);
             }}
             className="btn-primary rounded-full w-full mt-15"
