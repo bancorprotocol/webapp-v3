@@ -1,3 +1,5 @@
+import { Image } from 'components/image/Image';
+
 export const TokensOverlap = ({
   tokens,
 }: {
@@ -6,15 +8,13 @@ export const TokensOverlap = ({
   return (
     <div className="flex">
       {tokens.map((token, index) => (
-        <img
+        <Image
           key={token.id}
           src={token.logo}
           alt="Token"
-          width="30px"
-          height="30px"
           className={`${
             index === 1 && '-ml-2'
-          } shadow bg-white border rounded-full`}
+          } shadow bg-white border rounded-full w-30 h-30`}
         />
       ))}
     </div>

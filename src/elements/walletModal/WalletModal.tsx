@@ -13,6 +13,7 @@ import { FormattedMessage } from 'react-intl';
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
+import { Image } from 'components/image/Image';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector } = useWeb3React();
@@ -90,7 +91,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         })}
       >
         {selectedWallet ? (
-          <img src={selectedWallet.icon} alt="" className="w-[22px]" />
+          <Image src={selectedWallet.icon} alt="" className="w-[22px]" />
         ) : (
           <IconWallet className="text-primary dark:text-primary-light w-[22px]" />
         )}
@@ -114,7 +115,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
                   !error && pending ? 'animate-pulse' : ''
                 }`}
               >
-                <img
+                <Image
                   src={selectedWallet?.icon}
                   alt="Wallet Logo"
                   className="w-64 h-64 mr-30"
@@ -141,7 +142,11 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
                     onClick={() => tryConnecting(wallet)}
                     className="flex items-center w-full px-16 py-10 border-2 border-grey-2 rounded-20 hover:border-primary focus:outline-none focus:border-primary"
                   >
-                    <img src={wallet.icon} alt="" className="w-32 h-32 mr-20" />
+                    <Image
+                      src={wallet.icon}
+                      alt=""
+                      className="w-32 h-32 mr-20"
+                    />
                     {wallet.name}
                   </button>
                 );

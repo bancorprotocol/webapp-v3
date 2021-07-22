@@ -13,6 +13,7 @@ import { Switch } from '@headlessui/react';
 import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 import { prettifyNumber } from 'utils/helperFunctions';
 import wait from 'waait';
+import { Image } from 'components/image/Image';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -80,7 +81,7 @@ export const SearchableTokenList = ({
                   key={tokenList.name}
                 >
                   <div className="flex items-center">
-                    <img
+                    <Image
                       alt="TokenList"
                       src={getLogoByURI(tokenList.logoURI)}
                       className="bg-grey-2 rounded-full h-28 w-28"
@@ -149,7 +150,7 @@ export const SearchableTokenList = ({
                     className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
                   >
                     <div className="flex items-center">
-                      <img
+                      <Image
                         src={getTokenLogoURI(token)}
                         alt={`${token.symbol} Token`}
                         className="bg-grey-2 rounded-full h-28 w-28"
