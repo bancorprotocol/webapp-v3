@@ -11,6 +11,9 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import { useWeb3React } from '@web3-react/core';
+import { getNetworkVariables } from 'services/web3/config';
+import { EthNetworks } from 'services/web3/types';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -73,6 +76,16 @@ export const NotificationContent = ({
     }
   };
 
+  const { chainId } = useWeb3React();
+  const etherscanUrl = () => {
+    const currentNetwork =
+      chainId === EthNetworks.Ropsten
+        ? EthNetworks.Ropsten
+        : EthNetworks.Mainnet;
+    const baseUrl = getNetworkVariables(currentNetwork).etherscanUrl;
+    return `${baseUrl}/tx/${txHash}`;
+  };
+
   return (
     <div
       onMouseEnter={() => setIsHovering(true)}
@@ -81,22 +94,16 @@ export const NotificationContent = ({
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex">
-          {txHash && isHovering ? (
-            <IconLink className="w-14 text-primary" />
-          ) : (
-            <div
-              className={`flex items-center justify-center ${classNameGenerator(
-                {
-                  'w-14 h-14 rounded-full': type !== NotificationType.pending,
-                  'bg-success': type === NotificationType.success,
-                  'bg-error': type === NotificationType.error,
-                  'bg-info': type === NotificationType.info,
-                }
-              )}`}
-            >
-              {StatusIcon()}
-            </div>
-          )}
+          <div
+            className={`flex items-center justify-center ${classNameGenerator({
+              'w-14 h-14 rounded-full': type !== NotificationType.pending,
+              'bg-success': type === NotificationType.success,
+              'bg-error': type === NotificationType.error,
+              'bg-info': type === NotificationType.info,
+            })}`}
+          >
+            {StatusIcon()}
+          </div>
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
           <span className="text-grey-4 dark:text-grey-3">
@@ -107,7 +114,18 @@ export const NotificationContent = ({
           <IconTimes className="w-8" />
         </button>
       </div>
-      <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
+      {txHash && isHovering ? (
+        <a
+          href={etherscanUrl()}
+          target="_blank"
+          className="ml-[22px] flex text-primary font-semibold"
+          rel="noreferrer"
+        >
+          View on Etherscan <IconLink className="w-14 ml-6" />
+        </a>
+      ) : (
+        <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
+      )}
     </div>
   );
 };
