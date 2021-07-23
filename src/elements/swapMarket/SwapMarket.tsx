@@ -72,7 +72,11 @@ export const SwapMarket = ({
       setToAmount(fromDebounce);
     } else {
       (async () => {
-        if (!fromDebounce && fromToken && toToken) {
+        if (
+          (!fromDebounce || !parseFloat(fromDebounce)) &&
+          fromToken &&
+          toToken
+        ) {
           setToAmount('');
           setToAmountUsd('');
           const baseRate = await getRate(fromToken, toToken, '1');
