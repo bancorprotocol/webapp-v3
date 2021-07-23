@@ -13,7 +13,6 @@ import { ReactComponent as IconGithub } from 'assets/icons/github.svg';
 import { ReactComponent as IconBntee } from 'assets/icons/bnteeshop.svg';
 
 import { Popover } from '@headlessui/react';
-import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { MenuSecondaryItemSub } from 'elements/sidebar/menuSecondary/MenuSecondaryItemSub';
 import { useState } from 'react';
@@ -114,11 +113,23 @@ interface MenuSecondaryProps {
 
 export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
   const [showModal, setShowModal] = useState(false);
-  const [menuIndex, setMenuIndex] = useState(0);
+  const [indexMobile, setIndexMobile] = useState(0);
+  const [indexDesktop, setIndexDesktop] = useState<number | null>(null);
 
   const openMobileMenu = (index: number) => {
-    setMenuIndex(index);
+    setIndexMobile(index);
     setShowModal(true);
+  };
+
+  let timeout: NodeJS.Timeout;
+
+  const openPopover = (index: number) => {
+    clearInterval(timeout);
+    setIndexDesktop(index);
+  };
+
+  const closePopover = (duration: number) => {
+    timeout = setTimeout(() => setIndexDesktop(null), duration);
   };
 
   return (
@@ -128,15 +139,21 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
         {menu.map((item, index) => {
           return (
             <Popover key={index} className="relative">
-              <Popover.Button className="w-full">
+              <Popover.Button
+                onMouseEnter={() => openPopover(index)}
+                onMouseLeave={() => closePopover(600)}
+                className="w-full"
+              >
                 <MenuSecondaryItem {...item} />
               </Popover.Button>
-
-              <DropdownTransition>
+              {indexDesktop === index && (
                 <Popover.Panel
-                  className={`absolute w-[225px] py-20 bg-blue-4 bottom-[-18px] px-24 left-0 rounded z-10 ${
+                  static
+                  onMouseEnter={() => openPopover(index)}
+                  onMouseLeave={() => closePopover(200)}
+                  className={`absolute w-[225px] py-20 bg-blue-4 bottom-[-18px] px-24 left-0 rounded z-10 transition ease-out duration-500 ${
                     isMinimized ? 'ml-[66px]' : 'ml-[200px]'
-                  }`}
+                  } ${indexDesktop === index ? 'opacity-100' : 'opacity-0'}`}
                 >
                   <div className="absolute h-14 w-14 transform bottom-24 left-[-7px] rotate-45 bg-blue-4" />
 
@@ -153,7 +170,7 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
                     </div>
                   </div>
                 </Popover.Panel>
-              </DropdownTransition>
+              )}
             </Popover>
           );
         })}
@@ -176,13 +193,13 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
       </nav>
 
       <ModalFullscreen
-        title={menu[menuIndex].label}
+        title={menu[indexMobile].label}
         setIsOpen={setShowModal}
         isOpen={showModal}
         showHeader
       >
         <div className="space-y-20">
-          {menu[menuIndex].subMenu.map((subItem, index) => {
+          {menu[indexMobile].subMenu.map((subItem, index) => {
             return <MenuSecondaryItemSub key={index} {...subItem} />;
           })}
         </div>
