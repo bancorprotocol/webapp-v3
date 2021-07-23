@@ -63,6 +63,7 @@ export const SwapLimit = ({
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showEthModal, setShowEthModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
+  const [fromError, setFromError] = useState('');
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -245,6 +246,16 @@ export const SwapLimit = ({
     }
   };
 
+  // handle input errors
+  useEffect(() => {
+    const isInsufficient =
+      fromToken &&
+      fromToken.balance &&
+      new BigNumber(fromAmount).gt(fromToken.balance);
+    if (isInsufficient) setFromError('Token balance is currently insufficient');
+    else setFromError('');
+  }, [fromAmount, fromToken]);
+
   return (
     <div>
       <div className="px-20">
@@ -272,6 +283,7 @@ export const SwapLimit = ({
                 ]
               : []
           }
+          errorMsg={fromError}
         />
       </div>
 
@@ -423,7 +435,7 @@ export const SwapLimit = ({
           onClick={() =>
             handleSwap(false, false, fromToken.address === ethToken)
           }
-          disabled={disableSwap}
+          disabled={fromError !== '' || disableSwap}
         >
           Swap
         </button>

@@ -10,7 +10,7 @@ export const prettifyNumber = (
     if (bigNum.lte(0)) return '$0.00';
     else if (bigNum.lt(0.01)) return '< $0.01';
     else if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    else return numeral(bigNum).format('$0,0.00');
+    else return numeral(bigNum).format('$0,0.00', Math.floor);
   } else {
     if (bigNum.lte(0)) return '0';
     else if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);

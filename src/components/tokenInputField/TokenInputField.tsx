@@ -86,9 +86,10 @@ export const TokenInputField = ({
   };
 
   const inputValue = () => {
-    if (!toggle) return input;
+    if (!toggle && !disabled) return input;
+    if (!toggle && disabled) return `${sanitizeNumberInput(input, 6)}`;
     if (!amountUsd) return '';
-    return `~$${sanitizeNumberInput(amountUsd, 2)}`;
+    return `~$${sanitizeNumberInput(amountUsd, 6)}`;
   };
 
   const convertedAmount = () => {
@@ -99,6 +100,10 @@ export const TokenInputField = ({
 
     if ((input || amountUsd) && token) return `${prefix}${amount}`;
     else return `${prefix}0`;
+  };
+
+  const setMaxAmount = () => {
+    balance && balanceUsd && onInputChange(toggle ? balanceUsd : balance);
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
@@ -112,8 +117,11 @@ export const TokenInputField = ({
         <span className="font-medium">{label}</span>
         {balance && balanceUsd && token && (
           <button
-            onClick={() => onInputChange(toggle ? balanceUsd : balance)}
-            className="text-12 cursor-pointer focus:outline-none"
+            onClick={() => setMaxAmount()}
+            disabled={disabled}
+            className={`text-12 focus:outline-none ${classNameGenerator({
+              'cursor-not-allowed': disabled,
+            })}`}
           >
             Balance: {prettifyNumber(balance)}
             <span className="text-primary ml-4">
