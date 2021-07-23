@@ -92,7 +92,7 @@ export const NotificationsMenu = () => {
         </Popover.Button>
 
         <DropdownTransition>
-          <Popover.Panel className="dropdown-menu">
+          <Popover.Panel static className="dropdown-menu">
             <div className="dropdown-bubble" />
 
             <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
