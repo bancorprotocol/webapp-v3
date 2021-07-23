@@ -157,8 +157,8 @@ export const TokenInputField = ({
           <div className="w-full">
             <div className="relative w-full">
               <div className="absolute text-12 bottom-0 right-0 mr-[22px] mb-10">
-                {convertedAmount()}
-                {!toggle && usdSlippage && (
+                {convertedAmount()} {token?.symbol}
+                {usdSlippage && (
                   <span className="text-grey-3 ml-4">({usdSlippage}%)</span>
                 )}
               </div>
