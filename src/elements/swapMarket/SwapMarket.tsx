@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,6 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
@@ -43,7 +42,6 @@ export const SwapMarket = ({
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [fromError, setFromError] = useState('');
-  const toggle = useContext(Toggle);
   const [showModal, setShowModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
   const dispatch = useDispatch();
@@ -191,13 +189,6 @@ export const SwapMarket = ({
     setDisableSwap(false);
     console.log('Refresh balances');
   };
-
-  const steps = [
-    'Checking allowance ...',
-    'Choose approval',
-    'Setting approval amount ...',
-    'Processing Swap ...',
-  ];
 
   // handle input errors
   useEffect(() => {
