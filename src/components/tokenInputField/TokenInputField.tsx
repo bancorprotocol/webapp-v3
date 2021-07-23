@@ -101,6 +101,10 @@ export const TokenInputField = ({
     else return `${prefix}0`;
   };
 
+  const setMaxAmount = () => {
+    balance && balanceUsd && onInputChange(toggle ? balanceUsd : balance);
+  };
+
   const inputFieldStyles = `token-input-field ${classNameGenerator({
     'border-blue-0 dark:border-blue-1': border,
     '!border-error': errorMsg,
@@ -112,8 +116,11 @@ export const TokenInputField = ({
         <span className="font-medium">{label}</span>
         {balance && balanceUsd && token && (
           <button
-            onClick={() => onInputChange(toggle ? balanceUsd : balance)}
-            className="text-12 cursor-pointer focus:outline-none"
+            onClick={() => setMaxAmount()}
+            disabled={disabled}
+            className={`text-12 focus:outline-none ${classNameGenerator({
+              'cursor-not-allowed': disabled,
+            })}`}
           >
             Balance: {prettifyNumber(balance)}
             <span className="text-primary ml-4">
