@@ -86,9 +86,10 @@ export const TokenInputField = ({
   };
 
   const inputValue = () => {
-    if (!toggle) return input;
+    if (!toggle && !disabled) return input;
+    if (!toggle && disabled) return `${sanitizeNumberInput(input, 6)}`;
     if (!amountUsd) return '';
-    return `~$${sanitizeNumberInput(amountUsd, 2)}`;
+    return `~$${sanitizeNumberInput(amountUsd, 6)}`;
   };
 
   const convertedAmount = () => {
