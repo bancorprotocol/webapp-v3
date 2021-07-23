@@ -306,8 +306,8 @@ export const SwapMarket = ({
 
           <button
             onClick={() => handleSwap()}
-            className="btn-primary rounded w-full"
-            disabled={fromError !== ''}
+            className="btn-primary btn-xl w-full"
+            disabled={fromError !== '' || fromAmount === '' || toAmount === ''}
           >
             Swap
           </button>
