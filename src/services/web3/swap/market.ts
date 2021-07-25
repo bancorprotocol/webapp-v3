@@ -20,6 +20,8 @@ import { apiData$ } from 'services/observables/pools';
 import { Pool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
 
+const oneMillion = new BigNumber(1000000);
+
 export const getRateAndPriceImapct = async (
   fromToken: TokenListItem,
   toToken: TokenListItem,
@@ -41,10 +43,15 @@ export const getRateAndPriceImapct = async (
     path,
     web3,
   });
-
   const rate = shrinkToken(toAmountWei, toToken.decimals);
-  const priceImpact = new BigNumber(rate)
-    .div(await calculateSpotPrice(fromToken.address, toToken.address))
+
+  const priceImpact = new BigNumber(1)
+    .minus(
+      new BigNumber(rate)
+        .div(amount)
+        .div(await calculateSpotPrice(fromToken.address, toToken.address))
+    )
+    .times(100)
     .toFixed(4);
 
   return {
@@ -83,8 +90,6 @@ export const swap = async ({
 
   const path = await findPath(fromToken.address, toToken.address);
 
-  //handle ETH in path
-
   return resolveTxOnConfirmation({
     tx: networkContract.methods.convertByPath(
       path,
@@ -109,16 +114,16 @@ export const swap = async ({
 const findPath = async (from: string, to: string) => {
   const network = await currentNetwork$.pipe(take(1)).toPromise();
   if (from === bntToken(network))
-    return [from, (await findPoolByToken(to)).converter_dlt_id, to];
+    return [from, (await findPoolByToken(to)).pool_dlt_id, to];
 
   if (to === bntToken(network))
-    return [from, (await findPoolByToken(from)).converter_dlt_id, to];
+    return [from, (await findPoolByToken(from)).pool_dlt_id, to];
 
   return [
     from,
-    (await findPoolByToken(from)).converter_dlt_id,
+    (await findPoolByToken(from)).pool_dlt_id,
     bntToken(network),
-    (await findPoolByToken(to)).converter_dlt_id,
+    (await findPoolByToken(to)).pool_dlt_id,
     to,
   ];
 };
@@ -137,7 +142,7 @@ const calculateSpotPrice = async (from: string, to: string) => {
     );
     return new BigNumber(toReserve[0].balance).div(
       new BigNumber(fromReserve[0].balance).times(
-        new BigNumber(1).minus(pool.fee)
+        new BigNumber(1).minus(ppmToDec(pool.fee))
       )
     );
   }
@@ -156,18 +161,20 @@ const calculateSpotPrice = async (from: string, to: string) => {
     (x) => x.address !== to
   );
 
-  return new BigNumber(toReserve1[0].balance).div(
-    new BigNumber(fromReserve1[0].balance)
-      .times(new BigNumber(1).minus(fromPool.fee))
-      .times(
-        new BigNumber(toReserve2[0].balance).div(
-          new BigNumber(fromReserve2[0].balance).times(
-            new BigNumber(1).minus(toPool.fee)
-          )
-        )
-      )
+  const spot1 = new BigNumber(toReserve1[0].balance)
+    .div(new BigNumber(fromReserve1[0].balance))
+    .times(new BigNumber(1).minus(ppmToDec(fromPool.fee)));
+
+  const spot2 = new BigNumber(toReserve2[0].balance).div(
+    new BigNumber(fromReserve2[0].balance).times(
+      new BigNumber(1).minus(ppmToDec(toPool.fee))
+    )
   );
+
+  return spot1.times(spot2);
 };
+
+const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
 
 const findPoolByToken = async (tkn: string): Promise<Pool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
