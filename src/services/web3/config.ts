@@ -52,6 +52,11 @@ export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
   return null;
 };
 
+export const bntToken = (network: EthNetworks) =>
+  network === EthNetworks.Mainnet
+    ? '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
+    : '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5';
+
 export const getNetworkVariables = (
   ethNetwork: EthNetworks
 ): EthNetworkVariables => {
