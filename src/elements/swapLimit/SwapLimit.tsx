@@ -11,7 +11,7 @@ import {
   classNameGenerator,
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
-import { getRate } from 'services/web3/swap/methods';
+import { getRateAndPriceImapct } from 'services/web3/swap/market';
 import usePrevious from 'hooks/usePrevious';
 import { swapLimit } from 'services/api/keeperDao';
 import {
@@ -169,8 +169,8 @@ export const SwapLimit = ({
     if (!fromToken || !toToken) return;
     if (toToken.address === ethToken) return;
 
-    const mRate = Number(await getRate(fromToken, toToken, '1'));
-    setMarketRate(mRate);
+    const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+    setMarketRate(Number(res.rate));
   }, [fromToken, toToken]);
 
   useEffect(() => {

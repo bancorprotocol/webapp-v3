@@ -16,6 +16,7 @@ export interface EthNetworkVariables {
   alchemyKey: string;
   govToken: string;
 }
+
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
@@ -51,6 +52,11 @@ export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
 
   return null;
 };
+
+export const bntToken = (network: EthNetworks) =>
+  network === EthNetworks.Mainnet
+    ? '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
+    : '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5';
 
 export const getNetworkVariables = (
   ethNetwork: EthNetworks

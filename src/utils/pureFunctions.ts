@@ -137,3 +137,17 @@ export const usdByToken = (
   const tokenPrice = Number(token.usdPrice);
   return (isToken ? input * tokenPrice : input / tokenPrice).toString();
 };
+
+export const splitArrayByVal = <T>(
+  arr: T[],
+  predicate: (value: T) => boolean
+) => {
+  return arr.reduce<[T[], T[]]>(
+    (result, element) => {
+      const res: T[] = result[predicate(element) ? 0 : 1];
+      res.push(element);
+      return result;
+    },
+    [[], []]
+  );
+};
