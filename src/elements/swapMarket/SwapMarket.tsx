@@ -2,7 +2,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { TokenListItem } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getPriceImpact, getRate, swap } from 'services/web3/swap/methods';
+import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
@@ -49,16 +49,17 @@ export const SwapMarket = ({
   const tokens = useAppSelector<TokenListItem[]>(
     (state) => state.bancor.tokens
   );
+  const slippageTolerance = useAppSelector<number>(
+    (state) => state.user.slippageTolerance
+  );
 
   useEffect(() => {
     (async () => {
       if (toToken && toToken.address === wethToken) setToToken(undefined);
       else if (fromToken && toToken && fromToken.address !== wethToken) {
-        const baseRate = await getRate(fromToken, toToken, '1');
-        setRate(baseRate);
-
-        const priceImpact = await getPriceImpact(fromToken, toToken, '1');
-        setPriceImpact(priceImpact.toFixed(4));
+        const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+        setRate(res.rate);
+        setPriceImpact(res.priceImpact);
       }
     })();
   }, [fromToken, toToken, setToToken]);
@@ -79,14 +80,16 @@ export const SwapMarket = ({
         ) {
           setToAmount('');
           setToAmountUsd('');
-          const baseRate = await getRate(fromToken, toToken, '1');
-          setRate(baseRate);
-
-          const priceImpact = await getPriceImpact(fromToken, toToken, '1');
-          setPriceImpact(priceImpact.toFixed(4));
+          const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+          setRate(res.rate);
+          setPriceImpact(res.priceImpact);
         } else if (fromToken && toToken) {
-          const result = await getRate(fromToken, toToken, fromDebounce);
-          const rate = new BigNumber(result).div(fromDebounce);
+          const result = await getRateAndPriceImapct(
+            fromToken,
+            toToken,
+            fromDebounce
+          );
+          const rate = new BigNumber(result.rate).div(fromDebounce);
           setToAmount(
             sanitizeNumberInput(
               new BigNumber(fromDebounce).times(rate).toString(),
@@ -99,13 +102,7 @@ export const SwapMarket = ({
             .toString();
           setToAmountUsd(usdAmount);
           setRate(rate.toString());
-
-          const priceImpact = await getPriceImpact(
-            fromToken,
-            toToken,
-            fromDebounce
-          );
-          setPriceImpact(priceImpact.toFixed(4));
+          setPriceImpact(result.priceImpact);
         }
       })();
     }
@@ -156,7 +153,7 @@ export const SwapMarket = ({
 
     try {
       const txHash = await swap({
-        net: chainId,
+        slippageTolerance,
         fromToken,
         toToken,
         fromAmount,
@@ -164,7 +161,6 @@ export const SwapMarket = ({
         user: account,
         onConfirmation,
       });
-      console.log('txHash', txHash);
 
       dispatch(
         addNotification({
@@ -189,9 +185,8 @@ export const SwapMarket = ({
     }
   };
 
-  const onConfirmation = (hashj: string) => {
+  const onConfirmation = () => {
     setDisableSwap(false);
-    console.log('Refresh balances');
   };
 
   const handleSwitch = () => {

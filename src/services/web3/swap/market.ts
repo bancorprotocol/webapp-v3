@@ -1,6 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { TokenListItem } from 'services/observables/tokens';
-import { EthNetworks } from 'services/web3/types';
 import { expandToken, shrinkToken, splitArrayByVal } from 'utils/pureFunctions';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3/contracts';
@@ -55,7 +54,6 @@ export const getRateAndPriceImapct = async (
 };
 
 export const swap = async ({
-  net,
   slippageTolerance,
   fromToken,
   toToken,
@@ -64,7 +62,6 @@ export const swap = async ({
   user,
   onConfirmation,
 }: {
-  net: EthNetworks;
   slippageTolerance: number;
   fromToken: TokenListItem;
   toToken: TokenListItem;
@@ -101,6 +98,7 @@ export const swap = async ({
     ),
     user,
     onConfirmation: () => {
+      //RefreshBalances
       onConfirmation();
     },
     resolveImmediately: true,
