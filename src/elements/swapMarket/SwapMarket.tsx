@@ -126,13 +126,12 @@ export const SwapMarket = ({
       if (isApprovalReq) setShowModal(true);
       else await handleSwap(true);
     } catch (e) {
-      console.error('getNetworkContractApproval failed', e);
       setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
-          title: 'Check Allowance',
-          msg: 'Unkown error - check console log.',
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
@@ -163,21 +162,34 @@ export const SwapMarket = ({
       dispatch(
         addNotification({
           type: NotificationType.pending,
-          title: 'Test Notification',
-          msg: 'Some message here...',
+          title: 'Pending Confirmation',
+          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+          },
           txHash,
         })
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
       setDisableSwap(false);
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Swap Failed',
-          msg: e.message,
-        })
-      );
+      if (e.message.includes('User denied transaction signature'))
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the trade. If this was by mistake, please try again.',
+          })
+        );
+      else
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+          })
+        );
     } finally {
       setShowModal(false);
     }

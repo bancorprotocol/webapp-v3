@@ -31,6 +31,12 @@ export const NotificationsMenu = () => {
         setStatus({
           id: notification.id,
           type: tx.status ? NotificationType.success : NotificationType.error,
+          title: tx.status
+            ? notification.updatedInfo?.successTitle
+            : notification.updatedInfo?.errorTitle,
+          msg: tx.status
+            ? notification.updatedInfo?.successMsg
+            : notification.updatedInfo?.errorMsg,
         })
       );
     } catch (e) {

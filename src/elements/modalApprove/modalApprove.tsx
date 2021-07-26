@@ -46,16 +46,22 @@ export const ModalApprove = ({
       );
       handleApproved();
     } catch (e) {
-      console.error('setNetworkContractApproval failed', e);
       setIsOpen(false);
       handleCatch();
-      dispatch(
+      if (e.message.includes('User denied transaction signature'))
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. If this was by mistake, please try again.',
+          })
+        );
+      else
         addNotification({
           type: NotificationType.error,
-          title: 'Approve Token',
-          msg: 'Unkown error - check console log.',
-        })
-      );
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
+        });
     }
   };
 

@@ -221,13 +221,12 @@ export const SwapLimit = ({
       if (isApprovalReq) setShowApproveModal(true);
       else await handleSwap(true);
     } catch (e) {
-      console.error('getNetworkContractApproval failed', e);
       setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
-          title: 'Check Allowance',
-          msg: 'Unkown error - check console log.',
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
