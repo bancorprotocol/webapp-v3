@@ -105,7 +105,15 @@ export const TokenInputField = ({
   };
 
   const setMaxAmount = () => {
-    balance && balanceUsd && onInputChange(toggle ? balanceUsd : balance);
+    if (balance && balanceUsd && token) {
+      if (token.symbol === 'ETH') {
+        const reducedBalance = new BigNumber(balance).minus(0.01).toString();
+        const reducedUsdBalance = new BigNumber(reducedBalance)
+          .times(token.usdPrice!)
+          .toString();
+        onInputChange(toggle ? reducedUsdBalance : reducedBalance);
+      } else onInputChange(toggle ? balanceUsd : balance);
+    }
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
