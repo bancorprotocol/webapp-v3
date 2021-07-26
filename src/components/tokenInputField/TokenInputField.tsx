@@ -101,7 +101,7 @@ export const TokenInputField = ({
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return `${prefix}${amount}`;
-    else return `${prefix}0`;
+    else return `${prefix}${toggle ? '' : '$'}0`;
   };
 
   const setMaxAmount = () => {
