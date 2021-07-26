@@ -20,7 +20,7 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
   return (
     <>
       <div className="hidden md:block absolute w-full top-[60px]">
-        <div className="flex items-center justify-center mx-auto w-[291px] h-[39px] bg-white dark:bg-blue-4 rounded-b-20 text-grey-4 dark:text-grey-2 text-12">
+        <div className="flex items-center justify-center mx-auto w-[291px] h-[39px] bg-white dark:bg-blue-4 rounded-b-20 text-grey-3 dark:text-grey-2 text-12">
           Beta Interface
         </div>
       </div>
@@ -49,6 +49,9 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
           </div>
         </div>
       </header>
+      <div className="md:hidden fixed flex items-center justify-center h-[39px] bg-grey-1 dark:bg-blue-2 text-grey-3 dark:text-grey-2 text-12 w-full top-[75px] z-20">
+        Beta Interface
+      </div>
       <LayoutHeaderMobile>
         <button onClick={() => setIsSidebarOpen(true)}>
           <IconHamburger className="w-[27px]" />
