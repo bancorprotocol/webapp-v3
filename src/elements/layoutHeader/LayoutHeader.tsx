@@ -21,7 +21,7 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
     <>
       <div className="hidden md:block absolute w-full top-[60px]">
         <div className="flex items-center justify-center mx-auto w-[291px] h-[39px] bg-white dark:bg-blue-4 rounded-b-20 text-grey-4 dark:text-grey-2 text-12">
-          Beta Interface - Use at Your Own Risk
+          Beta Interface
         </div>
       </div>
       <header className="layout-header">
