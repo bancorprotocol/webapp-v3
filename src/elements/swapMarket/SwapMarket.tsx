@@ -228,7 +228,15 @@ export const SwapMarket = ({
     if (isInputZero) return 'Enter Amount';
     if (rate === '0') return 'Insufficient liquidity';
     if (!account) return 'Connect your wallet';
+    const isHighSlippage = new BigNumber(priceImpact).gte(5);
+    if (isHighSlippage) return 'Trade with high slippage';
     return 'Trade';
+  };
+
+  const buttonVariant = () => {
+    const isHighSlippage = new BigNumber(priceImpact).gte(10);
+    if (isHighSlippage) return 'btn-error';
+    return 'btn-primary';
   };
 
   return (
@@ -295,7 +303,14 @@ export const SwapMarket = ({
                 </div>
                 <div className="flex justify-between">
                   <span>Price Impact</span>
-                  <span data-cy="priceImpact">{priceImpact}%</span>
+                  <span
+                    data-cy="priceImpact"
+                    className={`${
+                      new BigNumber(priceImpact).gte(3) ? 'text-error' : ''
+                    }`}
+                  >
+                    {priceImpact}%
+                  </span>
                 </div>
               </>
             )}
@@ -303,7 +318,7 @@ export const SwapMarket = ({
 
           <button
             onClick={() => handleSwap()}
-            className="btn-primary rounded w-full"
+            className={`${buttonVariant()} rounded w-full`}
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}
