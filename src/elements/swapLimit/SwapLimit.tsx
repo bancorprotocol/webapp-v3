@@ -64,6 +64,7 @@ export const SwapLimit = ({
   const [showEthModal, setShowEthModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
   const [fromError, setFromError] = useState('');
+  const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -144,12 +145,30 @@ export const SwapLimit = ({
           else calcFrom(to, rate);
           break;
         case Field.rate:
+          const isTooHigh = new BigNumber(rate).lt(marketRate);
+          const isTooLow = new BigNumber(marketRate).times(1.2).lt(rate);
+          if (isTooHigh) {
+            setRateWarning({
+              type: 'error',
+              msg: 'Pay attention! The rate is lower than market rate, you can get a better rate on market swap',
+            });
+          } else if (isTooLow) {
+            setRateWarning({
+              type: 'warning',
+              msg: 'Pay attention! The rate is too high above market rate and will likely not be fulfilled',
+            });
+          } else {
+            setRateWarning({
+              type: '',
+              msg: '',
+            });
+          }
           if (previousField.current === Field.from) calcTo(from, rate);
           else calcFrom(to, rate);
           break;
       }
     },
-    [calcRate, calcTo, calcFrom]
+    [calcRate, calcTo, calcFrom, marketRate]
   );
 
   const calculateRateByMarket = useCallback(
@@ -256,6 +275,12 @@ export const SwapLimit = ({
     else setFromError('');
   }, [fromAmount, fromToken]);
 
+  const handleRateInput = (val: string) => {
+    setRate(val);
+    calculatePercentageByRate(marketRate, val);
+    handleFieldChanged(Field.rate, fromAmount, toAmount, val);
+  };
+
   return (
     <div>
       <div className="px-20">
@@ -331,19 +356,21 @@ export const SwapLimit = ({
                   }`}
                 </div>
               </div>
-              <div className="flex justify-between items-center mb-15">
+              <div className="flex justify-between items-center">
                 <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
-                <InputField
-                  format
-                  input={rate}
-                  onChange={(val: string) => {
-                    setRate(val);
-                    calculatePercentageByRate(marketRate, val);
-                    handleFieldChanged(Field.rate, fromAmount, toAmount, val);
-                  }}
-                />
+                <InputField format input={rate} onChange={handleRateInput} />
               </div>
-              <div className="flex justify-end space-x-8">
+              {rateWarning.msg && (
+                <div
+                  className={`mt-10 text-center ${classNameGenerator({
+                    'text-error': rateWarning.type === 'error',
+                    'text-warning': rateWarning.type === 'warning',
+                  })}`}
+                >
+                  {rateWarning.msg}
+                </div>
+              )}
+              <div className="flex justify-end space-x-8 mt-15">
                 {percentages.map((slip, index) => (
                   <button
                     key={'slippage' + slip}
