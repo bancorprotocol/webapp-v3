@@ -49,6 +49,9 @@ export const LayoutHeader = ({ setIsSidebarOpen }: LayoutHeaderProps) => {
           </div>
         </div>
       </header>
+      <div className="md:hidden fixed flex items-center justify-center h-[39px] bg-grey-1 dark:bg-blue-2 text-grey-3 text-12 w-full top-[75px] z-20">
+        Beta Interface
+      </div>
       <LayoutHeaderMobile>
         <button onClick={() => setIsSidebarOpen(true)}>
           <IconHamburger className="w-[27px]" />

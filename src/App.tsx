@@ -95,7 +95,7 @@ export const App = () => {
       ) : unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <main className="pt-[80px] md:pt-[145px]">
+        <main className="pt-[110px] md:pt-[165px]">
           <Switch>
             <Route exact strict path="/" component={Swap} />
             <Route exact strict path="/tokens" component={Tokens} />
