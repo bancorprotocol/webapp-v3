@@ -28,33 +28,33 @@ const menu: MenuItem[] = [
     icon: <IconSync />,
     subMenu: [
       { label: 'Swap', to: '/' },
-      { label: 'Tokens', to: '/tokens' },
+      // { label: 'Tokens', to: '/tokens' },
     ],
   },
-  {
-    label: 'Earn',
-    to: '/portfolio',
-    icon: <IconEarn />,
-    subMenu: [
-      { label: 'Portfolio', to: '/portfolio' },
-      { label: 'Pools', to: '/pools' },
-    ],
-  },
-  {
-    label: 'DAO',
-    to: '/governance',
-    icon: <IconVote />,
-    subMenu: [
-      { label: 'Governance', to: '/governance' },
-      { label: 'Vote', to: '/vote' },
-    ],
-  },
-  {
-    label: 'Fiat',
-    to: '/fiat',
-    icon: <IconFiat />,
-    subMenu: [],
-  },
+  // {
+  //   label: 'Earn',
+  //   to: '/portfolio',
+  //   icon: <IconEarn />,
+  //   subMenu: [
+  //     { label: 'Portfolio', to: '/portfolio' },
+  //     { label: 'Pools', to: '/pools' },
+  //   ],
+  // },
+  // {
+  //   label: 'DAO',
+  //   to: '/governance',
+  //   icon: <IconVote />,
+  //   subMenu: [
+  //     { label: 'Governance', to: '/governance' },
+  //     { label: 'Vote', to: '/vote' },
+  //   ],
+  // },
+  // {
+  //   label: 'Fiat',
+  //   to: '/fiat',
+  //   icon: <IconFiat />,
+  //   subMenu: [],
+  // },
 ];
 
 export const MenuPrimary = ({
