@@ -41,11 +41,11 @@ const menu: SecondaryMenuItem[] = [
         to: 'https://x.bancor.network',
         icon: <IconX />,
       },
-      {
-        label: 'Bancor Wallet',
-        to: 'https://wallet.bancor.network',
-        icon: <IconWallet />,
-      },
+      // {
+      //   label: 'Bancor Wallet',
+      //   to: 'https://wallet.bancor.network',
+      //   icon: <IconWallet />,
+      // },
       {
         label: 'BNTEE Shop',
         to: 'https://www.bntee.shop/',
