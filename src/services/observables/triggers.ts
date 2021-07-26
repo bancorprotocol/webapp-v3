@@ -2,8 +2,13 @@ import {
   tokens$,
   tokenLists$,
   userPreferredListIds$,
+  keeperDaoTokens$,
 } from 'services/observables/tokens';
-import { setTokenList, setTokenLists } from 'redux/bancor/bancor';
+import {
+  setKeeperDaoTokens,
+  setTokenList,
+  setTokenLists,
+} from 'redux/bancor/bancor';
 
 export const loadSwapData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -15,6 +20,10 @@ export const loadSwapData = (dispatch: any) => {
 
   tokens$.subscribe((tokenList) => {
     dispatch(setTokenList(tokenList));
+  });
+
+  keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+    setKeeperDaoTokens(keeperDaoTokens);
   });
 };
 

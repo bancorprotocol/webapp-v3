@@ -13,7 +13,7 @@ import {
 import { useInterval } from 'hooks/useInterval';
 import { getRateAndPriceImapct } from 'services/web3/swap/market';
 import usePrevious from 'hooks/usePrevious';
-import { swapLimit } from 'services/api/keeperDao';
+import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
   addNotification,
   NotificationType,
@@ -70,6 +70,9 @@ export const SwapLimit = ({
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
+    (state) => state.bancor.keeperDaoTokens
+  );
 
   const percentages = useMemo(() => [1, 3, 5], []);
 
@@ -282,6 +285,7 @@ export const SwapLimit = ({
               : []
           }
           errorMsg={fromError}
+          includedTokens={keeperDaoTokens.map((x) => x.address)}
         />
       </div>
 
@@ -317,6 +321,7 @@ export const SwapLimit = ({
                   ]
                 : []
             }
+            includedTokens={keeperDaoTokens.map((x) => x.address)}
           />
           {toToken && (
             <>

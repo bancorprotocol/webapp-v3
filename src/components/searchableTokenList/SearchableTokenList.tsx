@@ -21,6 +21,7 @@ interface SearchableTokenListProps {
   isOpen: boolean;
   setIsOpen: Function;
   excludedTokens: string[];
+  includedTokens: string[];
 }
 
 export const SearchableTokenList = ({
@@ -28,12 +29,14 @@ export const SearchableTokenList = ({
   isOpen,
   setIsOpen,
   excludedTokens = [],
+  includedTokens = [],
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
   const [userPreferredListIds, setUserLists] = useState(getLSTokenList());
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+
   const tokensLists = useAppSelector<TokenList[]>(
     (state) => state.bancor.tokenLists
   );
@@ -135,6 +138,8 @@ export const SearchableTokenList = ({
             {tokens
               .filter(
                 (token) =>
+                  (includedTokens.length === 0 ||
+                    includedTokens.includes(token.address)) &&
                   !excludedTokens.includes(token.address) &&
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
                     token.name.toLowerCase().includes(search.toLowerCase()))

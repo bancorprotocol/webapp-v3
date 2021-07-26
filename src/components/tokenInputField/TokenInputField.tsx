@@ -24,10 +24,11 @@ interface TokenInputFieldProps {
   setToken: Function;
   debounce?: Function;
   startEmpty?: boolean;
-  excludedTokens?: string[];
   errorMsg?: string;
   usdSlippage?: number;
   dataCy?: string;
+  excludedTokens?: string[];
+  includedTokens?: string[];
 }
 
 export const TokenInputField = ({
@@ -45,9 +46,10 @@ export const TokenInputField = ({
   disabled,
   debounce,
   startEmpty,
-  excludedTokens = [],
   errorMsg,
   usdSlippage,
+  excludedTokens = [],
+  includedTokens = [],
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
@@ -204,6 +206,7 @@ export const TokenInputField = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         excludedTokens={excludedTokens}
+        includedTokens={includedTokens}
       />
     </div>
   );

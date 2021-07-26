@@ -14,6 +14,7 @@ import {
   ropstenImage,
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
+import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 
 export interface TokenList {
   name: string;
@@ -153,6 +154,10 @@ export const tokens$ = combineLatest([
       return overlappingTokens;
     }
   }),
+  shareReplay(1)
+);
+
+export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
   shareReplay(1)
 );
 

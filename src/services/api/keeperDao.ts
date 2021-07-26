@@ -75,6 +75,23 @@ const getInfo = async () => {
   const res = await axios.get(`${baseUrl}/info`);
   return res.data.result.orderDetails;
 };
+export interface KeeprDaoToken {
+  address: string;
+  chainId: number;
+  decimals: number;
+  symbol: string;
+}
+
+export const fetchKeeperDaoTokens = async (): Promise<KeeprDaoToken[]> => {
+  try {
+    const tokens = await tokens$.pipe(take(1)).toPromise();
+    const res = await axios.get(`${baseUrl}/tokenList`);
+    return res.data.result.tokens;
+  } catch (error) {
+    console.error('Failed fetching keeperDao Tokens: ', error);
+    return [];
+  }
+};
 
 export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
   const res = await axios.get<{ orders: OrderResponse[] }>(
