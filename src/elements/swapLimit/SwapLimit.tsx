@@ -189,7 +189,7 @@ export const SwapLimit = ({
     if (!fromToken || !toToken) return;
     if (toToken.address === ethToken) return;
 
-    const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+    const res = await getRateAndPriceImapct(fromToken, toToken, '1', true);
     setMarketRate(Number(res.rate));
   }, [fromToken, toToken]);
 

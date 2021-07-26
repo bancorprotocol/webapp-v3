@@ -15,7 +15,7 @@ export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
   }`;
 
   const switchToggleStyles = `swap-switch-toggle ${
-    isEnabled ? 'md:translate-x-14 translate-x-20' : 'translate-x-0'
+    isEnabled ? 'md:translate-x-12 translate-x-20' : 'translate-x-0'
   }`;
 
   const coinIconStyles = isEnabled
