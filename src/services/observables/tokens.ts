@@ -12,6 +12,7 @@ import {
   getEthToken,
   buildWethToken,
   ropstenImage,
+  ethToken,
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
@@ -132,13 +133,14 @@ export const tokens$ = combineLatest([
             ...apiToken,
           });
       } else {
-        overlappingTokens.push({
-          chainId: EthNetworks.Ropsten,
-          name: apiToken.symbol,
-          logoURI: ropstenImage,
-          balance: null,
-          ...apiToken,
-        });
+        if (apiToken.address !== ethToken)
+          overlappingTokens.push({
+            chainId: EthNetworks.Ropsten,
+            name: apiToken.symbol,
+            logoURI: ropstenImage,
+            balance: null,
+            ...apiToken,
+          });
       }
     });
 
