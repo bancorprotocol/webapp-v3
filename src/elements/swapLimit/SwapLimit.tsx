@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import {
   calculatePercentageChange,
@@ -35,9 +35,9 @@ enum Field {
 }
 
 interface SwapLimitProps {
-  fromToken: TokenListItem;
+  fromToken: Token;
   setFromToken: Function;
-  toToken: TokenListItem | null;
+  toToken: Token | null;
   setToToken: Function;
   switchTokens: Function;
 }
@@ -69,9 +69,7 @@ export const SwapLimit = ({
   );
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancor.tokens
-  );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const percentages = useMemo(() => [1, 3, 5], []);
 
@@ -195,7 +193,7 @@ export const SwapLimit = ({
   }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
 
   //Check if approval is required
-  const checkApproval = async (token: TokenListItem) => {
+  const checkApproval = async (token: Token) => {
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
       if (isApprovalReq) setShowApproveModal(true);

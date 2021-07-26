@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TokenList, TokenListItem } from 'services/observables/tokens';
+import { TokenList, Token } from 'services/observables/tokens';
 
 interface BancorState {
   tokenLists: TokenList[];
-  tokens: TokenListItem[];
+  tokens: Token[];
 }
 
 export const initialState: BancorState = {

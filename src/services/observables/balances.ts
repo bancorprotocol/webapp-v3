@@ -6,7 +6,7 @@ import {
   multi,
 } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
-import { TokenListItem } from './tokens';
+import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
@@ -22,7 +22,7 @@ interface RawToken {
   decimals?: number;
 }
 
-const toRawToken = (token: TokenListItem): RawToken => ({
+const toRawToken = (token: Token): RawToken => ({
   contract: token.address,
   ...(token.decimals && { decimals: token.decimals }),
 });
@@ -83,10 +83,10 @@ export const fetchTokenBalances = async (
 };
 
 export const updateTokenBalances = async (
-  tokens: TokenListItem[],
+  tokens: Token[],
   user: string,
   currentNetwork: EthNetworks
-): Promise<TokenListItem[]> => {
+): Promise<Token[]> => {
   const includesEth = tokens.some((token) => token.address === ethToken);
   const withoutEth = tokens
     .map(toRawToken)

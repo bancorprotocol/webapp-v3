@@ -6,13 +6,13 @@ import {
 } from 'redux/notification/notification';
 import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 
 interface ModalApproveProps {
   setIsOpen: Function;
   isOpen: boolean;
   amount: string;
-  fromToken?: TokenListItem;
+  fromToken?: Token;
   handleApproved: Function;
   handleCatch: Function;
 }

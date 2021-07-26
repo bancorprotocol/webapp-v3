@@ -1,4 +1,4 @@
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { expandToken } from 'utils/pureFunctions';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
@@ -81,7 +81,7 @@ const setApproval = async (
 };
 
 export const getNetworkContractApproval = async (
-  token: TokenListItem,
+  token: Token,
   amount: string
 ): Promise<boolean> => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
@@ -97,7 +97,7 @@ export const getNetworkContractApproval = async (
 };
 
 export const setNetworkContractApproval = async (
-  token: TokenListItem,
+  token: Token,
   amount?: string
 ) => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();

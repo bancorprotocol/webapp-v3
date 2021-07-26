@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getTokenLogoURI, TokenListItem } from 'services/observables/tokens';
+import { getTokenLogoURI, Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -20,7 +20,7 @@ interface TokenInputFieldProps {
   amountUsd: string;
   setAmountUsd: Function;
   onChange?: Function;
-  token: TokenListItem | null;
+  token: Token | null;
   setToken: Function;
   debounce?: Function;
   startEmpty?: boolean;
@@ -197,7 +197,7 @@ export const TokenInputField = ({
       )}
 
       <SearchableTokenList
-        onClick={(token: TokenListItem) => {
+        onClick={(token: Token) => {
           setToken(token);
           setSelectToken(false);
         }}

@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokens$, TokenListItem } from 'services/observables/tokens';
+import { tokens$, Token } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import {
@@ -29,8 +29,8 @@ enum OrderStatus {
 }
 
 export const swapLimit = async (
-  fromToken: TokenListItem,
-  toToken: TokenListItem,
+  fromToken: Token,
+  toToken: Token,
   from: string,
   to: string,
   user: string,
@@ -192,8 +192,8 @@ const orderToStringOrder = (order: Order): StringRfq => ({
 export interface LimitOrder {
   hash: string;
   expiration: number;
-  payToken: TokenListItem;
-  getToken: TokenListItem;
+  payToken: Token;
+  getToken: Token;
   payAmount: string;
   getAmount: string;
   rate: string;

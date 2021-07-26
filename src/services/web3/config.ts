@@ -1,5 +1,5 @@
 import { APIToken } from 'services/api/bancor';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {
@@ -36,7 +36,7 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   };
 };
 
-export const getEthToken = (apiTokens: APIToken[]): TokenListItem | null => {
+export const getEthToken = (apiTokens: APIToken[]): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth)
     return {

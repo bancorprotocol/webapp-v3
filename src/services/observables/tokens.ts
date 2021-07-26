@@ -18,10 +18,10 @@ import { mapIgnoreThrown } from 'utils/pureFunctions';
 export interface TokenList {
   name: string;
   logoURI?: string;
-  tokens: TokenListItem[];
+  tokens: Token[];
 }
 
-export interface TokenListItem {
+export interface Token {
   address: string;
   chainId: EthNetworks;
   name: string;
@@ -85,7 +85,7 @@ const tokenListMerged$ = combineLatest([
   tokenLists$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([userPreferredListIds, tokenLists]): Promise<TokenListItem[]> => {
+    async ([userPreferredListIds, tokenLists]): Promise<Token[]> => {
       if (userPreferredListIds.length === 0) return tokenLists[0].tokens;
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
@@ -116,7 +116,7 @@ export const tokens$ = combineLatest([
       usdPrice: x.rate.usd,
     }));
 
-    let overlappingTokens: TokenListItem[] = [];
+    let overlappingTokens: Token[] = [];
     const eth = getEthToken(apiTokens);
     if (eth) overlappingTokens.push(eth);
 
@@ -158,7 +158,7 @@ export const tokens$ = combineLatest([
 
 const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
-export const getTokenLogoURI = (token: TokenListItem) =>
+export const getTokenLogoURI = (token: Token) =>
   token.logoURI
     ? token.logoURI.startsWith('ipfs')
       ? buildIpfsUri(token.logoURI.split('//')[1])

@@ -5,7 +5,7 @@ import {
   getLogoByURI,
   getTokenLogoURI,
   TokenList,
-  TokenListItem,
+  Token,
   userPreferredListIds$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
@@ -33,9 +33,7 @@ export const SearchableTokenList = ({
   const [manage, setManage] = useState(false);
   const [userPreferredListIds, setUserLists] = useState(getLSTokenList());
 
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancor.tokens
-  );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const tokensLists = useAppSelector<TokenList[]>(
     (state) => state.bancor.tokenLists
   );
