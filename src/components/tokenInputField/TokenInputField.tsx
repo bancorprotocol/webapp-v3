@@ -191,7 +191,7 @@ export const TokenInputField = ({
         <button
           data-cy="selectTokenButton"
           onClick={() => (selectable ? setIsOpen(true) : {})}
-          className="flex items-center text-primary font-semibold text-20 mt-10 mb-30 py-5"
+          className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
         >
           Select a token
           <IconChevronDown className="w-[10px] h-[6px] ml-10" />

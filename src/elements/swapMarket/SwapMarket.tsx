@@ -206,6 +206,39 @@ export const SwapMarket = ({
     else setFromError('');
   }, [fromAmount, fromToken]);
 
+  const isSwapDisabled = () => {
+    if (fromError !== '') return true;
+    if (rate === '0') return true;
+    if (disableSwap) return true;
+    if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
+    if (!toToken) return true;
+    if (!account) return false;
+    return false;
+  };
+
+  const swapButtonText = () => {
+    if (!toToken) return 'Select a token';
+    if (fromToken.balance) {
+      const isInsufficientBalance = new BigNumber(fromToken.balance).lt(
+        fromAmount
+      );
+      if (isInsufficientBalance) return 'Insufficient balance';
+    }
+    const isInputZero = fromAmount === '' || new BigNumber(fromAmount).eq(0);
+    if (isInputZero) return 'Enter Amount';
+    if (rate === '0') return 'Insufficient liquidity';
+    if (!account) return 'Connect your wallet';
+    const isHighSlippage = new BigNumber(priceImpact).gte(5);
+    if (isHighSlippage) return 'Trade with high slippage';
+    return 'Trade';
+  };
+
+  const buttonVariant = () => {
+    const isHighSlippage = new BigNumber(priceImpact).gte(10);
+    if (isHighSlippage) return 'btn-error';
+    return 'btn-primary';
+  };
+
   return (
     <>
       <div>
@@ -270,18 +303,25 @@ export const SwapMarket = ({
                 </div>
                 <div className="flex justify-between">
                   <span>Price Impact</span>
-                  <span data-cy="priceImpact">{priceImpact}%</span>
-                </div>{' '}
+                  <span
+                    data-cy="priceImpact"
+                    className={`${
+                      new BigNumber(priceImpact).gte(3) ? 'text-error' : ''
+                    }`}
+                  >
+                    {priceImpact}%
+                  </span>
+                </div>
               </>
             )}
           </div>
 
           <button
             onClick={() => handleSwap()}
-            className="btn-primary rounded w-full"
-            disabled={rate === '0' || fromError !== '' || disableSwap}
+            className={`${buttonVariant()} rounded w-full`}
+            disabled={isSwapDisabled()}
           >
-            {rate === '0' ? 'Insufficient liquidity' : 'Swap'}
+            {swapButtonText()}
           </button>
         </div>
       </div>
