@@ -44,6 +44,7 @@ export const SwapMarket = ({
   const [fromError, setFromError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
+  const [rateToggle, setRateToggle] = useState(false);
   const dispatch = useDispatch();
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -253,9 +254,18 @@ export const SwapMarket = ({
               <>
                 <div className="flex justify-between mt-15">
                   <span>Rate</span>
-                  <span data-cy="rateSpan">
-                    1 {fromToken?.symbol} = {prettifyNumber(rate)}{' '}
-                    {toToken?.symbol}
+                  <span
+                    className="flex cursor-pointer"
+                    onClick={() => setRateToggle(!rateToggle)}
+                  >
+                    {rateToggle
+                      ? `1 ${fromToken?.symbol} = ${prettifyNumber(rate)} ${
+                          toToken?.symbol
+                        }`
+                      : `1 ${toToken?.symbol} = ${prettifyNumber(
+                          1 / Number(rate)
+                        )} ${fromToken?.symbol}`}
+                    <IconSync className="w-12 ml-[3px]" />
                   </span>
                 </div>
                 <div className="flex justify-between">
