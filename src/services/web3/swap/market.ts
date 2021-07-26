@@ -1,5 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { expandToken, shrinkToken, splitArrayByVal } from 'utils/pureFunctions';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3/contracts';
@@ -23,8 +23,8 @@ import { currentNetwork$ } from 'services/observables/network';
 const oneMillion = new BigNumber(1000000);
 
 export const getRateAndPriceImapct = async (
-  fromToken: TokenListItem,
-  toToken: TokenListItem,
+  fromToken: Token,
+  toToken: Token,
   amount: string
 ) => {
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
@@ -70,8 +70,8 @@ export const swap = async ({
   onConfirmation,
 }: {
   slippageTolerance: number;
-  fromToken: TokenListItem;
-  toToken: TokenListItem;
+  fromToken: Token;
+  toToken: Token;
   fromAmount: string;
   toAmount: string;
   user: string;

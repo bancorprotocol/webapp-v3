@@ -4,7 +4,7 @@ import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { loadSwapData } from 'services/observables/triggers';
 import { useDispatch } from 'react-redux';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
 
@@ -15,12 +15,10 @@ interface SwapWidgetProps {
 }
 
 export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancor.tokens
-  );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState<TokenListItem | null>(null);
+  const [toToken, setToToken] = useState<Token | null>(null);
   const [toggle, setToggle] = useState(false);
 
   const dispatch = useDispatch();
@@ -30,7 +28,7 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   }, [dispatch]);
 
   useEffect(() => {
-    const findSetToken = (token: TokenListItem) => {
+    const findSetToken = (token: Token) => {
       if (token) {
         const found = tokens.find((x) => x.address === token.address);
         if (found) return found;

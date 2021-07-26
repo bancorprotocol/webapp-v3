@@ -1,6 +1,6 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
 import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
@@ -19,9 +19,9 @@ import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 interface SwapMarketProps {
-  fromToken: TokenListItem;
+  fromToken: Token;
   setFromToken: Function;
-  toToken: TokenListItem | null;
+  toToken: Token | null;
   setToToken: Function;
   switchTokens: Function;
 }
@@ -46,9 +46,7 @@ export const SwapMarket = ({
   const [disableSwap, setDisableSwap] = useState(false);
   const dispatch = useDispatch();
 
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancor.tokens
-  );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const slippageTolerance = useAppSelector<number>(
     (state) => state.user.slippageTolerance
   );

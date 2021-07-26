@@ -5,7 +5,7 @@ import {
   getLogoByURI,
   getTokenLogoURI,
   TokenList,
-  TokenListItem,
+  Token,
   userPreferredListIds$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
@@ -14,12 +14,14 @@ import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 import { prettifyNumber } from 'utils/helperFunctions';
 import wait from 'waait';
 import { Image } from 'components/image/Image';
+import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 
 interface SearchableTokenListProps {
   onClick: Function;
   isOpen: boolean;
   setIsOpen: Function;
   excludedTokens: string[];
+  includedTokens: string[];
 }
 
 export const SearchableTokenList = ({
@@ -27,14 +29,14 @@ export const SearchableTokenList = ({
   isOpen,
   setIsOpen,
   excludedTokens = [],
+  includedTokens = [],
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
   const [userPreferredListIds, setUserLists] = useState(getLSTokenList());
 
-  const tokens = useAppSelector<TokenListItem[]>(
-    (state) => state.bancor.tokens
-  );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+
   const tokensLists = useAppSelector<TokenList[]>(
     (state) => state.bancor.tokenLists
   );
@@ -52,6 +54,8 @@ export const SearchableTokenList = ({
     const newUserPreferredListIds = alreadyPreferred
       ? userPreferredListIds.filter((list) => list !== listId)
       : [...userPreferredListIds, listId];
+
+    if (newUserPreferredListIds.length === 0) return;
 
     setLSTokenList(newUserPreferredListIds);
     setUserLists(newUserPreferredListIds);
@@ -107,8 +111,7 @@ export const SearchableTokenList = ({
                         aria-hidden="true"
                         className={`${
                           isSelected ? 'translate-x-[20px]' : 'translate-x-0'
-                        }
-            pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
+                        }pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
                       />
                     </Switch>
                   </div>
@@ -135,6 +138,8 @@ export const SearchableTokenList = ({
             {tokens
               .filter(
                 (token) =>
+                  (includedTokens.length === 0 ||
+                    includedTokens.includes(token.address)) &&
                   !excludedTokens.includes(token.address) &&
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
                     token.name.toLowerCase().includes(search.toLowerCase()))
@@ -166,13 +171,19 @@ export const SearchableTokenList = ({
               })}
           </div>
           <hr className="border-grey-2 dark:border-blue-1" />
-          <div className="flex justify-center items-center h-[59px]">
+          <div className="flex flex-col justify-center items-center h-[59px]">
             <button
               onClick={() => setManage(true)}
               className="text-primary font-semibold"
             >
-              Manage Token Lists
+              <div className="flex">
+                <IconEdit className="w-[18px] mr-4" />
+                Manage Token Lists
+              </div>
             </button>
+            <div className="text-grey-3 text-12 font-medium">
+              Only supported tokens will be displayed
+            </div>
           </div>
         </>
       )}

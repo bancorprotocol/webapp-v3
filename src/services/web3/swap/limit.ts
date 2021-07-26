@@ -1,5 +1,5 @@
 import { expandToken } from 'utils/pureFunctions';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
 import { RfqOrder, SignatureType } from '@0x/protocol-utils';
 import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
@@ -63,8 +63,8 @@ export const withdrawWeth = async (
 };
 
 export const createOrder = async (
-  fromToken: TokenListItem,
-  toToken: TokenListItem,
+  fromToken: Token,
+  toToken: Token,
   from: string,
   to: string,
   user: string,

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
-import { toChecksumAddress, fromWei } from 'web3-utils';
+import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
 import { updateTokenBalances } from './balances';
@@ -13,16 +13,16 @@ import {
   buildWethToken,
   ropstenImage,
 } from 'services/web3/config';
-import { web3 } from 'services/web3/contracts';
-import { mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
+import { mapIgnoreThrown } from 'utils/pureFunctions';
+import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 
 export interface TokenList {
   name: string;
   logoURI?: string;
-  tokens: TokenListItem[];
+  tokens: Token[];
 }
 
-export interface TokenListItem {
+export interface Token {
   address: string;
   chainId: EthNetworks;
   name: string;
@@ -35,104 +35,40 @@ export interface TokenListItem {
 
 const listOfLists = [
   {
-    uri: 'https://tokens.1inch.eth.link',
-    name: '1inch',
-  },
-  {
     uri: 'https://tokens.coingecko.com/uniswap/all.json',
     name: 'CoinGecko',
   },
   {
-    uri: 'https://tokenlist.aave.eth.link',
-    name: 'Aave Token List',
-  },
-  {
-    uri: 'https://datafi.theagora.eth.link',
-    name: 'Agora dataFi Tokens',
-  },
-  {
-    uri: 'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
-    name: 'BA ERC20 SEC Action',
-  },
-  {
-    uri: 'https://defi.cmc.eth.link',
-    name: 'CMC DeFi',
-  },
-  {
-    uri: 'https://stablecoin.cmc.eth.link',
-    name: 'CMC Stablecoin',
-  },
-  {
-    uri: 'https://erc20.cmc.eth.link',
-    name: 'CMC200 ERC20',
-  },
-  {
-    uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
-    name: 'Compound',
-  },
-  {
-    uri: 'https://defiprime.com/defiprime.tokenlist.json',
-    name: 'Defiprime',
-  },
-  {
-    uri: 'https://tokenlist.dharma.eth.link',
-    name: 'Dharma Token List',
-  },
-  {
-    uri: 'https://cdn.furucombo.app/furucombo.tokenlist.json',
-    name: 'Furucombo',
-  },
-  {
-    uri: 'https://www.gemini.com/uniswap/manifest.json',
-    name: 'Gemini Token List',
-  },
-  {
-    uri: 'https://t2crtokens.eth.link',
-    name: 'Kleros Tokens',
-  },
-  {
-    uri: 'https://api.kyber.network/tokenlist',
-    name: 'Kyber',
-  },
-  {
-    uri: 'https://messari.io/tokenlist/messari-verified',
-    name: 'Messari Verified',
-  },
-  {
-    uri: 'https://uniswap.mycryptoapi.com',
-    name: 'MyCrypto Token List',
-  },
-  {
-    uri: 'https://raw.githubusercontent.com/opynfinance/opyn-tokenlist/master/opyn-v1.tokenlist.json',
-    name: 'Opyn v1',
-  },
-  {
-    uri: 'https://app.tryroll.com/tokens.json',
-    name: 'Roll Social Money',
-  },
-  {
-    uri: 'https://raw.githubusercontent.com/SetProtocol/uniswap-tokenlist/main/set.tokenlist.json',
-    name: 'Set',
-  },
-  {
-    uri: 'https://umaproject.org/uma.tokenlist.json',
-    name: 'UMA',
-  },
-  {
-    uri: 'https://wrapped.tokensoft.eth.link',
-    name: 'Wrapped Tokens',
-  },
-  {
-    uri: 'https://yearn.science/static/tokenlist.json',
-    name: 'Yearn',
+    uri: 'https://tokenlist.zerion.eth.link',
+    name: 'Zerion',
   },
   {
     uri: 'https://zapper.fi/api/token-list',
     name: 'Zapper Token List',
   },
   {
-    uri: 'https://tokenlist.zerion.eth.link',
-    name: 'Zerion',
+    uri: 'https://tokens.1inch.eth.link',
+    name: '1inch',
+  },
+  {
+    uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
+    name: 'Compound',
+  },
+  {
+    uri: 'https://yearn.science/static/tokenlist.json',
+    name: 'Yearn',
+  },
+  {
+    uri: 'https://uniswap.mycryptoapi.com',
+    name: 'MyCrypto Token List',
+  },
+  {
+    uri: 'https://tokenlist.aave.eth.link',
+    name: 'Aave Token List',
+  },
+  {
+    uri: 'https://defiprime.com/defiprime.tokenlist.json',
+    name: 'Defiprime',
   },
 ];
 
@@ -150,7 +86,7 @@ const tokenListMerged$ = combineLatest([
   tokenLists$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([userPreferredListIds, tokenLists]): Promise<TokenListItem[]> => {
+    async ([userPreferredListIds, tokenLists]): Promise<Token[]> => {
       if (userPreferredListIds.length === 0) return tokenLists[0].tokens;
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
@@ -181,7 +117,7 @@ export const tokens$ = combineLatest([
       usdPrice: x.rate.usd,
     }));
 
-    let overlappingTokens: TokenListItem[] = [];
+    let overlappingTokens: Token[] = [];
     const eth = getEthToken(apiTokens);
     if (eth) overlappingTokens.push(eth);
 
@@ -221,9 +157,13 @@ export const tokens$ = combineLatest([
   shareReplay(1)
 );
 
+export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
+  shareReplay(1)
+);
+
 const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
-export const getTokenLogoURI = (token: TokenListItem) =>
+export const getTokenLogoURI = (token: Token) =>
   token.logoURI
     ? token.logoURI.startsWith('ipfs')
       ? buildIpfsUri(token.logoURI.split('//')[1])

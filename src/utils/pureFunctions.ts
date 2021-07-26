@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { TokenListItem } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { EthNetworks } from 'services/web3/types';
 
 export const shortenString = (
@@ -127,7 +127,7 @@ export const mapIgnoreThrown = async <T, V>(
 };
 
 export const usdByToken = (
-  token: TokenListItem,
+  token: Token,
   amount?: string,
   isToken: boolean = true
 ): string => {
