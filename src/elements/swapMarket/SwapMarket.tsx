@@ -206,6 +206,31 @@ export const SwapMarket = ({
     else setFromError('');
   }, [fromAmount, fromToken]);
 
+  const isSwapDisabled = () => {
+    if (fromError !== '') return true;
+    if (rate === '0') return true;
+    if (disableSwap) return true;
+    if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
+    if (!toToken) return true;
+    if (!account) return false;
+    return false;
+  };
+
+  const swapButtonText = () => {
+    if (!toToken) return 'Select a token';
+    if (fromToken.balance) {
+      const isInsufficientBalance = new BigNumber(fromToken.balance).lt(
+        fromAmount
+      );
+      if (isInsufficientBalance) return 'Insufficient balance';
+    }
+    const isInputZero = fromAmount === '' || new BigNumber(fromAmount).eq(0);
+    if (isInputZero) return 'Enter Amount';
+    if (rate === '0') return 'Insufficient liquidity';
+    if (!account) return 'Connect your wallet';
+    return 'Trade';
+  };
+
   return (
     <>
       <div>
@@ -271,7 +296,7 @@ export const SwapMarket = ({
                 <div className="flex justify-between">
                   <span>Price Impact</span>
                   <span data-cy="priceImpact">{priceImpact}%</span>
-                </div>{' '}
+                </div>
               </>
             )}
           </div>
@@ -279,9 +304,9 @@ export const SwapMarket = ({
           <button
             onClick={() => handleSwap()}
             className="btn-primary rounded w-full"
-            disabled={rate === '0' || fromError !== '' || disableSwap}
+            disabled={isSwapDisabled()}
           >
-            {rate === '0' ? 'Insufficient liquidity' : 'Swap'}
+            {swapButtonText()}
           </button>
         </div>
       </div>
