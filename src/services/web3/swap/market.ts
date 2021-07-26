@@ -54,16 +54,17 @@ export const getRateAndPriceImapct = async (
 
     if (skipPriceImpact) return { rate, priceImpact: '0.0000' };
 
-    const priceImpact = new BigNumber(1)
+    const priceImpactNum = new BigNumber(1)
       .minus(
         new BigNumber(rate).div(amount).div(await calculateSpotPrice(from, to))
       )
-      .times(100)
-      .toFixed(4);
+      .times(100);
 
     return {
       rate,
-      priceImpact,
+      priceImpact: isNaN(priceImpactNum.toNumber())
+        ? '0.0000'
+        : priceImpactNum.toFixed(4),
     };
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);

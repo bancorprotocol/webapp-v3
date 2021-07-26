@@ -263,7 +263,7 @@ export const SwapMarket = ({
                           toToken?.symbol
                         }`
                       : `1 ${toToken?.symbol} = ${prettifyNumber(
-                          1 / Number(rate)
+                          rate === '0' ? 0 : 1 / Number(rate)
                         )} ${fromToken?.symbol}`}
                     <IconSync className="w-12 ml-[3px]" />
                   </span>
@@ -279,9 +279,9 @@ export const SwapMarket = ({
           <button
             onClick={() => handleSwap()}
             className="btn-primary rounded w-full"
-            disabled={fromError !== '' || disableSwap}
+            disabled={rate === '0' || fromError !== '' || disableSwap}
           >
-            Swap
+            {rate === '0' ? 'Insufficient liquidity' : 'Swap'}
           </button>
         </div>
       </div>
