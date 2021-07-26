@@ -35,7 +35,7 @@ export interface Token {
 
 const listOfLists = [
   {
-    uri: 'https://tokens.coingecko.com/uniswap/all.json',
+    uri: 'https://tokens.coingecko.com/ethereum/all.json',
     name: 'CoinGecko',
   },
   {
