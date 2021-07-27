@@ -12,7 +12,6 @@ import {
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRateAndPriceImapct } from 'services/web3/swap/market';
-import usePrevious from 'hooks/usePrevious';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
   addNotification,
@@ -57,7 +56,6 @@ export const SwapLimit = ({
   const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [marketRate, setMarketRate] = useState(-1);
-  const prevMarket = usePrevious(marketRate);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -194,14 +192,14 @@ export const SwapLimit = ({
   }, [fromToken, toToken]);
 
   useEffect(() => {
-    if (prevMarket === -1)
-      calculateRateByMarket(marketRate, selPercentage, percentage);
+    calculateRateByMarket(marketRate, selPercentage, percentage);
   }, [
     calculateRateByMarket,
     marketRate,
     selPercentage,
     percentage,
-    prevMarket,
+    fromToken,
+    toToken,
   ]);
 
   useEffect(() => {
@@ -362,7 +360,7 @@ export const SwapLimit = ({
                 <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
                 <InputField format input={rate} onChange={handleRateInput} />
               </div>
-              {rateWarning.msg && (
+              {rateWarning.msg && marketRate !== -1 && (
                 <div
                   className={`mt-10 text-center ${classNameGenerator({
                     'text-error': rateWarning.type === 'error',

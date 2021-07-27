@@ -101,11 +101,19 @@ export const TokenInputField = ({
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return `${prefix}${amount}`;
-    else return `${prefix}0`;
+    else return `${prefix}${toggle ? '' : '$'}0`;
   };
 
   const setMaxAmount = () => {
-    balance && balanceUsd && onInputChange(toggle ? balanceUsd : balance);
+    if (balance && balanceUsd && token) {
+      if (token.symbol === 'ETH') {
+        const reducedBalance = new BigNumber(balance).minus(0.01).toString();
+        const reducedUsdBalance = new BigNumber(reducedBalance)
+          .times(token.usdPrice!)
+          .toString();
+        onInputChange(toggle ? reducedUsdBalance : reducedBalance);
+      } else onInputChange(toggle ? balanceUsd : balance);
+    }
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
@@ -191,9 +199,9 @@ export const TokenInputField = ({
         <button
           data-cy="selectTokenButton"
           onClick={() => (selectable ? setIsOpen(true) : {})}
-          className="flex items-center text-primary uppercase font-semibold text-20 mt-10 mb-30 py-5"
+          className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
         >
-          Select a Token
+          Select a token
           <IconChevronDown className="w-[10px] h-[6px] ml-10" />
         </button>
       )}

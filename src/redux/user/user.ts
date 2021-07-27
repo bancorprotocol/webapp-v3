@@ -10,7 +10,7 @@ export interface UserState {
 export const initialState: UserState = {
   darkMode: false,
   walletModal: false,
-  slippageTolerance: 0.005,
+  slippageTolerance: 0.01,
   locale: 'en',
 };
 
@@ -28,6 +28,7 @@ const userSlice = createSlice({
       localStorage.setItem('darkMode', JSON.stringify(action.payload));
     },
     setSlippageTolerance: (state, action) => {
+      localStorage.setItem('slippageTolerance', JSON.stringify(action.payload));
       state.slippageTolerance = action.payload;
     },
     setLocale: (state, action) => {
