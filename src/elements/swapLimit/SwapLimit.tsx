@@ -198,14 +198,8 @@ export const SwapLimit = ({
 
   useEffect(() => {
     calculateRateByMarket(marketRate, selPercentage, percentage);
-  }, [
-    calculateRateByMarket,
-    marketRate,
-    selPercentage,
-    percentage,
-    fromToken,
-    toToken,
-  ]);
+    // eslint-disable-next-line
+  }, [calculateRateByMarket, fromToken, toToken]);
 
   useEffect(() => {
     if (toToken && toToken.address === ethToken)
@@ -291,6 +285,7 @@ export const SwapLimit = ({
   }, [fromAmount, fromToken]);
 
   const handleRateInput = (val: string) => {
+    console.log('handleRateInput');
     setRate(val);
     calculatePercentageByRate(marketRate, val);
     handleFieldChanged(Field.rate, fromAmount, toAmount, val);
