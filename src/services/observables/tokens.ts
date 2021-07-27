@@ -34,7 +34,7 @@ export interface Token {
   balance: string | null;
 }
 
-const listOfLists = [
+export const listOfLists = [
   {
     uri: 'https://tokens.coingecko.com/ethereum/all.json',
     name: 'CoinGecko',
@@ -88,7 +88,6 @@ const tokenListMerged$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(
     async ([userPreferredListIds, tokenLists]): Promise<Token[]> => {
-      if (userPreferredListIds.length === 0) return tokenLists[0].tokens;
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
       );

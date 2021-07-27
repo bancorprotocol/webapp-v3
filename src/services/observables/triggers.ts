@@ -3,6 +3,7 @@ import {
   tokenLists$,
   userPreferredListIds$,
   keeperDaoTokens$,
+  listOfLists,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
@@ -16,7 +17,11 @@ export const loadSwapData = (dispatch: any) => {
   });
 
   const userListIds = getLSTokenList();
-  userPreferredListIds$.next(userListIds);
+  if (userListIds.length === 0) {
+    const firstFromList = [listOfLists[0].name];
+    setLSTokenList(firstFromList);
+    userPreferredListIds$.next(firstFromList);
+  } else userPreferredListIds$.next(userListIds);
 
   tokens$.subscribe((tokenList) => {
     dispatch(setTokenList(tokenList));
