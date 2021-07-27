@@ -63,6 +63,7 @@ export const SwapLimit = ({
   const [disableSwap, setDisableSwap] = useState(false);
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
+  const [isLoadingRate, setIsLoadingRate] = useState(false);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -76,7 +77,7 @@ export const SwapLimit = ({
   const percentages = useMemo(() => [1, 3, 5], []);
 
   useInterval(() => {
-    fetchMarketRate();
+    fetchMarketRate(false);
   }, 15000);
 
   const calculatePercentageByRate = useCallback(
@@ -183,13 +184,18 @@ export const SwapLimit = ({
     [percentages, fromAmount, toAmount, handleFieldChanged]
   );
 
-  const fetchMarketRate = useCallback(async () => {
-    if (!fromToken || !toToken) return;
-    if (toToken.address === ethToken) return;
+  const fetchMarketRate = useCallback(
+    async (setLoading = true) => {
+      if (!fromToken || !toToken) return;
+      if (toToken.address === ethToken) return;
 
-    const res = await getRateAndPriceImapct(fromToken, toToken, '1', true);
-    setMarketRate(Number(res.rate));
-  }, [fromToken, toToken]);
+      setIsLoadingRate(setLoading);
+      const res = await getRateAndPriceImapct(fromToken, toToken, '1', true);
+      setMarketRate(Number(res.rate));
+      setIsLoadingRate(false);
+    },
+    [fromToken, toToken]
+  );
 
   useEffect(() => {
     calculateRateByMarket(marketRate, selPercentage, percentage);
@@ -348,22 +354,33 @@ export const SwapLimit = ({
           />
           {toToken && (
             <>
-              <div className="flex justify-between mt-28 mb-2">
+              <div className="flex justify-between items-center mt-28 mb-2 pr-10">
                 <div className="font-medium">Rate</div>
-                <div className="text-12 pr-10">
-                  Market Rate:{' '}
-                  {`1 ${fromToken?.symbol} = ${prettifyNumber(marketRate)} ${
-                    toToken?.symbol
-                  }`}
-                </div>
+                {isLoadingRate ? (
+                  <div className="loading-skeleton h-10 w-[190px]"></div>
+                ) : (
+                  <div className="text-12">
+                    Market Rate:{' '}
+                    {`1 ${fromToken?.symbol} = ${prettifyNumber(marketRate)} ${
+                      toToken?.symbol
+                    }`}
+                  </div>
+                )}
               </div>
               <div className="flex justify-between items-center">
                 <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
-                <InputField format input={rate} onChange={handleRateInput} />
+                <div className="relative w-full">
+                  {isLoadingRate && (
+                    <div className="absolute flex justify-end bottom-[17px] bg-white dark:bg-blue-2 h-[21px] w-full pr-15">
+                      <div className="loading-skeleton h-[24px] w-4/5"></div>
+                    </div>
+                  )}
+                  <InputField format input={rate} onChange={handleRateInput} />
+                </div>
               </div>
               {rateWarning.msg && marketRate !== -1 && (
                 <div
-                  className={`mt-10 text-center ${classNameGenerator({
+                  className={`mt-10 text-center text-12 ${classNameGenerator({
                     'text-error': rateWarning.type === 'error',
                     'text-warning': rateWarning.type === 'warning',
                   })}`}
@@ -463,9 +480,9 @@ export const SwapLimit = ({
           onClick={() =>
             handleSwap(false, false, fromToken.address === ethToken)
           }
-          disabled={fromError !== '' || disableSwap}
+          disabled={fromError !== '' || disableSwap || isLoadingRate}
         >
-          Swap
+          Trade
         </button>
       </div>
     </div>
