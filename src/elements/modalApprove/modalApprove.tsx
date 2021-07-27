@@ -14,7 +14,6 @@ interface ModalApproveProps {
   amount: string;
   fromToken?: Token;
   handleApproved: Function;
-  handleCatch: Function;
 }
 
 export const ModalApprove = ({
@@ -23,7 +22,6 @@ export const ModalApprove = ({
   amount,
   fromToken,
   handleApproved,
-  handleCatch,
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
@@ -33,8 +31,8 @@ export const ModalApprove = ({
   // Prop amount is UNDEFINED when UNLIMITED
   const approve = async (amount?: string) => {
     try {
-      await setNetworkContractApproval(fromToken, amount);
       setIsOpen(false);
+      await setNetworkContractApproval(fromToken, amount);
       dispatch(
         addNotification({
           type: NotificationType.success,
@@ -47,7 +45,6 @@ export const ModalApprove = ({
       handleApproved();
     } catch (e) {
       setIsOpen(false);
-      handleCatch();
       if (e.message.includes('User denied transaction signature'))
         dispatch(
           addNotification({

@@ -43,7 +43,6 @@ export const SwapMarket = ({
   const [priceImpact, setPriceImpact] = useState('');
   const [fromError, setFromError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [disableSwap, setDisableSwap] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const dispatch = useDispatch();
 
@@ -127,7 +126,6 @@ export const SwapMarket = ({
       if (isApprovalReq) setShowModal(true);
       else await handleSwap(true);
     } catch (e) {
-      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -146,7 +144,6 @@ export const SwapMarket = ({
 
     if (!(chainId && toToken)) return;
 
-    setDisableSwap(true);
     if (!approved) return checkApproval();
 
     try {
@@ -157,7 +154,6 @@ export const SwapMarket = ({
         fromAmount,
         toAmount,
         user: account,
-        onConfirmation,
       });
 
       dispatch(
@@ -174,7 +170,6 @@ export const SwapMarket = ({
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
-      setDisableSwap(false);
       if (e.message.includes('User denied transaction signature'))
         dispatch(
           addNotification({
@@ -194,10 +189,6 @@ export const SwapMarket = ({
     } finally {
       setShowModal(false);
     }
-  };
-
-  const onConfirmation = () => {
-    setDisableSwap(false);
   };
 
   const handleSwitch = () => {
@@ -221,7 +212,6 @@ export const SwapMarket = ({
   const isSwapDisabled = () => {
     if (fromError !== '') return true;
     if (rate === '0') return true;
-    if (disableSwap) return true;
     if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
     if (!toToken) return true;
     if (!account) return false;
@@ -343,7 +333,6 @@ export const SwapMarket = ({
         amount={fromAmount}
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
-        handleCatch={() => setDisableSwap(false)}
       />
     </>
   );

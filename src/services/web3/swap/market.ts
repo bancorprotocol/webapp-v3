@@ -87,7 +87,7 @@ export const swap = async ({
   fromAmount: string;
   toAmount: string;
   user: string;
-  onConfirmation: Function;
+  onConfirmation?: Function;
 }): Promise<string> => {
   const fromIsEth = fromToken.address === ethToken;
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
@@ -116,7 +116,7 @@ export const swap = async ({
     user,
     onConfirmation: () => {
       //RefreshBalances
-      onConfirmation();
+      onConfirmation && onConfirmation();
     },
     resolveImmediately: true,
     ...(fromIsEth && { value: fromWei }),
