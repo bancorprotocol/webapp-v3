@@ -164,6 +164,8 @@ export const SwapMarket = ({
           updatedInfo: {
             successTitle: 'Success!',
             successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
           },
           txHash,
         })

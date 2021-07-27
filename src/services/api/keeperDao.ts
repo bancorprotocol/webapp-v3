@@ -52,6 +52,8 @@ export const swapLimit = async (
           updatedInfo: {
             successTitle: 'Success!',
             successMsg: `Your deposit ${from} ETH to WETH is confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
           },
         };
       } catch (error) {

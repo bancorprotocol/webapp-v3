@@ -46,6 +46,8 @@ export const ModalApprove = ({
             successMsg: `${amount || 'Unlimited'} approval set for ${
               fromToken.symbol
             }`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
           },
           txHash,
         })
