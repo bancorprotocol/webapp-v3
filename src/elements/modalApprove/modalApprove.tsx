@@ -8,6 +8,7 @@ import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3/contracts';
+import wait from 'waait';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -56,6 +57,7 @@ export const ModalApprove = ({
         let tx = null;
         while (tx === null)
           try {
+            await wait(2000);
             tx = await web3.eth.getTransactionReceipt(txHash);
           } catch (error) {}
       }
