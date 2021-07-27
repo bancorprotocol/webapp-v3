@@ -59,13 +59,17 @@ const setApproval = async (
     );
     if (Number(allowanceWei) !== 0) {
       const tx = await tokenContract.methods.approve(spender, '0');
-      await resolveTxOnConfirmation({ tx, user });
+      await resolveTxOnConfirmation({ tx, user, resolveImmediately: true });
     }
   }
 
   const tx = await tokenContract.methods.approve(spender, amountFinal);
   try {
-    return await resolveTxOnConfirmation({ tx, user });
+    return await resolveTxOnConfirmation({
+      tx,
+      user,
+      resolveImmediately: true,
+    });
   } catch (e) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
     if (!isTxDenied) {

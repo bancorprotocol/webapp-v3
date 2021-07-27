@@ -32,14 +32,19 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       setIsOpen(false);
-      await setNetworkContractApproval(fromToken, amount);
+      const txHash = await setNetworkContractApproval(fromToken, amount);
       dispatch(
         addNotification({
-          type: NotificationType.success,
-          title: `Approve ${fromToken.symbol}`,
-          msg: `${amount || 'Unlimited'} Swap approval set for ${
-            fromToken.symbol
-          }.`,
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Approve ${fromToken.symbol} is pending confirmation`,
+          updatedInfo: {
+            successTitle: 'Transaction Confirmed',
+            successMsg: `${amount || 'Unlimited'} approval set for ${
+              fromToken.symbol
+            }`,
+          },
+          txHash,
         })
       );
       handleApproved();

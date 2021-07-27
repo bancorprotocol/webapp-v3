@@ -40,7 +40,7 @@ export const NotificationsMenu = () => {
         })
       );
     } catch (e) {
-      console.error('web3 failed: getTransactionReceipt', e.message);
+      //This will fail until the tx is completed
     }
   };
 
