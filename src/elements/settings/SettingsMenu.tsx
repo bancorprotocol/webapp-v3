@@ -4,14 +4,23 @@ import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
 import { useDispatch } from 'react-redux';
-import { setDarkMode } from 'redux/user/user';
+import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
+import { useAppSelector } from 'redux/index';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
+  const [customSlippage, setCustomSlippage] = useState('');
+
   const dispatch = useDispatch();
+  const currentSlippage = useAppSelector<number>(
+    (state) => state.user.slippageTolerance
+  );
+
+  console.log({ currentSlippage });
+  const slippages = [0.01, 0.03, 0.05];
 
   const content = (
     <>
@@ -26,6 +35,46 @@ export const SettingsMenu = () => {
             <button onClick={() => dispatch(setDarkMode(true))}>
               <IconMoon className="w-15" />
             </button>
+          </div>
+        </div>
+        <hr className="border-grey-3 mt-15 mb-10" />
+
+        <div className="">
+          <div className="mb-6">Slippage Tolerance</div>
+          <div className="grid grid-cols-4 gap-10">
+            {slippages.map((slippage) => (
+              <button
+                onClick={() => dispatch(setSlippageTolerance(slippage))}
+                className={`border rounded p-4 ${
+                  currentSlippage === slippage ? 'bg-primary text-white' : ''
+                }`}
+              >
+                +{slippage * 100}%
+              </button>
+            ))}
+            <input
+              type="text"
+              className={`border text-right rounded px-10 ${
+                currentSlippage === Number(customSlippage) / 100
+                  ? 'bg-primary text-white'
+                  : ''
+              }`}
+              onFocus={() => {
+                if (!Number.isNaN(customSlippage)) {
+                  dispatch(setSlippageTolerance(Number(customSlippage) / 100));
+                }
+              }}
+              value={customSlippage}
+              onChange={(event) => {
+                const { value } = event.target;
+                if (!Number.isNaN(value)) {
+                  console.log(value, 'should be getting set');
+                  dispatch(setSlippageTolerance(Number(value) / 100));
+                }
+                setCustomSlippage(value);
+              }}
+              placeholder="Custom"
+            />
           </div>
         </div>
       </div>
