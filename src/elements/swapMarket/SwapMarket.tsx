@@ -18,6 +18,7 @@ import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
+
 interface SwapMarketProps {
   fromToken: Token;
   setFromToken: Function;
@@ -45,6 +46,7 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [disableSwap, setDisableSwap] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
+  const [isLoadingRate, setIsLoadingRate] = useState(false);
   const dispatch = useDispatch();
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -52,11 +54,26 @@ export const SwapMarket = ({
     (state) => state.user.slippageTolerance
   );
 
+  const loadRateAndPriceImapct = async (
+    fromToken: Token,
+    toToken: Token,
+    amount: string
+  ) => {
+    setIsLoadingRate(true);
+    const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    setIsLoadingRate(false);
+    return res;
+  };
+
+  useEffect(() => {
+    setIsLoadingRate(true);
+  }, [fromAmount]);
+
   useEffect(() => {
     (async () => {
       if (toToken && toToken.address === wethToken) setToToken(undefined);
       else if (fromToken && toToken && fromToken.address !== wethToken) {
-        const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+        const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
         setRate(res.rate);
         setPriceImpact(res.priceImpact);
       }
@@ -79,11 +96,11 @@ export const SwapMarket = ({
         ) {
           setToAmount('');
           setToAmountUsd('');
-          const res = await getRateAndPriceImapct(fromToken, toToken, '1');
+          const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
           setRate(res.rate);
           setPriceImpact(res.priceImpact);
         } else if (fromToken && toToken) {
-          const result = await getRateAndPriceImapct(
+          const result = await loadRateAndPriceImapct(
             fromToken,
             toToken,
             fromDebounce
@@ -207,6 +224,7 @@ export const SwapMarket = ({
   }, [fromAmount, fromToken]);
 
   const isSwapDisabled = () => {
+    if (isLoadingRate) return true;
     if (fromError !== '') return true;
     if (rate === '0') return true;
     if (disableSwap) return true;
@@ -243,6 +261,7 @@ export const SwapMarket = ({
     <>
       <div>
         <div className="px-20">
+          isloading {isLoadingRate ? 'true' : 'false'}
           <TokenInputField
             dataCy="fromAmount"
             label="You Pay"
@@ -285,32 +304,40 @@ export const SwapMarket = ({
             />
             {toToken && (
               <>
-                <div className="flex justify-between mt-15">
+                <div className="flex justify-between items-center mt-15">
                   <span>Rate</span>
-                  <span
-                    className="flex cursor-pointer"
-                    onClick={() => setRateToggle(!rateToggle)}
-                  >
-                    {rateToggle
-                      ? `1 ${fromToken?.symbol} = ${prettifyNumber(rate)} ${
-                          toToken?.symbol
-                        }`
-                      : `1 ${toToken?.symbol} = ${prettifyNumber(
-                          rate === '0' ? 0 : 1 / Number(rate)
-                        )} ${fromToken?.symbol}`}
-                    <IconSync className="w-12 ml-[3px]" />
-                  </span>
+                  {isLoadingRate ? (
+                    <div className="loading-skeleton h-10 w-[140px]"></div>
+                  ) : (
+                    <button
+                      className="flex items-center"
+                      onClick={() => setRateToggle(!rateToggle)}
+                    >
+                      {rateToggle
+                        ? `1 ${fromToken?.symbol} = ${prettifyNumber(rate)} ${
+                            toToken?.symbol
+                          }`
+                        : `1 ${toToken?.symbol} = ${prettifyNumber(
+                            rate === '0' ? 0 : 1 / Number(rate)
+                          )} ${fromToken?.symbol}`}
+                      <IconSync className="w-12 ml-[3px]" />
+                    </button>
+                  )}
                 </div>
                 <div className="flex justify-between">
                   <span>Price Impact</span>
-                  <span
-                    data-cy="priceImpact"
-                    className={`${
-                      new BigNumber(priceImpact).gte(3) ? 'text-error' : ''
-                    }`}
-                  >
-                    {priceImpact}%
-                  </span>
+                  {isLoadingRate ? (
+                    <div className="loading-skeleton h-10 w-[80px]"></div>
+                  ) : (
+                    <span
+                      data-cy="priceImpact"
+                      className={`${
+                        new BigNumber(priceImpact).gte(3) ? 'text-error' : ''
+                      }`}
+                    >
+                      {priceImpact}%
+                    </span>
+                  )}
                 </div>
               </>
             )}
