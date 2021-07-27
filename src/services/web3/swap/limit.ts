@@ -30,6 +30,7 @@ export const depositWeth = async (amount: string, user: string) => {
     tx,
     user,
     gas: estimatedGas * manualBuffer,
+    resolveImmediately: true,
   });
 
   return txHash;
