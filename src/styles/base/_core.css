@@ -5,4 +5,12 @@
        @apply bg-white md:bg-grey-1 text-blue-4 text-14 font-inter font-normal;
        @apply dark:bg-blue-4 dark:md:bg-blue-3 dark:text-grey-1;
    }
+
+    button, a {
+        @apply outline-none focus:outline-none;
+    }
+
+    input {
+        @apply appearance-none;
+    }
 }
