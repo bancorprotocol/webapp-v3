@@ -7,6 +7,8 @@ import {
 import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
+import { web3 } from 'services/web3/contracts';
+import wait from 'waait';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -14,7 +16,7 @@ interface ModalApproveProps {
   amount: string;
   fromToken?: Token;
   handleApproved: Function;
-  handleCatch: Function;
+  waitForApproval?: boolean;
 }
 
 export const ModalApprove = ({
@@ -23,7 +25,7 @@ export const ModalApprove = ({
   amount,
   fromToken,
   handleApproved,
-  handleCatch,
+  waitForApproval,
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
@@ -33,29 +35,49 @@ export const ModalApprove = ({
   // Prop amount is UNDEFINED when UNLIMITED
   const approve = async (amount?: string) => {
     try {
-      await setNetworkContractApproval(fromToken, amount);
       setIsOpen(false);
+      const txHash = await setNetworkContractApproval(fromToken, amount);
       dispatch(
         addNotification({
-          type: NotificationType.success,
-          title: `Approve ${fromToken.symbol}`,
-          msg: `${amount || 'Unlimited'} Swap approval set for ${
-            fromToken.symbol
-          }.`,
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Approve ${fromToken.symbol} is pending confirmation`,
+          updatedInfo: {
+            successTitle: 'Transaction Confirmed',
+            successMsg: `${amount || 'Unlimited'} approval set for ${
+              fromToken.symbol
+            }`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
+          },
+          txHash,
         })
       );
+      if (waitForApproval) {
+        let tx = null;
+        while (tx === null)
+          try {
+            await wait(2000);
+            tx = await web3.eth.getTransactionReceipt(txHash);
+          } catch (error) {}
+      }
       handleApproved();
     } catch (e) {
-      console.error('setNetworkContractApproval failed', e);
       setIsOpen(false);
-      handleCatch();
-      dispatch(
+      if (e.message.includes('User denied transaction signature'))
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. If this was by mistake, please try again.',
+          })
+        );
+      else
         addNotification({
           type: NotificationType.error,
-          title: 'Approve Token',
-          msg: 'Unkown error - check console log.',
-        })
-      );
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
+        });
     }
   };
 

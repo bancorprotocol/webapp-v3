@@ -27,15 +27,20 @@ export const NotificationsMenu = () => {
     if (!notification.txHash) return;
     try {
       const tx = await web3.eth.getTransactionReceipt(notification.txHash);
-      dispatch(
-        setStatus({
-          id: notification.id,
-          type: tx.status ? NotificationType.success : NotificationType.error,
-        })
-      );
-    } catch (e) {
-      console.error('web3 failed: getTransactionReceipt', e.message);
-    }
+      if (tx !== null)
+        dispatch(
+          setStatus({
+            id: notification.id,
+            type: tx.status ? NotificationType.success : NotificationType.error,
+            title: tx.status
+              ? notification.updatedInfo?.successTitle
+              : notification.updatedInfo?.errorTitle,
+            msg: tx.status
+              ? notification.updatedInfo?.successMsg
+              : notification.updatedInfo?.errorMsg,
+          })
+        );
+    } catch (e) {}
   };
 
   useInterval(async () => {

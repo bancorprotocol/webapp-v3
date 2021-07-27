@@ -14,6 +14,14 @@ export interface BaseNotification {
   msg: string;
   showSeconds?: number;
   txHash?: string;
+  updatedInfo?: UpdatedInfo;
+}
+
+interface UpdatedInfo {
+  successTitle?: string;
+  successMsg?: string;
+  errorTitle?: string;
+  errorMsg?: string;
 }
 
 export interface Notification extends BaseNotification {
@@ -63,12 +71,31 @@ const notificationSlice = createSlice({
     },
     setStatus: (
       state,
-      action: PayloadAction<{ id: string; type: NotificationType }>
+      action: PayloadAction<{
+        id: string;
+        type: NotificationType;
+        title?: string;
+        msg?: string;
+      }>
     ) => {
       const index = state.notifications.findIndex(
         (notification) => notification.id === action.payload.id
       );
-      if (index > -1) state.notifications[index].type = action.payload.type;
+      if (index > -1) {
+        const oldNotification = state.notifications[index];
+        const notification = {
+          id: oldNotification.id,
+          type: action.payload.type,
+          title: action.payload.title
+            ? action.payload.title
+            : oldNotification.title,
+          msg: action.payload.msg ? action.payload.msg : oldNotification.msg,
+          showSeconds: oldNotification.showSeconds,
+          txHash: oldNotification.txHash,
+          timestamp: oldNotification.timestamp,
+        };
+        state.notifications[index] = notification;
+      }
     },
   },
 });

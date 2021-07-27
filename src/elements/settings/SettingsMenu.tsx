@@ -19,7 +19,6 @@ export const SettingsMenu = () => {
     (state) => state.user.slippageTolerance
   );
 
-  console.log({ currentSlippage });
   const slippages = [0.01, 0.03, 0.05];
 
   const content = (
@@ -44,6 +43,7 @@ export const SettingsMenu = () => {
           <div className="grid grid-cols-4 gap-10">
             {slippages.map((slippage) => (
               <button
+                key={slippage}
                 onClick={() => dispatch(setSlippageTolerance(slippage))}
                 className={`border rounded p-4 ${
                   currentSlippage === slippage ? 'bg-primary text-white' : ''
@@ -68,7 +68,6 @@ export const SettingsMenu = () => {
               onChange={(event) => {
                 const { value } = event.target;
                 if (!Number.isNaN(value)) {
-                  console.log(value, 'should be getting set');
                   dispatch(setSlippageTolerance(Number(value) / 100));
                 }
                 setCustomSlippage(value);

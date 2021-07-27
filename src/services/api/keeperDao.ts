@@ -41,8 +41,28 @@ export const swapLimit = async (
 
   try {
     if (fromIsEth) {
-      await depositWeth(from, user);
-      await checkApproval({ ...fromToken, address: wethToken });
+      try {
+        const txHash = await depositWeth(from, user);
+        checkApproval({ ...fromToken, address: wethToken });
+        return {
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Depositing ${from} ETH to WETH is pending confirmation`,
+          txHash,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Your deposit ${from} ETH to WETH is confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
+          },
+        };
+      } catch (error) {
+        return {
+          type: NotificationType.error,
+          title: 'Transaction Failed',
+          msg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
+        };
+      }
     } else {
       await createOrder(
         fromToken,
@@ -54,15 +74,22 @@ export const swapLimit = async (
       );
       return {
         type: NotificationType.success,
-        title: 'Title',
-        msg: 'Message',
+        title: 'Success!',
+        msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
       };
     }
   } catch (error) {
+    if (error.message.includes('User denied transaction signature'))
+      return {
+        type: NotificationType.error,
+        title: 'Transaction Rejected',
+        msg: 'You rejected the transaction. If this was by mistake, please try again.',
+      };
+
     return {
       type: NotificationType.error,
-      title: 'Title',
-      msg: 'Message',
+      title: 'Transaction Failed',
+      msg: `Limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} could not be created. Please try again or contact support`,
     };
   }
 };
