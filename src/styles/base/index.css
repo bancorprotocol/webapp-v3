@@ -1,6 +1,2 @@
 @import "_core.css";
 @import '_typography.css';
-
-button, a {
-    @apply outline-none focus:outline-none;
-}

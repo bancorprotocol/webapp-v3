@@ -300,6 +300,7 @@ export const SwapMarket = ({
               startEmpty
               excludedTokens={[fromToken && fromToken.address, wethToken]}
               usdSlippage={usdSlippage()}
+              isLoading={isLoadingRate}
             />
             {toToken && (
               <>

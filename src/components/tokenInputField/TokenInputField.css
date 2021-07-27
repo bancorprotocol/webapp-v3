@@ -1,5 +1,5 @@
 .token-input-field {
-    @apply appearance-none text-20 pt-14 pb-28 px-20 rounded w-full text-right;
+    @apply text-20 pt-14 pb-28 px-20 rounded w-full text-right;
     @apply bg-white dark:bg-blue-4;
     @apply border-2 border-white dark:border-blue-4;
     @apply focus:outline-none focus:border-primary;
