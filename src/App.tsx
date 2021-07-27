@@ -24,7 +24,7 @@ import {
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
-import { setDarkMode } from 'redux/user/user';
+import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
 import {
   Notification,
   setNotifications,
@@ -51,6 +51,11 @@ export const App = () => {
   useEffect(() => {
     const restored = localStorage.getItem('darkMode');
     if (restored) dispatch(setDarkMode(JSON.parse(restored)));
+  }, [dispatch]);
+
+  useEffect(() => {
+    const restored = localStorage.getItem('slippageTolerance');
+    if (restored) dispatch(setSlippageTolerance(JSON.parse(restored)));
   }, [dispatch]);
 
   useEffect(() => {
