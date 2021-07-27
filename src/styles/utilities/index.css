@@ -1,2 +1,7 @@
 @import 'tailwindcss/utilities';
 
+@layer utilities {
+    .loading-skeleton {
+        @apply bg-primary bg-opacity-30 animate-pulse rounded-full;
+    }
+}

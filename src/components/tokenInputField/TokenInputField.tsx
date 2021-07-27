@@ -161,8 +161,8 @@ export const TokenInputField = ({
               </>
             ) : (
               <>
-                <div className="bg-grey-2 rounded-full h-28 w-28 animate-pulse"></div>
-                <div className="mx-10 h-16 w-50 bg-grey-2 animate-pulse rounded-full"></div>
+                <div className="loading-skeleton h-28 w-28"></div>
+                <div className="loading-skeleton mx-10 h-16 w-50"></div>
               </>
             )}
 
@@ -183,6 +183,7 @@ export const TokenInputField = ({
               <input
                 data-cy={dataCy}
                 type="text"
+                inputMode="decimal"
                 value={inputValue()}
                 disabled={disabled}
                 placeholder={toggle ? '~$0.00' : '0.00'}
