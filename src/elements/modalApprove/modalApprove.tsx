@@ -7,6 +7,7 @@ import {
 import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
+import { web3 } from 'services/web3/contracts';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -14,6 +15,7 @@ interface ModalApproveProps {
   amount: string;
   fromToken?: Token;
   handleApproved: Function;
+  waitForApproval?: boolean;
 }
 
 export const ModalApprove = ({
@@ -22,6 +24,7 @@ export const ModalApprove = ({
   amount,
   fromToken,
   handleApproved,
+  waitForApproval,
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
@@ -47,6 +50,12 @@ export const ModalApprove = ({
           txHash,
         })
       );
+      if (waitForApproval)
+        try {
+          await web3.eth.getTransactionReceipt(txHash);
+        } catch (error) {
+          //This will fail until the tx is completed
+        }
       handleApproved();
     } catch (e) {
       setIsOpen(false);

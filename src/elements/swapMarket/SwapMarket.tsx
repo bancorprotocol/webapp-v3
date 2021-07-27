@@ -333,6 +333,7 @@ export const SwapMarket = ({
         amount={fromAmount}
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
+        waitForApproval={true}
       />
     </>
   );
