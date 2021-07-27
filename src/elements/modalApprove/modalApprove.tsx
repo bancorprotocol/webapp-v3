@@ -50,12 +50,13 @@ export const ModalApprove = ({
           txHash,
         })
       );
-      if (waitForApproval)
-        try {
-          await web3.eth.getTransactionReceipt(txHash);
-        } catch (error) {
-          //This will fail until the tx is completed
-        }
+      if (waitForApproval) {
+        let tx = null;
+        while (tx === null)
+          try {
+            tx = await web3.eth.getTransactionReceipt(txHash);
+          } catch (error) {}
+      }
       handleApproved();
     } catch (e) {
       setIsOpen(false);
