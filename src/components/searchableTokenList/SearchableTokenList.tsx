@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import {
@@ -111,7 +111,7 @@ export const SearchableTokenList = ({
                         aria-hidden="true"
                         className={`${
                           isSelected ? 'translate-x-[20px]' : 'translate-x-0'
-                        }pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
+                        } pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
                       />
                     </Switch>
                   </div>
@@ -173,7 +173,10 @@ export const SearchableTokenList = ({
           <hr className="border-grey-2 dark:border-blue-1" />
           <div className="flex flex-col justify-center items-center h-[59px]">
             <button
-              onClick={() => setManage(true)}
+              onClick={() => {
+                setUserLists(getLSTokenList());
+                setManage(true);
+              }}
               className="text-primary font-semibold"
             >
               <div className="flex">

@@ -60,7 +60,6 @@ export const SwapLimit = ({
   const [selPercentage, setSelPercentage] = useState(1);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showEthModal, setShowEthModal] = useState(false);
-  const [disableSwap, setDisableSwap] = useState(false);
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
   const [isLoadingRate, setIsLoadingRate] = useState(false);
@@ -225,13 +224,11 @@ export const SwapLimit = ({
       if (isApprovalReq) setShowApproveModal(true);
       else await handleSwap(true);
     } catch (e) {
-      console.error('getNetworkContractApproval failed', e);
-      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
-          title: 'Check Allowance',
-          msg: 'Unkown error - check console log.',
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
@@ -249,7 +246,6 @@ export const SwapLimit = ({
 
     if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
-    setDisableSwap(true);
     if (showETHtoWETHModal) return setShowEthModal(true);
 
     if (!approved) return checkApproval(fromToken);
@@ -264,10 +260,24 @@ export const SwapLimit = ({
       checkApproval
     );
 
-    if (notification) {
-      dispatch(addNotification(notification));
-      setDisableSwap(false);
-    }
+    if (notification) dispatch(addNotification(notification));
+  };
+
+  const isSwapDisabled = () => {
+    if (isLoadingRate) return true;
+    if (fromError !== '') return true;
+    if (
+      fromAmount === '' ||
+      toAmount === '' ||
+      rate === '' ||
+      new BigNumber(fromAmount).eq(0) ||
+      new BigNumber(toAmount).eq(0) ||
+      new BigNumber(rate).eq(0)
+    )
+      return true;
+    if (!toToken) return true;
+    if (!account) return false;
+    return false;
   };
 
   // handle input errors
@@ -450,16 +460,12 @@ export const SwapLimit = ({
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }
-          handleCatch={() => setDisableSwap(false)}
         />
         <Modal
           title="Deposit ETH to WETH"
           isOpen={showEthModal}
           setIsOpen={setShowEthModal}
-          onClose={() => {
-            setShowEthModal(false);
-            setDisableSwap(false);
-          }}
+          onClose={() => setShowEthModal(false)}
         >
           <>
             <div>Deposited ETH Will Be Converted to WETH</div>
@@ -480,7 +486,7 @@ export const SwapLimit = ({
           onClick={() =>
             handleSwap(false, false, fromToken.address === ethToken)
           }
-          disabled={fromError !== '' || disableSwap || isLoadingRate}
+          disabled={isSwapDisabled()}
         >
           Trade
         </button>

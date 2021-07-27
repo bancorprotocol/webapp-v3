@@ -44,7 +44,6 @@ export const SwapMarket = ({
   const [priceImpact, setPriceImpact] = useState('');
   const [fromError, setFromError] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [disableSwap, setDisableSwap] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
   const dispatch = useDispatch();
@@ -144,13 +143,11 @@ export const SwapMarket = ({
       if (isApprovalReq) setShowModal(true);
       else await handleSwap(true);
     } catch (e) {
-      console.error('getNetworkContractApproval failed', e);
-      setDisableSwap(false);
       dispatch(
         addNotification({
           type: NotificationType.error,
-          title: 'Check Allowance',
-          msg: 'Unkown error - check console log.',
+          title: 'Transaction Failed',
+          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
@@ -164,7 +161,6 @@ export const SwapMarket = ({
 
     if (!(chainId && toToken)) return;
 
-    setDisableSwap(true);
     if (!approved) return checkApproval();
 
     try {
@@ -175,34 +171,43 @@ export const SwapMarket = ({
         fromAmount,
         toAmount,
         user: account,
-        onConfirmation,
       });
 
       dispatch(
         addNotification({
           type: NotificationType.pending,
-          title: 'Test Notification',
-          msg: 'Some message here...',
+          title: 'Pending Confirmation',
+          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+          },
           txHash,
         })
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
-      setDisableSwap(false);
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Swap Failed',
-          msg: e.message,
-        })
-      );
+      if (e.message.includes('User denied transaction signature'))
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the trade. If this was by mistake, please try again.',
+          })
+        );
+      else
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+          })
+        );
     } finally {
       setShowModal(false);
     }
-  };
-
-  const onConfirmation = () => {
-    setDisableSwap(false);
   };
 
   const handleSwitch = () => {
@@ -227,7 +232,6 @@ export const SwapMarket = ({
     if (isLoadingRate) return true;
     if (fromError !== '') return true;
     if (rate === '0') return true;
-    if (disableSwap) return true;
     if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
     if (!toToken) return true;
     if (!account) return false;
@@ -358,7 +362,7 @@ export const SwapMarket = ({
         amount={fromAmount}
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
-        handleCatch={() => setDisableSwap(false)}
+        waitForApproval={true}
       />
     </>
   );
