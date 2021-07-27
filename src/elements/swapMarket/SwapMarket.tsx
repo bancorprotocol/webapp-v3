@@ -261,7 +261,6 @@ export const SwapMarket = ({
     <>
       <div>
         <div className="px-20">
-          isloading {isLoadingRate ? 'true' : 'false'}
           <TokenInputField
             dataCy="fromAmount"
             label="You Pay"
