@@ -26,6 +26,7 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
+import usePrevious from 'hooks/usePrevious';
 
 enum Field {
   from,
@@ -64,6 +65,9 @@ export const SwapLimit = ({
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
   const [isLoadingRate, setIsLoadingRate] = useState(false);
+  const previousFromToken = usePrevious(fromToken);
+  const previousToToken = usePrevious(toToken);
+  const previousMarketRate = usePrevious(marketRate);
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
@@ -199,14 +203,8 @@ export const SwapLimit = ({
 
   useEffect(() => {
     calculateRateByMarket(marketRate, selPercentage, percentage);
-  }, [
-    calculateRateByMarket,
-    marketRate,
-    selPercentage,
-    percentage,
-    fromToken,
-    toToken,
-  ]);
+    // eslint-disable-next-line
+  }, [calculateRateByMarket, fromToken, toToken]);
 
   useEffect(() => {
     if (toToken && toToken.address === ethToken)
@@ -281,6 +279,7 @@ export const SwapLimit = ({
   }, [fromAmount, fromToken]);
 
   const handleRateInput = (val: string) => {
+    console.log('handleRateInput');
     setRate(val);
     calculatePercentageByRate(marketRate, val);
     handleFieldChanged(Field.rate, fromAmount, toAmount, val);
