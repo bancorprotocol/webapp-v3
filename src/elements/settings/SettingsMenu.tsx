@@ -39,7 +39,7 @@ export const SettingsMenu = () => {
         </div>
         <hr className="border-grey-3 mt-15 mb-10" />
 
-        <div className="">
+        <div>
           <div className="mb-6">Slippage Tolerance</div>
           <div className="grid grid-cols-4 gap-10">
             {slippages.map((slippage) => (
@@ -81,7 +81,7 @@ export const SettingsMenu = () => {
 
       <hr className="border-grey-3 mt-15 mb-10" />
 
-      <div className="text-12">Version 3.0.1</div>
+      <div className="text-12">Version 3.0.2</div>
     </>
   );
 
