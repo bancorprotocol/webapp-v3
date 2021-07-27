@@ -18,6 +18,14 @@ import BigNumber from 'bignumber.js';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  getConversion,
+} from 'services/api/gtm';
+import { EthNetworks } from 'services/web3/types';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
+import { setConversion } from 'services/api/gtm';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -197,7 +205,12 @@ export const SwapMarket = ({
             msg: 'You rejected the trade. If this was by mistake, please try again.',
           })
         );
-      else
+      else {
+        const conversion = getConversion();
+        sendConversionEvent(ConversionEvents.fail, {
+          conversion,
+          error: e.message,
+        });
         dispatch(
           addNotification({
             type: NotificationType.error,
@@ -205,6 +218,7 @@ export const SwapMarket = ({
             msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
           })
         );
+      }
     } finally {
       setShowModal(false);
     }
@@ -347,7 +361,29 @@ export const SwapMarket = ({
           </div>
 
           <button
-            onClick={() => handleSwap()}
+            onClick={() => {
+              const conversion = {
+                conversion_type: 'Market',
+                conversion_approve: 'Unlimited',
+                conversion_blockchain: 'ethereum',
+                conversion_blockchain_network:
+                  chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+                conversion_settings:
+                  slippageTolerance === 0.005 ? 'Regular' : 'Advanced',
+                conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
+                conversion_from_token: fromToken.symbol,
+                conversion_to_token: toToken?.symbol,
+                conversion_from_amount: fromAmount,
+                conversion_from_amount_usd: fromAmountUsd,
+                conversion_to_amount: toAmount,
+                conversion_to_amount_usd: toAmountUsd,
+                conversion_input_type: Toggle,
+                conversion_rate: rate,
+              };
+              setConversion(conversion);
+              sendConversionEvent(ConversionEvents.click, conversion);
+              handleSwap();
+            }}
             className={`${buttonVariant()} rounded w-full`}
             disabled={isSwapDisabled()}
           >

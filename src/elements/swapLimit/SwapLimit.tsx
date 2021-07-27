@@ -26,6 +26,10 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
+import { sendConversionEvent, ConversionEvents } from 'services/api/gtm';
+import { EthNetworks } from 'services/web3/types';
+import { setConversion } from 'services/api/gtm';
 
 enum Field {
   from,
@@ -49,7 +53,7 @@ export const SwapLimit = ({
   switchTokens,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');
@@ -465,9 +469,27 @@ export const SwapLimit = ({
 
         <button
           className="btn-primary rounded w-full"
-          onClick={() =>
-            handleSwap(false, false, fromToken.address === ethToken)
-          }
+          onClick={() => {
+            const conversion = {
+              conversion_type: 'Limit',
+              conversion_approve: 'Unlimited',
+              conversion_blockchain: 'ethereum',
+              conversion_blockchain_network:
+                chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+              conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
+              conversion_from_token: fromToken.symbol,
+              conversion_to_token: toToken?.symbol,
+              conversion_from_amount: fromAmount,
+              conversion_from_amount_usd: fromAmountUsd,
+              conversion_to_amount: toAmount,
+              conversion_to_amount_usd: toAmountUsd,
+              conversion_input_type: Toggle,
+              conversion_rate: rate,
+            };
+            setConversion(conversion);
+            sendConversionEvent(ConversionEvents.click, conversion);
+            handleSwap(false, false, fromToken.address === ethToken);
+          }}
           disabled={isSwapDisabled()}
         >
           Trade
