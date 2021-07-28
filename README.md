@@ -10,6 +10,14 @@ Open Source Token Swap and Pool Liquidity Portal
 | Jan Langheimer  | [Freiburg](https://www.timeanddate.com/worldclock/germany/freiburg) |
 | Ran Cohen       | [Tel Aviv](https://www.timeanddate.com/worldclock/israel/tel-aviv)  |
 
+## How to contribute
+
+1. Talk to us, we will assign you to an issue
+2. Fork the repo
+3. Change `.env.sample` to `.env` and add your environment variables
+4. Run `yarn && yarn start`
+5. Create a Pull Request
+
 ## Available Scripts
 
 In the project directory, you can run:

@@ -74,16 +74,17 @@ export const SwapMarket = ({
       else if (fromToken && toToken && fromToken.address !== wethToken) {
         const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
         setRate(res.rate);
-        setPriceImpact(res.priceImpact);
+        if (fromDebounce) setPriceImpact(res.priceImpact);
+        else setPriceImpact('0.00');
       }
     })();
-  }, [fromToken, toToken, setToToken]);
+  }, [fromToken, toToken, setToToken, fromDebounce]);
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
-      setPriceImpact('0.0000');
+      setPriceImpact('0.00');
       setToToken(eth);
       setToAmount(fromDebounce);
     } else {
@@ -97,7 +98,8 @@ export const SwapMarket = ({
           setToAmountUsd('');
           const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
           setRate(res.rate);
-          setPriceImpact(res.priceImpact);
+          if (fromDebounce) setPriceImpact(res.priceImpact);
+          else setPriceImpact('0.00');
         } else if (fromToken && toToken) {
           const result = await loadRateAndPriceImapct(
             fromToken,
@@ -117,7 +119,8 @@ export const SwapMarket = ({
             .toString();
           setToAmountUsd(usdAmount);
           setRate(rate.toString());
-          setPriceImpact(result.priceImpact);
+          if (fromDebounce) setPriceImpact(result.priceImpact);
+          else setPriceImpact('0.00');
         }
       })();
     }
