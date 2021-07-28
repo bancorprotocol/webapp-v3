@@ -27,6 +27,7 @@ export const sanitizeNumberInput = (
   precision?: number
 ): string => {
   const sanitized = input
+    .replace(/,/, '.')
     .replace(/[^\d.]/g, '')
     .replace(/\./, 'x')
     .replace(/\./g, '')
