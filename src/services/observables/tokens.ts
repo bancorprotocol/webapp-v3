@@ -5,7 +5,7 @@ import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
-import { updateTokenBalances } from './balances';
+import { fetchBalances, userBalances$ } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -103,7 +103,7 @@ const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
-export const tokens$ = combineLatest([
+export const tokensWithoutBalances$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   user$,
@@ -143,17 +143,29 @@ export const tokens$ = combineLatest([
       }
     });
 
-    if (user) {
-      const updatedTokens = await updateTokenBalances(
-        overlappingTokens,
-        user,
-        currentNetwork
-      );
+    fetchBalances(overlappingTokens.map((token) => token.address));
 
-      return updatedTokens;
-    } else {
-      return overlappingTokens;
-    }
+    return overlappingTokens;
+  }),
+  shareReplay(1)
+);
+
+export const tokens$ = combineLatest([
+  tokensWithoutBalances$,
+  userBalances$,
+]).pipe(
+  map(([tokens, userBalances]) => {
+    console.log(userBalances, tokens, 'user balance and tokens');
+    return tokens.map((token) => {
+      if (userBalances) {
+        const userBalance = userBalances[token.address];
+        return userBalance === undefined
+          ? token
+          : { ...token, balance: userBalance };
+      } else {
+        return token;
+      }
+    });
   }),
   shareReplay(1)
 );

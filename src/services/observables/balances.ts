@@ -1,5 +1,5 @@
-import { findOrThrow, shrinkToken } from 'utils/pureFunctions';
-import { partition } from 'lodash';
+import { findOrThrow, shrinkToken, updateArray } from 'utils/pureFunctions';
+import { fromPairs, isEqual, partition, toPairs, uniq, uniqWith } from 'lodash';
 import {
   slimBalanceShape,
   balanceShape,
@@ -10,6 +10,18 @@ import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
+import { combineLatest, Subject } from 'rxjs';
+import { user$ } from './user';
+import {
+  distinctUntilChanged,
+  map,
+  scan,
+  shareReplay,
+  startWith,
+} from 'rxjs/operators';
+import { switchMapIgnoreThrow } from './customOperators';
+import { currentNetwork$ } from './network';
+import { apiTokens$ } from './pools';
 
 interface RawBalance {
   contract: string;
@@ -22,10 +34,12 @@ interface RawToken {
   decimals?: number;
 }
 
-const toRawToken = (token: Token): RawToken => ({
-  contract: token.address,
-  ...(token.decimals && { decimals: token.decimals }),
-});
+interface UserBalance {
+  [address: string]: string;
+}
+interface BalanceDictionary {
+  [user: string]: UserBalance;
+}
 
 export const fetchTokenBalances = async (
   tokens: RawToken[],
@@ -74,6 +88,16 @@ export const fetchTokenBalances = async (
       ...token,
       contract: toChecksumAddress(token.contract),
     }));
+
+    const includesEth = mergedWei.some((wei) => wei.contract === ethToken);
+    if (includesEth) {
+      const ethBalance = await web3.eth.getBalance(user);
+      return updateArray(
+        mergedWei,
+        (wei) => wei.contract === ethToken,
+        () => ({ balance: ethBalance, contract: ethToken, decimals: 18 })
+      );
+    }
     return mergedWei;
   } catch (e) {
     console.error('Failed fetching balances');
@@ -81,6 +105,86 @@ export const fetchTokenBalances = async (
 
   return [];
 };
+
+const toRawToken = (token: Token): RawToken => ({
+  contract: token.address,
+  ...(token.decimals && { decimals: token.decimals }),
+});
+
+const fetchBalanceReceiver$ = new Subject<string[]>();
+
+export const fetchBalances = (addresses: string[]) =>
+  fetchBalanceReceiver$.next(addresses);
+
+const rawBalances$ = combineLatest([
+  fetchBalanceReceiver$,
+  user$,
+  apiTokens$,
+  currentNetwork$,
+]).pipe(
+  switchMapIgnoreThrow(async ([addresses, user, tokens, network]) => {
+    const rawTokensToFetch = uniq(addresses).map((address): RawToken => {
+      const apiToken = tokens.find((token) => token.dlt_id === address);
+      return apiToken
+        ? { decimals: apiToken.decimals, contract: apiToken.dlt_id }
+        : { contract: address };
+    });
+
+    console.time('FetchBalance');
+
+    const fetchedTokenBalances = await fetchTokenBalances(
+      rawTokensToFetch,
+      user,
+      network
+    );
+    console.timeEnd('FetchBalance');
+    return {
+      fetchedTokenBalances,
+      user,
+    };
+  })
+);
+
+const balances$ = combineLatest([rawBalances$, user$]).pipe(
+  scan((acc, [newBalances, user]) => {
+    const newBalancesIncoming = newBalances.user === user;
+    if (!newBalancesIncoming) return acc;
+    const newBalancesShrunk = newBalances.fetchedTokenBalances.map(
+      (balance) => [
+        toChecksumAddress(balance.contract),
+        shrinkToken(balance.balance, balance.decimals),
+      ]
+    );
+    console.log(newBalancesShrunk, 'is shrunk');
+    const currentBalances = toPairs(acc[user]);
+    const mutationIsRequired = newBalancesShrunk.some(
+      ([newContract, newBalance]) => {
+        const currentInstance = acc[user] && acc[user][newContract];
+        return currentInstance !== newBalance;
+      }
+    );
+    if (!mutationIsRequired) return acc;
+
+    const untouchedBalances = currentBalances.filter(
+      ([address]) =>
+        !newBalances.fetchedTokenBalances.some((a) => address === a.contract)
+    );
+    const updatedBalances = [...newBalancesShrunk, ...untouchedBalances];
+    const newUserBalances = fromPairs(updatedBalances);
+
+    return {
+      ...acc,
+      [user]: newUserBalances,
+    };
+  }, {} as BalanceDictionary)
+);
+
+export const userBalances$ = combineLatest([balances$, user$]).pipe(
+  map(([balances, user]) => balances[user]),
+  startWith<UserBalance>({} as UserBalance),
+  distinctUntilChanged<UserBalance>(isEqual),
+  shareReplay(1)
+);
 
 export const updateTokenBalances = async (
   tokens: Token[],

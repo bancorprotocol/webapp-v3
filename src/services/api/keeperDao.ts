@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokens$, Token } from 'services/observables/tokens';
+import { tokensWithoutBalances$, Token } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import {
@@ -111,7 +111,7 @@ export interface KeeprDaoToken {
 
 export const fetchKeeperDaoTokens = async (): Promise<KeeprDaoToken[]> => {
   try {
-    const tokens = await tokens$.pipe(take(1)).toPromise();
+    const tokens = await tokensWithoutBalances$.pipe(take(1)).toPromise();
     const res = await axios.get(`${baseUrl}/tokenList`);
     return res.data.result.tokens;
   } catch (error) {
@@ -137,7 +137,7 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 const orderResToLimit = async (
   orders: OrderResponse[]
 ): Promise<LimitOrder[]> => {
-  const tokens = await tokens$.pipe(take(1)).toPromise();
+  const tokens = await tokensWithoutBalances$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
     const payToken =

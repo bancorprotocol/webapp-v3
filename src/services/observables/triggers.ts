@@ -1,9 +1,9 @@
 import {
-  tokens$,
   tokenLists$,
   userPreferredListIds$,
   keeperDaoTokens$,
   listOfLists,
+  tokens$,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
