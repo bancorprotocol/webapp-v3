@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import {
@@ -171,7 +171,7 @@ export const SearchableTokenList = ({
               })}
           </div>
           <hr className="border-grey-2 dark:border-blue-1" />
-          <div className="flex flex-col justify-center items-center h-[59px]">
+          <div className="flex justify-center items-center h-[59px]">
             <button
               onClick={() => {
                 setUserLists(getLSTokenList());
@@ -179,14 +179,14 @@ export const SearchableTokenList = ({
               }}
               className="text-primary font-semibold"
             >
-              <div className="flex">
-                <IconEdit className="w-[18px] mr-4" />
+              <span className="flex justify-center items center">
+                <IconEdit className="w-[18px] h-[18px] mr-4" />
                 Manage Token Lists
-              </div>
+              </span>
+              <span className="text-grey-3 text-12 font-medium">
+                Only supported tokens will be displayed
+              </span>
             </button>
-            <div className="text-grey-3 text-12 font-medium">
-              Only supported tokens will be displayed
-            </div>
           </div>
         </>
       )}
