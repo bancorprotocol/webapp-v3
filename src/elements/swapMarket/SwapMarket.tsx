@@ -26,6 +26,7 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { setConversion } from 'services/api/googleTagManager';
+import { withdrawWeth } from 'services/web3/swap/limit';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -96,6 +97,7 @@ export const SwapMarket = ({
       setPriceImpact('0.00');
       setToToken(eth);
       setToAmount(fromDebounce);
+      setIsLoadingRate(false);
     } else {
       (async () => {
         if (
@@ -177,6 +179,11 @@ export const SwapMarket = ({
     if (!(chainId && toToken)) return;
 
     if (!approved) return checkApproval();
+
+    if (fromToken.address === wethToken) {
+      dispatch(addNotification(await withdrawWeth(fromAmount, account)));
+      return;
+    }
 
     try {
       const txHash = await swap({

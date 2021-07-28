@@ -221,18 +221,33 @@ export const cancelOrders = async (
           ? contract.methods.cancelRfqOrder(stringOrders[0])
           : contract.methods.batchCancelRfqOrders(stringOrders),
       user,
+      resolveImmediately: true,
     });
     return {
-      type: NotificationType.success,
-      title: 'Title',
-      msg: 'Message',
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: 'Transaction is pending confirmationn',
       txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: 'Canceling your limit orders has been confirmed',
+        errorTitle: 'Transaction Failed',
+        errorMsg:
+          'Transaction had failed. Please try again or contact support.',
+      },
     };
   } catch (error) {
+    if (error.message.includes('User denied transaction signature'))
+      return {
+        type: NotificationType.error,
+        title: 'Transaction Rejected',
+        msg: 'You rejected the transaction. If this was by mistake, please try again.',
+      };
+
     return {
       type: NotificationType.error,
-      title: 'Title',
-      msg: 'Message',
+      title: 'Transaction Failed',
+      msg: 'Transaction had failed. Please try again or contact support.',
     };
   }
 };

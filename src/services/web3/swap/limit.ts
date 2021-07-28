@@ -47,18 +47,32 @@ export const withdrawWeth = async (
     const txHash = await resolveTxOnConfirmation({
       tx: tokenContract.methods.withdraw(wei),
       user,
+      resolveImmediately: true,
     });
     return {
-      type: NotificationType.success,
-      title: 'Title',
-      msg: 'Message',
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: 'Withdraw WETH is pending confirmation',
       txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your withdraw of ${amount} WETH has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Withdrawing ${amount} WETH had failed. Please try again or contact support.`,
+      },
     };
   } catch (error) {
+    if (error.message.includes('User denied transaction signature'))
+      return {
+        type: NotificationType.error,
+        title: 'Transaction Rejected',
+        msg: 'You rejected the transaction. If this was by mistake, please try again.',
+      };
+
     return {
       type: NotificationType.error,
-      title: 'Title',
-      msg: 'Message',
+      title: 'Transaction Failed',
+      msg: `Withdrawing ${amount} WETH had failed. Please try again or contact support.`,
     };
   }
 };
