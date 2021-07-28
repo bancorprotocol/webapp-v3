@@ -149,8 +149,11 @@ export const SwapMarket = ({
         fromToken,
         fromAmount
       );
-      if (isApprovalReq) setShowModal(true);
-      else await handleSwap(true);
+      if (isApprovalReq) {
+        const conversion = getConversion();
+        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        setShowModal(true);
+      } else await handleSwap(true);
     } catch (e) {
       dispatch(
         addNotification({

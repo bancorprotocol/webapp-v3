@@ -37,6 +37,7 @@ import { Toggle } from 'elements/swapWidget/SwapWidget';
 import {
   sendConversionEvent,
   ConversionEvents,
+  getConversion,
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import { setConversion } from 'services/api/googleTagManager';
@@ -230,8 +231,11 @@ export const SwapLimit = ({
   const checkApproval = async (token: Token) => {
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
-      if (isApprovalReq) setShowApproveModal(true);
-      else await handleSwap(true);
+      if (isApprovalReq) {
+        const conversion = getConversion();
+        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        setShowApproveModal(true);
+      } else await handleSwap(true);
     } catch (e) {
       dispatch(
         addNotification({
