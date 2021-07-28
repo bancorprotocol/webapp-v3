@@ -37,7 +37,10 @@ const sendGTM = (data: {}) => {
 
 export enum ConversionEvents {
   click,
+  approvePop,
+  approved,
   wallet_req,
+  wallet_confirm,
   fail,
   success,
 }
@@ -46,8 +49,14 @@ const conversionTxt = (event: ConversionEvents): string => {
   switch (event) {
     case ConversionEvents.click:
       return 'Conversion Swap Click';
+    case ConversionEvents.approvePop:
+      return 'Conversion Approve Popup';
+    case ConversionEvents.approved:
+      return 'Conversion Approve Popup';
     case ConversionEvents.wallet_req:
       return 'Conversion Wallet Confirmation Request';
+    case ConversionEvents.wallet_confirm:
+      return 'Conversion Wallet Confirmed';
     case ConversionEvents.fail:
       return 'Conversion Failed';
     case ConversionEvents.success:
@@ -59,7 +68,6 @@ export const sendConversionEvent = (
   event: ConversionEvents,
   event_properties: {} | undefined = undefined
 ) => {
-  console.log('event_properties', event_properties);
   sendGTM({
     event: 'CE ' + conversionTxt(event),
     event_properties: event_properties,

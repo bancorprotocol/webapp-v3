@@ -9,6 +9,11 @@ import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3/contracts';
 import wait from 'waait';
+import { useEffect } from 'react';
+import {
+  getConversion,
+  sendConversionEvent,
+} from 'services/api/googleTagManager';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -29,6 +34,11 @@ export const ModalApprove = ({
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    const conversion = getConversion();
+    sendConversionEvent(conversion);
+  }, []);
+
   if (!fromToken) return null;
 
   // Wait for user to choose approval and proceed with approval based on user selection
@@ -36,6 +46,11 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       setIsOpen(false);
+      const conversion = getConversion();
+      sendConversionEvent({
+        ...conversion,
+        conversion_unlimited_approve: amount ? 'Limited' : 'Unlimited',
+      });
       const txHash = await setNetworkContractApproval(fromToken, amount);
       dispatch(
         addNotification({

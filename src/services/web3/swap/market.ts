@@ -121,6 +121,8 @@ export const swap = async ({
       0
     ),
     user,
+    onHash: () =>
+      sendConversionEvent(ConversionEvents.wallet_confirm, conversion),
     onConfirmation: () => {
       sendConversionEvent(ConversionEvents.success, {
         ...conversion,

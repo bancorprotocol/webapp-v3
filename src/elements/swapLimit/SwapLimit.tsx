@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
@@ -78,6 +85,7 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
+  const fiatToggle = useContext(Toggle);
 
   const percentages = useMemo(() => [1, 3, 5], []);
 
@@ -475,8 +483,6 @@ export const SwapLimit = ({
           onClick={() => {
             const conversion = {
               conversion_type: 'Limit',
-              conversion_approve: 'Unlimited',
-              conversion_blockchain: 'ethereum',
               conversion_blockchain_network:
                 chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
               conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
@@ -486,8 +492,13 @@ export const SwapLimit = ({
               conversion_from_amount_usd: fromAmountUsd,
               conversion_to_amount: toAmount,
               conversion_to_amount_usd: toAmountUsd,
-              conversion_input_type: Toggle ? 'Fiat' : 'Token',
+              conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
               conversion_rate: rate,
+              conversion_rate_percentage:
+                selPercentage === -1
+                  ? percentage
+                  : percentages[selPercentage].toFixed(0),
+              conversion_experation: duration.asSeconds().toString(),
             };
             setConversion(conversion);
             sendConversionEvent(ConversionEvents.click, conversion);

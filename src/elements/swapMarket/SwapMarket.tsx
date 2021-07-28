@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
@@ -54,6 +54,7 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
+  const fiatToggle = useContext(Toggle);
   const dispatch = useDispatch();
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -364,8 +365,6 @@ export const SwapMarket = ({
             onClick={() => {
               const conversion = {
                 conversion_type: 'Market',
-                conversion_approve: 'Unlimited',
-                conversion_blockchain: 'ethereum',
                 conversion_blockchain_network:
                   chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
                 conversion_settings:
@@ -377,7 +376,7 @@ export const SwapMarket = ({
                 conversion_from_amount_usd: fromAmountUsd,
                 conversion_to_amount: toAmount,
                 conversion_to_amount_usd: toAmountUsd,
-                conversion_input_type: Toggle ? 'Fiat' : 'Token',
+                conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
                 conversion_rate: rate,
               };
               setConversion(conversion);
