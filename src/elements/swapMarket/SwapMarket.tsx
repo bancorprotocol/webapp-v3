@@ -75,8 +75,8 @@ export const SwapMarket = ({
   };
 
   useEffect(() => {
-    if (fromToken.address !== wethToken) setIsLoadingRate(true);
-  }, [fromAmount, fromToken]);
+    setIsLoadingRate(true);
+  }, [fromAmount]);
 
   useEffect(() => {
     (async () => {
@@ -97,6 +97,7 @@ export const SwapMarket = ({
       setPriceImpact('0.00');
       setToToken(eth);
       setToAmount(fromDebounce);
+      setIsLoadingRate(false);
     } else {
       (async () => {
         if (
