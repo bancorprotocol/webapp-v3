@@ -14,7 +14,7 @@ import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
-import { sendWalletEvent, WalletEvents } from 'services/api/gtm';
+import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector } = useWeb3React();

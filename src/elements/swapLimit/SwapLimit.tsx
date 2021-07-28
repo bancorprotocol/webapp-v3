@@ -27,9 +27,12 @@ import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
-import { sendConversionEvent, ConversionEvents } from 'services/api/gtm';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+} from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
-import { setConversion } from 'services/api/gtm';
+import { setConversion } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -483,7 +486,7 @@ export const SwapLimit = ({
               conversion_from_amount_usd: fromAmountUsd,
               conversion_to_amount: toAmount,
               conversion_to_amount_usd: toAmountUsd,
-              conversion_input_type: Toggle,
+              conversion_input_type: Toggle ? 'Fiat' : 'Token',
               conversion_rate: rate,
             };
             setConversion(conversion);

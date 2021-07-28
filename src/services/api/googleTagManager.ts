@@ -59,6 +59,7 @@ export const sendConversionEvent = (
   event: ConversionEvents,
   event_properties: {} | undefined = undefined
 ) => {
+  console.log('event_properties', event_properties);
   sendGTM({
     event: 'CE ' + conversionTxt(event),
     event_properties: event_properties,

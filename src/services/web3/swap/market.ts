@@ -23,7 +23,7 @@ import {
   sendConversionEvent,
   ConversionEvents,
   getConversion,
-} from 'services/api/gtm';
+} from 'services/api/googleTagManager';
 
 const oneMillion = new BigNumber(1000000);
 

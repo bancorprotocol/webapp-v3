@@ -22,10 +22,10 @@ import {
   sendConversionEvent,
   ConversionEvents,
   getConversion,
-} from 'services/api/gtm';
+} from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import { Toggle } from 'elements/swapWidget/SwapWidget';
-import { setConversion } from 'services/api/gtm';
+import { setConversion } from 'services/api/googleTagManager';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -377,7 +377,7 @@ export const SwapMarket = ({
                 conversion_from_amount_usd: fromAmountUsd,
                 conversion_to_amount: toAmount,
                 conversion_to_amount_usd: toAmountUsd,
-                conversion_input_type: Toggle,
+                conversion_input_type: Toggle ? 'Fiat' : 'Token',
                 conversion_rate: rate,
               };
               setConversion(conversion);

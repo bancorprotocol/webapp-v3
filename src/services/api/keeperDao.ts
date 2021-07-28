@@ -17,7 +17,11 @@ import {
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/pureFunctions';
-import { sendConversionEvent, ConversionEvents, getConversion } from './gtm';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  getConversion,
+} from './googleTagManager';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 

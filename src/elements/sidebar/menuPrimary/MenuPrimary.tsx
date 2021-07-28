@@ -5,7 +5,7 @@ import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MenuPrimaryItem } from 'elements/sidebar/menuPrimary/MenuPrimaryItem';
-import { sendGTMPath } from 'services/api/gtm';
+import { sendGTMPath } from 'services/api/googleTagManager';
 import usePrevious from 'hooks/usePrevious';
 import { useAppSelector } from 'redux/index';
 
