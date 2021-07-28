@@ -155,7 +155,6 @@ export const tokens$ = combineLatest([
   userBalances$,
 ]).pipe(
   map(([tokens, userBalances]) => {
-    console.log(userBalances, tokens, 'user balance and tokens');
     return tokens.map((token) => {
       if (userBalances) {
         const userBalance = userBalances[token.address];

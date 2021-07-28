@@ -158,7 +158,6 @@ const balances$ = combineLatest([rawBalances$, user$]).pipe(
         shrinkToken(balance.balance, balance.decimals),
       ]
     );
-    console.log(newBalancesShrunk, 'is shrunk');
     const currentBalances = toPairs(acc[user]);
     const mutationIsRequired = newBalancesShrunk.some(
       ([newContract, newBalance]) => {
