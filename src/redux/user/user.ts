@@ -10,7 +10,7 @@ export interface UserState {
 export const initialState: UserState = {
   darkMode: false,
   walletModal: false,
-  slippageTolerance: 0.01,
+  slippageTolerance: 0.005,
   locale: 'en',
 };
 

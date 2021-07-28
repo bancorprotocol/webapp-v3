@@ -19,7 +19,7 @@ export const SettingsMenu = () => {
     (state) => state.user.slippageTolerance
   );
 
-  const slippages = [0.01, 0.03, 0.05];
+  const slippages = [0.001, 0.005, 0.01];
 
   const content = (
     <>
