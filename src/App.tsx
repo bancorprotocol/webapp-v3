@@ -32,6 +32,7 @@ import {
 import { useAppSelector } from 'redux/index';
 import { web3 } from 'services/web3/contracts';
 import { provider } from 'services/web3/wallet/connectors';
+import { googleTagManager } from 'services/api/googleTagManager';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -70,6 +71,7 @@ export const App = () => {
   useEffect(() => {
     setUser(account);
     if (chainId) setNetwork(chainId);
+    googleTagManager('', '');
   }, [account, chainId]);
 
   useEffect(() => {

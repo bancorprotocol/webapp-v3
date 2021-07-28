@@ -19,6 +19,11 @@ import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/pools';
 import { Pool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  getConversion,
+} from 'services/api/googleTagManager';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -99,8 +104,10 @@ export const swap = async ({
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const expectedToWei = expandToken(toAmount, toToken.decimals);
-
   const path = await findPath(fromToken.address, toToken.address);
+
+  const conversion = getConversion();
+  sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
   return resolveTxOnConfirmation({
     tx: networkContract.methods.convertByPath(
@@ -114,7 +121,14 @@ export const swap = async ({
       0
     ),
     user,
+    onHash: () =>
+      sendConversionEvent(ConversionEvents.wallet_confirm, conversion),
     onConfirmation: () => {
+      sendConversionEvent(ConversionEvents.success, {
+        ...conversion,
+        conversion_market_token_rate: fromToken.usdPrice,
+        transaction_category: 'Conversion',
+      });
       //RefreshBalances
       onConfirmation && onConfirmation();
     },

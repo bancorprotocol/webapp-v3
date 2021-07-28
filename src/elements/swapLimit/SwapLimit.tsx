@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
@@ -26,6 +33,14 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { Toggle } from 'elements/swapWidget/SwapWidget';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  getConversion,
+} from 'services/api/googleTagManager';
+import { EthNetworks } from 'services/web3/types';
+import { setConversion } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -49,7 +64,7 @@ export const SwapLimit = ({
   switchTokens,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');
@@ -72,6 +87,7 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
+  const fiatToggle = useContext(Toggle);
 
   const percentages = useMemo(() => [1, 3, 5], []);
 
@@ -215,8 +231,11 @@ export const SwapLimit = ({
   const checkApproval = async (token: Token) => {
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
-      if (isApprovalReq) setShowApproveModal(true);
-      else await handleSwap(true);
+      if (isApprovalReq) {
+        const conversion = getConversion();
+        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        setShowApproveModal(true);
+      } else await handleSwap(true);
     } catch (e) {
       dispatch(
         addNotification({
@@ -478,9 +497,30 @@ export const SwapLimit = ({
 
         <button
           className="btn-primary rounded w-full"
-          onClick={() =>
-            handleSwap(false, false, fromToken.address === ethToken)
-          }
+          onClick={() => {
+            const conversion = {
+              conversion_type: 'Limit',
+              conversion_blockchain_network:
+                chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+              conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
+              conversion_from_token: fromToken.symbol,
+              conversion_to_token: toToken?.symbol,
+              conversion_from_amount: fromAmount,
+              conversion_from_amount_usd: fromAmountUsd,
+              conversion_to_amount: toAmount,
+              conversion_to_amount_usd: toAmountUsd,
+              conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
+              conversion_rate: rate,
+              conversion_rate_percentage:
+                selPercentage === -1
+                  ? percentage
+                  : percentages[selPercentage].toFixed(0),
+              conversion_experation: duration.asSeconds().toString(),
+            };
+            setConversion(conversion);
+            sendConversionEvent(ConversionEvents.click, conversion);
+            handleSwap(false, false, fromToken.address === ethToken);
+          }}
           disabled={isSwapDisabled()}
         >
           Trade

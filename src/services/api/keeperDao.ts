@@ -17,6 +17,11 @@ import {
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/pureFunctions';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  getConversion,
+} from './googleTagManager';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -38,7 +43,7 @@ export const swapLimit = async (
   checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
-
+  const conversion = getConversion();
   try {
     if (fromIsEth) {
       try {
@@ -64,6 +69,7 @@ export const swapLimit = async (
         };
       }
     } else {
+      sendConversionEvent(ConversionEvents.wallet_req, conversion);
       await createOrder(
         fromToken,
         toToken,
@@ -72,6 +78,12 @@ export const swapLimit = async (
         user,
         duration.asSeconds()
       );
+      sendConversionEvent(ConversionEvents.success, {
+        ...conversion,
+        conversion_market_token_rate: fromToken.usdPrice,
+        transaction_category: 'Conversion',
+      });
+
       return {
         type: NotificationType.success,
         title: 'Success!',
@@ -85,6 +97,11 @@ export const swapLimit = async (
         title: 'Transaction Rejected',
         msg: 'You rejected the transaction. If this was by mistake, please try again.',
       };
+
+    sendConversionEvent(ConversionEvents.fail, {
+      conversion,
+      error: error.message,
+    });
 
     return {
       type: NotificationType.error,

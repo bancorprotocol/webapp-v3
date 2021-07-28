@@ -14,6 +14,7 @@ import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
+import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector, active } = useWeb3React();
@@ -30,6 +31,9 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   const tryConnecting = async (wallet: WalletInfo) => {
+    sendWalletEvent(WalletEvents.click, {
+      wallet_name: wallet.name,
+    });
     setPending(true);
     setSelectedWallet(wallet);
     const { connector } = wallet;
@@ -45,6 +49,13 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         .then(async () => {
           setIsOpen(false);
           setAutoLogin(true);
+          const account = await connector.getAccount();
+          sendWalletEvent(
+            WalletEvents.connect,
+            undefined,
+            account ? account : '',
+            wallet.name ?? ''
+          );
         })
         .catch((error) => {
           setSelectedWallet(null);
@@ -61,6 +72,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
       setAutoLogin(false);
       setSelectedWallet(null);
     } else {
+      sendWalletEvent(WalletEvents.popup);
       setError(false);
       setPending(false);
       setIsOpen(true);

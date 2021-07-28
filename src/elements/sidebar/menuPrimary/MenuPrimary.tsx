@@ -5,6 +5,9 @@ import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MenuPrimaryItem } from 'elements/sidebar/menuPrimary/MenuPrimaryItem';
+import { sendGTMPath } from 'services/api/googleTagManager';
+import usePrevious from 'hooks/usePrevious';
+import { useAppSelector } from 'redux/index';
 
 export interface BaseMenuItem {
   label: string;
@@ -63,6 +66,8 @@ export const MenuPrimary = ({
 }: MenuPrimaryProps) => {
   const [activeNav, setActiveNav] = useState<number | null>(null);
   const location = useLocation();
+  const prevLocation = usePrevious(location);
+  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
 
   useEffect(() => {
     setActiveNav(
@@ -72,7 +77,8 @@ export const MenuPrimary = ({
           x.subMenu.some((sub) => sub.to === location.pathname)
       )
     );
-  }, [location]);
+    sendGTMPath(prevLocation?.pathname, location.pathname, darkMode);
+  }, [location, darkMode, prevLocation]);
 
   return (
     <nav className="mt-30">
