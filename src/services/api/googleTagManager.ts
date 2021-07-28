@@ -50,9 +50,9 @@ const conversionTxt = (event: ConversionEvents): string => {
     case ConversionEvents.click:
       return 'Conversion Swap Click';
     case ConversionEvents.approvePop:
-      return 'Conversion Approve Popup';
+      return 'Conversion Unlimited Popup';
     case ConversionEvents.approved:
-      return 'Conversion Approve Popup';
+      return 'Conversion Unlimited Popup Select';
     case ConversionEvents.wallet_req:
       return 'Conversion Wallet Confirmation Request';
     case ConversionEvents.wallet_confirm:

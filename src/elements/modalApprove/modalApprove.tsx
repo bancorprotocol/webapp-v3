@@ -44,7 +44,7 @@ export const ModalApprove = ({
       const conversion = getConversion();
       sendConversionEvent(ConversionEvents.approved, {
         ...conversion,
-        conversion_unlimited_approve: amount ? 'Limited' : 'Unlimited',
+        conversion_unlimited: amount ? 'Limited' : 'Unlimited',
       });
       const txHash = await setNetworkContractApproval(fromToken, amount);
       dispatch(
