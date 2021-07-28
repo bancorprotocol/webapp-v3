@@ -124,20 +124,23 @@ const rawBalances$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(async ([addresses, user, tokens, network]) => {
     const rawTokensToFetch = uniq(addresses).map((address): RawToken => {
+      if (
+        address === ethToken ||
+        address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+      ) {
+        return { decimals: 18, contract: address };
+      }
       const apiToken = tokens.find((token) => token.dlt_id === address);
       return apiToken
         ? { decimals: apiToken.decimals, contract: apiToken.dlt_id }
         : { contract: address };
     });
 
-    console.time('FetchBalance');
-
     const fetchedTokenBalances = await fetchTokenBalances(
       rawTokensToFetch,
       user,
       network
     );
-    console.timeEnd('FetchBalance');
     return {
       fetchedTokenBalances,
       user,
