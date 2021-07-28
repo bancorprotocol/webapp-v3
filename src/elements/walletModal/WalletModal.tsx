@@ -16,7 +16,7 @@ import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
-  const { activate, deactivate, account, connector } = useWeb3React();
+  const { activate, deactivate, account, connector, active } = useWeb3React();
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo | null>(null);
@@ -68,6 +68,14 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   };
 
   useEffect(() => {
+    if (!active) {
+      setSelectedWallet(null);
+      setError(false);
+      setPending(false);
+    }
+  }, [active]);
+
+  useEffect(() => {
     if (connector) {
       const wallet = SUPPORTED_WALLETS.find(
         (x) => typeof x.connector === typeof connector
@@ -90,7 +98,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           'btn-outline-secondary btn-sm mr-40': !isMobile,
         })}
       >
-        {selectedWallet ? (
+        {selectedWallet && account ? (
           <Image src={selectedWallet.icon} alt="" className="w-[22px]" />
         ) : (
           <IconWallet className="text-primary dark:text-primary-light w-[22px]" />
@@ -140,7 +148,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
                   <button
                     key={index}
                     onClick={() => tryConnecting(wallet)}
-                    className="flex items-center w-full px-16 py-10 border-2 border-grey-2 rounded-20 hover:border-primary focus:outline-none focus:border-primary"
+                    className="flex items-center w-full px-16 py-10 border-2 border-grey-2 dark:border-grey-4 rounded-20 hover:border-primary dark:hover:border-primary focus:outline-none focus:border-primary dark:focus:border-primary"
                   >
                     <Image
                       src={wallet.icon}
