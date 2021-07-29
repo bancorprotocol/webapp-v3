@@ -39,14 +39,16 @@ export const SettingsMenu = () => {
         <hr className="border-grey-3 mt-15 mb-10" />
 
         <div>
-          <div className="mb-6">Slippage Tolerance</div>
-          <div className="grid grid-cols-4 gap-10">
+          <div className="mb-15">Slippage Tolerance</div>
+          <div className="flex justify-between space-x-6">
             {slippages.map((slippage) => (
               <button
                 key={slippage}
                 onClick={() => dispatch(setSlippageTolerance(slippage))}
-                className={`border rounded p-4 ${
-                  currentSlippage === slippage ? 'bg-primary text-white' : ''
+                className={`w-full font-medium border border-grey-3 rounded-[12px] text-12 p-8 ${
+                  currentSlippage === slippage
+                    ? 'bg-primary !border-primary text-white'
+                    : ''
                 }`}
               >
                 +{slippage * 100}%
@@ -54,9 +56,9 @@ export const SettingsMenu = () => {
             ))}
             <input
               type="text"
-              className={`border text-right rounded px-10 ${
+              className={`w-[69px] dark:bg-blue-2 outline-none border border-primary text-center text-12 rounded-[12px] ${
                 currentSlippage === Number(customSlippage) / 100
-                  ? 'bg-primary text-white'
+                  ? 'bg-primary text-white placeholder-white'
                   : ''
               }`}
               onFocus={() => {
@@ -92,7 +94,7 @@ export const SettingsMenu = () => {
         </Popover.Button>
 
         <DropdownTransition>
-          <Popover.Panel className="dropdown-menu">
+          <Popover.Panel className="dropdown-menu w-[324px]">
             <div className="dropdown-bubble" />
             <div className="dropdown-header">Settings</div>
 
