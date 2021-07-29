@@ -82,7 +82,7 @@ export const SettingsMenu = () => {
 
       <hr className="border-grey-3 mt-15 mb-10" />
 
-      <div className="text-12">Version 3.0.3</div>
+      <div className="text-12">Version 3.0.4</div>
     </>
   );
 
