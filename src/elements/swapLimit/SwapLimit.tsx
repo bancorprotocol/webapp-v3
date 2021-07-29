@@ -470,7 +470,11 @@ export const SwapLimit = ({
           isOpen={showApproveModal}
           setIsOpen={setShowApproveModal}
           amount={fromAmount}
-          fromToken={fromToken}
+          fromToken={
+            fromToken.address === ethToken
+              ? { ...fromToken, address: wethToken }
+              : fromToken
+          }
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }
