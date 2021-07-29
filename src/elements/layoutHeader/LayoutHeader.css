@@ -1,11 +1,11 @@
 .layout-header {
-    @apply hidden md:fixed w-full md:flex items-center h-60 z-10;
+    @apply hidden md:fixed w-full md:flex items-center justify-center h-60 z-10;
     @apply bg-white shadow-header;
     @apply dark:bg-blue-1 dark:shadow-none;
 }
 
 .layout-header-content {
-    @apply flex justify-between w-full pl-[240px] pr-40;
+    @apply flex justify-between w-full;
 }
 
 .layout-header-mobile {

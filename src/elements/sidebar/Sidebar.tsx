@@ -5,12 +5,16 @@ import { MenuSecondary } from 'elements/sidebar/menuSecondary/MenuSecondary';
 import { SidebarFooter } from 'elements/sidebar/SidebarFooter';
 
 interface SidebarProps {
+  isMinimized: boolean;
+  setIsMinimized: Function;
   setIsSidebarOpen?: Function;
 }
 
-export const Sidebar = ({ setIsSidebarOpen }: SidebarProps) => {
-  const [isMinimized, setIsMinimized] = useState(false);
-
+export const Sidebar = ({
+  isMinimized,
+  setIsMinimized,
+  setIsSidebarOpen,
+}: SidebarProps) => {
   return (
     <div
       className={`fixed h-full text-grey-2 transition-all duration-500 ease-in-out z-20 ${
