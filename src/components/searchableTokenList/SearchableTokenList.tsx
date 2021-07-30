@@ -62,6 +62,11 @@ export const SearchableTokenList = ({
     userPreferredListIds$.next(newUserPreferredListIds);
   };
 
+  const tokenName = (name: string) => {
+    if (name.length < 19) return name;
+    return name + '...';
+  };
+
   return (
     <Modal
       title={manage ? 'Manage' : 'Select a Token'}
@@ -162,7 +167,9 @@ export const SearchableTokenList = ({
                       />
                       <div className="grid justify-items-start ml-15">
                         <div className="text-16">{token.symbol}</div>
-                        <div className="text-12 text-grey-3">{token.name}</div>
+                        <div className="text-12 text-grey-3">
+                          {tokenName(token.name)}
+                        </div>
                       </div>
                     </div>
                     <div>{token.balance && prettifyNumber(token.balance)}</div>
