@@ -422,7 +422,7 @@ export const SwapLimit = ({
                     +{slip}%
                   </button>
                 ))}
-                <div className="w-[65px]">
+                <div className="w-[70px]">
                   <InputField
                     input={percentage}
                     onBlur={() => {
