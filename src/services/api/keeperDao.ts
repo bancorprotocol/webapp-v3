@@ -22,6 +22,7 @@ import {
   ConversionEvents,
   getConversion,
 } from './googleTagManager';
+import { toChecksumAddress } from 'web3-utils';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -48,7 +49,7 @@ export const swapLimit = async (
     if (fromIsEth) {
       try {
         const txHash = await depositWeth(from, user);
-        checkApproval({ ...fromToken, address: wethToken });
+        checkApproval({ ...fromToken, symbol: 'WETH', address: wethToken });
         return {
           type: NotificationType.pending,
           title: 'Pending Confirmation',
@@ -62,6 +63,13 @@ export const swapLimit = async (
           },
         };
       } catch (error) {
+        if (error.message.includes('User denied transaction signature'))
+          return {
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. To complete the order you need to click approve.',
+          };
+
         return {
           type: NotificationType.error,
           title: 'Transaction Failed',
@@ -158,9 +166,13 @@ const orderResToLimit = async (
 
   return orders.map((res) => {
     const payToken =
-      tokens.find((x) => x.address === res.order.makerToken) ?? tokens[0];
+      tokens.find(
+        (x) => x.address === toChecksumAddress(res.order.makerToken)
+      ) ?? tokens[0];
     const getToken =
-      tokens.find((x) => x.address === res.order.takerToken) ?? tokens[0];
+      tokens.find(
+        (x) => x.address === toChecksumAddress(res.order.takerToken)
+      ) ?? tokens[0];
 
     const payAmount = new BigNumber(res.order.makerAmount);
     const getAmount = new BigNumber(res.order.takerAmount);

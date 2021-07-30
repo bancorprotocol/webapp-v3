@@ -241,7 +241,7 @@ export const SwapLimit = ({
         addNotification({
           type: NotificationType.error,
           title: 'Transaction Failed',
-          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
+          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
