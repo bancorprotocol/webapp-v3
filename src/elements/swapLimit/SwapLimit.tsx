@@ -235,7 +235,7 @@ export const SwapLimit = ({
         const conversion = getConversion();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowApproveModal(true);
-      } else await handleSwap(true);
+      } else await handleSwap(true, token.address === wethToken);
     } catch (e) {
       dispatch(
         addNotification({
@@ -471,8 +471,8 @@ export const SwapLimit = ({
           setIsOpen={setShowApproveModal}
           amount={fromAmount}
           fromToken={
-            fromToken.address === ethToken
-              ? { ...fromToken, address: wethToken }
+            fromToken?.address === ethToken
+              ? { ...fromToken, symbol: 'WETH', address: wethToken }
               : fromToken
           }
           handleApproved={() =>
