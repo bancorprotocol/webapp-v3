@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
@@ -33,7 +26,6 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import {
   sendConversionEvent,
   ConversionEvents,
@@ -87,8 +79,7 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
-  const fiatToggle = useContext(Toggle);
-
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
   const percentages = useMemo(() => [1, 3, 5], []);
 
   useInterval(() => {

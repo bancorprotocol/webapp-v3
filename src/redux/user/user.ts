@@ -4,6 +4,7 @@ export interface UserState {
   darkMode: boolean;
   walletModal: boolean;
   slippageTolerance: number;
+  usdToggle: boolean;
   locale: string;
 }
 
@@ -11,6 +12,7 @@ export const initialState: UserState = {
   darkMode: false,
   walletModal: false,
   slippageTolerance: 0.005,
+  usdToggle: false,
   locale: 'en',
 };
 
@@ -37,10 +39,19 @@ const userSlice = createSlice({
     openWalletModal: (state, action) => {
       state.walletModal = action.payload;
     },
+    setUsdToggle: (state, action: PayloadAction<boolean>) => {
+      localStorage.setItem('usdToggle', JSON.stringify(action.payload));
+      state.usdToggle = action.payload;
+    },
   },
 });
 
-export const { setDarkMode, setSlippageTolerance, setLocale, openWalletModal } =
-  userSlice.actions;
+export const {
+  setDarkMode,
+  setSlippageTolerance,
+  setLocale,
+  openWalletModal,
+  setUsdToggle,
+} = userSlice.actions;
 
 export const user = userSlice.reducer;

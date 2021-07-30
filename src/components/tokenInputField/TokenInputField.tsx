@@ -1,14 +1,14 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { getTokenLogoURI, Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
+import { useAppSelector } from 'redux/index';
 
 interface TokenInputFieldProps {
   label: string;
@@ -62,7 +62,7 @@ export const TokenInputField = ({
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
       : null;
 
-  const toggle = useContext(Toggle);
+  const toggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const onInputChange = (text: string) => {
     text = sanitizeNumberInput(text);

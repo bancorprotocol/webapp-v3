@@ -2,11 +2,16 @@ import { Switch } from '@headlessui/react';
 import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
 import { ReactComponent as IconDollar } from 'assets/icons/dollar.svg';
 import 'elements/swapSwitch/SwapSwitch.css';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
-import { useContext } from 'react';
+import { useAppSelector } from 'redux/index';
+import { useDispatch } from 'react-redux';
+import { setUsdToggle } from 'redux/user/user';
 
-export const SwapSwitch = ({ setIsEnabled }: { setIsEnabled: Function }) => {
-  const isEnabled = useContext(Toggle);
+export const SwapSwitch = () => {
+  const dispatch = useDispatch();
+  const isEnabled = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const setIsEnabled = (state: boolean) => {
+    dispatch(setUsdToggle(state));
+  };
 
   const switchStyles = `swap-switch !min-w-[0px] ${
     isEnabled

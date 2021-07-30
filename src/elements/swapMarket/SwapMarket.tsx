@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
@@ -24,7 +24,6 @@ import {
   getConversion,
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
-import { Toggle } from 'elements/swapWidget/SwapWidget';
 import { setConversion } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
 
@@ -55,7 +54,8 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
-  const fiatToggle = useContext(Toggle);
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+
   const dispatch = useDispatch();
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
