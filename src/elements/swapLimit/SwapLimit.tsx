@@ -226,13 +226,13 @@ export const SwapLimit = ({
         const conversion = getConversion();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowApproveModal(true);
-      } else await handleSwap(true);
+      } else await handleSwap(true, token.address === wethToken);
     } catch (e) {
       dispatch(
         addNotification({
           type: NotificationType.error,
           title: 'Transaction Failed',
-          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
+          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
         })
       );
     }
@@ -461,7 +461,11 @@ export const SwapLimit = ({
           isOpen={showApproveModal}
           setIsOpen={setShowApproveModal}
           amount={fromAmount}
-          fromToken={fromToken}
+          fromToken={
+            fromToken?.address === ethToken
+              ? { ...fromToken, symbol: 'WETH', address: wethToken }
+              : fromToken
+          }
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }

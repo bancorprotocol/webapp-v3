@@ -41,7 +41,7 @@ export const SwapLimitTable = () => {
   if (!account || orders.length === 0) return null;
 
   return (
-    <div className="md:max-w-[1200px] mx-auto md:rounded-30 bg-white dark:bg-blue-4 md:shadow-widget my-40 pb-10">
+    <div className="md:rounded-30 bg-white dark:bg-blue-4 md:shadow-widget my-40 pb-10">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:h-60 md:px-20">
         <div>
           <h2>Active Orders</h2>
