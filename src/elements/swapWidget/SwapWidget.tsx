@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
@@ -8,7 +8,6 @@ import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
 
-export const Toggle = createContext(false);
 interface SwapWidgetProps {
   isLimit: boolean;
   setIsLimit: Function;
@@ -19,7 +18,6 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
 
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState<Token | null>(null);
-  const [toggle, setToggle] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -58,13 +56,9 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   };
 
   return (
-    <Toggle.Provider value={toggle}>
+    <>
       <div className="widget mx-auto">
-        <SwapHeader
-          isLimit={isLimit}
-          setIsLimit={setIsLimit}
-          setToggle={setToggle}
-        />
+        <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
         <hr className="widget-separator" />
         {isLimit ? (
           <SwapLimit
@@ -91,6 +85,6 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
       ) : (
         ''
       )}
-    </Toggle.Provider>
+    </>
   );
 };
