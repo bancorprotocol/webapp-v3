@@ -311,12 +311,12 @@ export const SwapMarket = ({
         </div>
 
         <div className="widget-block">
-          <button
-            onClick={() => fromToken.address !== wethToken && handleSwitch()}
-            className="widget-block-icon transform hover:rotate-180 transition duration-500 "
-          >
-            <IconSync className="w-[25px] text-primary dark:text-primary-light" />
-          </button>
+          <div className="widget-block-icon cursor-pointer">
+            <IconSync
+              className="transform hover:rotate-180 transition duration-500 w-[25px] text-primary dark:text-primary-light"
+              onClick={() => fromToken.address !== wethToken && handleSwitch()}
+            />
+          </div>
           <div className="mx-10 mb-16 pt-16">
             <TokenInputField
               label="You Receive"
