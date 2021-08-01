@@ -5,7 +5,6 @@ import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
 import { user$ } from './user';
-import { fetchBalances, userBalances$ } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -16,6 +15,7 @@ import {
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
+import { fetchTokenBalances } from './balances';
 
 export interface TokenList {
   name: string;
@@ -103,7 +103,7 @@ const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
-export const tokensWithoutBalances$ = combineLatest([
+export const tokens$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   user$,
@@ -143,28 +143,16 @@ export const tokensWithoutBalances$ = combineLatest([
       }
     });
 
-    fetchBalances(overlappingTokens.map((token) => token.address));
+    if (user) {
+      const updatedTokens = await fetchTokenBalances(
+        overlappingTokens,
+        user,
+        currentNetwork
+      );
+      if (updatedTokens.length !== 0) return updatedTokens;
+    }
 
     return overlappingTokens;
-  }),
-  shareReplay(1)
-);
-
-export const tokens$ = combineLatest([
-  tokensWithoutBalances$,
-  userBalances$,
-]).pipe(
-  map(([tokens, userBalances]) => {
-    return tokens.map((token) => {
-      if (userBalances) {
-        const userBalance = userBalances[token.address];
-        return userBalance === undefined
-          ? token
-          : { ...token, balance: userBalance };
-      } else {
-        return token;
-      }
-    });
   }),
   shareReplay(1)
 );
