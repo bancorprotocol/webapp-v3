@@ -33,6 +33,9 @@ import {
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import { setConversion } from 'services/api/googleTagManager';
+import { updateTokens } from 'redux/bancor/bancor';
+import { fetchTokenBalances } from 'services/observables/balances';
+import wait from 'waait';
 
 enum Field {
   from,
@@ -238,6 +241,19 @@ export const SwapLimit = ({
     }
   };
 
+  const updateETHandWETH = async () => {
+    if (!(chainId && toToken && account)) return;
+
+    const wethIndex = tokens.findIndex((x) => x.address === wethToken);
+    await wait(4000);
+    const balances = await fetchTokenBalances(
+      [fromToken, tokens[wethIndex]],
+      account,
+      chainId
+    );
+    dispatch(updateTokens(balances));
+  };
+
   const handleSwap = async (
     approved: boolean = false,
     weth: boolean = false,
@@ -265,6 +281,7 @@ export const SwapLimit = ({
     );
 
     if (notification) dispatch(addNotification(notification));
+    if (fromToken.address === ethToken) updateETHandWETH();
   };
 
   const isSwapDisabled = () => {
