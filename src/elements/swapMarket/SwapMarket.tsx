@@ -26,6 +26,9 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { setConversion } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
+import { updateTokens } from 'redux/bancor/bancor';
+import { fetchTokenBalances } from 'services/observables/balances';
+import wait from 'waait';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -170,6 +173,18 @@ export const SwapMarket = ({
     }
   };
 
+  const onConfirmation = async () => {
+    if (!(chainId && toToken && account)) return;
+
+    await wait(4000);
+    const balances = await fetchTokenBalances(
+      [fromToken, toToken],
+      account,
+      chainId
+    );
+    dispatch(updateTokens(balances));
+  };
+
   const handleSwap = async (approved: boolean = false) => {
     if (!account) {
       dispatch(openWalletModal(true));
@@ -193,6 +208,7 @@ export const SwapMarket = ({
         fromAmount,
         toAmount,
         user: account,
+        onConfirmation: onConfirmation,
       });
 
       dispatch(

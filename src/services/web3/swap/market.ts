@@ -24,8 +24,6 @@ import {
   ConversionEvents,
   getConversion,
 } from 'services/api/googleTagManager';
-//import { fetchBalances } from 'services/observables/balances';
-import wait from 'waait';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -131,11 +129,6 @@ export const swap = async ({
         conversion_market_token_rate: fromToken.usdPrice,
         transaction_category: 'Conversion',
       });
-      //RefreshBalances
-      // fetchBalances([fromToken.address, toToken.address, ethToken]);
-      // wait(4000).then(() =>
-      //   fetchBalances([fromToken.address, toToken.address, ethToken])
-      // );
       onConfirmation && onConfirmation();
     },
     resolveImmediately: true,
