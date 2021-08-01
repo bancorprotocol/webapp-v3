@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { getNetworkVariables } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
@@ -11,12 +11,13 @@ const { ethereum } = window;
 export const getChainID = (chain: string | number): EthNetworks =>
   typeof chain === 'string' ? parseInt(chain) : chain;
 
-export const currentNetworkReceiver$ = new Subject<number>();
+export const currentNetworkReceiver$ = new BehaviorSubject<number>(
+  EthNetworks.Mainnet
+);
 
 const handleChainChanged = (chain: string | number) => {
   const chainID = getChainID(chain);
-  web3.setProvider(provider(chainID));
-  currentNetworkReceiver$.next(chainID);
+  setNetwork(chainID);
 };
 
 if (ethereum && ethereum.on) ethereum.on('chainChanged', handleChainChanged);
@@ -27,8 +28,10 @@ export const currentNetwork$ = currentNetworkReceiver$.pipe(
 );
 
 export const setNetwork = (chainId: EthNetworks) => {
-  if (chainId === EthNetworks.Mainnet || chainId === EthNetworks.Ropsten)
+  if (chainId === EthNetworks.Mainnet || chainId === EthNetworks.Ropsten) {
     currentNetworkReceiver$.next(chainId);
+    web3.setProvider(provider(chainId));
+  }
 };
 
 export const networkVars$ = currentNetwork$.pipe(
