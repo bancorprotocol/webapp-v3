@@ -76,17 +76,12 @@ export const App = () => {
   }, [notifications]);
 
   useEffect(() => {
-    const updateChain = async () => {
-      const chainID = await web3.eth.net.getId();
-      if (chainID) setNetwork(chainID);
-    };
-    updateChain();
-  }, []);
+    if (chainId) setNetwork(chainId);
+    else setNetwork(EthNetworks.Mainnet);
+  }, [chainId]);
 
   useEffect(() => {
     setUser(account);
-    if (!account) setNetwork(EthNetworks.Mainnet);
-
     googleTagManager('', '');
   }, [account]);
 
