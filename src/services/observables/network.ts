@@ -15,13 +15,6 @@ export const currentNetworkReceiver$ = new BehaviorSubject<number>(
   EthNetworks.Mainnet
 );
 
-const handleChainChanged = (chain: string | number) => {
-  const chainID = getChainID(chain);
-  setNetwork(chainID);
-};
-
-if (ethereum && ethereum.on) ethereum.on('chainChanged', handleChainChanged);
-
 export const currentNetwork$ = currentNetworkReceiver$.pipe(
   distinctUntilChanged(),
   shareReplay(1)
