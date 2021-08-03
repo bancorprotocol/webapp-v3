@@ -124,10 +124,10 @@ export const App = () => {
       ) : (
         <div
           className={`md:mr-[30px] pt-[110px] md:pt-[165px] transition-all duration-500 ${
-            isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
+            isSidebarMinimized ? 'md:ml-[96px]' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1200px] mx-auto`}>
+          <main className={`max-w-[1400px] mx-auto`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route exact strict path="/tokens" component={Tokens} />
