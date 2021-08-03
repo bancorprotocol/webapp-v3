@@ -4,7 +4,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
-import { user$ } from './user';
 import { fetchBalances, userBalances$ } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -16,7 +15,6 @@ import {
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
-import { isEmpty } from 'lodash';
 
 export interface TokenList {
   name: string;
@@ -107,10 +105,9 @@ const tokenListMerged$ = combineLatest([
 export const tokensWithoutBalances$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
-  user$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([tokenList, apiTokens, user, currentNetwork]) => {
+  switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
     const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
       address: x.dlt_id,
       symbol: x.symbol,
@@ -156,7 +153,7 @@ export const tokens$ = combineLatest([
   userBalances$,
 ]).pipe(
   map(([tokens, userBalances]) => {
-    if (Object.keys(userBalances).length === 0) {
+    if (!userBalances || Object.keys(userBalances).length === 0) {
       console.time('FirstEmissionTime');
       return tokens;
     } else {
