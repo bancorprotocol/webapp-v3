@@ -212,10 +212,11 @@ export const updateTokenBalances = async (
     .map(toRawToken)
     .filter((token) => token.contract !== ethToken);
 
-  const [updatedTokens, ethBalance] = await Promise.all([
-    fetchTokenBalances(withoutEth, user, currentNetwork),
-    (async () => includesEth && web3.eth.getBalance(user))(),
-  ]);
+  const updatedTokens = await fetchTokenBalances(
+    withoutEth,
+    user,
+    currentNetwork
+  );
 
   return tokens.map((token) => {
     const updatedBalance = updatedTokens.find(
@@ -237,8 +238,6 @@ export const updateTokenBalances = async (
         ...token,
         balance: shrinkToken(updatedBalance.balance, updatedBalance.decimals),
       };
-    } else if (token.address === ethToken && includesEth) {
-      return { ...token, balance: shrinkToken(ethBalance as string, 18) };
     } else {
       return token;
     }
