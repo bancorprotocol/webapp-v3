@@ -1,11 +1,6 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
-import {
-  expandToken,
-  ppmToDec,
-  shrinkToken,
-  splitArrayByVal,
-} from 'utils/pureFunctions';
+import { expandToken, ppmToDec, shrinkToken } from 'utils/pureFunctions';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import {
@@ -32,18 +27,67 @@ import {
 import { fetchBalances } from 'services/observables/balances';
 import wait from 'waait';
 import {
-  buildPoolBalancesShape,
+  buildPoolBalanceShape,
   buildRateShape,
   multi,
 } from '../contracts/shapes';
-import { CallReturn } from 'eth-multicall';
-import { EthNetworks } from '../types';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
   toToken: Token,
-  amount: string,
-  skipPriceImpact?: boolean
+  amount: string
+) => {
+  try {
+    const networkContractAddress = await bancorNetwork$
+      .pipe(take(1))
+      .toPromise();
+
+    const from =
+      fromToken.address === wethToken
+        ? { ...fromToken, address: ethToken }
+        : fromToken;
+    const to =
+      toToken.address === wethToken
+        ? { ...toToken, address: ethToken }
+        : toToken;
+
+    const path = await conversionPath({
+      from: from.address,
+      to: to.address,
+      networkContractAddress,
+      web3,
+    });
+    const fromAmountWei = expandToken(amount, fromToken.decimals);
+    const rateShape = await buildRateShape({
+      networkContractAddress,
+      amount: fromAmountWei,
+      path,
+      web3,
+    });
+
+    const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
+
+    const rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const priceImpactNum = new BigNumber(1)
+      .minus(new BigNumber(rate).div(amount).div(spotRate.spotPrice))
+      .times(100);
+
+    return {
+      rate,
+      priceImpact: isNaN(priceImpactNum.toNumber())
+        ? '0.0000'
+        : priceImpactNum.toFixed(4),
+    };
+  } catch (error) {
+    console.error('Failed fetching rate and price impact: ', error);
+    return { rate: '0', priceImpact: '0.0000' };
+  }
+};
+
+export const getRate = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
 ) => {
   try {
     const networkContractAddress = await bancorNetwork$
@@ -67,37 +111,12 @@ export const getRateAndPriceImapct = async (
       path,
       web3,
     });
-    const rate = shrinkToken(toAmountWei, toToken.decimals);
-
-    if (skipPriceImpact) return { rate, priceImpact: '0.0000' };
-
-    const rateShape = await buildRateShape({
-      networkContractAddress,
-      amount: fromAmountWei,
-      path,
-      web3,
-    });
-
-    const priceImpactNum = new BigNumber(1)
-      .minus(
-        new BigNumber(rate)
-          .div(amount)
-          .div(await calculateSpotPrice(from, to, rateShape))
-      )
-      .times(100);
-
-    return {
-      rate,
-      priceImpact: isNaN(priceImpactNum.toNumber())
-        ? '0.0000'
-        : priceImpactNum.toFixed(4),
-    };
+    return shrinkToken(toAmountWei, toToken.decimals);
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
     return { rate: '0', priceImpact: '0.0000' };
   }
 };
-
 export const swap = async ({
   slippageTolerance,
   fromToken,
@@ -179,83 +198,90 @@ const findPath = async (from: string, to: string) => {
   ];
 };
 
-const calculateSpotPrice = async (from: string, to: string, rateShape: any) => {
+const calculateSpotPriceAndRate = async (
+  from: Token,
+  to: Token,
+  rateShape: any
+) => {
   const network = await currentNetwork$.pipe(take(1)).toPromise();
 
+  const bnt = bntToken(network);
   let pool;
-  if (from === bntToken(network)) pool = await findPoolByToken(to);
-  if (to === bntToken(network)) pool = await findPoolByToken(from);
+  if (from.address === bnt) pool = await findPoolByToken(to.address);
+  if (to.address === bnt) pool = await findPoolByToken(from.address);
 
   if (pool) {
-    const poolShape = await buildPoolShpae(pool);
-    const [poolBalances, rate]: any = await multi({
-      groupsOfShapes: [poolShape, rateShape],
+    const fromShape = await buildTokenPoolShpae(pool, from.address);
+    const toShape = await buildTokenPoolShpae(pool, to.address);
+
+    const [fromReserve, toReserve, rate]: any = await multi({
+      groupsOfShapes: [[fromShape], [toShape], [rateShape]],
       currentNetwork: network,
     });
 
-    const [fromReserve, toReserve] = splitArrayByVal(
-      pool.reserves,
-      (x) => x.address === from
-    );
-    return new BigNumber(toReserve[0].balance).div(
-      new BigNumber(fromReserve[0].balance).times(
-        new BigNumber(1).minus(ppmToDec(pool.fee))
-      )
-    );
+    return {
+      spotPrice: calcReserve(
+        shrinkToken(fromReserve[0].balance, from.decimals),
+        shrinkToken(toReserve[0].balance, to.decimals),
+        ppmToDec(pool.fee)
+      ),
+      rate: rate[0].rate,
+    };
   }
 
   //First hop
-  const fromPool = await findPoolByToken(from);
-  const fromShape = await buildPoolShpae(fromPool);
+  const fromPool = await findPoolByToken(from.address);
+  const fromShape1 = await buildTokenPoolShpae(fromPool, from.address);
+  const bntShape1 = await buildTokenPoolShpae(fromPool, bnt);
 
   //Second hop
-  const toPool = await findPoolByToken(to);
-  const toShape = await buildPoolShpae(toPool);
+  const toPool = await findPoolByToken(to.address);
+  const bntShape2 = await buildTokenPoolShpae(toPool, bnt);
+  const toShape2 = await buildTokenPoolShpae(toPool, to.address);
 
-  const [fromBalance, toBalance, rateBalance]: any = await multi({
-    groupsOfShapes: [[fromShape], [toShape], [rateShape]],
-    currentNetwork: network,
-  });
-
-  const [fromReserve1, toReserve1] = splitArrayByVal(
-    fromPool.reserves,
-    (x) => x.address === from
-  );
-
-  const [fromReserve2, toReserve2] = splitArrayByVal(
-    toPool.reserves,
-    (x) => x.address !== to
-  );
-
-  const spot1 = new BigNumber(toReserve1[0].balance)
-    .div(new BigNumber(fromReserve1[0].balance))
-    .times(new BigNumber(1).minus(ppmToDec(fromPool.fee)));
-
-  const spot2 = new BigNumber(toReserve2[0].balance).div(
-    new BigNumber(fromReserve2[0].balance).times(
-      new BigNumber(1).minus(ppmToDec(toPool.fee))
-    )
-  );
-
-  return spot1.times(spot2);
-};
-
-const buildPoolShpae = async (pool: Pool) => {
-  if (pool.version >= 41)
-    return await buildPoolBalancesShape({
-      converterAddress: pool.converter_dlt_id,
-      web3,
+  const [fromReserve1, bntReserve1, bntReserve2, toReserve2, rate]: any =
+    await multi({
+      groupsOfShapes: [
+        [fromShape1],
+        [bntShape1],
+        [bntShape2],
+        [toShape2],
+        [rateShape],
+      ],
+      currentNetwork: network,
     });
 
-  return await buildPoolBalancesShape({
-    converterAddress: pool.converter_dlt_id,
+  const spot1 = calcReserve(
+    shrinkToken(fromReserve1[0].balance, from.decimals),
+    shrinkToken(bntReserve1[0].balance, 18),
+    ppmToDec(fromPool.fee)
+  );
+
+  const spot2 = calcReserve(
+    shrinkToken(bntReserve2[0].balance, 18),
+    shrinkToken(toReserve2[0].balance, to.decimals),
+    ppmToDec(toPool.fee)
+  );
+
+  return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
+};
+
+const buildTokenPoolShpae = async (pool: Pool, tokenAddress: string) => {
+  return await buildPoolBalanceShape({
     web3,
+    tokenAddress,
+    converterAddress: pool.converter_dlt_id,
   });
+};
+
+const calcReserve = (from: string, to: string, fee: BigNumber) => {
+  return new BigNumber(to).div(
+    new BigNumber(from).times(new BigNumber(1).minus(fee))
+  );
 };
 
 const findPoolByToken = async (tkn: string): Promise<Pool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
-
   const pool = apiData.pools.find(
     (x) => x && x.reserves.find((x) => x.address === tkn)
   );

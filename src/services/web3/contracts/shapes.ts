@@ -7,7 +7,7 @@ import {
   MultiCall,
   ShapeWithLabel,
 } from 'eth-multicall';
-import { getNetworkVariables } from 'services/web3/config';
+import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { buildNetworkContract } from './network/wrapper';
 import Web3 from 'web3';
 import { buildConverterContract } from './converter/wrapper';
@@ -81,19 +81,22 @@ export const buildRateShape = async ({
   };
 };
 
-export const buildPoolBalancesShape = async ({
+export const buildPoolBalanceShape = async ({
   converterAddress,
   web3,
+  tokenAddress,
 }: {
   converterAddress: string;
   web3: Web3;
+  tokenAddress: string;
 }): Promise<{
   contract: DataTypes;
-  balances: CallReturn<any>;
+  balance: CallReturn<string> | Promise<string>;
 }> => {
   const contract = buildConverterContract(converterAddress, web3);
+
   return {
     contract: DataTypes.originAddress,
-    balances: contract.methods.reserveBalances(),
+    balance: contract.methods.getConnectorBalance(tokenAddress),
   };
 };
