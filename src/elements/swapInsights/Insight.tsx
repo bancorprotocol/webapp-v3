@@ -47,6 +47,7 @@ export const Insight = ({ fromToken, toToken }: InsightProps) => {
           <div className="text-20 font-semibold">Insights</div>
         </div>
         <div className="text-12 mr-20 flex items-center">
+          <p className="mr-6">Powered by </p>
           <a
             className="flex items-center"
             href="https://app.intotheblock.com/?pid=bancor&utm_source=bancor_widget"
