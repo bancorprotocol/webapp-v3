@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
-import { loadSwapData } from 'services/observables/triggers';
-import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
@@ -18,12 +16,6 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
 
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState<Token | null>(null);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   useEffect(() => {
     const findSetToken = (token: Token) => {

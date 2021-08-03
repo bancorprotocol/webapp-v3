@@ -37,6 +37,7 @@ import { useAppSelector } from 'redux/index';
 import { web3 } from 'services/web3/contracts';
 import { provider } from 'services/web3/wallet/connectors';
 import { googleTagManager } from 'services/api/googleTagManager';
+import { loadSwapData } from './services/observables/triggers';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,10 @@ export const App = () => {
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
+
+  useEffect(() => {
+    loadSwapData(dispatch);
+  }, [dispatch]);
 
   useEffect(() => {
     if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
