@@ -1,0 +1,13 @@
+@import 'tailwindcss/components';
+
+@layer components {
+    .content-section {
+        @apply md:rounded-20;
+        @apply bg-white dark:bg-blue-4;
+        @apply shadow-content dark:shadow-none;
+    }
+
+    .content-separator {
+        @apply border-t-2 border-grey-2 dark:border-blue-1;
+    }
+}
