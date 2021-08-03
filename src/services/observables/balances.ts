@@ -46,9 +46,12 @@ export const fetchTokenBalances = async (
   user: string,
   currentNetwork: EthNetworks
 ): Promise<RawBalance[]> => {
+  const supportedTokens = tokens.filter((token) => token.contract !== ethToken);
+
   const [knownPrecisions, unknownPrecisions] = partition(
-    tokens,
-    (token) => Object.keys(token).includes('decimals') && token.decimals !== 0
+    supportedTokens,
+    (token) =>
+      Object.keys(token).includes('decimals') && !Number.isNaN(token.decimals)
   );
 
   const knownDecimalShapes = knownPrecisions.map((token) =>
@@ -59,12 +62,22 @@ export const fetchTokenBalances = async (
   );
 
   try {
-    const [knownDecimalsRes, unknownDecimalsRes] = (await multi({
-      groupsOfShapes: [knownDecimalShapes, unknownDecimalShapes],
-      currentNetwork,
-    })) as [
-      { contract: string; balance: string }[],
-      { contract: string; balance: string; decimals: string }[]
+    const includesEth = tokens.some((token) => token.contract === ethToken);
+
+    const [[knownDecimalsRes, unknownDecimalsRes], ethWei] = (await Promise.all(
+      [
+        multi({
+          groupsOfShapes: [knownDecimalShapes, unknownDecimalShapes],
+          currentNetwork,
+        }),
+        (async () => includesEth && web3.eth.getBalance(user))(),
+      ]
+    )) as [
+      [
+        { contract: string; balance: string }[],
+        { contract: string; balance: string; decimals: string }[]
+      ],
+      string | boolean
     ];
 
     const rebuiltDecimals = knownDecimalsRes.map((token): RawBalance => {
@@ -84,20 +97,21 @@ export const fetchTokenBalances = async (
         decimals: Number(res.decimals),
       })
     );
-    const mergedWei = [...rebuiltDecimals, ...parsedNumbers].map((token) => ({
-      ...token,
-      contract: toChecksumAddress(token.contract),
-    }));
+    const mergedWei = [...rebuiltDecimals, ...parsedNumbers].map(
+      (token): RawBalance => ({
+        ...token,
+        contract: toChecksumAddress(token.contract),
+      })
+    );
 
-    const includesEth = mergedWei.some((wei) => wei.contract === ethToken);
-    if (includesEth) {
-      const ethBalance = await web3.eth.getBalance(user);
-      return updateArray(
-        mergedWei,
-        (wei) => wei.contract === ethToken,
-        () => ({ balance: ethBalance, contract: ethToken, decimals: 18 })
-      );
+    if (ethWei) {
+      mergedWei.push({
+        balance: shrinkToken(ethToken, 18),
+        contract: ethToken,
+        decimals: 18,
+      });
     }
+
     return mergedWei;
   } catch (e) {
     console.error('Failed fetching balances');

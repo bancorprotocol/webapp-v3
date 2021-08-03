@@ -16,6 +16,7 @@ import {
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
+import { isEmpty } from 'lodash';
 
 export interface TokenList {
   name: string;
@@ -155,6 +156,12 @@ export const tokens$ = combineLatest([
   userBalances$,
 ]).pipe(
   map(([tokens, userBalances]) => {
+    if (Object.keys(userBalances).length === 0) {
+      console.time('FirstEmissionTime');
+      return tokens;
+    } else {
+      console.timeEnd('FirstEmissionTime');
+    }
     return tokens.map((token) => {
       if (userBalances) {
         const userBalance = userBalances[token.address];
