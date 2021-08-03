@@ -1,5 +1,5 @@
 import { Summary } from 'services/api/intoTheBlock';
-import { pick, toPairs } from 'lodash';
+import { pick, sum, toPairs } from 'lodash';
 
 export const Speedometer = ({ summary }: { summary: Summary | null }) => {
   const rotation = summary ? summary.score * 180 : 90;
@@ -9,6 +9,8 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
 
   const title = () => {
     if (!summary) return 'bullish';
+    if (summary.score < summary.bullish && summary.score > summary.bearish)
+      return 'neutral';
     const findTitle = toPairs(
       pick(summary, ['bullish', 'bearish', 'neutral'])
     ).sort(([, a], [, b]) => Number(b) - Number(a))[0];
