@@ -5,7 +5,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
   const rotation = summary ? summary.score * 180 : 90;
 
   const gradientColour =
-    rotation > 110 ? 'palegreen' : rotation > 70 ? 'grey' : 'red';
+    rotation > 110 ? '#0ED3B0' : rotation > 70 ? 'grey' : 'red';
 
   const title = () => {
     if (!summary) return 'bullish';
@@ -66,7 +66,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
             transform="scale(-1 1)"
             transform-origin="34 34"
           />
-          <circle cx="34" cy="34" r="30" fill="url(#meter-bg)" />
+          <circle cx="34" cy="34" r="30" fill={`url(#meter-bg${rotation})`} />
           <line
             x1="6"
             y1="34"
@@ -89,8 +89,11 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
           />
 
           <defs>
-            <linearGradient id="meter-bg" gradientTransform="rotate(90)">
-              <stop offset="0%" stopColor={gradientColour} stopOpacity="90%" />
+            <linearGradient
+              id={`meter-bg${rotation}`}
+              gradientTransform="rotate(90)"
+            >
+              <stop offset="0%" stopColor={gradientColour} stopOpacity="40%" />
               <stop
                 offset="55%"
                 className="text-white dark:text-blue-4"
@@ -114,7 +117,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
           <div>Bearish</div>
         </div>
         <div>
-          <div className="text-20 font-semibold text-gray-500">
+          <div className="text-20 font-semibold text-grey-3">
             {summary ? summary.neutral : 0}
           </div>
           <div>Neutral</div>

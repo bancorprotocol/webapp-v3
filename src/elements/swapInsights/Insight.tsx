@@ -4,7 +4,6 @@ import { ReactComponent as IconIntotheblock } from 'assets/icons/intotheblock.sv
 import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 
 export interface InsightToken extends IntoTheBlock {

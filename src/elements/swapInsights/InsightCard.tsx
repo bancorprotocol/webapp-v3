@@ -16,7 +16,7 @@ export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
           {data &&
             data.percentages.map((p) => (
               <div key={p.color}>
-                <span className={`text-${p.color}`}>
+                <span className={`text-${p.color} text-16 font-medium`}>
                   {(p.decPercent * 100).toFixed(1) + '%'}
                 </span>
               </div>
@@ -33,7 +33,9 @@ export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
                 <div
                   key={index}
                   style={{ width: (p.decPercent * 100).toFixed(1) + '%' }}
-                  className={`rounded-full bg-${p.color}`}
+                  className={`rounded-full bg-${p.color} z-${
+                    10 * (data.percentages.length - index)
+                  }`}
                 />
               ))}
           </div>
