@@ -1,3 +1,5 @@
+import { TopTokens } from '../elements/tokens/TopTokens';
+
 export const Tokens = () => {
-  return <h1 className="flex justify-center">Tokens</h1>;
+  return <TopTokens />;
 };
