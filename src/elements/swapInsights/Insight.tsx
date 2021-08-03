@@ -15,16 +15,16 @@ export interface InsightToken extends IntoTheBlock {
 interface InsightProps {
   fromToken: Token;
   toToken: Token | null;
+  fromTokenIntoBlock?: IntoTheBlock;
+  toTokenIntoBlock?: IntoTheBlock;
 }
 
-export const Insight = ({ fromToken, toToken }: InsightProps) => {
-  const fromTokenIntoBlock = useAppSelector<IntoTheBlock | null>(
-    (state) => state.intoTheBlock.fromToken
-  );
-  const toTokenIntoBlock = useAppSelector<IntoTheBlock | null>(
-    (state) => state.intoTheBlock.toToken
-  );
-
+export const Insight = ({
+  fromToken,
+  toToken,
+  fromTokenIntoBlock,
+  toTokenIntoBlock,
+}: InsightProps) => {
   const [isExpanded, setIsExpanded] = useLocalStorage(
     'insightsExpanded',
     false

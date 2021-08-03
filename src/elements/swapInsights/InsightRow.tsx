@@ -9,7 +9,7 @@ export const InsightRow = ({
   data,
 }: {
   token: Token;
-  data: IntoTheBlock | null;
+  data?: IntoTheBlock;
 }) => {
   const cards = [
     data && data.inOutOfTheMoney
@@ -73,8 +73,8 @@ export const InsightRow = ({
           </div>
         </div>
         <div className="h-full col-span-3 gap-8 grid grid-cols-3">
-          {cards.map((card) => (
-            <InsightCard data={card} />
+          {cards.map((card, index) => (
+            <InsightCard key={index} data={card} />
           ))}
         </div>
       </div>

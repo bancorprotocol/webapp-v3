@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
@@ -8,10 +8,7 @@ import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
-import {
-  fetchFromToken,
-  fetchToToken,
-} from 'services/observables/intoTheBlock';
+import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -24,6 +21,9 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const [fromToken, setFromToken] = useState(tokens[0]);
   const [toToken, setToToken] = useState<Token | null>(null);
 
+  const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
+  const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,15 +31,16 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (fromToken) {
-      fetchFromToken(fromToken.symbol);
-    }
+    (async () => {
+      if (fromToken)
+        setFromTokenITB(await intoTheBlockByToken(fromToken.symbol));
+    })();
   }, [fromToken]);
 
   useEffect(() => {
-    if (toToken) {
-      fetchToToken(toToken.symbol);
-    }
+    (async () => {
+      if (toToken) setToTokenITB(await intoTheBlockByToken(toToken.symbol));
+    })();
   }, [toToken]);
 
   useEffect(() => {
@@ -104,7 +105,12 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
           ''
         )}
       </div>
-      <Insight fromToken={fromToken} toToken={toToken} />
+      <Insight
+        fromToken={fromToken}
+        toToken={toToken}
+        fromTokenIntoBlock={fromTokenITB}
+        toTokenIntoBlock={toTokenITB}
+      />
     </div>
   );
 };

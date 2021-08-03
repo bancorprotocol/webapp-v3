@@ -89,7 +89,5 @@ export const intoTheBlockByToken = async (
       ...(inOutOfTheMoney && { inOutOfTheMoney }),
       ...(byTimeHeldComposition && { byTimeHeldComposition }),
     };
-  } catch (error) {
-    console.error(error);
-  }
+  } catch (error) {}
 };

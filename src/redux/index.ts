@@ -4,7 +4,6 @@ import { user } from 'redux/user/user';
 import { bancorAPI } from 'redux/bancorAPI/bancorAPI';
 import { bancor } from 'redux/bancor/bancor';
 import { notification } from 'redux/notification/notification';
-import { intoTheBlock } from 'redux/intoTheBlock/intoTheBlock';
 
 export const store = configureStore({
   reducer: {
@@ -12,7 +11,6 @@ export const store = configureStore({
     notification,
     bancorAPI,
     bancor,
-    intoTheBlock,
   },
 });
 
