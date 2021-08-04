@@ -1,4 +1,4 @@
-import { createRef, useCallback, useEffect } from 'react';
+import { createRef, useEffect } from 'react';
 import {
   ChartOptions,
   createChart,
@@ -65,20 +65,16 @@ export const LineChartSimple = ({
 }: LineChartSimpleProps) => {
   const chartDiv = createRef<HTMLDivElement>();
 
-  const initChart = useCallback(() => {
+  useEffect(() => {
     if (!chartDiv.current) return;
-
     const chart = createChart(chartDiv.current, size);
     chart.applyOptions(chartOptions);
     chart.timeScale().fitContent();
 
     const lineSeries = chart.addLineSeries(seriesOptions);
     lineSeries.setData(data);
-  }, [chartDiv, data, seriesOptions, chartOptions, size]);
-
-  useEffect(() => {
-    initChart();
-  }, [initChart]);
+    return () => chart.remove();
+  }, [data, seriesOptions, chartOptions, size, chartDiv]);
 
   return <div ref={chartDiv}></div>;
 };
