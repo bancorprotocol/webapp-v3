@@ -1,5 +1,11 @@
-import { TopTokens } from '../elements/tokens/TopTokens';
+import { TopTokens } from 'elements/tokens/TopTokens';
+import { TokenTable } from 'elements/tokens/TokenTable';
 
 export const Tokens = () => {
-  return <TopTokens />;
+  return (
+    <div className="space-y-30">
+      <TopTokens />
+      <TokenTable />
+    </div>
+  );
 };
