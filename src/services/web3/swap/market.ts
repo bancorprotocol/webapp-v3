@@ -31,6 +31,7 @@ import {
   buildRateShape,
   multi,
 } from '../contracts/shapes';
+import { calcReserve } from 'utils/formulas';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -67,6 +68,8 @@ export const getRateAndPriceImapct = async (
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const rate = shrinkToken(spotRate.rate, toToken.decimals);
+
+    console.log('rate', rate);
 
     const priceImpactNum = new BigNumber(1)
       .minus(new BigNumber(rate).div(amount).div(spotRate.spotPrice))
@@ -263,6 +266,17 @@ const calculateSpotPriceAndRate = async (
     ppmToDec(toPool.fee)
   );
 
+  console.log(
+    'Hop 1 from: ',
+    shrinkToken(fromReserve1[0].balance, from.decimals)
+  );
+  console.log('Hop 1 to: ', shrinkToken(bntReserve1[0].balance, 18));
+  console.log('Hop 1 fee', ppmToDec(fromPool.fee).toFixed(5));
+
+  console.log('Hop 2 from: ', shrinkToken(bntReserve2[0].balance, 18));
+  console.log('Hop 2 to: ', shrinkToken(toReserve2[0].balance, to.decimals));
+  console.log('Hop 2 fee', ppmToDec(toPool.fee).toFixed(5));
+
   return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
 };
 
@@ -272,12 +286,6 @@ const buildTokenPoolShpae = async (pool: Pool, tokenAddress: string) => {
     tokenAddress,
     converterAddress: pool.converter_dlt_id,
   });
-};
-
-const calcReserve = (from: string, to: string, fee: BigNumber) => {
-  return new BigNumber(to)
-    .div(new BigNumber(from))
-    .times(new BigNumber(1).minus(fee));
 };
 
 const findPoolByToken = async (tkn: string): Promise<Pool> => {
