@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useInterval } from '../hooks/useInterval';
+import { useInterval } from 'hooks/useInterval';
 
 interface TickerProps {
   id: string;

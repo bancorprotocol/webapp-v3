@@ -1,4 +1,4 @@
-import { Ticker } from 'components/Ticker';
+import { Ticker } from 'components/ticker/Ticker';
 import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
