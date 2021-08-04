@@ -10,8 +10,14 @@ import {
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
+import {
+  positions$,
+  fetchPositions,
+  fullPositions$,
+} from 'services/observables/protectedPositions';
 
 export const loadSwapData = (dispatch: any) => {
+  fetchPositions();
   tokenLists$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });
@@ -30,6 +36,10 @@ export const loadSwapData = (dispatch: any) => {
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {
     setKeeperDaoTokens(keeperDaoTokens);
   });
+
+  positions$.subscribe((x) => console.log(x, 'came from positions'));
+
+  fullPositions$.subscribe((x) => console.log(x, 'was full positons'));
 };
 
 const selected_lists = 'selected_list_ids';

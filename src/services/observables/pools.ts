@@ -4,7 +4,16 @@ import {
   APIToken,
   WelcomeData,
 } from 'services/api/bancor';
-import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
+import {
+  chunk,
+  isEmpty,
+  isEqual,
+  partition,
+  uniq,
+  uniqBy,
+  uniqWith,
+  zip,
+} from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -19,7 +28,11 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';
-import { bancorConverterRegistry$, bancorNetwork$ } from './contracts';
+import {
+  bancorConverterRegistry$,
+  bancorNetwork$,
+  settingsContractAddress$,
+} from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
@@ -40,6 +53,7 @@ import { getRateByPath } from 'services/web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
 import wait from 'waait';
+import { fetchWhiteListedV1Pools } from 'services/web3/contracts/liquidityProtectionSettings/wrapper';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -119,6 +133,13 @@ export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
     );
   }),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
+  shareReplay(1)
+);
+
+export const whitelistedPools$ = settingsContractAddress$.pipe(
+  switchMapIgnoreThrow((address) => fetchWhiteListedV1Pools(address)),
+  startWith([]),
+  distinctUntilChanged(isEqual),
   shareReplay(1)
 );
 
