@@ -107,44 +107,49 @@ export const tokensWithoutBalances$ = combineLatest([
   apiTokens$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
-    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
-      address: x.dlt_id,
-      symbol: x.symbol,
-      decimals: x.decimals,
-      usdPrice: x.rate.usd,
-    }));
+  switchMapIgnoreThrow(
+    async ([tokenList, { tokens, network }, currentNetwork]) => {
+      const newApiTokens = [...tokens, buildWethToken(tokens)].map((x) => ({
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice: x.rate.usd,
+      }));
 
-    let overlappingTokens: Token[] = [];
-    const eth = getEthToken(apiTokens);
-    if (eth) overlappingTokens.push(eth);
+      let overlappingTokens: Token[] = [];
+      const eth = getEthToken(tokens);
+      if (eth) overlappingTokens.push(eth);
 
-    newApiTokens.forEach((apiToken) => {
-      if (currentNetwork === EthNetworks.Mainnet) {
-        const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
-        );
-        if (found)
-          overlappingTokens.push({
-            ...found,
-            ...apiToken,
-          });
-      } else {
-        if (apiToken.address !== ethToken)
-          overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
-            ...apiToken,
-          });
+      newApiTokens.forEach((apiToken) => {
+        if (currentNetwork === EthNetworks.Mainnet) {
+          const found = tokenList.find(
+            (userToken) => userToken.address === apiToken.address
+          );
+          if (found)
+            overlappingTokens.push({
+              ...found,
+              ...apiToken,
+            });
+        } else {
+          if (apiToken.address !== ethToken)
+            overlappingTokens.push({
+              chainId: EthNetworks.Ropsten,
+              name: apiToken.symbol,
+              logoURI: ropstenImage,
+              balance: null,
+              ...apiToken,
+            });
+        }
+      });
+
+      const networkMatch = network === currentNetwork;
+      if (networkMatch) {
+        fetchBalances(overlappingTokens.map((token) => token.address));
       }
-    });
 
-    fetchBalances(overlappingTokens.map((token) => token.address));
-
-    return overlappingTokens;
-  }),
+      return overlappingTokens;
+    }
+  ),
   shareReplay(1)
 );
 

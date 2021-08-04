@@ -11,7 +11,7 @@ const { ethereum } = window;
 export const getChainID = (chain: string | number): EthNetworks =>
   typeof chain === 'string' ? parseInt(chain) : chain;
 
-export const currentNetworkReceiver$ = new Subject<number>();
+export const currentNetworkReceiver$ = new Subject<EthNetworks>();
 
 const handleChainChanged = (chain: string | number) => {
   const chainID = getChainID(chain);

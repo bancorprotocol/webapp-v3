@@ -211,7 +211,7 @@ const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
 const findPoolByToken = async (tkn: string): Promise<Pool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
-  const pool = apiData.pools.find(
+  const pool = apiData.welcomeData.pools.find(
     (x) => x && x.reserves.find((x) => x.address === tkn)
   );
   if (pool) return pool;

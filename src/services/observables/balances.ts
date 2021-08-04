@@ -13,6 +13,7 @@ import { combineLatest, Subject } from 'rxjs';
 import { onLogin$, user$ } from './user';
 import {
   distinctUntilChanged,
+  filter,
   map,
   scan,
   shareReplay,
@@ -130,7 +131,12 @@ const rawBalances$ = combineLatest([
   apiTokens$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([addresses, user, tokens, network]) => {
+  filter(([addresses, user, tokens, network]) => {
+    const networkMatched = tokens.network === network;
+    if (!networkMatched) console.warn('network not matched in rawBalances$');
+    return networkMatched;
+  }),
+  switchMapIgnoreThrow(async ([addresses, user, { tokens }, network]) => {
     const rawTokensToFetch = uniq(addresses).map((address): RawToken => {
       if (
         address === ethToken ||
