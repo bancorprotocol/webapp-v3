@@ -232,13 +232,13 @@ const calculateSpotPriceAndRate = async (
 
   //First hop
   const fromPool = await findPoolByToken(from.address);
-  const fromShape1 = await buildTokenPoolShape(fromPool, from.address);
-  const bntShape1 = await buildTokenPoolShape(fromPool, bnt);
+  const fromShape1 = buildTokenPoolShape(fromPool, from.address);
+  const bntShape1 = buildTokenPoolShape(fromPool, bnt);
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
-  const bntShape2 = await buildTokenPoolShape(toPool, bnt);
-  const toShape2 = await buildTokenPoolShape(toPool, to.address);
+  const bntShape2 = buildTokenPoolShape(toPool, bnt);
+  const toShape2 = buildTokenPoolShape(toPool, to.address);
 
   const [fromReserve1, bntReserve1, bntReserve2, toReserve2, rate]: any =
     await multi({
