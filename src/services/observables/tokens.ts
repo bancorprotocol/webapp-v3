@@ -159,10 +159,7 @@ export const tokens$ = combineLatest([
 ]).pipe(
   map(([tokens, userBalances]) => {
     if (!userBalances || Object.keys(userBalances).length === 0) {
-      console.time('FirstEmissionTime');
       return tokens;
-    } else {
-      console.timeEnd('FirstEmissionTime');
     }
     return tokens.map((token) => {
       if (userBalances) {
