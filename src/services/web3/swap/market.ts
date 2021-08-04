@@ -212,8 +212,8 @@ const calculateSpotPriceAndRate = async (
   if (to.address === bnt) pool = await findPoolByToken(from.address);
 
   if (pool) {
-    const fromShape = await buildTokenPoolShpae(pool, from.address);
-    const toShape = await buildTokenPoolShpae(pool, to.address);
+    const fromShape = buildTokenPoolShape(pool, from.address);
+    const toShape = buildTokenPoolShape(pool, to.address);
 
     const [fromReserve, toReserve, rate]: any = await multi({
       groupsOfShapes: [[fromShape], [toShape], [rateShape]],
@@ -232,13 +232,13 @@ const calculateSpotPriceAndRate = async (
 
   //First hop
   const fromPool = await findPoolByToken(from.address);
-  const fromShape1 = await buildTokenPoolShpae(fromPool, from.address);
-  const bntShape1 = await buildTokenPoolShpae(fromPool, bnt);
+  const fromShape1 = buildTokenPoolShape(fromPool, from.address);
+  const bntShape1 = buildTokenPoolShape(fromPool, bnt);
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
-  const bntShape2 = await buildTokenPoolShpae(toPool, bnt);
-  const toShape2 = await buildTokenPoolShpae(toPool, to.address);
+  const bntShape2 = buildTokenPoolShape(toPool, bnt);
+  const toShape2 = buildTokenPoolShape(toPool, to.address);
 
   const [fromReserve1, bntReserve1, bntReserve2, toReserve2, rate]: any =
     await multi({
@@ -267,8 +267,8 @@ const calculateSpotPriceAndRate = async (
   return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
 };
 
-const buildTokenPoolShpae = async (pool: Pool, tokenAddress: string) => {
-  return await buildPoolBalanceShape({
+const buildTokenPoolShape = (pool: Pool, tokenAddress: string) => {
+  return buildPoolBalanceShape({
     web3,
     tokenAddress,
     converterAddress: pool.converter_dlt_id,
