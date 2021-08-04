@@ -4,27 +4,15 @@ import {
   APIToken,
   WelcomeData,
 } from 'services/api/bancor';
-import {
-  chunk,
-  isEmpty,
-  isEqual,
-  partition,
-  uniq,
-  uniqBy,
-  uniqWith,
-  zip,
-} from 'lodash';
+import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
-  first,
   map,
   pluck,
   share,
   shareReplay,
   startWith,
-  switchMap,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';
