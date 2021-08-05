@@ -2,47 +2,7 @@ import { CallReturn } from 'eth-multicall';
 import { ContractMethods } from 'services/web3/types';
 import Web3 from 'web3';
 import { buildContract } from '..';
-import {
-  ABIStakingRewards,
-  ABIStakingRewardsStore,
-  ABILiquidityProtectionStore,
-} from './abi';
-import { ContractSendMethod } from 'web3-eth-contract';
-
-export const buildStakingRewardsContract = (
-  contractAddress: string,
-  web3?: Web3
-): ContractMethods<{
-  stakeRewards: (maxAmount: string, poolToken: string) => ContractSendMethod;
-  claimRewards: () => ContractSendMethod;
-  totalClaimedRewards: (provider: string) => CallReturn<string>;
-  pendingRewards: (provider: string) => CallReturn<string>;
-  store: () => CallReturn<string>;
-  pendingReserveRewards: (
-    provider: string,
-    poolToken: string,
-    reserveToken: string
-  ) => CallReturn<string>;
-  rewardsMultiplier: (
-    provider: string,
-    poolToken: string,
-    reserveToken: string
-  ) => CallReturn<string>;
-}> => buildContract(ABIStakingRewards, contractAddress, web3);
-
-export const buildStakingRewardsStoreContract = (
-  contractAddress: string,
-  web3?: Web3
-): ContractMethods<{
-  poolPrograms: () => CallReturn<{
-    '0': string[]; // poolToken
-    '1': string[]; // startTimes
-    '2': string[]; // endTimes
-    '3': string[]; // rewardRates
-    '4': string[][]; // reserveTokens
-    '5': string[][]; // rewardShares
-  }>;
-}> => buildContract(ABIStakingRewardsStore, contractAddress, web3);
+import { ABILiquidityProtectionStore } from './abi';
 
 export const buildLiquidityProtectionStoreContract = (
   contractAddress: string,

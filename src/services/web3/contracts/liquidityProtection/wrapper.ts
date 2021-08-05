@@ -1,14 +1,22 @@
 import { CallReturn } from 'eth-multicall';
 import Web3 from 'web3';
-import { fromPairs } from 'lodash';
+import { fromPairs, toPairs, uniqWith } from 'lodash';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods, EthNetworks } from 'services/web3/types';
 import { ABILiquidityProtection } from './abi';
 import { buildContract } from '..';
 import { buildLiquidityProtectionStoreContract } from '../swap/wrapper';
 import { multi } from '../shapes';
-import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import dayjs from 'utils/dayjs';
+import { decToPpm } from 'utils/pureFunctions';
+import { BigNumber } from 'bignumber.js';
+
+const calculateReturnOnInvestment = (
+  investment: string,
+  newReturn: string
+): string => {
+  return new BigNumber(newReturn).div(investment).minus(1).toString();
+};
 
 export const buildLiquidityProtectionContract = (
   contractAddress: string,
@@ -60,7 +68,7 @@ export const fetchLiquidityProtectionSettingsContract = async (
   return contract.methods.settings().call();
 };
 
-interface ProtectedLiquidity {
+export interface ProtectedLiquidity {
   id: string;
   owner: string;
   poolToken: string;
@@ -135,3 +143,89 @@ export const fetchProtectedPositions = async (
 
   return protectedLiquidity;
 };
+
+interface PositionReturn {
+  baseAmount: string;
+  networkAmount: string;
+  targetAmount: string;
+}
+
+export const getRemoveLiquidityReturn = async (
+  protectionContract: string,
+  id: string,
+  ppm: string,
+  removeTimestamp: number,
+  web3?: Web3
+): Promise<PositionReturn> => {
+  const contract = buildLiquidityProtectionContract(protectionContract, web3);
+
+  const res = await contract.methods
+    .removeLiquidityReturn(id, ppm, String(removeTimestamp))
+    .call();
+  const keys = ['targetAmount', 'baseAmount', 'networkAmount'];
+  const pairs = toPairs(res).map(([, value], index) => [keys[index], value]);
+
+  return fromPairs(pairs) as PositionReturn;
+
+  // targetAmount - expected return amount in the reserve token
+  // baseAmount - actual return amount in the reserve token
+  // networkAmount - compensation in the network token
+};
+
+interface RemoveLiquidityReturn {
+  id: string;
+  fullLiquidityReturn: PositionReturn;
+  currentLiquidityReturn: PositionReturn;
+  roiDec: string;
+}
+
+export const removeLiquidityReturn = async (
+  position: ProtectedLiquidity,
+  liquidityProtectionContract: string
+): Promise<RemoveLiquidityReturn> => {
+  const timeNow = dayjs();
+  const timeNowUnix = timeNow.unix();
+  const fullWaitTimeUnix = timeNow.add(1, 'year').unix();
+
+  const portion = decToPpm(1);
+
+  const [fullLiquidityReturn, currentLiquidityReturn] = await Promise.all([
+    getRemoveLiquidityReturn(
+      liquidityProtectionContract,
+      position.id,
+      portion,
+      fullWaitTimeUnix
+    ),
+    getRemoveLiquidityReturn(
+      liquidityProtectionContract,
+      position.id,
+      portion,
+      timeNowUnix
+    ),
+  ]);
+
+  const roiDec =
+    fullLiquidityReturn &&
+    calculateReturnOnInvestment(
+      position.reserveAmount,
+      fullLiquidityReturn.targetAmount
+    );
+
+  return {
+    id: position.id,
+    fullLiquidityReturn,
+    currentLiquidityReturn,
+    roiDec,
+  };
+};
+
+export const uniquePoolReserves = (
+  positions: ProtectedLiquidity[]
+): { poolToken: string; reserveToken: string }[] =>
+  uniqWith(
+    positions,
+    (a, b) => a.poolToken === b.poolToken && a.reserveToken === b.reserveToken
+  ).map((position) => ({
+    reserveToken: position.reserveToken,
+    poolToken: position.poolToken,
+  }));

@@ -17,6 +17,7 @@ import {
 import { toChecksumAddress } from 'web3-utils';
 import { RegisteredContracts } from 'services/web3/types';
 import { Observable } from 'rxjs';
+import { buildStakingRewardsContract } from 'services/web3/contracts/stakingRewards/wrapper';
 
 const zeroXContracts$ = currentNetwork$.pipe(
   switchMapIgnoreThrow(async (currentNetwork) =>
@@ -62,6 +63,14 @@ export const bancorConverterRegistry$ = contractAddresses$.pipe(
 
 export const stakingRewards$ = contractAddresses$.pipe(
   pluckAndCache('StakingRewards')
+);
+
+export const storeRewards$ = stakingRewards$.pipe(
+  switchMapIgnoreThrow((stakingRewardsContract) => {
+    const contract = buildStakingRewardsContract(stakingRewardsContract);
+    return contract.methods.store().call();
+  }),
+  shareReplay(1)
 );
 
 export const liquidityProtectionStore$ = liquidityProtection$.pipe(

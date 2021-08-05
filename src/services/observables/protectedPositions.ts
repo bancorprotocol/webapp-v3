@@ -3,11 +3,24 @@ import { optimisticObservable, switchMapIgnoreThrow } from './customOperators';
 import {
   fetchProtectedPositions,
   fetchPositionIds,
+  removeLiquidityReturn,
+  uniquePoolReserves,
 } from 'services/web3/contracts/liquidityProtection/wrapper';
-import { liquidityProtectionStore$ } from './contracts';
+import {
+  liquidityProtection$,
+  liquidityProtectionStore$,
+  stakingRewards$,
+  storeRewards$,
+} from './contracts';
 import { currentNetwork$ } from './network';
-import { delay, map, shareReplay, startWith, tap } from 'rxjs/operators';
-import { user$ } from './user';
+import { map, shareReplay, startWith, tap } from 'rxjs/operators';
+import { onLogin$, user$ } from './user';
+import { findOrThrow, mapIgnoreThrown } from 'utils/pureFunctions';
+import {
+  pendingRewardRewards,
+  positionMatchesReward,
+} from 'services/web3/contracts/stakingRewards/wrapper';
+import { fetchPoolPrograms } from 'services/web3/contracts/stakingRewardsStore/wrapper';
 
 const positionIds$ = combineLatest([liquidityProtectionStore$, user$]).pipe(
   optimisticObservable('positionIds', ([store, user]) =>
@@ -64,7 +77,62 @@ const spreadById = <T extends ObjectWithId, Y extends ObjectWithId>(
   );
 };
 
+const removeLiquidityReturn$ = combineLatest([
+  positions$,
+  liquidityProtection$,
+]).pipe(
+  switchMapIgnoreThrow(([positions, contract]) =>
+    mapIgnoreThrown(positions, (position) =>
+      removeLiquidityReturn(position, contract)
+    )
+  )
+);
+
+const pendingReserveRewards$ = combineLatest([
+  stakingRewards$,
+  positions$,
+  onLogin$,
+]).pipe(
+  switchMapIgnoreThrow(async ([stakingRewards, positions, currentUser]) => {
+    const uniquePoolReserveIds = uniquePoolReserves(positions);
+
+    const pendingReserveRewards = await mapIgnoreThrown(
+      uniquePoolReserveIds,
+      (poolReserve) =>
+        pendingRewardRewards(
+          stakingRewards,
+          currentUser,
+          poolReserve.poolToken,
+          poolReserve.reserveToken
+        )
+    );
+
+    const fulfilledPositions = positions.filter((position) =>
+      pendingReserveRewards.some(positionMatchesReward(position))
+    );
+
+    return fulfilledPositions.map((position) => {
+      const reward = findOrThrow(
+        pendingReserveRewards,
+        positionMatchesReward(position)
+      );
+
+      return {
+        id: position.id,
+        pendingReserveReward: reward.decBnt.toString(),
+      };
+    });
+  })
+);
+
+export const poolPrograms$ = storeRewards$.pipe(
+  switchMapIgnoreThrow((storeRewardContract) =>
+    fetchPoolPrograms(storeRewardContract)
+  ),
+  shareReplay(1)
+);
+
 export const fullPositions$ = spreadById(positions$, [
-  of([{ id: '26296', cat: 5 }]),
-  of([{ id: '26296', dog: 2020 }]),
+  removeLiquidityReturn$,
+  pendingReserveRewards$,
 ]);
