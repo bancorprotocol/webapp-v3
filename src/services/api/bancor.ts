@@ -76,9 +76,13 @@ export interface NewPool extends Pool {
   decFee: number;
 }
 
+export interface WelcomeDataRes extends WelcomeData {
+  network: EthNetworks;
+}
+
 export const getWelcomeData = async (
   network: EthNetworks = EthNetworks.Mainnet
-): Promise<WelcomeData> => {
+): Promise<WelcomeDataRes> => {
   if (!(network === EthNetworks.Mainnet || network === EthNetworks.Ropsten)) {
     throw new Error('API does not support this network');
   }
@@ -90,6 +94,7 @@ export const getWelcomeData = async (
     );
     return {
       ...data,
+      network,
       pools: data.pools.map((pool) => ({
         ...pool,
         converter_dlt_id: toChecksumAddress(pool.converter_dlt_id),

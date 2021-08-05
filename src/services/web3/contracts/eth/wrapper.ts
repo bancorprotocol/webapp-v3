@@ -36,22 +36,23 @@ export const buildWethContract = (
 export const buildGovernanceContract = (
   contractAddress?: string,
   web3?: Web3
-): ContractMethods<{
-  voteDuration: () => CallReturn<string>;
-  voteLockDuration: () => CallReturn<string>;
-  voteLockFraction: () => CallReturn<string>;
-  newProposalMinimum: () => CallReturn<string>;
-  propose: (executor: string, hash: string) => ContractSendMethod;
-  voteFor: (proposalId: string) => ContractSendMethod;
-  voteAgainst: (proposalId: string) => ContractSendMethod;
-  stake: (amount: string) => ContractSendMethod;
-  unstake: (amount: string) => ContractSendMethod;
-  decimals: () => CallReturn<string>;
-  proposalCount: () => CallReturn<number>;
-  proposals: (proposalI: number) => CallReturn<Proposal>;
-  votesOf: (voter: string) => CallReturn<string>;
-  votesForOf: (voter: string, proposalId: number) => CallReturn<string>;
-  votesAgainstOf: (voter: string, proposalId: number) => CallReturn<string>;
-  voteLocks: (voter: string) => CallReturn<string>;
-  govToken: () => CallReturn<string>;
-}> => buildContract(ABIBancorGovernance, contractAddress, web3);
+) =>
+  buildContract<{
+    voteDuration: () => CallReturn<string>;
+    voteLockDuration: () => CallReturn<string>;
+    voteLockFraction: () => CallReturn<string>;
+    newProposalMinimum: () => CallReturn<string>;
+    propose: (executor: string, hash: string) => ContractSendMethod;
+    voteFor: (proposalId: string) => ContractSendMethod;
+    voteAgainst: (proposalId: string) => ContractSendMethod;
+    stake: (amount: string) => ContractSendMethod;
+    unstake: (amount: string) => ContractSendMethod;
+    decimals: () => CallReturn<string>;
+    proposalCount: () => CallReturn<number>;
+    proposals: (proposalI: number) => CallReturn<Proposal>;
+    votesOf: (voter: string) => CallReturn<string>;
+    votesForOf: (voter: string, proposalId: number) => CallReturn<string>;
+    votesAgainstOf: (voter: string, proposalId: number) => CallReturn<string>;
+    voteLocks: (voter: string) => CallReturn<string>;
+    govToken: () => CallReturn<string>;
+  }>(ABIBancorGovernance, contractAddress, web3);

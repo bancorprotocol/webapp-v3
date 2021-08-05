@@ -9,6 +9,7 @@ export const buildConverterContract = (
   contractAddress?: string,
   web3?: Web3
 ): ContractMethods<{
+  reserveBalances: () => CallReturn<any>;
   acceptTokenOwnership: () => ContractSendMethod;
   reserves: (reserveAddress: string) => CallReturn<any[]>;
   reserveBalance: (reserveAddress: string) => CallReturn<string>;

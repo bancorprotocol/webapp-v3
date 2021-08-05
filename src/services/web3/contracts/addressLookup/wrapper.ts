@@ -1,20 +1,15 @@
-import {
-  ContractMethods,
-  EthNetworks,
-  RegisteredContracts,
-} from 'services/web3/types';
+import { EthNetworks, RegisteredContracts } from 'services/web3/types';
 import { CallReturn, MultiCall } from 'eth-multicall';
-import { asciiToHex, isAddress } from 'web3-utils';
+import { asciiToHex } from 'web3-utils';
 import { ABIContractRegistry } from 'services/web3/contracts/addressLookup/abi';
 import { buildContract, web3 } from 'services/web3/contracts';
 import { toPairs } from 'lodash';
-import { EthNetworkVariables, getNetworkVariables } from 'services/web3/config';
+import { EthNetworkVariables } from 'services/web3/config';
 
-export const buildAddressLookupContract = (
-  contractAddress: string
-): ContractMethods<{
-  addressOf: (ascii: string) => CallReturn<string>;
-}> => buildContract(ABIContractRegistry, contractAddress);
+export const buildAddressLookupContract = (contractAddress: string) =>
+  buildContract<{
+    addressOf: (ascii: string) => CallReturn<string>;
+  }>(ABIContractRegistry, contractAddress);
 
 export const fetchContractAddresses = async (
   networkVariables: EthNetworkVariables

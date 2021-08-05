@@ -82,22 +82,16 @@ export const SwapMarket = ({
   }, [fromAmount]);
 
   useEffect(() => {
-    (async () => {
-      if (toToken && toToken.address === wethToken) setToToken(undefined);
-      else if (fromToken && toToken && fromToken.address !== wethToken) {
-        const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
-        setRate(res.rate);
-        if (fromDebounce) setPriceImpact(res.priceImpact);
-        else setPriceImpact('0.00');
-      }
-    })();
-  }, [fromToken, toToken, setToToken, fromDebounce]);
-
-  useEffect(() => {
-    if (fromToken && fromToken.address === wethToken) {
+    if (toToken && toToken.address === wethToken) setToToken(undefined);
+    else if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.00');
+      const usdAmount = new BigNumber(fromDebounce)
+        .times(1)
+        .times(eth?.usdPrice!)
+        .toString();
+      setToAmountUsd(usdAmount);
       setToToken(eth);
       setToAmount(fromDebounce);
       setIsLoadingRate(false);

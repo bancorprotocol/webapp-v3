@@ -11,7 +11,7 @@ import {
   classNameGenerator,
 } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
-import { getRateAndPriceImapct } from 'services/web3/swap/market';
+import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
   addNotification,
@@ -199,8 +199,8 @@ export const SwapLimit = ({
       if (toToken.address === ethToken) return;
 
       setIsLoadingRate(setLoading);
-      const res = await getRateAndPriceImapct(fromToken, toToken, '1', true);
-      setMarketRate(Number(res.rate));
+      const rate = await getRate(fromToken, toToken, '1');
+      setMarketRate(Number(rate));
       setIsLoadingRate(false);
     },
     [fromToken, toToken]
