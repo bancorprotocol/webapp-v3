@@ -6,17 +6,18 @@
     }
 
     thead tr {
-        @apply bg-grey-0 text-left text-grey-5 border-t border-b border-grey-2 font-medium h-[45px];
+        @apply bg-grey-2 dark:bg-blue-1 text-left text-grey-4 dark:text-grey-3 h-[56px];
     }
+
     thead th {
-        @apply font-medium first:pl-20 last:pr-20;
+        @apply font-normal first:pl-20 last:pr-20;
     }
 
     tbody tr {
-        @apply h-[50px] border-b border-grey-2 last:border-0;
+        @apply border-b border-grey-2 dark:border-blue-1 last:border-0;
     }
 
     tbody td {
-        @apply first:pl-20 last:pr-20;
+        @apply py-10 first:pl-20 last:pr-20;
     }
 }

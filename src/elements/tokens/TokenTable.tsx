@@ -42,7 +42,7 @@ export const TokenTable = () => {
         <Image
           src={token.logoURI}
           alt="Token"
-          className="bg-grey-2 rounded-full h-28 w-28 mr-10"
+          className="bg-grey-2 rounded-full h-30 w-30 mr-10"
         />
         <div>
           <h3>{token.symbol}</h3>
@@ -97,12 +97,11 @@ export const TokenTable = () => {
         id: '7',
         Header: 'Last 7 Days',
         accessor: () => <LineChartSimple data={sampleData} />,
-        width: 170,
         minWidth: 170,
       },
       {
         id: '8',
-        Header: 'Action',
+        Header: '',
         accessor: () => (
           <button className="btn-primary btn-sm rounded-[12px]">Trade</button>
         ),

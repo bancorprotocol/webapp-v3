@@ -61,7 +61,7 @@ export const DataTable = <D extends object>({
   return (
     <>
       <div className={'overflow-x-scroll md:overflow-x-auto'}>
-        <table {...getTableProps()} className={'w-full'}>
+        <table {...getTableProps()}>
           <TableHeader<D>
             headerGroups={headerGroups}
             columnsWidth={columnsWidth}
