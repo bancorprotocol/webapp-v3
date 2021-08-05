@@ -3,6 +3,7 @@ import {
   Pool,
   APIToken,
   WelcomeData,
+  WelcomeDataRes,
 } from 'services/api/bancor';
 import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
@@ -15,12 +16,12 @@ import {
   startWith,
   withLatestFrom,
 } from 'rxjs/operators';
-import { ConverterAndAnchor } from 'services/web3/types';
 import {
   bancorConverterRegistry$,
   bancorNetwork$,
   settingsContractAddress$,
 } from './contracts';
+import { ConverterAndAnchor, EthNetworks } from 'services/web3/types';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
@@ -60,7 +61,10 @@ const zipAnchorAndConverters = (
 };
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
-  switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
+  switchMapIgnoreThrow(async ([networkVersion]) => ({
+    networkVersion,
+    welcomeData: await getWelcomeData(networkVersion),
+  })),
   shareReplay(1)
 );
 
@@ -132,8 +136,13 @@ export const whitelistedPools$ = settingsContractAddress$.pipe(
 );
 
 export const apiTokens$ = apiData$.pipe(
-  pluck('tokens'),
-  distinctUntilChanged<WelcomeData['tokens']>(isEqual),
+  map((data) => ({
+    tokens: data.welcomeData.tokens,
+    network: data.networkVersion,
+  })),
+  distinctUntilChanged<{ tokens: WelcomeData['tokens']; network: EthNetworks }>(
+    isEqual
+  ),
   share()
 );
 
@@ -294,7 +303,7 @@ interface MinimalPool {
 
 const rate$ = tradeAndPath$.pipe(
   withLatestFrom(apiTokens$, bancorNetwork$),
-  switchMapIgnoreThrow(async ([trade, tokens, networkContractAddress]) => {
+  switchMapIgnoreThrow(async ([trade, { tokens }, networkContractAddress]) => {
     const fromToken = findOrThrow(tokens, hasTokenId(trade.trade.fromId));
     const toToken = findOrThrow(tokens, hasTokenId(trade.trade.toId));
 
