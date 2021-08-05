@@ -32,9 +32,7 @@ export const exchangeProxy$ = zeroXContracts$.pipe(
 );
 
 export const contractAddresses$ = networkVars$.pipe(
-  switchMap((networkVariables) => {
-    return fetchContractAddresses(networkVariables);
-  }),
+  switchMap((networkVariables) => fetchContractAddresses(networkVariables)),
   distinctUntilChanged<RegisteredContracts>(isEqual),
   shareReplay(1)
 );
