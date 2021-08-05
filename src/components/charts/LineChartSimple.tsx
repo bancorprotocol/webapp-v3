@@ -50,6 +50,8 @@ const chartOptDefault: DeepPartial<ChartOptions> = {
   handleScale: false,
 };
 
+const sizeDefault = { width: 160, height: 31 };
+
 interface LineChartSimpleProps {
   data: LineData[];
   seriesOptions?: DeepPartial<LineStyleOptions & SeriesOptionsCommon>;
@@ -61,7 +63,7 @@ export const LineChartSimple = ({
   data,
   seriesOptions = seriesOptDefault,
   chartOptions = chartOptDefault,
-  size = { width: 160, height: 31 },
+  size = sizeDefault,
 }: LineChartSimpleProps) => {
   const chartDiv = createRef<HTMLDivElement>();
 
