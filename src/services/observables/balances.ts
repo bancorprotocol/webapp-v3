@@ -1,19 +1,19 @@
-import { findOrThrow, shrinkToken, updateArray } from 'utils/pureFunctions';
-import { fromPairs, isEqual, partition, toPairs, uniq, uniqWith } from 'lodash';
+import { findOrThrow, shrinkToken } from 'utils/pureFunctions';
+import { fromPairs, isEqual, partition, toPairs, uniq } from 'lodash';
 import {
   slimBalanceShape,
   balanceShape,
   multi,
 } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
-import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
 import { combineLatest, Subject } from 'rxjs';
-import { user$ } from './user';
+import { onLogin$, user$ } from './user';
 import {
   distinctUntilChanged,
+  filter,
   map,
   scan,
   shareReplay,
@@ -30,7 +30,7 @@ interface RawBalance {
 }
 
 interface RawToken {
-  contract: string;
+  address: string;
   decimals?: number;
 }
 
@@ -46,31 +46,44 @@ export const fetchTokenBalances = async (
   user: string,
   currentNetwork: EthNetworks
 ): Promise<RawBalance[]> => {
+  const supportedTokens = tokens.filter((token) => token.address !== ethToken);
+
   const [knownPrecisions, unknownPrecisions] = partition(
-    tokens,
-    (token) => Object.keys(token).includes('decimals') && token.decimals !== 0
+    supportedTokens,
+    (token) =>
+      Object.keys(token).includes('decimals') && !Number.isNaN(token.decimals)
   );
 
   const knownDecimalShapes = knownPrecisions.map((token) =>
-    slimBalanceShape(token.contract, user)
+    slimBalanceShape(token.address, user)
   );
   const unknownDecimalShapes = unknownPrecisions.map((token) =>
-    balanceShape(token.contract, user)
+    balanceShape(token.address, user)
   );
 
   try {
-    const [knownDecimalsRes, unknownDecimalsRes] = (await multi({
-      groupsOfShapes: [knownDecimalShapes, unknownDecimalShapes],
-      currentNetwork,
-    })) as [
-      { contract: string; balance: string }[],
-      { contract: string; balance: string; decimals: string }[]
+    const includesEth = tokens.some((token) => token.address === ethToken);
+
+    const [[knownDecimalsRes, unknownDecimalsRes], ethWei] = (await Promise.all(
+      [
+        multi({
+          groupsOfShapes: [knownDecimalShapes, unknownDecimalShapes],
+          currentNetwork,
+        }),
+        (async () => includesEth && web3.eth.getBalance(user))(),
+      ]
+    )) as [
+      [
+        { contract: string; balance: string }[],
+        { contract: string; balance: string; decimals: string }[]
+      ],
+      string | boolean
     ];
 
     const rebuiltDecimals = knownDecimalsRes.map((token): RawBalance => {
       const previouslyKnownPrecision = findOrThrow(
         knownPrecisions,
-        (t) => token.contract === t.contract
+        (t) => token.contract === t.address
       );
       return {
         ...token,
@@ -84,20 +97,21 @@ export const fetchTokenBalances = async (
         decimals: Number(res.decimals),
       })
     );
-    const mergedWei = [...rebuiltDecimals, ...parsedNumbers].map((token) => ({
-      ...token,
-      contract: toChecksumAddress(token.contract),
-    }));
+    const mergedWei = [...rebuiltDecimals, ...parsedNumbers].map(
+      (token): RawBalance => ({
+        ...token,
+        contract: toChecksumAddress(token.contract),
+      })
+    );
 
-    const includesEth = mergedWei.some((wei) => wei.contract === ethToken);
-    if (includesEth) {
-      const ethBalance = await web3.eth.getBalance(user);
-      return updateArray(
-        mergedWei,
-        (wei) => wei.contract === ethToken,
-        () => ({ balance: ethBalance, contract: ethToken, decimals: 18 })
-      );
+    if (ethWei) {
+      mergedWei.push({
+        balance: ethWei as string,
+        contract: ethToken,
+        decimals: 18,
+      });
     }
+
     return mergedWei;
   } catch (e) {
     console.error('Failed fetching balances');
@@ -106,11 +120,6 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const toRawToken = (token: Token): RawToken => ({
-  contract: token.address,
-  ...(token.decimals && { decimals: token.decimals }),
-});
-
 const fetchBalanceReceiver$ = new Subject<string[]>();
 
 export const fetchBalances = (addresses: string[]) =>
@@ -118,22 +127,27 @@ export const fetchBalances = (addresses: string[]) =>
 
 const rawBalances$ = combineLatest([
   fetchBalanceReceiver$,
-  user$,
+  onLogin$,
   apiTokens$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([addresses, user, tokens, network]) => {
+  filter(([addresses, user, tokens, network]) => {
+    const networkMatched = tokens.network === network;
+    if (!networkMatched) console.warn('network not matched in rawBalances$');
+    return networkMatched;
+  }),
+  switchMapIgnoreThrow(async ([addresses, user, { tokens }, network]) => {
     const rawTokensToFetch = uniq(addresses).map((address): RawToken => {
       if (
         address === ethToken ||
         address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
       ) {
-        return { decimals: 18, contract: address };
+        return { decimals: 18, address };
       }
       const apiToken = tokens.find((token) => token.dlt_id === address);
       return apiToken
-        ? { decimals: apiToken.decimals, contract: apiToken.dlt_id }
-        : { contract: address };
+        ? { decimals: apiToken.decimals, address: apiToken.dlt_id }
+        : { address };
     });
 
     const fetchedTokenBalances = await fetchTokenBalances(
@@ -187,46 +201,3 @@ export const userBalances$ = combineLatest([balances$, user$]).pipe(
   distinctUntilChanged<UserBalance>(isEqual),
   shareReplay(1)
 );
-
-export const updateTokenBalances = async (
-  tokens: Token[],
-  user: string,
-  currentNetwork: EthNetworks
-): Promise<Token[]> => {
-  const includesEth = tokens.some((token) => token.address === ethToken);
-  const withoutEth = tokens
-    .map(toRawToken)
-    .filter((token) => token.contract !== ethToken);
-
-  const [updatedTokens, ethBalance] = await Promise.all([
-    fetchTokenBalances(withoutEth, user, currentNetwork),
-    (async () => includesEth && web3.eth.getBalance(user))(),
-  ]);
-
-  return tokens.map((token) => {
-    const updatedBalance = updatedTokens.find(
-      (t) => token.address === t.contract
-    );
-    const decimalDifference =
-      updatedBalance && updatedBalance.decimals !== token.decimals;
-    if (decimalDifference) {
-      console.warn(
-        `Decimal difference detected on token ${
-          token.address
-        } where API sourced is ${token.decimals} but blockchain is ${
-          updatedBalance!.decimals
-        }`
-      );
-    }
-    if (updatedBalance) {
-      return {
-        ...token,
-        balance: shrinkToken(updatedBalance.balance, updatedBalance.decimals),
-      };
-    } else if (token.address === ethToken && includesEth) {
-      return { ...token, balance: shrinkToken(ethBalance as string, 18) };
-    } else {
-      return token;
-    }
-  });
-};
