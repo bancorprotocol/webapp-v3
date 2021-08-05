@@ -14,7 +14,7 @@
     }
 
     tbody tr {
-        @apply border-b border-grey-2 dark:border-blue-1 last:border-0;
+        @apply border-b border-grey-2 dark:border-blue-1;
     }
 
     tbody td {

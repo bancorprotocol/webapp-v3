@@ -19,6 +19,7 @@ export const TablePagination = ({
   pageIndex,
   pageSize,
 }: TablePaginationProps) => {
+  const showResults = [10, 20, 30, 40, 50];
   return (
     <div className="flex justify-between items-center p-20 text-grey-3 text-12">
       <div className="flex justify-between items-center  space-x-10">
@@ -31,7 +32,7 @@ export const TablePagination = ({
               setPageSize(Number(e.target.value));
             }}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {showResults.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>

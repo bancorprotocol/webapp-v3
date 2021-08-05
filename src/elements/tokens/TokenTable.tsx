@@ -96,7 +96,7 @@ export const TokenTable = () => {
       {
         id: '7',
         Header: 'Last 7 Days',
-        accessor: () => <LineChartSimple data={sampleData} />,
+        accessor: () => <LineChartSimple data={sampleData} color="#0ED3B0" />,
         minWidth: 170,
       },
       {

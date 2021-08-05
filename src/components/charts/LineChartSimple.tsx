@@ -56,6 +56,7 @@ interface LineChartSimpleProps {
   data: LineData[];
   seriesOptions?: DeepPartial<LineStyleOptions & SeriesOptionsCommon>;
   chartOptions?: DeepPartial<ChartOptions>;
+  color?: string;
   size?: { width: number; height: number };
 }
 
@@ -63,6 +64,7 @@ export const LineChartSimple = ({
   data,
   seriesOptions = seriesOptDefault,
   chartOptions = chartOptDefault,
+  color,
   size = sizeDefault,
 }: LineChartSimpleProps) => {
   const chartDiv = createRef<HTMLDivElement>();
@@ -73,10 +75,13 @@ export const LineChartSimple = ({
     chart.applyOptions(chartOptions);
     chart.timeScale().fitContent();
 
-    const lineSeries = chart.addLineSeries(seriesOptions);
+    const lineSeries = chart.addLineSeries({
+      ...seriesOptions,
+      color,
+    });
     lineSeries.setData(data);
     return () => chart.remove();
-  }, [data, seriesOptions, chartOptions, size, chartDiv]);
+  }, [data, seriesOptions, chartOptions, size, chartDiv, color]);
 
   return <div ref={chartDiv}></div>;
 };
