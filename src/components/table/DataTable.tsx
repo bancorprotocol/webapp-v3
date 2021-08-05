@@ -1,4 +1,10 @@
-import { Column, usePagination, useSortBy, useTable } from 'react-table';
+import {
+  Column,
+  SortingRule,
+  usePagination,
+  useSortBy,
+  useTable,
+} from 'react-table';
 import { TablePagination } from 'components/table/TablePagination';
 import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
@@ -6,11 +12,13 @@ import { TableBody } from 'components/table/TableBody';
 interface TableProps<D extends object> {
   columns: Column<D>[];
   data: D[];
+  defaultSort?: SortingRule<D>;
 }
 
 export const DataTable = <D extends object>({
   columns,
   data,
+  defaultSort,
 }: TableProps<D>) => {
   const {
     getTableProps,
@@ -31,23 +39,40 @@ export const DataTable = <D extends object>({
     {
       columns,
       data,
-      initialState: { pageIndex: 0, sortBy: [{ id: '3' }] },
+      initialState: {
+        pageIndex: 0,
+        sortBy: defaultSort ? [defaultSort] : [],
+      },
       disableSortRemove: true,
     },
     useSortBy,
     usePagination
   );
 
+  const columnsWidth = columns.map((c) => {
+    return {
+      id: c.id as string,
+      width: c.width as number | undefined,
+      maxWidth: c.maxWidth as number | undefined,
+      minWidth: c.minWidth as number | undefined,
+    };
+  });
+
   return (
     <>
-      <table {...getTableProps()}>
-        <TableHeader<D> headerGroups={headerGroups} />
-        <TableBody<D>
-          getTableBodyProps={getTableBodyProps}
-          prepareRow={prepareRow}
-          page={page}
-        />
-      </table>
+      <div className={'overflow-x-scroll md:overflow-x-auto'}>
+        <table {...getTableProps()} className={'w-full'}>
+          <TableHeader<D>
+            headerGroups={headerGroups}
+            columnsWidth={columnsWidth}
+          />
+          <TableBody<D>
+            getTableBodyProps={getTableBodyProps}
+            prepareRow={prepareRow}
+            page={page}
+          />
+        </table>
+      </div>
       <TablePagination
         pageIndex={pageIndex}
         pageSize={pageSize}

@@ -6,7 +6,7 @@ import { LineData } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
-import { Column } from 'react-table';
+import { Column, SortingRule } from 'react-table';
 import { DataTable } from 'components/table/DataTable';
 
 const sampleData: LineData[] = [
@@ -58,38 +58,47 @@ export const TokenTable = () => {
         id: '1',
         Header: 'Protected',
         accessor: () => <IconProtected className="w-18 h-20 text-primary" />,
+        width: 110,
+        minWidth: 110,
       },
       {
         id: '2',
         Header: 'Name',
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
+        minWidth: 180,
       },
       {
         id: '3',
         Header: 'Price',
         accessor: 'usdPrice',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
+        minWidth: 110,
       },
       {
         id: '4',
         Header: '24h Change',
         accessor: () => '+12.34%',
+        minWidth: 110,
       },
       {
         id: '5',
         Header: '24h Volume',
         accessor: () => '$12,123,123',
+        minWidth: 120,
       },
       {
         id: '6',
         Header: 'Liquidity',
         accessor: () => '$450,123,123',
+        minWidth: 150,
       },
       {
         id: '7',
         Header: 'Last 7 Days',
         accessor: () => <LineChartSimple data={sampleData} />,
+        width: 170,
+        minWidth: 170,
       },
       {
         id: '8',
@@ -97,15 +106,23 @@ export const TokenTable = () => {
         accessor: () => (
           <button className="btn-primary btn-sm rounded-[12px]">Trade</button>
         ),
+        width: 50,
+        minWidth: 50,
       },
     ],
     []
   );
 
+  const defaultSort: SortingRule<Token> = { id: '3', desc: true };
+
   return (
     <section className="content-section pt-20 pb-10">
       <h2 className="ml-20 mb-20">Tokens</h2>
-      <DataTable<Token> data={data} columns={columns} />
+      <DataTable<Token>
+        data={data}
+        columns={columns}
+        defaultSort={defaultSort}
+      />
     </section>
   );
 };
