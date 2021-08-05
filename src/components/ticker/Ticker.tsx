@@ -47,6 +47,8 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
       id={id}
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
+      onTouchStart={() => setPause(true)}
+      onTouchEnd={() => setPause(false)}
       className="overflow-x-scroll pb-15 px-10 hide-scrollbar"
     >
       {children}
