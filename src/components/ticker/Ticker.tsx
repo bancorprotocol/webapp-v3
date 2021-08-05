@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInterval } from 'hooks/useInterval';
+import wait from 'waait';
 
 interface TickerProps {
   id: string;
@@ -48,7 +49,10 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
       onTouchStart={() => setPause(true)}
-      onTouchEnd={() => setPause(false)}
+      onTouchEnd={async () => {
+        await wait(3000);
+        setPause(false);
+      }}
       className="overflow-x-scroll pb-15 px-10 hide-scrollbar"
     >
       {children}
