@@ -15,6 +15,7 @@ export const InsightRow = ({
     data && data.inOutOfTheMoney
       ? {
           label: 'Holders making money at the current price',
+          tooltip: '',
           percentages: [
             { color: 'success', decPercent: data.inOutOfTheMoney.in },
             {
@@ -56,12 +57,12 @@ export const InsightRow = ({
   ];
 
   return (
-    <div className="grid grid-cols-9 py-24 px-4 mt-10 gap-x-40 border-t">
+    <div className="grid grid-cols-9 py-24 px-4 gap-x-40 border-t">
       <div className="col-span-3">
         <Speedometer summary={data ? data.summary : null} />
       </div>
       <div className="col-span-6 grid grid-cols-3">
-        <div className="flex items-center col-span-6">
+        <div className="flex col-span-6 h-[70px]">
           <img
             className="rounded-full h-32 w-32 bg-grey-2"
             src={token.logoURI}
@@ -72,7 +73,7 @@ export const InsightRow = ({
             Price {prettifyNumber(token.usdPrice ?? 0, true)}
           </div>
         </div>
-        <div className="h-full col-span-3 gap-8 grid grid-cols-3">
+        <div className="h-[138px] col-span-3 gap-8 grid grid-cols-3">
           {cards.map((card, index) => (
             <InsightCard key={index} data={card} />
           ))}

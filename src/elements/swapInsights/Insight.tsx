@@ -32,20 +32,20 @@ export const Insight = ({
   return (
     <div
       className={`hidden 2xl:block widget-large mx-auto overflow-hidden transition-all duration-1000 ease-in-out ${
-        isExpanded ? 'max-w-full h-[633px]' : 'w-[57px] h-[57px]'
+        isExpanded ? 'max-w-full h-[583px] w-[780px]' : 'w-[57px] h-[57px]'
       }`}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center my-20 mx-24">
         <div className="flex items-center">
           <button
-            className="flex justify-center items-center min-w-[57px] min-h-[57px]"
+            className="flex justify-center items-center mr-10"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <IconLightbulb className="w-[17px] h-[24px]" />
           </button>
           <div className="text-20 font-semibold">Insights</div>
         </div>
-        <div className="text-12 mr-20 flex items-center">
+        <div className="text-12 flex items-center">
           <p className="mr-6">Powered by </p>
           <a
             className="flex items-center"
