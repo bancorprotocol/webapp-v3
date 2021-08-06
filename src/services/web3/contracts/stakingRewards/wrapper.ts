@@ -6,6 +6,7 @@ import { buildContract } from '..';
 import Web3 from 'web3';
 import { ABIStakingRewards } from './abi';
 import { ProtectedLiquidity } from '../liquidityProtection/wrapper';
+import { BigNumber } from 'bignumber.js';
 
 export interface PendingReserveReward {
   poolId: string;
@@ -58,3 +59,17 @@ export const positionMatchesReward =
   (position: ProtectedLiquidity) => (reward: PendingReserveReward) =>
     position.poolToken === reward.poolId &&
     position.reserveToken === reward.reserveId;
+
+export const fetchRewardsMultiplier = async (
+  poolId: string,
+  reserveId: string,
+  stakingRewardsContract: string,
+  currentUser: string
+): Promise<BigNumber> => {
+  const contract = buildStakingRewardsContract(stakingRewardsContract);
+  const result = await contract.methods
+    .rewardsMultiplier(currentUser, poolId, reserveId)
+    .call();
+
+  return new BigNumber(shrinkToken(result, 6));
+};
