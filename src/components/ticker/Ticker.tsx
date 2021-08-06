@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInterval } from 'hooks/useInterval';
-import wait from 'waait';
 
 interface TickerProps {
   id: string;
@@ -11,6 +10,7 @@ interface TickerProps {
 export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
   const [pause, setPause] = useState(false);
   const [pos, setPos] = useState(0);
+
   const [scrollBack, setScrollBack] = useState(false);
 
   useInterval(async () => {
@@ -30,15 +30,26 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
     }
   }, speedMs);
 
+  const isScrolling = () => {
+    const element = document.getElementById(`${id}`);
+    if (!element) return;
+    const scrollStart = element.scrollLeft;
+    setTimeout(() => {
+      const scrollPos = element.scrollLeft;
+      if (scrollStart !== scrollPos) isScrolling();
+      else setPause(false);
+    }, 100);
+  };
+
   const handleScroll = useCallback((event: Event) => {
     const target = event.target as HTMLDivElement;
-    target && setPos(target.scrollLeft);
+    if (target) setPos(target.scrollLeft);
   }, []);
 
   useEffect(() => {
     const element = document.getElementById(`${id}`);
     element && element.addEventListener('scroll', handleScroll);
-    return function cleanup() {
+    return () => {
       element && element.removeEventListener('scroll', handleScroll);
     };
   }, [id, handleScroll]);
@@ -49,10 +60,7 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
       onTouchStart={() => setPause(true)}
-      onTouchEnd={async () => {
-        await wait(3000);
-        setPause(false);
-      }}
+      onTouchEnd={() => isScrolling()}
       className="overflow-x-scroll pb-15 px-10 hide-scrollbar"
     >
       {children}
