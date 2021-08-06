@@ -10,8 +10,8 @@ interface TickerProps {
 export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
   const [pause, setPause] = useState(false);
   const [pos, setPos] = useState(0);
-
   const [scrollBack, setScrollBack] = useState(false);
+  const [isMomentumScrolling, setIsMomentumScrolling] = useState(false);
 
   useInterval(async () => {
     const element = document.getElementById(`${id}`);
@@ -30,17 +30,6 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
     }
   }, speedMs);
 
-  const isScrolling = () => {
-    const element = document.getElementById(`${id}`);
-    if (!element) return;
-    const scrollStart = element.scrollLeft;
-    setTimeout(() => {
-      const scrollPos = element.scrollLeft;
-      if (scrollStart !== scrollPos) isScrolling();
-      else setPause(false);
-    }, 100);
-  };
-
   const handleScroll = useCallback((event: Event) => {
     const target = event.target as HTMLDivElement;
     if (target) setPos(target.scrollLeft);
@@ -54,13 +43,33 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
     };
   }, [id, handleScroll]);
 
+  const unpauseOnMomentumEnd = () => {
+    const element = document.getElementById(`${id}`);
+    if (!element) return;
+    const scrollStart = element.scrollLeft;
+    setTimeout(() => {
+      const scrollPos = element.scrollLeft;
+      if (scrollStart !== scrollPos) unpauseOnMomentumEnd();
+      else {
+        setIsMomentumScrolling(false);
+        setPause(false);
+        console.log('ended');
+      }
+    }, 250);
+  };
+
   return (
     <div
       id={id}
       onMouseEnter={() => setPause(true)}
       onMouseLeave={() => setPause(false)}
       onTouchStart={() => setPause(true)}
-      onTouchEnd={() => isScrolling()}
+      onTouchEnd={() => {
+        if (!isMomentumScrolling) {
+          setIsMomentumScrolling(true);
+          unpauseOnMomentumEnd();
+        }
+      }}
       className="overflow-x-scroll pb-15 px-10 hide-scrollbar"
     >
       {children}

@@ -9,8 +9,12 @@ import { TablePagination } from 'components/table/TablePagination';
 import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
 
+export type TableColumn<D extends object> = Column<D> & {
+  tooltip?: string;
+};
+
 interface TableProps<D extends object> {
-  columns: Column<D>[];
+  columns: TableColumn<D>[];
   data: D[];
   defaultSort?: SortingRule<D>;
 }
@@ -49,23 +53,11 @@ export const DataTable = <D extends object>({
     usePagination
   );
 
-  const columnsWidth = columns.map((c) => {
-    return {
-      id: c.id as string,
-      width: c.width as number | undefined,
-      maxWidth: c.maxWidth as number | undefined,
-      minWidth: c.minWidth as number | undefined,
-    };
-  });
-
   return (
     <>
       <div className={'overflow-x-scroll md:overflow-x-auto'}>
         <table {...getTableProps()}>
-          <TableHeader<D>
-            headerGroups={headerGroups}
-            columnsWidth={columnsWidth}
-          />
+          <TableHeader<D> headerGroups={headerGroups} columns={columns} />
           <TableBody<D>
             getTableBodyProps={getTableBodyProps}
             prepareRow={prepareRow}

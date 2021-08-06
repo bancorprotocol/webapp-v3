@@ -6,8 +6,8 @@ import { LineData } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
-import { Column, SortingRule } from 'react-table';
-import { DataTable } from 'components/table/DataTable';
+import { SortingRule } from 'react-table';
+import { DataTable, TableColumn } from 'components/table/DataTable';
 
 const sampleData: LineData[] = [
   { time: '2019-04-11', value: 80.01 },
@@ -52,20 +52,22 @@ export const TokenTable = () => {
     );
   };
 
-  const columns = useMemo<Column<Token>[]>(
+  const columns = useMemo<TableColumn<Token>[]>(
     () => [
       {
         id: '1',
         Header: 'Protected',
         accessor: () => <IconProtected className="w-18 h-20 text-primary" />,
-        width: 110,
-        minWidth: 110,
+        width: 120,
+        minWidth: 120,
+        tooltip: 'Some awesome text here',
       },
       {
         id: '2',
         Header: 'Name',
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
+        tooltip: 'Some awesome text here',
         minWidth: 180,
       },
       {
@@ -73,31 +75,37 @@ export const TokenTable = () => {
         Header: 'Price',
         accessor: 'usdPrice',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
+        tooltip: 'Some awesome text here',
         minWidth: 110,
       },
       {
         id: '4',
         Header: '24h Change',
         accessor: () => '+12.34%',
+        tooltip: 'Some awesome text here',
         minWidth: 110,
       },
       {
         id: '5',
         Header: '24h Volume',
         accessor: () => '$12,123,123',
+        tooltip: 'Some awesome text here',
         minWidth: 120,
       },
       {
         id: '6',
         Header: 'Liquidity',
         accessor: () => '$450,123,123',
+        tooltip: 'Some awesome text here',
         minWidth: 150,
       },
       {
         id: '7',
         Header: 'Last 7 Days',
         accessor: () => <LineChartSimple data={sampleData} color="#0ED3B0" />,
+        tooltip: 'Some awesome text here',
         minWidth: 170,
+        disableSortBy: true,
       },
       {
         id: '8',
@@ -107,6 +115,7 @@ export const TokenTable = () => {
         ),
         width: 50,
         minWidth: 50,
+        disableSortBy: true,
       },
     ],
     []
@@ -117,6 +126,7 @@ export const TokenTable = () => {
   return (
     <section className="content-section pt-20 pb-10">
       <h2 className="ml-20 mb-20">Tokens</h2>
+
       <DataTable<Token>
         data={data}
         columns={columns}
