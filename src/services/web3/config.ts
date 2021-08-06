@@ -53,11 +53,6 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
   return null;
 };
 
-export const bntToken = (network: EthNetworks) =>
-  network === EthNetworks.Mainnet
-    ? '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C'
-    : '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5';
-
 export const getNetworkVariables = (
   ethNetwork: EthNetworks
 ): EthNetworkVariables => {
@@ -93,4 +88,9 @@ export const getNetworkVariables = (
         alchemyKey: process.env.REACT_APP_ALCHEMY_ROPSTEN || '',
       };
   }
+};
+
+export const bntToken = (network: EthNetworks): string => {
+  const vars = getNetworkVariables(network);
+  return vars.bntToken;
 };

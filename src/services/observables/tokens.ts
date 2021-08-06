@@ -4,7 +4,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
-import { user$ } from './user';
 import { fetchBalances, userBalances$ } from './balances';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -106,47 +105,51 @@ const tokenListMerged$ = combineLatest([
 export const tokensWithoutBalances$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
-  user$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([tokenList, apiTokens, user, currentNetwork]) => {
-    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
-      address: x.dlt_id,
-      symbol: x.symbol,
-      decimals: x.decimals,
-      usdPrice: x.rate.usd,
-    }));
+  switchMapIgnoreThrow(
+    async ([tokenList, { tokens, network }, currentNetwork]) => {
+      const newApiTokens = [...tokens, buildWethToken(tokens)].map((x) => ({
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice: x.rate.usd,
+      }));
 
-    let overlappingTokens: Token[] = [];
-    const eth = getEthToken(apiTokens);
-    if (eth) overlappingTokens.push(eth);
+      let overlappingTokens: Token[] = [];
+      const eth = getEthToken(tokens);
+      if (eth) overlappingTokens.push(eth);
 
-    newApiTokens.forEach((apiToken) => {
-      if (currentNetwork === EthNetworks.Mainnet) {
-        const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
-        );
-        if (found)
-          overlappingTokens.push({
-            ...found,
-            ...apiToken,
-          });
-      } else {
-        if (apiToken.address !== ethToken)
-          overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
-            ...apiToken,
-          });
+      newApiTokens.forEach((apiToken) => {
+        if (currentNetwork === EthNetworks.Mainnet) {
+          const found = tokenList.find(
+            (userToken) => userToken.address === apiToken.address
+          );
+          if (found)
+            overlappingTokens.push({
+              ...found,
+              ...apiToken,
+            });
+        } else {
+          if (apiToken.address !== ethToken)
+            overlappingTokens.push({
+              chainId: EthNetworks.Ropsten,
+              name: apiToken.symbol,
+              logoURI: ropstenImage,
+              balance: null,
+              ...apiToken,
+            });
+        }
+      });
+
+      const networkMatch = network === currentNetwork;
+      if (networkMatch) {
+        fetchBalances(overlappingTokens.map((token) => token.address));
       }
-    });
 
-    fetchBalances(overlappingTokens.map((token) => token.address));
-
-    return overlappingTokens;
-  }),
+      return overlappingTokens;
+    }
+  ),
   shareReplay(1)
 );
 
@@ -155,6 +158,9 @@ export const tokens$ = combineLatest([
   userBalances$,
 ]).pipe(
   map(([tokens, userBalances]) => {
+    if (!userBalances || Object.keys(userBalances).length === 0) {
+      return tokens;
+    }
     return tokens.map((token) => {
       if (userBalances) {
         const userBalance = userBalances[token.address];

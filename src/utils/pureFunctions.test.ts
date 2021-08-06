@@ -1,7 +1,7 @@
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 
 describe('convert input to number', () => {
-  test('range of percentages', () => {
+  test('variations', () => {
     expect(sanitizeNumberInput('1abc')).toBe('1');
     expect(sanitizeNumberInput('abc1')).toBe('1');
     expect(sanitizeNumberInput('a123')).toBe('123');
@@ -12,7 +12,7 @@ describe('convert input to number', () => {
 });
 
 describe('filter classNames by bools', () => {
-  test('range of percentages', () => {
+  test('variations', () => {
     expect(
       classNameGenerator({
         'bg-error': true,

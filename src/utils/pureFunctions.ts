@@ -2,6 +2,10 @@ import BigNumber from 'bignumber.js';
 import { Token } from 'services/observables/tokens';
 import { EthNetworks } from 'services/web3/types';
 
+const oneMillion = new BigNumber(1000000);
+
+export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
+
 export const shortenString = (
   string: string,
   separator = '...',
