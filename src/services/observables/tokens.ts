@@ -4,7 +4,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
-import { user$ } from './user';
+import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -103,13 +103,12 @@ const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
-export const tokens$ = combineLatest([
+export const tokensNoBalance$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
-  user$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([tokenList, apiTokens, user, currentNetwork]) => {
+  switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
     const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
       address: x.dlt_id,
       symbol: x.symbol,
@@ -143,16 +142,29 @@ export const tokens$ = combineLatest([
       }
     });
 
-    if (user) {
+    return overlappingTokens;
+  }),
+  shareReplay(1)
+);
+
+export const tokens$ = combineLatest([
+  user$,
+  tokensNoBalance$,
+  currentNetwork$,
+]).pipe(
+  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
+    if (user && tokensNoBalance) {
+      setLoadingBalances(true);
       const updatedTokens = await fetchTokenBalances(
-        overlappingTokens,
+        tokensNoBalance,
         user,
         currentNetwork
       );
+      setLoadingBalances(false);
       if (updatedTokens.length !== 0) return updatedTokens;
     }
 
-    return overlappingTokens;
+    return tokensNoBalance;
   }),
   shareReplay(1)
 );

@@ -4,17 +4,29 @@ import {
   keeperDaoTokens$,
   listOfLists,
   tokens$,
+  tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
+import { take } from 'rxjs/operators';
+import { setLoadingBalances } from 'redux/user/user';
+import { loadingBalances$ } from './user';
 
-export const loadSwapData = (dispatch: any) => {
+export const loadSwapData = async (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });
+  tokensNoBalance$
+    .pipe(take(1))
+    .toPromise()
+    .then((tokenList) => dispatch(setTokenList(tokenList)));
+
+  loadingBalances$.subscribe((loading) =>
+    dispatch(setLoadingBalances(loading))
+  );
 
   const userListIds = getLSTokenList();
   if (userListIds.length === 0) {
