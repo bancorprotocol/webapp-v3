@@ -1,14 +1,7 @@
 import { HeaderGroup } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { TableColumn } from 'components/table/DataTable';
-import { InfoTooltip } from 'components/tooltip/InfoTooltip';
-
-interface ColumnWidth {
-  id: string;
-  width: number | undefined;
-  maxWidth: number | undefined;
-  minWidth: number | undefined;
-}
+import { Tooltip } from 'components/tooltip/Tooltip';
 
 interface TableHeaderProps<D extends object> {
   headerGroups: HeaderGroup<D>[];
@@ -19,7 +12,7 @@ export const TableHeader = <D extends object>({
   headerGroups,
   columns,
 }: TableHeaderProps<D>) => {
-  const columnWidths: ColumnWidth[] = columns.map((c) => {
+  const columnWidths = columns.map((c) => {
     return {
       id: c.id as string,
       width: c.width as number | undefined,
@@ -44,7 +37,7 @@ export const TableHeader = <D extends object>({
     if (found && found.tooltip)
       return (
         <span className="inline-flex ml-5">
-          <InfoTooltip text={found.tooltip} />
+          <Tooltip content={found.tooltip} preventOverflow={false} />
         </span>
       );
   };
