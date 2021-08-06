@@ -131,6 +131,7 @@ export const TokenTable = () => {
         data={data}
         columns={columns}
         defaultSort={defaultSort}
+        isLoading={!tokens.length}
       />
     </section>
   );

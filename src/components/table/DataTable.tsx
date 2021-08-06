@@ -17,12 +17,14 @@ interface TableProps<D extends object> {
   columns: TableColumn<D>[];
   data: D[];
   defaultSort?: SortingRule<D>;
+  isLoading?: boolean;
 }
 
 export const DataTable = <D extends object>({
   columns,
   data,
   defaultSort,
+  isLoading,
 }: TableProps<D>) => {
   const {
     getTableProps,
@@ -65,6 +67,14 @@ export const DataTable = <D extends object>({
           />
         </table>
       </div>
+      {isLoading && (
+        <div className="space-y-20 p-20">
+          {[...Array(10)].map(() => (
+            <div className="w-full h-[30px] loading-skeleton !rounded-10"></div>
+          ))}
+        </div>
+      )}
+
       <TablePagination
         pageIndex={pageIndex}
         pageSize={pageSize}

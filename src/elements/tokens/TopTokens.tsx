@@ -32,7 +32,7 @@ export const TopTokens = () => {
                 </div>
               ))
             : [...Array(20)].map(() => (
-                <div className="rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-content dark:shadow-none min-w-[150px] h-[75px] animate-pulse"></div>
+                <div className="loading-skeleton !rounded-[6px] min-w-[150px] h-[75px]"></div>
               ))}
         </div>
       </Ticker>
