@@ -5,6 +5,8 @@ import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
+import { classNameGenerator } from 'utils/pureFunctions';
+import { useState } from 'react';
 
 export interface InsightToken extends IntoTheBlock {
   image: string;
@@ -28,22 +30,37 @@ export const Insight = ({
     'insightsExpanded',
     false
   );
+  const [show, setShow] = useState(isExpanded);
 
   return (
     <div
+      onTransitionEnd={() => setShow(isExpanded)}
       className={`hidden 2xl:block widget-large mx-auto overflow-hidden transition-all duration-1000 ease-in-out ${
         isExpanded ? 'max-w-full h-[583px] w-[780px]' : 'w-[57px] h-[57px]'
       }`}
     >
-      <div className="flex justify-between items-center my-20 mx-24">
+      <div
+        className={`flex justify-between items-center my-15 ${
+          isExpanded ? 'mx-24' : 'mx-20'
+        }`}
+      >
         <div className="flex items-center">
           <button
-            className="flex justify-center items-center mr-10"
-            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex justify-center items-center"
+            onClick={() => {
+              setShow(false);
+              setIsExpanded(!isExpanded);
+            }}
           >
             <IconLightbulb className="w-[17px] h-[24px]" />
           </button>
-          <div className="text-20 font-semibold">Insights</div>
+          <div
+            className={`text-20 font-semibold ${
+              isExpanded ? 'ml-10 my-5' : 'ml-30'
+            }`}
+          >
+            Insights
+          </div>
         </div>
         <div className="text-12 flex items-center">
           <p className="mr-6">Powered by </p>
@@ -58,16 +75,25 @@ export const Insight = ({
             <span className="font-semibold">block</span>
           </a>
           <button className="w-16 ml-12">
-            <IconTimes onClick={() => setIsExpanded(!isExpanded)} />
+            <IconTimes
+              onClick={() => {
+                setShow(false);
+                setIsExpanded(!isExpanded);
+              }}
+            />
           </button>
         </div>
       </div>
-      <div className="px-20">
-        {fromToken && (
-          <InsightRow token={fromToken} data={fromTokenIntoBlock} />
-        )}
-        {toToken && <InsightRow token={toToken} data={toTokenIntoBlock} />}
-      </div>
+      {show ? (
+        <div className="px-20">
+          {fromToken && (
+            <InsightRow token={fromToken} data={fromTokenIntoBlock} />
+          )}
+          {toToken && <InsightRow token={toToken} data={toTokenIntoBlock} />}
+        </div>
+      ) : (
+        <IconLightbulb className="w-full max-h-[480px]" />
+      )}
     </div>
   );
 };

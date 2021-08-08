@@ -8,7 +8,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
     rotation > 110 ? '#0ED3B0' : rotation > 70 ? 'grey' : 'red';
 
   const title = () => {
-    if (!summary) return 'bullish';
+    if (!summary) return 'neutral';
     if (summary.score < summary.bullish && summary.score > summary.bearish)
       return 'neutral';
     const findTitle = toPairs(
