@@ -63,27 +63,27 @@ export const App = () => {
   }, [setLoading, chainId, triedAutoLogin]);
 
   useEffect(() => {
-    const restored = getDarkModeLS();
-    if (restored) dispatch(setDarkMode(restored));
+    const usd = getUsdToggleLS();
+    if (usd) dispatch(setUsdToggle(usd));
+
+    const notify = getNotificationsLS();
+    if (notify) dispatch(setNotifications(notify));
+
+    const slippage = getSlippageToleranceLS();
+    if (slippage) dispatch(setSlippageTolerance(slippage));
+
+    const dark = getDarkModeLS();
+    if (dark) dispatch(setDarkMode(dark));
+
+    (async () => {
+      const chainID = await web3.eth.net.getId();
+      web3.setProvider(provider(chainID));
+      currentNetworkReceiver$.next(chainID);
+    })();
   }, [dispatch]);
 
   useEffect(() => {
-    const restored = getSlippageToleranceLS();
-    if (restored) dispatch(setSlippageTolerance(restored));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const restored = getUsdToggleLS();
-    if (restored) dispatch(setUsdToggle(restored));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const restored = getNotificationsLS();
-    if (restored) dispatch(setNotificationsLS(restored));
-  }, [dispatch]);
-
-  useEffect(() => {
-    setNotifications(notifications);
+    setNotificationsLS(notifications);
   }, [notifications]);
 
   useEffect(() => {
@@ -91,14 +91,6 @@ export const App = () => {
     if (chainId) setNetwork(chainId);
     googleTagManager('', '');
   }, [account, chainId]);
-
-  useEffect(() => {
-    (async () => {
-      const chainID = await web3.eth.net.getId();
-      web3.setProvider(provider(chainID));
-      currentNetworkReceiver$.next(chainID);
-    })();
-  }, []);
 
   return (
     <BrowserRouter>

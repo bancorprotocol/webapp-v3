@@ -1,4 +1,5 @@
 import { initialState as UserState } from 'redux/user/user';
+import { Notification } from 'redux/notification/notification';
 
 const selected_lists = 'selected_list_ids';
 const conversion = 'conversion';
