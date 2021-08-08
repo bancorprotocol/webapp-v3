@@ -22,7 +22,6 @@ import { currentNetwork$ } from 'services/observables/network';
 import {
   sendConversionEvent,
   ConversionEvents,
-  getConversion,
 } from 'services/api/googleTagManager';
 import { fetchBalances } from 'services/observables/balances';
 import wait from 'waait';
@@ -32,6 +31,7 @@ import {
   multi,
 } from '../contracts/shapes';
 import { calcReserve } from 'utils/formulas';
+import { getConversionLS } from 'utils/localStorage';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -147,7 +147,7 @@ export const swap = async ({
   const expectedToWei = expandToken(toAmount, toToken.decimals);
   const path = await findPath(fromToken.address, toToken.address);
 
-  const conversion = getConversion();
+  const conversion = getConversionLS();
   sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
   return resolveTxOnConfirmation({

@@ -17,12 +17,9 @@ import {
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/pureFunctions';
-import {
-  sendConversionEvent,
-  ConversionEvents,
-  getConversion,
-} from './googleTagManager';
+import { sendConversionEvent, ConversionEvents } from './googleTagManager';
 import { toChecksumAddress } from 'web3-utils';
+import { getConversionLS } from 'utils/localStorage';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -44,7 +41,7 @@ export const swapLimit = async (
   checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
-  const conversion = getConversion();
+  const conversion = getConversionLS();
   try {
     if (fromIsEth) {
       try {

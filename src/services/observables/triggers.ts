@@ -10,34 +10,38 @@ import {
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
+import { Subscription } from 'rxjs';
+import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 
-export const loadSwapData = (dispatch: any) => {
-  tokenLists$.subscribe((tokenLists) => {
-    dispatch(setTokenLists(tokenLists));
-  });
+let tokenSub: Subscription;
+let tokenListsSub: Subscription;
+let keeperDaoSub: Subscription;
 
-  const userListIds = getLSTokenList();
+const loadCommonData = (dispatch: any) => {
+  if (!tokenListsSub || tokenListsSub.closed)
+    tokenLists$.subscribe((tokenLists) => {
+      dispatch(setTokenLists(tokenLists));
+    });
+
+  const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
     const firstFromList = [listOfLists[0].name];
-    setLSTokenList(firstFromList);
+    setTokenListLS(firstFromList);
     userPreferredListIds$.next(firstFromList);
   } else userPreferredListIds$.next(userListIds);
 
-  tokens$.subscribe((tokenList) => {
-    dispatch(setTokenList(tokenList));
-  });
+  if (!tokenSub || tokenSub.closed) {
+    tokenSub = tokens$.subscribe((tokenList) => {
+      dispatch(setTokenList(tokenList));
+    });
+  }
 
-  keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    setKeeperDaoTokens(keeperDaoTokens);
-  });
+  if (!keeperDaoSub || keeperDaoSub.closed)
+    keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+      setKeeperDaoTokens(keeperDaoTokens);
+    });
 };
 
-const selected_lists = 'selected_list_ids';
-export const setLSTokenList = (userListIds: string[]) => {
-  localStorage.setItem(selected_lists, JSON.stringify(userListIds));
-};
-
-export const getLSTokenList = (): string[] => {
-  const list = localStorage.getItem(selected_lists);
-  return list ? JSON.parse(list) : [];
+export const loadSwapData = (dispatch: any) => {
+  loadCommonData(dispatch);
 };
