@@ -1,4 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  setDarkModeLS,
+  setSlippageToleranceLS,
+  setUsdToggleLS,
+} from 'utils/localStorage';
 
 export interface UserState {
   darkMode: boolean;
@@ -29,10 +34,10 @@ const userSlice = createSlice({
       if (action.payload) root.classList.add('dark');
       else root.classList.remove('dark');
 
-      localStorage.setItem('darkMode', JSON.stringify(action.payload));
+      setDarkModeLS(action.payload);
     },
     setSlippageTolerance: (state, action) => {
-      localStorage.setItem('slippageTolerance', JSON.stringify(action.payload));
+      setSlippageToleranceLS(action.payload);
       state.slippageTolerance = action.payload;
     },
     setLocale: (state, action) => {
@@ -42,7 +47,7 @@ const userSlice = createSlice({
       state.walletModal = action.payload;
     },
     setUsdToggle: (state, action: PayloadAction<boolean>) => {
-      localStorage.setItem('usdToggle', JSON.stringify(action.payload));
+      setUsdToggleLS(action.payload);
       state.usdToggle = action.payload;
     },
     setLoadingBalances: (state, action) => {

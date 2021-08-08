@@ -78,16 +78,6 @@ export const sendConversionEvent = (
   });
 };
 
-const conversion = 'conversion';
-
-export const setConversion = (conv: any) => {
-  localStorage.setItem(conversion, JSON.stringify(conv));
-};
-export const getConversion = () => {
-  const conv = localStorage.getItem(conversion);
-  if (conv) return JSON.parse(conv);
-};
-
 export enum WalletEvents {
   popup,
   click,

@@ -29,13 +29,12 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import {
   sendConversionEvent,
   ConversionEvents,
-  getConversion,
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
-import { setConversion } from 'services/api/googleTagManager';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import wait from 'waait';
+import { getConversionLS, setConversionLS } from 'utils/localStorage';
 
 enum Field {
   from,
@@ -226,7 +225,7 @@ export const SwapLimit = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
       if (isApprovalReq) {
-        const conversion = getConversion();
+        const conversion = getConversionLS();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
@@ -528,7 +527,7 @@ export const SwapLimit = ({
                   : percentages[selPercentage].toFixed(0),
               conversion_experation: duration.asSeconds().toString(),
             };
-            setConversion(conversion);
+            setConversionLS(conversion);
             sendConversionEvent(ConversionEvents.click, conversion);
             handleSwap(false, false, fromToken.address === ethToken);
           }}

@@ -21,14 +21,13 @@ import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
   sendConversionEvent,
   ConversionEvents,
-  getConversion,
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
-import { setConversion } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import wait from 'waait';
+import { getConversionLS, setConversionLS } from 'utils/localStorage';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -152,7 +151,7 @@ export const SwapMarket = ({
         fromAmount
       );
       if (isApprovalReq) {
-        const conversion = getConversion();
+        const conversion = getConversionLS();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowModal(true);
       } else await handleSwap(true);
@@ -230,7 +229,7 @@ export const SwapMarket = ({
           })
         );
       else {
-        const conversion = getConversion();
+        const conversion = getConversionLS();
         sendConversionEvent(ConversionEvents.fail, {
           conversion,
           error: e.message,
@@ -403,7 +402,7 @@ export const SwapMarket = ({
                 conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
                 conversion_rate: rate,
               };
-              setConversion(conversion);
+              setConversionLS(conversion);
               sendConversionEvent(ConversionEvents.click, conversion);
               handleSwap();
             }}

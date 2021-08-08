@@ -22,6 +22,7 @@ const bancorSlice = createSlice({
       state.tokenLists = action.payload;
     },
     setTokenList: (state, action) => {
+      console.log('Set tokens');
       state.tokens = action.payload;
     },
     updateTokens: (state, action) => {
