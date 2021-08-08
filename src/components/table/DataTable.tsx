@@ -69,8 +69,11 @@ export const DataTable = <D extends object>({
       </div>
       {isLoading && (
         <div className="space-y-20 p-20">
-          {[...Array(10)].map(() => (
-            <div className="w-full h-[30px] loading-skeleton !rounded-10"></div>
+          {[...Array(10)].map((_, index) => (
+            <div
+              key={index}
+              className="w-full h-[30px] loading-skeleton !rounded-10"
+            ></div>
           ))}
         </div>
       )}

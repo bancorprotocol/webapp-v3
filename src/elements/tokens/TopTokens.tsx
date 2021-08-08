@@ -31,8 +31,11 @@ export const TopTokens = () => {
                   </div>
                 </div>
               ))
-            : [...Array(20)].map(() => (
-                <div className="loading-skeleton !rounded-[6px] min-w-[150px] h-[75px]"></div>
+            : [...Array(20)].map((_, index) => (
+                <div
+                  key={index}
+                  className="loading-skeleton !rounded-[6px] min-w-[150px] h-[75px]"
+                ></div>
               ))}
         </div>
       </Ticker>
