@@ -45,6 +45,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
+import { loadCommonData } from 'services/observables/triggers';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -74,6 +75,8 @@ export const App = () => {
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
+
+    loadCommonData(dispatch);
 
     (async () => {
       const chainID = await web3.eth.net.getId();
