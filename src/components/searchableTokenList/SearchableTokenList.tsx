@@ -10,11 +10,11 @@ import {
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
-import { getLSTokenList, setLSTokenList } from 'services/observables/triggers';
 import { prettifyNumber } from 'utils/helperFunctions';
 import wait from 'waait';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
+import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -33,7 +33,7 @@ export const SearchableTokenList = ({
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
-  const [userPreferredListIds, setUserLists] = useState(getLSTokenList());
+  const [userPreferredListIds, setUserLists] = useState(getTokenListLS());
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
@@ -57,7 +57,7 @@ export const SearchableTokenList = ({
 
     if (newUserPreferredListIds.length === 0) return;
 
-    setLSTokenList(newUserPreferredListIds);
+    setTokenListLS(newUserPreferredListIds);
     setUserLists(newUserPreferredListIds);
     userPreferredListIds$.next(newUserPreferredListIds);
   };
@@ -181,7 +181,7 @@ export const SearchableTokenList = ({
           <div className="flex justify-center items-center h-[59px]">
             <button
               onClick={() => {
-                setUserLists(getLSTokenList());
+                setUserLists(getTokenListLS());
                 setManage(true);
               }}
               className="text-primary font-semibold"

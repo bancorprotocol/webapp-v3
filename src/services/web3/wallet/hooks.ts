@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'services/web3/wallet/connectors';
-import { isAutoLogin, setAutoLogin } from 'utils/pureFunctions';
+import { getAutoLoginLS, setAutoLoginLS } from 'utils/localStorage';
 
 export const useAutoConnect = () => {
   const { activate, active } = useWeb3React();
@@ -9,12 +9,12 @@ export const useAutoConnect = () => {
   const [triedAutoLogin, setTriedAutoLogin] = useState(false);
 
   useEffect(() => {
-    if (isAutoLogin())
+    if (getAutoLoginLS())
       injected.isAuthorized().then((isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true)
             .then(async () => {
-              setAutoLogin(true);
+              setAutoLoginLS(true);
               setTriedAutoLogin(true);
             })
             .catch(() => console.error('Failed to auto login'));
