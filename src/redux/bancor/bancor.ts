@@ -24,13 +24,22 @@ const bancorSlice = createSlice({
     setTokenList: (state, action) => {
       state.tokens = action.payload;
     },
+    updateTokens: (state, action) => {
+      const tokenToUpdate = action.payload as Token[];
+      state.tokens = state.tokens.map(
+        (token) =>
+          tokenToUpdate.find(
+            (updatedToken) => updatedToken.address === token.address
+          ) || token
+      );
+    },
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
   },
 });
 
-export const { setTokenLists, setTokenList, setKeeperDaoTokens } =
+export const { setTokenLists, setTokenList, setKeeperDaoTokens, updateTokens } =
   bancorSlice.actions;
 
 export const bancor = bancorSlice.reducer;

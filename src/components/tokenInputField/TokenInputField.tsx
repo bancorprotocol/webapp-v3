@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { getTokenLogoURI, Token } from 'services/observables/tokens';
@@ -9,6 +9,8 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
 import { useAppSelector } from 'redux/index';
+import { useWeb3React } from '@web3-react/core';
+import usePrevious from 'hooks/usePrevious';
 
 interface TokenInputFieldProps {
   label: string;
@@ -53,8 +55,10 @@ export const TokenInputField = ({
   includedTokens = [],
   isLoading,
 }: TokenInputFieldProps) => {
+  const { account, chainId } = useWeb3React();
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
+  const currentChain = useRef(chainId);
 
   const balance = token ? token.balance : null;
   const balanceUsd =
@@ -63,6 +67,9 @@ export const TokenInputField = ({
       : null;
 
   const toggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const loadingBalances = useAppSelector<boolean>(
+    (state) => state.user.loadingBalances
+  );
 
   const onInputChange = (text: string) => {
     text = sanitizeNumberInput(text);
@@ -127,19 +134,25 @@ export const TokenInputField = ({
     <div>
       <div className="flex justify-between pr-10 mb-4">
         <span className="font-medium">{label}</span>
-        {balance && balanceUsd && token && (
-          <button
-            onClick={() => setMaxAmount()}
-            disabled={disabled}
-            className={`text-12 focus:outline-none ${classNameGenerator({
-              'cursor-not-allowed': disabled,
-            })}`}
-          >
-            Balance: {prettifyNumber(balance)}
-            <span className="text-primary ml-4">
-              (~{prettifyNumber(balanceUsd, true)})
-            </span>
-          </button>
+        {loadingBalances && token ? (
+          <div className="loading-skeleton h-[20px] w-[140px]"></div>
+        ) : (
+          balance &&
+          balanceUsd &&
+          token && (
+            <button
+              onClick={() => setMaxAmount()}
+              disabled={disabled}
+              className={`text-12 focus:outline-none ${classNameGenerator({
+                'cursor-not-allowed': disabled,
+              })}`}
+            >
+              Balance: {prettifyNumber(balance)}
+              <span className="text-primary ml-4">
+                (~{prettifyNumber(balanceUsd, true)})
+              </span>
+            </button>
+          )
         )}
       </div>
       {!showSelectToken || token ? (
