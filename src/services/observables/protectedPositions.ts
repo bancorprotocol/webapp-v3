@@ -404,8 +404,8 @@ const poolAprs$ = combineLatest([
 );
 
 const poolReturns$ = combineLatest([positions$, poolAprs$]).pipe(
-  map(([positions, aprs]) => {
-    return positions.map((position) => {
+  map(([positions, aprs]) =>
+    positions.map((position) => {
       const scales = aprs.find((apr) => apr.find((x) => x.id === position.id));
       const week = scales && scales.find((scale) => scale.scaleId === 'week');
       const day = scales && scales.find((scale) => scale.scaleId === 'day');
@@ -414,8 +414,8 @@ const poolReturns$ = combineLatest([positions$, poolAprs$]).pipe(
         ...(day && { oneDayDec: day.calculatedAprDec }),
         ...(week && { oneWeekDec: week.calculatedAprDec }),
       };
-    });
-  })
+    })
+  )
 );
 
 export const fullPositions$ = spreadById(positions$, [
