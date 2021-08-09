@@ -1,4 +1,8 @@
-import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
+import {
+  classNameGenerator,
+  partitionPair,
+  sanitizeNumberInput,
+} from 'utils/pureFunctions';
 
 describe('convert input to number', () => {
   test('variations', () => {
@@ -34,5 +38,14 @@ describe('filter classNames by bools', () => {
         'bg-white': false,
       })
     ).toBe('bg-error');
+  });
+});
+
+describe('partition tuple', () => {
+  test('arranges properly', () => {
+    const base = ['cat', 'dog'];
+
+    const res = partitionPair(base, (word) => word === 'dog');
+    expect(res).toEqual(['dog', 'cat']);
   });
 });

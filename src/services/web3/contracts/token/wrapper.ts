@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import { CallReturn } from 'eth-multicall';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'services/web3/types';
-import { buildContract } from '..';
+import { buildContract, web3 } from '..';
 import { ABISmartToken } from './abi';
 interface TokenContractType {
   symbol: () => CallReturn<string>;
@@ -19,8 +19,22 @@ interface TokenContractType {
     approvedAmount: string
   ) => ContractSendMethod;
 }
+
 export const buildTokenContract = (
   contractAddress: string,
   web3: Web3
 ): ContractMethods<TokenContractType> =>
   buildContract(ABISmartToken, contractAddress, web3);
+
+export const fetchTokenSupply = async (
+  tokenAddress: string,
+  blockHeight?: number
+) => {
+  const smartTokenContract = buildTokenContract(tokenAddress, web3);
+  return smartTokenContract.methods.totalSupply().call(undefined, blockHeight);
+};
+
+export const fetchPoolOwner = async (anchor: string, blockHeight?: number) => {
+  const contract = buildTokenContract(anchor, web3);
+  return contract.methods.owner().call(undefined, blockHeight);
+};

@@ -159,3 +159,13 @@ export const splitArrayByVal = <T>(
     [[], []]
   );
 };
+
+export const partitionPair = <T>(
+  arr: T[],
+  predicate: (value: T) => boolean
+): [T, T] => {
+  if (arr.length !== 2) throw new Error(`Array must be length of 2`);
+  if (arr.every(predicate))
+    throw new Error('Both array elements passed truthy');
+  return arr.slice().sort((a) => (predicate(a) ? -1 : 1)) as [T, T];
+};

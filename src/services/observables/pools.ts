@@ -96,7 +96,7 @@ const anchorAndConverters$ = combineLatest([
 );
 
 const apiPools$ = apiData$.pipe(
-  pluck('pools'),
+  map((data) => data.welcomeData.pools),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
 );

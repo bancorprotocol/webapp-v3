@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import numeral from 'numeral';
 
 export const prettifyNumber = (
@@ -30,4 +31,16 @@ export const formatDuration = (duration: plugin.Duration): string => {
   if (hours > 0) sentence += ' ' + hours + ' Hours';
   if (minutes > 0) sentence += ' ' + minutes + ' Minutes';
   return sentence;
+};
+
+export const rewindBlocksByDays = (
+  currentBlock: number,
+  days: number,
+  secondsPerBlock = 13.3
+) => {
+  if (!Number.isInteger(currentBlock))
+    throw new Error('Current block should be an integer');
+  const secondsToRewind = dayjs.duration(days, 'days').asSeconds();
+  const blocksToRewind = parseInt(String(secondsToRewind / secondsPerBlock));
+  return currentBlock - blocksToRewind;
 };

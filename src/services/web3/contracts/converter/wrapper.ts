@@ -4,6 +4,8 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'services/web3/types';
 import { buildContract } from 'services/web3/contracts';
 import { ABIConverter } from 'services/web3/contracts/converter/abi';
+import { Pool } from 'services/api/bancor';
+import { shrinkToken } from 'utils/pureFunctions';
 
 export const buildConverterContract = (
   contractAddress?: string,
@@ -39,3 +41,22 @@ export const buildConverterContract = (
   conversionFee: () => CallReturn<string>;
   geometricMean: (weis: string[]) => CallReturn<string>;
 }> => buildContract(ABIConverter, contractAddress, web3);
+
+export const fetchPoolReserveBalances = async (
+  pool: Pool,
+  blockHeight?: number
+) => {
+  const contract = buildConverterContract(pool.converter_dlt_id);
+  return Promise.all(
+    pool.reserves.map(async (reserve) => {
+      const weiAmount = await contract.methods
+        .getConnectorBalance(reserve.address)
+        .call(undefined, blockHeight);
+
+      return {
+        contract: reserve.address,
+        weiAmount,
+      };
+    })
+  );
+};
