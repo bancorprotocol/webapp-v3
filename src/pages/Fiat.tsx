@@ -4,6 +4,7 @@ import { ReactComponent as banxaLogo } from 'assets/logos/banxa.svg';
 import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 const fiats = [
   {
@@ -90,7 +91,27 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid grid-cols-2 gap-40">
+    <div className="grid grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14">
+      <div className="w-[550px] mt-20">
+        <div className="text-[30px] font-semibold mb-20">
+          Fiat Gateway Providers
+        </div>
+        <div>
+          <div>Below is a list of popular fiat gateways.</div>
+          It can be used to buy or sell crypto with a credit card, bank transfer
+          & more.
+        </div>
+      </div>
+      <div className="bg-grey-1 shadow dark:bg-blue-2 px-20 py-16 rounded-20 text-12 w-[550px]">
+        <div className="flex items-center mb-8 text-16">
+          <IconInfo className="w-15 h-15 mr-10" />
+          Fiat Services
+        </div>
+        Fiat services on Bancor are provided by third-parties. Bancor is not
+        associated with, responsible or liable for the performance of these
+        third-party services. Any claims & questions should be addressed with
+        the selected provider directly.
+      </div>
       {fiats.map((fiat) => (
         <FiatBox key={fiat.name} fiat={fiat} />
       ))}
