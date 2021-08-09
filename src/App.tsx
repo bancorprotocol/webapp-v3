@@ -41,6 +41,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
+import { loadCommonData } from 'services/observables/triggers';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,8 @@ export const App = () => {
 
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
+
+    loadCommonData(dispatch);
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
