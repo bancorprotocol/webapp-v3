@@ -69,17 +69,6 @@ export const isUnsupportedNetwork = (
   return network !== undefined && EthNetworks[network] === undefined;
 };
 
-const autoLogin: string = 'autoLogin';
-
-export const setAutoLogin = (flag: boolean) => {
-  if (flag) localStorage.setItem(autoLogin, 'true');
-  else localStorage.removeItem(autoLogin);
-};
-
-export const isAutoLogin = (): boolean => {
-  return localStorage.getItem(autoLogin) === 'true';
-};
-
 export const findOrThrow = <T>(
   arr: readonly T[],
   iteratee: (obj: T, index: number, arr: readonly T[]) => unknown,

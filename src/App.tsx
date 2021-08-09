@@ -14,7 +14,7 @@ import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { isAutoLogin, isUnsupportedNetwork } from 'utils/pureFunctions';
+import { isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import {
@@ -37,6 +37,14 @@ import { useAppSelector } from 'redux/index';
 import { web3 } from 'services/web3/contracts';
 import { provider } from 'services/web3/wallet/connectors';
 import { googleTagManager } from 'services/api/googleTagManager';
+import {
+  getAutoLoginLS,
+  getDarkModeLS,
+  getNotificationsLS,
+  getSlippageToleranceLS,
+  getUsdToggleLS,
+  setNotificationsLS,
+} from 'utils/localStorage';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -51,31 +59,31 @@ export const App = () => {
   );
 
   useEffect(() => {
-    if (chainId || triedAutoLogin || !isAutoLogin()) setLoading(false);
+    if (chainId || triedAutoLogin || !getAutoLoginLS()) setLoading(false);
   }, [setLoading, chainId, triedAutoLogin]);
 
   useEffect(() => {
-    const restored = localStorage.getItem('darkMode');
-    if (restored) dispatch(setDarkMode(JSON.parse(restored)));
+    const usd = getUsdToggleLS();
+    if (usd) dispatch(setUsdToggle(usd));
+
+    const notify = getNotificationsLS();
+    if (notify) dispatch(setNotifications(notify));
+
+    const slippage = getSlippageToleranceLS();
+    if (slippage) dispatch(setSlippageTolerance(slippage));
+
+    const dark = getDarkModeLS();
+    if (dark) dispatch(setDarkMode(dark));
+
+    (async () => {
+      const chainID = await web3.eth.net.getId();
+      web3.setProvider(provider(chainID));
+      currentNetworkReceiver$.next(chainID);
+    })();
   }, [dispatch]);
 
   useEffect(() => {
-    const restored = localStorage.getItem('slippageTolerance');
-    if (restored) dispatch(setSlippageTolerance(JSON.parse(restored)));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const restored = localStorage.getItem('usdToggle');
-    if (restored) dispatch(setUsdToggle(JSON.parse(restored)));
-  }, [dispatch]);
-
-  useEffect(() => {
-    const restored = localStorage.getItem('notifications');
-    if (restored) dispatch(setNotifications(JSON.parse(restored)));
-  }, [dispatch]);
-
-  useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
+    setNotificationsLS(notifications);
   }, [notifications]);
 
   useEffect(() => {
@@ -83,14 +91,6 @@ export const App = () => {
     if (chainId) setNetwork(chainId);
     googleTagManager('', '');
   }, [account, chainId]);
-
-  useEffect(() => {
-    (async () => {
-      const chainID = await web3.eth.net.getId();
-      web3.setProvider(provider(chainID));
-      currentNetworkReceiver$.next(chainID);
-    })();
-  }, []);
 
   return (
     <BrowserRouter>
