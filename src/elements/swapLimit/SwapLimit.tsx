@@ -29,10 +29,12 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import {
   sendConversionEvent,
   ConversionEvents,
-  getConversion,
 } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
-import { setConversion } from 'services/api/googleTagManager';
+import { updateTokens } from 'redux/bancor/bancor';
+import { fetchTokenBalances } from 'services/observables/balances';
+import wait from 'waait';
+import { getConversionLS, setConversionLS } from 'utils/localStorage';
 
 enum Field {
   from,
@@ -223,7 +225,7 @@ export const SwapLimit = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
       if (isApprovalReq) {
-        const conversion = getConversion();
+        const conversion = getConversionLS();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
@@ -236,6 +238,19 @@ export const SwapLimit = ({
         })
       );
     }
+  };
+
+  const updateETHandWETH = async () => {
+    if (!(chainId && toToken && account)) return;
+
+    const weth = tokens.find((x) => x.address === wethToken);
+    await wait(4000);
+    const balances = await fetchTokenBalances(
+      weth ? [fromToken, weth] : [fromToken],
+      account,
+      chainId
+    );
+    dispatch(updateTokens(balances));
   };
 
   const handleSwap = async (
@@ -265,6 +280,7 @@ export const SwapLimit = ({
     );
 
     if (notification) dispatch(addNotification(notification));
+    if (fromToken.address === ethToken) updateETHandWETH();
   };
 
   const isSwapDisabled = () => {
@@ -295,7 +311,6 @@ export const SwapLimit = ({
   }, [fromAmount, fromToken]);
 
   const handleRateInput = (val: string) => {
-    console.log('handleRateInput');
     setRate(val);
     calculatePercentageByRate(marketRate, val);
     handleFieldChanged(Field.rate, fromAmount, toAmount, val);
@@ -512,7 +527,7 @@ export const SwapLimit = ({
                   : percentages[selPercentage].toFixed(0),
               conversion_experation: duration.asSeconds().toString(),
             };
-            setConversion(conversion);
+            setConversionLS(conversion);
             sendConversionEvent(ConversionEvents.click, conversion);
             handleSwap(false, false, fromToken.address === ethToken);
           }}

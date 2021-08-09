@@ -11,9 +11,9 @@ import { web3 } from 'services/web3/contracts';
 import wait from 'waait';
 import {
   ConversionEvents,
-  getConversion,
   sendConversionEvent,
 } from 'services/api/googleTagManager';
+import { getConversionLS } from 'utils/localStorage';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -41,7 +41,7 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       setIsOpen(false);
-      const conversion = getConversion();
+      const conversion = getConversionLS();
       sendConversionEvent(ConversionEvents.approved, {
         ...conversion,
         conversion_unlimited: amount ? 'Limited' : 'Unlimited',

@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokensWithoutBalances$, Token } from 'services/observables/tokens';
+import { Token, tokens$ } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import {
@@ -17,12 +17,9 @@ import {
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/pureFunctions';
-import {
-  sendConversionEvent,
-  ConversionEvents,
-  getConversion,
-} from './googleTagManager';
+import { sendConversionEvent, ConversionEvents } from './googleTagManager';
 import { toChecksumAddress } from 'web3-utils';
+import { getConversionLS } from 'utils/localStorage';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -44,7 +41,7 @@ export const swapLimit = async (
   checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
-  const conversion = getConversion();
+  const conversion = getConversionLS();
   try {
     if (fromIsEth) {
       try {
@@ -136,7 +133,7 @@ export interface KeeprDaoToken {
 
 export const fetchKeeperDaoTokens = async (): Promise<KeeprDaoToken[]> => {
   try {
-    const tokens = await tokensWithoutBalances$.pipe(take(1)).toPromise();
+    const tokens = await tokens$.pipe(take(1)).toPromise();
     const res = await axios.get(`${baseUrl}/tokenList`);
     return res.data.result.tokens;
   } catch (error) {
@@ -162,7 +159,7 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 const orderResToLimit = async (
   orders: OrderResponse[]
 ): Promise<LimitOrder[]> => {
-  const tokens = await tokensWithoutBalances$.pipe(take(1)).toPromise();
+  const tokens = await tokens$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
     const payToken =

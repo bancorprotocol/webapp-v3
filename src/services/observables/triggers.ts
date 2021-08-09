@@ -4,40 +4,59 @@ import {
   keeperDaoTokens$,
   listOfLists,
   tokens$,
+  tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
+import { Subscription } from 'rxjs';
+import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
+import { take } from 'rxjs/operators';
+import { loadingBalances$ } from './user';
+import { setLoadingBalances } from 'redux/user/user';
 
-export const loadSwapData = (dispatch: any) => {
-  tokenLists$.subscribe((tokenLists) => {
-    dispatch(setTokenLists(tokenLists));
-  });
+let tokenSub: Subscription;
+let tokenListsSub: Subscription;
+let keeperDaoSub: Subscription;
+let loadingBalancesSub: Subscription;
 
-  const userListIds = getLSTokenList();
+const loadCommonData = (dispatch: any) => {
+  if (!tokenListsSub || tokenListsSub.closed)
+    tokenListsSub = tokenLists$.subscribe((tokenLists) => {
+      dispatch(setTokenLists(tokenLists));
+    });
+
+  tokensNoBalance$
+    .pipe(take(1))
+    .toPromise()
+    .then((tokenList) => dispatch(setTokenList(tokenList)));
+
+  if (!loadingBalancesSub || loadingBalancesSub.closed)
+    loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+      dispatch(setLoadingBalances(loading))
+    );
+
+  const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
     const firstFromList = [listOfLists[0].name];
-    setLSTokenList(firstFromList);
+    setTokenListLS(firstFromList);
     userPreferredListIds$.next(firstFromList);
   } else userPreferredListIds$.next(userListIds);
 
-  tokens$.subscribe((tokenList) => {
-    dispatch(setTokenList(tokenList));
-  });
+  if (!tokenSub || tokenSub.closed) {
+    tokenSub = tokens$.subscribe((tokenList) => {
+      dispatch(setTokenList(tokenList));
+    });
+  }
 
-  keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    setKeeperDaoTokens(keeperDaoTokens);
-  });
+  if (!keeperDaoSub || keeperDaoSub.closed)
+    keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+      setKeeperDaoTokens(keeperDaoTokens);
+    });
 };
 
-const selected_lists = 'selected_list_ids';
-export const setLSTokenList = (userListIds: string[]) => {
-  localStorage.setItem(selected_lists, JSON.stringify(userListIds));
-};
-
-export const getLSTokenList = (): string[] => {
-  const list = localStorage.getItem(selected_lists);
-  return list ? JSON.parse(list) : [];
+export const loadSwapData = (dispatch: any) => {
+  loadCommonData(dispatch);
 };

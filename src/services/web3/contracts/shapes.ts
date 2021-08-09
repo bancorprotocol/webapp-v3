@@ -41,23 +41,12 @@ export const multi = async ({
   }
 };
 
-export const slimBalanceShape = (contractAddress: string, owner: string) => {
-  const contract = buildTokenContract(contractAddress, web3);
-  const template = {
-    contract: DataTypes.originAddress,
+export const balanceShape = (address: string, owner: string) => {
+  const contract = buildTokenContract(address, web3);
+  return {
+    address: DataTypes.originAddress,
     balance: contract.methods.balanceOf(owner),
   };
-  return template;
-};
-
-export const balanceShape = (contractAddress: string, owner: string) => {
-  const contract = buildTokenContract(contractAddress, web3);
-  const template = {
-    contract: DataTypes.originAddress,
-    balance: contract.methods.balanceOf(owner),
-    decimals: contract.methods.decimals(),
-  };
-  return template;
 };
 
 export const buildRateShape = ({

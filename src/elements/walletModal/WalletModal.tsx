@@ -3,11 +3,7 @@ import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { Modal } from 'components/modal/Modal';
-import {
-  classNameGenerator,
-  setAutoLogin,
-  shortenString,
-} from 'utils/pureFunctions';
+import { classNameGenerator, shortenString } from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { FormattedMessage } from 'react-intl';
 import { useAppSelector } from 'redux/index';
@@ -15,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
+import { setAutoLoginLS } from 'utils/localStorage';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector, active } = useWeb3React();
@@ -48,7 +45,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
       activate(connector, undefined, true)
         .then(async () => {
           setIsOpen(false);
-          setAutoLogin(true);
+          setAutoLoginLS(true);
           const account = await connector.getAccount();
           sendWalletEvent(
             WalletEvents.connect,
@@ -61,7 +58,6 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           setSelectedWallet(null);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
-            setAutoLogin(true);
           } else setError(true);
         });
   };
@@ -69,7 +65,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const connectButton = () => {
     if (account) {
       deactivate();
-      setAutoLogin(false);
+      setAutoLoginLS(false);
       setSelectedWallet(null);
     } else {
       sendWalletEvent(WalletEvents.popup);

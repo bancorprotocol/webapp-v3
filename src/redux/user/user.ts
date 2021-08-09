@@ -1,4 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  setDarkModeLS,
+  setSlippageToleranceLS,
+  setUsdToggleLS,
+} from 'utils/localStorage';
 
 export interface UserState {
   darkMode: boolean;
@@ -6,6 +11,7 @@ export interface UserState {
   slippageTolerance: number;
   usdToggle: boolean;
   locale: string;
+  loadingBalances: boolean;
 }
 
 export const initialState: UserState = {
@@ -14,6 +20,7 @@ export const initialState: UserState = {
   slippageTolerance: 0.005,
   usdToggle: false,
   locale: 'en',
+  loadingBalances: false,
 };
 
 const userSlice = createSlice({
@@ -27,10 +34,10 @@ const userSlice = createSlice({
       if (action.payload) root.classList.add('dark');
       else root.classList.remove('dark');
 
-      localStorage.setItem('darkMode', JSON.stringify(action.payload));
+      setDarkModeLS(action.payload);
     },
     setSlippageTolerance: (state, action) => {
-      localStorage.setItem('slippageTolerance', JSON.stringify(action.payload));
+      setSlippageToleranceLS(action.payload);
       state.slippageTolerance = action.payload;
     },
     setLocale: (state, action) => {
@@ -40,8 +47,11 @@ const userSlice = createSlice({
       state.walletModal = action.payload;
     },
     setUsdToggle: (state, action: PayloadAction<boolean>) => {
-      localStorage.setItem('usdToggle', JSON.stringify(action.payload));
+      setUsdToggleLS(action.payload);
       state.usdToggle = action.payload;
+    },
+    setLoadingBalances: (state, action) => {
+      state.loadingBalances = action.payload;
     },
   },
 });
@@ -52,6 +62,7 @@ export const {
   setLocale,
   openWalletModal,
   setUsdToggle,
+  setLoadingBalances,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

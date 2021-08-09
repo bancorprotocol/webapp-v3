@@ -22,9 +22,8 @@ import { currentNetwork$ } from 'services/observables/network';
 import {
   sendConversionEvent,
   ConversionEvents,
-  getConversion,
 } from 'services/api/googleTagManager';
-import { fetchBalances } from 'services/observables/balances';
+import { fetchTokenBalances } from 'services/observables/balances';
 import wait from 'waait';
 import {
   buildPoolBalanceShape,
@@ -32,6 +31,7 @@ import {
   multi,
 } from '../contracts/shapes';
 import { calcReserve } from 'utils/formulas';
+import { getConversionLS } from 'utils/localStorage';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -147,7 +147,7 @@ export const swap = async ({
   const expectedToWei = expandToken(toAmount, toToken.decimals);
   const path = await findPath(fromToken.address, toToken.address);
 
-  const conversion = getConversion();
+  const conversion = getConversionLS();
   sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
   return resolveTxOnConfirmation({
@@ -170,11 +170,6 @@ export const swap = async ({
         conversion_market_token_rate: fromToken.usdPrice,
         transaction_category: 'Conversion',
       });
-      //RefreshBalances
-      fetchBalances([fromToken.address, toToken.address, ethToken]);
-      wait(4000).then(() =>
-        fetchBalances([fromToken.address, toToken.address, ethToken])
-      );
       onConfirmation && onConfirmation();
     },
     resolveImmediately: true,
@@ -278,7 +273,7 @@ const buildTokenPoolShape = (pool: Pool, tokenAddress: string) => {
 const findPoolByToken = async (tkn: string): Promise<Pool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
-  const pool = apiData.welcomeData.pools.find(
+  const pool = apiData.pools.find(
     (x) => x && x.reserves.find((x) => x.address === tkn)
   );
   if (pool) return pool;
