@@ -1,4 +1,3 @@
-import { Image } from 'components/image/Image';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 
 export enum Operations {
@@ -13,16 +12,26 @@ export enum DepositMethods {
   samsumgPay = 'Samsumg Pay',
   googlePay = 'Google Pay',
   applePay = 'Apple Pay',
+  ideal = 'iDeal',
+  interac = 'Interac',
+  sepa = 'SEPA',
+  openBanking = 'Open Banking',
+  sepaInstant = 'SEPA Instant',
+  fasterPayments = 'Faster Payments',
 }
 
 export interface Fiat {
   name: string;
   text: string;
-  logo: string;
+  logo: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & {
+      title?: string | undefined;
+    }
+  >;
   operations: Operations[];
   depositMethods: DepositMethods[];
-  buyUrl: string;
-  sellUrl: string;
+  buyUrl?: string;
+  sellUrl?: string;
 }
 
 export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
@@ -31,11 +40,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
 
   return (
     <div className="flex flex-col items-between bg-white dark:bg-blue-4 w-[550px] [h-360px] p-30 rounded-20 text-grey-4 dark:text-grey-0">
-      <Image
-        className="h-40 w-140 self-start text-grey-4 dark:text-grey-0"
-        src={fiat.logo}
-        alt={fiat.name}
-      />
+      <fiat.logo className="h-40 w-140 self-start text-black dark:text-white" />
       <div className="flex items-center my-20 font-medium">
         Available Operations
         {fiatIn && (
