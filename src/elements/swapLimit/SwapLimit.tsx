@@ -243,10 +243,10 @@ export const SwapLimit = ({
   const updateETHandWETH = async () => {
     if (!(chainId && toToken && account)) return;
 
-    const wethIndex = tokens.findIndex((x) => x.address === wethToken);
+    const weth = tokens.find((x) => x.address === wethToken);
     await wait(4000);
     const balances = await fetchTokenBalances(
-      [fromToken, tokens[wethIndex]],
+      weth ? [fromToken, weth] : [fromToken],
       account,
       chainId
     );
