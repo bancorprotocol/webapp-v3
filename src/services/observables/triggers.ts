@@ -22,7 +22,7 @@ let tokenListsSub: Subscription;
 let keeperDaoSub: Subscription;
 let loadingBalancesSub: Subscription;
 
-const loadCommonData = (dispatch: any) => {
+export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
     tokenListsSub = tokenLists$.subscribe((tokenLists) => {
       dispatch(setTokenLists(tokenLists));
@@ -57,6 +57,4 @@ const loadCommonData = (dispatch: any) => {
     });
 };
 
-export const loadSwapData = (dispatch: any) => {
-  loadCommonData(dispatch);
-};
+export const loadSwapData = (dispatch: any) => {};

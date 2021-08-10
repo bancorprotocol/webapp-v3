@@ -41,6 +41,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
+import { loadCommonData } from 'services/observables/triggers';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,8 @@ export const App = () => {
 
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
+
+    loadCommonData(dispatch);
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
@@ -117,7 +120,7 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <div
-          className={`md:mr-[30px] pt-[110px] md:pt-[165px] transition-all duration-500 ${
+          className={`md:mr-[30px] pt-[110px] transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
