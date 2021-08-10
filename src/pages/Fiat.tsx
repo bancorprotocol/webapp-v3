@@ -91,7 +91,7 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px] mx-10 md:mx-auto">
+    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px] mx-10 md:mx-auto my-20">
       <div className="mt-20 mx-16 md:ml-5">
         <div className="font-medium text-2xl md:font-semibold md:text-3xl mb-20">
           Fiat Gateway Providers

@@ -39,7 +39,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
   const fiatOut = fiat.operations.includes(Operations.fiatOut);
 
   return (
-    <div className="flex flex-col items-between bg-white dark:bg-blue-4 [h-360px] p-30 rounded-20 text-grey-4 dark:text-grey-0">
+    <div className="flex flex-col items-between bg-white dark:bg-blue-4 [h-360px] p-30 shadow rounded-20 text-grey-4 dark:text-grey-0">
       <fiat.logo className="h-40 w-140 self-start text-black dark:text-white" />
       <div className="flex items-center my-20 font-medium">
         Available Operations
@@ -82,7 +82,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         <div className="mr-12">Deposit Methods</div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 md:gap-x-[30px]">
           {fiat.depositMethods.map((method) => (
-            <div key={method} className="flex items-center mr-[30px]">
+            <div key={method} className="flex items-center">
               <IconCheck className="w-15 h-15 p-2 bg-blue-0 rounded-full mr-8 dark:bg-blue-1" />
               {method}
             </div>

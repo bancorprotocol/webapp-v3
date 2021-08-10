@@ -120,7 +120,7 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <div
-          className={`md:mr-[30px] pt-[110px] md:pt-[165px] transition-all duration-500 ${
+          className={`md:mr-[30px] pt-[110px] transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
