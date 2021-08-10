@@ -68,6 +68,7 @@ const fiats = [
       DepositMethods.creditCard,
       DepositMethods.applePay,
     ],
+    smallGap: true,
     buyUrl:
       'https://buy.ramp.network/?hostApiKey=qg4s4spwnm7nahqdxfsjyzsjvtxbbzg8dxnxxrum&userAddress=0x5f7a009664b771e889751f4fd721adc439033ecd',
   },
@@ -102,7 +103,7 @@ export const Fiat = () => {
           & more.
         </div>
       </div>
-      <div className="bg-white shadow hover:shadow-lg dark:bg-blue-4 px-20 py-16 rounded-20 text-12">
+      <div className="bg-white shadow dark:shadow-none hover:shadow-lg dark:bg-blue-4 px-20 py-16 rounded-20 text-12">
         <div className="flex items-center mb-8 text-16">
           <IconInfo className="w-15 h-15 mr-10" />
           Fiat Services

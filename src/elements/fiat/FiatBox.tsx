@@ -32,6 +32,7 @@ export interface Fiat {
   depositMethods: DepositMethods[];
   buyUrl?: string;
   sellUrl?: string;
+  smallGap?: boolean;
 }
 
 export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
@@ -80,7 +81,11 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
       <hr className="widget-separator" />
       <div className="flex align-top h-42 text-12 weight-medium">
         <div className="mr-12">Deposit Methods</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-24 md:gap-x-[30px]">
+        <div
+          className={`grid grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-4 ${
+            fiat.smallGap ? 'md:gap-x-[10px]' : 'md:gap-x-[30px]'
+          }`}
+        >
           {fiat.depositMethods.map((method) => (
             <div key={method} className="flex items-center">
               <IconCheck className="w-15 h-15 p-2 bg-blue-0 rounded-full mr-8 dark:bg-blue-1" />
