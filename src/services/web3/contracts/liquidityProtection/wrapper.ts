@@ -5,7 +5,7 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods, EthNetworks } from 'services/web3/types';
 import { ABILiquidityProtection } from './abi';
 import { buildContract } from '..';
-import { buildLiquidityProtectionStoreContract } from '../swap/wrapper';
+import { buildLiquidityProtectionStoreContract } from '../liquidityProtectionStore/wrapper';
 import { multi } from '../shapes';
 import dayjs from 'utils/dayjs';
 import { decToPpm } from 'utils/pureFunctions';
@@ -14,9 +14,7 @@ import { BigNumber } from 'bignumber.js';
 const calculateReturnOnInvestment = (
   investment: string,
   newReturn: string
-): string => {
-  return new BigNumber(newReturn).div(investment).minus(1).toString();
-};
+): string => new BigNumber(newReturn).div(investment).minus(1).toString();
 
 export const buildLiquidityProtectionContract = (
   contractAddress: string,

@@ -13,6 +13,7 @@ import {
 import { Subscription } from 'rxjs';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { fullPositions$, positions$ } from './protectedPositions';
+import { lockedBalances$ } from './lockedBalances';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
@@ -44,6 +45,10 @@ const loadCommonData = (dispatch: any) => {
   positions$.subscribe((x) => console.log(x, 'came from positions'));
 
   fullPositions$.subscribe((x) => console.log(x, 'was full positons'));
+  lockedBalances$.subscribe((lockedBalances) =>
+    console.log(lockedBalances, 'are the locked balances')
+  );
+
   if (!keeperDaoSub || keeperDaoSub.closed)
     keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
       setKeeperDaoTokens(keeperDaoTokens);
