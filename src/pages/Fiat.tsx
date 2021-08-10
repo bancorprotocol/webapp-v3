@@ -102,7 +102,7 @@ export const Fiat = () => {
           & more.
         </div>
       </div>
-      <div className="bg-grey-1 shadow dark:bg-blue-2 px-20 py-16 rounded-20 text-12">
+      <div className="bg-white shadow hover:shadow-lg dark:bg-blue-4 px-20 py-16 rounded-20 text-12">
         <div className="flex items-center mb-8 text-16">
           <IconInfo className="w-15 h-15 mr-10" />
           Fiat Services
