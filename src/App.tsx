@@ -17,10 +17,7 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
-import {
-  currentNetworkReceiver$,
-  setNetwork,
-} from 'services/observables/network';
+import { setNetwork } from 'services/observables/network';
 import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
@@ -34,9 +31,8 @@ import {
   setNotifications,
 } from 'redux/notification/notification';
 import { useAppSelector } from 'redux/index';
-import { web3 } from 'services/web3/contracts';
-import { provider } from 'services/web3/wallet/connectors';
 import { googleTagManager } from 'services/api/googleTagManager';
+import { EthNetworks } from 'services/web3/types';
 import {
   getAutoLoginLS,
   getDarkModeLS,
@@ -73,16 +69,10 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    const dark = getDarkModeLS();
-    if (dark) dispatch(setDarkMode(dark));
-
     loadCommonData(dispatch);
 
-    (async () => {
-      const chainID = await web3.eth.net.getId();
-      web3.setProvider(provider(chainID));
-      currentNetworkReceiver$.next(chainID);
-    })();
+    const dark = getDarkModeLS();
+    if (dark) dispatch(setDarkMode(dark));
   }, [dispatch]);
 
   useEffect(() => {
@@ -90,10 +80,14 @@ export const App = () => {
   }, [notifications]);
 
   useEffect(() => {
-    setUser(account);
     if (chainId) setNetwork(chainId);
+    else setNetwork(EthNetworks.Mainnet);
+  }, [chainId]);
+
+  useEffect(() => {
+    setUser(account);
     googleTagManager('', '');
-  }, [account, chainId]);
+  }, [account]);
 
   return (
     <BrowserRouter>
@@ -126,7 +120,7 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <div
-          className={`md:mr-[30px] pt-[110px] md:pt-[165px] transition-all duration-500 ${
+          className={`md:mr-[30px] pt-[110px] transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >

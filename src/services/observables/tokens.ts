@@ -4,7 +4,7 @@ import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
 import { apiTokens$ } from './pools';
-import { fetchBalances, userBalances$ } from './balances';
+import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'services/web3/config';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
+import { fetchTokenBalances } from './balances';
 
 export interface TokenList {
   name: string;
@@ -102,75 +103,68 @@ const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
-export const tokensWithoutBalances$ = combineLatest([
+export const tokensNoBalance$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([tokenList, { tokens, network }, currentNetwork]) => {
-      const newApiTokens = [...tokens, buildWethToken(tokens)].map((x) => ({
-        address: x.dlt_id,
-        symbol: x.symbol,
-        decimals: x.decimals,
-        usdPrice: x.rate.usd,
-      }));
+  switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
+      address: x.dlt_id,
+      symbol: x.symbol,
+      decimals: x.decimals,
+      usdPrice: x.rate.usd,
+    }));
 
-      let overlappingTokens: Token[] = [];
-      const eth = getEthToken(tokens);
-      if (eth) overlappingTokens.push(eth);
+    let overlappingTokens: Token[] = [];
+    const eth = getEthToken(apiTokens);
+    if (eth) overlappingTokens.push(eth);
 
-      newApiTokens.forEach((apiToken) => {
-        if (currentNetwork === EthNetworks.Mainnet) {
-          const found = tokenList.find(
-            (userToken) => userToken.address === apiToken.address
-          );
-          if (found)
-            overlappingTokens.push({
-              ...found,
-              ...apiToken,
-            });
-        } else {
-          if (apiToken.address !== ethToken)
-            overlappingTokens.push({
-              chainId: EthNetworks.Ropsten,
-              name: apiToken.symbol,
-              logoURI: ropstenImage,
-              balance: null,
-              ...apiToken,
-            });
-        }
-      });
-
-      const networkMatch = network === currentNetwork;
-      if (networkMatch) {
-        fetchBalances(overlappingTokens.map((token) => token.address));
+    newApiTokens.forEach((apiToken) => {
+      if (currentNetwork === EthNetworks.Mainnet) {
+        const found = tokenList.find(
+          (userToken) => userToken.address === apiToken.address
+        );
+        if (found)
+          overlappingTokens.push({
+            ...found,
+            ...apiToken,
+          });
+      } else {
+        if (apiToken.address !== ethToken)
+          overlappingTokens.push({
+            chainId: EthNetworks.Ropsten,
+            name: apiToken.symbol,
+            logoURI: ropstenImage,
+            balance: null,
+            ...apiToken,
+          });
       }
+    });
 
-      return overlappingTokens;
-    }
-  ),
+    return overlappingTokens;
+  }),
   shareReplay(1)
 );
 
 export const tokens$ = combineLatest([
-  tokensWithoutBalances$,
-  userBalances$,
+  user$,
+  tokensNoBalance$,
+  currentNetwork$,
 ]).pipe(
-  map(([tokens, userBalances]) => {
-    if (!userBalances || Object.keys(userBalances).length === 0) {
-      return tokens;
+  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
+    if (user && tokensNoBalance) {
+      setLoadingBalances(true);
+      const updatedTokens = await fetchTokenBalances(
+        tokensNoBalance,
+        user,
+        currentNetwork
+      );
+      setLoadingBalances(false);
+      if (updatedTokens.length !== 0) return updatedTokens;
     }
-    return tokens.map((token) => {
-      if (userBalances) {
-        const userBalance = userBalances[token.address];
-        return userBalance === undefined
-          ? token
-          : { ...token, balance: userBalance };
-      } else {
-        return token;
-      }
-    });
+
+    return tokensNoBalance;
   }),
   shareReplay(1)
 );

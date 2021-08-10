@@ -52,12 +52,12 @@ const menu: MenuItem[] = [
   //     { label: 'Vote', to: '/vote' },
   //   ],
   // },
-  // {
-  //   label: 'Fiat',
-  //   to: '/fiat',
-  //   icon: <IconFiat />,
-  //   subMenu: [],
-  // },
+  {
+    label: 'Fiat',
+    to: '/fiat',
+    icon: <IconFiat />,
+    subMenu: [],
+  },
 ];
 
 export const MenuPrimary = ({

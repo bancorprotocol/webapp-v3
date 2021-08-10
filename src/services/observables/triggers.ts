@@ -4,6 +4,7 @@ import {
   keeperDaoTokens$,
   listOfLists,
   tokens$,
+  tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
@@ -12,16 +13,30 @@ import {
 } from 'redux/bancor/bancor';
 import { Subscription } from 'rxjs';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
+import { take } from 'rxjs/operators';
+import { loadingBalances$ } from './user';
+import { setLoadingBalances } from 'redux/user/user';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
 let keeperDaoSub: Subscription;
+let loadingBalancesSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
-    tokenLists$.subscribe((tokenLists) => {
+    tokenListsSub = tokenLists$.subscribe((tokenLists) => {
       dispatch(setTokenLists(tokenLists));
     });
+
+  tokensNoBalance$
+    .pipe(take(1))
+    .toPromise()
+    .then((tokenList) => dispatch(setTokenList(tokenList)));
+
+  if (!loadingBalancesSub || loadingBalancesSub.closed)
+    loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+      dispatch(setLoadingBalances(loading))
+    );
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
