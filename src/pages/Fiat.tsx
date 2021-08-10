@@ -91,9 +91,9 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px]">
-      <div className="mt-20 ml-20 md:ml-5">
-        <div className="text-20 font-semibold mb-20">
+    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px] mx-10 md:mx-auto">
+      <div className="mt-20 mx-16 md:ml-5">
+        <div className="font-medium text-2xl md:font-semibold md:text-3xl mb-20">
           Fiat Gateway Providers
         </div>
         <div>
@@ -107,10 +107,12 @@ export const Fiat = () => {
           <IconInfo className="w-15 h-15 mr-10" />
           Fiat Services
         </div>
-        Fiat services on Bancor are provided by third-parties. Bancor is not
-        associated with, responsible or liable for the performance of these
-        third-party services. Any claims & questions should be addressed with
-        the selected provider directly.
+        <div className="dark:text-grey-3">
+          Fiat services on Bancor are provided by third-parties. Bancor is not
+          associated with, responsible or liable for the performance of these
+          third-party services. Any claims & questions should be addressed with
+          the selected provider directly.
+        </div>
       </div>
       {fiats.map((fiat) => (
         <FiatBox key={fiat.name} fiat={fiat} />

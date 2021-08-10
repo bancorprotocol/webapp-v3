@@ -56,7 +56,7 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   };
 
   return (
-    <>
+    <div className="bg-white dark:bg-blue-3 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
       <div className="widget mx-auto">
         <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
         <hr className="widget-separator" />
@@ -85,6 +85,6 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
       ) : (
         ''
       )}
-    </>
+    </div>
   );
 };
