@@ -39,7 +39,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
   const fiatOut = fiat.operations.includes(Operations.fiatOut);
 
   return (
-    <div className="flex flex-col items-between bg-white dark:bg-blue-4 w-[550px] [h-360px] p-30 rounded-20 text-grey-4 dark:text-grey-0">
+    <div className="flex flex-col items-between bg-white dark:bg-blue-4 [h-360px] p-30 rounded-20 text-grey-4 dark:text-grey-0">
       <fiat.logo className="h-40 w-140 self-start text-black dark:text-white" />
       <div className="flex items-center my-20 font-medium">
         Available Operations
@@ -55,10 +55,10 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         )}
       </div>
       {fiat.text}
-      <div className="flex justify-between items-center w-[288px] my-20">
+      <div className="flex justify-between items-center my-20 max-w-[280px]">
         {fiatIn && (
           <a
-            className="btn-primary rounded w-full w-[135px] h-[40px]"
+            className="btn-primary rounded w-[135px] h-[40px]"
             href={fiat.buyUrl}
             rel="noreferrer"
             target="_blank"
@@ -68,7 +68,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         )}
         {fiatOut && (
           <a
-            className="btn-primary rounded w-full w-[135px] h-[40px]"
+            className="btn-primary rounded w-[135px] h-[40px]"
             href={fiat.sellUrl}
             rel="noreferrer"
             target="_blank"
@@ -78,15 +78,12 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         )}
       </div>
       <hr className="widget-separator" />
-      <div className="flex">
-        <div className="w-[120px]">Deposit Methods</div>
-        <div className="grid grid-cols-3">
+      <div className="flex align-top h-42 text-12 weight-medium">
+        <div className="mr-12">Deposit Methods</div>
+        <div className="grid grid-cols-3 gap-y-10 gap-x-[30px]">
           {fiat.depositMethods.map((method) => (
-            <div
-              key={method}
-              className="flex items-center mx-12 my-5 text-12 weight-medium"
-            >
-              <IconCheck className="w-14 h-14 p-2 bg-blue-0 rounded-full mr-5 dark:bg-blue-1" />
+            <div key={method} className="flex items-center mr-[30px]">
+              <IconCheck className="w-15 h-15 p-2 bg-blue-0 rounded-full mr-8 dark:bg-blue-1" />
               {method}
             </div>
           ))}

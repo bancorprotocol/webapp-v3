@@ -91,9 +91,9 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14">
-      <div className="w-[550px] mt-20">
-        <div className="text-[30px] font-semibold mb-20">
+    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px]">
+      <div className="mt-20 ml-20 md:ml-5">
+        <div className="text-20 font-semibold mb-20">
           Fiat Gateway Providers
         </div>
         <div>
@@ -102,7 +102,7 @@ export const Fiat = () => {
           & more.
         </div>
       </div>
-      <div className="bg-grey-1 shadow dark:bg-blue-2 px-20 py-16 rounded-20 text-12 w-[550px]">
+      <div className="bg-grey-1 shadow dark:bg-blue-2 px-20 py-16 rounded-20 text-12">
         <div className="flex items-center mb-8 text-16">
           <IconInfo className="w-15 h-15 mr-10" />
           Fiat Services
