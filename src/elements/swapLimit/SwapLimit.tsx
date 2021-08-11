@@ -409,13 +409,16 @@ export const SwapLimit = ({
                 </div>
               </div>
               {rateWarning.msg && marketRate !== -1 && (
-                <div
-                  className={`mt-10 text-center text-12 ${classNameGenerator({
-                    'text-error': rateWarning.type === 'error',
-                    'text-warning': rateWarning.type === 'warning',
-                  })}`}
-                >
-                  {rateWarning.msg}
+                <div className="flex mt-10">
+                  <div className="min-w-[135px]"></div>
+                  <div
+                    className={`mx-8 text-center text-10 sm:text-12 font-light ${classNameGenerator({
+                      'text-error': rateWarning.type === 'error',
+                      'text-warning': rateWarning.type === 'warning',
+                    })}`}
+                  >
+                    {rateWarning.msg}
+                  </div>
                 </div>
               )}
               <div className="flex justify-end space-x-8 mt-15">
