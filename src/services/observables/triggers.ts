@@ -9,11 +9,13 @@ import {
   setKeeperDaoTokens,
   setTokenList,
   setTokenLists,
+  setPools,
 } from 'redux/bancor/bancor';
 import { Subscription } from 'rxjs';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { fullPositions$, positions$ } from './protectedPositions';
 import { lockedBalances$ } from './lockedBalances';
+import { pools$ } from './pools';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
@@ -37,6 +39,10 @@ const loadCommonData = (dispatch: any) => {
       dispatch(setTokenList(tokenList));
     });
   }
+
+  pools$.subscribe((pools) => {
+    dispatch(setPools(pools));
+  });
 
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {
     setKeeperDaoTokens(keeperDaoTokens);

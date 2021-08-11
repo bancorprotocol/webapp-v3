@@ -45,6 +45,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
+import { AddProtection } from 'pages/AddProtection';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -133,6 +134,12 @@ export const App = () => {
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
               <Route exact strict path="/portfolio" component={Portfolio} />
+              <Route
+                exact
+                strict
+                path="/addProtection/:anchor"
+                component={AddProtection}
+              />
               <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />

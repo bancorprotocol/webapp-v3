@@ -30,7 +30,7 @@ import {
 import { fetchPoolPrograms } from 'services/web3/contracts/stakingRewardsStore/wrapper';
 import { BigNumber } from 'bignumber.js';
 import { currentBlock$ } from './currentBlock';
-import { pools$ } from './pools';
+import { correctedPools$ } from './pools';
 import { Pool } from 'services/api/bancor';
 import { rewindBlocksByDays } from 'utils/helperFunctions';
 import { uniq } from 'lodash';
@@ -386,7 +386,7 @@ export const getPoolAprs = async (
   }
 };
 
-const historicPoolBalances$ = combineLatest([positions$, pools$]).pipe(
+const historicPoolBalances$ = combineLatest([positions$, correctedPools$]).pipe(
   withLatestFrom(currentBlock$),
   switchMapIgnoreThrow(([[positions, pools], block]) =>
     getHistoricBalances(positions, block.currentBlock, pools)

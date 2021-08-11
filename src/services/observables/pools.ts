@@ -22,7 +22,7 @@ import {
   settingsContractAddress$,
 } from './contracts';
 import { ConverterAndAnchor, EthNetworks } from 'services/web3/types';
-import { switchMapIgnoreThrow } from './customOperators';
+import { logger, switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
 import {
@@ -101,7 +101,10 @@ const apiPools$ = apiData$.pipe(
   shareReplay(1)
 );
 
-export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
+export const correctedPools$ = combineLatest([
+  apiPools$,
+  anchorAndConverters$,
+]).pipe(
   map(([pools, anchorAndConverters]) => {
     if (anchorAndConverters.length === 0) return pools;
     return updateArray(
@@ -124,14 +127,32 @@ export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
       }
     );
   }),
+  logger('correctedPools', true),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
 );
 
 export const whitelistedPools$ = settingsContractAddress$.pipe(
   switchMapIgnoreThrow((address) => fetchWhiteListedV1Pools(address)),
+  map((anchors) => anchors.map(toChecksumAddress)),
   startWith([]),
-  distinctUntilChanged(isEqual),
+  distinctUntilChanged<string[]>(isEqual),
+  shareReplay(1)
+);
+
+export const pools$ = combineLatest([correctedPools$, whitelistedPools$]).pipe(
+  logger('before', true),
+  map(([pools, whitelistedPools]) =>
+    pools.map(
+      (pool): Pool => ({
+        ...pool,
+        isWhitelisted: whitelistedPools.some(
+          (anchor) => pool.pool_dlt_id === anchor
+        ),
+      })
+    )
+  ),
+  logger('pools$', true),
   shareReplay(1)
 );
 
@@ -270,7 +291,7 @@ const sortPathByBiggestStartingPool = (paths: TradePath[], pools: Pool[]) => {
 };
 
 const tradeAndPath$ = swapReceiver$.pipe(
-  withLatestFrom(pools$),
+  withLatestFrom(correctedPools$),
   switchMapIgnoreThrow(async ([trade, pools]) => {
     const winningPools = filterTradeWorthyPools(pools);
     const minimalPools = winningPools.map(toMinimal);

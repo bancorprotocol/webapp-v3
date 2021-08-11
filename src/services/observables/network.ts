@@ -1,5 +1,11 @@
 import { Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  shareReplay,
+  startWith,
+} from 'rxjs/operators';
 import { getNetworkVariables } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import { EthNetworks } from 'services/web3/types';
@@ -26,6 +32,7 @@ const handleChainChanged = (chain: string | number) => {
 if (ethereum && ethereum.on) ethereum.on('chainChanged', handleChainChanged);
 
 export const currentNetwork$ = currentNetworkReceiver$.pipe(
+  startWith(EthNetworks.Mainnet),
   distinctUntilChanged(),
   filter((network) => isSupportedNetwork(network)),
   shareReplay(1)

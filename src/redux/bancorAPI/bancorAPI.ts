@@ -35,6 +35,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setWelcomeData, setPools } = userSlice.actions;
+export const { setWelcomeData } = userSlice.actions;
 
 export const bancorAPI = userSlice.reducer;
