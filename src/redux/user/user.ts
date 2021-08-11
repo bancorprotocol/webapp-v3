@@ -11,6 +11,7 @@ export interface UserState {
   slippageTolerance: number;
   usdToggle: boolean;
   locale: string;
+  user: string | undefined;
 }
 
 export const initialState: UserState = {
@@ -19,6 +20,7 @@ export const initialState: UserState = {
   slippageTolerance: 0.005,
   usdToggle: false,
   locale: 'en',
+  user: undefined,
 };
 
 const userSlice = createSlice({
@@ -33,6 +35,9 @@ const userSlice = createSlice({
       else root.classList.remove('dark');
 
       setDarkModeLS(action.payload);
+    },
+    setUser: (state, action: PayloadAction<string | undefined>) => {
+      state.user = action.payload;
     },
     setSlippageTolerance: (state, action) => {
       setSlippageToleranceLS(action.payload);
@@ -56,6 +61,7 @@ export const {
   setSlippageTolerance,
   setLocale,
   openWalletModal,
+  setUser,
   setUsdToggle,
 } = userSlice.actions;
 

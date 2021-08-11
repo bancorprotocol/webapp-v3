@@ -16,6 +16,8 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { fullPositions$, positions$ } from './protectedPositions';
 import { lockedBalances$ } from './lockedBalances';
 import { pools$ } from './pools';
+import { onLogin$, onLogout$ } from './user';
+import { setUser } from 'redux/user/user';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
@@ -39,6 +41,9 @@ const loadCommonData = (dispatch: any) => {
       dispatch(setTokenList(tokenList));
     });
   }
+
+  onLogin$.subscribe((user) => setUser(user));
+  onLogout$.subscribe((user) => setUser(user));
 
   pools$.subscribe((pools) => {
     dispatch(setPools(pools));
