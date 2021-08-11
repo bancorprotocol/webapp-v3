@@ -32,6 +32,8 @@ export interface Token {
   logoURI: string;
   usdPrice: string | null;
   balance: string | null;
+  liquidity: string | null;
+  usd_24h_ago: string | null;
 }
 
 export const listOfLists = [
@@ -114,6 +116,8 @@ export const tokensNoBalance$ = combineLatest([
       symbol: x.symbol,
       decimals: x.decimals,
       usdPrice: x.rate.usd,
+      liquidity: x.liquidity.usd,
+      usd_24h_ago: x.rate_24h_ago.usd,
     }));
 
     let overlappingTokens: Token[] = [];

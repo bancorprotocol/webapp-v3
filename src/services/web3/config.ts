@@ -48,6 +48,8 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       symbol: eth.symbol,
       decimals: eth.decimals,
       usdPrice: eth.rate.usd,
+      liquidity: eth.liquidity.usd,
+      usd_24h_ago: eth.rate_24h_ago.usd,
     };
 
   return null;

@@ -8,6 +8,7 @@ import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
+import { calculatePercentageChange } from 'utils/pureFunctions';
 
 const sampleData: LineData[] = [
   { time: '2019-04-11', value: 80.01 },
@@ -81,7 +82,21 @@ export const TokenTable = () => {
       {
         id: '4',
         Header: '24h Change',
-        accessor: () => '+12.34%',
+        accessor: 'usd_24h_ago',
+        Cell: (cellData) => {
+          const token = cellData.row.original;
+          const percentage =
+            token.usdPrice &&
+            token.usd_24h_ago &&
+            Number(token.usd_24h_ago) !== 0
+              ? calculatePercentageChange(
+                  Number(token.usdPrice),
+                  Number(token.usd_24h_ago)
+                )
+              : 0;
+
+          return prettifyNumber(percentage ?? 0) + '%';
+        },
         tooltip: 'Some awesome text here',
         minWidth: 110,
       },
@@ -95,7 +110,8 @@ export const TokenTable = () => {
       {
         id: '6',
         Header: 'Liquidity',
-        accessor: () => '$450,123,123',
+        accessor: 'liquidity',
+        Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
         tooltip: 'Some awesome text here',
         minWidth: 150,
       },
