@@ -52,7 +52,6 @@ export const NotificationContent = ({
 
   useEffect(() => {
     if (!isAlert) return;
-    if (type === NotificationType.pending) return;
     setTimeout(() => {
       onRemove(id);
     }, showSeconds! * 1000);
