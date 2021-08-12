@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';

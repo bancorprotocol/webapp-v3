@@ -5,7 +5,6 @@ import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
-import { classNameGenerator } from 'utils/pureFunctions';
 import { useState } from 'react';
 
 export interface InsightToken extends IntoTheBlock {
@@ -35,7 +34,7 @@ export const Insight = ({
   return (
     <div
       onTransitionEnd={() => setShow(isExpanded)}
-      className={`hidden 2xl:block widget-large mx-auto overflow-hidden transition-all duration-1000 ease-in-out ${
+      className={`hidden 2xl:block widget-large mx-auto overflow-hidden transition-all duration-500 ease-in-out ${
         isExpanded ? 'max-w-full h-[583px] w-[780px]' : 'w-[57px] h-[57px]'
       }`}
     >
@@ -44,11 +43,11 @@ export const Insight = ({
           isExpanded ? 'mx-24' : 'mx-20'
         }`}
       >
-        <div className="flex items-center">
+        <div className="flex items-center transition-none">
           <button
             className="flex justify-center items-center"
             onClick={() => {
-              setShow(false);
+              setShow(!isExpanded);
               setIsExpanded(!isExpanded);
             }}
           >
@@ -77,23 +76,27 @@ export const Insight = ({
           <button className="w-16 ml-12">
             <IconTimes
               onClick={() => {
-                setShow(false);
+                setShow(!isExpanded);
                 setIsExpanded(!isExpanded);
               }}
             />
           </button>
         </div>
       </div>
-      {show ? (
-        <div className="px-20">
-          {fromToken && (
-            <InsightRow token={fromToken} data={fromTokenIntoBlock} />
-          )}
-          {toToken && <InsightRow token={toToken} data={toTokenIntoBlock} />}
-        </div>
-      ) : (
-        <IconLightbulb className="w-full max-h-[480px]" />
-      )}
+      <div
+        className={`transition-all duration-500 ease-in-out ${
+          isExpanded ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {show && (
+          <div className="px-20">
+            {fromToken && (
+              <InsightRow token={fromToken} data={fromTokenIntoBlock} />
+            )}
+            {toToken && <InsightRow token={toToken} data={toTokenIntoBlock} />}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
