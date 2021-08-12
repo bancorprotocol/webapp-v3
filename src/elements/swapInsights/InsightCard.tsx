@@ -1,9 +1,11 @@
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { Tooltip } from 'components/tooltip/ToolTip';
 import { classNameGenerator } from 'utils/pureFunctions';
 
 interface InsightCardProps {
   label: string;
   percentages: { color: string; decPercent: number }[];
+  tooltip: string;
 }
 
 const linePercentages = (
@@ -30,7 +32,11 @@ export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
     <div className="col-span-1 flex flex-col justify-between rounded-15 p-8 border-2 border-blue-0 dark:border-blue-1">
       <span className={`text-12 font-medium ${!data ? 'opacity-30' : ''}`}>
         {data ? data.label : 'No available insights'}
-        {false && <IconInfo className="inline text-grey-4 w-[10px] ml-5" />}
+        {false && (
+          <div className="inline text-grey-4 ml-5 align-middle h-[10px]">
+            <Tooltip content={''} />
+          </div>
+        )}
       </span>
       <div className="h-[31px]">
         <div className="flex justify-between mb-2 h-20">

@@ -15,7 +15,8 @@ export const InsightRow = ({
     data && data.inOutOfTheMoney
       ? {
           label: 'Holders making money at the current price',
-          tooltip: '',
+          tooltip:
+            'Shows what percentage of addresses holding this crypto-asset are making profits (in the money), breaking even (at the money) and losing money (out of the money) given the current market price.',
           percentages: [
             { color: 'success', decPercent: data.inOutOfTheMoney.in },
             {
@@ -29,6 +30,8 @@ export const InsightRow = ({
     data && data.concentration
       ? {
           label: 'Concentration by large holders',
+          tooltip:
+            'The total holdings of whales and Investors that own more than 0.1% of the circulating supply',
           percentages: [
             { color: 'primary', decPercent: data.concentration },
             { color: 'grey-3', decPercent: 1 - data.concentration },
@@ -38,6 +41,8 @@ export const InsightRow = ({
     data && data.byTimeHeldComposition
       ? {
           label: 'Holders composition by time held',
+          tooltip:
+            'Shows ownership distribution by time held. A Hodler (holding this crypto for over a year), a Cruiser (holding for more than a month but less than a year) or a Trader (holding for less than a month).',
           percentages: [
             {
               color: 'primary',
