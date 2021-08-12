@@ -30,7 +30,7 @@ export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
     <div className="col-span-1 flex flex-col justify-between rounded-15 p-8 border-2 border-blue-0 dark:border-blue-1">
       <span className={`text-12 font-medium ${!data ? 'opacity-30' : ''}`}>
         {data ? data.label : 'No available insights'}
-        {data && <IconInfo className="inline text-grey-4 w-[10px] ml-5" />}
+        {false && <IconInfo className="inline text-grey-4 w-[10px] ml-5" />}
       </span>
       <div className="h-[31px]">
         <div className="flex justify-between mb-2 h-20">
