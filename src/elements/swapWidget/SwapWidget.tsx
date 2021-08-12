@@ -74,43 +74,45 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   };
 
   return (
-    <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
-      <div>
-        <div className="widget">
-          <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
-          <hr className="widget-separator" />
+    <div className="bg-white dark:bg-blue-4 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
+      <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
+        <div>
+          <div className="widget ">
+            <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
+            <hr className="widget-separator" />
+            {isLimit ? (
+              <SwapLimit
+                fromToken={fromToken}
+                setFromToken={setFromToken}
+                toToken={toToken}
+                setToToken={setToToken}
+                switchTokens={switchTokens}
+              />
+            ) : (
+              <SwapMarket
+                fromToken={fromToken}
+                setFromToken={setFromToken}
+                toToken={toToken}
+                setToToken={setToToken}
+                switchTokens={switchTokens}
+              />
+            )}
+          </div>
           {isLimit ? (
-            <SwapLimit
-              fromToken={fromToken}
-              setFromToken={setFromToken}
-              toToken={toToken}
-              setToToken={setToToken}
-              switchTokens={switchTokens}
-            />
+            <div className="text-center text-10 text-grey-4 mt-18">
+              Limit orders are powered by KeeperDAO
+            </div>
           ) : (
-            <SwapMarket
-              fromToken={fromToken}
-              setFromToken={setFromToken}
-              toToken={toToken}
-              setToToken={setToToken}
-              switchTokens={switchTokens}
-            />
+            ''
           )}
         </div>
-        {isLimit ? (
-          <div className="text-center text-10 text-grey-4 mt-18">
-            Limit orders are powered by KeeperDAO
-          </div>
-        ) : (
-          ''
-        )}
+        <Insight
+          fromToken={fromToken}
+          toToken={toToken}
+          fromTokenIntoBlock={fromTokenITB}
+          toTokenIntoBlock={toTokenITB}
+        />
       </div>
-      <Insight
-        fromToken={fromToken}
-        toToken={toToken}
-        fromTokenIntoBlock={fromTokenITB}
-        toTokenIntoBlock={toTokenITB}
-      />
     </div>
   );
 };
