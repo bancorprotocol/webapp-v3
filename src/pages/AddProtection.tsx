@@ -14,6 +14,16 @@ import { loadSwapData } from 'services/observables/triggers';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { isAddress } from 'web3-utils';
 import { openWalletModal } from 'redux/user/user';
+import {
+  bntTokenAddress$,
+  govTokenAddress$,
+  liquidityProtection$,
+} from 'services/observables/contracts';
+import { first } from 'rxjs/operators';
+import { expandToken } from 'utils/pureFunctions';
+import { bntToken, ethToken } from 'services/web3/config';
+import { addLiquidity } from 'services/web3/contracts/liquidityProtection/wrapper';
+import { onLogin$ } from 'services/observables/user';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -94,12 +104,42 @@ export const AddProtection = (
   };
 
   const addProtection = async (approved: boolean = false) => {
+    if (!selectedToken) return;
+    if (!selectedPool) return;
     if (!account) {
       dispatch(openWalletModal(true));
       return;
     }
 
     if (!approved) return checkApproval();
+
+    const liquidityProtectionContract = await liquidityProtection$
+      .pipe(first())
+      .toPromise();
+
+    const reserveAmountWei = expandToken(amount, selectedToken.decimals);
+    const govToken = await govTokenAddress$.pipe(first()).toPromise();
+    const bntToken = await bntTokenAddress$.pipe(first()).toPromise();
+    const depositIsBnt = selectedToken.address === bntToken;
+
+    const user = await onLogin$.pipe(first()).toPromise();
+
+    const txHash = await addLiquidity({
+      user,
+      anchor: selectedPool.pool_dlt_id,
+      liquidityProtection: liquidityProtectionContract,
+      reserveAddress: selectedToken.address,
+      reserveAmountWei,
+      onConfirmation: () => {
+        const tokensToFetch = [
+          selectedToken,
+          ethToken,
+          ...(depositIsBnt ? [govToken] : []),
+        ];
+        // fetchBalances(tokensToFetch);
+        // wait(4000).then(() => fetchBalances(tokensToFetch));
+      },
+    });
   };
 
   return isLoading ? (

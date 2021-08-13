@@ -95,3 +95,9 @@ export const govTokenAddress$ = networkVars$.pipe(
   map(toChecksumAddress),
   shareReplay(1)
 );
+
+export const bntTokenAddress$ = networkVars$.pipe(
+  pluck('bntToken'),
+  map(toChecksumAddress),
+  shareReplay(1)
+);

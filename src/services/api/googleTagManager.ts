@@ -64,6 +64,8 @@ const conversionTxt = (event: ConversionEvents): string => {
   }
 };
 
+export const sendAddProtectionEvent = () => {};
+
 export const sendConversionEvent = (
   event: ConversionEvents,
   event_properties: {} | undefined = undefined

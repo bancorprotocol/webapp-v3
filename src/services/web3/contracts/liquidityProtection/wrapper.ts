@@ -10,6 +10,11 @@ import { multi } from '../shapes';
 import dayjs from 'utils/dayjs';
 import { decToPpm } from 'utils/pureFunctions';
 import { BigNumber } from 'bignumber.js';
+import { resolveTxOnConfirmation } from 'services/web3';
+import { fetchBalances } from 'services/observables/balances';
+import wait from 'waait';
+import { ethToken } from 'services/web3/config';
+import { sendAddProtectionEvent } from 'services/api/googleTagManager';
 
 const calculateReturnOnInvestment = (
   investment: string,
@@ -56,6 +61,35 @@ export const buildLiquidityProtectionContract = (
     poolAnchor: string
   ) => CallReturn<{ '0': string; '1': string }>;
 }> => buildContract(ABILiquidityProtection, contractAddress, web3);
+
+export const addLiquidity = async ({
+  user,
+  anchor,
+  reserveAddress,
+  reserveAmountWei,
+  liquidityProtection,
+  onConfirmation,
+}: {
+  liquidityProtection: string;
+  user: string;
+  anchor: string;
+  reserveAddress: string;
+  reserveAmountWei: string;
+  onConfirmation?: () => void;
+}) => {
+  const contract = buildLiquidityProtectionContract(liquidityProtection);
+
+  const fromIsEth = ethToken === reserveAddress;
+
+  return resolveTxOnConfirmation({
+    tx: contract.methods.addLiquidity(anchor, reserveAddress, reserveAmountWei),
+    user,
+    onHash: () => sendAddProtectionEvent(),
+    onConfirmation,
+    resolveImmediately: true,
+    ...(fromIsEth && { value: reserveAmountWei }),
+  });
+};
 
 export const fetchLiquidityProtectionSettingsContract = async (
   liquidityProtectionContract: string
