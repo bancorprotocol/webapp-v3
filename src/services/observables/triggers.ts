@@ -4,6 +4,7 @@ import {
   keeperDaoTokens$,
   listOfLists,
   tokens$,
+  tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
@@ -18,16 +19,30 @@ import { lockedBalances$ } from './lockedBalances';
 import { pools$ } from './pools';
 import { onLogin$, onLogout$ } from './user';
 import { setUser } from 'redux/user/user';
+import { take } from 'rxjs/operators';
+import { loadingBalances$ } from './user';
+import { setLoadingBalances } from 'redux/user/user';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
 let keeperDaoSub: Subscription;
+let loadingBalancesSub: Subscription;
 
-const loadCommonData = (dispatch: any) => {
+export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
-    tokenLists$.subscribe((tokenLists) => {
+    tokenListsSub = tokenLists$.subscribe((tokenLists) => {
       dispatch(setTokenLists(tokenLists));
     });
+
+  tokensNoBalance$
+    .pipe(take(1))
+    .toPromise()
+    .then((tokenList) => dispatch(setTokenList(tokenList)));
+
+  if (!loadingBalancesSub || loadingBalancesSub.closed)
+    loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+      dispatch(setLoadingBalances(loading))
+    );
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
@@ -66,6 +81,4 @@ const loadCommonData = (dispatch: any) => {
     });
 };
 
-export const loadSwapData = (dispatch: any) => {
-  loadCommonData(dispatch);
-};
+export const loadSwapData = (dispatch: any) => {};

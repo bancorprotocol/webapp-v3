@@ -12,6 +12,7 @@ export interface UserState {
   usdToggle: boolean;
   locale: string;
   user: string | undefined;
+  loadingBalances: boolean;
 }
 
 export const initialState: UserState = {
@@ -21,6 +22,7 @@ export const initialState: UserState = {
   usdToggle: false,
   locale: 'en',
   user: undefined,
+  loadingBalances: false,
 };
 
 const userSlice = createSlice({
@@ -53,6 +55,9 @@ const userSlice = createSlice({
       setUsdToggleLS(action.payload);
       state.usdToggle = action.payload;
     },
+    setLoadingBalances: (state, action) => {
+      state.loadingBalances = action.payload;
+    },
   },
 });
 
@@ -63,6 +68,7 @@ export const {
   openWalletModal,
   setUser,
   setUsdToggle,
+  setLoadingBalances,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

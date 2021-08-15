@@ -1,203 +1,69 @@
-import { findOrThrow, shrinkToken } from 'utils/pureFunctions';
-import { fromPairs, isEqual, partition, toPairs, uniq } from 'lodash';
-import {
-  slimBalanceShape,
-  balanceShape,
-  multi,
-} from 'services/web3/contracts/shapes';
+import { shrinkToken } from 'utils/pureFunctions';
+import { balanceShape, multi } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
+import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
-import { toChecksumAddress } from 'web3-utils';
-import { combineLatest, Subject } from 'rxjs';
-import { onLogin$, user$ } from './user';
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  scan,
-  shareReplay,
-  startWith,
-} from 'rxjs/operators';
-import { switchMapIgnoreThrow } from './customOperators';
-import { currentNetwork$ } from './network';
-import { apiTokens$ } from './pools';
+import { partition } from 'lodash';
 
-interface RawBalance {
-  contract: string;
-  decimals: number;
+interface TokenBalance {
   balance: string;
-}
-
-interface RawToken {
   address: string;
-  decimals?: number;
-}
-
-interface UserBalance {
-  [address: string]: string;
-}
-interface BalanceDictionary {
-  [user: string]: UserBalance;
 }
 
 export const fetchTokenBalances = async (
-  tokens: RawToken[],
+  tokens: Token[],
   user: string,
   currentNetwork: EthNetworks
-): Promise<RawBalance[]> => {
-  const supportedTokens = tokens.filter((token) => token.address !== ethToken);
-
-  const [knownPrecisions, unknownPrecisions] = partition(
-    supportedTokens,
-    (token) =>
-      Object.keys(token).includes('decimals') && !Number.isNaN(token.decimals)
+): Promise<Token[]> => {
+  const [eth, tokensNoETH] = partition(
+    tokens,
+    (token) => token.address === ethToken
   );
-
-  const knownDecimalShapes = knownPrecisions.map((token) =>
-    slimBalanceShape(token.address, user)
-  );
-  const unknownDecimalShapes = unknownPrecisions.map((token) =>
-    balanceShape(token.address, user)
-  );
+  const shapes = tokensNoETH.map((x) => balanceShape(x.address, user));
 
   try {
-    const includesEth = tokens.some((token) => token.address === ethToken);
+    const [tokenBalances, ethBalance]: [
+      TokenBalance[][] | undefined,
+      string | undefined
+    ] = await Promise.all([
+      multi({
+        groupsOfShapes: [shapes],
+        currentNetwork,
+      }),
+      eth && fetchETH(user),
+    ]);
 
-    const [[knownDecimalsRes, unknownDecimalsRes], ethWei] = (await Promise.all(
-      [
-        multi({
-          groupsOfShapes: [knownDecimalShapes, unknownDecimalShapes],
-          currentNetwork,
-        }),
-        (async () => includesEth && web3.eth.getBalance(user))(),
-      ]
-    )) as [
-      [
-        { contract: string; balance: string }[],
-        { contract: string; balance: string; decimals: string }[]
-      ],
-      string | boolean
-    ];
-
-    const rebuiltDecimals = knownDecimalsRes.map((token): RawBalance => {
-      const previouslyKnownPrecision = findOrThrow(
-        knownPrecisions,
-        (t) => token.contract === t.address
-      );
-      return {
-        ...token,
-        decimals: previouslyKnownPrecision.decimals!,
-      };
-    });
-
-    const parsedNumbers = unknownDecimalsRes.map(
-      (res): RawBalance => ({
-        ...res,
-        decimals: Number(res.decimals),
-      })
-    );
-    const mergedWei = [...rebuiltDecimals, ...parsedNumbers].map(
-      (token): RawBalance => ({
-        ...token,
-        contract: toChecksumAddress(token.contract),
-      })
-    );
-
-    if (ethWei) {
-      mergedWei.push({
-        balance: ethWei as string,
-        contract: ethToken,
-        decimals: 18,
+    if (tokenBalances && tokenBalances.length > 0) {
+      const balances = tokenBalances[0].map((token) => {
+        const inedx = tokensNoETH.findIndex((t) => t.address === token.address);
+        return {
+          ...tokensNoETH[inedx],
+          balance: token.balance
+            ? token.balance !== '0'
+              ? shrinkToken(token.balance, tokensNoETH[inedx].decimals)
+              : token.balance
+            : null,
+        };
       });
-    }
 
-    return mergedWei;
+      if (eth) {
+        const ethIndex = tokens.findIndex((x) => x.address === ethToken);
+        balances.splice(ethIndex, 0, {
+          ...tokens[ethIndex],
+          balance: ethBalance,
+        });
+      }
+
+      return balances;
+    }
   } catch (e) {
-    console.error('Failed fetching balances');
+    console.error('Failed fetching balances: ', e);
   }
 
   return [];
 };
 
-const fetchBalanceReceiver$ = new Subject<string[]>();
-
-export const fetchBalances = (addresses: string[]) =>
-  fetchBalanceReceiver$.next(addresses);
-
-const rawBalances$ = combineLatest([
-  fetchBalanceReceiver$,
-  onLogin$,
-  apiTokens$,
-  currentNetwork$,
-]).pipe(
-  filter(([addresses, user, tokens, network]) => {
-    const networkMatched = tokens.network === network;
-    if (!networkMatched) console.warn('network not matched in rawBalances$');
-    return networkMatched;
-  }),
-  switchMapIgnoreThrow(async ([addresses, user, { tokens }, network]) => {
-    const rawTokensToFetch = uniq(addresses).map((address): RawToken => {
-      if (
-        address === ethToken ||
-        address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-      ) {
-        return { decimals: 18, address };
-      }
-      const apiToken = tokens.find((token) => token.dlt_id === address);
-      return apiToken
-        ? { decimals: apiToken.decimals, address: apiToken.dlt_id }
-        : { address };
-    });
-
-    const fetchedTokenBalances = await fetchTokenBalances(
-      rawTokensToFetch,
-      user,
-      network
-    );
-    return {
-      fetchedTokenBalances,
-      user,
-    };
-  })
-);
-
-const balances$ = combineLatest([rawBalances$, user$]).pipe(
-  scan((acc, [newBalances, user]) => {
-    const newBalancesIncoming = newBalances.user === user;
-    if (!newBalancesIncoming) return acc;
-    const newBalancesShrunk = newBalances.fetchedTokenBalances.map(
-      (balance) => [
-        toChecksumAddress(balance.contract),
-        shrinkToken(balance.balance, balance.decimals),
-      ]
-    );
-    const currentBalances = toPairs(acc[user]);
-    const mutationIsRequired = newBalancesShrunk.some(
-      ([newContract, newBalance]) => {
-        const currentInstance = acc[user] && acc[user][newContract];
-        return currentInstance !== newBalance;
-      }
-    );
-    if (!mutationIsRequired) return acc;
-
-    const untouchedBalances = currentBalances.filter(
-      ([address]) =>
-        !newBalances.fetchedTokenBalances.some((a) => address === a.contract)
-    );
-    const updatedBalances = [...newBalancesShrunk, ...untouchedBalances];
-    const newUserBalances = fromPairs(updatedBalances);
-
-    return {
-      ...acc,
-      [user]: newUserBalances,
-    };
-  }, {} as BalanceDictionary)
-);
-
-export const userBalances$ = combineLatest([balances$, user$]).pipe(
-  map(([balances, user]) => balances[user]),
-  startWith<UserBalance>({} as UserBalance),
-  distinctUntilChanged<UserBalance>(isEqual),
-  shareReplay(1)
-);
+const fetchETH = async (user: string) => {
+  return shrinkToken(await web3.eth.getBalance(user), 18);
+};
