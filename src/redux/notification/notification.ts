@@ -39,11 +39,12 @@ export const initialState: NotificationState = {
 
 const defaultShowSeconds = ({ type }: BaseNotification) => {
   switch (type) {
-    case NotificationType.success: return 10;
-    case NotificationType.pending: return 15;
-    default: return 8;
+    case NotificationType.success:
+      return 10;
+    default:
+      return 8;
   }
-}
+};
 
 const notificationSlice = createSlice({
   name: 'notification',
