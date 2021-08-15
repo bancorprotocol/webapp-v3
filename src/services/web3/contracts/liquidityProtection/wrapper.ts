@@ -11,8 +11,6 @@ import dayjs from 'utils/dayjs';
 import { decToPpm } from 'utils/pureFunctions';
 import { BigNumber } from 'bignumber.js';
 import { resolveTxOnConfirmation } from 'services/web3';
-import { fetchBalances } from 'services/observables/balances';
-import wait from 'waait';
 import { ethToken } from 'services/web3/config';
 import { sendAddProtectionEvent } from 'services/api/googleTagManager';
 
