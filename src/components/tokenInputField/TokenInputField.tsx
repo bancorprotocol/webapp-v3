@@ -9,8 +9,6 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
 import { useAppSelector } from 'redux/index';
-import { useWeb3React } from '@web3-react/core';
-import usePrevious from 'hooks/usePrevious';
 
 interface TokenInputFieldProps {
   label: string;
@@ -55,10 +53,8 @@ export const TokenInputField = ({
   includedTokens = [],
   isLoading,
 }: TokenInputFieldProps) => {
-  const { account, chainId } = useWeb3React();
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
-  const currentChain = useRef(chainId);
 
   const balance = token ? token.balance : null;
   const balanceUsd =
@@ -71,7 +67,7 @@ export const TokenInputField = ({
     (state) => state.user.loadingBalances
   );
 
-  const onInputChange = (text: string) => {
+  const onInputChange = (text: string, token: Token | null) => {
     text = sanitizeNumberInput(text);
     if (toggle) {
       const tokenAmount = sanitizeNumberInput(
@@ -120,8 +116,8 @@ export const TokenInputField = ({
         const reducedUsdBalance = new BigNumber(reducedBalance)
           .times(token.usdPrice!)
           .toString();
-        onInputChange(toggle ? reducedUsdBalance : reducedBalance);
-      } else onInputChange(toggle ? balanceUsd : balance);
+        onInputChange(toggle ? reducedUsdBalance : reducedBalance, token);
+      } else onInputChange(toggle ? balanceUsd : balance, token);
     }
   };
 
@@ -215,7 +211,7 @@ export const TokenInputField = ({
                 disabled={disabled}
                 placeholder={toggle ? '~$0.00' : '0.00'}
                 className={inputFieldStyles}
-                onChange={(event) => onInputChange(event.target.value)}
+                onChange={(event) => onInputChange(event.target.value, token)}
               />
             </div>
             {errorMsg && (
@@ -237,6 +233,7 @@ export const TokenInputField = ({
       <SearchableTokenList
         onClick={(token: Token) => {
           setToken(token);
+          onInputChange(inputValue(), token);
           setSelectToken(false);
         }}
         isOpen={isOpen}

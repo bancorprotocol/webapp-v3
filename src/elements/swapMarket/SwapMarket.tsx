@@ -120,10 +120,12 @@ export const SwapMarket = ({
               toToken.decimals
             )
           );
+
           const usdAmount = new BigNumber(fromDebounce)
             .times(rate)
             .times(toToken.usdPrice!)
             .toString();
+
           setToAmountUsd(usdAmount);
           setRate(rate.toString());
           if (fromDebounce) setPriceImpact(result.priceImpact);
