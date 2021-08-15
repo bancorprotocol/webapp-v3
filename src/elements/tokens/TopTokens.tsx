@@ -14,23 +14,34 @@ export const TopTokens = () => {
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">
           {tokens.length
-            ? topTokens.map((token) => (
-                <div
-                  key={token.address}
-                  className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-content dark:shadow-none"
-                >
-                  <img
-                    src={token.logoURI.replace('thumb', 'small')}
-                    alt="Token Logo"
-                    className="w-50 h-50 rounded-full"
-                  />
-                  <div className="ml-10 text-12 dark:text-grey-3">
-                    <div className="font-medium">{token.symbol}</div>
-                    <div>{prettifyNumber(token.usdPrice ?? 0, true)}</div>
-                    <div className="font-bold text-success">+102.75%</div>
+            ? topTokens.map((token) => {
+                const changePositive = Number(token.price_change_24) > 0;
+                return (
+                  <div
+                    key={token.address}
+                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-content dark:shadow-none"
+                  >
+                    <img
+                      src={token.logoURI.replace('thumb', 'small')}
+                      alt="Token Logo"
+                      className="w-50 h-50 rounded-full"
+                    />
+                    <div className="ml-10 text-12 dark:text-grey-3">
+                      <div className="font-medium">{token.symbol}</div>
+                      <div>{prettifyNumber(token.usdPrice ?? 0, true)}</div>
+                      <div
+                        className={`font-bold text-${
+                          changePositive ? 'success' : 'error'
+                        } `}
+                      >
+                        {`${changePositive ? '+' : ''}${
+                          token.price_change_24
+                        }%`}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             : [...Array(20)].map((_, index) => (
                 <div
                   key={index}

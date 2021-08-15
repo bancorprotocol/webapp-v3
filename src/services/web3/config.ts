@@ -1,5 +1,6 @@
 import { APIToken } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
+import { calculatePercentageChange } from 'utils/pureFunctions';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {
@@ -38,7 +39,13 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
 
 export const getEthToken = (apiTokens: APIToken[]): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
-  if (eth)
+  if (eth) {
+    const price = eth.rate.usd;
+    const price_24h = eth.rate_24h_ago.usd;
+    const priceChanged =
+      price && price_24h && Number(price_24h) !== 0
+        ? calculatePercentageChange(Number(price), Number(price_24h))
+        : 0;
     return {
       address: eth.dlt_id,
       logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
@@ -47,10 +54,12 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       balance: null,
       symbol: eth.symbol,
       decimals: eth.decimals,
-      usdPrice: eth.rate.usd,
+      usdPrice: price,
       liquidity: eth.liquidity.usd,
-      usd_24h_ago: eth.rate_24h_ago.usd,
+      usd_24h_ago: price_24h,
+      price_change_24: priceChanged,
     };
+  }
 
   return null;
 };

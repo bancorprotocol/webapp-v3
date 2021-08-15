@@ -13,7 +13,10 @@ import {
   ropstenImage,
   ethToken,
 } from 'services/web3/config';
-import { mapIgnoreThrown } from 'utils/pureFunctions';
+import {
+  calculatePercentageChange,
+  mapIgnoreThrown,
+} from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 
@@ -34,6 +37,7 @@ export interface Token {
   balance: string | null;
   liquidity: string | null;
   usd_24h_ago: string | null;
+  price_change_24: number;
 }
 
 export const listOfLists = [
@@ -111,14 +115,24 @@ export const tokensNoBalance$ = combineLatest([
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
-    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => ({
-      address: x.dlt_id,
-      symbol: x.symbol,
-      decimals: x.decimals,
-      usdPrice: x.rate.usd,
-      liquidity: x.liquidity.usd,
-      usd_24h_ago: x.rate_24h_ago.usd,
-    }));
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
+      const price = x.rate.usd;
+      const price_24h = x.rate_24h_ago.usd;
+      const priceChanged =
+        price && price_24h && Number(price_24h) !== 0
+          ? calculatePercentageChange(Number(price), Number(price_24h))
+          : 0;
+
+      return {
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice: price,
+        liquidity: x.liquidity.usd,
+        usd_24h_ago: price_24h,
+        price_change_24: priceChanged,
+      };
+    });
 
     let overlappingTokens: Token[] = [];
     const eth = getEthToken(apiTokens);

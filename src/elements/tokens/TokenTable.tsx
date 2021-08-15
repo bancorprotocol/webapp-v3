@@ -82,20 +82,14 @@ export const TokenTable = () => {
       {
         id: '4',
         Header: '24h Change',
-        accessor: 'usd_24h_ago',
+        accessor: 'price_change_24',
         Cell: (cellData) => {
-          const token = cellData.row.original;
-          const percentage =
-            token.usdPrice &&
-            token.usd_24h_ago &&
-            Number(token.usd_24h_ago) !== 0
-              ? calculatePercentageChange(
-                  Number(token.usdPrice),
-                  Number(token.usd_24h_ago)
-                )
-              : 0;
-
-          return prettifyNumber(percentage ?? 0) + '%';
+          const changePositive = Number(cellData.value) > 0;
+          return (
+            <div className={`text-${changePositive ? 'success' : 'error'} `}>
+              {`${changePositive ? '+' : ''}${cellData.value}%`}
+            </div>
+          );
         },
         tooltip: 'Some awesome text here',
         minWidth: 110,
