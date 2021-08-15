@@ -9,7 +9,7 @@ export enum DepositMethods {
   wire = 'Wire Transfer',
   creditCard = 'Credit Card',
   debitCard = 'Debit Card',
-  samsumgPay = 'Samsumg Pay',
+  samsungPay = 'Samsung Pay',
   googlePay = 'Google Pay',
   applePay = 'Apple Pay',
   ideal = 'iDeal',
