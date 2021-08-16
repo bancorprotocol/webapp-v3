@@ -9,12 +9,14 @@ import {
   userPreferredListIds$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
+import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import wait from 'waait';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
+import { isMobile } from 'react-device-detect';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -22,6 +24,42 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens: string[];
   includedTokens: string[];
+}
+
+interface SearchableTokenListLayoutProps {
+  manage: boolean;
+  setManage: Function;
+  isOpen: boolean;
+  onClose: Function;
+  children: JSX.Element;
+}
+
+const SearchableTokenListLayout = ({ manage, setManage, onClose, isOpen, children }: SearchableTokenListLayoutProps) => {
+  if (isMobile) {
+    return (
+      <ModalFullscreen
+        title={manage ? 'Manage' : 'Select a Token'}
+        setIsOpen={() => {
+          if (manage) return setManage(false);
+          onClose();
+        }}
+        isOpen={isOpen}
+        showHeader>
+        {children}
+      </ModalFullscreen>
+    );
+  }
+
+  return (
+    <Modal
+      title={manage ? 'Manage' : 'Select a Token'}
+      isOpen={isOpen}
+      setIsOpen={onClose}
+      showBackButton={manage}
+      onBackClick={() => setManage(false)}>
+      {children}
+    </Modal>
+  );
 }
 
 export const SearchableTokenList = ({
@@ -66,17 +104,16 @@ export const SearchableTokenList = ({
     if (name.length < 19) return name;
     return name + '...';
   };
-
+  
   return (
-    <Modal
-      title={manage ? 'Manage' : 'Select a Token'}
+    <SearchableTokenListLayout 
+      manage={manage}
+      onClose={onClose}
       isOpen={isOpen}
-      setIsOpen={onClose}
-      showBackButton={manage}
-      onBackClick={() => setManage(false)}
+      setManage={setManage}
     >
       {manage ? (
-        <div className="max-h-[calc(70vh-100px)] overflow-auto mb-20">
+        <div className="sm:h-[calc(70vh-100px)] overflow-auto mb-20">
           <div className="pt-10 px-20 space-y-15">
             {tokensLists.map((tokenList) => {
               const isSelected = userPreferredListIds.some(
@@ -197,6 +234,6 @@ export const SearchableTokenList = ({
           </div>
         </>
       )}
-    </Modal>
+    </SearchableTokenListLayout>
   );
 };
