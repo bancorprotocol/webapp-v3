@@ -118,6 +118,18 @@ export const getRate = async (
     return { rate: '0', priceImpact: '0.0000' };
   }
 };
+
+const calculateMinimumReturn = (
+  expectedWei: string,
+  slippageTolerance: number
+): string => {
+  const res = new BigNumber(expectedWei)
+    .times(new BigNumber(1).minus(slippageTolerance))
+    .toFixed(0);
+
+  return res === '0' ? '1' : res;
+};
+
 export const swap = async ({
   slippageTolerance,
   fromToken,
@@ -154,9 +166,7 @@ export const swap = async ({
     tx: networkContract.methods.convertByPath(
       path,
       fromWei,
-      new BigNumber(expectedToWei)
-        .times(new BigNumber(1).minus(slippageTolerance))
-        .toFixed(0),
+      calculateMinimumReturn(expectedToWei, slippageTolerance),
       zeroAddress,
       zeroAddress,
       0
