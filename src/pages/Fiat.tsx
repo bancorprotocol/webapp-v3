@@ -16,7 +16,7 @@ const fiats = [
       DepositMethods.wire,
       DepositMethods.creditCard,
       DepositMethods.debitCard,
-      DepositMethods.samsumgPay,
+      DepositMethods.samsungPay,
       DepositMethods.googlePay,
       DepositMethods.applePay,
     ],
