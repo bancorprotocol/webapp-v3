@@ -1,4 +1,4 @@
-import { JSXElementConstructor } from 'react';
+import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 
 interface VoteCardProps {
   title: string;
@@ -17,7 +17,7 @@ const VoteCard = ({
   footer,
 }: VoteCardProps) => {
   return (
-    <div className="flex flex-col bg-white dark:bg-blue-4 max-w-[515px] min-h-[325px] p-30 shadow hover:shadow-lg dark:shadow-none rounded-20">
+    <div className="flex flex-col bg-white dark:bg-blue-4 max-w-[535px] min-h-[325px] px-30 pt-30 pb-[22px] shadow hover:shadow-lg dark:shadow-none rounded-20">
       <div className="flex text-20 font-semibold mb-18">
         <div className="text-primary-dark dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
@@ -31,8 +31,8 @@ const VoteCard = ({
       >
         {button}
       </button>
-      <hr className="widget-separator my-15" />
-      {footer}
+      <hr className="widget-separator mb-15 mt-50" />
+      <div className="min-h-[48px]">{footer}</div>
     </div>
   );
 };
@@ -48,42 +48,81 @@ export const Vote = () => {
         protocol with their proposals.
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-50">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-50 gap-x-50">
         <VoteCard
           step={1}
           title="Stake your vBNT"
           content="In order to participate in Bancor governance activities, you should first stake your vBNT tokens."
           button="Stake Tokens"
           onClick={() => {}}
-          footer={<div></div>}
+          footer={
+            <div className="grid grid-cols-2 text-grey-4 dark:text-grey-0">
+              <div>
+                <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                  120 vBNT
+                </div>
+                Unstaked Balance
+              </div>
+              <div>
+                <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                  0 vBNT
+                </div>
+                Staked Balance
+              </div>
+            </div>
+          }
         />
         <VoteCard
           step={2}
           title="Make a Difference"
           content="Voting on Bancor DAO is free as it is using the Snapshot off-chain infrastructure. Every user can vote on every available proposal and help shape the future of the Bancor Protocol."
           button="Vote on Snapshot"
-          onClick={() => {}}
-          footer={<div></div>}
+          onClick={() => {
+            window.open('https://vote.bancor.network/', '_blank');
+          }}
+          footer={
+            <a
+              href="https://blog.bancor.network/gasless-voting-is-live-on-bancor-governance-82d232da16b9"
+              target="_blank"
+              className="flex items-center text-primary dark:text-primary-light font-semibold"
+              rel="noreferrer"
+            >
+              How to Vote <IconLink className="w-14 ml-6" />
+            </a>
+          }
         />
 
-        <div className="col-span-2 flex justify-between items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20">
-          <div className="flex flex-col max-w-[515px]">
-            <div>Unstake from Governance</div>
+        <div className="col-span-2 flex items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20 min-h-[170px]">
+          <div className="flex flex-col max-w-[525px] p-24">
+            <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
+              Unstake from Governance
+            </div>
 
-            <div>
+            <div className="text-12 text-grey-4 dark:text-grey-0 mb-18">
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
 
-            <button />
+            <button className="max-w-[200px]">00:37:15 Unstake Tokens</button>
           </div>
-          <hr className="widget-separator w-[1px] transform rotate-90 mx-15" />
-          <div className="flex flex-col max-w-[515px]">
-            <div>Legacy onchain contract</div>
+          <hr className="widget-separator transform rotate-90 w-[120px] m-0" />
+          <div className="flex flex-col max-w-[525px] p-24">
+            <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
+              Legacy onchain contract
+            </div>
 
-            <div>View previous votes and decisions made onchain.</div>
+            <div className="text-12 text-grey-4 dark:text-grey-0 mb-18">
+              View previous votes and decisions made onchain.
+            </div>
 
-            <button>View Legacy Gov</button>
+            <a
+              href="https://app.bancor.network/eth/vote-legacy/"
+              target="_blank"
+              className="text-12 text-primary dark:text-primary-light font-semibold underline"
+              rel="noreferrer"
+            >
+              View Legacy Gov
+            </a>
           </div>
         </div>
       </div>
