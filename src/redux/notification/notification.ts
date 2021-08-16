@@ -37,6 +37,15 @@ export const initialState: NotificationState = {
   notifications: [],
 };
 
+const defaultShowSeconds = ({ type }: BaseNotification) => {
+  switch (type) {
+    case NotificationType.success:
+      return 10;
+    default:
+      return 8;
+  }
+};
+
 const notificationSlice = createSlice({
   name: 'notification',
   initialState,
@@ -49,7 +58,7 @@ const notificationSlice = createSlice({
         id: nanoid(),
         type: NotificationType.info,
         timestamp: dayjs().unix(),
-        showSeconds: 8,
+        showSeconds: defaultShowSeconds(action.payload),
         ...action.payload,
       });
 

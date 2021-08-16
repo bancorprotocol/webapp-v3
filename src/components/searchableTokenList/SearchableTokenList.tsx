@@ -138,7 +138,7 @@ export const SearchableTokenList = ({
           </div>
           <div
             data-cy="searchableTokensList"
-            className="max-h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+            className="h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
           >
             {tokens
               .filter(

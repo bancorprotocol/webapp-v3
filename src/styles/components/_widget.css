@@ -2,7 +2,13 @@
 
 @layer components {
   .widget {
-    @apply max-w-[483px] p-10 md:rounded-30;
+    @apply max-w-[483px] 2xl:min-w-[483px] p-10 md:rounded-30;
+    @apply bg-white md:shadow-widget;
+    @apply dark:bg-blue-4 dark:shadow-none;
+  }
+
+  .widget-large {
+    @apply w-full md:rounded-20;
     @apply bg-white md:shadow-widget;
     @apply dark:bg-blue-4 dark:shadow-none;
   }
