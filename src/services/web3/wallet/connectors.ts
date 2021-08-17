@@ -84,18 +84,18 @@ export const trezor = new TrezorConnector({
 });
 
 export const lattice = new LatticeConnector({
-  chainId: 4,
+  chainId: 1,
   appName: appName,
   url: RPC_URLS[3],
 });
 
 export const frame = new FrameConnector({ supportedChainIds: [1] });
 
-export const authereum = new AuthereumConnector({ chainId: 42 });
+export const authereum = new AuthereumConnector({ chainId: 1 });
 
 export const fortmatic = new FortmaticConnector({
   apiKey: process.env.REACT_APP_FORTMATIC_API_KEY as string,
-  chainId: 4,
+  chainId: 1,
 });
 
 export const portis = new PortisConnector({
