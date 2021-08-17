@@ -45,11 +45,11 @@ const menu: MenuItem[] = [
   // },
   {
     label: 'DAO',
-    to: '/governance',
+    to: '/vote',
     icon: <IconVote />,
     subMenu: [
-      { label: 'Governance', to: '/governance' },
       { label: 'Vote', to: '/vote' },
+      { label: 'Governance', to: 'https://gov.bancor.network' },
     ],
   },
   {
