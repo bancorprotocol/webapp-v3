@@ -26,7 +26,7 @@ const VoteCard = ({
         {content}
       </div>
       <button
-        className="btn-primary rounded w-[220px] h-[37px]"
+        className="btn-primary rounded w-[220px] h-[37px] mt-20"
         onClick={() => onClick()}
       >
         {button}
@@ -39,7 +39,7 @@ const VoteCard = ({
 
 export const Vote = () => {
   return (
-    <div className="flex flex-col text-14 max-w-[1140px] mx-auto">
+    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
       <div className="font-bold text-3xl text-blue-4 dark:text-grey-0 mb-18">
         Vote
       </div>
@@ -92,7 +92,7 @@ export const Vote = () => {
           }
         />
 
-        <div className="col-span-2 flex items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20">
+        <div className="flex flex-col md:flex-row md:col-span-2 md:items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20 mb-20">
           <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Unstake from Governance
@@ -115,7 +115,7 @@ export const Vote = () => {
               00:37:15 Unstake Tokens
             </button>
           </div>
-          <hr className="widget-separator transform rotate-90 w-[120px] m-0" />
+          <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 mx-10" />
           <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Legacy onchain contract
