@@ -92,26 +92,36 @@ export const Vote = () => {
           }
         />
 
-        <div className="col-span-2 flex items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20 min-h-[170px]">
-          <div className="flex flex-col max-w-[525px] p-24">
+        <div className="col-span-2 flex items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20">
+          <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Unstake from Governance
             </div>
 
-            <div className="text-12 text-grey-4 dark:text-grey-0 mb-18">
+            <div className="text-12 text-grey-4 dark:text-grey-0 mb-auto">
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
 
-            <button className="max-w-[200px]">00:37:15 Unstake Tokens</button>
+            <button
+              className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
+                true
+                  ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
+                  : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
+              }`}
+              disabled={true}
+              onClick={() => {}}
+            >
+              00:37:15 Unstake Tokens
+            </button>
           </div>
           <hr className="widget-separator transform rotate-90 w-[120px] m-0" />
-          <div className="flex flex-col max-w-[525px] p-24">
+          <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Legacy onchain contract
             </div>
 
-            <div className="text-12 text-grey-4 dark:text-grey-0 mb-18">
+            <div className="text-12 text-grey-4 dark:text-grey-0 mb-auto">
               View previous votes and decisions made onchain.
             </div>
 
