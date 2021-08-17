@@ -1,4 +1,17 @@
+import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { useAppSelector } from 'redux/index';
+import { Token } from 'services/observables/tokens';
+import { getNetworkVariables } from 'services/web3/config';
+import {
+  getStakedAmount,
+  getUnstakeTimer,
+} from 'services/web3/governance/governance';
+import { EthNetworks } from 'services/web3/types';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { toChecksumAddress } from 'web3-utils';
 
 interface VoteCardProps {
   title: string;
@@ -38,6 +51,30 @@ const VoteCard = ({
 };
 
 export const Vote = () => {
+  const { chainId, account } = useWeb3React();
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const [govToken, setGovToken] = useState<Token | undefined>();
+  const [stakeAmount, setStakeAmount] = useState<string | undefined>();
+  const [unstakeTime, setUnstakeTime] = useState<number>(0);
+
+  useEffect(() => {
+    const networkVars = getNetworkVariables(
+      chainId ? chainId : EthNetworks.Mainnet
+    );
+    setGovToken(tokens.find((x) => x.address === networkVars.govToken));
+  }, [tokens, chainId]);
+
+  useEffect(() => {
+    (async () => {
+      if (account && govToken) {
+        setUnstakeTime(await getUnstakeTimer());
+        setStakeAmount(await getStakedAmount(account, govToken));
+      } else {
+        setUnstakeTime(0);
+        setStakeAmount('0');
+      }
+    })();
+  }, [account, govToken]);
   return (
     <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
       <div className="font-bold text-3xl text-blue-4 dark:text-grey-0 mb-18">
@@ -58,15 +95,23 @@ export const Vote = () => {
           footer={
             <div className="grid grid-cols-2 text-grey-4 dark:text-grey-0">
               <div>
-                <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
-                  120 vBNT
-                </div>
+                {govToken ? (
+                  <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                    {prettifyNumber(govToken.balance ?? 0)} {govToken.symbol}
+                  </div>
+                ) : (
+                  <div className="loading-skeleton h-[24px] w-[140px] mb-4" />
+                )}
                 Unstaked Balance
               </div>
               <div>
-                <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
-                  0 vBNT
-                </div>
+                {govToken ? (
+                  <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                    {stakeAmount} {govToken.symbol}
+                  </div>
+                ) : (
+                  <div className="loading-skeleton h-[24px] w-[140px] mb-4" />
+                )}
                 Staked Balance
               </div>
             </div>
@@ -112,7 +157,7 @@ export const Vote = () => {
               disabled={true}
               onClick={() => {}}
             >
-              00:37:15 Unstake Tokens
+              {unstakeTime} Unstake Tokens
             </button>
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 mx-10" />
