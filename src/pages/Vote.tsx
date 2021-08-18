@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
+import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useAppSelector } from 'redux/index';
@@ -11,7 +12,6 @@ import {
 } from 'services/web3/governance/governance';
 import { EthNetworks } from 'services/web3/types';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { toChecksumAddress } from 'web3-utils';
 
 interface VoteCardProps {
   title: string;
@@ -56,6 +56,8 @@ export const Vote = () => {
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [unstakeTime, setUnstakeTime] = useState<number>(0);
+  const [stakeModal, setStakeModal] = useState<boolean>(false);
+  const [isStake, setIsStake] = useState<boolean>(false);
 
   useEffect(() => {
     const networkVars = getNetworkVariables(
@@ -91,7 +93,10 @@ export const Vote = () => {
           title="Stake your vBNT"
           content="In order to participate in Bancor governance activities, you should first stake your vBNT tokens."
           button="Stake Tokens"
-          onClick={() => {}}
+          onClick={() => {
+            setIsStake(true);
+            setStakeModal(true);
+          }}
           footer={
             <div className="grid grid-cols-2 text-grey-4 dark:text-grey-0">
               <div>
@@ -107,7 +112,7 @@ export const Vote = () => {
               <div>
                 {govToken ? (
                   <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
-                    {stakeAmount} {govToken.symbol}
+                    {prettifyNumber(stakeAmount ?? 0)} {govToken.symbol}
                   </div>
                 ) : (
                   <div className="loading-skeleton h-[24px] w-[140px] mb-4" />
@@ -181,6 +186,12 @@ export const Vote = () => {
           </div>
         </div>
       </div>
+      <ModalVbnt
+        isOpen={stakeModal}
+        setIsOpen={setStakeModal}
+        token={govToken}
+        stake={isStake}
+      />
     </div>
   );
 };

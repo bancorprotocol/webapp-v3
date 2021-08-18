@@ -11,17 +11,17 @@ import { Image } from 'components/image/Image';
 import { useAppSelector } from 'redux/index';
 
 interface TokenInputFieldProps {
-  label: string;
+  label?: string;
   border?: boolean;
   selectable?: boolean;
   disabled?: boolean;
   input: string;
   setInput?: Function;
-  amountUsd: string;
-  setAmountUsd: Function;
+  amountUsd?: string;
+  setAmountUsd?: Function;
   onChange?: Function;
   token: Token | null;
-  setToken: Function;
+  setToken?: Function;
   debounce?: Function;
   startEmpty?: boolean;
   errorMsg?: string;
@@ -74,7 +74,7 @@ export const TokenInputField = ({
         new BigNumber(text).div(token?.usdPrice!).toString(),
         token?.decimals
       );
-      setAmountUsd(text !== 'NaN' ? text : '');
+      if (setAmountUsd) setAmountUsd(text !== 'NaN' ? text : '');
       if (onChange) onChange(tokenAmount);
       else {
         if (setInput) setInput(tokenAmount);
@@ -82,7 +82,8 @@ export const TokenInputField = ({
       }
     } else {
       const usdAmount = new BigNumber(text).times(token?.usdPrice!).toString();
-      setAmountUsd(usdAmount !== '0' && usdAmount !== 'NaN' ? usdAmount : '');
+      if (setAmountUsd)
+        setAmountUsd(usdAmount !== '0' && usdAmount !== 'NaN' ? usdAmount : '');
       const val = sanitizeNumberInput(text, token?.decimals);
       if (onChange) onChange(val);
       else {
@@ -102,7 +103,7 @@ export const TokenInputField = ({
   const convertedAmount = () => {
     const prefix = toggle ? '' : '~';
     const tokenAmount = prettifyNumber(input);
-    const usdAmount = prettifyNumber(amountUsd, true);
+    const usdAmount = prettifyNumber(amountUsd ?? 0, true);
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return `${prefix}${amount}`;
@@ -232,7 +233,7 @@ export const TokenInputField = ({
 
       <SearchableTokenList
         onClick={(token: Token) => {
-          setToken(token);
+          if (setToken) setToken(token);
           onInputChange(inputValue(), token);
           setSelectToken(false);
         }}

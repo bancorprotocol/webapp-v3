@@ -6,6 +6,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 interface ModalProps {
   title?: string;
   children: JSX.Element;
+  titleElement?: any;
   setIsOpen: Function;
   isOpen: boolean;
   onBackClick?: Function;
@@ -16,6 +17,7 @@ interface ModalProps {
 export const Modal = ({
   title,
   children,
+  titleElement,
   setIsOpen,
   isOpen,
   showBackButton,
@@ -71,7 +73,7 @@ export const Modal = ({
                     </button>
                   )}
 
-                  {title ? title : <div />}
+                  {title ? title : titleElement}
                   <button
                     onClick={() => setIsOpen(false)}
                     className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"

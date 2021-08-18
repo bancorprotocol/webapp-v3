@@ -46,7 +46,7 @@ export const getUnstakeTimer = async () => {
   );
 
   const [voteDuration, voteLockFraction] = await Promise.all([
-    govContract.methods.voteDuration().call(),
+    govContract.methods.voteLockDuration().call(),
     govContract.methods.voteLockFraction().call(),
   ]);
 
