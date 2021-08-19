@@ -7,7 +7,6 @@ import { NetworkConnector } from '@web3-react/network-connector';
 import { LatticeConnector } from '@web3-react/lattice-connector';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
-import { AuthereumConnector } from '@web3-react/authereum-connector';
 import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { EthNetworks } from 'services/web3/types';
@@ -90,8 +89,6 @@ export const lattice = new LatticeConnector({
 });
 
 export const frame = new FrameConnector({ supportedChainIds: [1] });
-
-export const authereum = new AuthereumConnector({ chainId: 1 });
 
 export const fortmatic = new FortmaticConnector({
   apiKey: process.env.REACT_APP_FORTMATIC_API_KEY as string,

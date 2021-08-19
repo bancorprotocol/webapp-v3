@@ -10,7 +10,6 @@ import {
   frame,
   fortmatic,
   portis,
-  authereum,
   torus,
 } from 'services/web3/wallet/connectors';
 import metamaskLogo from 'assets/logos/metamask.png';
@@ -23,7 +22,6 @@ import trezorLogo from 'assets/logos/trezor.svg';
 import frameLogo from 'assets/logos/frame.png';
 import lattisLogo from 'assets/logos/lattis.png';
 import torusLogo from 'assets/logos/torus.svg';
-import authereumLogo from 'assets/logos/authereum.svg';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -66,6 +64,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: walletlink,
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
+    mobileOnly: true,
     description: 'Coinbase Wallet description',
   },
   {
@@ -93,14 +92,6 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     description: 'Frame description',
   },
   {
-    name: 'Open in Coinbase Wallet',
-    icon: coinbaseWalletLogo,
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    mobile: true,
-    mobileOnly: true,
-  },
-  {
     connector: fortmatic,
     name: 'Fortmatic',
     icon: fortmaticLogo,
@@ -113,12 +104,6 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     icon: portisLogo,
     description: 'Portis description',
     mobile: true,
-  },
-  {
-    connector: authereum,
-    name: 'Authereum',
-    icon: authereumLogo,
-    description: 'Authereum description',
   },
   {
     connector: torus,
