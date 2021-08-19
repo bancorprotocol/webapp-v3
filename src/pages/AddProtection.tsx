@@ -25,6 +25,11 @@ import { bntToken, ethToken } from 'services/web3/config';
 import { addLiquidity } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
 import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
+import { useAsyncEffect } from 'use-async-effect';
+import wait from 'waait';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -71,12 +76,14 @@ export const AddProtection = (
 
   useEffect(() => {
     const isBnt = selectedToken?.symbol === 'BNT';
-    const bntTokenAddress = tokens.find(token => token.symbol === 'BNT')?.address;
+    const bntTokenAddress = tokens.find(
+      (token) => token.symbol === 'BNT'
+    )?.address;
     if (!isBnt) {
       const tknReserve = selectedPool?.reserves.find(
         (reserve) => reserve.address !== bntTokenAddress
       );
-      setToken(tokens.find(token => token.address === tknReserve?.address))
+      setToken(tokens.find((token) => token.address === tknReserve?.address));
     }
   }, [selectedPool]);
 
@@ -89,11 +96,22 @@ export const AddProtection = (
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const getAvailableLiquidityDeposit = async (pool: Pool) => {
+    const randomNumber = (Math.random() * 100).toFixed(2);
+    await wait(200);
+    return randomNumber;
+  };
+
   const [stakeAvailable, setAvailable] = useState('343.54 ETH');
-  useEffect(() => {
-    const randomNumber = (Math.random() * 100).toFixed(2)
-    setAvailable(`${randomNumber} ETH`)
-  }, [selectedPool]);
+  useAsyncEffect(
+    async (isMounted) => {
+      const randomNumber = await getAvailableLiquidityDeposit(selectedPool!);
+      if (isMounted()) {
+        setAvailable(`${randomNumber} ETH`);
+      }
+    },
+    [selectedPool]
+  );
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
@@ -159,8 +177,6 @@ export const AddProtection = (
     });
   };
 
- 
-
   return isLoading ? (
     <div>Loading...</div>
   ) : (
@@ -174,10 +190,22 @@ export const AddProtection = (
           handleApproved={() => addProtection(true)}
           waitForApproval={true}
         />
+        <div className="flex justify-between p-14">
+          <SwapSwitch />
+          <div className="text-center">
+            <h1 className="font-bold">Add Liquidity </h1>
+            <h3>Single-Sided</h3>
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <IconTimes className="w-14" />
+          </button>
+        </div>
 
-        <h1>Add Single-Sided Liquidity </h1>
-        <div className="bg-blue border rounded rounded-lg p-10 bg-blue-0">
-          <h2 className="mb-6">
+        <div className="bg-blue text-primary border rounded rounded-lg p-20 bg-blue-0">
+          <h2 className="mb-6 font-semibold">
             Learn what it means to add liquidity to a pool:
           </h2>
           <ol>
@@ -188,7 +216,18 @@ export const AddProtection = (
         </div>
         <div className="flex justify-between">
           <div>Stake in pool</div>
-          <div onClick={() => setIsOpen(true)}>Dropdown goes here</div>
+          <div
+            className="border border-black rounded rounded-lg p-4"
+            onClick={() => setIsOpen(true)}
+          >
+            <button
+              onClick={() => setIsOpen(true)}
+              className="flex items-center bg-white dark:bg-blue-4 rounded-10 px-40 py-8"
+            >
+              {/* <div>{<Image />}</div> */}
+              <IconChevronDown className="w-10 ml-10" />
+            </button>
+          </div>
         </div>
         <div></div>
         <TokenInputField
@@ -200,9 +239,9 @@ export const AddProtection = (
           input={amount}
           label="Stake Amount"
           token={selectedToken!}
-          amountUsd={'1.2'}
+          amountUsd={(Number(amount) * 1.2).toFixed(2)}
           setAmountUsd={() => 3}
-          setToken={token => setToken(token)}
+          setToken={(token) => setToken(token)}
         />
 
         <SearchablePoolList
@@ -213,9 +252,15 @@ export const AddProtection = (
           setIsOpen={setIsOpen}
           isOpen={isOpen}
         />
-        <div className="p-10 px-14 rounded rounded-lg mb-10 bg-blue-0 flex justify-between">
-          <h3>Space Available</h3>
-          <h3>{stakeAvailable}</h3>
+        <div className=" rounded rounded-lg mb-10 bg-blue-0 p-20">
+          <div className="flex  justify-between">
+            <div>Space Available</div>
+            <div>{stakeAvailable}</div>
+          </div>
+          <div className="flex justify-between">
+            <div>BNT needed to open up space</div>
+            <div>21,342 ETH</div>
+          </div>
         </div>
 
         <button

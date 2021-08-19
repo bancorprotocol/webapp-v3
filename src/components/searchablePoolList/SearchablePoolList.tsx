@@ -34,6 +34,20 @@ interface ListPool {
   }[];
 }
 
+const createListPool = (
+  pool: Pool,
+  tokens: Token[],
+  decApr?: number
+): ListPool => ({
+  id: pool.pool_dlt_id,
+  ...(decApr && { decApr }),
+  reserves: pool.reserves
+    .map(
+      (reserve) => tokens.find((token) => token.address === reserve.address)!
+    )
+    .sort((a) => (a.symbol === 'BNT' ? -1 : 1)),
+});
+
 export const SearchablePoolList = ({
   onClick,
   isOpen,
@@ -60,17 +74,7 @@ export const SearchablePoolList = ({
         return true;
       }
     })
-    .map(
-      (pool): ListPool => ({
-        id: pool.pool_dlt_id,
-        decApr: 0.005,
-        reserves: pool.reserves
-          .map((reserve) => {
-            return tokens.find((token) => token.address === reserve.address)!;
-          })
-          .sort((a) => (a.symbol === 'BNT' ? -1 : 1)),
-      })
-    )
+    .map((pool): ListPool => createListPool(pool, tokens, 0.005))
     .filter((pool) =>
       pool.reserves.every((reserve) => Boolean(reserve && reserve.symbol))
     ) as ListPool[];
