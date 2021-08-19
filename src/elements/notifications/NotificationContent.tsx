@@ -111,8 +111,8 @@ export const NotificationContent = ({
             {dayjs.unix(timestamp).fromNow(true)}
           </span>
         </div>
-        <button onClick={() => onRemove(id)}>
-          <IconTimes className="w-8" />
+        <button className="w-12 h-12" onClick={() => onRemove(id)}>
+          <IconTimes className="w-8 mx-auto" />
         </button>
       </div>
       {txHash && isHovering ? (
