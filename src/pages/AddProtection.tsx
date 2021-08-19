@@ -21,7 +21,7 @@ import {
 } from 'services/observables/contracts';
 import { first } from 'rxjs/operators';
 import { expandToken } from 'utils/pureFunctions';
-import { ethToken } from 'services/web3/config';
+import { bntToken, ethToken } from 'services/web3/config';
 import { addLiquidity } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
 import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
@@ -66,9 +66,19 @@ export const AddProtection = (
   }, [pools]);
 
   const [selectedReserve, setReserve] = useState(selectedPool?.reserves[0]);
-  const [selectedToken] = useState(
+  const [selectedToken, setToken] = useState(
     tokens.find((token) => token.address === selectedReserve?.address) || null
   );
+
+  useEffect(() => {
+    const isBnt = selectedToken!.symbol === 'BNT';
+    if (!isBnt) {
+      const tknAddress = selectedPool!.reserves.find(
+        (reserve) => reserve.address
+      );
+      // setToken(selectedPool)
+    }
+  }, [selectedPool]);
 
   console.log({
     isValidAnchor,
@@ -78,6 +88,7 @@ export const AddProtection = (
   });
 
   const [showModal, setShowModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
@@ -172,7 +183,7 @@ export const AddProtection = (
         </div>
         <div className="flex justify-between">
           <div>Stake in pool</div>
-          <div>Dropdown goes here</div>
+          <div onClick={() => setIsOpen(true)}>Dropdown goes here</div>
         </div>
         <div></div>
         <TokenInputField
@@ -190,9 +201,11 @@ export const AddProtection = (
 
         <SearchablePoolList
           includedPoolAnchors={[]}
-          onClick={() => {}}
-          setIsOpen={() => {}}
-          isOpen={true}
+          onClick={(p) => {
+            setPool(pools.find((pool) => pool.pool_dlt_id === p.id)!);
+          }}
+          setIsOpen={setIsOpen}
+          isOpen={isOpen}
         />
         <div className="p-10 px-14 rounded rounded-lg mb-10 bg-blue-0 flex justify-between">
           <h3>Space Available</h3>
