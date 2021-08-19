@@ -69,7 +69,7 @@ export const Vote = () => {
   useEffect(() => {
     (async () => {
       if (account && govToken) {
-        setUnstakeTime(await getUnstakeTimer(account));
+        setUnstakeTime(await getUnstakeTimer());
         setStakeAmount(await getStakedAmount(account, govToken));
       } else {
         setUnstakeTime(0);

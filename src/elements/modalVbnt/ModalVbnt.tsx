@@ -15,6 +15,7 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useDispatch } from 'react-redux';
 import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
 import { useEffect } from 'react';
+import { getNetworkVariables } from 'services/web3/config';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -29,7 +30,7 @@ export const ModalVbnt = ({
   token,
   stake,
 }: ModalVbntProps) => {
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
@@ -49,7 +50,11 @@ export const ModalVbnt = ({
     if (!token) return;
 
     try {
-      const isApprovalReq = await getNetworkContractApproval(token, amount);
+      const isApprovalReq = await getNetworkContractApproval(
+        token,
+        amount,
+        getNetworkVariables(chainId ? chainId : 0).governanceContractAddress
+      );
       if (isApprovalReq) setShowApprove(true);
       else await handleStake(true);
     } catch (e) {
@@ -64,7 +69,8 @@ export const ModalVbnt = ({
   };
 
   const handleStake = async (approved: boolean = false) => {
-    if (!account || !token || !amount || Number(amount) === 0) return;
+    if (!account || !token || !chainId || !amount || Number(amount) === 0)
+      return;
     if (!approved) return checkApproval();
 
     setAmount('');
@@ -147,6 +153,9 @@ export const ModalVbnt = ({
         fromToken={token}
         handleApproved={() => handleStake(true)}
         waitForApproval={true}
+        contract={
+          chainId ? getNetworkVariables(chainId).governanceContractAddress : ''
+        }
       />
     </>
   );
