@@ -21,7 +21,7 @@ interface TokenInputFieldProps {
   setAmountUsd: Function;
   onChange?: Function;
   token: Token | null;
-  setToken: Function;
+  setToken: (token: Token) => void;
   debounce?: Function;
   startEmpty?: boolean;
   errorMsg?: string;

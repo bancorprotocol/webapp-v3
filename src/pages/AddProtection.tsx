@@ -65,30 +65,35 @@ export const AddProtection = (
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
   }, [pools]);
 
-  const [selectedReserve, setReserve] = useState(selectedPool?.reserves[0]);
-  const [selectedToken, setToken] = useState(
-    tokens.find((token) => token.address === selectedReserve?.address) || null
+  const [selectedToken, setToken] = useState<Token | undefined>(
+    tokens.find((token) => token.address === selectedPool?.reserves[0].address)
   );
 
   useEffect(() => {
-    const isBnt = selectedToken!.symbol === 'BNT';
+    const isBnt = selectedToken?.symbol === 'BNT';
+    const bntTokenAddress = tokens.find(token => token.symbol === 'BNT')?.address;
     if (!isBnt) {
-      const tknAddress = selectedPool!.reserves.find(
-        (reserve) => reserve.address
+      const tknReserve = selectedPool?.reserves.find(
+        (reserve) => reserve.address !== bntTokenAddress
       );
-      // setToken(selectedPool)
+      setToken(tokens.find(token => token.address === tknReserve?.address))
     }
   }, [selectedPool]);
 
   console.log({
     isValidAnchor,
-    selectedToken: selectedReserve,
-    selected: selectedToken,
+    selectedToken,
     selectedPool,
   });
 
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [stakeAvailable, setAvailable] = useState('343.54 ETH');
+  useEffect(() => {
+    const randomNumber = (Math.random() * 100).toFixed(2)
+    setAvailable(`${randomNumber} ETH`)
+  }, [selectedPool]);
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
@@ -154,7 +159,7 @@ export const AddProtection = (
     });
   };
 
-  const stakeAvailable = '343.54 ETH';
+ 
 
   return isLoading ? (
     <div>Loading...</div>
@@ -176,9 +181,9 @@ export const AddProtection = (
             Learn what it means to add liquidity to a pool:
           </h2>
           <ol>
-            <li>How do I make money by providing liquidity? </li>
-            <li>What is impermanent loss?</li>
-            <li>How does Bancor protect me from impermanent loss?</li>
+            <li>1. How do I make money by providing liquidity? </li>
+            <li>2. What is impermanent loss?</li>
+            <li>3. How does Bancor protect me from impermanent loss?</li>
           </ol>
         </div>
         <div className="flex justify-between">
@@ -188,15 +193,16 @@ export const AddProtection = (
         <div></div>
         <TokenInputField
           setInput={setAmount}
+          selectable={true}
           includedTokens={
             selectedPool ? selectedPool.reserves.map((x) => x.address) : []
           }
           input={amount}
           label="Stake Amount"
-          token={selectedToken}
+          token={selectedToken!}
           amountUsd={'1.2'}
           setAmountUsd={() => 3}
-          setToken={() => 3}
+          setToken={token => setToken(token)}
         />
 
         <SearchablePoolList
