@@ -69,7 +69,7 @@ export const Vote = () => {
   useEffect(() => {
     (async () => {
       if (account && govToken) {
-        setUnstakeTime(await getUnstakeTimer());
+        setUnstakeTime(await getUnstakeTimer(account));
         setStakeAmount(await getStakedAmount(account, govToken));
       } else {
         setUnstakeTime(0);
@@ -155,11 +155,13 @@ export const Vote = () => {
 
             <button
               className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
-                true
+                unstakeTime === 0 || (stakeAmount && Number(stakeAmount) === 0)
                   ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
                   : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
               }`}
-              disabled={true}
+              disabled={
+                unstakeTime === 0 || (!stakeAmount && Number(stakeAmount) === 0)
+              }
               onClick={() => {}}
             >
               {unstakeTime} Unstake Tokens

@@ -33,7 +33,7 @@ export const ModalVbnt = ({
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
-  const [selPercentage, setSelPercentage] = useState<number | undefined>();
+  const [selPercentage, setSelPercentage] = useState<number>(-1);
   const [showApprove, setShowApprove] = useState(false);
   const dispatch = useDispatch();
 
@@ -50,7 +50,6 @@ export const ModalVbnt = ({
 
     try {
       const isApprovalReq = await getNetworkContractApproval(token, amount);
-      console.log('isApprovalReq', isApprovalReq);
       if (isApprovalReq) setShowApprove(true);
       else await handleStake(true);
     } catch (e) {
@@ -68,8 +67,8 @@ export const ModalVbnt = ({
     if (!account || !token || !amount || Number(amount) === 0) return;
     if (!approved) return checkApproval();
 
-    //setAmount('');
-    //setIsOpen(false);
+    setAmount('');
+    setIsOpen(false);
     dispatch(addNotification(await stakeAmount(amount, account, token)));
   };
 
