@@ -222,7 +222,7 @@ export const SwapMarket = ({
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
-      if (e.message.includes('User denied transaction signature'))
+      if (e.code === 4001)
         dispatch(
           addNotification({
             type: NotificationType.error,
