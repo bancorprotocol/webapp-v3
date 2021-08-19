@@ -19,8 +19,8 @@ interface SwapWidgetProps {
 export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState<Token | null>(null);
+  const [fromToken, setFromToken] = useState<Token | null | undefined>(tokens[0]);
+  const [toToken, setToToken] = useState<Token | null | undefined>(null);
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
@@ -58,7 +58,7 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
 
       return null;
     };
-    const foundFrom = findSetToken(fromToken);
+    const foundFrom = findSetToken(fromToken!);
     foundFrom ? setFromToken(foundFrom) : setFromToken(tokens[0]);
 
     if (
@@ -88,17 +88,17 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
             <hr className="widget-separator" />
             {isLimit ? (
               <SwapLimit
-                fromToken={fromToken}
+                fromToken={fromToken!}
                 setFromToken={setFromToken}
-                toToken={toToken}
+                toToken={toToken!}
                 setToToken={setToToken}
                 switchTokens={switchTokens}
               />
             ) : (
               <SwapMarket
-                fromToken={fromToken}
+                fromToken={fromToken!}
                 setFromToken={setFromToken}
-                toToken={toToken}
+                toToken={toToken!}
                 setToToken={setToToken}
                 switchTokens={switchTokens}
               />
@@ -113,8 +113,8 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
           )}
         </div>
         <Insight
-          fromToken={fromToken}
-          toToken={toToken}
+          fromToken={fromToken!}
+          toToken={toToken!}
           fromTokenIntoBlock={fromTokenITB}
           toTokenIntoBlock={toTokenITB}
         />

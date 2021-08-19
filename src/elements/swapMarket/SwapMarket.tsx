@@ -31,9 +31,9 @@ import { getConversionLS, setConversionLS } from 'utils/localStorage';
 
 interface SwapMarketProps {
   fromToken: Token;
-  setFromToken: Function;
+  setFromToken: (token: Token | undefined) => void;
   toToken: Token | null;
-  setToToken: Function;
+  setToToken: (token: Token | undefined) => void;
   switchTokens: Function;
 }
 
