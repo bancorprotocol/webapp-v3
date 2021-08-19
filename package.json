@@ -45,7 +45,6 @@
     "react-popper": "^2.2.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "react-tippy": "^1.4.0",
     "rxjs": "6.6.7",
     "source-map-explorer": "^2.5.2",
     "waait": "^1.0.5",
@@ -71,7 +70,6 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "TAILWIND_MODE=watch craco start",
-    "format": "prettier --write \"**/*.{jsx,ts,tsx,md}\"",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

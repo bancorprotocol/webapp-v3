@@ -1,9 +1,11 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
 import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
@@ -370,6 +372,11 @@ export const SwapMarket = ({
                 <div className="flex justify-between">
                   <div className="flex items-center">
                     <span>Price Impact</span>
+                    <Tooltip
+                      button={<IconInfo className="w-12 mx-[3px]" />}
+                      placement="top"
+                      content="The difference between market price and estimated price due to trade size"
+                    />
                   </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[80px]"></div>
