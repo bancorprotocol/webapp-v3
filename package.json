@@ -7,6 +7,7 @@
     "@0x/protocol-utils": "^1.7.2",
     "@craco/craco": "^6.1.2",
     "@headlessui/react": "^1.3.0",
+    "@popperjs/core": "^2.9.3",
     "@reduxjs/toolkit": "^1.5.1",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.170",
@@ -41,6 +42,7 @@
     "react-device-detect": "^1.17.0",
     "react-dom": "^17.0.2",
     "react-intl": "^5.17.6",
+    "react-popper": "^2.2.5",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-tippy": "^1.4.0",
@@ -69,6 +71,7 @@
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "TAILWIND_MODE=watch craco start",
+    "format": "prettier --write \"**/*.{jsx,ts,tsx,md}\"",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"

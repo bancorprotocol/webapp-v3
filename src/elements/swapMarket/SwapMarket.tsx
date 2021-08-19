@@ -368,7 +368,9 @@ export const SwapMarket = ({
                   )}
                 </div>
                 <div className="flex justify-between">
-                  <span>Price Impact</span>
+                  <div className="flex items-center">
+                    <span>Price Impact</span>
+                  </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[80px]"></div>
                   ) : (
