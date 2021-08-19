@@ -21,9 +21,10 @@ import {
 } from 'services/observables/contracts';
 import { first } from 'rxjs/operators';
 import { expandToken } from 'utils/pureFunctions';
-import { bntToken, ethToken } from 'services/web3/config';
+import { ethToken } from 'services/web3/config';
 import { addLiquidity } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
+import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -142,11 +143,13 @@ export const AddProtection = (
     });
   };
 
+  const stakeAvailable = '343.54 ETH';
+
   return isLoading ? (
     <div>Loading...</div>
   ) : (
     (
-      <div className="">
+      <div className="widget">
         <ModalApprove
           isOpen={showModal}
           setIsOpen={setShowModal}
@@ -156,19 +159,45 @@ export const AddProtection = (
           waitForApproval={true}
         />
 
-        <h1>Add Protection </h1>
+        <h1>Add Single-Sided Liquidity </h1>
+        <div className="bg-blue border rounded rounded-lg p-10 bg-blue-0">
+          <h2 className="mb-6">
+            Learn what it means to add liquidity to a pool:
+          </h2>
+          <ol>
+            <li>How do I make money by providing liquidity? </li>
+            <li>What is impermanent loss?</li>
+            <li>How does Bancor protect me from impermanent loss?</li>
+          </ol>
+        </div>
+        <div className="flex justify-between">
+          <div>Stake in pool</div>
+          <div>Dropdown goes here</div>
+        </div>
+        <div></div>
         <TokenInputField
           setInput={setAmount}
           includedTokens={
             selectedPool ? selectedPool.reserves.map((x) => x.address) : []
           }
           input={amount}
-          label="Pool Amount"
+          label="Stake Amount"
           token={selectedToken}
           amountUsd={'1.2'}
           setAmountUsd={() => 3}
           setToken={() => 3}
         />
+
+        <SearchablePoolList
+          includedPoolAnchors={[]}
+          onClick={() => {}}
+          setIsOpen={() => {}}
+          isOpen={true}
+        />
+        <div className="p-10 px-14 rounded rounded-lg mb-10 bg-blue-0 flex justify-between">
+          <h3>Space Available</h3>
+          <h3>{stakeAvailable}</h3>
+        </div>
 
         <button
           onClick={() => {
