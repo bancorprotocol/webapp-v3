@@ -1,11 +1,18 @@
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+import { useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useState } from 'react';
-import { InputField } from 'components/inputField/InputField';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { stakeAmount } from 'services/web3/governance/governance';
+import { useWeb3React } from '@web3-react/core';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
+import { getNetworkContractApproval } from 'services/web3/approval';
+import { ModalApprove } from 'elements/modalApprove/modalApprove';
+import { useDispatch } from 'react-redux';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -20,73 +27,117 @@ export const ModalVbnt = ({
   token,
   stake,
 }: ModalVbntProps) => {
+  const { account } = useWeb3React();
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const percentages = [25, 50, 75, 100];
   const [selPercentage, setSelPercentage] = useState<number | undefined>();
+  const [showApprove, setShowApprove] = useState(false);
+  const dispatch = useDispatch();
+
+  //Check if approval is required
+  const checkApproval = async () => {
+    if (!token) return;
+
+    try {
+      const isApprovalReq = await getNetworkContractApproval(token, amount);
+      console.log('isApprovalReq', isApprovalReq);
+      if (isApprovalReq) setShowApprove(true);
+      else await handleStake(true);
+    } catch (e) {
+      dispatch(
+        addNotification({
+          type: NotificationType.error,
+          title: 'Transaction Failed',
+          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
+        })
+      );
+    }
+  };
+
+  const handleStake = async (approved: boolean = false) => {
+    if (!account || !token || !amount || Number(amount) === 0) return;
+    if (!approved) return checkApproval();
+
+    //setAmount('');
+    //setIsOpen(false);
+    dispatch(addNotification(await stakeAmount(amount, account, token)));
+  };
 
   return (
-    <Modal
-      title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
-      titleElement={<SwapSwitch />}
-      setIsOpen={setIsOpen}
-      isOpen={isOpen}
-      separator
-      large
-    >
-      <div className="p-10">
-        <div className="flex flex-col items-center text-12 mx-20">
-          <div className="text-20 font-semibold mb-10"></div>
-          {false && (
-            <div className="text-blue-4 text-12 mx-10 text-center">
-              Chose the amount you want to stake. you can decide if you want the
-              amount in Dollars or Token input
+    <>
+      <Modal
+        title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
+        titleElement={<SwapSwitch />}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+        separator
+        large
+      >
+        <div className="p-10">
+          <div className="flex flex-col items-center text-12 mx-20">
+            <div className="text-20 font-semibold mb-10"></div>
+            {false && (
+              <div className="text-blue-4 text-12 mx-10 text-center">
+                Chose the amount you want to stake. you can decide if you want
+                the amount in Dollars or Token input
+              </div>
+            )}
+            {token && (
+              <TokenInputField
+                border
+                token={token}
+                input={amount}
+                label={`${stake ? 'Stake' : 'Unstake'} amount`}
+                setInput={setAmount}
+                selectable={false}
+                amountUsd={amountUSD}
+                setAmountUsd={setAmountUSD}
+              />
+            )}
+            <div className="flex justify-between space-x-8 mt-15">
+              <div className="w-[125px]" />
+              {percentages.map((slip, index) => (
+                <button
+                  key={'slippage' + slip}
+                  className={`btn-sm rounded-10 h-[34px] w-[66px] text-14 ${classNameGenerator(
+                    {
+                      'btn-outline-secondary': selPercentage !== index,
+                      'btn-primary': selPercentage === index,
+                    }
+                  )} bg-opacity-0`}
+                  onClick={() => {
+                    setSelPercentage(index);
+                    if (token) {
+                      const amount = (Number(token.balance) * slip) / 100;
+                      setAmount(amount.toFixed(2));
+                      setAmountUSD(
+                        (amount * Number(token.usdPrice)).toFixed(2)
+                      );
+                    }
+                  }}
+                >
+                  +{slip}%
+                </button>
+              ))}
             </div>
-          )}
-          {token && (
-            <TokenInputField
-              border
-              token={token}
-              input={amount}
-              label={`${stake ? 'Stake' : 'Unstake'} amount`}
-              setInput={setAmount}
-              selectable={false}
-              amountUsd={amountUSD}
-              setAmountUsd={setAmountUSD}
-            />
-          )}
-          <div className="flex justify-between space-x-8 mt-15">
-            <div className="w-[125px]" />
-            {percentages.map((slip, index) => (
-              <button
-                key={'slippage' + slip}
-                className={`btn-sm rounded-10 h-[34px] w-[66px] text-14 ${classNameGenerator(
-                  {
-                    'btn-outline-secondary': selPercentage !== index,
-                    'btn-primary': selPercentage === index,
-                  }
-                )} bg-opacity-0`}
-                onClick={() => {
-                  setSelPercentage(index);
-                }}
-              >
-                +{slip}%
-              </button>
-            ))}
+            <button
+              onClick={() => handleStake()}
+              className={`btn-primary rounded w-full mt-30 mb-10`}
+            >
+              {`${stake ? 'Stake' : 'Unstake'} vBNT`}
+            </button>
           </div>
-          <button
-            onClick={() => {
-              if (!amount || Number(amount) === 0) return;
-
-              stakeAmount(amount);
-              setIsOpen(false);
-            }}
-            className={`btn-primary rounded w-full mt-30 mb-10`}
-          >
-            {`${stake ? 'Stake' : 'Unstake'} vBNT`}
-          </button>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+      <ModalApprove
+        isOpen={showApprove}
+        setIsOpen={setShowApprove}
+        amount={amount}
+        fromToken={token}
+        handleApproved={() => handleStake(true)}
+        waitForApproval={true}
+      />
+    </>
   );
 };
