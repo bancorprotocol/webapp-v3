@@ -1,6 +1,6 @@
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -13,6 +13,8 @@ import {
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useDispatch } from 'react-redux';
+import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
+import { useEffect } from 'react';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -30,10 +32,17 @@ export const ModalVbnt = ({
   const { account } = useWeb3React();
   const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
-  const percentages = [25, 50, 75, 100];
+  const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number | undefined>();
   const [showApprove, setShowApprove] = useState(false);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (amount && token && token.balance) {
+      const percentage = (Number(amount) / Number(token.balance)) * 100;
+      setSelPercentage(percentages.findIndex((x) => percentage === x));
+    }
+  }, [amount, token, percentages]);
 
   //Check if approval is required
   const checkApproval = async () => {
@@ -108,11 +117,13 @@ export const ModalVbnt = ({
                   )} bg-opacity-0`}
                   onClick={() => {
                     setSelPercentage(index);
-                    if (token) {
-                      const amount = (Number(token.balance) * slip) / 100;
-                      setAmount(amount.toFixed(2));
+                    if (token && token.balance) {
+                      const amount = new BigNumber(token.balance).times(
+                        new BigNumber(slip / 100)
+                      );
+                      setAmount(amount.toString());
                       setAmountUSD(
-                        (amount * Number(token.usdPrice)).toFixed(2)
+                        (amount.toNumber() * Number(token.usdPrice)).toString()
                       );
                     }
                   }}
