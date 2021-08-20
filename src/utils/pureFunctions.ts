@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { EthNetworks } from 'services/web3/types';
 
@@ -158,3 +159,26 @@ export const partitionPair = <T>(
     throw new Error('Both array elements passed truthy');
   return arr.slice().sort((a) => (predicate(a) ? -1 : 1)) as [T, T];
 };
+
+export interface ListPool {
+  decApr?: number;
+  id: string;
+  reserves: {
+    symbol: string;
+    logoURI: string;
+  }[];
+}
+
+export const createListPool = (
+  pool: Pool,
+  tokens: Token[],
+  decApr?: number
+): ListPool => ({
+  id: pool.pool_dlt_id,
+  ...(decApr && { decApr }),
+  reserves: pool.reserves
+    .map(
+      (reserve) => tokens.find((token) => token.address === reserve.address)!
+    )
+    .sort((a) => (a.symbol === 'BNT' ? 1 : -1)),
+});

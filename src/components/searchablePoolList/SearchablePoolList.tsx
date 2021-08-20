@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import {
-  getLogoByURI,
-  getTokenLogoURI,
-  TokenList,
-  Token,
-  userPreferredListIds$,
-} from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
-import { Switch } from '@headlessui/react';
-import { prettifyNumber } from 'utils/helperFunctions';
 import wait from 'waait';
 import { Image } from 'components/image/Image';
-import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
-import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { Pool } from 'services/api/bancor';
+import { createListPool, ListPool } from 'utils/pureFunctions';
 
 interface SearchablePoolListProps {
   onClick: (pool: ListPool) => void;
@@ -24,29 +15,6 @@ interface SearchablePoolListProps {
   excludedPoolAnchors?: string[];
   includedPoolAnchors?: string[];
 }
-
-interface ListPool {
-  decApr?: number;
-  id: string;
-  reserves: {
-    symbol: string;
-    logoURI: string;
-  }[];
-}
-
-const createListPool = (
-  pool: Pool,
-  tokens: Token[],
-  decApr?: number
-): ListPool => ({
-  id: pool.pool_dlt_id,
-  ...(decApr && { decApr }),
-  reserves: pool.reserves
-    .map(
-      (reserve) => tokens.find((token) => token.address === reserve.address)!
-    )
-    .sort((a) => (a.symbol === 'BNT' ? -1 : 1)),
-});
 
 export const SearchablePoolList = ({
   onClick,
