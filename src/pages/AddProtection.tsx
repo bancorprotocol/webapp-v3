@@ -30,13 +30,13 @@ import {
 import { onLogin$ } from 'services/observables/user';
 import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
 import { useAsyncEffect } from 'use-async-effect';
-import wait from 'waait';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { Image } from 'components/image/Image';
 import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { BigNumber } from '@0x/utils';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -52,6 +52,7 @@ export const AddProtection = (
   };
 
   const [amount, setAmount] = useState('');
+  const [amountUsd, setAmountUsd] = useState('');
 
   const dispatch = useDispatch();
 
@@ -81,6 +82,14 @@ export const AddProtection = (
   const [selectedToken, setToken] = useState<Token | undefined>(
     tokens.find((token) => token.address === selectedPool?.reserves[0].address)
   );
+
+  useEffect(() => {
+    if (selectedToken) {
+      setAmountUsd(
+        new BigNumber(selectedToken.usdPrice || 0).times(amount).toString()
+      );
+    }
+  }, [selectedToken, selectedPool]);
 
   const [tknIsSelected, setTknIsSelected] = useState(false);
 
@@ -323,8 +332,8 @@ export const AddProtection = (
             input={amount}
             label="Stake Amount"
             token={selectedToken!}
-            amountUsd={(Number(amount) * 1.2).toFixed(2)}
-            setAmountUsd={() => 3}
+            amountUsd={amountUsd}
+            setAmountUsd={setAmountUsd}
             setToken={(token) => setToken(token)}
           />
 
