@@ -20,10 +20,13 @@ import {
   liquidityProtection$,
 } from 'services/observables/contracts';
 import { first } from 'rxjs/operators';
-import { expandToken } from 'utils/pureFunctions';
-import { ethToken } from 'services/web3/config';
+import { expandToken, shrinkToken } from 'utils/pureFunctions';
+import { bntToken, ethToken } from 'services/web3/config';
 import { createListPool } from 'utils/pureFunctions';
-import { addLiquidity } from 'services/web3/contracts/liquidityProtection/wrapper';
+import {
+  addLiquidity,
+  getMaxStakes,
+} from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
 import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
 import { useAsyncEffect } from 'use-async-effect';
@@ -32,6 +35,8 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { Image } from 'components/image/Image';
+import { currentNetwork$ } from 'services/observables/network';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -56,6 +61,7 @@ export const AddProtection = (
 
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
 
+  const [bntLimitIsReached, setBntLimitIsReached] = useState(false);
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
   const account = useAppSelector(
@@ -70,46 +76,83 @@ export const AddProtection = (
 
   useEffect(() => {
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
-  }, [pools]);
+  }, [pools, anchor]);
 
   const [selectedToken, setToken] = useState<Token | undefined>(
     tokens.find((token) => token.address === selectedPool?.reserves[0].address)
   );
+
+  const [tknIsSelected, setTknIsSelected] = useState(false);
 
   useEffect(() => {
     const isBnt = selectedToken?.symbol === 'BNT';
     const bntTokenAddress = tokens.find(
       (token) => token.symbol === 'BNT'
     )?.address;
+    setTknIsSelected(!isBnt);
     if (!isBnt) {
       const tknReserve = selectedPool?.reserves.find(
         (reserve) => reserve.address !== bntTokenAddress
       );
       setToken(tokens.find((token) => token.address === tknReserve?.address));
     }
-  }, [selectedPool]);
-
-  console.log({
-    isValidAnchor,
-    selectedToken,
-    selectedPool,
-  });
+  }, [selectedPool, selectedToken, tokens]);
 
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const getAvailableLiquidityDeposit = async (pool: Pool) => {
-    const randomNumber = (Math.random() * 100).toFixed(2);
-    await wait(200);
-    return randomNumber;
-  };
+  const [spaceAvailable, setAvailable] = useState({
+    bntAvailable: '',
+    tknAvailable: '',
+  });
+  const [spaceAvailableLabel, setSpaceAvailableLabel] = useState('');
+  const [spaceIsLoading, setSpaceIsLoading] = useState(true);
 
-  const [stakeAvailable, setAvailable] = useState('343.54 ETH');
+  useAsyncEffect(async () => {
+    const address = bntToken(await currentNetwork$.pipe(first()).toPromise());
+    setTknIsSelected(address !== selectedToken?.address);
+  }, [selectedToken]);
+
+  useEffect(() => {
+    setSpaceAvailableLabel(
+      tknIsSelected ? spaceAvailable.tknAvailable : spaceAvailable.bntAvailable
+    );
+  }, [spaceAvailable, selectedToken, tknIsSelected]);
+
   useAsyncEffect(
     async (isMounted) => {
-      const randomNumber = await getAvailableLiquidityDeposit(selectedPool!);
+      if (!selectedPool) {
+        return;
+      }
+      setSpaceIsLoading(true);
+      const liquidityProtection = await liquidityProtection$
+        .pipe(first())
+        .toPromise();
+      const { maxAllowedBntWei, maxAllowedTknWei } = await getMaxStakes(
+        liquidityProtection,
+        selectedPool!.pool_dlt_id
+      );
+
+      const currentNetwork = await currentNetwork$.pipe(first()).toPromise();
+      const bntTokenAddress = bntToken(currentNetwork);
+      const tknReserve = selectedPool.reserves.find(
+        (reserve) => reserve.address !== bntTokenAddress
+      )!;
+      const tknToken = tokens.find(
+        (token) => token.address === tknReserve.address
+      )!;
+
       if (isMounted()) {
-        setAvailable(`${randomNumber} ETH`);
+        const data = {
+          bntAvailable: `${prettifyNumber(
+            shrinkToken(maxAllowedBntWei, 18)
+          )} BNT`,
+          tknAvailable: `${prettifyNumber(
+            shrinkToken(maxAllowedTknWei, tknToken.decimals)
+          )} ${tknToken.symbol}`,
+        };
+        setAvailable(data);
+        setSpaceIsLoading(false);
       }
     },
     [selectedPool]
@@ -118,7 +161,6 @@ export const AddProtection = (
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
   const checkApproval = async () => {
-    console.log('checkApproval');
     try {
       const isApprovalReq = await getNetworkContractApproval(
         selectedToken!,
@@ -177,9 +219,22 @@ export const AddProtection = (
         // wait(4000).then(() => fetchBalances(tokensToFetch));
       },
     });
+
+    dispatch(
+      addNotification({
+        type: NotificationType.pending,
+        title: 'Transaction Pending',
+        msg: `Adding liquidity...`,
+      })
+    );
   };
 
-  if (isLoading || typeof selectedPool === 'undefined') {
+  if (
+    isLoading ||
+    typeof selectedPool === 'undefined' ||
+    !tokens ||
+    tokens.length === 0
+  ) {
     return <div>Loading...</div>;
   }
   const listPool = createListPool(selectedPool!, tokens);
@@ -284,7 +339,7 @@ export const AddProtection = (
           <div className=" rounded rounded-lg mb-10 bg-blue-0 text-blue-4 p-20">
             <div className="flex  justify-between">
               <div>Space Available</div>
-              <div>{stakeAvailable}</div>
+              <div>{spaceIsLoading ? 'Loading' : spaceAvailableLabel}</div>
             </div>
             <div className="flex justify-between">
               <div>BNT needed to open up space</div>

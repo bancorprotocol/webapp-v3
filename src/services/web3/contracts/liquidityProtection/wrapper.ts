@@ -259,3 +259,19 @@ export const uniquePoolReserves = (
     reserveToken: position.reserveToken,
     poolToken: position.poolToken,
   }));
+
+export const getMaxStakes = async (
+  liquidityProtection: string,
+  anchor: string
+) => {
+  const contract = buildLiquidityProtectionContract(liquidityProtection);
+
+  const result = await contract.methods.poolAvailableSpace(anchor).call();
+
+  const res = {
+    maxAllowedBntWei: result['1'].toString(),
+    maxAllowedTknWei: result['0'].toString(),
+  };
+
+  return res;
+};
