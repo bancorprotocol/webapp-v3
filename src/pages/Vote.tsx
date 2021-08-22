@@ -134,7 +134,7 @@ export const Vote = () => {
             <a
               href="https://blog.bancor.network/gasless-voting-is-live-on-bancor-governance-82d232da16b9"
               target="_blank"
-              className="flex items-center text-primary dark:text-primary-light font-semibold"
+              className="flex items-center text-primary dark:text-primary-light font-medium"
               rel="noreferrer"
             >
               How to Vote <IconLink className="w-14 ml-6" />
@@ -180,10 +180,10 @@ export const Vote = () => {
             <a
               href="https://app.bancor.network/eth/vote-legacy/"
               target="_blank"
-              className="text-12 text-primary dark:text-primary-light font-semibold underline"
+              className="flex items-center text-12 text-primary dark:text-primary-light font-medium underline"
               rel="noreferrer"
             >
-              View Legacy Gov
+              View Legacy Gov <IconLink className="w-14 ml-6" />
             </a>
           </div>
         </div>
