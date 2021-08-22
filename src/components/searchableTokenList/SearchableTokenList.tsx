@@ -34,7 +34,13 @@ interface SearchableTokenListLayoutProps {
   children: JSX.Element;
 }
 
-const SearchableTokenListLayout = ({ manage, setManage, onClose, isOpen, children }: SearchableTokenListLayoutProps) => {
+const SearchableTokenListLayout = ({
+  manage,
+  setManage,
+  onClose,
+  isOpen,
+  children,
+}: SearchableTokenListLayoutProps) => {
   if (isMobile) {
     return (
       <ModalFullscreen
@@ -44,7 +50,8 @@ const SearchableTokenListLayout = ({ manage, setManage, onClose, isOpen, childre
           onClose();
         }}
         isOpen={isOpen}
-        showHeader>
+        showHeader
+      >
         {children}
       </ModalFullscreen>
     );
@@ -56,11 +63,12 @@ const SearchableTokenListLayout = ({ manage, setManage, onClose, isOpen, childre
       isOpen={isOpen}
       setIsOpen={onClose}
       showBackButton={manage}
-      onBackClick={() => setManage(false)}>
+      onBackClick={() => setManage(false)}
+    >
       {children}
     </Modal>
   );
-}
+};
 
 export const SearchableTokenList = ({
   onClick,
@@ -104,16 +112,16 @@ export const SearchableTokenList = ({
     if (name.length < 19) return name;
     return name + '...';
   };
-  
+
   return (
-    <SearchableTokenListLayout 
+    <SearchableTokenListLayout
       manage={manage}
       onClose={onClose}
       isOpen={isOpen}
       setManage={setManage}
     >
       {manage ? (
-        <div className="sm:h-[calc(70vh-100px)] overflow-auto mb-20">
+        <div className="h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20">
           <div className="pt-10 px-20 space-y-15">
             {tokensLists.map((tokenList) => {
               const isSelected = userPreferredListIds.some(
@@ -175,7 +183,7 @@ export const SearchableTokenList = ({
           </div>
           <div
             data-cy="searchableTokensList"
-            className="h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+            className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
           >
             {tokens
               .filter(
