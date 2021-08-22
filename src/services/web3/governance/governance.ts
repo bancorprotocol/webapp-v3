@@ -2,7 +2,7 @@ import { NotificationType } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { networkVars$ } from 'services/observables/network';
 import { Token } from 'services/observables/tokens';
-import { expandToken, shrinkToken } from 'utils/pureFunctions';
+import { shrinkToken, expandToken } from 'utils/formulas';
 import { resolveTxOnConfirmation } from '..';
 import { web3, writeWeb3 } from '../contracts';
 import { buildGovernanceContract } from '../contracts/governance/wrapper';
