@@ -26,7 +26,7 @@ import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
 

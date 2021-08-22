@@ -31,13 +31,15 @@ export const multi = async ({
   );
 
   try {
+    console.log('blockHeight', blockHeight);
+    console.log('groupsOfShapes', groupsOfShapes);
     const res = await multi.all(groupsOfShapes, {
       traditional,
       blockHeight,
     });
     return res;
   } catch (e) {
-    console.error(e);
+    console.log('This', e);
   }
 };
 

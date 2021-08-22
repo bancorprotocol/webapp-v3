@@ -1,4 +1,3 @@
-import { expandToken } from 'utils/pureFunctions';
 import { Token } from 'services/observables/tokens';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
 import { RfqOrder, SignatureType } from '@0x/protocol-utils';
@@ -14,6 +13,7 @@ import {
   BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
+import { expandToken } from 'utils/formulas';
 
 //Web3 estimation is too low doubling it to be safe
 const manualBuffer = 2;

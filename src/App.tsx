@@ -13,7 +13,6 @@ import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
@@ -41,6 +40,7 @@ import {
   setNotificationsLS,
 } from 'utils/localStorage';
 import { loadCommonData } from 'services/observables/triggers';
+import { isUnsupportedNetwork } from 'utils/helperFunctions';
 
 export const App = () => {
   const dispatch = useDispatch();

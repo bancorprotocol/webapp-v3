@@ -16,11 +16,11 @@ import {
 } from 'services/web3/contracts/exchangeProxy/wrapper';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { shrinkToken } from 'utils/pureFunctions';
 import { sendConversionEvent, ConversionEvents } from './googleTagManager';
 import { toChecksumAddress } from 'web3-utils';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
+import { shrinkToken } from 'utils/formulas';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 

@@ -11,7 +11,7 @@ import {
 import { Modal } from 'components/modal/Modal';
 import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
