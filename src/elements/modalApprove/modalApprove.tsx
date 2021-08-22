@@ -8,12 +8,13 @@ import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3/contracts';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import {
   ConversionEvents,
   sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { getConversionLS } from 'utils/localStorage';
+import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -80,7 +81,7 @@ export const ModalApprove = ({
       handleApproved();
     } catch (e) {
       setIsOpen(false);
-      if (e.message.includes('User denied transaction signature'))
+      if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
             type: NotificationType.error,
