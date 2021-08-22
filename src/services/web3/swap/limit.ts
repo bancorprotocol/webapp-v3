@@ -4,7 +4,7 @@ import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
 import { RfqOrder, SignatureType } from '@0x/protocol-utils';
 import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
 import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
-import { EthNetworks } from 'services/web3/types';
+import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
@@ -61,8 +61,8 @@ export const withdrawWeth = async (
         errorMsg: `Withdrawing ${amount} WETH had failed. Please try again or contact support.`,
       },
     };
-  } catch (error) {
-    if (error.message.includes('User denied transaction signature'))
+  } catch (e) {
+    if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',

@@ -14,6 +14,7 @@ import {
   sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { getConversionLS } from 'utils/localStorage';
+import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -74,7 +75,7 @@ export const ModalApprove = ({
       handleApproved();
     } catch (e) {
       setIsOpen(false);
-      if (e.message.includes('User denied transaction signature'))
+      if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
             type: NotificationType.error,
