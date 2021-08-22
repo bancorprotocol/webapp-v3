@@ -22,12 +22,13 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
+import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
+import { useInterval } from 'hooks/useInterval';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -75,6 +76,10 @@ export const SwapMarket = ({
     setIsLoadingRate(false);
     return res;
   };
+
+  useInterval(() => {
+    if (toToken) loadRateAndPriceImapct(fromToken, toToken, fromAmount ?? '1');
+  }, 15000);
 
   useEffect(() => {
     setIsLoadingRate(true);
@@ -222,7 +227,7 @@ export const SwapMarket = ({
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
-      if (e.code === 4001)
+      if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
             type: NotificationType.error,

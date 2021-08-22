@@ -12,7 +12,7 @@ import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
@@ -223,7 +223,7 @@ export const SearchableTokenList = ({
               })}
           </div>
           <hr className="border-grey-2 dark:border-blue-1" />
-          <div className="flex justify-center items-center h-[59px]">
+          <div className="flex justify-center items-center h-[59px] my-5">
             <button
               onClick={() => {
                 setUserLists(getTokenListLS());
