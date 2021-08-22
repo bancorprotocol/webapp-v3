@@ -4,7 +4,6 @@ import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
-import { ButtonSamples } from 'pages/ButtonSamples';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
 import { Pools } from 'pages/Pools';
@@ -133,7 +132,6 @@ export const App = () => {
               <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
-              <Route exact strict path="/buttons" component={ButtonSamples} />
               <Route component={NotFound} />
             </Switch>
           </main>

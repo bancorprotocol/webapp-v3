@@ -178,7 +178,7 @@ export const SearchableTokenList = ({
               })}
           </div>
           <hr className="border-grey-2 dark:border-blue-1" />
-          <div className="flex justify-center items-center h-[59px]">
+          <div className="flex justify-center items-center h-[59px] my-5">
             <button
               onClick={() => {
                 setUserLists(getTokenListLS());
