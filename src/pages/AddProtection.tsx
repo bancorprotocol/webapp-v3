@@ -274,7 +274,7 @@ export const AddProtection = (
         </div>
 
         <div className="px-10">
-          <div className="bg-blue text-primary border rounded rounded-lg p-20 bg-blue-0">
+          <div className="bg-blue text-primary dark:text-blue-light border rounded dark:border-blue-5 rounded-lg p-20 bg-blue-0 dark:bg-blue-5">
             <h2 className="mb-6 font-semibold">
               Learn what it means to add liquidity to a pool:
             </h2>
@@ -286,10 +286,10 @@ export const AddProtection = (
           </div>
           <div className="flex justify-between p-4">
             <div className="text-blue-4 flex">
-              <span className="m-auto">Stake in pool</span>
+              <span className="m-auto dark:text-grey-0 ">Stake in pool</span>
             </div>
             <div
-              className="border border-black rounded rounded-lg p-4"
+              className="border border-black dark:border-grey-3 rounded rounded-lg p-4"
               onClick={() => setIsOpen(true)}
             >
               <button
@@ -310,7 +310,7 @@ export const AddProtection = (
                         />
                       ))}
                   </div>
-                  <div className="grid justify-items-start ml-15">
+                  <div className="grid justify-items-start mb-4 ml-15">
                     <div className="text-16">
                       {listPool.reserves
                         .map((reserve) => reserve.symbol)
@@ -345,7 +345,7 @@ export const AddProtection = (
             setIsOpen={setIsOpen}
             isOpen={isOpen}
           />
-          <div className=" rounded rounded-lg mb-10 bg-blue-0 text-blue-4 p-20">
+          <div className=" rounded rounded-lg mb-10 bg-blue-0 dark:bg-blue-5 dark:text-grey-0 text-blue-4 p-20">
             <div className="flex  justify-between">
               <div>Space Available</div>
               <div>{spaceIsLoading ? 'Loading' : spaceAvailableLabel}</div>
