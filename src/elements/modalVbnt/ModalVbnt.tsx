@@ -4,7 +4,10 @@ import { useMemo, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { stakeAmount } from 'services/web3/governance/governance';
+import {
+  stakeAmount,
+  unstakeAmount,
+} from 'services/web3/governance/governance';
 import { useWeb3React } from '@web3-react/core';
 import {
   addNotification,
@@ -22,6 +25,7 @@ interface ModalVbntProps {
   isOpen: boolean;
   token?: Token;
   stake: boolean;
+  stakeBalance?: string;
 }
 
 export const ModalVbnt = ({
@@ -29,6 +33,7 @@ export const ModalVbnt = ({
   isOpen,
   token,
   stake,
+  stakeBalance,
 }: ModalVbntProps) => {
   const { account, chainId } = useWeb3React();
   const [amount, setAmount] = useState('');
@@ -38,9 +43,15 @@ export const ModalVbnt = ({
   const [showApprove, setShowApprove] = useState(false);
   const dispatch = useDispatch();
 
+  const fieldBlance = stake
+    ? token && token.balance
+      ? token.balance
+      : undefined
+    : stakeBalance;
+
   useEffect(() => {
-    if (amount && token && token.balance) {
-      const percentage = (Number(amount) / Number(token.balance)) * 100;
+    if (amount && fieldBlance) {
+      const percentage = (Number(amount) / Number(fieldBlance)) * 100;
       setSelPercentage(percentages.findIndex((x) => percentage === x));
     }
   }, [amount, token, percentages]);
@@ -75,7 +86,9 @@ export const ModalVbnt = ({
 
     setAmount('');
     setIsOpen(false);
-    dispatch(addNotification(await stakeAmount(amount, account, token)));
+    if (stake)
+      dispatch(addNotification(await stakeAmount(amount, account, token)));
+    else dispatch(addNotification(await unstakeAmount(amount, account, token)));
   };
 
   return (
@@ -107,10 +120,11 @@ export const ModalVbnt = ({
                 selectable={false}
                 amountUsd={amountUSD}
                 setAmountUsd={setAmountUSD}
+                fieldBalance={fieldBlance}
               />
             )}
             <div className="flex justify-between space-x-8 mt-15">
-              <div className="w-[125px]" />
+              <div className="md:w-[125px]" />
               {percentages.map((slip, index) => (
                 <button
                   key={'slippage' + slip}
@@ -122,8 +136,8 @@ export const ModalVbnt = ({
                   )} bg-opacity-0`}
                   onClick={() => {
                     setSelPercentage(index);
-                    if (token && token.balance) {
-                      const amount = new BigNumber(token.balance).times(
+                    if (token && fieldBlance) {
+                      const amount = new BigNumber(fieldBlance).times(
                         new BigNumber(slip / 100)
                       );
                       setAmount(amount.toString());
@@ -154,7 +168,9 @@ export const ModalVbnt = ({
         handleApproved={() => handleStake(true)}
         waitForApproval={true}
         contract={
-          chainId ? getNetworkVariables(chainId).governanceContractAddress : ''
+          chainId
+            ? getNetworkVariables(chainId).governanceContractAddress
+            : undefined
         }
       />
     </>

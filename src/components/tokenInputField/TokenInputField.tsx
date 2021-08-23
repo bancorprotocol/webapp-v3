@@ -27,6 +27,7 @@ interface TokenInputFieldProps {
   errorMsg?: string;
   usdSlippage?: number;
   dataCy?: string;
+  fieldBalance?: string;
   excludedTokens?: string[];
   includedTokens?: string[];
   isLoading?: boolean;
@@ -49,6 +50,7 @@ export const TokenInputField = ({
   startEmpty,
   errorMsg,
   usdSlippage,
+  fieldBalance,
   excludedTokens = [],
   includedTokens = [],
   isLoading,
@@ -56,7 +58,7 @@ export const TokenInputField = ({
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
 
-  const balance = token ? token.balance : null;
+  const balance = fieldBalance ? fieldBalance : token ? token.balance : null;
   const balanceUsd =
     token && balance
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
