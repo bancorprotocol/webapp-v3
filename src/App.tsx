@@ -42,6 +42,7 @@ import {
   setNotificationsLS,
 } from 'utils/localStorage';
 import { AddProtection } from 'pages/AddProtection';
+import { AddProtectionDouble } from 'pages/AddProtectionDouble';
 import { loadCommonData } from 'services/observables/triggers';
 
 export const App = () => {
@@ -136,6 +137,12 @@ export const App = () => {
                 strict
                 path="/addProtection/:anchor"
                 component={AddProtection}
+              />
+              <Route
+                exact
+                strict
+                path="/addProtectionDouble/:anchor"
+                component={AddProtectionDouble}
               />
               <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />
