@@ -111,7 +111,7 @@ export const NotificationContent = ({
             {dayjs.unix(timestamp).fromNow(true)}
           </span>
         </div>
-        <button onClick={() => onRemove(id)}>
+        <button className="expand-clickable-area" onClick={() => onRemove(id)}>
           <IconTimes className="w-8" />
         </button>
       </div>

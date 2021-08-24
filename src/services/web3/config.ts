@@ -14,7 +14,6 @@ export interface EthNetworkVariables {
   converterContractForMaths: string;
   governanceContractAddress: string;
   etherscanUrl: string;
-  alchemyKey: string;
   govToken: string;
 }
 
@@ -81,7 +80,6 @@ export const getNetworkVariables = (
         converterContractForMaths: '0xe870d00176b2c71afd4c43cea550228e22be4abd',
         governanceContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
         etherscanUrl: 'https://etherscan.io/',
-        alchemyKey: process.env.REACT_APP_ALCHEMY_MAINNET || '',
       };
     case EthNetworks.Ropsten:
       return {
@@ -96,7 +94,6 @@ export const getNetworkVariables = (
         converterContractForMaths: '0x9a36b31ca768a860dab246cf080e7f042d1b7c0f',
         governanceContractAddress: '0x161f28A417361961E946Ae03EF0A425008b7F01B',
         etherscanUrl: 'https://ropsten.etherscan.io/',
-        alchemyKey: process.env.REACT_APP_ALCHEMY_ROPSTEN || '',
       };
   }
 };

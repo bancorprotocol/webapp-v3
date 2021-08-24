@@ -14,9 +14,8 @@ Open Source Token Swap and Pool Liquidity Portal
 
 1. Talk to us, we will assign you to an issue
 2. Fork the repo
-3. Change `.env.sample` to `.env` and add your environment variables
-4. Run `yarn && yarn start`
-5. Create a Pull Request
+3. Run `yarn && yarn start`
+4. Create a Pull Request
 
 ## Available Scripts
 

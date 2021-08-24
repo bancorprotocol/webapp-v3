@@ -1,7 +1,7 @@
 import { useAppSelector } from 'redux/index';
 import { Notification, hideAlert } from 'redux/notification/notification';
 import { useDispatch } from 'react-redux';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { NotificationAlert } from 'elements/notifications/NotificationAlert';
 
 export const NotificationAlerts = () => {
@@ -19,7 +19,7 @@ export const NotificationAlerts = () => {
   return (
     <div
       aria-live="assertive"
-      className="fixed inset-0 top-[10px] md:top-[85px] md:right-[20px] px-10 md:p-0 flex pointer-events-none items-start z-10"
+      className="fixed inset-0 top-[10px] md:top-[85px] md:right-[20px] px-10 md:p-0 flex pointer-events-none items-start z-20"
     >
       <div className="w-full flex flex-col space-y-15 items-end">
         {notifications

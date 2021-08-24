@@ -1,6 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
-import { expandToken, ppmToDec, shrinkToken } from 'utils/pureFunctions';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import {
@@ -23,15 +22,14 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
 import {
   buildPoolBalanceShape,
   buildRateShape,
   multi,
 } from '../contracts/shapes';
-import { calcReserve } from 'utils/formulas';
+import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
+import { ppmToDec } from 'utils/helperFunctions';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -118,6 +116,18 @@ export const getRate = async (
     return { rate: '0', priceImpact: '0.0000' };
   }
 };
+
+const calculateMinimumReturn = (
+  expectedWei: string,
+  slippageTolerance: number
+): string => {
+  const res = new BigNumber(expectedWei)
+    .times(new BigNumber(1).minus(slippageTolerance))
+    .toFixed(0);
+
+  return res === '0' ? '1' : res;
+};
+
 export const swap = async ({
   slippageTolerance,
   fromToken,
@@ -154,9 +164,7 @@ export const swap = async ({
     tx: networkContract.methods.convertByPath(
       path,
       fromWei,
-      new BigNumber(expectedToWei)
-        .times(new BigNumber(1).minus(slippageTolerance))
-        .toFixed(0),
+      calculateMinimumReturn(expectedToWei, slippageTolerance),
       zeroAddress,
       zeroAddress,
       0
