@@ -3,7 +3,7 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { classNameGenerator } from 'utils/pureFunctions';
+import { classNameGenerator, wait } from 'utils/pureFunctions';
 import {
   stakeAmount,
   unstakeAmount,
@@ -19,6 +19,8 @@ import { useDispatch } from 'react-redux';
 import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
 import { useEffect } from 'react';
 import { getNetworkVariables } from 'services/web3/config';
+import { fetchTokenBalances } from 'services/observables/balances';
+import { updateTokens } from 'redux/bancor/bancor';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -26,6 +28,7 @@ interface ModalVbntProps {
   token?: Token;
   stake: boolean;
   stakeBalance?: string;
+  onCompleted?: Function;
 }
 
 export const ModalVbnt = ({
@@ -34,6 +37,7 @@ export const ModalVbnt = ({
   token,
   stake,
   stakeBalance,
+  onCompleted,
 }: ModalVbntProps) => {
   const { account, chainId } = useWeb3React();
   const [amount, setAmount] = useState('');
@@ -54,7 +58,7 @@ export const ModalVbnt = ({
       const percentage = (Number(amount) / Number(fieldBlance)) * 100;
       setSelPercentage(percentages.findIndex((x) => percentage === x));
     }
-  }, [amount, token, percentages]);
+  }, [amount, token, percentages, fieldBlance]);
 
   //Check if approval is required
   const checkApproval = async () => {
@@ -89,6 +93,11 @@ export const ModalVbnt = ({
     if (stake)
       dispatch(addNotification(await stakeAmount(amount, account, token)));
     else dispatch(addNotification(await unstakeAmount(amount, account, token)));
+
+    await wait(4000);
+    const balances = await fetchTokenBalances([token], account, chainId);
+    dispatch(updateTokens(balances));
+    if (onCompleted) onCompleted();
   };
 
   return (

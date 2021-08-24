@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useInterval } from 'hooks/useInterval';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
 import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
@@ -12,7 +12,7 @@ import {
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
 import { EthNetworks } from 'services/web3/types';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { formatTime, prettifyNumber } from 'utils/helperFunctions';
 
 interface VoteCardProps {
   title: string;
@@ -67,24 +67,25 @@ export const Vote = () => {
     setGovToken(tokens.find((x) => x.address === networkVars.govToken));
   }, [tokens, chainId]);
 
-  useEffect(() => {
-    (async () => {
-      if (account && govToken) {
-        const [unstakeTimer, stakedAmount] = await Promise.all([
-          getUnstakeTimer(account),
-          getStakedAmount(account, govToken),
-        ]);
-        setUnstakeTime(unstakeTimer);
-        setStakeAmount(stakedAmount);
-      } else {
-        setUnstakeTime(0);
-        setStakeAmount('0');
-      }
-    })();
+  const refresh = useCallback(async () => {
+    if (account && govToken) {
+      const [unstakeTimer, stakedAmount] = await Promise.all([
+        getUnstakeTimer(account),
+        getStakedAmount(account, govToken),
+      ]);
+      setUnstakeTime(unstakeTimer);
+      setStakeAmount(stakedAmount);
+    } else {
+      setUnstakeTime(0);
+      setStakeAmount('0');
+    }
   }, [account, govToken]);
 
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
   useInterval(() => {
-    //check unstake on ropsten
     if (unstakeTime !== 0) setUnstakeTime(unstakeTime - 1);
   }, 1000);
 
@@ -166,19 +167,19 @@ export const Vote = () => {
 
             <button
               className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
-                unstakeTime !== 0 || (stakeAmount && Number(stakeAmount) === 0)
+                unstakeTime !== 0 || !stakeAmount || Number(stakeAmount) === 0
                   ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
                   : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
               }`}
               disabled={
-                unstakeTime !== 0 || (!stakeAmount && Number(stakeAmount) === 0)
+                unstakeTime !== 0 || !stakeAmount || Number(stakeAmount) === 0
               }
               onClick={() => {
                 setIsStake(false);
                 setStakeModal(true);
               }}
             >
-              {unstakeTime !== 0 && unstakeTime} Unstake Tokens
+              {unstakeTime !== 0 && formatTime(unstakeTime)} Unstake Tokens
             </button>
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 mx-10" />
@@ -208,6 +209,7 @@ export const Vote = () => {
         token={govToken}
         stake={isStake}
         stakeBalance={stakeAmount}
+        onCompleted={refresh}
       />
     </div>
   );
