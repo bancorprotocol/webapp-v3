@@ -22,12 +22,13 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
+import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
+import { useInterval } from 'hooks/useInterval';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -76,6 +77,10 @@ export const SwapMarket = ({
     return res;
   };
 
+  useInterval(() => {
+    if (toToken) loadRateAndPriceImapct(fromToken, toToken, fromAmount ?? '1');
+  }, 15000);
+
   useEffect(() => {
     setIsLoadingRate(true);
   }, [fromAmount]);
@@ -120,10 +125,12 @@ export const SwapMarket = ({
               toToken.decimals
             )
           );
+
           const usdAmount = new BigNumber(fromDebounce)
             .times(rate)
             .times(toToken.usdPrice!)
             .toString();
+
           setToAmountUsd(usdAmount);
           setRate(rate.toString());
           if (fromDebounce) setPriceImpact(result.priceImpact);
@@ -220,7 +227,7 @@ export const SwapMarket = ({
       );
     } catch (e) {
       console.error('Swap failed with error: ', e);
-      if (e.message.includes('User denied transaction signature'))
+      if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
             type: NotificationType.error,

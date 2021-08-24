@@ -11,6 +11,10 @@ export enum EthNetworks {
   Ropsten = 3,
 }
 
+export enum ErrorCode {
+  DeniedTx = 4001,
+}
+
 export interface RegisteredContracts {
   BancorNetwork: string;
   BancorConverterRegistry: string;

@@ -1,5 +1,4 @@
 import { Token } from 'services/observables/tokens';
-import { expandToken } from 'utils/pureFunctions';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
@@ -12,6 +11,7 @@ import {
   UNLIMITED_WEI,
 } from 'services/web3/approval/constants';
 import { ethToken } from 'services/web3/config';
+import { expandToken } from 'utils/formulas';
 
 interface GetApprovalReturn {
   allowanceWei: string;

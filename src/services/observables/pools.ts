@@ -8,14 +8,11 @@ import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
-  first,
   map,
   pluck,
   share,
   shareReplay,
   startWith,
-  switchMap,
-  tap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';
@@ -29,17 +26,12 @@ import {
 } from 'services/web3/contracts/converterRegistry/wrapper';
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
-import {
-  expandToken,
-  findOrThrow,
-  mapIgnoreThrown,
-  shrinkToken,
-  updateArray,
-} from 'utils/pureFunctions';
+import { findOrThrow, mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
 import { getRateByPath } from 'services/web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
+import { expandToken, shrinkToken } from 'utils/formulas';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
