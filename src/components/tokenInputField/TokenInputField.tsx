@@ -11,7 +11,7 @@ import { Image } from 'components/image/Image';
 import { useAppSelector } from 'redux/index';
 
 interface TokenInputFieldProps {
-  label: string;
+  label?: string;
   border?: boolean;
   selectable?: boolean;
   disabled?: boolean;
@@ -21,7 +21,7 @@ interface TokenInputFieldProps {
   setAmountUsd: Function;
   onChange?: Function;
   token: Token | null;
-  setToken: (token: Token) => void;
+  setToken?: (token: Token) => void;
   debounce?: Function;
   startEmpty?: boolean;
   errorMsg?: string;
@@ -129,7 +129,7 @@ export const TokenInputField = ({
   return (
     <div>
       <div className="flex justify-between pr-10 mb-4">
-        <span className="font-medium">{label}</span>
+        {label && <span className="font-medium">{label}</span>}
         {loadingBalances && token ? (
           <div className="loading-skeleton h-[20px] w-[140px]"></div>
         ) : (
@@ -232,7 +232,9 @@ export const TokenInputField = ({
 
       <SearchableTokenList
         onClick={(token: Token) => {
-          setToken(token);
+          if (setToken) {
+            setToken(token);
+          }
           onInputChange(inputValue(), token);
           setSelectToken(false);
         }}
