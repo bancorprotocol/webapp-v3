@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
-import { apiTokens$ } from './pools';
+import { apiTokens$, pools$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -37,6 +37,7 @@ export interface Token {
   usd_24h_ago: string | null;
   price_change_24: number;
   price_history_7d: (string | number)[][];
+  usd_volume_24: string | null;
 }
 
 export const listOfLists = [
@@ -111,57 +112,68 @@ const tokenListMerged$ = combineLatest([
 export const tokensNoBalance$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
+  pools$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([tokenList, apiTokens, currentNetwork]) => {
-    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
-      const price = x.rate.usd;
-      const price_24h = x.rate_24h_ago.usd;
-      const priceChanged =
-        price && price_24h && Number(price_24h) !== 0
-          ? calculatePercentageChange(Number(price), Number(price_24h))
-          : 0;
+  switchMapIgnoreThrow(
+    async ([tokenList, apiTokens, pools, currentNetwork]) => {
+      console.log('pools', pools.length);
+      const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map(
+        (x) => {
+          const usdPrice = x.rate.usd;
+          const price_24h = x.rate_24h_ago.usd;
+          const priceChanged =
+            usdPrice && price_24h && Number(price_24h) !== 0
+              ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
+              : 0;
+          const pool = pools.find((p) =>
+            p.reserves.find((r) => r.address === x.dlt_id)
+          );
+          const usdVolume24 = pool ? pool.volume_24h.usd : null;
 
-      return {
-        address: x.dlt_id,
-        symbol: x.symbol,
-        decimals: x.decimals,
-        usdPrice: price,
-        liquidity: x.liquidity.usd,
-        usd_24h_ago: price_24h,
-        price_change_24: priceChanged,
-        price_history_7d: x.rates_7d,
-      };
-    });
+          return {
+            address: x.dlt_id,
+            symbol: x.symbol,
+            decimals: x.decimals,
+            usdPrice,
+            liquidity: x.liquidity.usd,
+            usd_24h_ago: price_24h,
+            price_change_24: priceChanged,
+            price_history_7d: x.rates_7d,
+            usd_volume_24: usdVolume24,
+          };
+        }
+      );
 
-    let overlappingTokens: Token[] = [];
-    const eth = getEthToken(apiTokens);
-    if (eth) overlappingTokens.push(eth);
+      let overlappingTokens: Token[] = [];
+      const eth = getEthToken(apiTokens);
+      if (eth) overlappingTokens.push(eth);
 
-    newApiTokens.forEach((apiToken) => {
-      if (currentNetwork === EthNetworks.Mainnet) {
-        const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
-        );
-        if (found)
-          overlappingTokens.push({
-            ...found,
-            ...apiToken,
-          });
-      } else {
-        if (apiToken.address !== ethToken)
-          overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
-            ...apiToken,
-          });
-      }
-    });
+      newApiTokens.forEach((apiToken) => {
+        if (currentNetwork === EthNetworks.Mainnet) {
+          const found = tokenList.find(
+            (userToken) => userToken.address === apiToken.address
+          );
+          if (found)
+            overlappingTokens.push({
+              ...found,
+              ...apiToken,
+            });
+        } else {
+          if (apiToken.address !== ethToken)
+            overlappingTokens.push({
+              chainId: EthNetworks.Ropsten,
+              name: apiToken.symbol,
+              logoURI: ropstenImage,
+              balance: null,
+              ...apiToken,
+            });
+        }
+      });
 
-    return overlappingTokens;
-  }),
+      return overlappingTokens;
+    }
+  ),
   shareReplay(1)
 );
 

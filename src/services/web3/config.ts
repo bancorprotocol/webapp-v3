@@ -59,6 +59,7 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       usd_24h_ago: price_24h,
       price_change_24: priceChanged,
       price_history_7d: eth.rates_7d,
+      usd_volume_24: 'N/A',
     };
   }
 

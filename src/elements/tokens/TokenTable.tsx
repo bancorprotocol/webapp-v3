@@ -84,9 +84,10 @@ export const TokenTable = () => {
         minWidth: 110,
       },
       {
-        id: 'v25h',
+        id: 'v24h',
         Header: '24h Volume',
-        accessor: () => '$12,123,123',
+        accessor: 'usd_volume_24',
+        Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
         tooltip: 'Some awesome text here',
         minWidth: 120,
       },
