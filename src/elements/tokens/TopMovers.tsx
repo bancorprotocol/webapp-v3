@@ -2,10 +2,11 @@ import { Ticker } from 'components/ticker/Ticker';
 import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { orderBy } from 'lodash';
 
 export const TopMovers = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
-  const topTokens = tokens.slice(0, 20);
+  const topTokens = orderBy(tokens, 'price_change_24', 'desc').slice(0, 20);
 
   return (
     <section className="content-section pt-20 pb-10">
