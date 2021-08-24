@@ -1,6 +1,6 @@
 import { APIToken } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
-import { calculatePercentageChange } from 'utils/pureFunctions';
+import { calculatePercentageChange } from 'utils/formulas';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {

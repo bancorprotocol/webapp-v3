@@ -1,5 +1,4 @@
-import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
-import { Tooltip } from 'components/tooltip/ToolTip';
+import { Tooltip } from 'components/tooltip/Tooltip';
 import { classNameGenerator } from 'utils/pureFunctions';
 
 interface InsightCardProps {

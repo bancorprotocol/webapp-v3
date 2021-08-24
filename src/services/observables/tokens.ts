@@ -13,12 +13,10 @@ import {
   ropstenImage,
   ethToken,
 } from 'services/web3/config';
-import {
-  calculatePercentageChange,
-  mapIgnoreThrown,
-} from 'utils/pureFunctions';
+import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
+import { calculatePercentageChange } from 'utils/formulas';
 
 export interface TokenList {
   name: string;
