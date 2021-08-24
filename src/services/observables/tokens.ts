@@ -38,6 +38,7 @@ export interface Token {
   liquidity: string | null;
   usd_24h_ago: string | null;
   price_change_24: number;
+  price_history_7d: (string | number)[][];
 }
 
 export const listOfLists = [
@@ -131,6 +132,7 @@ export const tokensNoBalance$ = combineLatest([
         liquidity: x.liquidity.usd,
         usd_24h_ago: price_24h,
         price_change_24: priceChanged,
+        price_history_7d: x.rates_7d,
       };
     });
 

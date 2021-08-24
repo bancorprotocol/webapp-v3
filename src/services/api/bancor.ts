@@ -64,6 +64,7 @@ export interface APIToken {
   rate: USDPrice;
   rate_24h_ago: USDPrice;
   decimals: number;
+  rates_7d: (string | number)[][];
 }
 
 export interface TokenMetaWithReserve extends TokenMeta {

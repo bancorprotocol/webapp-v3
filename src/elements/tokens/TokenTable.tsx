@@ -2,40 +2,27 @@ import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { LineData } from 'lightweight-charts';
+import { LineData, UTCTimestamp } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { calculatePercentageChange } from 'utils/pureFunctions';
-
-const sampleData: LineData[] = [
-  { time: '2019-04-11', value: 80.01 },
-  { time: '2019-04-12', value: 96.63 },
-  { time: '2019-04-13', value: 76.64 },
-  { time: '2019-04-14', value: 81.89 },
-  { time: '2019-04-15', value: 74.43 },
-  { time: '2019-04-16', value: 80.01 },
-  { time: '2019-04-17', value: 96.63 },
-  { time: '2019-04-18', value: 76.64 },
-  { time: '2019-04-19', value: 81.89 },
-  { time: '2019-04-20', value: 74.43 },
-  { time: '2019-04-21', value: 80.01 },
-  { time: '2019-04-22', value: 96.63 },
-  { time: '2019-04-23', value: 76.64 },
-  { time: '2019-04-24', value: 81.89 },
-  { time: '2019-04-25', value: 74.43 },
-  { time: '2019-04-26', value: 80.01 },
-  { time: '2019-04-27', value: 96.63 },
-  { time: '2019-04-28', value: 76.64 },
-  { time: '2019-04-29', value: 81.89 },
-  { time: '2019-04-30', value: 74.43 },
-];
 
 export const TokenTable = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const data = useMemo<Token[]>(() => tokens, [tokens]);
+
+  const convertChartData = (data: (string | number)[][]): LineData[] => {
+    return data
+      .filter((x) => x !== null)
+      .map((x) => {
+        return {
+          time: x[0] as UTCTimestamp,
+          value: Number(x[1]),
+        };
+      });
+  };
 
   const CellName = (token: Token) => {
     return (
@@ -56,7 +43,7 @@ export const TokenTable = () => {
   const columns = useMemo<TableColumn<Token>[]>(
     () => [
       {
-        id: '1',
+        id: 'protected',
         Header: 'Protected',
         accessor: () => <IconProtected className="w-18 h-20 text-primary" />,
         width: 120,
@@ -64,7 +51,7 @@ export const TokenTable = () => {
         tooltip: 'Some awesome text here',
       },
       {
-        id: '2',
+        id: 'name',
         Header: 'Name',
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
@@ -72,7 +59,7 @@ export const TokenTable = () => {
         minWidth: 180,
       },
       {
-        id: '3',
+        id: 'price',
         Header: 'Price',
         accessor: 'usdPrice',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
@@ -80,13 +67,15 @@ export const TokenTable = () => {
         minWidth: 110,
       },
       {
-        id: '4',
+        id: 'c24h',
         Header: '24h Change',
         accessor: 'price_change_24',
         Cell: (cellData) => {
           const changePositive = Number(cellData.value) > 0;
           return (
-            <div className={`text-${changePositive ? 'success' : 'error'} `}>
+            <div
+              className={`${changePositive ? 'text-success' : 'text-error'} `}
+            >
               {`${changePositive ? '+' : ''}${cellData.value}%`}
             </div>
           );
@@ -95,14 +84,14 @@ export const TokenTable = () => {
         minWidth: 110,
       },
       {
-        id: '5',
+        id: 'v25h',
         Header: '24h Volume',
         accessor: () => '$12,123,123',
         tooltip: 'Some awesome text here',
         minWidth: 120,
       },
       {
-        id: '6',
+        id: 'liquidity',
         Header: 'Liquidity',
         accessor: 'liquidity',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
@@ -110,15 +99,25 @@ export const TokenTable = () => {
         minWidth: 150,
       },
       {
-        id: '7',
+        id: 'price7d',
         Header: 'Last 7 Days',
-        accessor: () => <LineChartSimple data={sampleData} color="#0ED3B0" />,
+        accessor: 'price_history_7d',
+        Cell: (cellData) => {
+          const changePositive =
+            Number(cellData.row.original.price_change_24) > 0;
+          return (
+            <LineChartSimple
+              data={convertChartData(cellData.value)}
+              color={changePositive ? '#0ED3B0' : '#FF3F56'}
+            />
+          );
+        },
         tooltip: 'Some awesome text here',
         minWidth: 170,
         disableSortBy: true,
       },
       {
-        id: '8',
+        id: 'actions',
         Header: '',
         accessor: () => (
           <button className="btn-primary btn-sm rounded-[12px]">Trade</button>
@@ -131,7 +130,7 @@ export const TokenTable = () => {
     []
   );
 
-  const defaultSort: SortingRule<Token> = { id: '3', desc: true };
+  const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
     <section className="content-section pt-20 pb-10">

@@ -34,6 +34,7 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
     rate: eth ? eth.rate : { usd: null },
     rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
     decimals: eth ? eth.decimals : 18,
+    rates_7d: eth ? eth.rates_7d : [],
   };
 };
 
@@ -58,6 +59,7 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       liquidity: eth.liquidity.usd,
       usd_24h_ago: price_24h,
       price_change_24: priceChanged,
+      price_history_7d: eth.rates_7d,
     };
   }
 
