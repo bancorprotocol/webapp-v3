@@ -38,6 +38,7 @@ export interface Token {
   price_change_24: number;
   price_history_7d: (string | number)[][];
   usd_volume_24: string | null;
+  isWhitelisted: boolean;
 }
 
 export const listOfLists = [
@@ -130,6 +131,7 @@ export const tokensNoBalance$ = combineLatest([
             p.reserves.find((r) => r.address === x.dlt_id)
           );
           const usdVolume24 = pool ? pool.volume_24h.usd : null;
+          const isWhitelisted = pool ? pool.isWhitelisted : false;
 
           return {
             address: x.dlt_id,
@@ -141,6 +143,7 @@ export const tokensNoBalance$ = combineLatest([
             price_change_24: priceChanged,
             price_history_7d: x.rates_7d,
             usd_volume_24: usdVolume24,
+            isWhitelisted,
           };
         }
       );

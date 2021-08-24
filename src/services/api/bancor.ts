@@ -38,6 +38,7 @@ export interface Pool {
   version: number;
   supply: string;
   decimals: number;
+  isWhitelisted: boolean;
 }
 
 export interface Reserve {

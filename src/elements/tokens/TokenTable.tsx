@@ -45,7 +45,11 @@ export const TokenTable = () => {
       {
         id: 'protected',
         Header: 'Protected',
-        accessor: () => <IconProtected className="w-18 h-20 text-primary" />,
+        accessor: 'isWhitelisted',
+        Cell: (cellData) =>
+          cellData.value && (
+            <IconProtected className="w-18 h-20 text-primary" />
+          ),
         width: 120,
         minWidth: 120,
         tooltip: 'Some awesome text here',
