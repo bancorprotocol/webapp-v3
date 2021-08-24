@@ -3,7 +3,7 @@ import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 
-export const TopTokens = () => {
+export const TopMovers = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const topTokens = tokens.slice(0, 20);
 

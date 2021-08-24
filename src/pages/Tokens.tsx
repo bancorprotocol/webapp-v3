@@ -1,4 +1,4 @@
-import { TopTokens } from 'elements/tokens/TopTokens';
+import { TopMovers } from 'elements/tokens/TopMovers';
 import { TokenTable } from 'elements/tokens/TokenTable';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -13,7 +13,7 @@ export const Tokens = () => {
 
   return (
     <div className="space-y-30">
-      <TopTokens />
+      <TopMovers />
       <TokenTable />
     </div>
   );
