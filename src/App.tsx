@@ -43,6 +43,7 @@ import {
 } from 'utils/localStorage';
 import { AddProtection } from 'pages/AddProtection';
 import { AddProtectionDouble } from 'pages/AddProtectionDouble';
+import { AddProtectionDoubleLiq } from 'pages/AddProtectionDoubleLiq';
 import { loadCommonData } from 'services/observables/triggers';
 
 export const App = () => {
@@ -143,6 +144,12 @@ export const App = () => {
                 strict
                 path="/addProtectionDouble/:anchor"
                 component={AddProtectionDouble}
+              />
+              <Route
+                exact
+                strict
+                path="/addProtectionDoubleLiq/:anchor"
+                component={AddProtectionDoubleLiq}
               />
               <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />

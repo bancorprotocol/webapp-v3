@@ -9,7 +9,7 @@ import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
-import { useAsyncEffect } from 'use-async-effect'
+import { useAsyncEffect } from 'use-async-effect';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -19,7 +19,9 @@ interface SwapWidgetProps {
 export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
-  const [fromToken, setFromToken] = useState<Token | null | undefined>(tokens[0]);
+  const [fromToken, setFromToken] = useState<Token | null | undefined>(
+    tokens[0]
+  );
   const [toToken, setToToken] = useState<Token | null | undefined>(null);
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
@@ -31,23 +33,29 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
     loadSwapData(dispatch);
   }, [dispatch]);
 
-  useAsyncEffect(async (isMounted) => {
-    if (fromToken) {
-      const data = await intoTheBlockByToken(fromToken.symbol);
-      if (isMounted()) {
-        setFromTokenITB(data);
+  useAsyncEffect(
+    async (isMounted) => {
+      if (fromToken) {
+        const data = await intoTheBlockByToken(fromToken.symbol);
+        if (isMounted()) {
+          setFromTokenITB(data);
+        }
       }
-    }
-  }, [fromToken]);
+    },
+    [fromToken]
+  );
 
-  useAsyncEffect(async (isMounted) => {
-    if (toToken) {
-      const data = await intoTheBlockByToken(toToken.symbol);
-      if (isMounted()) {
-        setToTokenITB(data);
+  useAsyncEffect(
+    async (isMounted) => {
+      if (toToken) {
+        const data = await intoTheBlockByToken(toToken.symbol);
+        if (isMounted()) {
+          setToTokenITB(data);
+        }
       }
-    }
-  }, [toToken]);
+    },
+    [toToken]
+  );
 
   useEffect(() => {
     const findSetToken = (token: Token) => {
