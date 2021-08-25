@@ -149,7 +149,7 @@ export const tokensNoBalance$ = combineLatest([
       );
 
       let overlappingTokens: Token[] = [];
-      const eth = getEthToken(apiTokens);
+      const eth = getEthToken(apiTokens, pools);
       if (eth) overlappingTokens.push(eth);
 
       newApiTokens.forEach((apiToken) => {

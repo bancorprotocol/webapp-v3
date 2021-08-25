@@ -1,4 +1,4 @@
-import { APIToken } from 'services/api/bancor';
+import { APIToken, Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { calculatePercentageChange } from 'utils/formulas';
 import { EthNetworks } from './types';
@@ -37,7 +37,10 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   };
 };
 
-export const getEthToken = (apiTokens: APIToken[]): Token | null => {
+export const getEthToken = (
+  apiTokens: APIToken[],
+  pools: Pool[]
+): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth) {
     const price = eth.rate.usd;
@@ -46,6 +49,12 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       price && price_24h && Number(price_24h) !== 0
         ? calculatePercentageChange(Number(price), Number(price_24h))
         : 0;
+    const pool = pools.find((p) =>
+      p.reserves.find((r) => r.address === eth.dlt_id)
+    );
+    const usdVolume24 = pool ? pool.volume_24h.usd : null;
+    const isWhitelisted = pool ? pool.isWhitelisted : false;
+
     return {
       address: eth.dlt_id,
       logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
@@ -59,8 +68,8 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       usd_24h_ago: price_24h,
       price_change_24: priceChanged,
       price_history_7d: eth.rates_7d,
-      usd_volume_24: 'N/A',
-      isWhitelisted: false,
+      usd_volume_24: usdVolume24,
+      isWhitelisted,
     };
   }
 
