@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
+import { NavLink } from 'react-router-dom';
 
 export const TokenTable = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -133,7 +134,9 @@ export const TokenTable = () => {
         id: 'actions',
         Header: '',
         accessor: () => (
-          <button className="btn-primary btn-sm rounded-[12px]">Trade</button>
+          <NavLink to="/" className="btn-primary btn-sm rounded-[12px]">
+            Trade
+          </NavLink>
         ),
         width: 50,
         minWidth: 50,
