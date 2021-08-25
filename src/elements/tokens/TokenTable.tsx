@@ -25,14 +25,12 @@ export const TokenTable = () => {
   }, [tokens, searchInput]);
 
   const convertChartData = (data: (string | number)[][]): LineData[] => {
-    return data
-      .filter((x) => x !== null)
-      .map((x) => {
-        return {
-          time: x[0] as UTCTimestamp,
-          value: Number(x[1]),
-        };
-      });
+    return data.map((x) => {
+      return {
+        time: x[0] as UTCTimestamp,
+        value: Number(x[1]),
+      };
+    });
   };
 
   const CellName = (token: Token) => {
@@ -119,11 +117,13 @@ export const TokenTable = () => {
         Header: 'Last 7 Days',
         accessor: 'price_history_7d',
         Cell: (cellData) => {
-          const changePositive =
-            Number(cellData.row.original.price_change_24) > 0;
+          const sanitized = cellData.value.filter((x) => x !== null);
+          const latest = sanitized[sanitized.length - 1][1];
+          const earliest = sanitized[0][1];
+          const changePositive = latest > earliest;
           return (
             <LineChartSimple
-              data={convertChartData(cellData.value)}
+              data={convertChartData(sanitized)}
               color={changePositive ? '#0ED3B0' : '#FF3F56'}
             />
           );
