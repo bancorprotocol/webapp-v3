@@ -40,7 +40,7 @@ const VoteCard = ({
         {content}
       </div>
       <button
-        className="btn-primary rounded w-[220px] h-[37px] mt-20"
+        className="btn-primary rounded w-[220px] h-[37px] mt-20 text-14"
         onClick={() => onClick()}
       >
         {button}
@@ -143,14 +143,16 @@ export const Vote = () => {
             window.open('https://vote.bancor.network/', '_blank');
           }}
           footer={
-            <a
-              href="https://blog.bancor.network/gasless-voting-is-live-on-bancor-governance-82d232da16b9"
-              target="_blank"
-              className="flex items-center text-primary dark:text-primary-light font-medium"
-              rel="noreferrer"
-            >
-              How to Vote <IconLink className="w-14 ml-6" />
-            </a>
+            <div className="flex items-end h-[48px]">
+              <a
+                href="https://blog.bancor.network/gasless-voting-is-live-on-bancor-governance-82d232da16b9"
+                target="_blank"
+                className="flex items-center text-primary dark:text-primary-light font-medium"
+                rel="noreferrer"
+              >
+                How to Vote <IconLink className="w-14 ml-6" />
+              </a>
+            </div>
           }
         />
 
