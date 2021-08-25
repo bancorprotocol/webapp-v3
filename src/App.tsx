@@ -123,7 +123,7 @@ export const App = () => {
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1400px] mx-auto`}>
+          <main className={`max-w-[1400px] mx-auto mb-30`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route exact strict path="/tokens" component={Tokens} />

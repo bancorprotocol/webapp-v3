@@ -5,13 +5,21 @@ import { LineChartSimple } from 'components/charts/LineChartSimple';
 import { LineData, UTCTimestamp } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
+import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 
 export const TokenTable = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
-  const data = useMemo<Token[]>(() => tokens, [tokens]);
+  const [searchInput, setSearchInput] = useState('');
+  const data = useMemo<Token[]>(() => {
+    return tokens.filter(
+      (t) =>
+        t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
+        t.name.toLowerCase().includes(searchInput.toLowerCase())
+    );
+  }, [tokens, searchInput]);
 
   const convertChartData = (data: (string | number)[][]): LineData[] => {
     return data
@@ -139,7 +147,19 @@ export const TokenTable = () => {
 
   return (
     <section className="content-section pt-20 pb-10">
-      <h2 className="ml-20 mb-20">Tokens</h2>
+      <div className="flex justify-between items-center mb-20 mx-20">
+        <h2>Tokens</h2>
+        <div className="relative">
+          <IconSearch className="absolute w-12 ml-10 text-grey-3" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search"
+            className="block w-full border border-grey-3 rounded-10 pl-30 h-28 focus:outline-none focus:border-primary"
+          />
+        </div>
+      </div>
 
       <DataTable<Token>
         data={data}
