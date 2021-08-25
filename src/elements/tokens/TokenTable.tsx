@@ -10,6 +10,7 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { NavLink } from 'react-router-dom';
+import { wethToken } from 'services/web3/config';
 
 export const TokenTable = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -17,8 +18,9 @@ export const TokenTable = () => {
   const data = useMemo<Token[]>(() => {
     return tokens.filter(
       (t) =>
-        t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
-        t.name.toLowerCase().includes(searchInput.toLowerCase())
+        t.address !== wethToken &&
+        (t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
+          t.name.toLowerCase().includes(searchInput.toLowerCase()))
     );
   }, [tokens, searchInput]);
 
