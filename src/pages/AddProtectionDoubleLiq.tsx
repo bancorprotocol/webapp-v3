@@ -210,7 +210,13 @@ export const AddProtectionDoubleLiq = (
               </div>
             </div>
             <div className="flex pt-4 justify-between">
-              <div>1 BNT ($0.00) =</div>
+              <div>
+                1 BNT (
+                {bntToken &&
+                  bntToken.usdPrice &&
+                  prettifyNumber(bntToken.usdPrice, true)}
+                ) =
+              </div>
               <div>0.00 ETH ($0.00)</div>
             </div>
             <div className="text-14 mt-12 mb-20 leading-3">

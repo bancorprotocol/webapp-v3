@@ -58,6 +58,8 @@ export const AddProtectionDouble = (
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
 
+  const [tknUsdPrice, setTknUsdPrice] = useState<string | undefined>();
+
   const account = useAppSelector(
     (state) => state.bancor.user as string | undefined
   );
@@ -90,17 +92,19 @@ export const AddProtectionDouble = (
       tokens.find((token) => token.address === tknTokenAddress)) ||
     false;
 
-  useAsyncEffect(
-    async (isMounted) => {
-      if (!selectedPool) {
-        return;
-      }
-      const reserveAddresses = selectedPool.reserves.map(
-        (reserve) => reserve.address
-      );
-    },
-    [selectedPool]
-  );
+  const bntToTknRate =
+    tknUsdPrice &&
+    bntToken &&
+    bntToken.usdPrice &&
+    new BigNumber(bntToken.usdPrice).div(tknUsdPrice).toFixed(6);
+
+  const bntToTknRateToUsd =
+    (bntToTknRate &&
+      prettifyNumber(
+        new BigNumber(bntToTknRate).times((bntToken as Token).usdPrice!),
+        true
+      )) ||
+    false;
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
@@ -114,7 +118,6 @@ export const AddProtectionDouble = (
   ) {
     return <div>Loading...</div>;
   }
-  const listPool = createListPool(selectedPool!, tokens);
 
   return (
     (
@@ -152,20 +155,35 @@ export const AddProtectionDouble = (
             <div>
               <h1 className="text-2xl ml-10">1 BNT = </h1>
               <input
+                disabled={true}
+                value={
+                  (bntToken &&
+                    bntToken.usdPrice &&
+                    prettifyNumber(bntToken.usdPrice, true)) ||
+                  ''
+                }
                 className="border-blue-0 border-2 text-right rounded mr-10 py-10"
                 type="text"
               />
             </div>
             <div>
-              <h1 className="text-2xl ml-10">1 ETH = </h1>
+              <h1 className="text-2xl ml-10">
+                1 {tknToken && tknToken.symbol} ={' '}
+              </h1>
               <input
                 className="border-blue-0 border-2 text-right rounded px-4 py-10"
                 type="text"
+                value={tknUsdPrice}
+                onChange={(e) => setTknUsdPrice(e.target.value)}
               />
             </div>
           </div>
           <div className="p-10 text-grey-4">
-            1 BNT ($0.00) = 0.00 ETH ($0.00)
+            1 BNT (
+            {bntToken &&
+              bntToken.usdPrice &&
+              prettifyNumber(bntToken.usdPrice, true)}
+            ) = {bntToTknRate} ETH ({bntToTknRateToUsd})
           </div>
 
           <div className="rounded-lg bg-blue-0 rounded p-20">
