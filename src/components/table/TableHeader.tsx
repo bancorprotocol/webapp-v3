@@ -37,7 +37,7 @@ export const TableHeader = <D extends object>({
     if (found && found.tooltip)
       return (
         <span className="inline-flex ml-5">
-          <Tooltip content={found.tooltip} preventOverflow={false} />
+          <Tooltip content={found.tooltip} />
         </span>
       );
   };
