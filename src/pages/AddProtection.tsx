@@ -272,6 +272,7 @@ export const AddProtection = (
             <IconTimes className="w-14" />
           </button>
         </div>
+        <hr className="widget-separator" />
 
         <div className="px-10">
           <div className="bg-blue text-primary dark:text-blue-light border rounded dark:border-blue-5 rounded-lg p-20 bg-blue-0 dark:bg-blue-5">

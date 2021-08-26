@@ -142,6 +142,7 @@ export const AddProtectionDouble = (
             <IconTimes className="w-14" />
           </button>
         </div>
+        <hr className="widget-separator" />
 
         <div>
           <div className="p-10 text-blue-4 flex ">
