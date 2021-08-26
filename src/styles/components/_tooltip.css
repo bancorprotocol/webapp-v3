@@ -1,0 +1,13 @@
+@import 'tailwindcss/components';
+
+@layer components {
+  .tooltip {
+    @apply absolute w-[306px] mt-10 py-16 px-20 rounded z-10 left-[-30px];
+    @apply bg-white dark:bg-blue-2;
+    @apply shadow-header dark:shadow-none;
+  }
+  .tooltip-arrow {
+    @apply absolute h-14 w-14 transform rotate-45 mt-[-20px] left-32;
+    @apply bg-white dark:bg-blue-2;
+  }
+}
