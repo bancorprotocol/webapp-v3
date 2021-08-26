@@ -5,7 +5,6 @@ import { ContractMethods } from 'services/web3/types';
 import { buildContract } from 'services/web3/contracts';
 import { ABIConverter } from 'services/web3/contracts/converter/abi';
 import { Pool } from 'services/api/bancor';
-import { shrinkToken } from 'utils/pureFunctions';
 
 export const buildConverterContract = (
   contractAddress?: string,

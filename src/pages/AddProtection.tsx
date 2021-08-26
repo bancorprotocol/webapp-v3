@@ -20,7 +20,6 @@ import {
   liquidityProtection$,
 } from 'services/observables/contracts';
 import { first } from 'rxjs/operators';
-import { expandToken, shrinkToken } from 'utils/pureFunctions';
 import { bntToken, ethToken } from 'services/web3/config';
 import { createListPool } from 'utils/pureFunctions';
 import {
@@ -37,6 +36,7 @@ import { Image } from 'components/image/Image';
 import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from '@0x/utils';
+import { expandToken, shrinkToken } from 'utils/formulas';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>

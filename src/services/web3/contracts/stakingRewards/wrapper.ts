@@ -1,7 +1,7 @@
 import { CallReturn } from 'eth-multicall';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'services/web3/types';
-import { shrinkToken } from 'utils/pureFunctions';
+import { shrinkToken } from 'utils/formulas';
 import { buildContract } from '..';
 import Web3 from 'web3';
 import { ABIStakingRewards } from './abi';

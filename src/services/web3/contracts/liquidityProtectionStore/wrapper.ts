@@ -1,7 +1,7 @@
 import { CallReturn } from 'eth-multicall';
 import { zip } from 'lodash';
 import { ContractMethods } from 'services/web3/types';
-import { shrinkToken } from 'utils/pureFunctions';
+import { shrinkToken } from 'utils/formulas';
 import Web3 from 'web3';
 import { buildContract, web3 } from '..';
 import { ABILiquidityProtectionStore } from './abi';

@@ -18,7 +18,7 @@ import {
   govTokenAddress$,
   liquidityProtection$,
 } from 'services/observables/contracts';
-import { expandToken, shrinkToken } from 'utils/pureFunctions';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import { bntToken, ethToken } from 'services/web3/config';
 import { createListPool } from 'utils/pureFunctions';
 import {
