@@ -1,6 +1,6 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { useAppSelector } from 'redux/index';
@@ -11,6 +11,10 @@ import { isAddress } from 'web3-utils';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { fetchPoolReserveBalances } from 'services/web3/contracts/converter/wrapper';
+import { partitionPair } from 'utils/pureFunctions';
+import { BigNumber } from 'bignumber.js';
+import { useInterval } from 'hooks/useInterval';
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
@@ -55,6 +59,61 @@ export const AddProtectionDoubleLiq = (
     false;
 
   const dispatch = useDispatch();
+
+  const [bntToTknRate, setBntToTknRate] = useState('');
+  const [tknToBntRate, setTknToBntRate] = useState('');
+
+  const onBntChange = (value: string) => {
+    setAmountBnt(value);
+    if (tknToken) {
+      setAmountTkn(
+        new BigNumber(value)
+          .times(bntToTknRate)
+          .toFormat(tknToken.decimals, BigNumber.ROUND_UP, {
+            groupSeparator: '',
+            decimalSeparator: '.',
+          })
+      );
+    }
+  };
+
+  const onTknChange = (value: string) => {
+    setAmountTkn(value);
+    if (bntToken) {
+      setAmountBnt(
+        new BigNumber(value)
+          .times(tknToBntRate)
+          .toFormat(bntToken.decimals, BigNumber.ROUND_UP, {
+            groupSeparator: '',
+            decimalSeparator: '.',
+          })
+      );
+    }
+  };
+
+  const fetchPoolRates = async () => {
+    if (selectedPool && bntToken) {
+      const poolBalances = await fetchPoolReserveBalances(selectedPool);
+      const [bntReserve, tknReserve] = partitionPair(
+        poolBalances,
+        (balance) => balance.contract === bntToken.address
+      ).map((reserve) => reserve.weiAmount);
+      setBntToTknRate(new BigNumber(tknReserve).div(bntReserve).toString());
+      setTknToBntRate(new BigNumber(bntReserve).div(tknReserve).toString());
+    }
+  };
+
+  useEffect(() => {
+    fetchPoolRates();
+  }, [selectedPool]);
+
+  useInterval(
+    () => {
+      fetchPoolRates();
+    },
+    60000,
+    false
+  );
 
   useEffect(() => {
     loadSwapData(dispatch);
@@ -139,7 +198,7 @@ export const AddProtectionDoubleLiq = (
             <div className="mb-12">
               <TokenInputField
                 label=" "
-                setInput={setAmountBnt}
+                setInput={onBntChange}
                 selectable={false}
                 input={amountBnt}
                 token={bntToken! as Token}
@@ -151,7 +210,7 @@ export const AddProtectionDoubleLiq = (
 
             <TokenInputField
               label=" "
-              setInput={setAmountTkn}
+              setInput={onTknChange}
               selectable={false}
               input={amountTkn}
               border
@@ -194,7 +253,7 @@ export const AddProtectionDoubleLiq = (
               <div>0.00 ETH ($0.00)</div>
             </div>
             <div className="text-14 mt-12 mb-20 leading-3">
-              I understand that I am adding dual sided liquidity to the pool
+              I understand that I am adding dual sided liquidity to the pool{' '}
             </div>
             <button
               onClick={() => {
