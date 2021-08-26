@@ -17,7 +17,9 @@ export const Tooltip = ({
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   return (
     <>
-      <button ref={buttonRef}>{button}</button>
+      <button className="text-grey-4 dark:text-grey-0" ref={buttonRef}>
+        {button}
+      </button>
       <TooltipPanel placement={placement} targetRef={buttonRef}>
         {typeof content === 'string' ? (
           <div className="text-12">{content}</div>
