@@ -4,7 +4,6 @@ import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
-import { ButtonSamples } from 'pages/ButtonSamples';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
 import { Pools } from 'pages/Pools';
@@ -14,7 +13,6 @@ import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { isUnsupportedNetwork } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
@@ -45,6 +43,7 @@ import { AddProtection } from 'pages/AddProtection';
 import { AddProtectionDouble } from 'pages/AddProtectionDouble';
 import { AddProtectionDoubleLiq } from 'pages/AddProtectionDoubleLiq';
 import { loadCommonData } from 'services/observables/triggers';
+import { isUnsupportedNetwork } from 'utils/helperFunctions';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -154,7 +153,6 @@ export const App = () => {
               <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
-              <Route exact strict path="/buttons" component={ButtonSamples} />
               <Route component={NotFound} />
             </Switch>
           </main>

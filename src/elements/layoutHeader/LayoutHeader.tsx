@@ -1,6 +1,5 @@
 import { WalletModal } from 'elements/walletModal/WalletModal';
 import { useWeb3React } from '@web3-react/core';
-import { getNetworkName } from 'utils/pureFunctions';
 import { EthNetworks } from 'services/web3/types';
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
@@ -9,7 +8,7 @@ import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { isMobile } from 'react-device-detect';
 import 'elements/layoutHeader/LayoutHeader.css';
-import { useState } from 'react';
+import { getNetworkName } from 'utils/helperFunctions';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;

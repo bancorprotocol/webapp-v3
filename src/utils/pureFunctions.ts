@@ -46,30 +46,6 @@ export const sanitizeNumberInput = (
   else return sanitized;
 };
 
-export const calculatePercentageChange = (
-  numberNow: number,
-  numberBefore: number
-): number => {
-  return Number(((numberNow / numberBefore - 1) * 100).toFixed(2));
-};
-
-export const getNetworkName = (network: EthNetworks): string => {
-  switch (network) {
-    case EthNetworks.Mainnet:
-      return 'Ethereum Mainnet';
-    case EthNetworks.Ropsten:
-      return 'Ropsten Test Network';
-    default:
-      return 'Unsupported network';
-  }
-};
-
-export const isUnsupportedNetwork = (
-  network: EthNetworks | undefined
-): boolean => {
-  return network !== undefined && EthNetworks[network] === undefined;
-};
-
 export const findOrThrow = <T>(
   arr: readonly T[],
   iteratee: (obj: T, index: number, arr: readonly T[]) => unknown,
@@ -79,32 +55,6 @@ export const findOrThrow = <T>(
   if (!res)
     throw new Error(message || 'Failed to find object in find or throw');
   return res;
-};
-
-export const expandToken = (amount: string | number, precision: number) => {
-  const trimmed = new BigNumber(amount).toFixed(precision, 1);
-  const inWei = new BigNumber(trimmed)
-    .times(new BigNumber(10).pow(precision))
-    .toFixed(0);
-  return inWei;
-};
-
-export const shrinkToken = (
-  amount: string | number | BigNumber,
-  precision: number,
-  chopZeros = false
-) => {
-  if (!Number.isInteger(precision))
-    throw new Error(
-      `Must be passed integer to shrink token, received ${precision}`
-    );
-  const bigNumAmount = new BigNumber(amount);
-  if (bigNumAmount.isEqualTo(0)) return '0';
-  const res = bigNumAmount
-    .div(new BigNumber(10).pow(precision))
-    .toFixed(precision, BigNumber.ROUND_DOWN);
-
-  return chopZeros ? new BigNumber(res).toString() : res;
 };
 
 export const updateArray = <T>(
@@ -122,18 +72,6 @@ export const mapIgnoreThrown = async <T, V>(
     input.map((val, index) => iteratee(val, index).catch(() => IGNORE_TOKEN))
   );
   return res.filter((res) => res !== IGNORE_TOKEN) as V[];
-};
-
-export const usdByToken = (
-  token: Token,
-  amount?: string,
-  isToken: boolean = true
-): string => {
-  if (!token || !token.usdPrice || (!amount && !token.balance)) return '';
-
-  const input = Number(amount ? amount : token.balance);
-  const tokenPrice = Number(token.usdPrice);
-  return (isToken ? input * tokenPrice : input / tokenPrice).toString();
 };
 
 export const splitArrayByVal = <T>(
@@ -182,3 +120,6 @@ export const createListPool = (
     )
     .sort((a) => (a.symbol === 'BNT' ? 1 : -1)),
 });
+
+export const wait = async (ms: number = 0) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

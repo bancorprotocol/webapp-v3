@@ -1,6 +1,11 @@
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import numeral from 'numeral';
+import { EthNetworks } from 'services/web3/types';
+
+const oneMillion = new BigNumber(1000000);
+
+export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
 
 export const prettifyNumber = (
   num: number | string | BigNumber,
@@ -43,4 +48,21 @@ export const rewindBlocksByDays = (
   const secondsToRewind = dayjs.duration(days, 'days').asSeconds();
   const blocksToRewind = parseInt(String(secondsToRewind / secondsPerBlock));
   return currentBlock - blocksToRewind;
+};
+
+export const getNetworkName = (network: EthNetworks): string => {
+  switch (network) {
+    case EthNetworks.Mainnet:
+      return 'Ethereum Mainnet';
+    case EthNetworks.Ropsten:
+      return 'Ropsten Test Network';
+    default:
+      return 'Unsupported network';
+  }
+};
+
+export const isUnsupportedNetwork = (
+  network: EthNetworks | undefined
+): boolean => {
+  return network !== undefined && EthNetworks[network] === undefined;
 };
