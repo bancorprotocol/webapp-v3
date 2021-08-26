@@ -1,23 +1,40 @@
 @import 'tailwindcss/components';
 
 @layer components {
-    table {
-        @apply table-auto w-full;
+    .table-responsive {
+        @apply relative overflow-x-scroll md:overflow-x-auto;
     }
 
-    thead tr {
-        @apply bg-grey-2 dark:bg-blue-1 text-left text-grey-4 dark:text-grey-3 h-[56px];
+    .table-responsive table {
+        @apply table-auto w-full relative;
     }
 
-    thead th {
-        @apply font-normal first:pl-20 last:pr-20;
+    .table-responsive thead tr {
+        @apply text-left text-grey-4 dark:text-grey-3 h-[56px];
     }
 
-    tbody tr {
+    .table-responsive thead th {
+        @apply font-normal first:pl-20 last:pr-20 bg-grey-2 dark:bg-blue-1;
+    }
+
+    .table-responsive tbody tr {
         @apply border-b border-grey-2 dark:border-blue-1;
     }
 
-    tbody td {
-        @apply py-10 first:pl-20 last:pr-20;
+    .table-responsive tbody {
+        @apply relative;
+    }
+
+    .table-responsive tbody td {
+        @apply h-[70px] first:pl-20 last:pr-20 bg-white dark:bg-blue-4;
+    }
+
+    .table-sticky-cell {
+        @apply first:sticky first:left-0 first:z-30;
+    }
+
+    .table-sticky-column thead th,
+    .table-sticky-column tbody td {
+        @apply table-sticky-cell;
     }
 }

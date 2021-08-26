@@ -36,39 +36,45 @@ export const TokenTable = () => {
   const CellName = (token: Token) => {
     return (
       <div className={'flex items-center'}>
+        <IconProtected
+          className={`w-18 h-20 ${
+            token.isWhitelisted ? 'text-primary' : 'text-grey-3'
+          }`}
+        />
         <Image
           src={token.logoURI}
           alt="Token"
-          className="bg-grey-2 rounded-full h-30 w-30 mr-10"
+          className="bg-grey-2 rounded-full h-30 w-30 mr-10 ml-20"
         />
-        <div>
-          <h3>{token.symbol}</h3>
-          <span className="text-12 text-grey-3">{token.name}</span>
-        </div>
+        <h3>{token.symbol}</h3>
       </div>
     );
   };
 
   const columns = useMemo<TableColumn<Token>[]>(
     () => [
-      {
-        id: 'protected',
-        Header: 'Protected',
-        accessor: 'isWhitelisted',
-        Cell: (cellData) =>
-          cellData.value && (
-            <IconProtected className="w-18 h-20 text-primary ml-20" />
-          ),
-        width: 120,
-        minWidth: 120,
-        tooltip: 'Some awesome text here',
-      },
+      // {
+      //   id: 'protected',
+      //   Header: () => <IconProtected className="w-18 h-20" />,
+      //   accessor: 'isWhitelisted',
+      //   Cell: (cellData) =>
+      //     cellData.value && (
+      //       <IconProtected className="w-18 h-20 text-primary" />
+      //     ),
+      //   width: 600,
+      //   minWidth: 60,
+      // },
       {
         id: 'name',
-        Header: 'Name',
+        Header: () => (
+          <>
+            <span className="align-middle inline-flex items-center ml-2">
+              <IconProtected className="w-15 mr-20" /> <span>Name</span>
+            </span>
+          </>
+        ),
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
-        tooltip: 'Some awesome text here',
         minWidth: 180,
       },
       {
@@ -117,10 +123,16 @@ export const TokenTable = () => {
         Header: 'Last 7 Days',
         accessor: 'price_history_7d',
         Cell: (cellData) => {
-          const sanitized = cellData.value.filter((x) => x !== null);
-          const latest = sanitized[sanitized.length - 1][1];
-          const earliest = sanitized[0][1];
-          const changePositive = latest > earliest;
+          const sanitized = cellData.value.filter((x) => !!x);
+          if (sanitized.length === 0) {
+            return <div>N/A</div>;
+          }
+          const latest = sanitized[sanitized.length - 1];
+          const earliest = sanitized[0];
+          if (!latest || !earliest || !latest[1] || !earliest[1]) {
+            return <div>N/A</div>;
+          }
+          const changePositive = latest[1] > earliest[1];
           return (
             <LineChartSimple
               data={convertChartData(sanitized)}
@@ -171,6 +183,7 @@ export const TokenTable = () => {
         columns={columns}
         defaultSort={defaultSort}
         isLoading={!tokens.length}
+        stickyColumn
       />
     </section>
   );

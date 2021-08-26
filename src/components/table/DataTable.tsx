@@ -8,6 +8,7 @@ import {
 import { TablePagination } from 'components/table/TablePagination';
 import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 export type TableColumn<D extends object> = Column<D> & {
   tooltip?: string;
@@ -18,6 +19,7 @@ interface TableProps<D extends object> {
   data: D[];
   defaultSort?: SortingRule<D>;
   isLoading?: boolean;
+  stickyColumn?: boolean;
 }
 
 export const DataTable = <D extends object>({
@@ -25,6 +27,7 @@ export const DataTable = <D extends object>({
   data,
   defaultSort,
   isLoading,
+  stickyColumn,
 }: TableProps<D>) => {
   const {
     getTableProps,
@@ -57,7 +60,11 @@ export const DataTable = <D extends object>({
 
   return (
     <>
-      <div className={'overflow-x-scroll md:overflow-x-auto'}>
+      <div
+        className={`table-responsive ${classNameGenerator({
+          'table-sticky-column': stickyColumn,
+        })}`}
+      >
         <table {...getTableProps()}>
           <TableHeader<D> headerGroups={headerGroups} columns={columns} />
           <TableBody<D>
