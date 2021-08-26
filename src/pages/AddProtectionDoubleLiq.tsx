@@ -66,28 +66,29 @@ export const AddProtectionDoubleLiq = (
   const onBntChange = (value: string) => {
     setAmountBnt(value);
     if (tknToken) {
+      const amountTkn = new BigNumber(value).times(bntToTknRate);
+
       setAmountTkn(
-        new BigNumber(value)
-          .times(bntToTknRate)
-          .toFormat(tknToken.decimals, BigNumber.ROUND_UP, {
-            groupSeparator: '',
-            decimalSeparator: '.',
-          })
+        amountTkn.toFormat(tknToken.decimals, BigNumber.ROUND_UP, {
+          groupSeparator: '',
+          decimalSeparator: '.',
+        })
       );
+      setAmountTknUsd(amountTkn.times(tknToken.usdPrice!).toString());
     }
   };
 
   const onTknChange = (value: string) => {
     setAmountTkn(value);
     if (bntToken) {
+      const amountBnt = new BigNumber(value).times(tknToBntRate);
       setAmountBnt(
-        new BigNumber(value)
-          .times(tknToBntRate)
-          .toFormat(bntToken.decimals, BigNumber.ROUND_UP, {
-            groupSeparator: '',
-            decimalSeparator: '.',
-          })
+        amountBnt.toFormat(bntToken.decimals, BigNumber.ROUND_UP, {
+          groupSeparator: '',
+          decimalSeparator: '.',
+        })
       );
+      setAmountBntUsd(amountBnt.times(bntToken.usdPrice!).toString());
     }
   };
 
@@ -162,6 +163,8 @@ export const AddProtectionDoubleLiq = (
   ) {
     return <div>Loading...</div>;
   }
+
+  console.log({ amountBnt, amountBntUsd }, 'derp');
 
   return (
     (
