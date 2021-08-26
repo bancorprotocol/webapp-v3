@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
-import wait from 'waait';
 import { Image } from 'components/image/Image';
 import { Pool } from 'services/api/bancor';
-import { createListPool, ListPool } from 'utils/pureFunctions';
+import { createListPool, ListPool, wait } from 'utils/pureFunctions';
 
 interface SearchablePoolListProps {
   onClick: (pool: ListPool) => void;

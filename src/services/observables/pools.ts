@@ -30,11 +30,15 @@ import {
 } from 'services/web3/contracts/converterRegistry/wrapper';
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
-import { findOrThrow, mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
+import {
+  findOrThrow,
+  mapIgnoreThrown,
+  updateArray,
+  wait,
+} from 'utils/pureFunctions';
 import { getRateByPath } from 'services/web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
-import wait from 'waait';
 import { fetchWhiteListedV1Pools } from 'services/web3/contracts/liquidityProtectionSettings/wrapper';
 import { expandToken, shrinkToken } from 'utils/formulas';
 
