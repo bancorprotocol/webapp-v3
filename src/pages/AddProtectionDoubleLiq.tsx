@@ -4,39 +4,13 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { useAppSelector } from 'redux/index';
-import {
-  addNotification,
-  NotificationType,
-} from 'redux/notification/notification';
 import { Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { loadSwapData } from 'services/observables/triggers';
-import { getNetworkContractApproval } from 'services/web3/approval';
 import { isAddress } from 'web3-utils';
-import { openWalletModal } from 'redux/user/user';
-import {
-  bntTokenAddress$,
-  govTokenAddress$,
-  liquidityProtection$,
-} from 'services/observables/contracts';
-import { first } from 'rxjs/operators';
-import { expandToken, shrinkToken } from 'utils/formulas';
-import { bntToken, ethToken } from 'services/web3/config';
-import { createListPool } from 'utils/pureFunctions';
-import {
-  addLiquidity,
-  getMaxStakes,
-} from 'services/web3/contracts/liquidityProtection/wrapper';
-import { onLogin$ } from 'services/observables/user';
-import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
-import { useAsyncEffect } from 'use-async-effect';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { Image } from 'components/image/Image';
-import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { BigNumber } from '@0x/utils';
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
