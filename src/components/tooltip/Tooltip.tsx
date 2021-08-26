@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { TooltipPanel } from './TooltipPanel';
-import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 import type * as PopperJS from '@popperjs/core';
 
 interface TooltipProps {
