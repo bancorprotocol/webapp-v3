@@ -58,6 +58,8 @@ export const TooltipPanel = ({
   useEffect(() => {
     if (targetRef.current) {
       targetRef.current.onclick = () => setVisible(!isVisible);
+      targetRef.current.onmouseenter = () => setVisible(true);
+      targetRef.current.onmouseleave = () => setVisible(false);
     }
     if (isVisible) {
       document.addEventListener('mousedown', handleClickOutside);
