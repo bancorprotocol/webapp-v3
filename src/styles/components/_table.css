@@ -30,7 +30,7 @@
     }
 
     .table-sticky-cell {
-        @apply first:sticky first:left-0 first:z-30;
+        @apply first:sticky first:left-0 first:z-20;
     }
 
     .table-sticky-column thead th,
