@@ -11,10 +11,19 @@ import { isAddress } from 'web3-utils';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { fetchPoolReserveBalances } from 'services/web3/contracts/converter/wrapper';
+import {
+  fetchPoolReserveBalances,
+  getTokenContractApproval,
+} from 'services/web3/contracts/converter/wrapper';
 import { partitionPair } from 'utils/pureFunctions';
 import { BigNumber } from 'bignumber.js';
 import { useInterval } from 'hooks/useInterval';
+import { getNetworkContractApproval } from 'services/web3/approval';
+import { TokenAndAmount } from 'services/web3/types';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
@@ -43,15 +52,19 @@ export const AddProtectionDoubleLiq = (
   useEffect(() => {
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
   }, [pools, anchor]);
+
   const bntToken =
-    tokens &&
-    tokens.length > 0 &&
-    tokens.find((token) => token.symbol === 'BNT');
+    (tokens &&
+      tokens.length > 0 &&
+      tokens.find((token) => token.symbol === 'BNT')) ||
+    false;
+
   const tknTokenAddress =
     bntToken &&
     selectedPool?.reserves.find(
       (reserve) => reserve.address !== bntToken.address
     )?.address;
+
   const tknToken =
     (bntToken &&
       tknTokenAddress &&
@@ -129,28 +142,58 @@ export const AddProtectionDoubleLiq = (
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [showBntModal, setShowBntModal] = useState(false);
+  const [showTknModal, setShowTknModal] = useState(false);
+
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
   const checkApproval = async () => {
-    // try {
-    //   const isApprovalReq = await getNetworkContractApproval(
-    //     selectedToken!,
-    //     amount
-    //   );
-    //   if (isApprovalReq) {
-    //     setShowModal(true);
-    //   } else await addProtection(true);
-    // } catch (e) {
-    //   dispatch(
-    //     addNotification({
-    //       type: NotificationType.error,
-    //       title: 'Transaction Failed',
-    //       msg: `${
-    //         selectedToken!.symbol
-    //       } approval had failed. Please try again or contact support.`,
-    //     })
-    //   );
-    // }
+    if (tknToken && bntToken && selectedPool) {
+      const tokensAndAmounts: TokenAndAmount[] = [
+        { decAmount: amountTkn, token: tknToken },
+        { decAmount: amountBnt, token: bntToken },
+      ];
+
+      try {
+        const approvalsRequired = await Promise.all(
+          tokensAndAmounts.map(async ({ token, decAmount }) => ({
+            token,
+            decAmount,
+            isApprovalRequired: await getTokenContractApproval(
+              token,
+              decAmount,
+              selectedPool.converter_dlt_id
+            ),
+          }))
+        );
+
+        const remainingApproval = approvalsRequired.find(
+          (approval) => approval.isApprovalRequired
+        );
+
+        if (remainingApproval) {
+          remainingApproval.token.symbol === 'BNT'
+            ? setShowBntModal(true)
+            : setShowTknModal(true);
+        } else {
+          await addLiquidity();
+        }
+      } catch (e) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `${tokensAndAmounts
+              .map((token) => token.token.symbol)
+              .join(
+                ' '
+              )} approval had failed. Please try again or contact support.`,
+          })
+        );
+      }
+    } else {
+      throw new Error(`Failed to finds tokens,`);
+    }
   };
 
   const addLiquidity = async (approvalRequired: boolean = false) => {};
@@ -170,11 +213,19 @@ export const AddProtectionDoubleLiq = (
     (
       <div className="widget">
         <ModalApprove
-          isOpen={showModal}
-          setIsOpen={setShowModal}
-          amount={'amount'}
+          isOpen={showBntModal}
+          setIsOpen={setShowBntModal}
+          amount={amountBnt}
+          fromToken={bntToken! as Token}
+          handleApproved={() => checkApproval()}
+          waitForApproval={true}
+        />
+        <ModalApprove
+          isOpen={showTknModal}
+          setIsOpen={setShowTknModal}
+          amount={amountTkn}
           fromToken={tknToken! as Token}
-          handleApproved={() => addLiquidity(true)}
+          handleApproved={() => checkApproval()}
           waitForApproval={true}
         />
         <div className="flex justify-between p-14">

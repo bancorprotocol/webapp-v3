@@ -1,3 +1,4 @@
+import { Token } from 'services/observables/tokens';
 import { Contract } from 'web3-eth-contract';
 
 export type EthAddress = string;
@@ -32,4 +33,9 @@ export interface MinimalPool {
   anchorAddress: string;
   converterAddress: string;
   reserves: string[];
+}
+
+export interface TokenAndAmount {
+  decAmount: string;
+  token: Token;
 }

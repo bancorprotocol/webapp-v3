@@ -18,7 +18,7 @@ interface GetApprovalReturn {
   isApprovalRequired: boolean;
 }
 
-const getApproval = async (
+export const getApproval = async (
   token: string,
   user: string,
   spender: string,
