@@ -1,4 +1,5 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
+import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
@@ -373,7 +374,10 @@ export const SwapMarket = ({
                   )}
                 </div>
                 <div className="flex justify-between">
-                  <span>Price Impact</span>
+                  <div className="flex items-center">
+                    <span className="mr-5">Price Impact</span>
+                    <Tooltip content="The difference between market price and estimated price due to trade size" />
+                  </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[80px]"></div>
                   ) : (
