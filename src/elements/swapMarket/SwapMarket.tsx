@@ -75,6 +75,11 @@ export const SwapMarket = ({
   ) => {
     setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    if (rate === '' && priceImpact === '') {
+      setRate(res.rate);
+      if (amount) setPriceImpact(res.priceImpact);
+      else setPriceImpact('0.00');
+    }
     setIsLoadingRate(false);
     return res;
   };
