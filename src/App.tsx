@@ -125,7 +125,12 @@ export const App = () => {
         >
           <main className={`max-w-[1400px] mx-auto`}>
             <Switch>
-              <Route exact strict path="/" component={Swap} />
+              <Route
+                exact
+                strict
+                path={['/', '/:from?/:to?']}
+                component={Swap}
+              />
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
               <Route exact strict path="/portfolio" component={Portfolio} />
