@@ -157,7 +157,7 @@ export const Vote = () => {
         />
 
         <div className="flex flex-col md:flex-row md:col-span-2 md:items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20 mb-20">
-          <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
+          <div className="flex flex-col max-w-[520px] min-h-[170px] p-24">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Unstake from Governance
             </div>
@@ -184,8 +184,8 @@ export const Vote = () => {
               {unstakeTime !== 0 && formatTime(unstakeTime)} Unstake Tokens
             </button>
           </div>
-          <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 mx-10" />
-          <div className="flex flex-col max-w-[525px] min-h-[170px] p-24">
+          <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 ml-2" />
+          <div className="flex flex-col max-w-[525px] min-h-[170px] py-24 pl-24 md:pl-8">
             <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
               Legacy onchain contract
             </div>
@@ -197,7 +197,7 @@ export const Vote = () => {
             <a
               href="https://app.bancor.network/eth/vote-legacy/"
               target="_blank"
-              className="flex items-center text-12 text-primary dark:text-primary-light font-medium underline"
+              className="flex items-center text-primary dark:text-primary-light font-medium"
               rel="noreferrer"
             >
               View Legacy Gov <IconLink className="w-14 ml-6" />
