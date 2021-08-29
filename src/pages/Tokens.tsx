@@ -12,7 +12,7 @@ export const Tokens = () => {
   }, [dispatch]);
 
   return (
-    <div className="space-y-30">
+    <div className="space-y-30 max-w-[1140px] mx-auto">
       <TopMovers />
       <TokenTable />
     </div>
