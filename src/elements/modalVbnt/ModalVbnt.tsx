@@ -56,7 +56,9 @@ export const ModalVbnt = ({
   useEffect(() => {
     if (amount && fieldBlance) {
       const percentage = (Number(amount) / Number(fieldBlance)) * 100;
-      setSelPercentage(percentages.findIndex((x) => percentage === x));
+      setSelPercentage(
+        percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
+      );
     }
   }, [amount, token, percentages, fieldBlance]);
 
@@ -99,6 +101,8 @@ export const ModalVbnt = ({
     dispatch(updateTokens(balances));
     if (onCompleted) onCompleted();
   };
+
+  const isStakeDisabled = () => !token || !amount || Number(amount) === 0;
 
   return (
     <>
@@ -162,6 +166,7 @@ export const ModalVbnt = ({
             </div>
             <button
               onClick={() => handleStake()}
+              disabled={isStakeDisabled()}
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >
               {`${stake ? 'Stake' : 'Unstake'} vBNT`}

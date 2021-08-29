@@ -4,7 +4,9 @@ import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useInterval } from 'hooks/useInterval';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'redux/index';
+import { openWalletModal } from 'redux/user/user';
 import { Token } from 'services/observables/tokens';
 import { getNetworkVariables } from 'services/web3/config';
 import {
@@ -59,6 +61,7 @@ export const Vote = () => {
   const [unstakeTime, setUnstakeTime] = useState<number>(0);
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const networkVars = getNetworkVariables(
@@ -77,7 +80,7 @@ export const Vote = () => {
       setStakeAmount(stakedAmount);
     } else {
       setUnstakeTime(0);
-      setStakeAmount('0');
+      setStakeAmount(undefined);
     }
   }, [account, govToken]);
 
@@ -106,15 +109,22 @@ export const Vote = () => {
           content="In order to participate in Bancor governance activities, you should first stake your vBNT tokens."
           button="Stake Tokens"
           onClick={() => {
+            if (!account) {
+              dispatch(openWalletModal(true));
+              return;
+            }
+
             setIsStake(true);
             setStakeModal(true);
           }}
           footer={
             <div className="grid grid-cols-2 text-grey-4 dark:text-grey-0">
               <div>
-                {govToken ? (
+                {!account || (govToken && govToken.balance) ? (
                   <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
-                    {prettifyNumber(govToken.balance ?? 0)} {govToken.symbol}
+                    {govToken && govToken.balance
+                      ? `${prettifyNumber(govToken.balance)} ${govToken.symbol}`
+                      : '--'}
                   </div>
                 ) : (
                   <div className="loading-skeleton h-[24px] w-[140px] mb-4" />
@@ -122,9 +132,11 @@ export const Vote = () => {
                 Unstaked Balance
               </div>
               <div>
-                {govToken ? (
+                {!account || stakeAmount ? (
                   <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
-                    {prettifyNumber(stakeAmount ?? 0)} {govToken.symbol}
+                    {stakeAmount && govToken
+                      ? `${prettifyNumber(stakeAmount)} ${govToken.symbol}`
+                      : '--'}
                   </div>
                 ) : (
                   <div className="loading-skeleton h-[24px] w-[140px] mb-4" />
