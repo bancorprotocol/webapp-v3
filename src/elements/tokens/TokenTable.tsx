@@ -136,7 +136,7 @@ export const TokenTable = () => {
           return (
             <LineChartSimple
               data={convertChartData(sanitized)}
-              color={changePositive ? '#0ED3B0' : '#FF3F56'}
+              color={changePositive ? '#0FC7A6' : '#FF3F56'}
             />
           );
         },

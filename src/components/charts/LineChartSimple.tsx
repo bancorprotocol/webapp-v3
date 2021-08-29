@@ -50,7 +50,7 @@ const chartOptDefault: DeepPartial<ChartOptions> = {
   handleScale: false,
 };
 
-const sizeDefault = { width: 160, height: 31 };
+const sizeDefault = { width: 160, height: 50 };
 
 interface LineChartSimpleProps {
   data: LineData[];

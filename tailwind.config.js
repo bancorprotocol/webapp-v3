@@ -42,14 +42,14 @@ module.exports = {
       },
 
       success: {
-        DEFAULT: '#0ED3B0',
+        DEFAULT: '#0FC7A6',
         50: '#f3fdfb',
         100: '#e7fbf7',
         200: '#c3f4eb',
         300: '#9feddf',
         400: '#56e0c8',
         500: '#0ED3B0',
-        600: '#0dbe9e',
+        600: '#0FC7A6',
         700: '#0b9e84',
         800: '#087f6a',
         900: '#076756',
