@@ -35,12 +35,12 @@ export const Insight = ({
     <div
       onTransitionEnd={() => setShow(isExpanded)}
       className={`hidden 2xl:block widget-large mx-auto overflow-hidden transition-all duration-500 ease-in-out ${
-        isExpanded ? 'max-w-full h-[583px] w-[780px]' : 'w-[57px] h-[57px]'
+        isExpanded ? 'max-w-full h-[583px] w-[780px]' : 'w-[65px] h-[65px]'
       }`}
     >
       <div
-        className={`flex justify-between items-center my-15 ${
-          isExpanded ? 'mx-24' : 'mx-20'
+        className={`flex justify-between items-center ${
+          isExpanded ? 'mb-16 mx-24 mt-[26px]' : 'mx-24 my-20'
         }`}
       >
         <div className="flex items-center transition-none">
@@ -55,7 +55,7 @@ export const Insight = ({
           </button>
           <div
             className={`text-20 font-semibold ${
-              isExpanded ? 'ml-10 my-5' : 'ml-30'
+              isExpanded ? 'ml-10' : 'ml-30'
             }`}
           >
             Insights
