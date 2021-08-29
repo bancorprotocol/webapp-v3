@@ -31,6 +31,7 @@ import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
 import useAsyncEffect from 'use-async-effect';
+import { useCallback } from 'react';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -68,21 +69,20 @@ export const SwapMarket = ({
     (state) => state.user.slippageTolerance
   );
 
-  const loadRateAndPriceImapct = async (
-    fromToken: Token,
-    toToken: Token,
-    amount: string
-  ) => {
-    setIsLoadingRate(true);
-    const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-    if (rate === '' && priceImpact === '') {
-      setRate(res.rate);
-      if (amount) setPriceImpact(res.priceImpact);
-      else setPriceImpact('0.00');
-    }
-    setIsLoadingRate(false);
-    return res;
-  };
+  const loadRateAndPriceImapct = useCallback(
+    async (fromToken: Token, toToken: Token, amount: string) => {
+      setIsLoadingRate(true);
+      const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+      if (rate === '' && priceImpact === '') {
+        setRate(res.rate);
+        if (amount) setPriceImpact(res.priceImpact);
+        else setPriceImpact('0.00');
+      }
+      setIsLoadingRate(false);
+      return res;
+    },
+    [priceImpact, rate]
+  );
 
   useInterval(() => {
     if (toToken && fromToken) {
@@ -130,7 +130,7 @@ export const SwapMarket = ({
 
   useEffect(() => {
     if (toToken) loadRateAndPriceImapct(fromToken, toToken, '1');
-  }, [fromToken, toToken]);
+  }, [fromToken, toToken, loadRateAndPriceImapct]);
 
   useEffect(() => {
     if (toToken && toToken.address === wethToken) setToToken(undefined);
