@@ -35,7 +35,7 @@ const VoteCard = ({
   return (
     <div className="flex flex-col bg-white dark:bg-blue-4 max-w-[535px] min-h-[325px] px-30 pt-30 pb-[22px] shadow hover:shadow-lg dark:shadow-none rounded-20">
       <div className="flex text-20 font-semibold mb-18">
-        <div className="text-primary-dark dark:text-primary-light mr-12">{`Step ${step}`}</div>
+        <div className="text-primary dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
       </div>
       <div className="text-14 text-grey-4 dark:text-grey-0 mb-auto">

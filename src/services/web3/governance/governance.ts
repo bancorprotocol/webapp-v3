@@ -24,7 +24,8 @@ export const getStakedAmount = async (
 export const stakeAmount = async (
   amount: string,
   user: string,
-  govToken: Token
+  govToken: Token,
+  onConfirmation?: (hash: string) => void
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -39,6 +40,7 @@ export const stakeAmount = async (
       tx: govContract.methods.stake(expandedAmount),
       user,
       resolveImmediately: true,
+      onConfirmation,
     });
     return {
       type: NotificationType.pending,
@@ -71,7 +73,8 @@ export const stakeAmount = async (
 export const unstakeAmount = async (
   amount: string,
   user: string,
-  govToken: Token
+  govToken: Token,
+  onConfirmation?: (hash: string) => void
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -86,6 +89,7 @@ export const unstakeAmount = async (
       tx: govContract.methods.unstake(expandedAmount),
       user,
       resolveImmediately: true,
+      onConfirmation,
     });
     return {
       type: NotificationType.pending,

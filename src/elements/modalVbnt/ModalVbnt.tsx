@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { updateTokens } from 'redux/bancor/bancor';
+import { EthNetworks } from 'services/web3/types';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -93,10 +94,29 @@ export const ModalVbnt = ({
     setAmount('');
     setIsOpen(false);
     if (stake)
-      dispatch(addNotification(await stakeAmount(amount, account, token)));
-    else dispatch(addNotification(await unstakeAmount(amount, account, token)));
+      dispatch(
+        addNotification(
+          await stakeAmount(amount, account, token, (_) =>
+            refreshBalances(token, account, chainId)
+          )
+        )
+      );
+    else
+      dispatch(
+        addNotification(
+          await unstakeAmount(amount, account, token, (_) =>
+            refreshBalances(token, account, chainId)
+          )
+        )
+      );
+  };
 
-    await wait(4000);
+  const refreshBalances = async (
+    token: Token,
+    account: string,
+    chainId: EthNetworks
+  ) => {
+    await wait(8000);
     const balances = await fetchTokenBalances([token], account, chainId);
     dispatch(updateTokens(balances));
     if (onCompleted) onCompleted();
