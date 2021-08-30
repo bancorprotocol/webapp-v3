@@ -69,7 +69,7 @@ export const TokenTable = () => {
         Header: () => (
           <>
             <span className="align-middle inline-flex items-center ml-2">
-              <IconProtected className="w-15 mr-20" /> <span>Name</span>
+              <IconProtected className="w-18 mr-20" /> <span>Name</span>
             </span>
           </>
         ),
