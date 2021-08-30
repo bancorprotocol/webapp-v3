@@ -1,9 +1,6 @@
 import { CallReturn } from 'eth-multicall';
 import { ContractMethods } from 'services/web3/types';
-import Web3 from 'web3';
-import { buildContract, writeWeb3 } from '..';
-import { ABIBancorGovernance } from '../governance/abi';
-import { Proposal } from '../governance/wrapper';
+import { buildContract, writeWeb3 } from 'services/web3/contracts';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ABIWethToken } from './abi';
 
@@ -32,27 +29,3 @@ export const buildWethContract = (
   contractAddress?: string
 ): ContractMethods<WethContractType> =>
   buildContract(ABIWethToken, contractAddress, writeWeb3);
-
-export const buildGovernanceContract = (
-  contractAddress?: string,
-  web3?: Web3
-) =>
-  buildContract<{
-    voteDuration: () => CallReturn<string>;
-    voteLockDuration: () => CallReturn<string>;
-    voteLockFraction: () => CallReturn<string>;
-    newProposalMinimum: () => CallReturn<string>;
-    propose: (executor: string, hash: string) => ContractSendMethod;
-    voteFor: (proposalId: string) => ContractSendMethod;
-    voteAgainst: (proposalId: string) => ContractSendMethod;
-    stake: (amount: string) => ContractSendMethod;
-    unstake: (amount: string) => ContractSendMethod;
-    decimals: () => CallReturn<string>;
-    proposalCount: () => CallReturn<number>;
-    proposals: (proposalI: number) => CallReturn<Proposal>;
-    votesOf: (voter: string) => CallReturn<string>;
-    votesForOf: (voter: string, proposalId: number) => CallReturn<string>;
-    votesAgainstOf: (voter: string, proposalId: number) => CallReturn<string>;
-    voteLocks: (voter: string) => CallReturn<string>;
-    govToken: () => CallReturn<string>;
-  }>(ABIBancorGovernance, contractAddress, web3);

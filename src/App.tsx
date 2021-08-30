@@ -8,7 +8,6 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
 import { Pools } from 'pages/Pools';
 import { Portfolio } from 'pages/Portfolio';
-import { Governance } from 'pages/Governance';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
@@ -129,7 +128,6 @@ export const App = () => {
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
               <Route exact strict path="/portfolio" component={Portfolio} />
-              <Route exact strict path="/governance" component={Governance} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
               <Route component={NotFound} />

@@ -23,6 +23,7 @@ interface ModalApproveProps {
   fromToken?: Token;
   handleApproved: Function;
   waitForApproval?: boolean;
+  contract?: string;
 }
 
 export const ModalApprove = ({
@@ -32,6 +33,7 @@ export const ModalApprove = ({
   fromToken,
   handleApproved,
   waitForApproval,
+  contract,
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
@@ -47,7 +49,11 @@ export const ModalApprove = ({
         ...conversion,
         conversion_unlimited: amount ? 'Limited' : 'Unlimited',
       });
-      const txHash = await setNetworkContractApproval(fromToken, amount);
+      const txHash = await setNetworkContractApproval(
+        fromToken,
+        amount,
+        contract
+      );
       dispatch(
         addNotification({
           type: NotificationType.pending,

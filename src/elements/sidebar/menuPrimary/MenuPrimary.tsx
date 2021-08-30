@@ -43,15 +43,15 @@ const menu: MenuItem[] = [
   //     { label: 'Pools', to: '/pools' },
   //   ],
   // },
-  // {
-  //   label: 'DAO',
-  //   to: '/governance',
-  //   icon: <IconVote />,
-  //   subMenu: [
-  //     { label: 'Governance', to: '/governance' },
-  //     { label: 'Vote', to: '/vote' },
-  //   ],
-  // },
+  {
+    label: 'DAO',
+    to: '/vote',
+    icon: <IconVote />,
+    subMenu: [
+      { label: 'Vote', to: '/vote' },
+      { label: 'Governance', to: 'https://gov.bancor.network' },
+    ],
+  },
   {
     label: 'Fiat',
     to: '/fiat',
