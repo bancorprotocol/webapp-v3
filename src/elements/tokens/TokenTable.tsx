@@ -160,7 +160,7 @@ export const TokenTable = () => {
 
   return (
     <section className="content-section pt-20 pb-10">
-      <div className="flex justify-between items-center mb-20 mx-20">
+      <div className="flex justify-between items-center mb-20 mx-[44px]">
         <h2>Tokens</h2>
         <div className="relative">
           <IconSearch className="absolute w-16 ml-14 text-grey-3" />

@@ -14,7 +14,7 @@
     }
 
     .table-responsive thead th {
-        @apply font-normal first:pl-20 last:pr-20 bg-grey-2 dark:bg-blue-1;
+        @apply font-normal first:pl-[44px] last:pr-[44px] bg-grey-2 dark:bg-blue-1;
     }
 
     .table-responsive tbody tr {
@@ -26,7 +26,7 @@
     }
 
     .table-responsive tbody td {
-        @apply h-[70px] first:pl-20 last:pr-20 bg-white dark:bg-blue-4;
+        @apply h-[70px] first:pl-[44px] last:pr-[44px] bg-white dark:bg-blue-4;
     }
 
     .table-sticky-cell {
