@@ -93,7 +93,6 @@ export const AddProtectionDouble = (
   }, [pools, anchor]);
 
   const [showModal, setShowModal] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const bntToken =
     tokens &&
@@ -194,7 +193,7 @@ export const AddProtectionDouble = (
             <h1 className="font-bold">Add Liquidity </h1>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => {}}
             className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <IconTimes className="w-14" />
