@@ -30,7 +30,7 @@
     }
 
     .table-responsive tbody td {
-        @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px];
+        @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-blue-4;
     }
 
     .table-sticky-cell {
@@ -42,7 +42,7 @@
         @apply table-sticky-cell;
     }
 
-    .table-responsive tbody td table tr {
+    .table-responsive tbody td table tr, .table-responsive tbody td table td {
         @apply bg-opacity-0 dark:bg-opacity-0;
     }
 }

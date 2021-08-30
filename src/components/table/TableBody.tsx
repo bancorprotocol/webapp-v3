@@ -16,9 +16,16 @@ export const TableBody = <D extends object>({
       {page.map((row, i) => {
         prepareRow(row);
         return (
-          <tr {...row.getRowProps()}>
+          <tr {...row.getRowProps()} className="group">
             {row.cells.map((cell) => {
-              return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
+              return (
+                <td
+                  {...cell.getCellProps()}
+                  className="group-hover:bg-blue-0 dark:group-hover:bg-blue-2"
+                >
+                  {cell.render('Cell')}
+                </td>
+              );
             })}
           </tr>
         );
