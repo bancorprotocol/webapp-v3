@@ -36,11 +36,12 @@ export const TokenTable = () => {
   const CellName = (token: Token) => {
     return (
       <div className={'flex items-center'}>
-        <IconProtected
-          className={`w-18 h-20 ${
-            token.isWhitelisted ? 'text-primary' : 'text-grey-3'
-          }`}
-        />
+        <div className="w-18">
+          {token.isWhitelisted && (
+            <IconProtected className={`w-18 h-20 text-primary`} />
+          )}
+        </div>
+
         <Image
           src={token.logoURI}
           alt="Token"
