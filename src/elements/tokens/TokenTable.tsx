@@ -144,7 +144,10 @@ export const TokenTable = () => {
         id: 'actions',
         Header: '',
         accessor: () => (
-          <NavLink to="/" className="btn-primary btn-sm rounded-[12px]">
+          <NavLink
+            to="/"
+            className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
+          >
             Trade
           </NavLink>
         ),
