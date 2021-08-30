@@ -82,7 +82,6 @@ export const TokenTable = () => {
         Header: 'Price',
         accessor: 'usdPrice',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
-        tooltip: 'Some awesome text here',
         minWidth: 110,
       },
       {
@@ -99,7 +98,6 @@ export const TokenTable = () => {
             </div>
           );
         },
-        tooltip: 'Some awesome text here',
         minWidth: 110,
       },
       {
@@ -107,7 +105,6 @@ export const TokenTable = () => {
         Header: '24h Volume',
         accessor: 'usd_volume_24',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
-        tooltip: 'Some awesome text here',
         minWidth: 120,
       },
       {
@@ -115,7 +112,7 @@ export const TokenTable = () => {
         Header: 'Liquidity',
         accessor: 'liquidity',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
-        tooltip: 'Some awesome text here',
+        tooltip: 'The value of tokens staked in the pool',
         minWidth: 150,
       },
       {
@@ -140,7 +137,6 @@ export const TokenTable = () => {
             />
           );
         },
-        tooltip: 'Some awesome text here',
         minWidth: 170,
         disableSortBy: true,
       },
