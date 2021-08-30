@@ -20,7 +20,7 @@ export const TopMovers = () => {
                 return (
                   <div
                     key={token.address}
-                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-content dark:shadow-none"
+                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
                     <img
                       src={token.logoURI.replace('thumb', 'small')}
