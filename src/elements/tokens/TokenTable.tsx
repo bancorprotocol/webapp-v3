@@ -167,13 +167,13 @@ export const TokenTable = () => {
       <div className="flex justify-between items-center mb-20 mx-20">
         <h2>Tokens</h2>
         <div className="relative">
-          <IconSearch className="absolute w-12 ml-10 text-grey-3" />
+          <IconSearch className="absolute w-16 ml-14 text-grey-3" />
           <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search"
-            className="block w-full border border-grey-3 rounded-10 pl-30 h-28 focus:outline-none focus:border-primary"
+            className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
           />
         </div>
       </div>
