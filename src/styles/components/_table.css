@@ -25,8 +25,12 @@
         @apply relative;
     }
 
+    .table-responsive tbody tr {
+        @apply bg-white dark:bg-blue-4 hover:bg-blue-0 dark:hover:bg-blue-2;
+    }
+
     .table-responsive tbody td {
-        @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-blue-4;
+        @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px];
     }
 
     .table-sticky-cell {
@@ -36,5 +40,9 @@
     .table-sticky-column thead th,
     .table-sticky-column tbody td {
         @apply table-sticky-cell;
+    }
+
+    .table-responsive tbody td table tr {
+        @apply bg-opacity-0 dark:bg-opacity-0;
     }
 }

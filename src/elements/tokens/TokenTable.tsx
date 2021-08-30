@@ -68,7 +68,7 @@ export const TokenTable = () => {
         id: 'name',
         Header: () => (
           <>
-            <span className="align-middle inline-flex items-center ml-2">
+            <span className="align-middle inline-flex items-center">
               <IconProtected className="w-18 mr-20" /> <span>Name</span>
             </span>
           </>
