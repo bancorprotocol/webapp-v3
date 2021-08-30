@@ -1,5 +1,6 @@
-import { APIToken } from 'services/api/bancor';
+import { APIToken, Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
+import { calculatePercentageChange } from 'utils/formulas';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {
@@ -31,12 +32,28 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
     rate: eth ? eth.rate : { usd: null },
     rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
     decimals: eth ? eth.decimals : 18,
+    rates_7d: eth ? eth.rates_7d : [],
   };
 };
 
-export const getEthToken = (apiTokens: APIToken[]): Token | null => {
+export const getEthToken = (
+  apiTokens: APIToken[],
+  pools: Pool[]
+): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
-  if (eth)
+  if (eth) {
+    const price = eth.rate.usd;
+    const price_24h = eth.rate_24h_ago.usd;
+    const priceChanged =
+      price && price_24h && Number(price_24h) !== 0
+        ? calculatePercentageChange(Number(price), Number(price_24h))
+        : 0;
+    const pool = pools.find((p) =>
+      p.reserves.find((r) => r.address === eth.dlt_id)
+    );
+    const usdVolume24 = pool ? pool.volume_24h.usd : null;
+    const isWhitelisted = pool ? pool.isWhitelisted : false;
+
     return {
       address: eth.dlt_id,
       logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
@@ -45,8 +62,15 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       balance: null,
       symbol: eth.symbol,
       decimals: eth.decimals,
-      usdPrice: eth.rate.usd,
+      usdPrice: price,
+      liquidity: eth.liquidity.usd,
+      usd_24h_ago: price_24h,
+      price_change_24: priceChanged,
+      price_history_7d: eth.rates_7d,
+      usd_volume_24: usdVolume24,
+      isWhitelisted,
     };
+  }
 
   return null;
 };

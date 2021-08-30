@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getTokenLogoURI, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -167,7 +167,7 @@ export const TokenInputField = ({
             {token ? (
               <>
                 <Image
-                  src={getTokenLogoURI(token)}
+                  src={token.logoURI}
                   alt="Token"
                   className="bg-grey-2 rounded-full h-28 w-28"
                 />

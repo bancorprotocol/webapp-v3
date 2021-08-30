@@ -31,7 +31,7 @@ const menu: MenuItem[] = [
     icon: <IconSync />,
     subMenu: [
       { label: 'Swap', to: '/' },
-      // { label: 'Tokens', to: '/tokens' },
+      { label: 'Tokens', to: '/tokens' },
     ],
   },
   // {

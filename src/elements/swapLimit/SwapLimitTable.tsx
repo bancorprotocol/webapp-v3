@@ -6,7 +6,7 @@ import { useInterval } from 'hooks/useInterval';
 import { cancelOrders, getOrders, LimitOrder } from 'services/api/keeperDao';
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { getTokenLogoURI, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 import { useAppSelector } from 'redux/index';
@@ -116,7 +116,7 @@ export const SwapLimitTable = () => {
                   <td>
                     <div className={'flex items-center'}>
                       <Image
-                        src={getTokenLogoURI(order.payToken)}
+                        src={order.payToken.logoURI}
                         alt="Token"
                         className="bg-grey-2 rounded-full h-28 w-28 mr-5"
                       />
@@ -126,7 +126,7 @@ export const SwapLimitTable = () => {
                   <td>
                     <div className={'flex items-center'}>
                       <Image
-                        src={getTokenLogoURI(order.getToken)}
+                        src={order.getToken.logoURI}
                         alt="Token"
                         className="bg-grey-2 rounded-full h-28 w-28 mr-5"
                       />

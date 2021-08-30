@@ -13,6 +13,7 @@ import {
   share,
   shareReplay,
   startWith,
+  switchMap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';

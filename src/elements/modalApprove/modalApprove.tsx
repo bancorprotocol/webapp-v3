@@ -105,9 +105,7 @@ export const ModalApprove = ({
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
             <IconLock className="w-[22px] text-white" />
           </div>
-          <h2 className="text-20 font-semibold mb-8">
-            Approve {fromToken.symbol}
-          </h2>
+          <h2 className="text-20 mb-8">Approve {fromToken.symbol}</h2>
           <p className="text-center text-grey-5">
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.
