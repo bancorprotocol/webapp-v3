@@ -33,7 +33,10 @@ import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg'
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from 'bignumber.js';
+
+const calculateRate = (from: string | number, to: string | number): string =>
+  new BigNumber(from).div(to).toString();
 
 export const AddProtectionDouble = (
   props: RouteComponentProps<{ anchor: string }>
@@ -48,6 +51,23 @@ export const AddProtectionDouble = (
   const [amountBntUsd, setAmountBntUsd] = useState('');
   const [amountTknUsd, setAmountTknUsd] = useState('');
 
+  const [bntToTknRate, setBntToTknRate] = useState('');
+  const [tknToBntRate, setTknToBntRate] = useState('');
+
+  const [tknUsdPrice, setTknUsdPrice] = useState('');
+
+  const onTknUsdChange = (value: string) => {
+    setTknUsdPrice(value);
+
+    const tokenInputsAreValidNumbers = [amountBnt, amountTkn].every(
+      (amount) => !new BigNumber(amount).isNaN()
+    );
+    if (tokenInputsAreValidNumbers) {
+      const rate = calculateRate(value, amountBntUsd);
+      setAmountTkn(new BigNumber(amountBnt).times(rate).toString());
+    }
+  };
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -57,8 +77,6 @@ export const AddProtectionDouble = (
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
-
-  const [tknUsdPrice, setTknUsdPrice] = useState<string | undefined>();
 
   const account = useAppSelector(
     (state) => state.bancor.user as string | undefined
@@ -81,6 +99,9 @@ export const AddProtectionDouble = (
     tokens &&
     tokens.length > 0 &&
     tokens.find((token) => token.symbol === 'BNT');
+
+  const bntUsdPrice = bntToken && Number(bntToken.usdPrice);
+
   const tknTokenAddress =
     bntToken &&
     selectedPool?.reserves.find(
@@ -92,11 +113,48 @@ export const AddProtectionDouble = (
       tokens.find((token) => token.address === tknTokenAddress)) ||
     false;
 
-  const bntToTknRate =
-    tknUsdPrice &&
-    bntToken &&
-    bntToken.usdPrice &&
-    new BigNumber(bntToken.usdPrice).div(tknUsdPrice).toFixed(6);
+  const modifiedTknToken: Token | false =
+    (tknToken && tknUsdPrice && { ...tknToken, usdPrice: tknUsdPrice }) ||
+    false;
+
+  useEffect(() => {
+    if (bntUsdPrice && tknUsdPrice) {
+      const bntToTknRate = calculateRate(bntUsdPrice, tknUsdPrice);
+      const tknToBntRate = calculateRate(tknUsdPrice, bntUsdPrice);
+
+      setBntToTknRate(bntToTknRate);
+      setTknToBntRate(tknToBntRate);
+    }
+  }, [bntUsdPrice, tknUsdPrice]);
+
+  const onBntChange = (value: string) => {
+    setAmountBnt(value);
+    if (tknToken) {
+      const amountTkn = new BigNumber(value).times(bntToTknRate);
+
+      setAmountTkn(
+        amountTkn.toFormat(tknToken.decimals, BigNumber.ROUND_UP, {
+          groupSeparator: '',
+          decimalSeparator: '.',
+        })
+      );
+      setAmountTknUsd(amountTkn.times(tknUsdPrice).toString());
+    }
+  };
+
+  const onTknChange = (value: string) => {
+    setAmountTkn(value);
+    if (bntToken) {
+      const amountBnt = new BigNumber(value).times(tknToBntRate);
+      setAmountBnt(
+        amountBnt.toFormat(bntToken.decimals, BigNumber.ROUND_UP, {
+          groupSeparator: '',
+          decimalSeparator: '.',
+        })
+      );
+      setAmountBntUsd(amountBnt.times(bntToken.usdPrice!).toString());
+    }
+  };
 
   const bntToTknRateToUsd =
     (bntToTknRate &&
@@ -175,7 +233,7 @@ export const AddProtectionDouble = (
                 className="border-blue-0 border-2 text-right rounded px-4 py-10"
                 type="text"
                 value={tknUsdPrice}
-                onChange={(e) => setTknUsdPrice(e.target.value)}
+                onChange={(e) => onTknUsdChange(e.target.value)}
               />
             </div>
           </div>
@@ -184,7 +242,8 @@ export const AddProtectionDouble = (
             {bntToken &&
               bntToken.usdPrice &&
               prettifyNumber(bntToken.usdPrice, true)}
-            ) = {bntToTknRate} ETH ({bntToTknRateToUsd})
+            ) = {new BigNumber(bntToTknRate).toFixed(6)} ETH (
+            {bntToTknRateToUsd})
           </div>
 
           <div className="rounded-lg bg-blue-0 rounded p-20">
@@ -193,10 +252,10 @@ export const AddProtectionDouble = (
                 2
               </div>
               <div className="text-grey-3">Enter stake amount</div>
-            </div>{' '}
+            </div>
             <div className="p-10">
               <TokenInputField
-                setInput={setAmountBnt}
+                setInput={onBntChange}
                 selectable={false}
                 input={amountBnt}
                 token={bntToken! as Token}
@@ -206,10 +265,10 @@ export const AddProtectionDouble = (
             </div>
             <div className="p-10">
               <TokenInputField
-                setInput={setAmountTkn}
+                setInput={onTknChange}
                 selectable={false}
                 input={amountTkn}
-                token={tknToken! as Token}
+                token={modifiedTknToken! as Token}
                 amountUsd={amountTknUsd}
                 setAmountUsd={setAmountTknUsd}
               />
