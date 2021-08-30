@@ -47,7 +47,7 @@ export const TokenTable = () => {
           alt="Token"
           className="bg-grey-2 rounded-full h-30 w-30 mr-10 ml-20"
         />
-        <h3>{token.symbol}</h3>
+        <h3 className="text-14">{token.symbol}</h3>
       </div>
     );
   };
@@ -157,7 +157,7 @@ export const TokenTable = () => {
   return (
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
-        <h2 className="text-14">Tokens</h2>
+        <h2>Tokens</h2>
         <div className="relative">
           <IconSearch className="absolute w-16 ml-14 text-grey-3" />
           <input
