@@ -53,7 +53,6 @@ export const Ticker = ({ id, children, speedMs = 60 }: TickerProps) => {
       else {
         setIsMomentumScrolling(false);
         setPause(false);
-        console.log('ended');
       }
     }, 250);
   };

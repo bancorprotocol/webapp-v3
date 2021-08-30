@@ -118,7 +118,6 @@ export const tokensNoBalance$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(
     async ([tokenList, apiTokens, pools, currentNetwork]) => {
-      console.log('pools', pools.length);
       const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map(
         (x) => {
           const usdPrice = x.rate.usd;
