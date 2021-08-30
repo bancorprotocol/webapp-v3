@@ -13,6 +13,7 @@ import {
   share,
   shareReplay,
   startWith,
+  switchMap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';
@@ -50,7 +51,7 @@ const zipAnchorAndConverters = (
 };
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
-  switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
+  switchMap(([networkVersion]) => getWelcomeData(networkVersion)),
   shareReplay(1)
 );
 

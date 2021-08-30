@@ -85,7 +85,10 @@ export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
     const res = await axios.get<TokenList>(list.uri);
-    return res.data;
+    return {
+      ...res.data,
+      logoURI: getLogoByURI(res.data.logoURI),
+    };
   })
 ).pipe(shareReplay(1));
 
@@ -118,7 +121,6 @@ export const tokensNoBalance$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(
     async ([tokenList, apiTokens, pools, currentNetwork]) => {
-      console.log('pools', pools.length);
       const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map(
         (x) => {
           const usdPrice = x.rate.usd;
@@ -157,11 +159,13 @@ export const tokensNoBalance$ = combineLatest([
           const found = tokenList.find(
             (userToken) => userToken.address === apiToken.address
           );
-          if (found)
+          if (found) {
             overlappingTokens.push({
               ...found,
               ...apiToken,
+              logoURI: getTokenLogoURI(found),
             });
+          }
         } else {
           if (apiToken.address !== ethToken)
             overlappingTokens.push({
@@ -208,12 +212,12 @@ export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
 
 const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
-export const getTokenLogoURI = (token: Token) =>
+const getTokenLogoURI = (token: Token) =>
   token.logoURI
     ? token.logoURI.startsWith('ipfs')
       ? buildIpfsUri(token.logoURI.split('//')[1])
       : token.logoURI
     : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
 
-export const getLogoByURI = (uri: string | undefined) =>
+const getLogoByURI = (uri: string | undefined) =>
   uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
