@@ -285,8 +285,8 @@ export const AddProtection = (
               <li>3. How does Bancor protect me from impermanent loss?</li>
             </ol>
           </div>
-          <div className="flex justify-between p-4">
-            <div className="text-blue-4 flex">
+          <div className="flex justify-between p-4 mt-8">
+            <div className="text-blue-4 flex ">
               <span className="m-auto dark:text-grey-0 ">Stake in pool</span>
             </div>
             <div
@@ -323,20 +323,22 @@ export const AddProtection = (
               </button>
             </div>
           </div>
-          <div></div>
-          <TokenInputField
-            setInput={setAmount}
-            selectable={true}
-            includedTokens={
-              selectedPool ? selectedPool.reserves.map((x) => x.address) : []
-            }
-            input={amount}
-            label="Stake Amount"
-            token={selectedToken!}
-            amountUsd={amountUsd}
-            setAmountUsd={setAmountUsd}
-            setToken={(token) => setToken(token)}
-          />
+          <div className="mb-12">
+            <TokenInputField
+              setInput={setAmount}
+              selectable={true}
+              border
+              includedTokens={
+                selectedPool ? selectedPool.reserves.map((x) => x.address) : []
+              }
+              input={amount}
+              label="Stake Amount"
+              token={selectedToken!}
+              amountUsd={amountUsd}
+              setAmountUsd={setAmountUsd}
+              setToken={(token) => setToken(token)}
+            />
+          </div>
 
           <SearchablePoolList
             includedPoolAnchors={[]}
