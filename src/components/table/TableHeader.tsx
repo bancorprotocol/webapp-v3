@@ -39,7 +39,9 @@ export const TableHeader = <D extends object>({
       return (
         <span className="inline-flex ml-5">
           <Tooltip
-            button={<IconInfo className="w-[15px] h-[15px]" />}
+            button={
+              <IconInfo className="w-[15px] h-[15px] text-grey-4 dark:text-grey-3" />
+            }
             content={found.tooltip}
           />
         </span>
