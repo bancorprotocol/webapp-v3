@@ -1,5 +1,6 @@
 import { HeaderGroup } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { TableColumn } from 'components/table/DataTable';
 import { Tooltip } from 'components/tooltip/Tooltip';
 
@@ -37,7 +38,10 @@ export const TableHeader = <D extends object>({
     if (found && found.tooltip)
       return (
         <span className="inline-flex ml-5">
-          <Tooltip content={found.tooltip} />
+          <Tooltip
+            button={<IconInfo className="w-[15px] h-[15px]" />}
+            content={found.tooltip}
+          />
         </span>
       );
   };
@@ -47,7 +51,7 @@ export const TableHeader = <D extends object>({
       <span className="inline-flex relative">
         {isSorted && (
           <IconChevronDown
-            className={`absolute bottom-[1px] w-10 h-6 ml-5 transition-transform duration-500 ${
+            className={`w-10 h-6 ml-5 transition-transform duration-500 ${
               isSortedDesc ? 'rotate-0' : 'rotate-180'
             }`}
           />
@@ -71,9 +75,11 @@ export const TableHeader = <D extends object>({
               )}
               title={undefined}
             >
-              {column.render('Header')}
-              {getTooltip(column.getHeaderProps().key as string)}
-              {getSortBy(column.isSorted, column.isSortedDesc)}
+              <div className="flex items-center">
+                {column.render('Header')}
+                {getTooltip(column.getHeaderProps().key as string)}
+                {getSortBy(column.isSorted, column.isSortedDesc)}
+              </div>
             </th>
           ))}
         </tr>
