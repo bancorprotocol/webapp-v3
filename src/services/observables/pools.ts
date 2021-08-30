@@ -4,7 +4,15 @@ import {
   APIToken,
   WelcomeData,
 } from 'services/api/bancor';
-import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
+import {
+  chunk,
+  isEqual,
+  partition,
+  uniq,
+  uniqBy,
+  uniqWith,
+  zip,
+} from 'lodash-es';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import {
   distinctUntilChanged,

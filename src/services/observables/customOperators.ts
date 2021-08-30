@@ -1,4 +1,4 @@
-import { differenceWith, isEqual } from 'lodash';
+import { differenceWith, isEqual } from 'lodash-es';
 import { combineLatest, Observable } from 'rxjs';
 import {
   distinctUntilChanged,

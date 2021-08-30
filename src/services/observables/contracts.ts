@@ -8,7 +8,7 @@ import {
   shareReplay,
   switchMap,
 } from 'rxjs/operators';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
 import {
   buildLiquidityProtectionContract,

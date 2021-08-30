@@ -3,7 +3,7 @@ import { EthNetworks } from 'services/web3/types';
 import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3/contracts';
-import { partition } from 'lodash';
+import { partition } from 'lodash-es';
 import { shrinkToken } from 'utils/formulas';
 
 interface TokenBalance {

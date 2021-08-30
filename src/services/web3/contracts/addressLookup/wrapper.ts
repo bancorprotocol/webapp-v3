@@ -3,7 +3,7 @@ import { CallReturn, MultiCall } from 'eth-multicall';
 import { asciiToHex } from 'web3-utils';
 import { ABIContractRegistry } from 'services/web3/contracts/addressLookup/abi';
 import { buildContract, web3 } from 'services/web3/contracts';
-import { toPairs } from 'lodash';
+import { toPairs } from 'lodash-es';
 import { EthNetworkVariables } from 'services/web3/config';
 
 export const buildAddressLookupContract = (contractAddress: string) =>
