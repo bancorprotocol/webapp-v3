@@ -6,21 +6,27 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 interface ModalProps {
   title?: string;
   children: JSX.Element;
+  separator?: boolean;
+  titleElement?: any;
   setIsOpen: Function;
   isOpen: boolean;
   onBackClick?: Function;
   showBackButton?: boolean;
   onClose?: Function;
+  large?: boolean;
 }
 
 export const Modal = ({
   title,
   children,
+  separator,
+  titleElement,
   setIsOpen,
   isOpen,
   showBackButton,
   onBackClick,
   onClose,
+  large,
 }: ModalProps) => {
   const refDiv = useRef(null);
 
@@ -60,7 +66,11 @@ export const Modal = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-[353px] overflow-hidden align-middle transition-all transform rounded-20 bg-white dark:bg-blue-4 text-left">
+              <div
+                className={`inline-block w-full ${
+                  large ? 'max-w-[485px]' : 'max-w-[380px]'
+                } overflow-hidden align-middle transition-all transform rounded-20 bg-white dark:bg-blue-4 text-left`}
+              >
                 <Dialog.Title className="flex justify-between items-center px-20 text-20 font-semibold h-[60px]">
                   {showBackButton && (
                     <button
@@ -70,8 +80,8 @@ export const Modal = ({
                       <IconChevron className="w-24 transform rotate-180" />
                     </button>
                   )}
-
-                  {title ? title : <div />}
+                  {titleElement && titleElement}
+                  {title && title}
                   <button
                     onClick={() => setIsOpen(false)}
                     className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -79,6 +89,7 @@ export const Modal = ({
                     <IconTimes className="w-14" />
                   </button>
                 </Dialog.Title>
+                {separator && <hr className="widget-separator m-0" />}
                 {children}
               </div>
             </Transition.Child>
