@@ -54,29 +54,17 @@ export const TokenTable = () => {
 
   const columns = useMemo<TableColumn<Token>[]>(
     () => [
-      // {
-      //   id: 'protected',
-      //   Header: () => <IconProtected className="w-18 h-20" />,
-      //   accessor: 'isWhitelisted',
-      //   Cell: (cellData) =>
-      //     cellData.value && (
-      //       <IconProtected className="w-18 h-20 text-primary" />
-      //     ),
-      //   width: 600,
-      //   minWidth: 60,
-      // },
       {
         id: 'name',
         Header: () => (
-          <>
-            <span className="align-middle inline-flex items-center">
-              <IconProtected className="w-18 mr-20" /> <span>Name</span>
-            </span>
-          </>
+          <span className="align-middle inline-flex items-center">
+            <IconProtected className="w-18 mr-20" /> <span>Name</span>
+          </span>
         ),
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
         minWidth: 180,
+        sortDescFirst: true,
       },
       {
         id: 'price',
@@ -84,6 +72,7 @@ export const TokenTable = () => {
         accessor: 'usdPrice',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
         minWidth: 110,
+        sortDescFirst: true,
       },
       {
         id: 'c24h',
@@ -100,6 +89,7 @@ export const TokenTable = () => {
           );
         },
         minWidth: 110,
+        sortDescFirst: true,
       },
       {
         id: 'v24h',
@@ -107,6 +97,7 @@ export const TokenTable = () => {
         accessor: 'usd_volume_24',
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
         minWidth: 120,
+        sortDescFirst: true,
       },
       {
         id: 'liquidity',
@@ -115,6 +106,7 @@ export const TokenTable = () => {
         Cell: (cellData) => prettifyNumber(cellData.value ?? 0, true),
         tooltip: 'The value of tokens staked in the pool',
         minWidth: 150,
+        sortDescFirst: true,
       },
       {
         id: 'price7d',

@@ -52,6 +52,7 @@ export const DataTable = <D extends object>({
         pageIndex: 0,
         sortBy: defaultSort ? [defaultSort] : [],
       },
+      autoResetSortBy: false,
       disableSortRemove: true,
     },
     useSortBy,
