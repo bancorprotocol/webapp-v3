@@ -34,6 +34,8 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from 'bignumber.js';
+import { ModalDoubleApprove } from 'elements/modalDoubleApprove/modalDoubleApprove';
+import { sanitizeNumberInput } from 'utils/pureFunctions';
 
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
@@ -62,7 +64,7 @@ export const AddProtectionDouble = (
     const tokenInputsAreValidNumbers = [amountBnt, amountTkn].every(
       (amount) => !new BigNumber(amount).isNaN()
     );
-    if (tokenInputsAreValidNumbers) {
+    if (tokenInputsAreValidNumbers && value !== '') {
       const rate = calculateRate(value, amountBntUsd);
       setAmountTkn(new BigNumber(amountBnt).times(rate).toString());
     }
@@ -128,14 +130,16 @@ export const AddProtectionDouble = (
 
   const onBntChange = (value: string) => {
     setAmountBnt(value);
+    if (value === '') {
+      setAmountTkn('');
+      setAmountTknUsd('');
+      return;
+    }
     if (tknToken) {
       const amountTkn = new BigNumber(value).times(bntToTknRate);
 
       setAmountTkn(
-        amountTkn.toFormat(tknToken.decimals, BigNumber.ROUND_UP, {
-          groupSeparator: '',
-          decimalSeparator: '.',
-        })
+        sanitizeNumberInput(amountTkn.toString(), tknToken.decimals)
       );
       setAmountTknUsd(amountTkn.times(tknUsdPrice).toString());
     }
@@ -143,13 +147,15 @@ export const AddProtectionDouble = (
 
   const onTknChange = (value: string) => {
     setAmountTkn(value);
+    if (value === '') {
+      setAmountBnt('');
+      setAmountBntUsd('');
+      return;
+    }
     if (bntToken) {
       const amountBnt = new BigNumber(value).times(tknToBntRate);
       setAmountBnt(
-        amountBnt.toFormat(bntToken.decimals, BigNumber.ROUND_UP, {
-          groupSeparator: '',
-          decimalSeparator: '.',
-        })
+        sanitizeNumberInput(amountBnt.toString(), bntToken.decimals)
       );
       setAmountBntUsd(amountBnt.times(bntToken.usdPrice!).toString());
     }
@@ -165,7 +171,7 @@ export const AddProtectionDouble = (
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
-  const addLiquidity = async (skipApproval: boolean) => {};
+  const addLiquidity = async (skipApproval: boolean = false) => {};
 
   if (
     isLoading ||
@@ -176,14 +182,20 @@ export const AddProtectionDouble = (
     return <div>Loading...</div>;
   }
 
+  const fromTokens = [bntToken, tknToken] as [Token, Token];
+
+  const displayedRate = new BigNumber(bntToTknRate).isNaN()
+    ? '?'
+    : new BigNumber(bntToTknRate).toFixed(6);
+
   return (
     (
       <div className="widget">
-        <ModalApprove
+        <ModalDoubleApprove
           isOpen={showModal}
           setIsOpen={setShowModal}
-          amount={'amount'}
-          fromToken={tknToken as Token}
+          amounts={[amountBnt, amountTkn]}
+          fromTokens={fromTokens}
           handleApproved={() => addLiquidity(true)}
           waitForApproval={true}
         />
@@ -241,8 +253,13 @@ export const AddProtectionDouble = (
             {bntToken &&
               bntToken.usdPrice &&
               prettifyNumber(bntToken.usdPrice, true)}
-            ) = {new BigNumber(bntToTknRate).toFixed(6)} ETH (
-            {bntToTknRateToUsd})
+            ) ={' '}
+            {displayedRate !== '?' && (
+              <span>
+                {' '}
+                {displayedRate} ETH ({bntToTknRateToUsd}){' '}
+              </span>
+            )}
           </div>
 
           <div className="rounded-lg bg-blue-0 rounded p-20">
@@ -281,7 +298,7 @@ export const AddProtectionDouble = (
             </div>
             <button
               onClick={() => {
-                addLiquidity(true);
+                addLiquidity();
               }}
               className={`btn-primary rounded w-full`}
               disabled={false}

@@ -38,7 +38,7 @@ export interface Token {
   price_change_24: number;
   price_history_7d: (string | number)[][];
   usd_volume_24: string | null;
-  isWhitelisted: boolean;
+  isWhitelisted?: boolean;
 }
 
 export const listOfLists = [

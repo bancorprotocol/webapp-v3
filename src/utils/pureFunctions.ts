@@ -31,10 +31,10 @@ export const classNameGenerator = (object: {
 };
 
 export const sanitizeNumberInput = (
-  input: string,
+  input: string | BigNumber,
   precision?: number
 ): string => {
-  const sanitized = input
+  const sanitized = (typeof input === 'string' ? input : input.toString())
     .replace(/,/, '.')
     .replace(/[^\d.]/g, '')
     .replace(/\./, 'x')
@@ -42,8 +42,9 @@ export const sanitizeNumberInput = (
     .replace(/x/, '.');
   if (!precision) return sanitized;
   const [integer, decimals] = sanitized.split('.');
-  if (decimals) return `${integer}.${decimals.substring(0, precision)}`;
-  else return sanitized;
+  return decimals
+    ? `${integer}.${decimals.substring(0, precision)}`
+    : sanitized;
 };
 
 export const findOrThrow = <T>(
