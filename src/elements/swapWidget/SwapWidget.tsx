@@ -15,8 +15,8 @@ import { useHistory } from 'react-router-dom';
 interface SwapWidgetProps {
   isLimit: boolean;
   setIsLimit: Function;
-  from: string;
-  to: string;
+  from: string | null;
+  to: string | null;
 }
 
 export const SwapWidget = ({
@@ -80,20 +80,20 @@ export const SwapWidget = ({
   const replaceFrom = (token: Token) => {
     const toAddress =
       !isLimit && token.address === wethToken
-        ? '/' + tokens.find((x) => x.address === ethToken)?.address
+        ? tokens.find((x) => x.address === ethToken)?.address
         : toToken
-        ? '/' + toToken.address
+        ? toToken.address
         : '';
-    history.push(`/${token.address}${toAddress}`);
+    history.push(`?from=${token.address}&to=${toAddress}`);
   };
 
   const replaceTo = (token?: Token) => {
-    history.push(`/${fromToken.address}${token ? '/' + token.address : ''}`);
+    history.push(`?from=${fromToken.address}&to=${token ? token.address : ''}`);
   };
 
   const switchTokens = () => {
     if (toToken) {
-      history.push(`/${toToken.address}/${fromToken.address}`);
+      history.push(`?from=${toToken.address}&to=${fromToken.address}`);
     }
   };
 

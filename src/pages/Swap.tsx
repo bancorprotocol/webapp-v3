@@ -2,19 +2,19 @@ import { SwapWidget } from 'elements/swapWidget/SwapWidget';
 import { useState } from 'react';
 import { SwapLimitTable } from 'elements/swapLimit/SwapLimitTable';
 import { RouteComponentProps } from 'react-router-dom';
+import { useQuery } from 'hooks/useQuery';
 
-export const Swap = (
-  props: RouteComponentProps<{ from: string; to: string }>
-) => {
+export const Swap = () => {
   const [isLimit, setIsLimit] = useState(false);
+  const query = useQuery();
 
   return (
     <div className="md:pt-[55px]">
       <SwapWidget
         isLimit={isLimit}
         setIsLimit={setIsLimit}
-        from={props.match.params.from}
-        to={props.match.params.to}
+        from={query.get('from')}
+        to={query.get('to')}
       />
       {isLimit ? <SwapLimitTable /> : ''}
     </div>
