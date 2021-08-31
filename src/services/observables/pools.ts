@@ -13,7 +13,6 @@ import {
   share,
   shareReplay,
   startWith,
-  switchMap,
   withLatestFrom,
 } from 'rxjs/operators';
 import { ConverterAndAnchor } from 'services/web3/types';
@@ -90,26 +89,36 @@ const apiPools$ = apiData$.pipe(
 
 export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
   map(([pools, anchorAndConverters]) => {
-    if (anchorAndConverters.length === 0) return pools;
-    return updateArray(
-      pools,
-      (pool) => {
-        const correctAnchor = anchorAndConverters.find(
-          (anchor) => anchor.anchorAddress === pool.pool_dlt_id
-        );
-        if (!correctAnchor) return false;
-        return correctAnchor.converterAddress !== pool.converter_dlt_id;
-      },
-      (pool) => {
-        const correctAnchor = anchorAndConverters.find(
-          (anchor) => anchor.anchorAddress === pool.pool_dlt_id
-        )!;
-        return {
-          ...pool,
-          converter_dlt_id: correctAnchor.converterAddress,
-        };
-      }
-    );
+    let newPools = [];
+    if (anchorAndConverters.length === 0) {
+      newPools = pools;
+    } else {
+      newPools = updateArray(
+        pools,
+        (pool) => {
+          const correctAnchor = anchorAndConverters.find(
+            (anchor) => anchor.anchorAddress === pool.pool_dlt_id
+          );
+          if (!correctAnchor) return false;
+          return correctAnchor.converterAddress !== pool.converter_dlt_id;
+        },
+        (pool) => {
+          const correctAnchor = anchorAndConverters.find(
+            (anchor) => anchor.anchorAddress === pool.pool_dlt_id
+          )!;
+          return {
+            ...pool,
+            converter_dlt_id: correctAnchor.converterAddress,
+          };
+        }
+      );
+    }
+
+    return newPools.map((pool) => {
+      return {
+        ...pool,
+      };
+    });
   }),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)

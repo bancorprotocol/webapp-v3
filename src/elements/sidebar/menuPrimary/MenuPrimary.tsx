@@ -36,7 +36,7 @@ const menu: MenuItem[] = [
   },
   {
     label: 'Earn',
-    to: '/portfolio',
+    to: '/pools',
     icon: <IconEarn />,
     subMenu: [
       // { label: 'Portfolio', to: '/portfolio' },

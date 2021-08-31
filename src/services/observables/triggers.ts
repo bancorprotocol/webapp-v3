@@ -8,6 +8,7 @@ import {
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
+  setPools,
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
@@ -16,11 +17,13 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
+import { pools$ } from 'services/observables/pools';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
 let keeperDaoSub: Subscription;
 let loadingBalancesSub: Subscription;
+let poolsSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
@@ -33,10 +36,9 @@ export const loadCommonData = (dispatch: any) => {
     .toPromise()
     .then((tokenList) => dispatch(setTokenList(tokenList)));
 
-  if (!loadingBalancesSub || loadingBalancesSub.closed)
-    loadingBalancesSub = loadingBalances$.subscribe((loading) =>
-      dispatch(setLoadingBalances(loading))
-    );
+  loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+    dispatch(setLoadingBalances(loading))
+  );
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
@@ -45,18 +47,15 @@ export const loadCommonData = (dispatch: any) => {
     userPreferredListIds$.next(firstFromList);
   } else userPreferredListIds$.next(userListIds);
 
-  if (!tokenSub || tokenSub.closed) {
-    tokenSub = tokens$.subscribe((tokenList) => {
-      dispatch(setTokenList(tokenList));
-    });
-  }
+  tokenSub = tokens$.subscribe((tokenList) => {
+    dispatch(setTokenList(tokenList));
+  });
 
-  if (!keeperDaoSub || keeperDaoSub.closed)
-    keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-      setKeeperDaoTokens(keeperDaoTokens);
-    });
+  keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+    setKeeperDaoTokens(keeperDaoTokens);
+  });
+
+  poolsSub = pools$.subscribe((pools) => {
+    dispatch(setPools(pools));
+  });
 };
-
-export const loadSwapData = (dispatch: any) => {};
-
-export const loadTokenData = (dispatch: any) => {};
