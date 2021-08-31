@@ -82,3 +82,5 @@ export const loadCommonData = (dispatch: any) => {
 };
 
 export const loadSwapData = (dispatch: any) => {};
+
+export const loadTokenData = (dispatch: any) => {};

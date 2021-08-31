@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { getTokenLogoURI, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -17,8 +17,8 @@ interface TokenInputFieldProps {
   disabled?: boolean;
   input: string;
   setInput?: Function;
-  amountUsd: string;
-  setAmountUsd: Function;
+  amountUsd?: string;
+  setAmountUsd?: Function;
   onChange?: Function;
   token: Token | null;
   setToken?: (token: Token) => void;
@@ -27,6 +27,7 @@ interface TokenInputFieldProps {
   errorMsg?: string;
   usdSlippage?: number;
   dataCy?: string;
+  fieldBalance?: string;
   excludedTokens?: string[];
   includedTokens?: string[];
   isLoading?: boolean;
@@ -49,6 +50,7 @@ export const TokenInputField = ({
   startEmpty,
   errorMsg,
   usdSlippage,
+  fieldBalance,
   excludedTokens = [],
   includedTokens = [],
   isLoading,
@@ -56,7 +58,7 @@ export const TokenInputField = ({
   const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
 
-  const balance = token ? token.balance : null;
+  const balance = fieldBalance ? fieldBalance : token ? token.balance : null;
   const balanceUsd =
     token && balance
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
@@ -74,7 +76,7 @@ export const TokenInputField = ({
         new BigNumber(text).div(token?.usdPrice!).toString(),
         token?.decimals
       );
-      setAmountUsd(text !== 'NaN' ? text : '');
+      if (setAmountUsd) setAmountUsd(text !== 'NaN' ? text : '');
       if (onChange) onChange(tokenAmount);
       else {
         if (setInput) setInput(tokenAmount);
@@ -82,7 +84,8 @@ export const TokenInputField = ({
       }
     } else {
       const usdAmount = new BigNumber(text).times(token?.usdPrice!).toString();
-      setAmountUsd(usdAmount !== '0' && usdAmount !== 'NaN' ? usdAmount : '');
+      if (setAmountUsd)
+        setAmountUsd(usdAmount !== '0' && usdAmount !== 'NaN' ? usdAmount : '');
       const val = sanitizeNumberInput(text, token?.decimals);
       if (onChange) onChange(val);
       else {
@@ -102,7 +105,7 @@ export const TokenInputField = ({
   const convertedAmount = () => {
     const prefix = toggle ? '' : '~';
     const tokenAmount = prettifyNumber(input);
-    const usdAmount = prettifyNumber(amountUsd, true);
+    const usdAmount = prettifyNumber(amountUsd ?? 0, true);
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return `${prefix}${amount}`;
@@ -164,7 +167,7 @@ export const TokenInputField = ({
             {token ? (
               <>
                 <Image
-                  src={getTokenLogoURI(token)}
+                  src={token.logoURI}
                   alt="Token"
                   className="bg-grey-2 rounded-full h-28 w-28"
                 />

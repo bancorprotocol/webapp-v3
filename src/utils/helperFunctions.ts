@@ -50,6 +50,10 @@ export const rewindBlocksByDays = (
   return currentBlock - blocksToRewind;
 };
 
+export const formatTime = (seconds: number): string => {
+  return new Date(seconds * 1000).toISOString().substr(11, 8);
+};
+
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {
     case EthNetworks.Mainnet:

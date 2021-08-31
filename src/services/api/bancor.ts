@@ -12,17 +12,17 @@ interface TokenMeta {
 }
 
 export interface WelcomeData {
-  total_liquidity: BntPrice;
-  total_volume_24h: BntPrice;
-  bnt_price_24h_ago: BntPrice;
-  bnt_price: BntPrice;
+  total_liquidity: USDPrice;
+  total_volume_24h: USDPrice;
+  bnt_price_24h_ago: USDPrice;
+  bnt_price: USDPrice;
   bnt_supply: string;
   swaps: Swap[];
   pools: Pool[];
   tokens: APIToken[];
 }
 
-export interface BntPrice {
+export interface USDPrice {
   usd: null | string;
 }
 
@@ -31,9 +31,9 @@ export interface Pool {
   converter_dlt_id: string;
   reserves: Reserve[];
   name: string;
-  liquidity: BntPrice;
-  volume_24h: BntPrice;
-  fees_24h: BntPrice;
+  liquidity: USDPrice;
+  volume_24h: USDPrice;
+  fees_24h: USDPrice;
   fee: string;
   version: number;
   supply: string;
@@ -53,7 +53,7 @@ export interface Swap {
   tx_hash: string;
   input_amount: string;
   output_amount: string;
-  amount: BntPrice;
+  amount: USDPrice;
   timestamp: number;
   account_dlt_id: string;
 }
@@ -61,10 +61,11 @@ export interface Swap {
 export interface APIToken {
   symbol: string;
   dlt_id: string;
-  liquidity: BntPrice;
-  rate: BntPrice;
-  rate_24h_ago: BntPrice;
+  liquidity: USDPrice;
+  rate: USDPrice;
+  rate_24h_ago: USDPrice;
   decimals: number;
+  rates_7d: (string | number)[][];
 }
 
 export interface TokenMetaWithReserve extends TokenMeta {

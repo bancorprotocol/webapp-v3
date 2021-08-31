@@ -63,7 +63,7 @@ export const LayoutHeader = ({
           </div>
         </div>
       </header>
-      <div className="md:hidden fixed flex items-center justify-center h-[39px] bg-grey-1 dark:bg-blue-2 text-grey-3 text-12 w-full top-[75px] z-20">
+      <div className="md:hidden fixed flex items-center justify-center h-[39px] bg-grey-1 dark:bg-blue-2 text-grey-3 text-12 w-full top-[75px] z-30">
         Beta Interface
       </div>
       <LayoutHeaderMobile>

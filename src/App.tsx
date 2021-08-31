@@ -8,7 +8,6 @@ import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
 import { Pools } from 'pages/Pools';
 import { Portfolio } from 'pages/Portfolio';
-import { Governance } from 'pages/Governance';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
@@ -126,7 +125,7 @@ export const App = () => {
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1400px] mx-auto`}>
+          <main className={`max-w-[1400px] mx-auto mb-30`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route exact strict path="/tokens" component={Tokens} />
@@ -150,7 +149,7 @@ export const App = () => {
                 path="/addProtectionDoubleLiq/:anchor"
                 component={AddProtectionDoubleLiq}
               />
-              <Route exact strict path="/governance" component={Governance} />
+              {/* <Route exact strict path="/governance" component={Governance} /> */}
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
               <Route component={NotFound} />
