@@ -6,21 +6,21 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { NavLink } from 'react-router-dom';
-import { Pool } from 'services/api/bancor';
+import { APIPool } from 'services/api/bancor';
 
 interface Props {
-  pools: Pool[];
+  pools: APIPool[];
 }
 
 export const PoolsTable = ({ pools }: Props) => {
   const [searchInput, setSearchInput] = useState('');
-  const data = useMemo<Pool[]>(() => {
+  const data = useMemo<APIPool[]>(() => {
     return pools.filter((p) =>
       p.name.toLowerCase().includes(searchInput.toLowerCase())
     );
   }, [pools, searchInput]);
 
-  const CellName = (pool: Pool) => {
+  const CellName = (pool: APIPool) => {
     return (
       <div className={'flex items-center'}>
         <div className="w-18">
@@ -33,7 +33,7 @@ export const PoolsTable = ({ pools }: Props) => {
     );
   };
 
-  const columns = useMemo<TableColumn<Pool>[]>(
+  const columns = useMemo<TableColumn<APIPool>[]>(
     () => [
       {
         id: 'name',
@@ -115,7 +115,7 @@ export const PoolsTable = ({ pools }: Props) => {
         </div>
       </div>
 
-      <DataTable<Pool>
+      <DataTable<APIPool>
         data={data}
         columns={columns}
         defaultSort={defaultSort}

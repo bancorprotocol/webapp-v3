@@ -18,7 +18,7 @@ export interface WelcomeData {
   bnt_price: USDPrice;
   bnt_supply: string;
   swaps: Swap[];
-  pools: Pool[];
+  pools: APIPool[];
   tokens: APIToken[];
 }
 
@@ -26,7 +26,7 @@ export interface USDPrice {
   usd: null | string;
 }
 
-export interface Pool {
+export interface APIPool {
   pool_dlt_id: string;
   converter_dlt_id: string;
   reserves: Reserve[];
@@ -73,7 +73,7 @@ export interface TokenMetaWithReserve extends TokenMeta {
   decBalance: string;
 }
 
-export interface NewPool extends Pool {
+export interface NewPool extends APIPool {
   reserveTokens: TokenMetaWithReserve[];
   decFee: number;
 }

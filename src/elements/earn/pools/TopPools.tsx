@@ -1,9 +1,9 @@
 import { Ticker } from 'components/ticker/Ticker';
-import { Pool } from 'services/api/bancor';
+import { APIPool } from 'services/api/bancor';
 import { orderBy } from 'lodash';
 
 interface Props {
-  pools: Pool[];
+  pools: APIPool[];
 }
 
 export const TopPools = ({ pools }: Props) => {

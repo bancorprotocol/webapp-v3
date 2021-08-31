@@ -1,6 +1,6 @@
 import {
   getWelcomeData,
-  Pool,
+  APIPool,
   APIToken,
   WelcomeData,
 } from 'services/api/bancor';
@@ -142,7 +142,7 @@ interface MinimalPool {
   reserves: string[];
 }
 
-const toMinimal = (pool: Pool): MinimalPool => ({
+const toMinimal = (pool: APIPool): MinimalPool => ({
   anchorAddress: pool.pool_dlt_id,
   contract: pool.converter_dlt_id,
   reserves: pool.reserves.map((reserve) => reserve.address),
@@ -150,20 +150,20 @@ const toMinimal = (pool: Pool): MinimalPool => ({
 
 const swapReceiver$ = new Subject<SwapOptions>();
 
-const sortByLiqDepth = (a: Pool, b: Pool) =>
+const sortByLiqDepth = (a: APIPool, b: APIPool) =>
   Number(b.liquidity.usd) - Number(a.liquidity.usd);
 
-const dropDuplicateReservesByHigherLiquidity = (pools: Pool[]) => {
+const dropDuplicateReservesByHigherLiquidity = (pools: APIPool[]) => {
   const sortedByLiquidityDepth = pools.sort(sortByLiqDepth);
   const uniquePools = uniqBy(sortedByLiquidityDepth, 'pool_dlt_id');
 
   return uniquePools;
 };
 
-const poolHasBalances = (pool: Pool) =>
+const poolHasBalances = (pool: APIPool) =>
   pool.reserves.every((reserve) => reserve.balance !== '0');
 
-const filterTradeWorthyPools = (pools: Pool[]) => {
+const filterTradeWorthyPools = (pools: APIPool[]) => {
   const poolsWithBalances = pools.filter(poolHasBalances);
   const removedDuplicates =
     dropDuplicateReservesByHigherLiquidity(poolsWithBalances);
@@ -226,13 +226,16 @@ const possiblePaths = async (
   }
 };
 
-const hasAnchor = (anchor: string) => (pool: Pool) =>
+const hasAnchor = (anchor: string) => (pool: APIPool) =>
   pool.pool_dlt_id === anchor;
 
 const hasTokenId = (tokenAddress: string) => (token: APIToken) =>
   token.dlt_id === tokenAddress;
 
-const sortPathByBiggestStartingPool = (paths: TradePath[], pools: Pool[]) => {
+const sortPathByBiggestStartingPool = (
+  paths: TradePath[],
+  pools: APIPool[]
+) => {
   const allAnchors = paths.flat(2);
   const uniqueAnchors = uniq(allAnchors);
   const allPoolsFound = uniqueAnchors.every((minimalPool) =>
