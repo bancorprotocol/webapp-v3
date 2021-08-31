@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
+import { UTCTimestamp } from 'lightweight-charts';
 
 interface TokenMeta {
   id: string;
@@ -25,6 +26,10 @@ export interface WelcomeData {
 export interface USDPrice {
   usd: null | string;
 }
+export interface Reward {
+  starts_at: UTCTimestamp;
+  ends_at: UTCTimestamp;
+}
 
 export interface APIPool {
   pool_dlt_id: string;
@@ -39,12 +44,14 @@ export interface APIPool {
   supply: string;
   decimals: number;
   isWhitelisted: boolean;
+  reward?: Reward;
 }
 
 export interface Reserve {
   address: string;
   weight: string;
   balance: string;
+  apr?: string;
 }
 
 export interface Swap {

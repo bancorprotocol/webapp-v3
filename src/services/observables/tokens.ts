@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
-import { apiTokens$, pools$ } from './pools';
+import { apiTokens$, correctedPools$, pools$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -116,7 +116,7 @@ const tokenListMerged$ = combineLatest([
 export const tokensNoBalance$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
-  pools$,
+  correctedPools$,
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(
@@ -212,7 +212,7 @@ export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
 
 const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
-const getTokenLogoURI = (token: Token) =>
+export const getTokenLogoURI = (token: Token) =>
   token.logoURI
     ? token.logoURI.startsWith('ipfs')
       ? buildIpfsUri(token.logoURI.split('//')[1])

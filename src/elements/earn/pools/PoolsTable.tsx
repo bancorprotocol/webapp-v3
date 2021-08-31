@@ -6,21 +6,22 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { NavLink } from 'react-router-dom';
-import { APIPool } from 'services/api/bancor';
+import { Pool } from 'services/observables/pools';
+import { Image } from 'components/image/Image';
 
 interface Props {
-  pools: APIPool[];
+  pools: Pool[];
 }
 
 export const PoolsTable = ({ pools }: Props) => {
   const [searchInput, setSearchInput] = useState('');
-  const data = useMemo<APIPool[]>(() => {
+  const data = useMemo<Pool[]>(() => {
     return pools.filter((p) =>
       p.name.toLowerCase().includes(searchInput.toLowerCase())
     );
   }, [pools, searchInput]);
 
-  const CellName = (pool: APIPool) => {
+  const CellName = (pool: Pool) => {
     return (
       <div className={'flex items-center'}>
         <div className="w-18">
@@ -28,12 +29,26 @@ export const PoolsTable = ({ pools }: Props) => {
             <IconProtected className={`w-18 h-20 text-primary`} />
           )}
         </div>
-        <h3 className="text-14">{pool.name}</h3>
+        <h3 className="text-14 ml-20">{pool.name}</h3>
       </div>
     );
   };
 
-  const columns = useMemo<TableColumn<APIPool>[]>(
+  const CellReward = (pool: Pool) => {
+    const aprOne = pool.reserves[0].apr;
+    const aprTwo = pool.reserves[1].apr;
+    return aprOne && aprTwo ? (
+      <div>
+        <span>{`${aprOne}%`}</span>
+        <span className="px-10">|</span>
+        <span>{`${aprTwo}%`}</span>
+      </div>
+    ) : (
+      ''
+    );
+  };
+
+  const columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
         id: 'name',
@@ -51,13 +66,7 @@ export const PoolsTable = ({ pools }: Props) => {
         id: 'liquidity',
         Header: 'Liquidity',
         accessor: 'liquidity',
-        Cell: (cellData) => {
-          return (
-            <div>
-              <div>{prettifyNumber(cellData.value.usd ?? 0, true)}</div>
-            </div>
-          );
-        },
+        Cell: (cellData) => prettifyNumber(cellData.value, true),
         tooltip: 'The value of tokens staked in the pool',
         minWidth: 150,
         sortDescFirst: true,
@@ -66,7 +75,7 @@ export const PoolsTable = ({ pools }: Props) => {
         id: 'fee',
         Header: 'Fee',
         accessor: 'fee',
-        Cell: (cellData) => cellData.value,
+        Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
         minWidth: 110,
         sortDescFirst: true,
       },
@@ -74,20 +83,46 @@ export const PoolsTable = ({ pools }: Props) => {
         id: 'v24h',
         Header: '24h Volume',
         accessor: 'volume_24h',
-        Cell: (cellData) => prettifyNumber(cellData.value.usd ?? 0, true),
+        Cell: (cellData) => prettifyNumber(cellData.value, true),
         minWidth: 120,
+        sortDescFirst: true,
+      },
+      {
+        id: 'f24h',
+        Header: '24h Fees',
+        accessor: 'fees_24h',
+        Cell: (cellData) => prettifyNumber(cellData.value, true),
+        minWidth: 120,
+        sortDescFirst: true,
+      },
+      {
+        id: 'rewards',
+        Header: 'Reward',
+        accessor: 'reward',
+        Cell: (cellData) => CellReward(cellData.row.original),
+        minWidth: 180,
+        sortDescFirst: true,
+      },
+      {
+        id: 'apr',
+        Header: 'APR',
+        accessor: 'apr',
+        Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
+        minWidth: 60,
         sortDescFirst: true,
       },
       {
         id: 'actions',
         Header: '',
         accessor: () => (
-          <NavLink
-            to="/"
-            className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
-          >
-            Trade
-          </NavLink>
+          <div className="flex">
+            <NavLink to="/" className="btn-primary btn-sm rounded-[12px]">
+              x
+            </NavLink>
+            <NavLink to="/" className="btn-primary btn-sm rounded-[12px]">
+              x
+            </NavLink>
+          </div>
         ),
         width: 50,
         minWidth: 50,
@@ -115,7 +150,7 @@ export const PoolsTable = ({ pools }: Props) => {
         </div>
       </div>
 
-      <DataTable<APIPool>
+      <DataTable<Pool>
         data={data}
         columns={columns}
         defaultSort={defaultSort}

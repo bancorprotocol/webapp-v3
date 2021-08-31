@@ -3,6 +3,9 @@ import {
   APIPool,
   APIToken,
   WelcomeData,
+  Reserve,
+  USDPrice,
+  Reward,
 } from 'services/api/bancor';
 import { chunk, isEqual, partition, uniq, uniqBy, uniqWith, zip } from 'lodash';
 import { combineLatest, Observable, Subject } from 'rxjs';
@@ -32,6 +35,8 @@ import { ContractSendMethod } from 'web3-eth-contract';
 import { toHex } from 'web3-utils';
 import { wait } from 'utils/pureFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
+import BigNumber from 'bignumber.js';
+import { getTokenLogoURI, tokens$ } from 'services/observables/tokens';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -87,40 +92,99 @@ const apiPools$ = apiData$.pipe(
   shareReplay(1)
 );
 
-export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
+export const correctedPools$ = combineLatest([
+  apiPools$,
+  anchorAndConverters$,
+]).pipe(
   map(([pools, anchorAndConverters]) => {
-    let newPools = [];
-    if (anchorAndConverters.length === 0) {
-      newPools = pools;
-    } else {
-      newPools = updateArray(
-        pools,
-        (pool) => {
-          const correctAnchor = anchorAndConverters.find(
-            (anchor) => anchor.anchorAddress === pool.pool_dlt_id
-          );
-          if (!correctAnchor) return false;
-          return correctAnchor.converterAddress !== pool.converter_dlt_id;
-        },
-        (pool) => {
-          const correctAnchor = anchorAndConverters.find(
-            (anchor) => anchor.anchorAddress === pool.pool_dlt_id
-          )!;
-          return {
-            ...pool,
-            converter_dlt_id: correctAnchor.converterAddress,
-          };
-        }
-      );
-    }
-
-    return newPools.map((pool) => {
-      return {
-        ...pool,
-      };
-    });
+    if (anchorAndConverters.length === 0) return pools;
+    return updateArray(
+      pools,
+      (pool) => {
+        const correctAnchor = anchorAndConverters.find(
+          (anchor) => anchor.anchorAddress === pool.pool_dlt_id
+        );
+        if (!correctAnchor) return false;
+        return correctAnchor.converterAddress !== pool.converter_dlt_id;
+      },
+      (pool) => {
+        const correctAnchor = anchorAndConverters.find(
+          (anchor) => anchor.anchorAddress === pool.pool_dlt_id
+        )!;
+        return {
+          ...pool,
+          converter_dlt_id: correctAnchor.converterAddress,
+        };
+      }
+    );
   }),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
+  shareReplay(1)
+);
+
+export interface Pool {
+  name: string;
+  pool_dlt_id: string;
+  converter_dlt_id: string;
+  reserves: Reserve[];
+  liquidity: number;
+  volume_24h: number;
+  fees_24h: number;
+  fee: number;
+  version: number;
+  supply: number;
+  decimals: number;
+  isWhitelisted: boolean;
+  apr: number;
+  reward?: Reward;
+}
+
+export const pools$ = combineLatest([correctedPools$]).pipe(
+  switchMapIgnoreThrow(async ([pools]) => {
+    const newPools: Pool[] = pools.map((pool) => {
+      let apr = 0;
+      const liquidity = Number(pool.liquidity.usd ?? 0);
+      const fees_24h = Number(pool.fees_24h.usd ?? 0);
+      if (liquidity && fees_24h) {
+        apr = new BigNumber(fees_24h)
+          .times(365)
+          .div(liquidity)
+          .times(100)
+          .toNumber();
+      }
+      // const reserveTokenOne = tokens.find(
+      //   (t) => t.address === pool.reserves[0].address
+      // );
+      // const reserveTokenTwo = tokens.find(
+      //   (t) => t.address === pool.reserves[1].address
+      // );
+      // const reserves = [
+      //   {
+      //     ...pool.reserves[0],
+      //     symbol: reserveTokenOne!.symbol,
+      //     logoURI: getTokenLogoURI(reserveTokenOne!),
+      //   },
+      //   {
+      //     ...pool.reserves[1],
+      //     symbol: reserveTokenTwo!.symbol,
+      //     logoURI: getTokenLogoURI(reserveTokenTwo!),
+      //   },
+      // ];
+
+      return {
+        ...pool,
+        reserves: pool.reserves,
+        liquidity,
+        volume_24h: Number(pool.volume_24h.usd ?? 0),
+        fees_24h,
+        fee: Number(pool.fee) / 10000,
+        supply: Number(pool.supply),
+        apr,
+      };
+    });
+
+    return newPools;
+  }),
   shareReplay(1)
 );
 
@@ -257,7 +321,7 @@ const sortPathByBiggestStartingPool = (
 };
 
 const tradeAndPath$ = swapReceiver$.pipe(
-  withLatestFrom(pools$),
+  withLatestFrom(correctedPools$),
   switchMapIgnoreThrow(async ([trade, pools]) => {
     const winningPools = filterTradeWorthyPools(pools);
     const minimalPools = winningPools.map(toMinimal);
