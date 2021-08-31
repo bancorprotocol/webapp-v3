@@ -34,15 +34,15 @@ const menu: MenuItem[] = [
       { label: 'Tokens', to: '/tokens' },
     ],
   },
-  // {
-  //   label: 'Earn',
-  //   to: '/portfolio',
-  //   icon: <IconEarn />,
-  //   subMenu: [
-  //     { label: 'Portfolio', to: '/portfolio' },
-  //     { label: 'Pools', to: '/pools' },
-  //   ],
-  // },
+  {
+    label: 'Earn',
+    to: '/portfolio',
+    icon: <IconEarn />,
+    subMenu: [
+      // { label: 'Portfolio', to: '/portfolio' },
+      { label: 'Pools', to: '/pools' },
+    ],
+  },
   {
     label: 'DAO',
     to: '/vote',
