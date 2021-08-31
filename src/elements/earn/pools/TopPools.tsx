@@ -11,7 +11,7 @@ export const TopPools = ({ pools }: Props) => {
 
   return (
     <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Movers</h2>
+      <h2 className="ml-[20px] md:ml-[44px]">Top Pools</h2>
       <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">
@@ -24,6 +24,7 @@ export const TopPools = ({ pools }: Props) => {
                   >
                     <div className="ml-10 text-12 dark:text-grey-3">
                       <div className="font-medium">{pool.name}</div>
+                      <div>{pool.apr.toFixed(2)}% APR</div>
                     </div>
                   </div>
                 );

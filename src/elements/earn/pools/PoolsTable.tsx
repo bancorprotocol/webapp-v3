@@ -8,6 +8,7 @@ import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { NavLink } from 'react-router-dom';
 import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
+import dayjs from 'dayjs';
 
 interface Props {
   pools: Pool[];
@@ -37,11 +38,13 @@ export const PoolsTable = ({ pools }: Props) => {
   const CellReward = (pool: Pool) => {
     const aprOne = pool.reserves[0].apr;
     const aprTwo = pool.reserves[1].apr;
-    return aprOne && aprTwo ? (
+    const ends_at = pool.reward?.ends_at;
+    return aprOne && aprTwo && ends_at ? (
       <div>
         <span>{`${aprOne}%`}</span>
         <span className="px-10">|</span>
         <span>{`${aprTwo}%`}</span>
+        <div>{dayjs(ends_at).format('DD/MM/YY - HH:mm')}</div>
       </div>
     ) : (
       ''
