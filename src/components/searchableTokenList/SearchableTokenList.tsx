@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import {
-  getLogoByURI,
-  getTokenLogoURI,
   TokenList,
   Token,
   userPreferredListIds$,
@@ -137,7 +135,7 @@ export const SearchableTokenList = ({
                   <div className="flex items-center">
                     <Image
                       alt="TokenList"
-                      src={getLogoByURI(tokenList.logoURI)}
+                      src={tokenList.logoURI}
                       className="bg-grey-2 rounded-full h-28 w-28"
                     />
                     <div className={'ml-15'}>
@@ -206,7 +204,7 @@ export const SearchableTokenList = ({
                   >
                     <div className="flex items-center">
                       <Image
-                        src={getTokenLogoURI(token)}
+                        src={token.logoURI}
                         alt={`${token.symbol} Token`}
                         className="bg-grey-2 rounded-full h-28 w-28"
                       />

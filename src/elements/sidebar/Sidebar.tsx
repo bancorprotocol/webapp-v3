@@ -17,7 +17,7 @@ export const Sidebar = ({
 }: SidebarProps) => {
   return (
     <div
-      className={`fixed h-full text-grey-2 transition-all duration-500 ease-in-out z-20 ${
+      className={`fixed h-full text-grey-2 transition-all duration-500 ease-in-out z-50 ${
         isMinimized ? 'w-[66px]' : 'w-[200px]'
       }`}
     >
