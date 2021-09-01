@@ -1,9 +1,15 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import {
+  distinctUntilChanged,
+  map,
+  pluck,
+  share,
+  shareReplay,
+} from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
-import { apiTokens$, correctedPools$, pools$ } from './pools';
+import { apiData$, correctedPools$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -17,6 +23,14 @@ import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange } from 'utils/formulas';
+import { isEqual } from 'lodash';
+import { WelcomeData } from 'services/api/bancor';
+
+export const apiTokens$ = apiData$.pipe(
+  pluck('tokens'),
+  distinctUntilChanged<WelcomeData['tokens']>(isEqual),
+  share()
+);
 
 export interface TokenList {
   name: string;
@@ -38,7 +52,7 @@ export interface Token {
   price_change_24: number;
   price_history_7d: (string | number)[][];
   usd_volume_24: string | null;
-  isWhitelisted: boolean;
+  isWhitelisted?: boolean;
 }
 
 export const listOfLists = [
@@ -221,3 +235,53 @@ export const getTokenLogoURI = (token: Token) =>
 
 const getLogoByURI = (uri: string | undefined) =>
   uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
+
+export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
+  switchMapIgnoreThrow(async ([pools, tokens]) => {
+    console.log({ pools, tokens });
+    // const newPools: Pool[] = pools.map((pool) => {
+    //   let apr = 0;
+    //   const liquidity = Number(pool.liquidity.usd ?? 0);
+    //   const fees_24h = Number(pool.fees_24h.usd ?? 0);
+    //   if (liquidity && fees_24h) {
+    //     apr = new BigNumber(fees_24h)
+    //       .times(365)
+    //       .div(liquidity)
+    //       .times(100)
+    //       .toNumber();
+    //   }
+    //   // const reserveTokenOne = tokens.find(
+    //   //   (t) => t.address === pool.reserves[0].address
+    //   // );
+    //   // const reserveTokenTwo = tokens.find(
+    //   //   (t) => t.address === pool.reserves[1].address
+    //   // );
+    //   // const reserves = [
+    //   //   {
+    //   //     ...pool.reserves[0],
+    //   //     symbol: reserveTokenOne!.symbol,
+    //   //     logoURI: getTokenLogoURI(reserveTokenOne!),
+    //   //   },
+    //   //   {
+    //   //     ...pool.reserves[1],
+    //   //     symbol: reserveTokenTwo!.symbol,
+    //   //     logoURI: getTokenLogoURI(reserveTokenTwo!),
+    //   //   },
+    //   // ];
+
+    //   return {
+    //     ...pool,
+    //     reserves: pool.reserves,
+    //     liquidity,
+    //     volume_24h: Number(pool.volume_24h.usd ?? 0),
+    //     fees_24h,
+    //     fee: Number(pool.fee) / 10000,
+    //     supply: Number(pool.supply),
+    //     apr,
+    //   };
+    // });
+
+    // return newPools;
+  }),
+  shareReplay(1)
+);

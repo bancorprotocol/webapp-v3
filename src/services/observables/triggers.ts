@@ -17,7 +17,7 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
-import { pools$ } from 'services/observables/pools';
+import { pools$ } from 'services/observables/tokens';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
