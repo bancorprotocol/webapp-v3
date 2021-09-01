@@ -37,7 +37,7 @@ export const getLibrary = (provider: any): Web3Provider => {
 };
 
 export interface WalletInfo {
-  connector?: AbstractConnector;
+  connector: AbstractConnector;
   name: string;
   description: string;
   icon: string;
