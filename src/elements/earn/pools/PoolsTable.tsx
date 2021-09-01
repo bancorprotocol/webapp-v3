@@ -141,7 +141,7 @@ export const PoolsTable = ({ pools }: Props) => {
           <div className="flex">
             <NavLink
               to="/"
-              className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header mr-10"
+              className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
             >
               <IconPlus className={`w-20`} />
             </NavLink>

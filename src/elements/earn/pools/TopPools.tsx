@@ -1,6 +1,7 @@
 import { Ticker } from 'components/ticker/Ticker';
 import { orderBy } from 'lodash';
 import { Pool } from 'services/observables/tokens';
+import { Image } from 'components/image/Image';
 
 interface Props {
   pools: Pool[];
@@ -20,11 +21,28 @@ export const TopPools = ({ pools }: Props) => {
                 return (
                   <div
                     key={pool.name}
-                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[225px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
+                    <div className="flex">
+                      <Image
+                        src={pool.reserves[0].logoURI.replace('thumb', 'small')}
+                        alt="Token Logo"
+                        className="bg-grey-1 rounded-full w-50 h-50 z-20"
+                      />
+                      <Image
+                        src={pool.reserves[1].logoURI.replace('thumb', 'small')}
+                        alt="Token Logo"
+                        className="-ml-20 bg-grey-1 rounded-full w-50 h-50 z-10"
+                      />
+                    </div>
                     <div className="ml-10 text-12 dark:text-grey-3">
                       <div className="font-medium">{pool.name}</div>
-                      <div>{pool.apr.toFixed(2)}% APR</div>
+                      <div className="text-16">
+                        <span className="text-primary text-20 font-semibold">
+                          {pool.apr.toFixed(0)}%
+                        </span>{' '}
+                        APR
+                      </div>
                     </div>
                   </div>
                 );
