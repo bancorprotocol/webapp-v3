@@ -88,6 +88,8 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
 
   useAsyncEffect(
     async (isMounted) => {
+      if (selectedWallet) return;
+
       if (connector) {
         writeWeb3.setProvider(await connector.getProvider());
         const wallet = SUPPORTED_WALLETS.find(
@@ -96,7 +98,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         if (isMounted()) if (wallet) setSelectedWallet(wallet);
       }
     },
-    [walletModal, connector]
+    [walletModal, connector, selectedWallet]
   );
 
   const title = error
