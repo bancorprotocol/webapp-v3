@@ -23,8 +23,9 @@ import { mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange } from 'utils/formulas';
-import { isEqual } from 'lodash';
-import { WelcomeData } from 'services/api/bancor';
+import { isEqual, sortBy } from 'lodash';
+import { APIReward, WelcomeData } from 'services/api/bancor';
+import BigNumber from 'bignumber.js';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -53,6 +54,32 @@ export interface Token {
   price_history_7d: (string | number)[][];
   usd_volume_24: string | null;
   isWhitelisted?: boolean;
+}
+
+interface Reserve {
+  address: string;
+  weight: string;
+  balance: string;
+  symbol: string;
+  logoURI: string;
+  rewardApr?: number;
+}
+
+export interface Pool {
+  name: string;
+  pool_dlt_id: string;
+  converter_dlt_id: string;
+  reserves: Reserve[];
+  liquidity: number;
+  volume_24h: number;
+  fees_24h: number;
+  fee: number;
+  version: number;
+  supply: number;
+  decimals: number;
+  isWhitelisted: boolean;
+  apr: number;
+  reward?: APIReward;
 }
 
 export const listOfLists = [
@@ -238,50 +265,55 @@ const getLogoByURI = (uri: string | undefined) =>
 
 export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
   switchMapIgnoreThrow(async ([pools, tokens]) => {
-    console.log({ pools, tokens });
-    // const newPools: Pool[] = pools.map((pool) => {
-    //   let apr = 0;
-    //   const liquidity = Number(pool.liquidity.usd ?? 0);
-    //   const fees_24h = Number(pool.fees_24h.usd ?? 0);
-    //   if (liquidity && fees_24h) {
-    //     apr = new BigNumber(fees_24h)
-    //       .times(365)
-    //       .div(liquidity)
-    //       .times(100)
-    //       .toNumber();
-    //   }
-    //   // const reserveTokenOne = tokens.find(
-    //   //   (t) => t.address === pool.reserves[0].address
-    //   // );
-    //   // const reserveTokenTwo = tokens.find(
-    //   //   (t) => t.address === pool.reserves[1].address
-    //   // );
-    //   // const reserves = [
-    //   //   {
-    //   //     ...pool.reserves[0],
-    //   //     symbol: reserveTokenOne!.symbol,
-    //   //     logoURI: getTokenLogoURI(reserveTokenOne!),
-    //   //   },
-    //   //   {
-    //   //     ...pool.reserves[1],
-    //   //     symbol: reserveTokenTwo!.symbol,
-    //   //     logoURI: getTokenLogoURI(reserveTokenTwo!),
-    //   //   },
-    //   // ];
+    const newPools: Pool[] = pools.map((pool) => {
+      let apr = 0;
+      const liquidity = Number(pool.liquidity.usd ?? 0);
+      const fees_24h = Number(pool.fees_24h.usd ?? 0);
+      if (liquidity && fees_24h) {
+        apr = new BigNumber(fees_24h)
+          .times(365)
+          .div(liquidity)
+          .times(100)
+          .toNumber();
+      }
+      const reserveTokenOne = tokens.find(
+        (t) => t.address === pool.reserves[0].address
+      );
+      const reserveTokenTwo = tokens.find(
+        (t) => t.address === pool.reserves[1].address
+      );
+      const reserves: Reserve[] = [
+        {
+          ...pool.reserves[0],
+          rewardApr: Number(pool.reserves[0].apr) / 1000,
+          symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
+          logoURI: reserveTokenOne
+            ? getTokenLogoURI(reserveTokenOne)
+            : ropstenImage,
+        },
+        {
+          ...pool.reserves[1],
+          rewardApr: Number(pool.reserves[1].apr) / 10000,
+          symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
+          logoURI: reserveTokenTwo
+            ? getTokenLogoURI(reserveTokenTwo)
+            : ropstenImage,
+        },
+      ];
 
-    //   return {
-    //     ...pool,
-    //     reserves: pool.reserves,
-    //     liquidity,
-    //     volume_24h: Number(pool.volume_24h.usd ?? 0),
-    //     fees_24h,
-    //     fee: Number(pool.fee) / 10000,
-    //     supply: Number(pool.supply),
-    //     apr,
-    //   };
-    // });
+      return {
+        ...pool,
+        reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
+        liquidity,
+        volume_24h: Number(pool.volume_24h.usd ?? 0),
+        fees_24h,
+        fee: Number(pool.fee) / 10000,
+        supply: Number(pool.supply),
+        apr,
+      };
+    });
 
-    // return newPools;
+    return newPools;
   }),
   shareReplay(1)
 );

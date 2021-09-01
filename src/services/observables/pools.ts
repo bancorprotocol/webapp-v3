@@ -1,9 +1,4 @@
-import {
-  getWelcomeData,
-  WelcomeData,
-  Reserve,
-  Reward,
-} from 'services/api/bancor';
+import { getWelcomeData, WelcomeData } from 'services/api/bancor';
 import { isEqual, zip } from 'lodash';
 import { combineLatest } from 'rxjs';
 import {
@@ -25,7 +20,6 @@ import {
 import { web3 } from 'services/web3/contracts';
 import { toChecksumAddress } from 'web3-utils';
 import { updateArray } from 'utils/pureFunctions';
-import { tokens$ } from 'services/observables/tokens';
 
 const zipAnchorAndConverters = (
   anchorAddresses: string[],
@@ -110,20 +104,3 @@ export const correctedPools$ = combineLatest([
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
 );
-
-export interface Pool {
-  name: string;
-  pool_dlt_id: string;
-  converter_dlt_id: string;
-  reserves: Reserve[];
-  liquidity: number;
-  volume_24h: number;
-  fees_24h: number;
-  fee: number;
-  version: number;
-  supply: number;
-  decimals: number;
-  isWhitelisted: boolean;
-  apr: number;
-  reward?: Reward;
-}

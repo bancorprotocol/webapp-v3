@@ -26,7 +26,15 @@ export interface WelcomeData {
 export interface USDPrice {
   usd: null | string;
 }
-export interface Reward {
+
+export interface APIReserve {
+  address: string;
+  weight: string;
+  balance: string;
+  apr?: number;
+}
+
+export interface APIReward {
   starts_at: UTCTimestamp;
   ends_at: UTCTimestamp;
 }
@@ -34,7 +42,7 @@ export interface Reward {
 export interface APIPool {
   pool_dlt_id: string;
   converter_dlt_id: string;
-  reserves: Reserve[];
+  reserves: APIReserve[];
   name: string;
   liquidity: USDPrice;
   volume_24h: USDPrice;
@@ -44,14 +52,7 @@ export interface APIPool {
   supply: string;
   decimals: number;
   isWhitelisted: boolean;
-  reward?: Reward;
-}
-
-export interface Reserve {
-  address: string;
-  weight: string;
-  balance: string;
-  apr?: string;
+  reward?: APIReward;
 }
 
 export interface Swap {

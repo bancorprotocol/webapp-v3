@@ -1,6 +1,6 @@
 import { Ticker } from 'components/ticker/Ticker';
 import { orderBy } from 'lodash';
-import { Pool } from 'services/observables/pools';
+import { Pool } from 'services/observables/tokens';
 
 interface Props {
   pools: Pool[];

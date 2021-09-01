@@ -1,7 +1,7 @@
 import { TopPools } from 'elements/earn/pools/TopPools';
 import { PoolsTable } from 'elements/earn/pools/PoolsTable';
 import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/observables/pools';
+import { Pool } from 'services/observables/tokens';
 
 export const Pools = () => {
   const pools = useAppSelector<Pool[]>((state) => state.bancor.pools);
