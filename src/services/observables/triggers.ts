@@ -51,12 +51,7 @@ export const loadCommonData = (dispatch: any) => {
     });
   }
 
-  if (!keeperDaoSub || keeperDaoSub.closed)
-    keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-      setKeeperDaoTokens(keeperDaoTokens);
-    });
+  keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+    dispatch(setKeeperDaoTokens(keeperDaoTokens));
+  });
 };
-
-export const loadSwapData = (dispatch: any) => {};
-
-export const loadTokenData = (dispatch: any) => {};

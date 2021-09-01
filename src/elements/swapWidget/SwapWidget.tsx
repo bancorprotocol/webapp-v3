@@ -5,8 +5,6 @@ import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
-import { useDispatch } from 'react-redux';
-import { loadSwapData } from 'services/observables/triggers';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
@@ -33,11 +31,6 @@ export const SwapWidget = ({
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
   const history = useHistory();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   useEffect(() => {
     if (tokens) {
