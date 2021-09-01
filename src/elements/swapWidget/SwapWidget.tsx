@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
-import { loadSwapData } from 'services/observables/triggers';
-import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { ethToken, wethToken } from 'services/web3/config';
+import { useDispatch } from 'react-redux';
+import { loadSwapData } from 'services/observables/triggers';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
+import { useAsyncEffect } from 'use-async-effect';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -30,18 +31,29 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
     loadSwapData(dispatch);
   }, [dispatch]);
 
-  useEffect(() => {
-    (async () => {
-      if (fromToken)
-        setFromTokenITB(await intoTheBlockByToken(fromToken.symbol));
-    })();
-  }, [fromToken]);
+  useAsyncEffect(
+    async (isMounted) => {
+      if (fromToken) {
+        const data = await intoTheBlockByToken(fromToken.symbol);
+        if (isMounted()) {
+          setFromTokenITB(data);
+        }
+      }
+    },
+    [fromToken]
+  );
 
-  useEffect(() => {
-    (async () => {
-      if (toToken) setToTokenITB(await intoTheBlockByToken(toToken.symbol));
-    })();
-  }, [toToken]);
+  useAsyncEffect(
+    async (isMounted) => {
+      if (toToken) {
+        const data = await intoTheBlockByToken(toToken.symbol);
+        if (isMounted()) {
+          setToTokenITB(data);
+        }
+      }
+    },
+    [toToken]
+  );
 
   useEffect(() => {
     const findSetToken = (token: Token) => {

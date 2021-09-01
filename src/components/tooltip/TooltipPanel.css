@@ -1,0 +1,34 @@
+@import 'tailwindcss/components';
+
+:root {
+  --tooltip-tooltip-arrow-size: 5px;
+}
+
+@layer components {
+  .tooltip-panel {
+    @apply absolute max-w-[280px] py-16 px-20 rounded z-40;
+    @apply bg-white dark:bg-blue-2;
+    @apply shadow-header dark:shadow-none;
+    @apply text-grey-4 dark:text-grey-0;
+  }
+  .tooltip-arrow {
+    @apply absolute h-10 w-10;
+    @apply bg-white dark:bg-blue-2;
+  }
+}
+
+.tooltip-panel[data-popper-placement^='top'] > .tooltip-arrow {
+  bottom: calc(var(--tooltip-tooltip-arrow-size) * -1);
+}
+
+.tooltip-panel[data-popper-placement^='bottom'] > .tooltip-arrow {
+  top: calc(var(--tooltip-tooltip-arrow-size) * -1);
+}
+
+.tooltip-panel[data-popper-placement^='left'] > .tooltip-arrow {
+  right: calc(var(--tooltip-tooltip-arrow-size) * -1);
+}
+
+.tooltip-panel[data-popper-placement^='right'] > .tooltip-arrow {
+  left: calc(var(--tooltip-tooltip-arrow-size) * -1);
+}

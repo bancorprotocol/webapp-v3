@@ -1,7 +1,7 @@
 import { useAppSelector } from 'redux/index';
 import { Notification, hideAlert } from 'redux/notification/notification';
 import { useDispatch } from 'react-redux';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { NotificationAlert } from 'elements/notifications/NotificationAlert';
 
 export const NotificationAlerts = () => {

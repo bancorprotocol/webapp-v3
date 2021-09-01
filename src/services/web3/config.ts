@@ -1,5 +1,6 @@
-import { APIToken } from 'services/api/bancor';
+import { APIToken, Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
+import { calculatePercentageChange } from 'utils/formulas';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {
@@ -7,7 +8,6 @@ export interface EthNetworkVariables {
   contractRegistry: string;
   bntToken: string;
   ethToken: string;
-  vBntToken: string;
   multiCall: string;
   liquidityProtectionToken: string;
   converterContractForMaths: string;
@@ -32,12 +32,28 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
     rate: eth ? eth.rate : { usd: null },
     rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
     decimals: eth ? eth.decimals : 18,
+    rates_7d: eth ? eth.rates_7d : [],
   };
 };
 
-export const getEthToken = (apiTokens: APIToken[]): Token | null => {
+export const getEthToken = (
+  apiTokens: APIToken[],
+  pools: Pool[]
+): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
-  if (eth)
+  if (eth) {
+    const price = eth.rate.usd;
+    const price_24h = eth.rate_24h_ago.usd;
+    const priceChanged =
+      price && price_24h && Number(price_24h) !== 0
+        ? calculatePercentageChange(Number(price), Number(price_24h))
+        : 0;
+    const pool = pools.find((p) =>
+      p.reserves.find((r) => r.address === eth.dlt_id)
+    );
+    const usdVolume24 = pool ? pool.volume_24h.usd : null;
+    const isWhitelisted = pool ? pool.isWhitelisted : false;
+
     return {
       address: eth.dlt_id,
       logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
@@ -46,8 +62,15 @@ export const getEthToken = (apiTokens: APIToken[]): Token | null => {
       balance: null,
       symbol: eth.symbol,
       decimals: eth.decimals,
-      usdPrice: eth.rate.usd,
+      usdPrice: price,
+      liquidity: eth.liquidity.usd,
+      usd_24h_ago: price_24h,
+      price_change_24: priceChanged,
+      price_history_7d: eth.rates_7d,
+      usd_volume_24: usdVolume24,
+      isWhitelisted,
     };
+  }
 
   return null;
 };
@@ -63,26 +86,24 @@ export const getNetworkVariables = (
         bntToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
         govToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
         ethToken,
-        vBntToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
         liquidityProtectionToken: ethToken,
         multiCall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
         converterContractForMaths: '0xe870d00176b2c71afd4c43cea550228e22be4abd',
         governanceContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
-        etherscanUrl: 'https://etherscan.io/',
+        etherscanUrl: 'https://etherscan.io',
       };
     case EthNetworks.Ropsten:
       return {
         network: EthNetworks.Ropsten,
         contractRegistry: '0xA6DB4B0963C37Bc959CbC0a874B5bDDf2250f26F',
         bntToken: '0xF35cCfbcE1228014F66809EDaFCDB836BFE388f5',
-        govToken: '0x83ec8129b1f54ba5b0f47bd902a79c803e20a249',
+        govToken: '0x83ec8129b1F54BA5b0f47bD902A79C803e20A249',
         ethToken,
-        vBntToken: '0x83ec8129b1f54ba5b0f47bd902a79c803e20a249',
         liquidityProtectionToken: ethToken,
         multiCall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
         converterContractForMaths: '0x9a36b31ca768a860dab246cf080e7f042d1b7c0f',
         governanceContractAddress: '0x161f28A417361961E946Ae03EF0A425008b7F01B',
-        etherscanUrl: 'https://ropsten.etherscan.io/',
+        etherscanUrl: 'https://ropsten.etherscan.io',
       };
   }
 };

@@ -1,0 +1,7 @@
+@import 'tailwindcss/components';
+
+@layer components {
+  .expand-clickable-area {
+    @apply relative after:absolute after:-inset-16;
+  }
+}

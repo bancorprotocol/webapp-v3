@@ -6,10 +6,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import {
-  calculatePercentageChange,
-  classNameGenerator,
-} from 'utils/pureFunctions';
+import { classNameGenerator } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
@@ -33,8 +30,9 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
+import { calculatePercentageChange } from 'utils/formulas';
 
 enum Field {
   from,
@@ -412,10 +410,12 @@ export const SwapLimit = ({
                 <div className="flex mt-10">
                   <div className="min-w-[135px]"></div>
                   <div
-                    className={`mx-8 text-center text-10 sm:text-12 font-light ${classNameGenerator({
-                      'text-error': rateWarning.type === 'error',
-                      'text-warning': rateWarning.type === 'warning',
-                    })}`}
+                    className={`mx-8 text-center text-10 sm:text-12 font-light ${classNameGenerator(
+                      {
+                        'text-error': rateWarning.type === 'error',
+                        'text-warning': rateWarning.type === 'warning',
+                      }
+                    )}`}
                   >
                     {rateWarning.msg}
                   </div>

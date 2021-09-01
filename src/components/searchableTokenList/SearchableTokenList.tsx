@@ -2,19 +2,19 @@ import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
 import {
-  getLogoByURI,
-  getTokenLogoURI,
   TokenList,
   Token,
   userPreferredListIds$,
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
+import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
+import { isMobile } from 'react-device-detect';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -23,6 +23,50 @@ interface SearchableTokenListProps {
   excludedTokens: string[];
   includedTokens: string[];
 }
+
+interface SearchableTokenListLayoutProps {
+  manage: boolean;
+  setManage: Function;
+  isOpen: boolean;
+  onClose: Function;
+  children: JSX.Element;
+}
+
+const SearchableTokenListLayout = ({
+  manage,
+  setManage,
+  onClose,
+  isOpen,
+  children,
+}: SearchableTokenListLayoutProps) => {
+  if (isMobile) {
+    return (
+      <ModalFullscreen
+        title={manage ? 'Manage' : 'Select a Token'}
+        setIsOpen={() => {
+          if (manage) return setManage(false);
+          onClose();
+        }}
+        isOpen={isOpen}
+        showHeader
+      >
+        {children}
+      </ModalFullscreen>
+    );
+  }
+
+  return (
+    <Modal
+      title={manage ? 'Manage' : 'Select a Token'}
+      isOpen={isOpen}
+      setIsOpen={onClose}
+      showBackButton={manage}
+      onBackClick={() => setManage(false)}
+    >
+      {children}
+    </Modal>
+  );
+};
 
 export const SearchableTokenList = ({
   onClick,
@@ -68,15 +112,14 @@ export const SearchableTokenList = ({
   };
 
   return (
-    <Modal
-      title={manage ? 'Manage' : 'Select a Token'}
+    <SearchableTokenListLayout
+      manage={manage}
+      onClose={onClose}
       isOpen={isOpen}
-      setIsOpen={onClose}
-      showBackButton={manage}
-      onBackClick={() => setManage(false)}
+      setManage={setManage}
     >
       {manage ? (
-        <div className="max-h-[calc(70vh-100px)] overflow-auto mb-20">
+        <div className="h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20">
           <div className="pt-10 px-20 space-y-15">
             {tokensLists.map((tokenList) => {
               const isSelected = userPreferredListIds.some(
@@ -92,7 +135,7 @@ export const SearchableTokenList = ({
                   <div className="flex items-center">
                     <Image
                       alt="TokenList"
-                      src={getLogoByURI(tokenList.logoURI)}
+                      src={tokenList.logoURI}
                       className="bg-grey-2 rounded-full h-28 w-28"
                     />
                     <div className={'ml-15'}>
@@ -138,7 +181,7 @@ export const SearchableTokenList = ({
           </div>
           <div
             data-cy="searchableTokensList"
-            className="h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+            className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
           >
             {tokens
               .filter(
@@ -161,7 +204,7 @@ export const SearchableTokenList = ({
                   >
                     <div className="flex items-center">
                       <Image
-                        src={getTokenLogoURI(token)}
+                        src={token.logoURI}
                         alt={`${token.symbol} Token`}
                         className="bg-grey-2 rounded-full h-28 w-28"
                       />
@@ -178,7 +221,7 @@ export const SearchableTokenList = ({
               })}
           </div>
           <hr className="border-grey-2 dark:border-blue-1" />
-          <div className="flex justify-center items-center h-[59px]">
+          <div className="flex justify-center items-center h-[59px] my-5">
             <button
               onClick={() => {
                 setUserLists(getTokenListLS());
@@ -197,6 +240,6 @@ export const SearchableTokenList = ({
           </div>
         </>
       )}
-    </Modal>
+    </SearchableTokenListLayout>
   );
 };

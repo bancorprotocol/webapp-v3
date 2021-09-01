@@ -8,12 +8,13 @@ import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3/contracts';
-import wait from 'waait';
+import { wait } from 'utils/pureFunctions';
 import {
   ConversionEvents,
   sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { getConversionLS } from 'utils/localStorage';
+import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -22,6 +23,7 @@ interface ModalApproveProps {
   fromToken?: Token;
   handleApproved: Function;
   waitForApproval?: boolean;
+  contract?: string;
 }
 
 export const ModalApprove = ({
@@ -31,6 +33,7 @@ export const ModalApprove = ({
   fromToken,
   handleApproved,
   waitForApproval,
+  contract,
 }: ModalApproveProps) => {
   const dispatch = useDispatch();
 
@@ -46,7 +49,11 @@ export const ModalApprove = ({
         ...conversion,
         conversion_unlimited: amount ? 'Limited' : 'Unlimited',
       });
-      const txHash = await setNetworkContractApproval(fromToken, amount);
+      const txHash = await setNetworkContractApproval(
+        fromToken,
+        amount,
+        contract
+      );
       dispatch(
         addNotification({
           type: NotificationType.pending,
@@ -74,7 +81,7 @@ export const ModalApprove = ({
       handleApproved();
     } catch (e) {
       setIsOpen(false);
-      if (e.message.includes('User denied transaction signature'))
+      if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
             type: NotificationType.error,
@@ -98,9 +105,7 @@ export const ModalApprove = ({
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
             <IconLock className="w-[22px] text-white" />
           </div>
-          <h2 className="text-20 font-semibold mb-8">
-            Approve {fromToken.symbol}
-          </h2>
+          <h2 className="text-20 mb-8">Approve {fromToken.symbol}</h2>
           <p className="text-center text-grey-5">
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.

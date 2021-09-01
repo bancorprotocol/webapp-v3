@@ -1,5 +1,4 @@
 import { Token } from 'services/observables/tokens';
-import { expandToken } from 'utils/pureFunctions';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
@@ -12,6 +11,7 @@ import {
   UNLIMITED_WEI,
 } from 'services/web3/approval/constants';
 import { ethToken } from 'services/web3/config';
+import { expandToken } from 'utils/formulas';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -86,7 +86,8 @@ const setApproval = async (
 
 export const getNetworkContractApproval = async (
   token: Token,
-  amount: string
+  amount: string,
+  contract?: string
 ): Promise<boolean> => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
@@ -94,7 +95,7 @@ export const getNetworkContractApproval = async (
   const { isApprovalRequired } = await getApproval(
     token.address,
     USER,
-    BANCOR_NETWORK,
+    contract ? contract : BANCOR_NETWORK,
     amountWei
   );
   return isApprovalRequired;
@@ -102,10 +103,16 @@ export const getNetworkContractApproval = async (
 
 export const setNetworkContractApproval = async (
   token: Token,
-  amount?: string
+  amount?: string,
+  contract?: string
 ) => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
   const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
-  return await setApproval(token.address, USER, BANCOR_NETWORK, amountWei);
+  return await setApproval(
+    token.address,
+    USER,
+    contract ? contract : BANCOR_NETWORK,
+    amountWei
+  );
 };

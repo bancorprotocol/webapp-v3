@@ -1,5 +1,10 @@
 import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
+import { EthNetworks } from 'services/web3/types';
+
+const oneMillion = new BigNumber(1000000);
+
+export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
 
 export const prettifyNumber = (
   num: number | string | BigNumber,
@@ -30,4 +35,25 @@ export const formatDuration = (duration: plugin.Duration): string => {
   if (hours > 0) sentence += ' ' + hours + ' Hours';
   if (minutes > 0) sentence += ' ' + minutes + ' Minutes';
   return sentence;
+};
+
+export const formatTime = (seconds: number): string => {
+  return new Date(seconds * 1000).toISOString().substr(11, 8);
+};
+
+export const getNetworkName = (network: EthNetworks): string => {
+  switch (network) {
+    case EthNetworks.Mainnet:
+      return 'Ethereum Mainnet';
+    case EthNetworks.Ropsten:
+      return 'Ropsten Test Network';
+    default:
+      return 'Unsupported network';
+  }
+};
+
+export const isUnsupportedNetwork = (
+  network: EthNetworks | undefined
+): boolean => {
+  return network !== undefined && EthNetworks[network] === undefined;
 };

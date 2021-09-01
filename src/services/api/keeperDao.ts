@@ -16,10 +16,11 @@ import {
 } from 'services/web3/contracts/exchangeProxy/wrapper';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { shrinkToken } from 'utils/pureFunctions';
 import { sendConversionEvent, ConversionEvents } from './googleTagManager';
 import { toChecksumAddress } from 'web3-utils';
 import { getConversionLS } from 'utils/localStorage';
+import { ErrorCode } from 'services/web3/types';
+import { shrinkToken } from 'utils/formulas';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -59,8 +60,8 @@ export const swapLimit = async (
             errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
           },
         };
-      } catch (error) {
-        if (error.message.includes('User denied transaction signature'))
+      } catch (e) {
+        if (e.code === ErrorCode.DeniedTx)
           return {
             type: NotificationType.error,
             title: 'Transaction Rejected',
@@ -95,18 +96,18 @@ export const swapLimit = async (
         msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
       };
     }
-  } catch (error) {
-    if (error.message.includes('User denied transaction signature'))
+  } catch (e) {
+    sendConversionEvent(ConversionEvents.fail, {
+      conversion,
+      error: e.message,
+    });
+
+    if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',
         msg: 'You rejected the transaction. If this was by mistake, please try again.',
       };
-
-    sendConversionEvent(ConversionEvents.fail, {
-      conversion,
-      error: error.message,
-    });
 
     return {
       type: NotificationType.error,
@@ -245,8 +246,8 @@ export const cancelOrders = async (
           'Transaction had failed. Please try again or contact support.',
       },
     };
-  } catch (error) {
-    if (error.message.includes('User denied transaction signature'))
+  } catch (e) {
+    if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',

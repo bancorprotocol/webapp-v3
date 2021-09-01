@@ -1,6 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
-import { expandToken, ppmToDec, shrinkToken } from 'utils/pureFunctions';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3/contracts';
 import {
@@ -23,16 +22,15 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { fetchTokenBalances } from 'services/observables/balances';
-import wait from 'waait';
 import {
   buildPoolBalanceShape,
   buildRateShape,
   multi,
 } from '../contracts/shapes';
-import { calcReserve } from 'utils/formulas';
+import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
 import Web3 from 'web3';
+import { ppmToDec } from 'utils/helperFunctions';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
