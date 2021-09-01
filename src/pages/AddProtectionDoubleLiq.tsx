@@ -196,7 +196,10 @@ export const AddProtectionDoubleLiq = (
     }
   };
 
-  const addLiquidity = async (approvalRequired: boolean = false) => {};
+  const addLiquidity = async (skipApproval: boolean = false) => {
+    if (!skipApproval) {
+    }
+  };
 
   if (
     isLoading ||
