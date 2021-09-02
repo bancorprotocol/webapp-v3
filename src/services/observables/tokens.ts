@@ -285,7 +285,7 @@ export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
       const reserves: Reserve[] = [
         {
           ...pool.reserves[0],
-          rewardApr: Number(pool.reserves[0].apr) / 1000,
+          rewardApr: Number(pool.reserves[0].apr) / 10000,
           symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
           logoURI: reserveTokenOne
             ? getTokenLogoURI(reserveTokenOne)

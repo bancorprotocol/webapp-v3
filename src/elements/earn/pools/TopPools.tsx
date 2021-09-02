@@ -5,21 +5,26 @@ import { Image } from 'components/image/Image';
 
 interface Props {
   pools: Pool[];
+  setSearch: Function;
 }
 
-export const TopPools = ({ pools }: Props) => {
-  const topPools = orderBy(pools, 'apr', 'desc').slice(0, 20);
+export const TopPools = ({ pools, setSearch }: Props) => {
+  const filteredPools = pools.filter(
+    (p) => p.isWhitelisted && p.liquidity > 100000
+  );
+  const topPools = orderBy(filteredPools, 'apr', 'desc').slice(0, 20);
 
   return (
     <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Pools</h2>
+      <h2 className="ml-[20px] md:ml-[44px]">Top Performing Pools</h2>
       <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">
           {pools.length
             ? topPools.map((pool) => {
                 return (
-                  <div
+                  <button
+                    onClick={() => setSearch(pool.name)}
                     key={pool.name}
                     className="flex items-center justify-center min-w-[225px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
@@ -35,7 +40,7 @@ export const TopPools = ({ pools }: Props) => {
                         className="-ml-20 bg-grey-1 rounded-full w-50 h-50 z-10"
                       />
                     </div>
-                    <div className="ml-10 text-12 dark:text-grey-3">
+                    <div className="ml-10 text-12 dark:text-grey-3 text-left">
                       <div className="font-medium">{pool.name}</div>
                       <div className="text-16">
                         <span className="text-primary text-20 font-semibold">
@@ -44,7 +49,7 @@ export const TopPools = ({ pools }: Props) => {
                         APR
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })
             : [...Array(20)].map((_, index) => (

@@ -43,7 +43,7 @@ export const TokenTable = () => {
         </div>
 
         <Image
-          src={token.logoURI}
+          src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
           className="bg-grey-2 rounded-full h-30 w-30 mr-10 ml-20"
         />

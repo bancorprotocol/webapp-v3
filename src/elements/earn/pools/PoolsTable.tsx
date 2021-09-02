@@ -5,7 +5,7 @@ import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { NavLink } from 'react-router-dom';
@@ -15,15 +15,16 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 
 interface Props {
   pools: Pool[];
+  search: string;
+  setSearch: Function;
 }
 
-export const PoolsTable = ({ pools }: Props) => {
-  const [searchInput, setSearchInput] = useState('');
+export const PoolsTable = ({ pools, search, setSearch }: Props) => {
   const data = useMemo<Pool[]>(() => {
     return pools.filter((p) =>
-      p.name.toLowerCase().includes(searchInput.toLowerCase())
+      p.name.toLowerCase().includes(search.toLowerCase())
     );
-  }, [pools, searchInput]);
+  }, [pools, search]);
 
   const CellName = (pool: Pool) => {
     return (
@@ -35,12 +36,12 @@ export const PoolsTable = ({ pools }: Props) => {
         </div>
         <div className="flex ml-20">
           <Image
-            src={pool.reserves[0].logoURI}
+            src={pool.reserves[0].logoURI.replace('thumb', 'small')}
             alt="Token Logo"
             className="bg-grey-1 rounded-full w-30 h-30 z-20"
           />
           <Image
-            src={pool.reserves[1].logoURI}
+            src={pool.reserves[1].logoURI.replace('thumb', 'small')}
             alt="Token Logo"
             className="-ml-12 bg-grey-1 rounded-full w-30 h-30 z-10"
           />
@@ -171,8 +172,8 @@ export const PoolsTable = ({ pools }: Props) => {
           <IconSearch className="absolute w-16 ml-14 text-grey-3" />
           <input
             type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
             className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
           />
