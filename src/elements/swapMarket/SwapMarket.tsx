@@ -30,7 +30,6 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
-import { useCallback } from 'react';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -68,20 +67,16 @@ export const SwapMarket = ({
     (state) => state.user.slippageTolerance
   );
 
-  const loadRateAndPriceImapct = useCallback(
-    async (fromToken: Token, toToken: Token, amount: string) => {
-      setIsLoadingRate(true);
-      const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-      if (rate === '' && priceImpact === '') {
-        setRate(res.rate);
-        if (amount) setPriceImpact(res.priceImpact);
-        else setPriceImpact('0.00');
-      }
-      setIsLoadingRate(false);
-      return res;
-    },
-    [priceImpact, rate]
-  );
+  const loadRateAndPriceImapct = async (
+    fromToken: Token,
+    toToken: Token,
+    amount: string
+  ) => {
+    setIsLoadingRate(true);
+    const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    setIsLoadingRate(false);
+    return res;
+  };
 
   useInterval(() => {
     if (toToken && fromToken.address !== wethToken) {
@@ -92,45 +87,6 @@ export const SwapMarket = ({
   useEffect(() => {
     setIsLoadingRate(true);
   }, [fromAmount]);
-
-  const handleInputChange = async (amount: string) => {
-    if (!fromToken || !toToken || fromToken.address === wethToken) return;
-
-    if (amount && parseFloat(amount)) {
-      const result = await loadRateAndPriceImapct(fromToken, toToken, amount);
-      const rate = new BigNumber(result.rate).div(amount);
-      setToAmount(
-        sanitizeNumberInput(
-          new BigNumber(amount).times(rate).toString(),
-          toToken.decimals
-        )
-      );
-
-      const usdAmount = new BigNumber(amount)
-        .times(rate)
-        .times(toToken.usdPrice!)
-        .toString();
-
-      setToAmountUsd(usdAmount);
-      setRate(rate.toString());
-      if (amount) setPriceImpact(result.priceImpact);
-      else setPriceImpact('0.00');
-    } else {
-      setToAmount('');
-      setToAmountUsd('');
-      setIsLoadingRate(false);
-
-      const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
-      setRate(res.rate);
-      if (amount) setPriceImpact(res.priceImpact);
-      else setPriceImpact('0.00');
-    }
-  };
-
-  useEffect(() => {
-    if (toToken && fromToken.address !== wethToken)
-      loadRateAndPriceImapct(fromToken, toToken, '1');
-  }, [fromToken, toToken, loadRateAndPriceImapct]);
 
   useEffect(() => {
     if (toToken && toToken.address === wethToken) setToToken(undefined);
@@ -145,6 +101,44 @@ export const SwapMarket = ({
       setToAmountUsd(usdAmount);
       setToAmount(fromDebounce);
       setIsLoadingRate(false);
+    } else {
+      (async () => {
+        if (
+          (!fromDebounce || !parseFloat(fromDebounce)) &&
+          fromToken &&
+          toToken
+        ) {
+          setToAmount('');
+          setToAmountUsd('');
+          const res = await loadRateAndPriceImapct(fromToken, toToken, '1');
+          setRate(res.rate);
+          if (fromDebounce) setPriceImpact(res.priceImpact);
+          else setPriceImpact('0.00');
+        } else if (fromToken && toToken) {
+          const result = await loadRateAndPriceImapct(
+            fromToken,
+            toToken,
+            fromDebounce
+          );
+          const rate = new BigNumber(result.rate).div(fromDebounce);
+          setToAmount(
+            sanitizeNumberInput(
+              new BigNumber(fromDebounce).times(rate).toString(),
+              toToken.decimals
+            )
+          );
+
+          const usdAmount = new BigNumber(fromDebounce)
+            .times(rate)
+            .times(toToken.usdPrice!)
+            .toString();
+
+          setToAmountUsd(usdAmount);
+          setRate(rate.toString());
+          if (fromDebounce) setPriceImpact(result.priceImpact);
+          else setPriceImpact('0.00');
+        }
+      })();
     }
   }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
 
@@ -326,10 +320,7 @@ export const SwapMarket = ({
             setInput={setFromAmount}
             amountUsd={fromAmountUsd}
             setAmountUsd={setFromAmountUsd}
-            debounce={(amount: string) => {
-              handleInputChange(amount);
-              setFromDebounce(amount);
-            }}
+            debounce={setFromDebounce}
             border
             selectable
             excludedTokens={toToken ? [toToken.address] : []}
