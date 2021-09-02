@@ -85,7 +85,7 @@ export const SwapMarket = ({
   );
 
   useInterval(() => {
-    if (toToken && fromToken) {
+    if (toToken && fromToken.address !== wethToken) {
       loadRateAndPriceImapct(fromToken, toToken, fromAmount ? fromAmount : '1');
     }
   }, 15000);
@@ -95,7 +95,7 @@ export const SwapMarket = ({
   }, [fromAmount]);
 
   const handleInputChange = async (amount: string) => {
-    if (!fromToken || !toToken) return;
+    if (!fromToken || !toToken || fromToken.address === wethToken) return;
 
     if (amount && parseFloat(amount)) {
       const result = await loadRateAndPriceImapct(fromToken, toToken, amount);
@@ -129,7 +129,8 @@ export const SwapMarket = ({
   };
 
   useEffect(() => {
-    if (toToken) loadRateAndPriceImapct(fromToken, toToken, '1');
+    if (toToken && fromToken.address !== wethToken)
+      loadRateAndPriceImapct(fromToken, toToken, '1');
   }, [fromToken, toToken, loadRateAndPriceImapct]);
 
   useEffect(() => {
