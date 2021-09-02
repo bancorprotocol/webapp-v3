@@ -42,8 +42,6 @@ export interface WalletInfo {
   description: string;
   icon: string;
   href?: string;
-  mobile?: true;
-  mobileOnly?: true;
 }
 
 export const SUPPORTED_WALLETS: WalletInfo[] = [
@@ -58,13 +56,11 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'WalletConnect',
     icon: walletConnectLogo,
     description: 'WalletConnect description',
-    mobile: true,
   },
   {
     connector: walletlink,
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
-    mobileOnly: true,
     description: 'Coinbase Wallet description',
   },
   {
@@ -96,20 +92,17 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'Fortmatic',
     icon: fortmaticLogo,
     description: 'Fortmatic description',
-    mobile: true,
   },
   {
     connector: portis,
     name: 'Portis',
     icon: portisLogo,
     description: 'Portis description',
-    mobile: true,
   },
   {
     connector: torus,
     name: 'Torus',
     icon: torusLogo,
     description: 'Torus description',
-    mobile: true,
   },
 ];
