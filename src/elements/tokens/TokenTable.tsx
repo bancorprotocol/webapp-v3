@@ -24,15 +24,6 @@ export const TokenTable = () => {
     );
   }, [tokens, searchInput]);
 
-  const convertChartData = (data: (string | number)[][]): LineData[] => {
-    return data.map((x) => {
-      return {
-        time: x[0] as UTCTimestamp,
-        value: Number(x[1]),
-      };
-    });
-  };
-
   const CellName = (token: Token) => {
     return (
       <div className={'flex items-center'}>
@@ -113,19 +104,15 @@ export const TokenTable = () => {
         Header: 'Last 7 Days',
         accessor: 'price_history_7d',
         Cell: (cellData) => {
-          const sanitized = cellData.value.filter((x) => !!x);
-          if (sanitized.length === 0) {
-            return <div>N/A</div>;
-          }
-          const latest = sanitized[sanitized.length - 1];
-          const earliest = sanitized[0];
-          if (!latest || !earliest || !latest[1] || !earliest[1]) {
-            return <div>N/A</div>;
-          }
-          const changePositive = latest[1] > earliest[1];
+          const value = cellData.value;
+
+          if (value.length === 0) return <div>N/A</div>;
+
+          const changePositive =
+            value[value.length - 1].value >= value[0].value;
           return (
             <LineChartSimple
-              data={convertChartData(sanitized)}
+              data={value}
               color={changePositive ? '#0FC7A6' : '#FF3F56'}
             />
           );
