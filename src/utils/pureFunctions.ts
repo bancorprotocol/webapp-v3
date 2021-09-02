@@ -78,3 +78,5 @@ export const splitArrayByVal = <T>(
 
 export const wait = async (ms: number = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);

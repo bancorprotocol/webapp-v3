@@ -13,10 +13,11 @@ import {
   ropstenImage,
   ethToken,
 } from 'services/web3/config';
-import { mapIgnoreThrown } from 'utils/pureFunctions';
+import { get7DaysAgo, mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange } from 'utils/formulas';
+import { UTCTimestamp } from 'lightweight-charts';
 
 export interface TokenList {
   name: string;
@@ -36,7 +37,7 @@ export interface Token {
   liquidity: string | null;
   usd_24h_ago: string | null;
   price_change_24: number;
-  price_history_7d: (string | number)[][];
+  price_history_7d: { time: UTCTimestamp; value: number }[];
   usd_volume_24: string | null;
   isWhitelisted: boolean;
 }
@@ -135,6 +136,7 @@ export const tokensNoBalance$ = combineLatest([
           const usdVolume24 = pool ? pool.volume_24h.usd : null;
           const isWhitelisted = pool ? pool.isWhitelisted : false;
 
+          const seven_days_ago = get7DaysAgo().getUTCSeconds();
           return {
             address: x.dlt_id,
             symbol: x.symbol,
@@ -143,7 +145,12 @@ export const tokensNoBalance$ = combineLatest([
             liquidity: x.liquidity.usd,
             usd_24h_ago: price_24h,
             price_change_24: priceChanged,
-            price_history_7d: x.rates_7d,
+            price_history_7d: x.rates_7d
+              .filter((x) => !!x)
+              .map((x, i) => ({
+                value: Number(x),
+                time: (seven_days_ago + i * 360) as UTCTimestamp,
+              })),
             usd_volume_24: usdVolume24,
             isWhitelisted,
           };
