@@ -15,6 +15,7 @@ interface SwapWidgetProps {
   setIsLimit: Function;
   from: string | null;
   to: string | null;
+  limit: string | null;
 }
 
 export const SwapWidget = ({
@@ -22,6 +23,7 @@ export const SwapWidget = ({
   setIsLimit,
   from,
   to,
+  limit,
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
@@ -43,8 +45,10 @@ export const SwapWidget = ({
         const toToken = tokens.find((x) => x.address === to);
         if (toToken) setToToken(toToken);
       } else setToToken(null);
+
+      setIsLimit(limit);
     }
-  }, [from, to, tokens]);
+  }, [from, to, limit, tokens, setIsLimit]);
 
   useAsyncEffect(
     async (isMounted) => {
@@ -70,6 +74,14 @@ export const SwapWidget = ({
     [toToken]
   );
 
+  const replaceLimit = (limit: boolean) => {
+    const url = `?from=${fromToken.address}${
+      toToken ? '&to=' + toToken.address : ''
+    }${limit ? '&limit=' + limit : ''}`;
+
+    if (url !== window.location.search) history.push(url);
+  };
+
   const replaceFrom = (token: Token) => {
     const toAddress =
       !isLimit && token.address === wethToken
@@ -77,16 +89,28 @@ export const SwapWidget = ({
         : toToken
         ? toToken.address
         : '';
-    history.push(`?from=${token.address}&to=${toAddress}`);
+
+    const url = `?from=${token.address}${toAddress ? '&to=' + toAddress : ''}${
+      isLimit ? '&limit=' + isLimit : ''
+    }`;
+
+    if (url !== window.location.search) history.push(url);
   };
 
   const replaceTo = (token?: Token) => {
-    history.push(`?from=${fromToken.address}&to=${token ? token.address : ''}`);
+    const url = `?from=${fromToken.address}${
+      token ? '&to=' + token.address : ''
+    }${isLimit ? '&limit=' + isLimit : ''}`;
+
+    if (url !== window.location.search) history.push(url);
   };
 
   const switchTokens = () => {
     if (toToken) {
-      history.push(`?from=${toToken.address}&to=${fromToken.address}`);
+      const url = `?from=${toToken.address}${
+        fromToken ? '&to=' + fromToken.address : ''
+      }${isLimit ? '&limit=' + isLimit : ''}`;
+      if (url !== window.location.search) history.push(url);
     }
   };
 
@@ -95,7 +119,7 @@ export const SwapWidget = ({
       <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
         <div>
           <div className="widget ">
-            <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
+            <SwapHeader isLimit={isLimit} setIsLimit={replaceLimit} />
             <hr className="widget-separator" />
             {isLimit ? (
               <SwapLimit

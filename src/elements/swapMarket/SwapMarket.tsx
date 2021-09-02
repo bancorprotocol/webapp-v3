@@ -30,7 +30,6 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
-import useAsyncEffect from 'use-async-effect';
 import { useCallback } from 'react';
 
 interface SwapMarketProps {

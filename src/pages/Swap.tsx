@@ -15,6 +15,7 @@ export const Swap = () => {
         setIsLimit={setIsLimit}
         from={query.get('from')}
         to={query.get('to')}
+        limit={query.get('limit')}
       />
       {isLimit ? <SwapLimitTable /> : ''}
     </div>
