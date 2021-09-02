@@ -58,7 +58,6 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           );
         })
         .catch((error) => {
-          setSelectedWallet(null);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
           } else setError(true);
@@ -150,11 +149,11 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
               {error && (
                 <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
                   <p className="font-semibold mb-5">
-                    Failed to connect to wallet.
+                    {`Failed Connecting to ${
+                      selectedWallet ? selectedWallet.name : 'Wallet'
+                    }`}
                   </p>
-                  <p className="text-12">
-                    Please try again or contact support.
-                  </p>
+                  <p className="text-12">Please try again or contact support</p>
                 </div>
               )}
             </>
