@@ -24,6 +24,7 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
+import { useApprove } from 'hooks/useApprove';
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
@@ -139,66 +140,19 @@ export const AddProtectionDoubleLiq = (
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
   }, [pools, anchor]);
 
-  const [showModal, setShowModal] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [showBntModal, setShowBntModal] = useState(false);
-  const [showTknModal, setShowTknModal] = useState(false);
+  const [triggerCheck, isOpen, selectedToken, selectedAmount, waitForConfirmation, handleApproved] = useApprove([{ amount: amountBnt, token: bntToken as Token }, { amount: amountTkn, token: tknToken as Token }], '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c', true, () => console.log('approveeey'))
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
-  const checkApproval = async () => {
-    if (tknToken && bntToken && selectedPool) {
-      const tokensAndAmounts: TokenAndAmount[] = [
-        { decAmount: amountTkn, token: tknToken },
-        { decAmount: amountBnt, token: bntToken },
-      ];
 
-      try {
-        const approvalsRequired = await Promise.all(
-          tokensAndAmounts.map(async ({ token, decAmount }) => ({
-            token,
-            decAmount,
-            isApprovalRequired: await getTokenContractApproval(
-              token,
-              decAmount,
-              selectedPool.converter_dlt_id
-            ),
-          }))
-        );
-
-        const remainingApproval = approvalsRequired.find(
-          (approval) => approval.isApprovalRequired
-        );
-
-        if (remainingApproval) {
-          remainingApproval.token.symbol === 'BNT'
-            ? setShowBntModal(true)
-            : setShowTknModal(true);
-        } else {
-          await addLiquidity();
-        }
-      } catch (e) {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `${tokensAndAmounts
-              .map((token) => token.token.symbol)
-              .join(
-                ' '
-              )} approval had failed. Please try again or contact support.`,
-          })
-        );
-      }
-    } else {
-      throw new Error(`Failed to finds tokens,`);
-    }
-  };
 
   const addLiquidity = async (skipApproval: boolean = false) => {
     if (!skipApproval) {
+      console.log('triggering check')
+      triggerCheck()
+      return;
     }
+    console.log('got to add liquidity');
   };
 
   if (
@@ -210,120 +164,24 @@ export const AddProtectionDoubleLiq = (
     return <div>Loading...</div>;
   }
 
-  console.log({ amountBnt, amountBntUsd }, 'derp');
+  console.log({ isOpen }, 'derp');
 
+  
   return (
     (
-      <div className="widget">
-        <ModalApprove
-          isOpen={showBntModal}
-          setIsOpen={setShowBntModal}
-          amount={amountBnt}
-          fromToken={bntToken! as Token}
-          handleApproved={() => checkApproval()}
-          waitForApproval={true}
-        />
-        <ModalApprove
-          isOpen={showTknModal}
-          setIsOpen={setShowTknModal}
-          amount={amountTkn}
-          fromToken={tknToken! as Token}
-          handleApproved={() => checkApproval()}
-          waitForApproval={true}
-        />
-        <div className="flex justify-between p-14">
-          <SwapSwitch />
-          <div className="text-center">
-            <h1 className="font-bold">Add Liquidity</h1>
-          </div>
 
-          <button
-            onClick={() => setIsOpen(false)}
-            className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            <IconTimes className="w-14" />
-          </button>
-        </div>
-        <hr className="widget-separator" />
 
-        <div className="px-20 font-medium text-blue-4 mb-10 mt-6">
-          Enter Stake Amount
-        </div>
+      <ModalApprove
+          isOpen={false}
+          setIsOpen={() => {}}
+          amount={selectedAmount}
+          fromToken={selectedToken}
+          handleApproved={(address) => handleApproved(address)}
+          waitForApproval={waitForConfirmation}
+          />
 
-        <div className="px-10">
-          <div className="px-4">
-            <div className="mb-12">
-              <TokenInputField
-                label=" "
-                setInput={onBntChange}
-                selectable={false}
-                input={amountBnt}
-                token={bntToken! as Token}
-                border
-                amountUsd={amountBntUsd}
-                setAmountUsd={setAmountBntUsd}
-              />
-            </div>
 
-            <TokenInputField
-              label=" "
-              setInput={onTknChange}
-              selectable={false}
-              input={amountTkn}
-              border
-              token={tknToken! as Token}
-              amountUsd={amountTknUsd}
-              setAmountUsd={setAmountTknUsd}
-            />
-          </div>
-
-          <div className="rounded rounded-lg leading-7 text-16 mb-10 mt-12 bg-blue-0 dark:bg-blue-5 dark:text-grey-0 text-blue-4 px-20 py-18">
-            <div className="font-medium">Token prices</div>
-            <div className="p-10 mt-8">
-              <div className="flex justify-between">
-                <div className="text-20">1 BNT =</div>
-                <div className="text-grey-4 text-right">
-                  ~
-                  {bntToken &&
-                    bntToken.usdPrice &&
-                    prettifyNumber(bntToken.usdPrice, true)}
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <div className="text-20">1 {tknToken && tknToken.symbol} =</div>
-                <div className="text-grey-4 text-right">
-                  ~
-                  {tknToken &&
-                    tknToken.usdPrice &&
-                    prettifyNumber(tknToken.usdPrice, true)}
-                </div>
-              </div>
-            </div>
-            <div className="flex pt-4 justify-between">
-              <div>
-                1 BNT (
-                {bntToken &&
-                  bntToken.usdPrice &&
-                  prettifyNumber(bntToken.usdPrice, true)}
-                ) =
-              </div>
-              <div>0.00 ETH ($0.00)</div>
-            </div>
-            <div className="text-14 mt-12 mb-20 leading-3">
-              I understand that I am adding dual sided liquidity to the pool{' '}
-            </div>
-            <button
-              onClick={() => {
-                addLiquidity();
-              }}
-              className={`btn-primary rounded w-full`}
-              disabled={false}
-            >
-              Supply
-            </button>
-          </div>
-        </div>
-      </div>
+      
     ) || <div>Invalid anchor!</div>
   );
 };

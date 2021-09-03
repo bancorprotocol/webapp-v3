@@ -25,10 +25,11 @@ export const useApprove = (
     TokenAmountWithApproval[]
   >([]);
   const [handleApproved, setHandleApproved] = useState(
-    () => (tokenAddress: string) => {}
+    () => (tokenAddress: string) => { }
   );
 
   const triggerCheck = async () => {
+    console.log('triggering check inside')
     const approvals = await Promise.all(
       tokens.map(async ({ token, amount }) => ({
         token,
@@ -40,22 +41,29 @@ export const useApprove = (
         ),
       }))
     );
+    console.log('approvals', approvals);
 
     const approvalsRequired = approvals.filter(
       (approval) => approval.isApprovalRequired
     );
     if (approvalsRequired.length === 0) {
-      approved();
       setIsOpen(false);
+      approved();
       return;
     }
-    for (const approval of approvalsRequired) {
-      setSelectedToken(approval.token);
-      setSelectedAmount(approval.amount);
-      setIsOpen(true);
-    }
     setRemainingApprovals(approvalsRequired);
-    setHandleApproved(() => (tokenAddress: string) => {});
+    setIsOpen(true);
+    setHandleApproved(() => (tokenAddress: string) => {
+      const remaining = remainingApprovals.filter(approval => approval.token.address !== tokenAddress);
+      setRemainingApprovals(remaining);
+      if (remaining.length === 0) {
+        setIsOpen(false);
+        approved();
+        return;
+      }
+      setSelectedToken(remaining[0].token);
+      setSelectedAmount(remaining[0].amount);
+    })
   };
 
   return [
@@ -65,5 +73,12 @@ export const useApprove = (
     selectedAmount,
     waitForConfirmation,
     handleApproved,
-  ];
+  ] as [
+    () => Promise<void>,
+    boolean,
+    Token,
+    string,
+    boolean,
+    (tokenAddress: string) => void
+  ]
 };
