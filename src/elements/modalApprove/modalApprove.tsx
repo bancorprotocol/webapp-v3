@@ -17,11 +17,11 @@ import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
-  setIsOpen: Function;
+  setIsOpen: (status: boolean) => void;
   isOpen: boolean;
   amount: string;
   fromToken?: Token;
-  handleApproved: Function;
+  handleApproved: (tokenAddress: string) => void;
   waitForApproval?: boolean;
   contract?: string;
 }
@@ -78,7 +78,7 @@ export const ModalApprove = ({
             tx = await web3.eth.getTransactionReceipt(txHash);
           } catch (error) {}
       }
-      handleApproved();
+      handleApproved(fromToken.address);
     } catch (e) {
       setIsOpen(false);
       if (e.code === ErrorCode.DeniedTx)
