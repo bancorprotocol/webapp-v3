@@ -140,14 +140,14 @@ export const App = () => {
               <Route
                 exact
                 strict
-                path="/addProtectionDouble/:anchor"
-                component={AddProtectionDouble}
+                path="/addProtectionDoubleLiq/:anchor"
+                component={AddProtectionDoubleLiq}
               />
               <Route
                 exact
                 strict
-                path="/addProtectionDoubleLiq/:anchor"
-                component={AddProtectionDoubleLiq}
+                path="/addProtectionDouble/:anchor"
+                component={AddProtectionDouble}
               />
               {/* <Route exact strict path="/governance" component={Governance} /> */}
               <Route exact strict path="/vote" component={Vote} />

@@ -17,7 +17,7 @@ import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
-  setIsOpen: (status: boolean) => void;
+  promptSelected: (cancelled: boolean) => void;
   isOpen: boolean;
   amount: string;
   fromToken?: Token;
@@ -27,7 +27,7 @@ interface ModalApproveProps {
 }
 
 export const ModalApprove = ({
-  setIsOpen,
+  promptSelected,
   isOpen,
   amount,
   fromToken,
@@ -39,11 +39,13 @@ export const ModalApprove = ({
 
   if (!fromToken) return null;
 
+  console.log({ isOpen }, 'on <ModalApprove />');
+
   // Wait for user to choose approval and proceed with approval based on user selection
   // Prop amount is UNDEFINED when UNLIMITED
   const approve = async (amount?: string) => {
     try {
-      setIsOpen(false);
+      promptSelected(false);
       const conversion = getConversionLS();
       sendConversionEvent(ConversionEvents.approved, {
         ...conversion,
@@ -80,7 +82,7 @@ export const ModalApprove = ({
       }
       handleApproved(fromToken.address);
     } catch (e) {
-      setIsOpen(false);
+      promptSelected(false);
       if (e.code === ErrorCode.DeniedTx)
         dispatch(
           addNotification({
@@ -99,7 +101,11 @@ export const ModalApprove = ({
   };
 
   return (
-    <Modal title={'Swap'} setIsOpen={setIsOpen} isOpen={isOpen}>
+    <Modal
+      title={'Swap'}
+      setIsOpen={() => promptSelected(true)}
+      isOpen={isOpen}
+    >
       <div className="p-10">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">

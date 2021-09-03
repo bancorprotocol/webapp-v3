@@ -54,7 +54,7 @@ export const ModalDoubleApprove = ({
   return (
     <>
       <ModalApprove
-        setIsOpen={token1PromptCompleted}
+        promptSelected={token1PromptCompleted}
         isOpen={isOpen && token1IsOpen}
         waitForApproval={waitForApproval}
         handleApproved={token1IsApproved}
@@ -62,7 +62,7 @@ export const ModalDoubleApprove = ({
         amount={amount1}
       />
       <ModalApprove
-        setIsOpen={token2PromptCompleted}
+        promptSelected={token2PromptCompleted}
         isOpen={isOpen && token2IsOpen}
         waitForApproval={waitForApproval}
         handleApproved={token2IsApproved}

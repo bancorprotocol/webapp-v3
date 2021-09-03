@@ -196,7 +196,7 @@ export const ModalVbnt = ({
       </Modal>
       <ModalApprove
         isOpen={showApprove}
-        setIsOpen={setShowApprove}
+        promptSelected={(state) => setShowApprove(!state)}
         amount={amount}
         fromToken={token}
         handleApproved={() => handleStake(true)}

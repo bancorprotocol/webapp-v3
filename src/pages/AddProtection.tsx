@@ -253,7 +253,7 @@ export const AddProtection = (
       <div className="widget">
         <ModalApprove
           isOpen={showModal}
-          setIsOpen={setShowModal}
+          promptSelected={(state) => setShowModal(!state)}
           amount={amount}
           fromToken={selectedToken!}
           handleApproved={() => addProtection(true)}

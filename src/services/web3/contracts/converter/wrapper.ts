@@ -12,6 +12,7 @@ import { resolveTxOnConfirmation } from 'services/web3';
 import { onLogin$, user$ } from 'services/observables/user';
 import { ethToken } from 'services/web3/config';
 import { getApproval } from 'services/web3/approval';
+import { isAddress } from 'web3-utils';
 
 export const buildConverterContract = (
   contractAddress?: string,
@@ -58,7 +59,14 @@ export const getTokenContractApproval = async (
   decAmount: string,
   converterAddress: string
 ): Promise<boolean> => {
+  if (!isAddress(converterAddress) || !isAddress(token.address))
+    throw new Error(
+      `Invalid contract address of ${converterAddress} ${JSON.stringify(
+        token
+      )} passed to getContractApproval`
+    );
   const USER = await user$.pipe(take(1)).toPromise();
+  if (!isAddress(USER)) throw new Error(`Failed to find user address ${USER}`);
   const amountWei = expandToken(decAmount, token.decimals);
   const { isApprovalRequired } = await getApproval(
     token.address,

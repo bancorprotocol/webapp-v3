@@ -92,6 +92,11 @@ export const AddProtectionDoubleLiq = (
     }
   };
 
+  const [beOpen, setBeOpen] = useState(false);
+  // useInterval(() => {
+  //   setBeOpen((state) => !state);
+  // }, 1000);
+
   const onTknChange = (value: string) => {
     setAmountTkn(value);
     if (bntToken) {
@@ -147,6 +152,7 @@ export const AddProtectionDoubleLiq = (
     selectedAmount,
     waitForConfirmation,
     handleApproved,
+    handleOpen,
   ] = useApprove(
     [
       { amount: amountBnt, token: bntToken as Token },
@@ -177,18 +183,112 @@ export const AddProtectionDoubleLiq = (
     return <div>Loading...</div>;
   }
 
-  console.log({ isOpen }, 'derp');
+  console.log({ isOpen }, '<AddProtectionDoubleLiq />');
 
   return (
     (
-      <ModalApprove
-        isOpen={false}
-        setIsOpen={() => {}}
-        amount={selectedAmount}
-        fromToken={selectedToken}
-        handleApproved={(address: string) => handleApproved(address)}
-        waitForApproval={waitForConfirmation}
-      />
+      <div className="widget">
+        <ModalApprove
+          isOpen={isOpen}
+          promptSelected={handleOpen}
+          amount={selectedAmount}
+          fromToken={selectedToken}
+          handleApproved={(address: string) => handleApproved(address)}
+          waitForApproval={waitForConfirmation}
+        />
+        <div className="flex justify-between p-14">
+          <SwapSwitch />
+          <div className="text-center">
+            <h1 className="font-bold">Add Liquidity</h1>
+          </div>
+
+          <button
+            onClick={() => {}}
+            className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <IconTimes className="w-14" />
+          </button>
+        </div>
+        <hr className="widget-separator" />
+
+        <div className="px-20 font-medium text-blue-4 mb-10 mt-6">
+          Enter Stake Amount
+        </div>
+
+        <div className="px-10">
+          <div className="px-4">
+            <div className="mb-12">
+              <TokenInputField
+                label=" "
+                setInput={onBntChange}
+                selectable={false}
+                input={amountBnt}
+                token={bntToken! as Token}
+                border
+                amountUsd={amountBntUsd}
+                setAmountUsd={setAmountBntUsd}
+              />
+            </div>
+
+            <TokenInputField
+              label=" "
+              setInput={onTknChange}
+              selectable={false}
+              input={amountTkn}
+              border
+              token={tknToken! as Token}
+              amountUsd={amountTknUsd}
+              setAmountUsd={setAmountTknUsd}
+            />
+          </div>
+
+          <div className="rounded rounded-lg leading-7 text-16 mb-10 mt-12 bg-blue-0 dark:bg-blue-5 dark:text-grey-0 text-blue-4 px-20 py-18">
+            <div className="font-medium">Token prices</div>
+            <div className="p-10 mt-8">
+              <div className="flex justify-between">
+                <div className="text-20">1 BNT =</div>
+                <div className="text-grey-4 text-right">
+                  ~
+                  {bntToken &&
+                    bntToken.usdPrice &&
+                    prettifyNumber(bntToken.usdPrice, true)}
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div className="text-20">1 {tknToken && tknToken.symbol} =</div>
+                <div className="text-grey-4 text-right">
+                  ~
+                  {tknToken &&
+                    tknToken.usdPrice &&
+                    prettifyNumber(tknToken.usdPrice, true)}
+                </div>
+              </div>
+            </div>
+            <div className="flex pt-4 justify-between">
+              <div>
+                1 BNT (
+                {bntToken &&
+                  bntToken.usdPrice &&
+                  prettifyNumber(bntToken.usdPrice, true)}
+                ) =
+              </div>
+              <div>0.00 ETH ($0.00)</div>
+            </div>
+            <div className="text-14 mt-12 mb-20 leading-3">
+              I understand that I am adding dual sided liquidity to the pool{' '}
+            </div>
+            <button
+              onClick={() => {
+                addLiquidity();
+              }}
+              className={`btn-primary rounded w-full`}
+              disabled={false}
+            >
+              Supply
+            </button>
+          </div>
+        </div>
+      </div>
     ) || <div>Invalid anchor!</div>
   );
 };

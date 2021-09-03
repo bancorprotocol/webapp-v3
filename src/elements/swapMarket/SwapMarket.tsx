@@ -426,7 +426,7 @@ export const SwapMarket = ({
       </div>
       <ModalApprove
         isOpen={showModal}
-        setIsOpen={setShowModal}
+        promptSelected={(state) => setShowModal(!state)}
         amount={fromAmount}
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}

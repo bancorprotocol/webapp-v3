@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { getTokenContractApproval } from 'services/web3/contracts/converter/wrapper';
+import { wait } from 'utils/pureFunctions';
+import { useInterval } from './useInterval';
 
 interface TokenAmount {
   amount: string;
@@ -9,6 +11,7 @@ interface TokenAmount {
 
 interface TokenAmountWithApproval extends TokenAmount {
   isApprovalRequired: boolean;
+  prompted: boolean;
 }
 
 export const useApprove = (
@@ -25,11 +28,11 @@ export const useApprove = (
     TokenAmountWithApproval[]
   >([]);
   const [handleApproved, setHandleApproved] = useState(
-    () => (tokenAddress: string) => { }
+    () => (tokenAddress: string) => {}
   );
 
   const triggerCheck = async () => {
-    console.log('triggering check inside')
+    console.log('triggering check inside');
     const approvals = await Promise.all(
       tokens.map(async ({ token, amount }) => ({
         token,
@@ -39,6 +42,7 @@ export const useApprove = (
           amount,
           spendingContract
         ),
+        prompted: false,
       }))
     );
     console.log('approvals', approvals);
@@ -48,22 +52,38 @@ export const useApprove = (
     );
     if (approvalsRequired.length === 0) {
       setIsOpen(false);
+      console.log('not opening, no approvals required');
       approved();
       return;
     }
     setRemainingApprovals(approvalsRequired);
     setIsOpen(true);
+    console.log('setIsOpen should be thing');
     setHandleApproved(() => (tokenAddress: string) => {
-      const remaining = remainingApprovals.filter(approval => approval.token.address !== tokenAddress);
+      const remaining = remainingApprovals.filter(
+        (approval) => approval.token.address !== tokenAddress
+      );
       setRemainingApprovals(remaining);
       if (remaining.length === 0) {
         setIsOpen(false);
         approved();
         return;
       }
-      setSelectedToken(remaining[0].token);
-      setSelectedAmount(remaining[0].amount);
-    })
+    });
+  };
+
+  const handleOpen = async (promptSelected: boolean) => {
+    if (!promptSelected || remainingApprovals.length == 0) {
+      setIsOpen(false);
+      setHandleApproved(() => () => {});
+      return;
+    }
+    setIsOpen(false);
+    await wait(500);
+    setIsOpen(true);
+    setSelectedToken(remainingApprovals[0].token);
+    setSelectedAmount(remainingApprovals[0].amount);
+    setRemainingApprovals(remainingApprovals.slice(1));
   };
 
   return [
@@ -73,12 +93,14 @@ export const useApprove = (
     selectedAmount,
     waitForConfirmation,
     handleApproved,
+    handleOpen,
   ] as [
     () => Promise<void>,
     boolean,
     Token,
     string,
     boolean,
-    (tokenAddress: string) => void
-  ]
+    (tokenAddress: string) => void,
+    (promptSelected: boolean) => void
+  ];
 };

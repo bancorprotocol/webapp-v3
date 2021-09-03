@@ -477,7 +477,7 @@ export const SwapLimit = ({
 
         <ModalApprove
           isOpen={showApproveModal}
-          setIsOpen={setShowApproveModal}
+          promptSelected={() => setShowApproveModal((state) => !state)}
           amount={fromAmount}
           fromToken={
             fromToken?.address === ethToken
