@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { ContractSendMethod } from 'web3-eth-contract';
-import { toHex } from 'web3-utils';
+import { utils } from 'ethers';
 
 const gasEstimaationBuffer = 1.1;
 
@@ -53,7 +53,7 @@ export const resolveTxOnConfirmation = async ({
     tx.send({
       from: user,
       ...(adjustedGas && { gas: adjustedGas as number }),
-      ...(value && { value: toHex(value) }),
+      ...(value && { value: utils.hexlify(value) }),
     })
       .on('transactionHash', (hash: string) => {
         txHash = hash;

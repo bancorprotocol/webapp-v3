@@ -26,11 +26,10 @@ import {
   getConvertersByAnchors,
 } from 'services/web3/contracts/converterRegistry/wrapper';
 import { web3 } from 'services/web3/contracts';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { findOrThrow, mapIgnoreThrown, updateArray } from 'utils/pureFunctions';
 import { getRateByPath } from 'services/web3/contracts/network/wrapper';
 import { ContractSendMethod } from 'web3-eth-contract';
-import { toHex } from 'web3-utils';
 import { wait } from 'utils/pureFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
 
@@ -45,8 +44,8 @@ const zipAnchorAndConverters = (
 
   const zipped = zip(anchorAddresses, converterAddresses) as [string, string][];
   return zipped.map(([anchorAddress, converterAddress]) => ({
-    anchorAddress: toChecksumAddress(anchorAddress!),
-    converterAddress: toChecksumAddress(converterAddress!),
+    anchorAddress: utils.getAddress(anchorAddress!),
+    converterAddress: utils.getAddress(converterAddress!),
   }));
 };
 
@@ -316,7 +315,7 @@ const txFactory = ({
     tx.send({
       from: currentUser,
       ...(adjustedGas && { gas: adjustedGas as number }),
-      ...(value && { value: toHex(value) }),
+      ...(value && { value: utils.hexlify(value) }),
     })
       .on('transactionHash', (hash: string) => {
         subscriber.next(hash);

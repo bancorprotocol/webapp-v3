@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { apiTokens$, pools$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
@@ -108,7 +108,7 @@ const tokenListMerged$ = combineLatest([
   map((tokens) =>
     tokens.map((token) => ({
       ...token,
-      address: toChecksumAddress(token.address),
+      address: utils.getAddress(token.address),
     }))
   ),
   shareReplay()

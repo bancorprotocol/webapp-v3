@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { EthNetworks } from 'services/web3/types';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 
 interface TokenMeta {
   id: string;
@@ -99,18 +99,18 @@ export const getWelcomeData = async (
       network,
       pools: data.pools.map((pool) => ({
         ...pool,
-        converter_dlt_id: toChecksumAddress(pool.converter_dlt_id),
-        pool_dlt_id: toChecksumAddress(pool.pool_dlt_id),
+        converter_dlt_id: utils.getAddress(pool.converter_dlt_id),
+        pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
       })),
       swaps: data.swaps.map((swap) => ({
         ...swap,
-        account_dlt_id: toChecksumAddress(swap.account_dlt_id),
-        source_token_dlt_id: toChecksumAddress(swap.source_token_dlt_id),
-        target_token_dlt_id: toChecksumAddress(swap.target_token_dlt_id),
+        account_dlt_id: utils.getAddress(swap.account_dlt_id),
+        source_token_dlt_id: utils.getAddress(swap.source_token_dlt_id),
+        target_token_dlt_id: utils.getAddress(swap.target_token_dlt_id),
       })),
       tokens: data.tokens.map((token) => ({
         ...token,
-        dlt_id: toChecksumAddress(token.dlt_id),
+        dlt_id: utils.getAddress(token.dlt_id),
       })),
     };
   } catch (e: any) {

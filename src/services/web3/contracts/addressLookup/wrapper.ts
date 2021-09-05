@@ -1,6 +1,6 @@
 import { EthNetworks, RegisteredContracts } from 'services/web3/types';
 import { CallReturn, MultiCall } from 'eth-multicall';
-import { asciiToHex } from 'web3-utils';
+import { utils } from 'ethers';
 import { ABIContractRegistry } from 'services/web3/contracts/addressLookup/abi';
 import { buildContract, web3 } from 'services/web3/contracts';
 import { toPairs } from 'lodash';
@@ -20,11 +20,15 @@ export const fetchContractAddresses = async (
       : new MultiCall(web3, networkVariables.multiCall, [500, 100, 50, 10, 1]);
 
   const hardCodedBytes: RegisteredContracts = {
-    BancorNetwork: asciiToHex('BancorNetwork'),
-    BancorConverterRegistry: asciiToHex('BancorConverterRegistry'),
-    LiquidityProtectionStore: asciiToHex('LiquidityProtectionStore'),
-    LiquidityProtection: asciiToHex('LiquidityProtection'),
-    StakingRewards: asciiToHex('StakingRewards'),
+    BancorNetwork: utils.formatBytes32String('BancorNetwork'),
+    BancorConverterRegistry: utils.formatBytes32String(
+      'BancorConverterRegistry'
+    ),
+    LiquidityProtectionStore: utils.formatBytes32String(
+      'LiquidityProtectionStore'
+    ),
+    LiquidityProtection: utils.formatBytes32String('LiquidityProtection'),
+    StakingRewards: utils.formatBytes32String('StakingRewards'),
   };
 
   const hardCodedShape = (

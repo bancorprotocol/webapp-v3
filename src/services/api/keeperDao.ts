@@ -17,7 +17,7 @@ import {
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sendConversionEvent, ConversionEvents } from './googleTagManager';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
@@ -165,11 +165,11 @@ const orderResToLimit = async (
   return orders.map((res) => {
     const payToken =
       tokens.find(
-        (x) => x.address === toChecksumAddress(res.order.makerToken)
+        (x) => x.address === utils.getAddress(res.order.makerToken)
       ) ?? tokens[0];
     const getToken =
       tokens.find(
-        (x) => x.address === toChecksumAddress(res.order.takerToken)
+        (x) => x.address === utils.getAddress(res.order.takerToken)
       ) ?? tokens[0];
 
     const payAmount = new BigNumber(res.order.makerAmount);

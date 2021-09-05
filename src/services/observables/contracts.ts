@@ -14,7 +14,7 @@ import {
   buildLiquidityProtectionContract,
   fetchLiquidityProtectionSettingsContract,
 } from 'services/web3/contracts/liquidityProtection/wrapper';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { RegisteredContracts } from 'services/web3/types';
 import { Observable } from 'rxjs';
 
@@ -26,7 +26,7 @@ const zeroXContracts$ = currentNetwork$.pipe(
 
 export const exchangeProxy$ = zeroXContracts$.pipe(
   pluck('exchangeProxy'),
-  map(toChecksumAddress),
+  map(utils.getAddress),
   shareReplay(1)
 );
 
@@ -43,7 +43,7 @@ const pluckAndCache =
   (contractsObj$: Observable<RegisteredContracts>) =>
     contractsObj$.pipe(
       pluck(key),
-      map(toChecksumAddress),
+      map(utils.getAddress),
       optimisticContract(key),
       shareReplay(1)
     );
@@ -69,7 +69,7 @@ export const liquidityProtectionStore$ = liquidityProtection$.pipe(
     const contract = buildLiquidityProtectionContract(liquidityProtection);
     return contract.methods.store().call();
   }),
-  map(toChecksumAddress),
+  map(utils.getAddress),
   distinctUntilChanged(),
   shareReplay(1)
 );
@@ -78,13 +78,13 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
   switchMapIgnoreThrow((protectionAddress) =>
     fetchLiquidityProtectionSettingsContract(protectionAddress)
   ),
-  map(toChecksumAddress),
+  map(utils.getAddress),
   optimisticContract('LiquiditySettings'),
   shareReplay(1)
 );
 
 export const govTokenAddress$ = networkVars$.pipe(
   pluck('govToken'),
-  map(toChecksumAddress),
+  map(utils.getAddress),
   shareReplay(1)
 );
