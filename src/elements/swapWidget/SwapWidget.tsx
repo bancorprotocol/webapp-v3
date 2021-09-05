@@ -75,8 +75,15 @@ export const SwapWidget = ({
   );
 
   const replaceLimit = (limit: boolean) => {
+    const toAddress =
+      !limit && fromToken.address === wethToken
+        ? tokens.find((x) => x.address === ethToken)?.address
+        : toToken
+        ? toToken.address
+        : '';
+
     const url = `?from=${fromToken.address}${
-      toToken ? '&to=' + toToken.address : ''
+      toToken ? '&to=' + toAddress : ''
     }${limit ? '&limit=' + limit : ''}`;
 
     if (url !== window.location.search) history.push(url);
@@ -102,7 +109,15 @@ export const SwapWidget = ({
       token ? '&to=' + token.address : ''
     }${isLimit ? '&limit=' + isLimit : ''}`;
 
-    if (url !== window.location.search) history.push(url);
+    if (url !== window.location.search) {
+      if (
+        (fromToken.address === wethToken ||
+          (toToken && toToken.address === ethToken)) &&
+        isLimit
+      )
+        history.replace(url);
+      else history.push(url);
+    }
   };
 
   const switchTokens = () => {
@@ -110,7 +125,9 @@ export const SwapWidget = ({
       const url = `?from=${toToken.address}${
         fromToken ? '&to=' + fromToken.address : ''
       }${isLimit ? '&limit=' + isLimit : ''}`;
-      if (url !== window.location.search) history.push(url);
+      if (url !== window.location.search) {
+        history.push(url);
+      }
     }
   };
 

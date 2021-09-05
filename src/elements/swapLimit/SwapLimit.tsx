@@ -342,7 +342,7 @@ export const SwapLimit = ({
               : []
           }
           errorMsg={fromError}
-          includedTokens={keeperDaoTokens.map((x) => x.address)}
+          includedTokens={[ethToken, ...keeperDaoTokens.map((x) => x.address)]}
         />
       </div>
 
