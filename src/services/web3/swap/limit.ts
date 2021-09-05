@@ -5,10 +5,9 @@ import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
 import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
 import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
-import { web3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3/contracts';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
-import Web3 from 'web3';
 import {
   BaseNotification,
   NotificationType,
@@ -109,7 +108,7 @@ export const createOrder = async (
   });
 
   const signature = await order.getSignatureWithProviderAsync(
-    Web3.givenProvider,
+    writeWeb3,
     SignatureType.EIP712
   );
 

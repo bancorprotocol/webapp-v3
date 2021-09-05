@@ -1,10 +1,4 @@
-import { Contract } from 'web3-eth-contract';
-
 export type EthAddress = string;
-
-export interface ContractMethods<T> extends Contract {
-  methods: T;
-}
 
 export enum EthNetworks {
   Mainnet = 1,

@@ -29,7 +29,6 @@ import {
 } from '../contracts/shapes';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
-import Web3 from 'web3';
 import { ppmToDec } from 'utils/helperFunctions';
 
 export const getRateAndPriceImapct = async (
@@ -153,7 +152,6 @@ export const swap = async ({
     networkContractAddress,
     writeWeb3
   );
-  console.log('write web3', Web3.givenProvider);
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const expectedToWei = expandToken(toAmount, toToken.decimals);
