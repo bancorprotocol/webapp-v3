@@ -3,9 +3,9 @@
 
 
 "@0x/contract-addresses@^6.3.0":
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/@0x/contract-addresses/-/contract-addresses-6.4.0.tgz#5d093f4b34e8e58416387c83c3c2ca22dc7e2191"
-  integrity sha512-GwZSzJGq3d/6v22G/i43AN3RgV3CaCw2meds87cDVE2awhxl/zlJypaY5PlW6VQmo0XZ3Ab3hix2ZGJiKpzLZg==
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/@0x/contract-addresses/-/contract-addresses-6.7.0.tgz#2b53f75f86144a48acef93039ab6b9d371072bc0"
+  integrity sha512-z67/OPernPCqJQK5LakVp+Ut2tYnRHsYH6+AjreJxpsN15Vd5A7r2h4LXE1Nnp/kx8bYXjNMkxHUKxFoz5xVPA==
 
 "@babel/code-frame@7.10.4":
   version "7.10.4"

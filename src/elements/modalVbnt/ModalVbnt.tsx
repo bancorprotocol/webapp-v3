@@ -16,7 +16,7 @@ import {
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useDispatch } from 'react-redux';
-import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
+import BigNumber from 'bignumber.js';
 import { useEffect } from 'react';
 import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';

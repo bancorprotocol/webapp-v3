@@ -3,7 +3,6 @@ import { TorusConnector } from '@web3-react/torus-connector';
 import { LedgerConnector } from '@web3-react/ledger-connector';
 import { TrezorConnector } from '@web3-react/trezor-connector';
 import { PortisConnector } from '@web3-react/portis-connector';
-import { NetworkConnector } from '@web3-react/network-connector';
 import { LatticeConnector } from '@web3-react/lattice-connector';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
@@ -50,11 +49,6 @@ export const provider = (network: EthNetworks) =>
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
-});
-
-export const network = new NetworkConnector({
-  urls: { 1: RPC_URLS[1], 3: RPC_URLS[3] },
-  defaultChainId: 1,
 });
 
 export const walletconnect = new WalletConnectConnector({
