@@ -60,7 +60,7 @@ export const swapLimit = async (
             errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
           },
         };
-      } catch (e) {
+      } catch (e: any) {
         if (e.code === ErrorCode.DeniedTx)
           return {
             type: NotificationType.error,
@@ -96,7 +96,7 @@ export const swapLimit = async (
         msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
       };
     }
-  } catch (e) {
+  } catch (e: any) {
     sendConversionEvent(ConversionEvents.fail, {
       conversion,
       error: e.message,
@@ -209,7 +209,7 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
     } else {
       throw new Error(`Unexpected response from server, ${res.data.message}`);
     }
-  } catch (e) {
+  } catch (e: any) {
     throw new Error(`Unexpected error during send order request ${e.message}`);
   }
 };
@@ -246,7 +246,7 @@ export const cancelOrders = async (
           'Transaction had failed. Please try again or contact support.',
       },
     };
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,

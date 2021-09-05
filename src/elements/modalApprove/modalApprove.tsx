@@ -79,7 +79,7 @@ export const ModalApprove = ({
           } catch (error) {}
       }
       handleApproved();
-    } catch (e) {
+    } catch (e: any) {
       setIsOpen(false);
       if (e.code === ErrorCode.DeniedTx)
         dispatch(

@@ -61,7 +61,7 @@ export const withdrawWeth = async (
         errorMsg: `Withdrawing ${amount} WETH had failed. Please try again or contact support.`,
       },
     };
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,

@@ -70,7 +70,7 @@ const setApproval = async (
       user,
       resolveImmediately: true,
     });
-  } catch (e) {
+  } catch (e: any) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
     if (!isTxDenied) {
       // TODO send this error with failed contract to Sentry or GTM

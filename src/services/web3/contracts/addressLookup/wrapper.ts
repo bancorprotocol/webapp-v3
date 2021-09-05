@@ -54,7 +54,7 @@ export const fetchContractAddresses = async (
     );
     if (allUndefined) throw new Error('All requests returned undefined');
     return registeredContracts;
-  } catch (e) {
+  } catch (e: any) {
     throw new Error(e.message);
   }
 };

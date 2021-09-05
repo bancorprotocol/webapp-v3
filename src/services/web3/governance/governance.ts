@@ -6,6 +6,7 @@ import { shrinkToken, expandToken } from 'utils/formulas';
 import { resolveTxOnConfirmation } from '..';
 import { web3, writeWeb3 } from '../contracts';
 import { buildGovernanceContract } from '../contracts/governance/wrapper';
+import { ErrorCode } from '../types';
 
 export const getStakedAmount = async (
   user: string,
@@ -54,8 +55,8 @@ export const stakeAmount = async (
         errorMsg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
       },
     };
-  } catch (error) {
-    if (error.message.includes('User denied transaction signature'))
+  } catch (e: any) {
+    if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',
@@ -103,8 +104,8 @@ export const unstakeAmount = async (
         errorMsg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
       },
     };
-  } catch (error) {
-    if (error.message.includes('User denied transaction signature'))
+  } catch (e: any) {
+    if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',

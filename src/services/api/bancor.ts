@@ -113,7 +113,7 @@ export const getWelcomeData = async (
         dlt_id: toChecksumAddress(token.dlt_id),
       })),
     };
-  } catch (e) {
+  } catch (e: any) {
     console.error('Failed to load data from Bancor API', e);
     throw new Error(e);
   }

@@ -226,7 +226,7 @@ export const SwapMarket = ({
           txHash,
         })
       );
-    } catch (e) {
+    } catch (e: any) {
       console.error('Swap failed with error: ', e);
       if (e.code === ErrorCode.DeniedTx)
         dispatch(
