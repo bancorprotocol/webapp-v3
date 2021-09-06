@@ -250,7 +250,7 @@ export const AddProtection = (
 
   return (
     (
-      <div className="widget">
+      <div className="widget mx-auto">
         <ModalApprove
           isOpen={showModal}
           promptSelected={(state) => setShowModal(!state)}

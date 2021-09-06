@@ -187,7 +187,7 @@ export const AddProtectionDoubleLiq = (
 
   return (
     (
-      <div className="widget">
+      <div className="widget mx-auto">
         <ModalApprove
           isOpen={isOpen}
           promptSelected={handleOpen}

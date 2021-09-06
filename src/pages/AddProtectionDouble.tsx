@@ -190,7 +190,7 @@ export const AddProtectionDouble = (
 
   return (
     (
-      <div className="widget">
+      <div className="widget mx-auto">
         <ModalDoubleApprove
           isOpen={showModal}
           setIsOpen={setShowModal}
