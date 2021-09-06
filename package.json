@@ -65,8 +65,8 @@
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
-    "compile-abis": "yarn typechain --target ethers-v5 --out-dir src/services/web3/abis/types './src/services/web3/abis/*.json'",
-    "postinstall": "compile-abis",
+    "compile-abis": "typechain --target ethers-v5 --out-dir src/services/web3/abis/types './src/services/web3/abis/*.json'",
+    "postinstall": "yarn compile-abis",
     "start": "TAILWIND_MODE=watch craco start",
     "build": "craco build",
     "test": "craco test",
