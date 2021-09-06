@@ -232,11 +232,11 @@ export const AddProtectionDouble = (
 
         <div>
           <div className="p-10 text-blue-4 flex ">
-            <div className="rounded-full mx-12 border border-primary-light text-blue-primary h-24 w-24 flex items-center justify-center">
+            <div className="rounded-full dark:text-grey-3 mx-12 border border-primary-light dark:border-blue-1 text-blue-primary h-24 w-24 flex items-center justify-center">
               1
             </div>
 
-            <div className={oneFocused ? 'text-black' : 'text-grey-3'}>Please enter the token prices</div>
+            <div className={oneFocused ? 'text-black dark:text-grey-0' : 'text-grey-3 '}>Please enter the token prices</div>
           </div>
           <div className="flex justify-between">
             <div>
@@ -249,7 +249,7 @@ export const AddProtectionDouble = (
                     prettifyNumber(bntToken.usdPrice, true)) ||
                   ''
                 }
-                className="border-blue-0 border-2 text-right rounded mr-10 py-10"
+                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded mr-10 py-10"
                 type="text"
               />
             </div>
@@ -259,7 +259,7 @@ export const AddProtectionDouble = (
               </h1>
               <input
                 onFocus={() => setOneFocused(true)}
-                className="border-blue-0 border-2 text-right rounded px-4 py-10"
+                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded px-4 py-10"
                 type="text"
                 value={tknUsdPrice}
                 onChange={(e) => onTknUsdChange(e.target.value)}
@@ -280,12 +280,12 @@ export const AddProtectionDouble = (
             )}
           </div>
 
-          <div className="rounded-lg bg-blue-0 rounded p-20">
+          <div className="rounded-lg bg-blue-0 dark:bg-blue-5 rounded p-20">
             <div className="flex justify-start">
-              <div className="rounded-full mx-12 bg-white h-24 w-24 flex items-center justify-center">
+              <div className="rounded-full mx-12 bg-white h-24 w-24 flex dark:text-grey-3 dark:bg-blue-4 items-center justify-center">
                 2
               </div>
-              <div className={`${oneFocused ? 'text-grey-3' : 'text-black'}`}>Enter stake amount</div>
+              <div className={`${oneFocused ? 'text-grey-3 dark:text-grey-3' : 'text-black dark:text-white'}`}>Enter stake amount</div>
             </div>
             <div className="p-10">
               <TokenInputField
