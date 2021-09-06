@@ -7,7 +7,7 @@ import {
 } from 'redux/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -49,14 +49,25 @@ export const NotificationContent = ({
 }: NotificationContentProps) => {
   const { id, type, title, msg, showSeconds, timestamp, txHash } = data;
   const [isHovering, setIsHovering] = useState(false);
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!isAlert) return;
     if (type === NotificationType.pending) return;
-    setTimeout(() => {
+    if (isHovering) {
+      timer.current && clearTimeout(timer.current);
+      return;
+    }
+    timer.current = setTimeout(() => {
       onRemove(id);
     }, showSeconds! * 1000);
-  }, [isAlert, onRemove, type, showSeconds, id]);
+
+    return () => {
+      timer.current && clearTimeout(timer.current)
+    }
+  }, [isAlert, onRemove, type, showSeconds, id, isHovering]);
+
+
 
   const StatusIcon = () => {
     switch (type) {
