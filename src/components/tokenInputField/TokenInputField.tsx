@@ -21,6 +21,7 @@ interface TokenInputFieldProps {
   setAmountUsd?: Function;
   onChange?: Function;
   token: Token | null;
+  onFocus?: () => void;
   setToken?: (token: Token) => void;
   debounce?: Function;
   startEmpty?: boolean;
@@ -47,6 +48,7 @@ export const TokenInputField = ({
   onChange,
   disabled,
   debounce,
+  onFocus,
   startEmpty,
   errorMsg,
   usdSlippage,
@@ -209,6 +211,7 @@ export const TokenInputField = ({
               <input
                 data-cy={dataCy}
                 type="text"
+                onFocus={() => onFocus && onFocus()}
                 inputMode="decimal"
                 value={inputValue()}
                 disabled={disabled}
