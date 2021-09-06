@@ -12,6 +12,7 @@ import { NavLink } from 'react-router-dom';
 import { Image } from 'components/image/Image';
 import dayjs from 'dayjs';
 import { Tooltip } from 'components/tooltip/Tooltip';
+import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 
 interface Props {
   pools: Pool[];
@@ -60,7 +61,11 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
     return aprOne && aprTwo && ends_at ? (
       <div className="flex items-center text-12">
         <Tooltip
-          content="Rewards end in xx/xx/xxxxx"
+          content={
+            <span>
+              Rewards end in <CountdownTimer date={ends_at} />
+            </span>
+          }
           button={<IconClock className="w-10" />}
         />
         <span className="ml-10">{`${symbolOne} ${aprOne.toFixed(2)}%`}</span>
