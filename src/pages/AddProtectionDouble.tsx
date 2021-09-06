@@ -21,8 +21,8 @@ import {
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { bntToken, ethToken } from 'services/web3/config';
 import { createListPool } from 'utils/pureFunctions';
+import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
 import {
-  addLiquidity,
   getMaxStakes,
 } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
@@ -36,6 +36,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from 'bignumber.js';
 import { ModalDoubleApprove } from 'elements/modalDoubleApprove/modalDoubleApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
+import { first } from 'rxjs/operators';
 
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
@@ -58,7 +59,10 @@ export const AddProtectionDouble = (
 
   const [tknUsdPrice, setTknUsdPrice] = useState('');
 
+  const [oneFocused, setOneFocused] = useState(true);
+
   const onTknUsdChange = (value: string) => {
+    setOneFocused(true);
     setTknUsdPrice(value);
 
     const tokenInputsAreValidNumbers = [amountBnt, amountTkn].every(
@@ -129,6 +133,7 @@ export const AddProtectionDouble = (
   }, [bntUsdPrice, tknUsdPrice]);
 
   const onBntChange = (value: string) => {
+    setOneFocused(false);
     setAmountBnt(value);
     if (value === '') {
       setAmountTkn('');
@@ -146,6 +151,7 @@ export const AddProtectionDouble = (
   };
 
   const onTknChange = (value: string) => {
+    setOneFocused(false);
     setAmountTkn(value);
     if (value === '') {
       setAmountBnt('');
@@ -171,7 +177,18 @@ export const AddProtectionDouble = (
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
-  const addLiquidity = async (skipApproval: boolean = false) => {};
+  const addLiquidity = async (skipApproval: boolean = false) => {
+
+    const user = await onLogin$.pipe(first()).toPromise();
+    const hash = await addLiquidityTx(
+      [
+        { decAmount: amountBnt, token: bntToken as Token }, 
+        { decAmount: amountTkn, token: tknToken as Token }
+      ], 
+      selectedPool!.converter_dlt_id
+    );
+  
+  };
 
   if (
     isLoading ||
@@ -205,7 +222,7 @@ export const AddProtectionDouble = (
             <h1 className="font-bold">Add Liquidity </h1>
           </div>
           <button
-            onClick={() => {}}
+            onClick={() => { }}
             className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <IconTimes className="w-14" />
@@ -215,11 +232,11 @@ export const AddProtectionDouble = (
 
         <div>
           <div className="p-10 text-blue-4 flex ">
-            <div className="rounded-full mx-12 border border-primary-light text-blue-primary h-24 w-24 flex items-center justify-center">
+            <div className="rounded-full dark:text-grey-3 mx-12 border border-primary-light dark:border-blue-1 text-blue-primary h-24 w-24 flex items-center justify-center">
               1
             </div>
 
-            <div>Please enter the token prices</div>
+            <div className={oneFocused ? 'text-black dark:text-grey-0' : 'text-grey-3 '}>Please enter the token prices</div>
           </div>
           <div className="flex justify-between">
             <div>
@@ -232,7 +249,7 @@ export const AddProtectionDouble = (
                     prettifyNumber(bntToken.usdPrice, true)) ||
                   ''
                 }
-                className="border-blue-0 border-2 text-right rounded mr-10 py-10"
+                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded mr-10 py-10"
                 type="text"
               />
             </div>
@@ -241,7 +258,8 @@ export const AddProtectionDouble = (
                 1 {tknToken && tknToken.symbol} ={' '}
               </h1>
               <input
-                className="border-blue-0 border-2 text-right rounded px-4 py-10"
+                onFocus={() => setOneFocused(true)}
+                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded px-4 py-10"
                 type="text"
                 value={tknUsdPrice}
                 onChange={(e) => onTknUsdChange(e.target.value)}
@@ -262,16 +280,17 @@ export const AddProtectionDouble = (
             )}
           </div>
 
-          <div className="rounded-lg bg-blue-0 rounded p-20">
+          <div className="rounded-lg bg-blue-0 dark:bg-blue-5 rounded p-20">
             <div className="flex justify-start">
-              <div className="rounded-full mx-12 bg-white h-24 w-24 flex items-center justify-center">
+              <div className="rounded-full mx-12 bg-white h-24 w-24 flex dark:text-grey-3 dark:bg-blue-4 items-center justify-center">
                 2
               </div>
-              <div className="text-grey-3">Enter stake amount</div>
+              <div className={`${oneFocused ? 'text-grey-3 dark:text-grey-3' : 'text-black dark:text-white'}`}>Enter stake amount</div>
             </div>
             <div className="p-10">
               <TokenInputField
                 setInput={onBntChange}
+                onFocus={() => setOneFocused(false)}
                 selectable={false}
                 input={amountBnt}
                 token={bntToken! as Token}
@@ -282,6 +301,7 @@ export const AddProtectionDouble = (
             <div className="p-10">
               <TokenInputField
                 setInput={onTknChange}
+                onFocus={() => setOneFocused(false)}
                 selectable={false}
                 input={amountTkn}
                 token={modifiedTknToken! as Token}
@@ -303,7 +323,7 @@ export const AddProtectionDouble = (
               className={`btn-primary rounded w-full`}
               disabled={false}
             >
-              Add Protection
+              Add Liquidity
             </button>
           </div>
         </div>

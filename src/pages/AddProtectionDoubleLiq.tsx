@@ -25,6 +25,10 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { useApprove } from 'hooks/useApprove';
+import { first } from 'rxjs/operators';
+import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
+import { onLogin$ } from 'services/observables/user';
+
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
@@ -171,7 +175,16 @@ export const AddProtectionDoubleLiq = (
       triggerCheck();
       return;
     }
-    console.log('got to add liquidity');
+
+    const user = await onLogin$.pipe(first()).toPromise();
+    const hash = await addLiquidityTx(
+      [
+        { decAmount: amountBnt, token: bntToken as Token }, 
+        { decAmount: amountTkn, token: tknToken as Token }
+      ], 
+      selectedPool!.converter_dlt_id
+    );
+    
   };
 
   if (
