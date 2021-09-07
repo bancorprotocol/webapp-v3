@@ -167,11 +167,12 @@ export const AddProtectionDouble = (
     } & ${amountTkn} ${(tknToken! as Token).symbol}`;
 
     try {
+      const amounts = [
+        { decAmount: amountBnt, token: bntToken as Token },
+        { decAmount: amountTkn, token: tknToken as Token },
+      ];
       const txHash = await addLiquidityTx(
-        [
-          { decAmount: amountBnt, token: bntToken as Token },
-          { decAmount: amountTkn, token: tknToken as Token },
-        ],
+        amounts,
         selectedPool!.converter_dlt_id
       );
 

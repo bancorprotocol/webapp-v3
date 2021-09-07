@@ -13,6 +13,8 @@ import { onLogin$, user$ } from 'services/observables/user';
 import { ethToken } from 'services/web3/config';
 import { getApproval } from 'services/web3/approval';
 import { isAddress } from 'web3-utils';
+import { writeWeb3 } from 'services/web3/contracts';
+import { BigNumber } from '@0x/utils';
 
 export const buildConverterContract = (
   contractAddress?: string,
@@ -81,7 +83,7 @@ export const addLiquidity = async (
   amounts: TokenAndAmount[],
   converterAddress: string
 ) => {
-  const contract = buildConverterContract(converterAddress);
+  const contract = buildConverterContract(converterAddress, writeWeb3);
   const user = await onLogin$.pipe(first()).toPromise();
 
   const amountsWei = amounts.map((amount) => ({
@@ -89,18 +91,17 @@ export const addLiquidity = async (
     weiAmount: expandToken(amount.decAmount, amount.token.decimals),
   }));
 
-  const tx = contract.methods.addLiquidity(
-    amountsWei.map(({ address }) => address),
-    amountsWei.map(({ weiAmount }) => weiAmount),
-    '1'
-  );
-
   const ethAmount = amountsWei.find((amount) => amount.address === ethToken);
+  const value = ethAmount?.weiAmount;
 
   return resolveTxOnConfirmation({
-    tx,
+    tx: contract.methods.addLiquidity(
+      amountsWei.map(({ address }) => address),
+      amountsWei.map(({ weiAmount }) => weiAmount),
+      '1'
+    ),
     user,
-    value: ethAmount?.weiAmount,
+    value,
     resolveImmediately: true,
   });
 };
