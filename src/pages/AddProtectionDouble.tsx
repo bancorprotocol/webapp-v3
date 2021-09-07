@@ -68,10 +68,6 @@ export const AddProtectionDouble = (
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
 
-  const account = useAppSelector(
-    (state) => state.bancor.user as string | undefined
-  );
-
   const [selectedPool, setPool] = useState(
     pools.find(
       (pool) => pool.pool_dlt_id.toLowerCase() === anchor.toLowerCase()
@@ -104,6 +100,7 @@ export const AddProtectionDouble = (
 
   const modifiedTknToken: Token | false =
     (tknToken && tknUsdPrice && { ...tknToken, usdPrice: tknUsdPrice }) ||
+    (tknToken && tknToken) ||
     false;
 
   useEffect(() => {
