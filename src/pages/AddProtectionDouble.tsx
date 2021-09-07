@@ -12,29 +12,15 @@ import { Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { loadSwapData } from 'services/observables/triggers';
 import { isAddress } from 'web3-utils';
-import { openWalletModal } from 'redux/user/user';
-import {
-  bntTokenAddress$,
-  govTokenAddress$,
-  liquidityProtection$,
-} from 'services/observables/contracts';
-import { expandToken, shrinkToken } from 'utils/formulas';
-import { bntToken, ethToken } from 'services/web3/config';
-import { createListPool } from 'utils/pureFunctions';
+
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
-import { getMaxStakes } from 'services/web3/contracts/liquidityProtection/wrapper';
-import { onLogin$ } from 'services/observables/user';
-import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
-import { useAsyncEffect } from 'use-async-effect';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from 'bignumber.js';
 import { ModalDoubleApprove } from 'elements/modalDoubleApprove/modalDoubleApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
-import { first } from 'rxjs/operators';
+import { ErrorCode } from 'services/web3/types';
 
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
@@ -176,14 +162,53 @@ export const AddProtectionDouble = (
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
   const addLiquidity = async (skipApproval: boolean = false) => {
-    const user = await onLogin$.pipe(first()).toPromise();
-    const hash = await addLiquidityTx(
-      [
-        { decAmount: amountBnt, token: bntToken as Token },
-        { decAmount: amountTkn, token: tknToken as Token },
-      ],
-      selectedPool!.converter_dlt_id
-    );
+    const tokenLabel = `${amountBnt} ${
+      (bntToken! as Token).symbol
+    } & ${amountTkn} ${(tknToken! as Token).symbol}`;
+
+    try {
+      const txHash = await addLiquidityTx(
+        [
+          { decAmount: amountBnt, token: bntToken as Token },
+          { decAmount: amountTkn, token: tknToken as Token },
+        ],
+        selectedPool!.converter_dlt_id
+      );
+
+      dispatch(
+        addNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Adding ${tokenLabel} is Pending Confirmation`,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Adding ${tokenLabel} to the pool has been confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Adding ${tokenLabel} has failed. Please try again or contact support`,
+          },
+          txHash,
+        })
+      );
+    } catch (e) {
+      if (e.code === ErrorCode.DeniedTx) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the trade. If this was by mistake, please try again.',
+          })
+        );
+      } else {
+        console.error(e);
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Failed to add ${tokenLabel} ${e.message}`,
+          })
+        );
+      }
+    }
   };
 
   if (
