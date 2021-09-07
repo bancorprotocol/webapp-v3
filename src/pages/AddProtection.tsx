@@ -89,7 +89,7 @@ export const AddProtection = (
         new BigNumber(selectedToken.usdPrice || 0).times(amount).toString()
       );
     }
-  }, [selectedToken, selectedPool]);
+  }, [selectedToken, selectedPool, amount]);
 
   const [tknIsSelected, setTknIsSelected] = useState(false);
 
