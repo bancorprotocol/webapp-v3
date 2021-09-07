@@ -22,9 +22,7 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { bntToken, ethToken } from 'services/web3/config';
 import { createListPool } from 'utils/pureFunctions';
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
-import {
-  getMaxStakes,
-} from 'services/web3/contracts/liquidityProtection/wrapper';
+import { getMaxStakes } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { onLogin$ } from 'services/observables/user';
 import { SearchablePoolList } from 'components/searchablePoolList/SearchablePoolList';
 import { useAsyncEffect } from 'use-async-effect';
@@ -178,16 +176,14 @@ export const AddProtectionDouble = (
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
   const addLiquidity = async (skipApproval: boolean = false) => {
-
     const user = await onLogin$.pipe(first()).toPromise();
     const hash = await addLiquidityTx(
       [
-        { decAmount: amountBnt, token: bntToken as Token }, 
-        { decAmount: amountTkn, token: tknToken as Token }
-      ], 
+        { decAmount: amountBnt, token: bntToken as Token },
+        { decAmount: amountTkn, token: tknToken as Token },
+      ],
       selectedPool!.converter_dlt_id
     );
-  
   };
 
   if (
@@ -222,7 +218,7 @@ export const AddProtectionDouble = (
             <h1 className="font-bold">Add Liquidity </h1>
           </div>
           <button
-            onClick={() => { }}
+            onClick={() => {}}
             className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <IconTimes className="w-14" />
@@ -236,9 +232,15 @@ export const AddProtectionDouble = (
               1
             </div>
 
-            <div className={oneFocused ? 'text-black dark:text-grey-0' : 'text-grey-3 '}>Please enter the token prices</div>
+            <div
+              className={
+                oneFocused ? 'text-black dark:text-grey-0' : 'text-grey-3 '
+              }
+            >
+              Please enter the token prices
+            </div>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between flex-col md:flex-row">
             <div>
               <h1 className="text-2xl ml-10">1 BNT = </h1>
               <input
@@ -285,7 +287,15 @@ export const AddProtectionDouble = (
               <div className="rounded-full mx-12 bg-white h-24 w-24 flex dark:text-grey-3 dark:bg-blue-4 items-center justify-center">
                 2
               </div>
-              <div className={`${oneFocused ? 'text-grey-3 dark:text-grey-3' : 'text-black dark:text-white'}`}>Enter stake amount</div>
+              <div
+                className={`${
+                  oneFocused
+                    ? 'text-grey-3 dark:text-grey-3'
+                    : 'text-black dark:text-white'
+                }`}
+              >
+                Enter stake amount
+              </div>
             </div>
             <div className="p-10">
               <TokenInputField
