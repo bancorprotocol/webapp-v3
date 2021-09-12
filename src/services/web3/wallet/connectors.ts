@@ -1,15 +1,10 @@
 import { FrameConnector } from '@web3-react/frame-connector';
-import { TorusConnector } from '@web3-react/torus-connector';
-import { LedgerConnector } from '@web3-react/ledger-connector';
-import { TrezorConnector } from '@web3-react/trezor-connector';
 import { PortisConnector } from '@web3-react/portis-connector';
-import { LatticeConnector } from '@web3-react/lattice-connector';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { EthNetworks } from 'services/web3/types';
-import Web3 from 'web3';
 
 const POLLING_INTERVAL = 15000;
 
@@ -31,22 +26,6 @@ const RPC_URLS: { [chainId: number]: string } = {
 
 const appName = 'phoenix';
 
-export const provider = (network: EthNetworks) =>
-  network === EthNetworks.Ropsten
-    ? buildAlchemyUrl(network)
-    : new Web3.providers.WebsocketProvider(buildAlchemyUrl(network, true), {
-        timeout: 100 * 1000,
-        clientConfig: {
-          keepalive: true,
-          keepaliveInterval: 60000,
-        },
-        reconnect: {
-          auto: true,
-          delay: 15000,
-          onTimeout: true,
-        },
-      });
-
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
@@ -62,26 +41,6 @@ export const walletlink = new WalletLinkConnector({
   appName: appName,
 });
 
-export const ledger = new LedgerConnector({
-  chainId: 1,
-  url: RPC_URLS[1],
-  pollingInterval: POLLING_INTERVAL,
-});
-
-export const trezor = new TrezorConnector({
-  chainId: 1,
-  url: RPC_URLS[1],
-  pollingInterval: POLLING_INTERVAL,
-  manifestEmail: '',
-  manifestAppUrl: '',
-});
-
-export const lattice = new LatticeConnector({
-  chainId: 1,
-  appName: appName,
-  url: RPC_URLS[3],
-});
-
 export const frame = new FrameConnector({ supportedChainIds: [1] });
 
 export const fortmatic = new FortmaticConnector({
@@ -93,5 +52,3 @@ export const portis = new PortisConnector({
   dAppId: process.env.REACT_APP_PORTIS_DAPP_ID as string,
   networks: [1, 100],
 });
-
-export const torus = new TorusConnector({ chainId: 1 });

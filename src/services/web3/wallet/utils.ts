@@ -4,13 +4,9 @@ import {
   injected,
   walletconnect,
   walletlink,
-  ledger,
-  trezor,
-  lattice,
   frame,
   fortmatic,
   portis,
-  torus,
 } from 'services/web3/wallet/connectors';
 import metamaskLogo from 'assets/logos/metamask.png';
 import fortmaticLogo from 'assets/logos/fortmatic.svg';
@@ -64,19 +60,19 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     description: 'Coinbase Wallet description',
   },
   {
-    connector: ledger,
+    connector: injected,
     name: 'Ledger',
     icon: ledgerLogo,
     description: 'Ledger description',
   },
   {
-    connector: trezor,
+    connector: injected,
     name: 'Trezor',
     icon: trezorLogo,
     description: 'Trezor description',
   },
   {
-    connector: lattice,
+    connector: injected,
     name: 'Lattice',
     icon: lattisLogo,
     description: 'Lattice description',
@@ -100,7 +96,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     description: 'Portis description',
   },
   {
-    connector: torus,
+    connector: injected,
     name: 'Torus',
     icon: torusLogo,
     description: 'Torus description',
