@@ -7,7 +7,7 @@ import {
 import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import {
   ConversionEvents,

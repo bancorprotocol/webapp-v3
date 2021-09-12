@@ -1,18 +1,13 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
-import { web3, writeWeb3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
   ethToken,
   wethToken,
   zeroAddress,
 } from 'services/web3/config';
-import {
-  buildNetworkContract,
-  conversionPath,
-  getRateByPath,
-} from 'services/web3/contracts/network/wrapper';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/pools';
@@ -22,14 +17,10 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import {
-  buildPoolBalanceShape,
-  buildRateShape,
-  multi,
-} from '../contracts/shapes';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
+import { BancorNetwork__factory } from '../abis/types';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -41,6 +32,11 @@ export const getRateAndPriceImapct = async (
       .pipe(take(1))
       .toPromise();
 
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      web3
+    );
+
     const from =
       fromToken.address === wethToken
         ? { ...fromToken, address: ethToken }
@@ -50,19 +46,10 @@ export const getRateAndPriceImapct = async (
         ? { ...toToken, address: ethToken }
         : toToken;
 
-    const path = await conversionPath({
-      from: from.address,
-      to: to.address,
-      networkContractAddress,
-      web3,
-    });
+    const path = await contract.conversionPath(from.address, to.address);
+
     const fromAmountWei = expandToken(amount, fromToken.decimals);
-    const rateShape = await buildRateShape({
-      networkContractAddress,
-      amount: fromAmountWei,
-      path,
-      web3,
-    });
+    const rateShape = await contract.rateByPath(path, fromAmountWei);
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const rate = shrinkToken(spotRate.rate, toToken.decimals);
@@ -93,24 +80,19 @@ export const getRate = async (
       .pipe(take(1))
       .toPromise();
 
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      web3
+    );
+
     const from = fromToken.address === wethToken ? ethToken : fromToken.address;
     const to = toToken.address === wethToken ? ethToken : toToken.address;
 
-    const path = await conversionPath({
-      from,
-      to,
-      networkContractAddress,
-      web3,
-    });
+    const path = await contract.conversionPath(from, to);
 
     const fromAmountWei = expandToken(amount, fromToken.decimals);
-    const toAmountWei = await getRateByPath({
-      networkContractAddress,
-      amount: fromAmountWei,
-      path,
-      web3,
-    });
-    return shrinkToken(toAmountWei, toToken.decimals);
+    const toAmountWei = await contract.rateByPath(path, fromAmountWei);
+    return shrinkToken(toAmountWei.toString(), toToken.decimals);
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
     return { rate: '0', priceImpact: '0.0000' };
@@ -148,7 +130,7 @@ export const swap = async ({
   const fromIsEth = fromToken.address === ethToken;
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
-  const networkContract = buildNetworkContract(
+  const contract = BancorNetwork__factory.connect(
     networkContractAddress,
     writeWeb3
   );
@@ -161,7 +143,7 @@ export const swap = async ({
   sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
   return resolveTxOnConfirmation({
-    tx: networkContract.methods.convertByPath(
+    tx: await contract.convertByPath(
       path,
       fromWei,
       calculateMinimumReturn(expectedToWei, slippageTolerance),

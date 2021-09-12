@@ -2,7 +2,7 @@ import { balanceShape, multi } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
 import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { partition } from 'lodash';
 import { shrinkToken } from 'utils/formulas';
 

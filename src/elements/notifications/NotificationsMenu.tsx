@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useInterval } from 'hooks/useInterval';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();

@@ -18,7 +18,7 @@ import {
   getAnchors,
   getConvertersByAnchors,
 } from 'services/web3/contracts/converterRegistry/wrapper';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { utils } from 'ethers';
 import { updateArray } from 'utils/pureFunctions';
 

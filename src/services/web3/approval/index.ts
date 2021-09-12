@@ -1,7 +1,6 @@
 import { Token } from 'services/observables/tokens';
-import { web3, writeWeb3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
-import { buildTokenContract } from 'services/web3/contracts/token/wrapper';
 import { resolveTxOnConfirmation } from 'services/web3/index';
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import {
 } from 'services/web3/approval/constants';
 import { ethToken } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
+import { Token__factory } from '../abis/types';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -27,11 +27,14 @@ const getApproval = async (
   if (token === ethToken)
     return { allowanceWei: '', isApprovalRequired: false };
 
-  const tokenContract = buildTokenContract(token, web3);
-  const allowanceWei = await tokenContract.methods
-    .allowance(user, spender)
-    .call();
-  const isApprovalRequired = new BigNumber(amountWei).gt(allowanceWei);
+  const tokenContract = Token__factory.connect(token, web3);
+  const allowanceWei = (
+    await tokenContract.allowance(user, spender)
+  ).toString();
+
+  const isApprovalRequired = new BigNumber(amountWei).gt(
+    new BigNumber(allowanceWei)
+  );
   return { allowanceWei, isApprovalRequired };
 };
 
@@ -44,7 +47,7 @@ const setApproval = async (
   const isEth = token === ethToken;
   if (isEth) return '';
 
-  const tokenContract = buildTokenContract(token, writeWeb3);
+  const tokenContract = Token__factory.connect(token, writeWeb3);
 
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 
@@ -58,12 +61,12 @@ const setApproval = async (
       amountFinal
     );
     if (Number(allowanceWei) !== 0) {
-      const tx = await tokenContract.methods.approve(spender, '0');
+      const tx = await tokenContract.approve(spender, '0');
       await resolveTxOnConfirmation({ tx, user, resolveImmediately: true });
     }
   }
 
-  const tx = await tokenContract.methods.approve(spender, amountFinal);
+  const tx = await tokenContract.approve(spender, amountFinal);
   try {
     return await resolveTxOnConfirmation({
       tx,

@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { getNetworkVariables } from 'services/web3/config';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { EthNetworks } from 'services/web3/types';
 import { provider } from 'services/web3/wallet/connectors';
 

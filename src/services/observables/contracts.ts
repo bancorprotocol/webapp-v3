@@ -1,4 +1,3 @@
-import { fetchContractAddresses } from 'services/web3/contracts/addressLookup/wrapper';
 import { optimisticContract, switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$, networkVars$ } from './network';
 import {
@@ -10,13 +9,15 @@ import {
 } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
-import {
-  buildLiquidityProtectionContract,
-  fetchLiquidityProtectionSettingsContract,
-} from 'services/web3/contracts/liquidityProtection/wrapper';
 import { utils } from 'ethers';
 import { RegisteredContracts } from 'services/web3/types';
 import { Observable } from 'rxjs';
+import {
+  ContractRegistry__factory,
+  LiquidityProtection__factory,
+} from 'services/web3/abis/types';
+import { web3 } from 'services/web3';
+import { EthNetworkVariables } from 'services/web3/config';
 
 const zeroXContracts$ = currentNetwork$.pipe(
   switchMapIgnoreThrow(async (currentNetwork) =>
@@ -31,12 +32,44 @@ export const exchangeProxy$ = zeroXContracts$.pipe(
 );
 
 export const contractAddresses$ = networkVars$.pipe(
-  switchMap((networkVariables) => {
-    return fetchContractAddresses(networkVariables);
-  }),
+  switchMap((networkVariables) => fetchContractAddresses(networkVariables)),
   distinctUntilChanged<RegisteredContracts>(isEqual),
   shareReplay(1)
 );
+const fetchContractAddresses = async (
+  networkVariables: EthNetworkVariables
+): Promise<RegisteredContracts> => {
+  const contract = ContractRegistry__factory.connect(
+    networkVariables.contractRegistry,
+    web3
+  );
+
+  try {
+    const addresses = await Promise.all([
+      contract.addressOf(utils.formatBytes32String('BancorNetwork')),
+      contract.addressOf(utils.formatBytes32String('BancorConverterRegistry')),
+      contract.addressOf(utils.formatBytes32String('LiquidityProtectionStore')),
+      contract.addressOf(utils.formatBytes32String('LiquidityProtection')),
+      contract.addressOf(utils.formatBytes32String('StakingRewards')),
+    ]);
+
+    return {
+      BancorNetwork: addresses[0],
+      BancorConverterRegistry: addresses[1],
+      LiquidityProtectionStore: addresses[2],
+      LiquidityProtection: addresses[3],
+      StakingRewards: addresses[4],
+    };
+  } catch (error) {
+    return {
+      BancorNetwork: '',
+      BancorConverterRegistry: '',
+      LiquidityProtectionStore: '',
+      LiquidityProtection: '',
+      StakingRewards: '',
+    };
+  }
+};
 
 const pluckAndCache =
   (key: keyof RegisteredContracts) =>
@@ -65,9 +98,16 @@ export const stakingRewards$ = contractAddresses$.pipe(
 );
 
 export const liquidityProtectionStore$ = liquidityProtection$.pipe(
-  map((liquidityProtection) => {
-    const contract = buildLiquidityProtectionContract(liquidityProtection);
-    return contract.methods.store().call();
+  switchMap(async (liquidityProtection) => {
+    const contract = LiquidityProtection__factory.connect(
+      liquidityProtection,
+      web3
+    );
+    try {
+      return await contract.store();
+    } catch (error) {}
+
+    return '';
   }),
   map(utils.getAddress),
   distinctUntilChanged(),
@@ -75,9 +115,17 @@ export const liquidityProtectionStore$ = liquidityProtection$.pipe(
 );
 
 export const settingsContractAddress$ = liquidityProtection$.pipe(
-  switchMapIgnoreThrow((protectionAddress) =>
-    fetchLiquidityProtectionSettingsContract(protectionAddress)
-  ),
+  switchMap(async (liquidityProtection) => {
+    const contract = LiquidityProtection__factory.connect(
+      liquidityProtection,
+      web3
+    );
+    try {
+      return await contract.settings();
+    } catch (error) {}
+
+    return '';
+  }),
   map(utils.getAddress),
   optimisticContract('LiquiditySettings'),
   shareReplay(1)

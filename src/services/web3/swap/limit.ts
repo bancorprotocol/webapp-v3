@@ -5,7 +5,7 @@ import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
 import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
 import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
-import { web3, writeWeb3 } from 'services/web3/contracts';
+import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
 import {

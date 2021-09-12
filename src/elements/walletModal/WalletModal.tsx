@@ -12,7 +12,7 @@ import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
-import { writeWeb3 } from 'services/web3/contracts';
+import { writeWeb3 } from 'services/web3';
 import useAsyncEffect from 'use-async-effect';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {

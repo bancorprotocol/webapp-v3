@@ -4,22 +4,21 @@ import { networkVars$ } from 'services/observables/network';
 import { Token } from 'services/observables/tokens';
 import { shrinkToken, expandToken } from 'utils/formulas';
 import { resolveTxOnConfirmation } from '..';
-import { web3, writeWeb3 } from '../contracts';
-import { buildGovernanceContract } from '../contracts/governance/wrapper';
+import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
+import { Governance__factory } from '../abis/types';
 
 export const getStakedAmount = async (
   user: string,
   govToken: Token
 ): Promise<string> => {
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
-  const govContract = buildGovernanceContract(
+  const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3
   );
-  const amount = await govContract.methods.votesOf(user).call();
-
-  return shrinkToken(amount, govToken.decimals);
+  const amount = await govContract.votesOf(user);
+  return shrinkToken(amount.toString(), govToken.decimals);
 };
 
 export const stakeAmount = async (
@@ -32,13 +31,13 @@ export const stakeAmount = async (
     const expandedAmount = expandToken(amount, govToken.decimals);
 
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
-    const govContract = buildGovernanceContract(
+    const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3
     );
 
     const txHash = await resolveTxOnConfirmation({
-      tx: govContract.methods.stake(expandedAmount),
+      tx: await govContract.stake(expandedAmount),
       user,
       resolveImmediately: true,
       onConfirmation,
@@ -81,13 +80,13 @@ export const unstakeAmount = async (
     const expandedAmount = expandToken(amount, govToken.decimals);
 
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
-    const govContract = buildGovernanceContract(
+    const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3
     );
 
     const txHash = await resolveTxOnConfirmation({
-      tx: govContract.methods.unstake(expandedAmount),
+      tx: await govContract.unstake(expandedAmount),
       user,
       resolveImmediately: true,
       onConfirmation,
@@ -123,11 +122,11 @@ export const unstakeAmount = async (
 //Remaining time in seconds
 export const getUnstakeTimer = async (user: string) => {
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
-  const govContract = buildGovernanceContract(
+  const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3
   );
-  const locks = await govContract.methods.voteLocks(user).call();
+  const locks = await govContract.voteLocks(user);
   const timeInSeconds = Number(locks) - Date.now() / 1000;
   return timeInSeconds < 0 ? 0 : timeInSeconds;
 };
