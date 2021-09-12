@@ -14,13 +14,10 @@ import { bancorConverterRegistry$ } from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
-import {
-  getAnchors,
-  getConvertersByAnchors,
-} from 'services/web3/contracts/converterRegistry/wrapper';
 import { web3 } from 'services/web3';
 import { utils } from 'ethers';
 import { updateArray } from 'utils/pureFunctions';
+import { ConverterRegistry__factory } from 'services/web3/abis/types';
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
@@ -34,9 +31,13 @@ export const apiTokens$ = apiData$.pipe(
 );
 
 const trueAnchors$ = bancorConverterRegistry$.pipe(
-  switchMapIgnoreThrow((converterRegistry) =>
-    getAnchors(converterRegistry, web3)
-  ),
+  switchMapIgnoreThrow(async (converterRegistry) => {
+    const contract = ConverterRegistry__factory.connect(
+      converterRegistry,
+      web3
+    );
+    return await contract.getAnchors();
+  }),
   shareReplay(1)
 );
 
@@ -45,11 +46,12 @@ const anchorAndConverters$ = combineLatest([
   bancorConverterRegistry$,
 ]).pipe(
   switchMapIgnoreThrow(async ([anchorAddresses, converterRegistryAddress]) => {
-    const converters = await getConvertersByAnchors({
-      anchorAddresses,
+    const contract = ConverterRegistry__factory.connect(
       converterRegistryAddress,
-      web3,
-    });
+      web3
+    );
+
+    const converters = await contract.getConvertersByAnchors(anchorAddresses);
     const anchorsAndConverters = zipAnchorAndConverters(
       anchorAddresses,
       converters

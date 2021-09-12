@@ -12,8 +12,8 @@ import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
-import { writeWeb3 } from 'services/web3';
 import useAsyncEffect from 'use-async-effect';
+import { setProvider } from 'services/web3';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector, active } = useWeb3React();
@@ -48,7 +48,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         .then(async () => {
           setIsOpen(false);
           setAutoLoginLS(true);
-          writeWeb3.setProvider(await connector.getProvider());
+          setProvider(await connector.getProvider());
           const account = await connector.getAccount();
           sendWalletEvent(
             WalletEvents.connect,
@@ -90,7 +90,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
       if (selectedWallet) return;
 
       if (connector) {
-        writeWeb3.setProvider(await connector.getProvider());
+        setProvider(await connector.getProvider());
         const wallet = SUPPORTED_WALLETS.find(
           async (x) => typeof x.connector === typeof connector
         );

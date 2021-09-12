@@ -1,9 +1,9 @@
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { getNetworkVariables } from 'services/web3/config';
-import { web3 } from 'services/web3';
+import { setProvider } from 'services/web3';
 import { EthNetworks } from 'services/web3/types';
-import { provider } from 'services/web3/wallet/connectors';
+import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
 //@ts-ignore
 const { ethereum } = window;
@@ -27,7 +27,7 @@ export const setNetwork = (chainId: EthNetworks) => {
       process.env.REACT_APP_ALCHEMY_MAINNET ||
       process.env.REACT_APP_ALCHEMY_ROPSTEN
     )
-      web3.setProvider(provider(chainId));
+      setProvider(buildAlchemyUrl(chainId), false);
   }
 };
 

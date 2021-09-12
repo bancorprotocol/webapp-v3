@@ -1,6 +1,3 @@
-import BigNumber from 'bignumber.js';
-import { utils } from 'ethers';
-
 import { Web3Provider } from '@ethersproject/providers';
 import {
   Contract,
@@ -13,11 +10,16 @@ import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
 const gasEstimaationBuffer = 1.1;
 
-export const web3 = new Web3Provider(
+export let web3 = new Web3Provider(
   window.ethereum || buildAlchemyUrl(EthNetworks.Mainnet)
 );
 
-export const writeWeb3 = new Web3Provider(window.ethereum);
+export let writeWeb3 = new Web3Provider(window.ethereum);
+
+export const setProvider = (provider: any, write = true) => {
+  if (write) writeWeb3 = provider;
+  else web3 = provider;
+};
 
 export const buildContract = (
   abi: ContractInterface,
