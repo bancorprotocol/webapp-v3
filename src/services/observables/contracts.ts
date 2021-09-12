@@ -65,7 +65,7 @@ export const stakingRewards$ = contractAddresses$.pipe(
 );
 
 export const liquidityProtectionStore$ = liquidityProtection$.pipe(
-  switchMapIgnoreThrow((liquidityProtection) => {
+  map((liquidityProtection) => {
     const contract = buildLiquidityProtectionContract(liquidityProtection);
     return contract.methods.store().call();
   }),

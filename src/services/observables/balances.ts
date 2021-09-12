@@ -64,6 +64,5 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const fetchETH = async (user: string) => {
-  return shrinkToken(await web3.eth.getBalance(user), 18);
-};
+const fetchETH = async (user: string) =>
+  shrinkToken(await web3.getBalance(user).toString(), 18);

@@ -26,7 +26,7 @@ export const NotificationsMenu = () => {
   const checkStatus = async (notification: Notification) => {
     if (!notification.txHash) return;
     try {
-      const tx = await web3.eth.getTransactionReceipt(notification.txHash);
+      const tx = await web3.getTransactionReceipt(notification.txHash);
       if (tx !== null)
         dispatch(
           setStatus({
