@@ -8,12 +8,8 @@ import {
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
 import { Token, tokens$ } from 'services/observables/tokens';
-import { resolveTxOnConfirmation } from 'services/web3';
+import { resolveTxOnConfirmation, writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
-import {
-  buildExchangeProxyContract,
-  StringRfq,
-} from 'services/web3/contracts/exchangeProxy/wrapper';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sendConversionEvent, ConversionEvents } from './googleTagManager';
@@ -21,6 +17,7 @@ import { utils } from 'ethers';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
+import { ExchangeProxy__factory } from 'services/web3/abis/types';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -30,6 +27,19 @@ enum OrderStatus {
   Filled,
   Cancelled,
   Expired,
+}
+
+interface StringRfq {
+  makerToken: string;
+  takerToken: string;
+  makerAmount: string;
+  takerAmount: string;
+  maker: string;
+  taker: string;
+  txOrigin: string;
+  pool: string;
+  expiry: string;
+  salt: string;
 }
 
 export const swapLimit = async (
@@ -222,14 +232,17 @@ export const cancelOrders = async (
     orderToStringOrder(limitOrder.order)
   );
   const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
-  const contract = buildExchangeProxyContract(exchangeProxyAddress);
+  const contract = ExchangeProxy__factory.connect(
+    exchangeProxyAddress,
+    writeWeb3
+  );
 
   try {
     const txHash = await resolveTxOnConfirmation({
       tx:
         stringOrders.length === 1
-          ? contract.methods.cancelRfqOrder(stringOrders[0])
-          : contract.methods.batchCancelRfqOrders(stringOrders),
+          ? await contract.cancelRfqOrder(stringOrders[0])
+          : await contract.batchCancelRfqOrders(stringOrders),
       user,
       resolveImmediately: true,
     });
