@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { TokenList, Token, Pool } from 'services/observables/tokens';
+import { Statistic } from 'services/observables/statistics';
 
 interface BancorState {
   tokenLists: TokenList[];
   tokens: Token[];
   keeperDaoTokens: KeeprDaoToken[];
   pools: Pool[];
+  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -14,6 +16,7 @@ export const initialState: BancorState = {
   tokens: [],
   keeperDaoTokens: [],
   pools: [],
+  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -41,6 +44,9 @@ const bancorSlice = createSlice({
     setPools: (state, action) => {
       state.pools = action.payload;
     },
+    setStats: (state, action) => {
+      state.statistics = action.payload;
+    },
   },
 });
 
@@ -50,6 +56,7 @@ export const {
   setKeeperDaoTokens,
   updateTokens,
   setPools,
+  setStats,
 } = bancorSlice.actions;
 
 export const bancor = bancorSlice.reducer;
