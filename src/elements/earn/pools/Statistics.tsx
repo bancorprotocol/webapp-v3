@@ -12,9 +12,9 @@ export const Statistics = () => {
           <div key={index} className="flex justify-center">
             <div className="flex items-end">
               {item.change24h && (
-                <div className="mb-10 animate-bounce">
+                <div className="mb-10 lg:mb-5 animate-bounce">
                   <IconArrow
-                    className={`w-16 mr-14 lg:mt-0 ${
+                    className={`w-16 mr-14 ${
                       item.change24h > 0
                         ? 'text-success'
                         : 'text-error rotate-180'

@@ -12,7 +12,14 @@ export const TopPools = ({ pools, setSearch }: Props) => {
   const filteredPools = pools.filter(
     (p) => p.isWhitelisted && p.liquidity > 100000
   );
-  const topPools = orderBy(filteredPools, 'apr', 'desc').slice(0, 20);
+  const finalPools = filteredPools.map((p) => {
+    return {
+      ...p,
+      name: p.reserves[0].symbol,
+      apr: p.apr + (p.reserves[0].rewardApr || 0),
+    };
+  });
+  const topPools = orderBy(finalPools, 'apr', 'desc').slice(0, 20);
 
   return (
     <section className="content-section pt-20 pb-10">
@@ -26,18 +33,13 @@ export const TopPools = ({ pools, setSearch }: Props) => {
                   <button
                     onClick={() => setSearch(pool.name)}
                     key={pool.name}
-                    className="flex items-center justify-center min-w-[225px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
                     <div className="flex">
                       <Image
                         src={pool.reserves[0].logoURI.replace('thumb', 'small')}
                         alt="Token Logo"
-                        className="bg-grey-1 rounded-full w-50 h-50 z-20"
-                      />
-                      <Image
-                        src={pool.reserves[1].logoURI.replace('thumb', 'small')}
-                        alt="Token Logo"
-                        className="-ml-20 bg-grey-1 rounded-full w-50 h-50 z-10"
+                        className="bg-grey-1 rounded-full w-50 h-50"
                       />
                     </div>
                     <div className="ml-10 text-12 dark:text-grey-3 text-left">
