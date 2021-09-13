@@ -104,7 +104,7 @@ export const getRate = async (
     const toAmountWei = await contract.rateByPath(path, fromAmountWei);
     return shrinkToken(toAmountWei.toString(), toToken.decimals);
   } catch (error) {
-    console.error('Failed fetching rate and price impact: ', error);
+    console.error('Failed fetching rate', error);
     return { rate: '0', priceImpact: '0.0000' };
   }
 };

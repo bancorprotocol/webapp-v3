@@ -5,16 +5,16 @@ import {
   ContractTransaction,
 } from '@ethersproject/contracts';
 import { EthNetworks } from 'services/web3//types';
-import { Signer } from 'ethers';
+import { providers, Signer } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
-const gasEstimaationBuffer = 1.1;
-
-export let web3 = new Web3Provider(
-  window.ethereum || buildAlchemyUrl(EthNetworks.Mainnet)
+export let web3 = new providers.JsonRpcProvider(
+  buildAlchemyUrl(EthNetworks.Mainnet)
 );
 
-export let writeWeb3 = new Web3Provider(window.ethereum);
+export let writeWeb3 = window.ethereum
+  ? new Web3Provider(window.ethereum)
+  : new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet));
 
 export const setProvider = (provider: any, write = true) => {
   if (write) writeWeb3 = provider;
