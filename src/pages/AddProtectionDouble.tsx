@@ -1,5 +1,4 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -10,6 +9,7 @@ import {
 } from 'redux/notification/notification';
 import { Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
+import { triggerApiCall } from 'services/observables/pools';
 import { loadSwapData } from 'services/observables/triggers';
 import { isAddress } from 'web3-utils';
 
@@ -19,8 +19,15 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from 'bignumber.js';
 import { ModalDoubleApprove } from 'elements/modalDoubleApprove/modalDoubleApprove';
-import { sanitizeNumberInput } from 'utils/pureFunctions';
+import {
+  classNameGenerator,
+  sanitizeNumberInput,
+  wait,
+} from 'utils/pureFunctions';
 import { ErrorCode } from 'services/web3/types';
+import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import { apiData$ } from 'services/observables/pools';
+import { take } from 'rxjs/operators';
 
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
@@ -48,6 +55,10 @@ export const AddProtectionDouble = (
   const onTknUsdChange = (value: string) => {
     setOneFocused(true);
     setTknUsdPrice(value);
+
+    if (value === '') {
+      setBntToTknRate('NaN');
+    }
 
     const tokenInputsAreValidNumbers = [amountBnt, amountTkn].every(
       (amount) => !new BigNumber(amount).isNaN()
@@ -129,6 +140,14 @@ export const AddProtectionDouble = (
       );
       setAmountTknUsd(amountTkn.times(tknUsdPrice).toString());
     }
+  };
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshRates = async () => {
+    setIsRefreshing(true);
+    triggerApiCall();
+    await apiData$.pipe(take(2)).toPromise();
+    setIsRefreshing(false);
   };
 
   const onTknChange = (value: string) => {
@@ -291,18 +310,28 @@ export const AddProtectionDouble = (
               />
             </div>
           </div>
-          <div className="p-10 text-grey-4">
-            1 BNT (
-            {bntToken &&
-              bntToken.usdPrice &&
-              prettifyNumber(bntToken.usdPrice, true)}
-            ) ={' '}
-            {displayedRate !== '?' && (
-              <span>
-                {' '}
-                {displayedRate} ETH ({bntToTknRateToUsd}){' '}
-              </span>
-            )}
+          <div className="p-10 text-grey-4 flex">
+            <div>
+              1 BNT (
+              {bntToken &&
+                bntToken.usdPrice &&
+                prettifyNumber(bntToken.usdPrice, true)}
+              ) ={' '}
+              {displayedRate !== '?' && (
+                <span>
+                  {' '}
+                  {displayedRate} ETH ({bntToTknRateToUsd}){' '}
+                </span>
+              )}
+            </div>
+            <div>
+              <IconSync
+                className={`ml-8 w-[25px] ${classNameGenerator({
+                  'animate-spin': isRefreshing,
+                })}`}
+                onClick={() => refreshRates()}
+              />
+            </div>
           </div>
 
           <div className="rounded-lg bg-blue-0 dark:bg-blue-5 rounded p-20">

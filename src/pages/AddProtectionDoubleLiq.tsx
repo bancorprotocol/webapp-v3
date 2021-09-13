@@ -15,11 +15,11 @@ import {
   fetchPoolReserveBalances,
   getTokenContractApproval,
 } from 'services/web3/contracts/converter/wrapper';
-import { partitionPair } from 'utils/pureFunctions';
+import { partitionPair, wait } from 'utils/pureFunctions';
 import { BigNumber } from 'bignumber.js';
 import { useInterval } from 'hooks/useInterval';
 import { getNetworkContractApproval } from 'services/web3/approval';
-import { TokenAndAmount } from 'services/web3/types';
+import { ErrorCode, TokenAndAmount } from 'services/web3/types';
 import {
   addNotification,
   NotificationType,
@@ -28,7 +28,6 @@ import { useApprove } from 'hooks/useApprove';
 import { first } from 'rxjs/operators';
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
 import { onLogin$ } from 'services/observables/user';
-
 
 export const AddProtectionDoubleLiq = (
   props: RouteComponentProps<{ anchor: string }>
@@ -176,15 +175,55 @@ export const AddProtectionDoubleLiq = (
       return;
     }
 
-    const user = await onLogin$.pipe(first()).toPromise();
-    const hash = await addLiquidityTx(
-      [
-        { decAmount: amountBnt, token: bntToken as Token }, 
-        { decAmount: amountTkn, token: tknToken as Token }
-      ], 
-      selectedPool!.converter_dlt_id
-    );
-    
+    const tokenLabel = `${amountBnt} ${
+      (bntToken! as Token).symbol
+    } & ${amountTkn} ${(tknToken! as Token).symbol}`;
+
+    const amounts = [
+      { decAmount: amountBnt, token: bntToken as Token },
+      { decAmount: amountTkn, token: tknToken as Token },
+    ];
+
+    try {
+      const txHash = await addLiquidityTx(
+        amounts,
+        selectedPool!.converter_dlt_id
+      );
+
+      dispatch(
+        addNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Adding ${tokenLabel} is Pending Confirmation`,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Adding ${tokenLabel} to the pool has been confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Adding ${tokenLabel} has failed. Please try again or contact support`,
+          },
+          txHash,
+        })
+      );
+    } catch (e) {
+      if (e.code === ErrorCode.DeniedTx) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the trade. If this was by mistake, please try again.',
+          })
+        );
+      } else {
+        console.error(e);
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Failed to add ${tokenLabel} ${e.message}`,
+          })
+        );
+      }
+    }
   };
 
   if (
@@ -277,7 +316,7 @@ export const AddProtectionDoubleLiq = (
                 </div>
               </div>
             </div>
-            <div className="flex pt-4 justify-between">
+            <div className="flex pt-4 justify-between text-blue-4 opacity-70">
               <div>
                 1 BNT (
                 {bntToken &&

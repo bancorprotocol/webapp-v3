@@ -59,7 +59,16 @@ const zipAnchorAndConverters = (
   }));
 };
 
-export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
+const apiTrigger$ = new Subject<true>();
+export const triggerApiCall = () => {
+  apiTrigger$.next();
+};
+
+export const apiData$ = combineLatest([
+  currentNetwork$,
+  fifteenSeconds$,
+  apiTrigger$.pipe(startWith(true)),
+]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
   shareReplay(1)
 );
