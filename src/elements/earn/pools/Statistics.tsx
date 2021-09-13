@@ -8,8 +8,8 @@ export const Statistics = () => {
   return (
     <section className="content-section py-20 md:mt-20">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-20">
-        {stats.map((item, index) => (
-          <div key={index} className="flex justify-center">
+        {stats.map((item, i) => (
+          <div key={i} className="flex justify-center">
             <div className="flex items-end">
               {item.change24h && (
                 <div className="mb-10 lg:mb-5 animate-bounce">
@@ -50,6 +50,13 @@ export const Statistics = () => {
             </div>
           </div>
         ))}
+        {!stats.length &&
+          [...Array(4)].map((i) => (
+            <div key={i}>
+              <div className="loading-skeleton w-1/2 h-20 mx-auto mb-10"></div>
+              <div className="loading-skeleton w-2/3 h-14 mx-auto"></div>
+            </div>
+          ))}
       </div>
     </section>
   );
