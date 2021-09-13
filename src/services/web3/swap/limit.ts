@@ -1,11 +1,9 @@
 import { Token } from 'services/observables/tokens';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
-import { RfqOrder, SignatureType } from '@0x/protocol-utils';
-import { determineTxGas, resolveTxOnConfirmation } from 'services/web3/index';
-import { buildWethContract } from 'services/web3/contracts/eth/wrapper';
-import { ErrorCode, EthNetworks } from 'services/web3/types';
+import { resolveTxOnConfirmation } from 'services/web3/index';
+import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
-import { web3, writeWeb3 } from 'services/web3';
+import { writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
 import {
@@ -13,22 +11,19 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { expandToken } from 'utils/formulas';
-
-//Web3 estimation is too low doubling it to be safe
-const manualBuffer = 2;
+import { Weth__factory } from '../abis/types';
+import { utils } from 'ethers';
 
 export const depositWeth = async (amount: string, user: string) => {
-  const tokenContract = buildWethContract(wethToken);
+  const tokenContract = Weth__factory.connect(wethToken, writeWeb3);
   const wei = expandToken(amount, 18);
 
-  const tx = tokenContract.methods.deposit();
-  const estimatedGas = await determineTxGas(tx, user);
+  const tx = await tokenContract.deposit();
 
   const txHash = await resolveTxOnConfirmation({
     value: wei,
     tx,
     user,
-    gas: estimatedGas * manualBuffer,
     resolveImmediately: true,
   });
 
@@ -39,12 +34,12 @@ export const withdrawWeth = async (
   amount: string,
   user: string
 ): Promise<BaseNotification> => {
-  const tokenContract = buildWethContract(wethToken);
+  const tokenContract = Weth__factory.connect(wethToken, writeWeb3);
   const wei = expandToken(amount, 18);
 
   try {
     const txHash = await resolveTxOnConfirmation({
-      tx: tokenContract.methods.withdraw(wei),
+      tx: await tokenContract.withdraw(wei),
       user,
       resolveImmediately: true,
     });
@@ -87,46 +82,45 @@ export const createOrder = async (
   const now = dayjs().unix();
   const expiry = new BigNumber(now + seconds);
 
-  const randomHex = web3.utils.randomHex(6);
-  const randomNumber = web3.utils.hexToNumber(randomHex);
-  const randomBigNumber = new BigNumber(randomNumber);
   const fromAmountWei = new BigNumber(expandToken(from, fromToken.decimals));
   const toAmountWei = new BigNumber(expandToken(to, toToken.decimals));
   const txOrigin = await getTxOrigin();
 
-  const order = new RfqOrder({
-    chainId: EthNetworks.Mainnet,
-    expiry,
-    salt: randomBigNumber,
-    maker: user,
-    makerToken: fromToken.address,
-    makerAmount: fromAmountWei,
-    takerAmount: toAmountWei,
-    takerToken: toToken.address,
-    txOrigin,
-    pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
-  });
+  // const order = new RfqOrder({
+  //   chainId: EthNetworks.Mainnet,
+  //   expiry,
+  //   salt: utils.randomBytes(16),
+  //   maker: user,
+  //   makerToken: fromToken.address,
+  //   makerAmount: fromAmountWei,
+  //   takerAmount: toAmountWei,
+  //   takerToken: toToken.address,
+  //   txOrigin,
+  //   pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
+  // });
+  // const signer = await writeWeb3.getSigner();
+  // //const signnn = await signer._signTypedData()
 
-  const signature = await order.getSignatureWithProviderAsync(
-    writeWeb3,
-    SignatureType.EIP712
-  );
+  // const signature = await order.getSignatureWithProviderAsync(
+  //   writeWeb3,
+  //   SignatureType.EIP712
+  // );
 
-  const jsonOrder: RfqOrderJson = {
-    maker: order.maker.toLowerCase(),
-    taker: order.taker.toLowerCase(),
-    chainId: order.chainId,
-    expiry: order.expiry.toNumber(),
-    makerAmount: order.makerAmount.toString().toLowerCase(),
-    makerToken: order.makerToken.toLowerCase(),
-    pool: order.pool.toLowerCase(),
-    salt: order.salt.toString().toLowerCase(),
-    signature,
-    takerAmount: order.takerAmount.toString().toLowerCase(),
-    takerToken: order.takerToken.toLowerCase(),
-    txOrigin: order.txOrigin.toLowerCase(),
-    verifyingContract: order.verifyingContract.toLowerCase(),
-  };
+  // const jsonOrder: RfqOrderJson = {
+  //   maker: order.maker.toLowerCase(),
+  //   taker: order.taker.toLowerCase(),
+  //   chainId: order.chainId,
+  //   expiry: order.expiry.toNumber(),
+  //   makerAmount: order.makerAmount.toString().toLowerCase(),
+  //   makerToken: order.makerToken.toLowerCase(),
+  //   pool: order.pool.toLowerCase(),
+  //   salt: order.salt.toString().toLowerCase(),
+  //   signature,
+  //   takerAmount: order.takerAmount.toString().toLowerCase(),
+  //   takerToken: order.takerToken.toLowerCase(),
+  //   txOrigin: order.txOrigin.toLowerCase(),
+  //   verifyingContract: order.verifyingContract.toLowerCase(),
+  // };
 
-  await sendOrders([jsonOrder]);
+  await sendOrders([]);
 };

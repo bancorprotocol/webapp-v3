@@ -9,6 +9,10 @@ export enum ErrorCode {
   DeniedTx = 4001,
 }
 
+export enum SignatureType {
+  EIP712 = 2,
+}
+
 export interface RegisteredContracts {
   BancorNetwork: string;
   BancorConverterRegistry: string;
