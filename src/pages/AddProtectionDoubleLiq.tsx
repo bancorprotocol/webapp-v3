@@ -161,7 +161,7 @@ export const AddProtectionDoubleLiq = (
       { amount: amountBnt, token: bntToken as Token },
       { amount: amountTkn, token: tknToken as Token },
     ],
-    '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
+    selectedPool?.converter_dlt_id || '',
     true,
     () => console.log('approveeey')
   );
