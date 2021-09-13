@@ -96,7 +96,7 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         Header: 'Liquidity',
         accessor: 'liquidity',
         Cell: (cellData) => prettifyNumber(cellData.value, true),
-        tooltip: 'The value of tokens staked in the pool',
+        tooltip: 'The value of tokens staked in the pool.',
         minWidth: 150,
         sortDescFirst: true,
       },
@@ -107,6 +107,8 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
         minWidth: 80,
         sortDescFirst: true,
+        tooltip:
+          'The % deducted from each swap and re-deposited into the pool.',
       },
       {
         id: 'v24h',
@@ -130,7 +132,9 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         accessor: 'reward',
         Cell: (cellData) => CellReward(cellData.row.original),
         minWidth: 200,
-        sortDescFirst: true,
+        disableSortBy: true,
+        tooltip:
+          'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',
       },
       {
         id: 'apr',
@@ -139,6 +143,7 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
         minWidth: 80,
         sortDescFirst: true,
+        tooltip: '24h fees annualized divided by liquidity in the pool. ',
       },
       {
         id: 'actions',
@@ -149,13 +154,27 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
               to="/"
               className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
             >
-              <IconPlus className={`w-20`} />
+              <Tooltip
+                content="Coming Soon"
+                button={
+                  <IconPlus
+                    className={`w-20 hover:rotate-180 transition-transform duration-300`}
+                  />
+                }
+              />
             </NavLink>
             <NavLink
               to="/"
               className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
             >
-              <IconSync className={`w-20`} />
+              <Tooltip
+                content="Trade"
+                button={
+                  <IconSync
+                    className={`w-20 hover:rotate-180 transition-transform duration-300`}
+                  />
+                }
+              />
             </NavLink>
           </div>
         ),

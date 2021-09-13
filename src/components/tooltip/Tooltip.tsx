@@ -11,15 +11,15 @@ interface TooltipProps {
 
 export const Tooltip = ({
   content,
-  button = <IconInfo className="w-[10px] h-[10px]" />,
+  button = (
+    <IconInfo className="w-[10px] h-[10px] text-grey-4 dark:text-grey-0" />
+  ),
   placement,
 }: TooltipProps) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   return (
     <>
-      <button className="text-grey-4 dark:text-grey-0" ref={buttonRef}>
-        {button}
-      </button>
+      <button ref={buttonRef}>{button}</button>
       <TooltipPanel placement={placement} targetRef={buttonRef}>
         {typeof content === 'string' ? (
           <div className="text-12">{content}</div>
