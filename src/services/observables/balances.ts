@@ -1,10 +1,11 @@
-import { balanceShape, multi } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
 import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3';
 import { partition } from 'lodash';
 import { shrinkToken } from 'utils/formulas';
+import { multicall } from 'services/web3/multicall/multicall';
+import { Token__factory } from 'services/web3/abis/types';
 
 interface TokenBalance {
   balance: string;
@@ -20,22 +21,19 @@ export const fetchTokenBalances = async (
     tokens,
     (token) => token.address === ethToken
   );
-  const shapes = tokensNoETH.map((x) => balanceShape(x.address, user));
+  const calls = tokensNoETH.map((x) => buildTokenBalanceCall(x.address, user));
 
   try {
     const [tokenBalances, ethBalance]: [
-      TokenBalance[][] | undefined,
+      TokenBalance[] | undefined,
       string | undefined
     ] = await Promise.all([
-      multi({
-        groupsOfShapes: [shapes],
-        currentNetwork,
-      }),
+      [{ balance: '', address: '' }], //multicall(currentNetwork, calls),
       eth && fetchETH(user),
     ]);
 
     if (tokenBalances && tokenBalances.length > 0) {
-      const balances = tokenBalances[0].map((token) => {
+      const balances = tokenBalances.map((token) => {
         const inedx = tokensNoETH.findIndex((t) => t.address === token.address);
         return {
           ...tokensNoETH[inedx],
@@ -62,6 +60,17 @@ export const fetchTokenBalances = async (
   }
 
   return [];
+};
+
+const buildTokenBalanceCall = (address: string, user: string) => {
+  const contract = Token__factory.connect(address, web3);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: contract.balanceOf.toString(),
+    methodParameters: [user],
+  };
 };
 
 const fetchETH = async (user: string) =>
