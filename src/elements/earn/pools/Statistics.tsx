@@ -7,17 +7,17 @@ export const Statistics = () => {
   const stats = useAppSelector<Statistic[]>((state) => state.bancor.statistics);
 
   return (
-    <section className="content-section py-20 md:mt-20">
+    <section className="content-section py-20 pl-30 lg:pl-0 md:mt-20">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-20">
         {stats.map((item, i) => (
-          <div key={i} className="flex justify-center">
+          <div key={i} className="flex lg:justify-center">
             <div className="flex items-end">
               {item.change24h && (
                 <div
                   className={`mb-10 lg:mb-5 animate-bounce-15s ${
                     item.change24h > 0
-                      ? 'animate-bounce-15s'
-                      : 'animate-bounce-15s-invert'
+                      ? 'animate-bounce-2s'
+                      : 'animate-bounce-2s-invert'
                   }`}
                 >
                   <IconArrow
@@ -29,7 +29,7 @@ export const Statistics = () => {
                   />
                 </div>
               )}
-              <div className="text-center lg:text-left">
+              <div>
                 {item.change24h && (
                   <span
                     className={`lg:hidden text-14 font-normal ${
