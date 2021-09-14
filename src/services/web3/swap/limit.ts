@@ -1,6 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
-import { resolveTxOnConfirmation } from 'services/web3/index';
+import { NULL_ADDRESS, hexUtils } from '@0x/utils';
+import { resolveTxOnConfirmation, web3 } from 'services/web3/index';
 import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
 import { writeWeb3 } from 'services/web3';
@@ -13,6 +14,8 @@ import {
 import { expandToken } from 'utils/formulas';
 import { Weth__factory } from '../abis/types';
 import { utils } from 'ethers';
+import { exchangeProxy$ } from 'services/observables/contracts';
+import { take } from 'rxjs/operators';
 
 export const depositWeth = async (amount: string, user: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3);
@@ -85,42 +88,70 @@ export const createOrder = async (
   const fromAmountWei = new BigNumber(expandToken(from, fromToken.decimals));
   const toAmountWei = new BigNumber(expandToken(to, toToken.decimals));
   const txOrigin = await getTxOrigin();
+  const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
 
-  // const order = new RfqOrder({
-  //   chainId: EthNetworks.Mainnet,
-  //   expiry,
-  //   salt: utils.randomBytes(16),
-  //   maker: user,
-  //   makerToken: fromToken.address,
-  //   makerAmount: fromAmountWei,
-  //   takerAmount: toAmountWei,
-  //   takerToken: toToken.address,
-  //   txOrigin,
-  //   pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
-  // });
-  // const signer = await writeWeb3.getSigner();
-  // //const signnn = await signer._signTypedData()
+  const signer = writeWeb3.getSigner();
+  const signature = await signer._signTypedData(
+    domain(exchangeProxyAddress),
+    types,
+    {
+      signer: signer,
+      sender: user,
+      minGasPrice: ZERO,
+      maxGasPrice: ZERO,
+      expirationTimeSeconds: expiry.toString(10),
+      salt: ZERO,
+      callData: hexUtils.leftPad(0),
+      value: ZERO,
+      feeToken: NULL_ADDRESS,
+      feeAmount: ZERO,
+    }
+  );
 
-  // const signature = await order.getSignatureWithProviderAsync(
-  //   writeWeb3,
-  //   SignatureType.EIP712
-  // );
+  const jsonOrder: RfqOrderJson = {
+    maker: user.toLowerCase(),
+    taker: NULL_ADDRESS.toLocaleLowerCase(),
+    chainId: EthNetworks.Mainnet,
+    expiry: expiry.toNumber(),
+    makerAmount: fromAmountWei.toString().toLowerCase(),
+    makerToken: fromToken.address.toLowerCase(),
+    pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
+    salt: utils.randomBytes(16).toString().toLowerCase(),
+    signature,
+    takerAmount: toAmountWei.toString().toLowerCase(),
+    takerToken: toToken.address.toLowerCase(),
+    txOrigin: txOrigin.toLowerCase(),
+    verifyingContract: exchangeProxyAddress.toLowerCase(),
+  };
 
-  // const jsonOrder: RfqOrderJson = {
-  //   maker: order.maker.toLowerCase(),
-  //   taker: order.taker.toLowerCase(),
-  //   chainId: order.chainId,
-  //   expiry: order.expiry.toNumber(),
-  //   makerAmount: order.makerAmount.toString().toLowerCase(),
-  //   makerToken: order.makerToken.toLowerCase(),
-  //   pool: order.pool.toLowerCase(),
-  //   salt: order.salt.toString().toLowerCase(),
-  //   signature,
-  //   takerAmount: order.takerAmount.toString().toLowerCase(),
-  //   takerToken: order.takerToken.toLowerCase(),
-  //   txOrigin: order.txOrigin.toLowerCase(),
-  //   verifyingContract: order.verifyingContract.toLowerCase(),
-  // };
+  await sendOrders([jsonOrder]);
+};
+const ZERO = new BigNumber(0).toString(10);
 
-  await sendOrders([]);
+const domain = (exchangeProxyAddress: string) => ({
+  chainId: 1,
+  verifyingContract: exchangeProxyAddress,
+  name: 'ZeroEx',
+  version: '1.0.0',
+});
+
+const types = {
+  EIP712Domain: [
+    { name: 'name', type: 'string' },
+    { name: 'version', type: 'string' },
+    { name: 'chainId', type: 'uint256' },
+    { name: 'verifyingContract', type: 'address' },
+  ],
+  MetaTransactionData: [
+    { type: 'address', name: 'signer' },
+    { type: 'address', name: 'sender' },
+    { type: 'uint256', name: 'minGasPrice' },
+    { type: 'uint256', name: 'maxGasPrice' },
+    { type: 'uint256', name: 'expirationTimeSeconds' },
+    { type: 'uint256', name: 'salt' },
+    { type: 'bytes', name: 'callData' },
+    { type: 'uint256', name: 'value' },
+    { type: 'address', name: 'feeToken' },
+    { type: 'uint256', name: 'feeAmount' },
+  ],
 };
