@@ -23,7 +23,7 @@ export const TopPools = ({ pools, setSearch }: Props) => {
 
   return (
     <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Performing Pools</h2>
+      <h2 className="ml-[20px] md:ml-[44px]">Top Earners</h2>
       <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">

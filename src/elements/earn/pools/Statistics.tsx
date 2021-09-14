@@ -1,6 +1,7 @@
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
 import { useAppSelector } from 'redux/index';
 import { Statistic } from 'services/observables/statistics';
+import './Statistics.css';
 
 export const Statistics = () => {
   const stats = useAppSelector<Statistic[]>((state) => state.bancor.statistics);
@@ -12,7 +13,13 @@ export const Statistics = () => {
           <div key={i} className="flex justify-center">
             <div className="flex items-end">
               {item.change24h && (
-                <div className="mb-10 lg:mb-5 animate-bounce">
+                <div
+                  className={`mb-10 lg:mb-5 animate-bounce-15s ${
+                    item.change24h > 0
+                      ? 'animate-bounce-15s'
+                      : 'animate-bounce-15s-invert'
+                  }`}
+                >
                   <IconArrow
                     className={`w-16 mr-14 ${
                       item.change24h > 0

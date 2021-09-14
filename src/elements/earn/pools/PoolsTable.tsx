@@ -10,7 +10,6 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { NavLink } from 'react-router-dom';
 import { Image } from 'components/image/Image';
-import dayjs from 'dayjs';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 
@@ -59,7 +58,7 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
     const symbolTwo = pool.reserves[1].symbol;
     const ends_at = pool.reward?.ends_at;
     return aprOne && aprTwo && ends_at ? (
-      <div className="flex items-center text-12">
+      <div className="flex items-center">
         <Tooltip
           content={
             <span>
@@ -88,7 +87,7 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         ),
         accessor: 'name',
         Cell: (cellData) => CellName(cellData.row.original),
-        minWidth: 260,
+        minWidth: 230,
         sortDescFirst: true,
       },
       {
@@ -97,7 +96,7 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         accessor: 'liquidity',
         Cell: (cellData) => prettifyNumber(cellData.value, true),
         tooltip: 'The value of tokens staked in the pool.',
-        minWidth: 150,
+        minWidth: 130,
         sortDescFirst: true,
       },
       {
@@ -123,15 +122,15 @@ export const PoolsTable = ({ pools, search, setSearch }: Props) => {
         Header: '24h Fees',
         accessor: 'fees_24h',
         Cell: (cellData) => prettifyNumber(cellData.value, true),
-        minWidth: 100,
+        minWidth: 90,
         sortDescFirst: true,
       },
       {
         id: 'rewards',
-        Header: 'Reward',
+        Header: 'Rewards',
         accessor: 'reward',
         Cell: (cellData) => CellReward(cellData.row.original),
-        minWidth: 200,
+        minWidth: 230,
         disableSortBy: true,
         tooltip:
           'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',

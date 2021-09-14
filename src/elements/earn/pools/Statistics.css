@@ -1,0 +1,17 @@
+.animate-bounce-15s {
+    animation: bounce-15 15s infinite;
+}
+
+@keyframes bounce-15 {
+    0%, 6.7% {transform: translateY(0);}
+    3.6% {transform: translateY(-8px);}
+}
+
+.animate-bounce-15s-invert {
+    animation: bounce-15-invert 15s infinite;
+}
+
+@keyframes bounce-15-invert {
+    0%, 6.7% {transform: translateY(0);}
+    3.6% {transform: translateY(8px);}
+}
