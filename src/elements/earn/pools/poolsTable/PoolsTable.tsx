@@ -48,16 +48,6 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         sortDescFirst: true,
       },
       {
-        id: 'fee',
-        Header: 'Fee',
-        accessor: 'fee',
-        Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
-        minWidth: 80,
-        sortDescFirst: true,
-        tooltip:
-          'The % deducted from each swap and re-deposited into the pool.',
-      },
-      {
         id: 'v24h',
         Header: '24h Volume',
         accessor: 'volume_24h',
