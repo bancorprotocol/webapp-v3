@@ -22,11 +22,13 @@ import {
 import { get7DaysAgo, mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
-import { calculatePercentageChange } from 'utils/formulas';
+import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { isEqual, sortBy } from 'lodash';
 import { APIReward, WelcomeData } from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
+import { settingsContractAddress$ } from 'services/observables/contracts';
+import { buildLiquidityProtectionSettingsContract } from 'services/web3/contracts/swap/wrapper';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -81,6 +83,7 @@ export interface Pool {
   isWhitelisted: boolean;
   apr: number;
   reward?: APIReward;
+  isProtectionAllowed: boolean;
 }
 
 export const listOfLists = [
@@ -270,8 +273,28 @@ export const getTokenLogoURI = (token: Token) =>
 const getLogoByURI = (uri: string | undefined) =>
   uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
 
-export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
-  switchMapIgnoreThrow(async ([pools, tokens]) => {
+export const minNetworkTokenLiquidityForMinting$ = combineLatest([
+  settingsContractAddress$,
+]).pipe(
+  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
+    const contract = buildLiquidityProtectionSettingsContract(
+      liquidityProtectionSettingsContract
+    );
+    const res = await contract.methods
+      .minNetworkTokenLiquidityForMinting()
+      .call();
+    return shrinkToken(res, 18);
+  }),
+  distinctUntilChanged<string>(isEqual),
+  shareReplay(1)
+);
+
+export const pools$ = combineLatest([
+  correctedPools$,
+  tokens$,
+  minNetworkTokenLiquidityForMinting$,
+]).pipe(
+  switchMapIgnoreThrow(async ([pools, tokens, minMintingBalance]) => {
     const newPools: Pool[] = pools.map((pool) => {
       let apr = 0;
       const liquidity = Number(pool.liquidity.usd ?? 0);
@@ -308,6 +331,13 @@ export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
         },
       ];
 
+      const bntBalance = reserves.find((r) => r.symbol === 'BNT')!.balance;
+      const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+        bntBalance
+      );
+      const isProtectionAllowed =
+        sufficientMintingBalance && pool.isWhitelisted;
+
       return {
         ...pool,
         reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
@@ -317,6 +347,7 @@ export const pools$ = combineLatest([correctedPools$, tokens$]).pipe(
         fee: Number(pool.fee) / 10000,
         supply: Number(pool.supply),
         apr,
+        isProtectionAllowed,
       };
     });
 

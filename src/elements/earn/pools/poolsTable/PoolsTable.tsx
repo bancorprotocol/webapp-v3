@@ -85,7 +85,8 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       {
         id: 'actions',
         Header: '',
-        Cell: () => PoolsTableCellActions(),
+        accessor: 'isProtectionAllowed',
+        Cell: (cellData) => PoolsTableCellActions(cellData.row.original),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
