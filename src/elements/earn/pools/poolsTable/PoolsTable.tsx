@@ -19,8 +19,8 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
 
   const data = useMemo<Pool[]>(() => {
-    return pools.filter((p) =>
-      p.name.toLowerCase().includes(search.toLowerCase())
+    return pools.filter(
+      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [pools, search]);
 
