@@ -68,7 +68,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         Header: 'Rewards',
         accessor: 'reward',
         Cell: (cellData) => PoolsTableCellRewards(cellData.row.original),
-        minWidth: 230,
+        minWidth: 250,
         disableSortBy: true,
         tooltip:
           'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',

@@ -10,7 +10,7 @@ export const PoolsTableCellRewards = (pool: Pool) => {
   const symbolTwo = pool.reserves[1].symbol;
   const ends_at = pool.reward?.ends_at;
   return aprOne && aprTwo && ends_at ? (
-    <div className="flex items-center">
+    <div className="flex items-center w-full">
       <Tooltip
         content={
           <span>
@@ -19,9 +19,15 @@ export const PoolsTableCellRewards = (pool: Pool) => {
         }
         button={<IconClock className="w-10" />}
       />
-      <span className="ml-10">{`${symbolOne} ${aprOne.toFixed(2)}%`}</span>
-      <span className="px-10">|</span>
-      <span>{`${symbolTwo} ${aprTwo.toFixed(2)}%`}</span>
+      <div className="flex justify-center w-full">
+        <span className="text-right w-full">{`${symbolOne} ${aprOne.toFixed(
+          2
+        )}%`}</span>
+        <span className="text-center px-10">|</span>
+        <span className="text-left w-full">{`${symbolTwo} ${aprTwo.toFixed(
+          2
+        )}%`}</span>
+      </div>
     </div>
   ) : (
     ''
