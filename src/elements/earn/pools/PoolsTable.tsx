@@ -12,14 +12,16 @@ import { NavLink } from 'react-router-dom';
 import { Image } from 'components/image/Image';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
+import { useAppSelector } from 'redux/index';
 
 interface Props {
-  pools: Pool[];
   search: string;
   setSearch: Function;
 }
 
-export const PoolsTable = ({ pools, search, setSearch }: Props) => {
+export const PoolsTable = ({ search, setSearch }: Props) => {
+  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+
   const data = useMemo<Pool[]>(() => {
     return pools.filter((p) =>
       p.name.toLowerCase().includes(search.toLowerCase())

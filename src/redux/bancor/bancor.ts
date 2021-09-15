@@ -1,22 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { TokenList, Token, Pool } from 'services/observables/tokens';
-import { Statistic } from 'services/observables/statistics';
+import { TokenList, Token } from 'services/observables/tokens';
 
 interface BancorState {
   tokenLists: TokenList[];
   tokens: Token[];
   keeperDaoTokens: KeeprDaoToken[];
-  pools: Pool[];
-  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
   tokenLists: [],
   tokens: [],
   keeperDaoTokens: [],
-  pools: [],
-  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -41,22 +36,10 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
-    setPools: (state, action) => {
-      state.pools = action.payload;
-    },
-    setStats: (state, action) => {
-      state.statistics = action.payload;
-    },
   },
 });
 
-export const {
-  setTokenLists,
-  setTokenList,
-  setKeeperDaoTokens,
-  updateTokens,
-  setPools,
-  setStats,
-} = bancorSlice.actions;
+export const { setTokenLists, setTokenList, setKeeperDaoTokens, updateTokens } =
+  bancorSlice.actions;
 
 export const bancor = bancorSlice.reducer;

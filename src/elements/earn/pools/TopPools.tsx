@@ -1,25 +1,15 @@
 import { Ticker } from 'components/ticker/Ticker';
-import { orderBy } from 'lodash';
 import { Pool } from 'services/observables/tokens';
 import { Image } from 'components/image/Image';
+import { useAppSelector } from 'redux/index';
+import { getTopPools } from 'redux/bancor/pool';
 
 interface Props {
-  pools: Pool[];
   setSearch: Function;
 }
 
-export const TopPools = ({ pools, setSearch }: Props) => {
-  const filteredPools = pools.filter(
-    (p) => p.isWhitelisted && p.liquidity > 100000
-  );
-  const finalPools = filteredPools.map((p) => {
-    return {
-      ...p,
-      name: p.reserves[0].symbol,
-      apr: p.apr + (p.reserves[0].rewardApr || 0),
-    };
-  });
-  const topPools = orderBy(finalPools, 'apr', 'desc').slice(0, 20);
+export const TopPools = ({ setSearch }: Props) => {
+  const pools = useAppSelector<Pool[]>(getTopPools);
 
   return (
     <section className="content-section pt-20 pb-10">
@@ -28,7 +18,7 @@ export const TopPools = ({ pools, setSearch }: Props) => {
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">
           {pools.length
-            ? topPools.map((pool) => {
+            ? pools.map((pool) => {
                 return (
                   <button
                     onClick={() => setSearch(pool.name)}

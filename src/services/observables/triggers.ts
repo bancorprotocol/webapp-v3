@@ -8,8 +8,6 @@ import {
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
-  setPools,
-  setStats,
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
@@ -20,6 +18,7 @@ import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { pools$ } from 'services/observables/tokens';
 import { statistics$ } from 'services/observables/statistics';
+import { setPools, setStats } from 'redux/bancor/pool';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;

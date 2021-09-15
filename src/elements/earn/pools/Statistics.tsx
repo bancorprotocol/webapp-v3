@@ -4,7 +4,7 @@ import { Statistic } from 'services/observables/statistics';
 import './Statistics.css';
 
 export const Statistics = () => {
-  const stats = useAppSelector<Statistic[]>((state) => state.bancor.statistics);
+  const stats = useAppSelector<Statistic[]>((state) => state.pool.statistics);
 
   return (
     <section className="content-section py-20 pl-30 lg:pl-0 md:mt-20">
