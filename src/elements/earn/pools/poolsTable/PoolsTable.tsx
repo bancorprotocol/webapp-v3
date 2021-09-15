@@ -1,18 +1,14 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
-import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { NavLink } from 'react-router-dom';
-import { Image } from 'components/image/Image';
-import { Tooltip } from 'components/tooltip/Tooltip';
-import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { useAppSelector } from 'redux/index';
+import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
+import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
+import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
 
 interface Props {
   search: string;
@@ -28,89 +24,6 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     );
   }, [pools, search]);
 
-  const CellName = (pool: Pool) => {
-    return (
-      <div className={'flex items-center'}>
-        <div className="w-18">
-          {pool.isWhitelisted && (
-            <IconProtected className={`w-18 h-20 text-primary`} />
-          )}
-        </div>
-        <div className="flex ml-20">
-          <Image
-            src={pool.reserves[0].logoURI.replace('thumb', 'small')}
-            alt="Token Logo"
-            className="bg-grey-1 rounded-full w-30 h-30 z-20"
-          />
-          <Image
-            src={pool.reserves[1].logoURI.replace('thumb', 'small')}
-            alt="Token Logo"
-            className="-ml-12 bg-grey-1 rounded-full w-30 h-30 z-10"
-          />
-        </div>
-        <h3 className="text-14 ml-10">{pool.name}</h3>
-      </div>
-    );
-  };
-
-  const CellReward = (pool: Pool) => {
-    const aprOne = pool.reserves[0].rewardApr;
-    const aprTwo = pool.reserves[1].rewardApr;
-    const symbolOne = pool.reserves[0].symbol;
-    const symbolTwo = pool.reserves[1].symbol;
-    const ends_at = pool.reward?.ends_at;
-    return aprOne && aprTwo && ends_at ? (
-      <div className="flex items-center">
-        <Tooltip
-          content={
-            <span>
-              Rewards end in <CountdownTimer date={ends_at} />
-            </span>
-          }
-          button={<IconClock className="w-10" />}
-        />
-        <span className="ml-10">{`${symbolOne} ${aprOne.toFixed(2)}%`}</span>
-        <span className="px-10">|</span>
-        <span>{`${symbolTwo} ${aprTwo.toFixed(2)}%`}</span>
-      </div>
-    ) : (
-      ''
-    );
-  };
-
-  const CellActions = () => {
-    return (
-      <div className="flex">
-        <NavLink
-          to="/"
-          className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
-        >
-          <Tooltip
-            content="Coming Soon"
-            button={
-              <IconPlus
-                className={`w-20 hover:rotate-180 transition-transform duration-300`}
-              />
-            }
-          />
-        </NavLink>
-        <NavLink
-          to="/"
-          className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
-        >
-          <Tooltip
-            content="Trade"
-            button={
-              <IconSync
-                className={`w-20 hover:rotate-180 transition-transform duration-300`}
-              />
-            }
-          />
-        </NavLink>
-      </div>
-    );
-  };
-
   const columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
@@ -121,7 +34,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
           </span>
         ),
         accessor: 'name',
-        Cell: (cellData) => CellName(cellData.row.original),
+        Cell: (cellData) => PoolsTableCellName(cellData.row.original),
         minWidth: 230,
         sortDescFirst: true,
       },
@@ -164,7 +77,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'rewards',
         Header: 'Rewards',
         accessor: 'reward',
-        Cell: (cellData) => CellReward(cellData.row.original),
+        Cell: (cellData) => PoolsTableCellRewards(cellData.row.original),
         minWidth: 230,
         disableSortBy: true,
         tooltip:
@@ -182,7 +95,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       {
         id: 'actions',
         Header: '',
-        Cell: () => CellActions(),
+        Cell: () => PoolsTableCellActions(),
         width: 50,
         minWidth: 50,
         disableSortBy: true,

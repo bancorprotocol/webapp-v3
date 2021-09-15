@@ -1,5 +1,5 @@
 import { TopPools } from 'elements/earn/pools/TopPools';
-import { PoolsTable } from 'elements/earn/pools/PoolsTable';
+import { PoolsTable } from 'elements/earn/pools/poolsTable/PoolsTable';
 import { useState } from 'react';
 import { Statistics } from 'elements/earn/pools/Statistics';
 
