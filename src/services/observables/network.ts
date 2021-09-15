@@ -4,6 +4,7 @@ import { getNetworkVariables } from 'services/web3/config';
 import { setProvider } from 'services/web3';
 import { EthNetworks } from 'services/web3/types';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
+import { providers } from 'ethers';
 
 //@ts-ignore
 const { ethereum } = window;
@@ -27,7 +28,10 @@ export const setNetwork = (chainId: EthNetworks) => {
       process.env.REACT_APP_ALCHEMY_MAINNET ||
       process.env.REACT_APP_ALCHEMY_ROPSTEN
     )
-      setProvider(buildAlchemyUrl(chainId), false);
+      setProvider(
+        new providers.JsonRpcProvider(buildAlchemyUrl(chainId)),
+        false
+      );
   }
 };
 
