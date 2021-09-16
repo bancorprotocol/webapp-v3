@@ -54,6 +54,7 @@ export const DataTable = <D extends object>({
       },
       autoResetSortBy: false,
       disableSortRemove: true,
+      autoResetPage: false,
     },
     useSortBy,
     usePagination

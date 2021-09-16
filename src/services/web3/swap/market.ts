@@ -16,7 +16,7 @@ import {
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/pools';
-import { Pool } from 'services/api/bancor';
+import { APIPool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
 import {
   sendConversionEvent,
@@ -272,7 +272,7 @@ const calculateSpotPriceAndRate = async (
   return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
 };
 
-const buildTokenPoolShape = (pool: Pool, tokenAddress: string) => {
+const buildTokenPoolShape = (pool: APIPool, tokenAddress: string) => {
   return buildPoolBalanceShape({
     web3,
     tokenAddress,
@@ -280,7 +280,7 @@ const buildTokenPoolShape = (pool: Pool, tokenAddress: string) => {
   });
 };
 
-const findPoolByToken = async (tkn: string): Promise<Pool> => {
+const findPoolByToken = async (tkn: string): Promise<APIPool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
   const pool = apiData.pools.find(

@@ -4,7 +4,7 @@ import { Dropdown } from 'components/dropdown/Dropdown';
 import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
-import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
+import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { formatDuration } from 'utils/helperFunctions';
 
 interface ModalDurationProps {
