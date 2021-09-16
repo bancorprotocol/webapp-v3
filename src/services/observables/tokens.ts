@@ -83,7 +83,7 @@ export interface Pool {
   isWhitelisted: boolean;
   apr: number;
   reward?: APIReward;
-  isProtectionAllowed: boolean;
+  isProtected: boolean;
 }
 
 export const listOfLists = [
@@ -335,8 +335,7 @@ export const pools$ = combineLatest([
       const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
         bntBalance
       );
-      const isProtectionAllowed =
-        sufficientMintingBalance && pool.isWhitelisted;
+      const isProtected = sufficientMintingBalance && pool.isWhitelisted;
 
       return {
         ...pool,
@@ -347,7 +346,7 @@ export const pools$ = combineLatest([
         fee: Number(pool.fee) / 10000,
         supply: Number(pool.supply),
         apr,
-        isProtectionAllowed,
+        isProtected,
       };
     });
 

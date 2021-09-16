@@ -6,7 +6,7 @@ export const PoolsTableCellName = (pool: Pool) => {
   return (
     <div className={'flex items-center'}>
       <div className="w-18">
-        {pool.isWhitelisted && (
+        {pool.isProtected && (
           <IconProtected className={`w-18 h-20 text-primary`} />
         )}
       </div>

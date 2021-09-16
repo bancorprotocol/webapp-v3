@@ -35,7 +35,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         ),
         accessor: 'name',
         Cell: (cellData) => PoolsTableCellName(cellData.row.original),
-        minWidth: 230,
+        minWidth: 200,
         sortDescFirst: true,
       },
       {
@@ -85,7 +85,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       {
         id: 'actions',
         Header: '',
-        accessor: 'isProtectionAllowed',
+        accessor: 'isProtected',
         Cell: (cellData) => PoolsTableCellActions(cellData.row.original),
         width: 50,
         minWidth: 50,

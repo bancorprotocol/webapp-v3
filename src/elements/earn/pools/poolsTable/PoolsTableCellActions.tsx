@@ -5,7 +5,7 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { Pool } from 'services/observables/tokens';
 
 export const PoolsTableCellActions = (pool: Pool) => {
-  const href = pool.isProtectionAllowed
+  const href = pool.isProtected
     ? `https://app.bancor.network/eth/portfolio/stake/add/single/${pool.pool_dlt_id}`
     : `https://app.bancor.network/eth/pool/add/${pool.pool_dlt_id}`;
 
