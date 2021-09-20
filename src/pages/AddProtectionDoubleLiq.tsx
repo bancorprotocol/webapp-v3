@@ -238,6 +238,7 @@ export const AddProtectionDoubleLiq = (
     (
       <div className="widget mx-auto">
         <ModalApprove
+          title="Add Liquidity"
           isOpen={isOpen}
           promptSelected={handleOpen}
           amount={selectedAmount}
