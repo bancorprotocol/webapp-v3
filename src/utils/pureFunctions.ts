@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { isEqual } from 'lodash';
 import { Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { EthNetworks } from 'services/web3/types';
@@ -61,8 +62,40 @@ export const findOrThrow = <T>(
 export const updateArray = <T>(
   arr: T[],
   conditioner: (element: T) => boolean,
-  updater: (element: T) => T
-) => arr.map((element) => (conditioner(element) ? updater(element) : element));
+  updater: (element: T) => T,
+  debug = false
+) => {
+  if (!debug) {
+    return arr.map((element) =>
+      conditioner(element) ? updater(element) : element
+    );
+  } else {
+    const willGetUpdated = arr.filter(conditioner);
+    if (willGetUpdated.length > 0) {
+      const before = willGetUpdated;
+      const after = willGetUpdated.map(updater);
+      const isSame = isEqual(before, after);
+      if (isSame) {
+        console.error(
+          'Updater was ran against',
+          willGetUpdated,
+          'but didnt change anything.'
+        );
+      } else {
+        console.log(
+          willGetUpdated,
+          'will get updated to',
+          willGetUpdated.map(updater)
+        );
+        return willGetUpdated.map(updater);
+      }
+      return arr;
+    } else {
+      console.warn(`Nothing getting updated in array of`, arr);
+      return arr;
+    }
+  }
+};
 
 export const mapIgnoreThrown = async <T, V>(
   input: readonly T[],

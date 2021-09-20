@@ -163,18 +163,15 @@ export const AddProtectionDoubleLiq = (
     ],
     selectedPool?.converter_dlt_id || '',
     true,
-    () => console.log('approveeey')
+    () => {
+      console.log('approved callback');
+      addLiquidity();
+    }
   );
 
   if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
-  const addLiquidity = async (skipApproval: boolean = false) => {
-    if (!skipApproval) {
-      console.log('triggering check');
-      triggerCheck();
-      return;
-    }
-
+  const addLiquidity = async () => {
     const tokenLabel = `${amountBnt} ${
       (bntToken! as Token).symbol
     } & ${amountTkn} ${(tknToken! as Token).symbol}`;
@@ -331,7 +328,7 @@ export const AddProtectionDoubleLiq = (
             </div>
             <button
               onClick={() => {
-                addLiquidity();
+                triggerCheck();
               }}
               className={`btn-primary rounded w-full`}
               disabled={false}

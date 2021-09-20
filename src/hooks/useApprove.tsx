@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { getTokenContractApproval } from 'services/web3/contracts/converter/wrapper';
-import { wait } from 'utils/pureFunctions';
-import { useInterval } from './useInterval';
-
+import { updateArray, wait } from 'utils/pureFunctions';
 interface TokenAmount {
   amount: string;
   token: Token;
@@ -12,6 +10,7 @@ interface TokenAmount {
 interface TokenAmountWithApproval extends TokenAmount {
   isApprovalRequired: boolean;
   prompted: boolean;
+  approved: boolean;
 }
 
 export const useApprove = (
@@ -32,18 +31,21 @@ export const useApprove = (
   );
 
   const triggerCheck = async () => {
-    console.log('triggering check inside');
+    setSelectedToken(tokens[0].token);
     const approvals = await Promise.all(
-      tokens.map(async ({ token, amount }) => ({
-        token,
-        amount,
-        isApprovalRequired: await getTokenContractApproval(
+      tokens.map(
+        async ({ token, amount }): Promise<TokenAmountWithApproval> => ({
           token,
           amount,
-          spendingContract
-        ),
-        prompted: false,
-      }))
+          isApprovalRequired: await getTokenContractApproval(
+            token,
+            amount,
+            spendingContract
+          ),
+          prompted: false,
+          approved: false,
+        })
+      )
     );
     console.log('approvals', approvals);
 
@@ -56,34 +58,60 @@ export const useApprove = (
       approved();
       return;
     }
-    setRemainingApprovals(approvalsRequired);
+    const toPrompt = approvalsRequired[0];
+    setSelectedToken(toPrompt.token);
+    setSelectedAmount(toPrompt.amount);
+    setRemainingApprovals(
+      updateArray(
+        approvalsRequired,
+        (approval) => approval.token.address === toPrompt.token.address,
+        (approval) => ({ ...approval, prompted: true })
+      )
+    );
     setIsOpen(true);
     console.log('setIsOpen should be thing');
     setHandleApproved(() => (tokenAddress: string) => {
-      const remaining = remainingApprovals.filter(
-        (approval) => approval.token.address !== tokenAddress
+      const newApprovals = updateArray(
+        remainingApprovals,
+        (approval) => approval.token.address === tokenAddress,
+        (approval) => ({ ...approval, approved: true })
       );
-      setRemainingApprovals(remaining);
-      if (remaining.length === 0) {
+      const allApproved = newApprovals.every((approval) => approval.approved);
+      if (allApproved) {
         setIsOpen(false);
         approved();
         return;
+      } else {
+        setRemainingApprovals(newApprovals);
       }
     });
   };
 
   const handleOpen = async (promptSelected: boolean) => {
-    if (!promptSelected || remainingApprovals.length == 0) {
+    const allPrompted = remainingApprovals.every(
+      (approval) => approval.prompted
+    );
+    if (promptSelected || allPrompted) {
       setIsOpen(false);
       setHandleApproved(() => () => {});
       return;
     }
     setIsOpen(false);
-    await wait(500);
+    await wait(300);
+    const promptedToken = remainingApprovals.find(
+      (approval) => approval.prompted === false
+    )!;
+    const newApprovals = updateArray(
+      remainingApprovals,
+      (approval) => approval.token.address === promptedToken.token.address,
+      (approval) => ({ ...approval, prompted: true })
+    );
+
+    setRemainingApprovals(newApprovals);
+    setSelectedToken(promptedToken.token);
+    setSelectedAmount(promptedToken.amount);
+    await wait(300);
     setIsOpen(true);
-    setSelectedToken(remainingApprovals[0].token);
-    setSelectedAmount(remainingApprovals[0].amount);
-    setRemainingApprovals(remainingApprovals.slice(1));
   };
 
   return [
