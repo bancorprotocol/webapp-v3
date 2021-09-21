@@ -13,11 +13,20 @@ interface TokenMeta {
 }
 
 export interface WelcomeData {
-  total_liquidity: USDPrice;
+  total_liquidity: {
+    usd: string;
+    bnt: string;
+  };
+  total_liquidity_24h_ago: {
+    usd: string;
+    bnt: string;
+  };
   total_volume_24h: USDPrice;
+  total_volume_24h_ago: USDPrice;
   bnt_price_24h_ago: USDPrice;
   bnt_price: USDPrice;
   bnt_supply: string;
+  bnt_supply_24h_ago: string;
   swaps: Swap[];
   pools: APIPool[];
   tokens: APIToken[];
