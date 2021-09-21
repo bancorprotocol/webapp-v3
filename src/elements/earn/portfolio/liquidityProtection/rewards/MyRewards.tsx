@@ -52,11 +52,14 @@ export const MyRewards = () => {
         <div className="flex mr-[20px] md:mr-[44px] space-x-8">
           <NavLink
             to="/portfolio/rewards/claim"
-            className="btn-outline-primary btn-sm"
+            className="btn-outline-primary btn-sm rounded-[12px]"
           >
             Claim
           </NavLink>
-          <NavLink to="/portfolio/rewards/stake" className="btn-primary btn-sm">
+          <NavLink
+            to="/portfolio/rewards/stake"
+            className="btn-primary btn-sm rounded-[12px]"
+          >
             Stake
           </NavLink>
         </div>
