@@ -1,5 +1,5 @@
 import { MyStake } from 'elements/earn/portfolio/MyStake';
-import { MyRewards } from 'elements/earn/portfolio/MyRewards';
+import { MyRewards } from 'elements/earn/portfolio/rewards/MyRewards';
 
 export const Portfolio = () => {
   return (

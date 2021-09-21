@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useAppSelector } from 'redux/index';
 import { useInterval } from 'hooks/useInterval';
+import { NavLink } from 'react-router-dom';
 
 export const MyRewards = () => {
   const { account } = useWeb3React();
@@ -46,7 +47,20 @@ export const MyRewards = () => {
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light">
-      <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
+        <div className="flex mr-[20px] md:mr-[44px] space-x-8">
+          <NavLink
+            to="/portfolio/rewards/claim"
+            className="btn-outline-primary btn-sm"
+          >
+            Claim
+          </NavLink>
+          <NavLink to="/portfolio/rewards/stake" className="btn-primary btn-sm">
+            Stake
+          </NavLink>
+        </div>
+      </div>
       <hr className="content-separator my-14 mx-[20px] md:ml-[34px] md:mr-[44px]" />
       <div className="flex justify-between md:ml-[34px] md:mr-[44px]">
         <div>

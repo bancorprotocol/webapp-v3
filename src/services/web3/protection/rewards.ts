@@ -48,16 +48,12 @@ export const stakeRewards = async ({
   });
 };
 
-export const claimRewards = async ({
-  currentUser,
-}: {
-  currentUser: string;
-}): Promise<string> => {
+export const claimRewards = async (user: string): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
   const contract = buildStakingRewardsContract(contractAddress, writeWeb3);
   return resolveTxOnConfirmation({
     tx: contract.methods.claimRewards(),
-    user: currentUser,
+    user,
     resolveImmediately: true,
   });
 };

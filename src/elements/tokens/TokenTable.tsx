@@ -2,7 +2,6 @@ import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { LineData, UTCTimestamp } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
