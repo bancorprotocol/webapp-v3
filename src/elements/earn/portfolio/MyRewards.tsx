@@ -17,7 +17,7 @@ export const MyRewards = () => {
     (state) => state.bancor.bntPrice
   );
 
-  const getRewards = async (account: string) => {
+  const fetchRewardsData = async (account: string) => {
     const pendingRewards = await fetchPendingRewards(account);
     const claimedRewards = await fetchTotalClaimedRewards(account);
 
@@ -31,7 +31,7 @@ export const MyRewards = () => {
   useInterval(
     async () => {
       if (account) {
-        await getRewards(account);
+        await fetchRewardsData(account);
       }
     },
     account ? 15000 : null
