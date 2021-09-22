@@ -15,15 +15,22 @@ export const multicall = async (network: EthNetworks, calls: MultiCall[]) => {
   const vars = getNetworkVariables(network);
   const multicallContract = Multicall__factory.connect(vars.multiCall, web3);
 
-  const res = await multicallContract.aggregate(
-    calls.map((call) => ({
-      target: call.contractAddress,
+  try {
+    const encoded = calls.map((call) => ({
+      target: call.contractAddress.toLocaleLowerCase(),
       callData: call.interface.encodeFunctionData(
         call.methodName,
         call.methodParameters
       ),
-    }))
-  );
+    }));
 
-  return '';
+    const encodedRes = await multicallContract.aggregate(encoded);
+    const res = encodedRes.returnData.map((call, i) => {
+      return calls[i].interface.decodeFunctionResult(calls[i].methodName, call);
+    });
+
+    return res;
+  } catch (error) {
+    console.error('error', error);
+  }
 };

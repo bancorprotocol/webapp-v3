@@ -6,6 +6,8 @@ import { partition } from 'lodash';
 import { shrinkToken } from 'utils/formulas';
 import { multicall } from 'services/web3/multicall/multicall';
 import { Token__factory } from 'services/web3/abis/types';
+import { Result } from '@ethersproject/abi/lib/coders/abstract-coder';
+import BigNumber from 'bignumber.js';
 
 interface TokenBalance {
   balance: string;
@@ -21,26 +23,26 @@ export const fetchTokenBalances = async (
     tokens,
     (token) => token.address === ethToken
   );
+
   const calls = tokensNoETH.map((x) => buildTokenBalanceCall(x.address, user));
 
   try {
     const [tokenBalances, ethBalance]: [
-      TokenBalance[] | undefined,
+      Result[] | undefined,
       string | undefined
     ] = await Promise.all([
-      [{ balance: '', address: '' }], //multicall(currentNetwork, calls),
+      multicall(currentNetwork, calls),
       eth && fetchETH(user),
     ]);
-
-    if (tokenBalances && tokenBalances.length > 0) {
-      const balances = tokenBalances.map((token) => {
-        const inedx = tokensNoETH.findIndex((t) => t.address === token.address);
+    if (tokenBalances) {
+      const balances = tokenBalances.map((bn, index) => {
+        const balance = (bn[0] as BigNumber).toString();
         return {
-          ...tokensNoETH[inedx],
-          balance: token.balance
-            ? token.balance !== '0'
-              ? shrinkToken(token.balance, tokensNoETH[inedx].decimals)
-              : token.balance
+          ...tokensNoETH[index],
+          balance: balance
+            ? balance !== '0'
+              ? shrinkToken(balance, tokensNoETH[index].decimals)
+              : balance
             : null,
         };
       });
@@ -68,10 +70,10 @@ const buildTokenBalanceCall = (address: string, user: string) => {
   return {
     contractAddress: contract.address,
     interface: contract.interface,
-    methodName: contract.balanceOf.toString(),
+    methodName: 'balanceOf',
     methodParameters: [user],
   };
 };
 
 const fetchETH = async (user: string) =>
-  shrinkToken(await web3.getBalance(user).toString(), 18);
+  shrinkToken((await web3.getBalance(user)).toString(), 18);

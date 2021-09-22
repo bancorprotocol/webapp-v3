@@ -120,74 +120,70 @@ export const tokensNoBalance$ = combineLatest([
   pools$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([tokenList, apiTokens, pools, currentNetwork]) => {
-      const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map(
-        (x) => {
-          const usdPrice = x.rate.usd;
-          const price_24h = x.rate_24h_ago.usd;
-          const priceChanged =
-            usdPrice && price_24h && Number(price_24h) !== 0
-              ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
-              : 0;
-          const pool = pools.find((p) =>
-            p.reserves.find((r) => r.address === x.dlt_id)
-          );
-          const usdVolume24 = pool ? pool.volume_24h.usd : null;
-          const isWhitelisted = pool ? pool.isWhitelisted : false;
-
-          const seven_days_ago = get7DaysAgo().getUTCSeconds();
-          return {
-            address: x.dlt_id,
-            symbol: x.symbol,
-            decimals: x.decimals,
-            usdPrice,
-            liquidity: x.liquidity.usd,
-            usd_24h_ago: price_24h,
-            price_change_24: priceChanged,
-            price_history_7d: x.rates_7d
-              .filter((x) => !!x)
-              .map((x, i) => ({
-                value: Number(x),
-                time: (seven_days_ago + i * 360) as UTCTimestamp,
-              })),
-            usd_volume_24: usdVolume24,
-            isWhitelisted,
-          };
-        }
+  map(([tokenList, apiTokens, pools, currentNetwork]) => {
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
+      const usdPrice = x.rate.usd;
+      const price_24h = x.rate_24h_ago.usd;
+      const priceChanged =
+        usdPrice && price_24h && Number(price_24h) !== 0
+          ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
+          : 0;
+      const pool = pools.find((p) =>
+        p.reserves.find((r) => r.address === x.dlt_id)
       );
+      const usdVolume24 = pool ? pool.volume_24h.usd : null;
+      const isWhitelisted = pool ? pool.isWhitelisted : false;
 
-      let overlappingTokens: Token[] = [];
-      const eth = getEthToken(apiTokens, pools);
-      if (eth) overlappingTokens.push(eth);
+      const seven_days_ago = get7DaysAgo().getUTCSeconds();
+      return {
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice,
+        liquidity: x.liquidity.usd,
+        usd_24h_ago: price_24h,
+        price_change_24: priceChanged,
+        price_history_7d: x.rates_7d
+          .filter((x) => !!x)
+          .map((x, i) => ({
+            value: Number(x),
+            time: (seven_days_ago + i * 360) as UTCTimestamp,
+          })),
+        usd_volume_24: usdVolume24,
+        isWhitelisted,
+      };
+    });
 
-      newApiTokens.forEach((apiToken) => {
-        if (currentNetwork === EthNetworks.Mainnet) {
-          const found = tokenList.find(
-            (userToken) => userToken.address === apiToken.address
-          );
-          if (found) {
-            overlappingTokens.push({
-              ...found,
-              ...apiToken,
-              logoURI: getTokenLogoURI(found),
-            });
-          }
-        } else {
-          if (apiToken.address !== ethToken)
-            overlappingTokens.push({
-              chainId: EthNetworks.Ropsten,
-              name: apiToken.symbol,
-              logoURI: ropstenImage,
-              balance: null,
-              ...apiToken,
-            });
+    let overlappingTokens: Token[] = [];
+    const eth = getEthToken(apiTokens, pools);
+    if (eth) overlappingTokens.push(eth);
+
+    newApiTokens.forEach((apiToken) => {
+      if (currentNetwork === EthNetworks.Mainnet) {
+        const found = tokenList.find(
+          (userToken) => userToken.address === apiToken.address
+        );
+        if (found) {
+          overlappingTokens.push({
+            ...found,
+            ...apiToken,
+            logoURI: getTokenLogoURI(found),
+          });
         }
-      });
+      } else {
+        if (apiToken.address !== ethToken)
+          overlappingTokens.push({
+            chainId: EthNetworks.Ropsten,
+            name: apiToken.symbol,
+            logoURI: ropstenImage,
+            balance: null,
+            ...apiToken,
+          });
+      }
+    });
 
-      return overlappingTokens;
-    }
-  ),
+    return overlappingTokens;
+  }),
   shareReplay(1)
 );
 
