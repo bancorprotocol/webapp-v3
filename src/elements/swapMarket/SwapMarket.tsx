@@ -89,8 +89,7 @@ export const SwapMarket = ({
   }, [fromAmount]);
 
   useEffect(() => {
-    if (toToken && toToken.address === wethToken) setToToken(undefined);
-    else if (fromToken && fromToken.address === wethToken) {
+    if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.00');
@@ -280,12 +279,15 @@ export const SwapMarket = ({
     if (rate === '0') return true;
     if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
     if (!toToken) return true;
+    if (toToken.address === wethToken) return true;
     if (!account) return false;
     return false;
   };
 
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
+    else if (toToken.address === wethToken)
+      return '"You Pay"/"You Receive" token is not supported';
     if (fromToken.balance) {
       const isInsufficientBalance = new BigNumber(fromToken.balance).lt(
         fromAmount

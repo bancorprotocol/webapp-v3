@@ -193,7 +193,8 @@ export const SwapLimit = ({
   const fetchMarketRate = useCallback(
     async (setLoading = true) => {
       if (!fromToken || !toToken) return;
-      if (toToken.address === ethToken) return;
+      if (toToken.address === ethToken && fromToken.address === wethToken)
+        return;
 
       setIsLoadingRate(setLoading);
       const rate = await getRate(fromToken, toToken, '1');
@@ -209,14 +210,8 @@ export const SwapLimit = ({
   }, [calculateRateByMarket, fromToken, toToken]);
 
   useEffect(() => {
-    if (toToken && toToken.address === ethToken)
-      if (fromToken.address === wethToken) setToToken(undefined);
-      else {
-        const weth = tokens.find((x) => x.address === wethToken);
-        setToToken(weth);
-      }
     fetchMarketRate();
-  }, [fetchMarketRate, fromToken, toToken, setToToken, tokens]);
+  }, [fetchMarketRate, fromToken, toToken]);
 
   //Check if approval is required
   const checkApproval = async (token: Token) => {
@@ -295,6 +290,8 @@ export const SwapLimit = ({
       return true;
     if (!toToken) return true;
     if (!account) return false;
+    if (toToken.address === ethToken) return true;
+
     return false;
   };
 
@@ -312,6 +309,14 @@ export const SwapLimit = ({
     setRate(val);
     calculatePercentageByRate(marketRate, val);
     handleFieldChanged(Field.rate, fromAmount, toAmount, val);
+  };
+
+  const swapButtonText = () => {
+    if (!toToken) return 'Select a token';
+    else if (toToken.address === ethToken)
+      return '"You Pay"/"You Receive" token is not supported';
+
+    return 'Trade';
   };
 
   return (
@@ -536,7 +541,7 @@ export const SwapLimit = ({
           }}
           disabled={isSwapDisabled()}
         >
-          Trade
+          {swapButtonText()}
         </button>
       </div>
     </div>
