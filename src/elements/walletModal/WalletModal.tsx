@@ -12,6 +12,8 @@ import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
+import { writeWeb3 } from 'services/web3/contracts';
+import useAsyncEffect from 'use-async-effect';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector, active } = useWeb3React();
@@ -46,6 +48,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         .then(async () => {
           setIsOpen(false);
           setAutoLoginLS(true);
+          writeWeb3.setProvider(await connector.getProvider());
           const account = await connector.getAccount();
           sendWalletEvent(
             WalletEvents.connect,
@@ -55,7 +58,6 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           );
         })
         .catch((error) => {
-          setSelectedWallet(null);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
           } else setError(true);
@@ -83,14 +85,20 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
     }
   }, [active]);
 
-  useEffect(() => {
-    if (connector) {
-      const wallet = SUPPORTED_WALLETS.find(
-        (x) => typeof x.connector === typeof connector
-      );
-      if (wallet) setSelectedWallet(wallet);
-    }
-  }, [walletModal, connector]);
+  useAsyncEffect(
+    async (isMounted) => {
+      if (selectedWallet) return;
+
+      if (connector) {
+        writeWeb3.setProvider(await connector.getProvider());
+        const wallet = SUPPORTED_WALLETS.find(
+          async (x) => typeof x.connector === typeof connector
+        );
+        if (isMounted()) if (wallet) setSelectedWallet(wallet);
+      }
+    },
+    [walletModal, connector, selectedWallet]
+  );
 
   const title = error
     ? 'Wallet Error'
@@ -141,11 +149,11 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
               {error && (
                 <div className="bg-error text-white mb-20 p-20 rounded-30 text-center">
                   <p className="font-semibold mb-5">
-                    Failed to connect to wallet.
+                    {`Failed Connecting to ${
+                      selectedWallet ? selectedWallet.name : 'Wallet'
+                    }`}
                   </p>
-                  <p className="text-12">
-                    Please try again or contact support.
-                  </p>
+                  <p className="text-12">Please try again or contact support</p>
                 </div>
               )}
             </>

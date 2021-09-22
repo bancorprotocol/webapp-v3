@@ -7,10 +7,8 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { Pool } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { triggerApiCall } from 'services/observables/pools';
-import { loadSwapData } from 'services/observables/triggers';
 import { isAddress } from 'web3-utils';
 
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
@@ -70,10 +68,6 @@ export const AddProtectionDouble = (
   };
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);

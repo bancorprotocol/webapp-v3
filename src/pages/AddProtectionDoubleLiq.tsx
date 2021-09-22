@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
-import { loadSwapData } from 'services/observables/triggers';
+import { Pool, Token } from 'services/observables/tokens';
 import { isAddress } from 'web3-utils';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
@@ -137,10 +135,6 @@ export const AddProtectionDoubleLiq = (
     60000,
     false
   );
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
 

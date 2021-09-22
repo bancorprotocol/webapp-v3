@@ -8,9 +8,7 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { Pool } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
-import { loadSwapData } from 'services/observables/triggers';
+import { Pool, Token } from 'services/observables/tokens';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { isAddress } from 'web3-utils';
 import { openWalletModal } from 'redux/user/user';
@@ -55,10 +53,6 @@ export const AddProtection = (
   const [amountUsd, setAmountUsd] = useState('');
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    loadSwapData(dispatch);
-  }, [dispatch]);
 
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
 

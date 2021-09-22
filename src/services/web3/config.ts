@@ -1,6 +1,8 @@
-import { APIToken, Pool } from 'services/api/bancor';
+import { APIToken, APIPool } from 'services/api/bancor';
+import { UTCTimestamp } from 'lightweight-charts';
 import { Token } from 'services/observables/tokens';
 import { calculatePercentageChange } from 'utils/formulas';
+import { get7DaysAgo } from 'utils/pureFunctions';
 import { EthNetworks } from './types';
 
 export interface EthNetworkVariables {
@@ -38,7 +40,7 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
 
 export const getEthToken = (
   apiTokens: APIToken[],
-  pools: Pool[]
+  pools: APIPool[]
 ): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth) {
@@ -53,6 +55,7 @@ export const getEthToken = (
     );
     const usdVolume24 = pool ? pool.volume_24h.usd : null;
     const isWhitelisted = pool ? pool.isWhitelisted : false;
+    const seven_days_ago = get7DaysAgo().getUTCSeconds();
 
     return {
       address: eth.dlt_id,
@@ -66,7 +69,12 @@ export const getEthToken = (
       liquidity: eth.liquidity.usd,
       usd_24h_ago: price_24h,
       price_change_24: priceChanged,
-      price_history_7d: eth.rates_7d,
+      price_history_7d: eth.rates_7d
+        .filter((x) => !!x)
+        .map((x, i) => ({
+          value: Number(x),
+          time: (seven_days_ago + i * 360) as UTCTimestamp,
+        })),
       usd_volume_24: usdVolume24,
       isWhitelisted,
     };

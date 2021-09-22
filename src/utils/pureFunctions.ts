@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { isEqual } from 'lodash';
-import { Pool } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { EthNetworks } from 'services/web3/types';
 
 export const oneMillion = new BigNumber(1000000);
@@ -157,3 +156,5 @@ export const createListPool = (
 
 export const wait = async (ms: number = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);

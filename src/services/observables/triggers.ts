@@ -16,17 +16,21 @@ import { Subscription } from 'rxjs';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { fullPositions$, positions$ } from './protectedPositions';
 import { lockedBalances$ } from './lockedBalances';
-import { pools$ } from './pools';
 import { onLogin$, onLogout$ } from './user';
 import { setUser } from 'redux/user/user';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
+import { pools$ } from 'services/observables/tokens';
+import { statistics$ } from 'services/observables/statistics';
+import { setStats } from 'redux/bancor/pool';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
 let keeperDaoSub: Subscription;
 let loadingBalancesSub: Subscription;
+let poolsSub: Subscription;
+let statsSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
@@ -39,10 +43,9 @@ export const loadCommonData = (dispatch: any) => {
     .toPromise()
     .then((tokenList) => dispatch(setTokenList(tokenList)));
 
-  if (!loadingBalancesSub || loadingBalancesSub.closed)
-    loadingBalancesSub = loadingBalances$.subscribe((loading) =>
-      dispatch(setLoadingBalances(loading))
-    );
+  loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+    dispatch(setLoadingBalances(loading))
+  );
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
@@ -51,11 +54,9 @@ export const loadCommonData = (dispatch: any) => {
     userPreferredListIds$.next(firstFromList);
   } else userPreferredListIds$.next(userListIds);
 
-  if (!tokenSub || tokenSub.closed) {
-    tokenSub = tokens$.subscribe((tokenList) => {
-      dispatch(setTokenList(tokenList));
-    });
-  }
+  tokenSub = tokens$.subscribe((tokenList) => {
+    dispatch(setTokenList(tokenList));
+  });
 
   onLogin$.subscribe((user) => setUser(user));
   onLogout$.subscribe((user) => setUser(user));
@@ -75,12 +76,15 @@ export const loadCommonData = (dispatch: any) => {
     console.log(lockedBalances, 'are the locked balances')
   );
 
-  if (!keeperDaoSub || keeperDaoSub.closed)
-    keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-      setKeeperDaoTokens(keeperDaoTokens);
-    });
+  keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+    setKeeperDaoTokens(keeperDaoTokens);
+  });
+
+  poolsSub = pools$.subscribe((pools) => {
+    dispatch(setPools(pools));
+  });
+
+  statsSub = statistics$.subscribe((stats) => {
+    dispatch(setStats(stats));
+  });
 };
-
-export const loadSwapData = (dispatch: any) => {};
-
-export const loadTokenData = (dispatch: any) => {};

@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Pool } from 'services/api/bancor';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { TokenList, Token } from 'services/observables/tokens';
+import { TokenList, Token, Pool } from 'services/observables/tokens';
 
 interface BancorState {
   tokenLists: TokenList[];

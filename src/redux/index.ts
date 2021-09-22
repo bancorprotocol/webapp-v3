@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
 import { user } from 'redux/user/user';
 import { bancor } from 'redux/bancor/bancor';
+import { pool } from 'redux/bancor/pool';
 import { notification } from 'redux/notification/notification';
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     user,
     notification,
     bancor,
+    pool,
   },
 });
 

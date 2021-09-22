@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import { Token } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { Image } from 'components/image/Image';
-import { Pool } from 'services/api/bancor';
 import { createListPool, ListPool, wait } from 'utils/pureFunctions';
 
 interface SearchablePoolListProps {

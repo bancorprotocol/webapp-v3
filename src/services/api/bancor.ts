@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EthNetworks } from 'services/web3/types';
 import { toChecksumAddress } from 'web3-utils';
+import { UTCTimestamp } from 'lightweight-charts';
 
 interface TokenMeta {
   id: string;
@@ -18,7 +19,7 @@ export interface WelcomeData {
   bnt_price: USDPrice;
   bnt_supply: string;
   swaps: Swap[];
-  pools: Pool[];
+  pools: APIPool[];
   tokens: APIToken[];
 }
 
@@ -26,10 +27,22 @@ export interface USDPrice {
   usd: null | string;
 }
 
-export interface Pool {
+export interface APIReserve {
+  address: string;
+  weight: string;
+  balance: string;
+  apr?: number;
+}
+
+export interface APIReward {
+  starts_at: UTCTimestamp;
+  ends_at: UTCTimestamp;
+}
+
+export interface APIPool {
   pool_dlt_id: string;
   converter_dlt_id: string;
-  reserves: Reserve[];
+  reserves: APIReserve[];
   name: string;
   liquidity: USDPrice;
   volume_24h: USDPrice;
@@ -38,7 +51,8 @@ export interface Pool {
   version: number;
   supply: string;
   decimals: number;
-  isWhitelisted?: boolean;
+  isWhitelisted: boolean;
+  reward?: APIReward;
 }
 
 export interface Reserve {
@@ -65,7 +79,7 @@ export interface APIToken {
   rate: USDPrice;
   rate_24h_ago: USDPrice;
   decimals: number;
-  rates_7d: (string | number)[][];
+  rates_7d: string[];
 }
 
 export interface TokenMetaWithReserve extends TokenMeta {
@@ -73,7 +87,7 @@ export interface TokenMetaWithReserve extends TokenMeta {
   decBalance: string;
 }
 
-export interface NewPool extends Pool {
+export interface NewPool extends APIPool {
   reserveTokens: TokenMetaWithReserve[];
   decFee: number;
 }

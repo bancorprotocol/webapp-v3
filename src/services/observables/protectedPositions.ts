@@ -31,7 +31,6 @@ import { fetchPoolPrograms } from 'services/web3/contracts/stakingRewardsStore/w
 import { BigNumber } from 'bignumber.js';
 import { currentBlock$ } from './currentBlock';
 import { correctedPools$ } from './pools';
-import { Pool } from 'services/api/bancor';
 import { rewindBlocksByDays } from 'utils/helperFunctions';
 import { uniq } from 'lodash';
 import {
@@ -39,6 +38,8 @@ import {
   fetchTokenSupply,
 } from 'services/web3/contracts/token/wrapper';
 import { fetchPoolReserveBalances } from 'services/web3/contracts/converter/wrapper';
+import { Pool } from 'services/observables/tokens';
+import { APIPool } from 'services/api/bancor';
 
 const positionIds$ = combineLatest([liquidityProtectionStore$, user$]).pipe(
   optimisticObservable('positionIds', ([store, user]) =>
@@ -272,7 +273,7 @@ export const fetchHistoricBalances = async (
 export const getHistoricBalances = async (
   positions: ProtectedLiquidity[],
   blockNow: number,
-  pools: Pool[]
+  pools: APIPool[]
 ): Promise<PoolHistoricBalance[][]> => {
   const timeScales: TimeScale[] = (
     [
