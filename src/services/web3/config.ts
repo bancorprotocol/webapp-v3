@@ -1,5 +1,5 @@
+import { APIToken, APIPool } from 'services/api/bancor';
 import { UTCTimestamp } from 'lightweight-charts';
-import { APIToken, Pool } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import { calculatePercentageChange } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
@@ -40,7 +40,7 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
 
 export const getEthToken = (
   apiTokens: APIToken[],
-  pools: Pool[]
+  pools: APIPool[]
 ): Token | null => {
   const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
   if (eth) {
