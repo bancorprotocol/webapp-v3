@@ -164,7 +164,6 @@ export const AddProtectionDoubleLiq = (
     selectedPool?.converter_dlt_id || '',
     true,
     () => {
-      console.log('approved callback');
       addLiquidity();
     }
   );
@@ -231,8 +230,6 @@ export const AddProtectionDoubleLiq = (
   ) {
     return <div>Loading...</div>;
   }
-
-  console.log({ isOpen }, '<AddProtectionDoubleLiq />');
 
   return (
     (

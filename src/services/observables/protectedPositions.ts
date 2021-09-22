@@ -235,7 +235,6 @@ export const fetchHistoricBalances = async (
           try {
             reserveBalances = await fetchPoolReserveBalances(pool, blockHeight);
           } catch (e) {
-            console.log('trying to fetch previous owner..');
             try {
               const previousOwner = await fetchPoolOwner(
                 pool.pool_dlt_id,

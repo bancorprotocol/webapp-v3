@@ -63,7 +63,6 @@ export const SearchablePoolList = ({
     setSearch('');
   };
 
-  console.log({ filteredPools });
   return (
     <Modal
       title={'Select Pool'}

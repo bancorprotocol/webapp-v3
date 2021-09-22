@@ -47,14 +47,12 @@ export const useApprove = (
         })
       )
     );
-    console.log('approvals', approvals);
 
     const approvalsRequired = approvals.filter(
       (approval) => approval.isApprovalRequired
     );
     if (approvalsRequired.length === 0) {
       setIsOpen(false);
-      console.log('not opening, no approvals required');
       approved();
       return;
     }
@@ -69,7 +67,6 @@ export const useApprove = (
       )
     );
     setIsOpen(true);
-    console.log('setIsOpen should be thing');
     setHandleApproved(() => (tokenAddress: string) => {
       const newApprovals = updateArray(
         remainingApprovals,
