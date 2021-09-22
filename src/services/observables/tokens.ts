@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { BehaviorSubject, combineLatest, from } from 'rxjs';
+import { BehaviorSubject, combineLatest, from,  } from 'rxjs';
 import {
   distinctUntilChanged,
   map,
+  tap,
   pluck,
   share,
   shareReplay,
@@ -33,6 +34,11 @@ import { buildLiquidityProtectionSettingsContract } from 'services/web3/contract
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
+  tap(tokens => {
+    const bcs = '0x98Bde3a768401260E7025FaF9947ef1b81295519'
+    const hasBcs = tokens.some(x => x.dlt_id === bcs)
+    alert(`${hasBcs} in API`)
+  }),
   share()
 );
 
@@ -241,6 +247,11 @@ export const tokens$ = combineLatest([
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
+
+
+    const bcs = '0x98Bde3a768401260E7025FaF9947ef1b81295519'
+    const hasBcs = tokensNoBalance.some(x => x.address === bcs)
+    alert(`in tokens$ ${hasBcs}`)
     if (user && tokensNoBalance) {
       setLoadingBalances(true);
       const updatedTokens = await fetchTokenBalances(
@@ -249,7 +260,9 @@ export const tokens$ = combineLatest([
         currentNetwork
       );
       setLoadingBalances(false);
-      if (updatedTokens.length !== 0) return updatedTokens;
+      if (updatedTokens.length !== 0) {
+        return updatedTokens;
+      }
     }
 
     return tokensNoBalance;
@@ -289,7 +302,7 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const pools$ = combineLatest([
+export const pools2$ = combineLatest([
   correctedPools$,
   tokens$,
   minNetworkTokenLiquidityForMinting$,

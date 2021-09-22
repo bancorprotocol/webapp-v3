@@ -41,6 +41,7 @@ import {
 import { AddProtection } from 'pages/AddProtection';
 import { AddProtectionDouble } from 'pages/AddProtectionDouble';
 import { AddProtectionDoubleLiq } from 'pages/AddProtectionDoubleLiq';
+import { AddLiquidity } from 'pages/AddLiquidity';
 import { loadCommonData } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 
@@ -140,14 +141,8 @@ export const App = () => {
               <Route
                 exact
                 strict
-                path="/addProtectionDoubleLiq/:anchor"
-                component={AddProtectionDoubleLiq}
-              />
-              <Route
-                exact
-                strict
-                path="/addProtectionDouble/:anchor"
-                component={AddProtectionDouble}
+                path="/addLiquidity/:anchor"
+                component={AddLiquidity}
               />
               {/* <Route exact strict path="/governance" component={Governance} /> */}
               <Route exact strict path="/vote" component={Vote} />
