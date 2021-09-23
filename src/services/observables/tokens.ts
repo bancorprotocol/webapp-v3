@@ -293,64 +293,69 @@ export const pools$ = combineLatest([
   correctedPools$,
   tokens$,
   minNetworkTokenLiquidityForMinting$,
+  currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([pools, tokens, minMintingBalance]) => {
-    const newPools: Pool[] = pools.map((pool) => {
-      let apr = 0;
-      const liquidity = Number(pool.liquidity.usd ?? 0);
-      const fees_24h = Number(pool.fees_24h.usd ?? 0);
-      if (liquidity && fees_24h) {
-        apr = new BigNumber(fees_24h)
-          .times(365)
-          .div(liquidity)
-          .times(100)
-          .toNumber();
-      }
-      const reserveTokenOne = tokens.find(
-        (t) => t.address === pool.reserves[0].address
-      );
-      const reserveTokenTwo = tokens.find(
-        (t) => t.address === pool.reserves[1].address
-      );
-      const reserves: Reserve[] = [
-        {
-          ...pool.reserves[0],
-          rewardApr: Number(pool.reserves[0].apr) / 10000,
-          symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
-          logoURI: reserveTokenOne
-            ? getTokenLogoURI(reserveTokenOne)
-            : ropstenImage,
-        },
-        {
-          ...pool.reserves[1],
-          rewardApr: Number(pool.reserves[1].apr) / 10000,
-          symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
-          logoURI: reserveTokenTwo
-            ? getTokenLogoURI(reserveTokenTwo)
-            : ropstenImage,
-        },
-      ];
+  switchMapIgnoreThrow(
+    async ([pools, tokens, minMintingBalance, currentNetwork]) => {
+      const newPools: Pool[] = pools.map((pool) => {
+        let apr = 0;
+        const liquidity = Number(pool.liquidity.usd ?? 0);
+        const fees_24h = Number(pool.fees_24h.usd ?? 0);
+        if (liquidity && fees_24h) {
+          apr = new BigNumber(fees_24h)
+            .times(365)
+            .div(liquidity)
+            .times(100)
+            .toNumber();
+        }
+        const reserveTokenOne = tokens.find(
+          (t) => t.address === pool.reserves[0].address
+        );
+        const reserveTokenTwo = tokens.find(
+          (t) => t.address === pool.reserves[1].address
+        );
+        const reserves: Reserve[] = [
+          {
+            ...pool.reserves[0],
+            rewardApr: Number(pool.reserves[0].apr) / 10000,
+            symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
+            logoURI:
+              reserveTokenOne && currentNetwork === EthNetworks.Mainnet
+                ? getTokenLogoURI(reserveTokenOne)
+                : ropstenImage,
+          },
+          {
+            ...pool.reserves[1],
+            rewardApr: Number(pool.reserves[1].apr) / 10000,
+            symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
+            logoURI:
+              reserveTokenTwo && currentNetwork === EthNetworks.Mainnet
+                ? getTokenLogoURI(reserveTokenTwo)
+                : ropstenImage,
+          },
+        ];
 
-      const bntBalance = reserves.find((r) => r.symbol === 'BNT')!.balance;
-      const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
-        bntBalance
-      );
-      const isProtected = sufficientMintingBalance && pool.isWhitelisted;
+        const bntReserve = reserves.find((r) => r.symbol === 'BNT');
+        const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+          bntReserve ? bntReserve.balance : 0
+        );
+        const isProtected = sufficientMintingBalance && pool.isWhitelisted;
 
-      return {
-        ...pool,
-        reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
-        liquidity,
-        volume_24h: Number(pool.volume_24h.usd ?? 0),
-        fees_24h,
-        fee: Number(pool.fee) / 10000,
-        supply: Number(pool.supply),
-        apr,
-        isProtected,
-      };
-    });
+        return {
+          ...pool,
+          reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
+          liquidity,
+          volume_24h: Number(pool.volume_24h.usd ?? 0),
+          fees_24h,
+          fee: Number(pool.fee) / 10000,
+          supply: Number(pool.supply),
+          apr,
+          isProtected,
+        };
+      });
 
-    return newPools;
-  }),
+      return newPools;
+    }
+  ),
   shareReplay(1)
 );
