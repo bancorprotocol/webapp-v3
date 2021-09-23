@@ -6,18 +6,16 @@ import { Pool } from 'services/observables/tokens';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const href = pool.isProtected
-    ? `https://app.bancor.network/eth/portfolio/stake/add/single/${pool.pool_dlt_id}`
-    : `https://app.bancor.network/eth/pool/add/${pool.pool_dlt_id}`;
+    ? `/addProtection/${pool.pool_dlt_id}`
+    : `/addLiquidity/${pool.pool_dlt_id}`
 
   return (
     <div className="flex">
-      <a
-        href={href}
-        target="_blank"
-        className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
-        rel="noreferrer"
+      <NavLink
+        to={href}
+        className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
       >
-        <Tooltip
+      <Tooltip
           content="Stake & Earn"
           button={
             <IconPlus
@@ -25,7 +23,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
             />
           }
         />
-      </a>
+        </NavLink>
       <NavLink
         to="/"
         className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"

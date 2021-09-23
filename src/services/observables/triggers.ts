@@ -5,6 +5,7 @@ import {
   listOfLists,
   tokens$,
   tokensNoBalance$,
+  pools2$
 } from 'services/observables/tokens';
 import {
   setKeeperDaoTokens,
@@ -21,9 +22,10 @@ import { setUser } from 'redux/user/user';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
-import { pools$ } from 'services/observables/tokens';
 import { statistics$ } from 'services/observables/statistics';
 import { setStats } from 'redux/bancor/pool';
+import { setPools as setPools2 } from "redux/bancor/pool"
+import { pools$ } from './pools';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
@@ -31,6 +33,7 @@ let keeperDaoSub: Subscription;
 let loadingBalancesSub: Subscription;
 let poolsSub: Subscription;
 let statsSub: Subscription;
+let pools2Sub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
@@ -86,5 +89,9 @@ export const loadCommonData = (dispatch: any) => {
 
   statsSub = statistics$.subscribe((stats) => {
     dispatch(setStats(stats));
+  });
+
+  pools2Sub = pools2$.subscribe((pools) => {
+    dispatch(setPools2(pools));
   });
 };

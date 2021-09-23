@@ -249,7 +249,9 @@ export const tokens$ = combineLatest([
         currentNetwork
       );
       setLoadingBalances(false);
-      if (updatedTokens.length !== 0) return updatedTokens;
+      if (updatedTokens.length !== 0) {
+        return updatedTokens;
+      }
     }
 
     return tokensNoBalance;
@@ -289,7 +291,7 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const pools$ = combineLatest([
+export const pools2$ = combineLatest([
   correctedPools$,
   tokens$,
   minNetworkTokenLiquidityForMinting$,

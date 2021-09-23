@@ -36,7 +36,7 @@ export const SettingsMenu = () => {
             </button>
           </div>
         </div>
-        <hr className="border-grey-3 mt-15 mb-10" />
+        <hr className="mb-10 border-grey-3 mt-15" />
 
         <div>
           <div className="mb-15">Slippage Tolerance</div>
@@ -80,7 +80,7 @@ export const SettingsMenu = () => {
         </div>
       </div>
 
-      <hr className="border-grey-3 mt-15 mb-10" />
+      <hr className="mb-10 border-grey-3 mt-15" />
 
       <div className="text-12">Version 3.0.4</div>
     </>
@@ -88,7 +88,7 @@ export const SettingsMenu = () => {
 
   return (
     <>
-      <Popover className="hidden md:block relative">
+      <Popover className="relative hidden md:block">
         <Popover.Button className="flex items-center">
           <IconCog className="w-[20px]" />
         </Popover.Button>

@@ -30,10 +30,13 @@ import { take } from 'rxjs/operators';
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
 
+interface Props {
+  anchor: string;
+}
+
 export const AddProtectionDouble = (
-  props: RouteComponentProps<{ anchor: string }>
+  { anchor }: Props
 ) => {
-  const { anchor } = props.match.params;
 
   const isValidAnchor = isAddress(anchor);
 
@@ -100,8 +103,7 @@ export const AddProtectionDouble = (
   const tknToken =
     (bntToken &&
       tknTokenAddress &&
-      tokens.find((token) => token.address === tknTokenAddress)) ||
-    false;
+      tokens.find((token) => token.address === tknTokenAddress)) || false
 
   const modifiedTknToken: Token | false =
     (tknToken && tknUsdPrice && { ...tknToken, usdPrice: tknUsdPrice }) ||
@@ -239,7 +241,7 @@ export const AddProtectionDouble = (
 
   return (
     (
-      <div className="widget mx-auto">
+      <div className="mx-auto widget">
         <ModalDoubleApprove
           isOpen={showModal}
           setIsOpen={setShowModal}
@@ -255,7 +257,7 @@ export const AddProtectionDouble = (
           </div>
           <button
             onClick={() => {}}
-            className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-5 py-2 rounded-10 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <IconTimes className="w-14" />
           </button>
@@ -263,8 +265,8 @@ export const AddProtectionDouble = (
         <hr className="widget-separator" />
 
         <div>
-          <div className="p-10 text-blue-4 flex ">
-            <div className="rounded-full dark:text-grey-3 mx-12 border border-primary-light dark:border-blue-1 text-blue-primary h-24 w-24 flex items-center justify-center">
+          <div className="flex p-10 text-blue-4 ">
+            <div className="flex items-center justify-center w-24 h-24 mx-12 border rounded-full dark:text-grey-3 border-primary-light dark:border-blue-1 text-blue-primary">
               1
             </div>
 
@@ -276,9 +278,9 @@ export const AddProtectionDouble = (
               Please enter the token prices
             </div>
           </div>
-          <div className="flex justify-between flex-col md:flex-row">
+          <div className="flex flex-col justify-between md:flex-row">
             <div>
-              <h1 className="text-2xl ml-10">1 BNT = </h1>
+              <h1 className="ml-10 text-2xl">1 BNT = </h1>
               <input
                 disabled={true}
                 value={
@@ -287,24 +289,24 @@ export const AddProtectionDouble = (
                     prettifyNumber(bntToken.usdPrice, true)) ||
                   ''
                 }
-                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded mr-10 py-10"
+                className="py-10 mr-10 text-right border-2 rounded border-blue-0 dark:bg-blue-4"
                 type="text"
               />
             </div>
             <div>
-              <h1 className="text-2xl ml-10">
+              <h1 className="ml-10 text-2xl">
                 1 {tknToken && tknToken.symbol} ={' '}
               </h1>
               <input
                 onFocus={() => setOneFocused(true)}
-                className="border-blue-0 border-2 text-right dark:bg-blue-4 rounded px-4 py-10"
+                className="px-4 py-10 text-right border-2 rounded border-blue-0 dark:bg-blue-4"
                 type="text"
                 value={tknUsdPrice}
                 onChange={(e) => onTknUsdChange(e.target.value)}
               />
             </div>
           </div>
-          <div className="p-10 text-grey-4 flex">
+          <div className="flex p-10 text-grey-4">
             <div>
               1 BNT (
               {bntToken &&
@@ -328,9 +330,9 @@ export const AddProtectionDouble = (
             </div>
           </div>
 
-          <div className="rounded-lg bg-blue-0 dark:bg-blue-5 rounded p-20">
+          <div className="p-20 rounded rounded-lg bg-blue-0 dark:bg-blue-5">
             <div className="flex justify-start">
-              <div className="rounded-full mx-12 bg-white h-24 w-24 flex dark:text-grey-3 dark:bg-blue-4 items-center justify-center">
+              <div className="flex items-center justify-center w-24 h-24 mx-12 bg-white rounded-full dark:text-grey-3 dark:bg-blue-4">
                 2
               </div>
               <div

@@ -27,10 +27,14 @@ import { first } from 'rxjs/operators';
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
 import { onLogin$ } from 'services/observables/user';
 
+
+interface Props {
+  anchor: string;
+}
+
 export const AddProtectionDoubleLiq = (
-  props: RouteComponentProps<{ anchor: string }>
-) => {
-  const { anchor } = props.match.params;
+  { anchor }: Props
+  ) => {
 
   const isValidAnchor = isAddress(anchor);
 
@@ -227,7 +231,7 @@ export const AddProtectionDoubleLiq = (
 
   return (
     (
-      <div className="widget mx-auto">
+      <div className="mx-auto widget">
         <ModalApprove
           title="Add Liquidity"
           isOpen={isOpen}
@@ -245,14 +249,14 @@ export const AddProtectionDoubleLiq = (
 
           <button
             onClick={() => {}}
-            className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-5 py-2 rounded-10 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <IconTimes className="w-14" />
           </button>
         </div>
         <hr className="widget-separator" />
 
-        <div className="px-20 font-medium text-blue-4 mb-10 mt-6">
+        <div className="px-20 mt-6 mb-10 font-medium text-blue-4">
           Enter Stake Amount
         </div>
 
@@ -283,12 +287,12 @@ export const AddProtectionDoubleLiq = (
             />
           </div>
 
-          <div className="rounded rounded-lg leading-7 text-16 mb-10 mt-12 bg-blue-0 dark:bg-blue-5 dark:text-grey-0 text-blue-4 px-20 py-18">
+          <div className="px-20 mt-12 mb-10 leading-7 rounded rounded-lg text-16 bg-blue-0 dark:bg-blue-5 dark:text-grey-0 text-blue-4 py-18">
             <div className="font-medium">Token prices</div>
             <div className="p-10 mt-8">
               <div className="flex justify-between">
                 <div className="text-20">1 BNT =</div>
-                <div className="text-grey-4 text-right">
+                <div className="text-right text-grey-4">
                   ~
                   {bntToken &&
                     bntToken.usdPrice &&
@@ -297,7 +301,7 @@ export const AddProtectionDoubleLiq = (
               </div>
               <div className="flex justify-between">
                 <div className="text-20">1 {tknToken && tknToken.symbol} =</div>
-                <div className="text-grey-4 text-right">
+                <div className="text-right text-grey-4">
                   ~
                   {tknToken &&
                     tknToken.usdPrice &&
@@ -305,7 +309,7 @@ export const AddProtectionDoubleLiq = (
                 </div>
               </div>
             </div>
-            <div className="flex pt-4 justify-between text-blue-4 opacity-70">
+            <div className="flex justify-between pt-4 text-blue-4 opacity-70">
               <div>
                 1 BNT (
                 {bntToken &&
@@ -315,7 +319,7 @@ export const AddProtectionDoubleLiq = (
               </div>
               <div>0.00 ETH ($0.00)</div>
             </div>
-            <div className="text-14 mt-12 mb-20 leading-3">
+            <div className="mt-12 mb-20 leading-3 text-14">
               I understand that I am adding dual sided liquidity to the pool{' '}
             </div>
             <button
