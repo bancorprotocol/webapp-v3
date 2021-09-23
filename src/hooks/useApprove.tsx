@@ -94,6 +94,7 @@ export const useApprove = (
       return;
     }
     setIsOpen(false);
+    // wait added for cosemetic purposes only
     await wait(300);
     const promptedToken = remainingApprovals.find(
       (approval) => approval.prompted === false
@@ -107,6 +108,7 @@ export const useApprove = (
     setRemainingApprovals(newApprovals);
     setSelectedToken(promptedToken.token);
     setSelectedAmount(promptedToken.amount);
+    // wait added for cosemetic purposes only
     await wait(300);
     setIsOpen(true);
   };

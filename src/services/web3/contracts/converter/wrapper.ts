@@ -93,6 +93,8 @@ export const addLiquidity = async (
   const ethAmount = amountsWei.find((amount) => amount.address === ethToken);
   const value = ethAmount?.weiAmount;
 
+  // assert the value is the exact same that in amountsWei
+
   return resolveTxOnConfirmation({
     tx: contract.methods.addLiquidity(
       amountsWei.map(({ address }) => address),

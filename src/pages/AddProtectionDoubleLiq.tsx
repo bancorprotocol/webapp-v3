@@ -27,15 +27,11 @@ import { first } from 'rxjs/operators';
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
 import { onLogin$ } from 'services/observables/user';
 
-
 interface Props {
   anchor: string;
 }
 
-export const AddProtectionDoubleLiq = (
-  { anchor }: Props
-  ) => {
-
+export const AddProtectionDoubleLiq = ({ anchor }: Props) => {
   const isValidAnchor = isAddress(anchor);
 
   const [amountBnt, setAmountBnt] = useState('');
@@ -145,6 +141,12 @@ export const AddProtectionDoubleLiq = (
   useEffect(() => {
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
   }, [pools, anchor]);
+
+  // 1. adopt useApprove on AddProtectionDouble
+  // 2. actually test the transactions
+
+  // if the user is sending ETH then take away 0.01 for gas
+  // this can cause a bug
 
   const [
     triggerCheck,
