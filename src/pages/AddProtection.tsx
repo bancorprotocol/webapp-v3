@@ -35,6 +35,7 @@ import { currentNetwork$ } from 'services/observables/network';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from '@0x/utils';
 import { expandToken, shrinkToken } from 'utils/formulas';
+import { useWeb3React } from '@web3-react/core';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -59,9 +60,8 @@ export const AddProtection = (
   const [bntLimitIsReached, setBntLimitIsReached] = useState(false);
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
-  const account = useAppSelector(
-    (state) => state.bancor.user as string | undefined
-  );
+  const { account } = useWeb3React();
+
 
   const [selectedPool, setPool] = useState(
     pools.find(
