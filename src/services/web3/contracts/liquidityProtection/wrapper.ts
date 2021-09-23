@@ -4,7 +4,7 @@ import { fromPairs, toPairs, uniqWith } from 'lodash';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods, EthNetworks } from 'services/web3/types';
 import { ABILiquidityProtection } from './abi';
-import { buildContract } from '..';
+import { buildContract, writeWeb3 } from '..';
 import { buildLiquidityProtectionStoreContract } from '../liquidityProtectionStore/wrapper';
 import { multi } from '../shapes';
 import dayjs from 'utils/dayjs';
@@ -75,7 +75,7 @@ export const addLiquidity = async ({
   reserveAmountWei: string;
   onConfirmation?: () => void;
 }) => {
-  const contract = buildLiquidityProtectionContract(liquidityProtection);
+  const contract = buildLiquidityProtectionContract(liquidityProtection, writeWeb3);
 
   const fromIsEth = ethToken === reserveAddress;
 
