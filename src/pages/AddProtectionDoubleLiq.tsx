@@ -26,6 +26,7 @@ import { useApprove } from 'hooks/useApprove';
 import { first } from 'rxjs/operators';
 import { addLiquidity as addLiquidityTx } from 'services/web3/contracts/converter/wrapper';
 import { onLogin$ } from 'services/observables/user';
+import { useApproveModal } from '../hooks/useApproveModal';
 
 interface Props {
   anchor: string;
@@ -148,28 +149,6 @@ export const AddProtectionDoubleLiq = ({ anchor }: Props) => {
   // if the user is sending ETH then take away 0.01 for gas
   // this can cause a bug
 
-  const [
-    triggerCheck,
-    isOpen,
-    selectedToken,
-    selectedAmount,
-    waitForConfirmation,
-    handleApproved,
-    handleOpen,
-  ] = useApprove(
-    [
-      { amount: amountBnt, token: bntToken as Token },
-      { amount: amountTkn, token: tknToken as Token },
-    ],
-    selectedPool?.converter_dlt_id || '',
-    true,
-    () => {
-      addLiquidity();
-    }
-  );
-
-  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
-
   const addLiquidity = async () => {
     const tokenLabel = `${amountBnt} ${
       (bntToken! as Token).symbol
@@ -222,6 +201,18 @@ export const AddProtectionDoubleLiq = ({ anchor }: Props) => {
     }
   };
 
+  const [onStart, ModalApprove] = useApproveModal(
+    [
+      { amount: amountBnt, token: bntToken as Token },
+      { amount: amountTkn, token: tknToken as Token },
+    ],
+    addLiquidity,
+    selectedPool?.converter_dlt_id,
+    false
+  );
+
+  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
+
   if (
     isLoading ||
     typeof selectedPool === 'undefined' ||
@@ -234,15 +225,7 @@ export const AddProtectionDoubleLiq = ({ anchor }: Props) => {
   return (
     (
       <div className="mx-auto widget">
-        <ModalApprove
-          title="Add Liquidity"
-          isOpen={isOpen}
-          promptSelected={handleOpen}
-          amount={selectedAmount}
-          fromToken={selectedToken}
-          handleApproved={(address: string) => handleApproved(address)}
-          waitForApproval={waitForConfirmation}
-        />
+        {ModalApprove}
         <div className="flex justify-between p-14">
           <SwapSwitch />
           <div className="text-center">
@@ -326,7 +309,7 @@ export const AddProtectionDoubleLiq = ({ anchor }: Props) => {
             </div>
             <button
               onClick={() => {
-                triggerCheck();
+                onStart();
               }}
               className={`btn-primary rounded w-full`}
               disabled={false}
