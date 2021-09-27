@@ -5,6 +5,12 @@ import {
   setNetworkContractApproval,
 } from 'services/web3/approval';
 import { ModalApproveNew } from '../elements/modalApprove/modalApproveNew';
+import {
+  addNotification,
+  NotificationType,
+} from '../redux/notification/notification';
+import { useDispatch } from 'react-redux';
+import { ErrorCode } from '../services/web3/types';
 
 interface Tokens {
   token: Token;
@@ -20,6 +26,7 @@ export const useApproveModal = (
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const checkNextToken = async () => {
     const nextIndex = tokenIndex + 1;
@@ -57,12 +64,44 @@ export const useApproveModal = (
         contract,
         resolveImmediately
       );
-      console.log('approve success', txHash);
+      dispatch(
+        addNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Approve ${tokens[tokenIndex].token.symbol} is pending confirmation`,
+          updatedInfo: {
+            successTitle: 'Transaction Confirmed',
+            successMsg: `${amount || 'Unlimited'} approval set for ${
+              tokens[tokenIndex].token.symbol
+            }`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `${tokens[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
+          },
+          txHash,
+        })
+      );
       setIsOpen(false);
       setIsLoading(false);
       await checkNextToken();
     } catch (e) {
-      console.error(e.message);
+      if (e.code === ErrorCode.DeniedTx) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. If this was by mistake, please try again.',
+          })
+        );
+      } else {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `${tokens[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
+          })
+        );
+      }
+
       setIsOpen(false);
       setIsLoading(false);
     }
