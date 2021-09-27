@@ -1,11 +1,10 @@
-import { Modal } from 'components/modal/Modal';
-import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import { Token } from 'services/observables/tokens';
 import { useState } from 'react';
 import {
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
+import { ModalApproveNew } from '../elements/modalApprove/modalApproveNew';
 
 interface Tokens {
   token: Token;
@@ -23,12 +22,12 @@ export const useApproveModal = (
   const [isLoading, setIsLoading] = useState(false);
 
   const checkNextToken = async () => {
+    const nextIndex = tokenIndex + 1;
     const count = tokens.length;
-    if (count === tokenIndex + 1) {
+    if (count === nextIndex) {
       return onComplete();
     }
 
-    const nextIndex = tokenIndex + 1;
     setTokenIndex(nextIndex);
     await checkApprovalRequired(nextIndex);
   };
@@ -77,41 +76,14 @@ export const useApproveModal = (
     await checkApprovalRequired();
   };
 
-  const ModalApprove = (
-    <Modal title={'Swap'} setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div className="p-10">
-        <div className="flex flex-col items-center text-12 mb-20">
-          <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
-            <IconLock className="w-[22px] text-white" />
-          </div>
-          <h2 className="text-20 mb-8">
-            Approve {tokens[tokenIndex].token.symbol}
-          </h2>
-          <p className="text-center text-grey-5">
-            Before you can proceed, you need to approve{' '}
-            {tokens[tokenIndex].token.symbol} spending.
-          </p>
-          <button
-            onClick={() => setApproval()}
-            className={'btn-primary w-full my-15'}
-            disabled={isLoading}
-          >
-            Approve
-          </button>
-          <p className="text-center text-grey-5">
-            Want to approve before each transaction?
-          </p>
-          <button
-            onClick={() => setApproval(tokens[tokenIndex].amount)}
-            className="underline"
-            disabled={isLoading}
-          >
-            Approve limited permission
-          </button>
-        </div>
-      </div>
-    </Modal>
-  );
+  const ModalApprove = ModalApproveNew({
+    isOpen,
+    setIsOpen,
+    amount: tokens[tokenIndex].amount,
+    setApproval,
+    token: tokens[tokenIndex].token,
+    isLoading,
+  });
 
   return [onStart, ModalApprove] as [Function, JSX.Element];
 };
