@@ -3,6 +3,7 @@ import { Pool } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
 import { orderBy } from 'lodash';
+import BigNumber from 'bignumber.js';
 
 interface PoolState {
   pools: Pool[];
@@ -70,6 +71,33 @@ export const getTopPools = createSelector(
     return orderBy(topPools, 'apr', 'desc').slice(0, 20);
   }
 );
+
+export const getPoolById = (id: string) =>
+  createSelector(
+    (state: RootState) => state.pool.pools,
+    (pools: Pool[]) => {
+      if (pools.length === 0) {
+        return null;
+      }
+
+      const pool = pools.find((p) => p.pool_dlt_id === id);
+      if (pool === undefined) {
+        return undefined;
+      }
+      let type: 'empty' | 'single' | 'dual';
+
+      if (pool.isProtected) {
+        type = 'single';
+      } else {
+        const poolHasLiquidity = pool.reserves.some((reserve) =>
+          new BigNumber(reserve.balance).gt(0)
+        );
+        type = poolHasLiquidity ? 'dual' : 'empty';
+      }
+
+      return { pool, type };
+    }
+  );
 
 export const { setPools, setStats } = poolSlice.actions;
 
