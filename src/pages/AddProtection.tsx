@@ -1,5 +1,4 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -9,7 +8,6 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { Pool, Token } from 'services/observables/tokens';
-import { getNetworkContractApproval } from 'services/web3/approval';
 import { isAddress } from 'web3-utils';
 import { openWalletModal } from 'redux/user/user';
 import {
@@ -36,6 +34,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from '@0x/utils';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { useWeb3React } from '@web3-react/core';
+import { useApproveModal } from '../hooks/useApproveModal';
 
 export const AddProtection = (
   props: RouteComponentProps<{ anchor: string }>
@@ -57,11 +56,10 @@ export const AddProtection = (
 
   const isLoading = useAppSelector((state) => state.bancor.pools.length === 0);
 
-  const [bntLimitIsReached, setBntLimitIsReached] = useState(false);
+  // const [bntLimitIsReached, setBntLimitIsReached] = useState(false);
   const pools = useAppSelector((state) => state.bancor.pools as Pool[]);
   const tokens = useAppSelector((state) => state.bancor.tokens as Token[]);
   const { account } = useWeb3React();
-
 
   const [selectedPool, setPool] = useState(
     pools.find(
@@ -101,7 +99,6 @@ export const AddProtection = (
     }
   }, [selectedPool, selectedToken, tokens]);
 
-  const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const [spaceAvailable, setAvailable] = useState({
@@ -161,39 +158,13 @@ export const AddProtection = (
     [selectedPool]
   );
 
-  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
-
-  const checkApproval = async () => {
-    try {
-      const isApprovalReq = await getNetworkContractApproval(
-        selectedToken!,
-        amount
-      );
-      if (isApprovalReq) {
-        setShowModal(true);
-      } else await addProtection(true);
-    } catch (e) {
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `${
-            selectedToken!.symbol
-          } approval had failed. Please try again or contact support.`,
-        })
-      );
-    }
-  };
-
-  const addProtection = async (approved: boolean = false) => {
+  const addProtection = async () => {
     if (!selectedToken) return;
     if (!selectedPool) return;
     if (!account) {
       dispatch(openWalletModal(true));
       return;
     }
-
-    if (!approved) return checkApproval();
 
     const liquidityProtectionContract = await liquidityProtection$
       .pipe(first())
@@ -228,9 +199,19 @@ export const AddProtection = (
         type: NotificationType.pending,
         title: 'Transaction Pending',
         msg: `Adding liquidity...`,
+        txHash,
       })
     );
   };
+
+  const [onStart, ModalApprove] = useApproveModal(
+    [{ amount, token: selectedToken! }],
+    addProtection,
+    selectedPool?.converter_dlt_id,
+    false
+  );
+
+  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
 
   if (
     isLoading ||
@@ -245,14 +226,8 @@ export const AddProtection = (
   return (
     (
       <div className="widget mx-auto">
-        <ModalApprove
-          isOpen={showModal}
-          promptSelected={(state) => setShowModal(!state)}
-          amount={amount}
-          fromToken={selectedToken!}
-          handleApproved={() => addProtection(true)}
-          waitForApproval={true}
-        />
+        {ModalApprove}
+
         <div className="flex justify-between p-14">
           <SwapSwitch />
           <div className="text-center">
@@ -355,7 +330,7 @@ export const AddProtection = (
 
           <button
             onClick={() => {
-              addProtection();
+              onStart();
             }}
             className={`${buttonVariant()} rounded w-full`}
             disabled={false}
