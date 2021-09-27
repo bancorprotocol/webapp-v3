@@ -1,7 +1,6 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
 import { useAppSelector } from 'redux/index';
 import {
   addNotification,
@@ -16,16 +15,12 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { BigNumber } from 'bignumber.js';
-import { ModalDoubleApprove } from 'elements/modalDoubleApprove/modalDoubleApprove';
-import {
-  classNameGenerator,
-  sanitizeNumberInput,
-  wait,
-} from 'utils/pureFunctions';
+import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { ErrorCode } from 'services/web3/types';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { apiData$ } from 'services/observables/pools';
 import { take } from 'rxjs/operators';
+import { useApproveModal } from '../hooks/useApproveModal';
 
 const calculateRate = (from: string | number, to: string | number): string =>
   new BigNumber(from).div(to).toString();
@@ -34,10 +29,7 @@ interface Props {
   anchor: string;
 }
 
-export const AddProtectionDouble = (
-  { anchor }: Props
-) => {
-
+export const AddProtectionDouble = ({ anchor }: Props) => {
   const isValidAnchor = isAddress(anchor);
 
   const [amountBnt, setAmountBnt] = useState('');
@@ -86,8 +78,6 @@ export const AddProtectionDouble = (
     setPool(pools.find((pool) => pool.pool_dlt_id === anchor));
   }, [pools, anchor]);
 
-  const [showModal, setShowModal] = useState(false);
-
   const bntToken =
     tokens &&
     tokens.length > 0 &&
@@ -103,7 +93,8 @@ export const AddProtectionDouble = (
   const tknToken =
     (bntToken &&
       tknTokenAddress &&
-      tokens.find((token) => token.address === tknTokenAddress)) || false
+      tokens.find((token) => token.address === tknTokenAddress)) ||
+    false;
 
   const modifiedTknToken: Token | false =
     (tknToken && tknUsdPrice && { ...tknToken, usdPrice: tknUsdPrice }) ||
@@ -171,9 +162,7 @@ export const AddProtectionDouble = (
       )) ||
     false;
 
-  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
-
-  const addLiquidity = async (skipApproval: boolean = false) => {
+  const addLiquidity = async () => {
     const tokenLabel = `${amountBnt} ${
       (bntToken! as Token).symbol
     } & ${amountTkn} ${(tknToken! as Token).symbol}`;
@@ -224,6 +213,18 @@ export const AddProtectionDouble = (
     }
   };
 
+  const [onStart, ModalApprove] = useApproveModal(
+    [
+      { amount: amountBnt, token: bntToken as Token },
+      { amount: amountTkn, token: tknToken as Token },
+    ],
+    addLiquidity,
+    selectedPool?.converter_dlt_id,
+    false
+  );
+
+  if (!isValidAnchor) return <div>Invalid Anchor!</div>;
+
   if (
     isLoading ||
     typeof selectedPool === 'undefined' ||
@@ -233,8 +234,6 @@ export const AddProtectionDouble = (
     return <div>Loading...</div>;
   }
 
-  const fromTokens = [bntToken, tknToken] as [Token, Token];
-
   const displayedRate = new BigNumber(bntToTknRate).isNaN()
     ? '?'
     : new BigNumber(bntToTknRate).toFixed(6);
@@ -242,14 +241,8 @@ export const AddProtectionDouble = (
   return (
     (
       <div className="mx-auto widget">
-        <ModalDoubleApprove
-          isOpen={showModal}
-          setIsOpen={setShowModal}
-          amounts={[amountBnt, amountTkn]}
-          fromTokens={fromTokens}
-          handleApproved={() => addLiquidity(true)}
-          waitForApproval={true}
-        />
+        {ModalApprove}
+
         <div className="flex justify-between p-14">
           <SwapSwitch />
           <div className="text-center">
@@ -376,7 +369,7 @@ export const AddProtectionDouble = (
             </div>
             <button
               onClick={() => {
-                addLiquidity();
+                onStart();
               }}
               className={`btn-primary rounded w-full`}
               disabled={false}
