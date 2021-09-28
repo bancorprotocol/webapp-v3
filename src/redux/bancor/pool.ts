@@ -35,6 +35,13 @@ export interface TopPool {
   poolName: string;
 }
 
+export const getPools = createSelector(
+  (state: RootState) => state.pool.pools,
+  (pools: Pool[]) => {
+    return orderBy(pools, 'liquidity', 'desc');
+  }
+);
+
 export const getTopPools = createSelector(
   (state: RootState) => state.pool.pools,
   (pools: Pool[]) => {

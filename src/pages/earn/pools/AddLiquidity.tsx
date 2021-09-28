@@ -2,7 +2,7 @@ import { useAppSelector } from 'redux/index';
 import { getPoolById } from 'redux/bancor/pool';
 import { Pool } from 'services/observables/tokens';
 import { RouteComponentProps } from 'react-router-dom';
-import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/AddLiquiditySingle';
+import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/AddLiquidityDual';
 import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/AddLiquidityEmpty';
 import { AddLiquidityLoading } from 'elements/earn/pools/addLiquidity/AddLiquidityLoading';
