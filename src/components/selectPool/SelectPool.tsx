@@ -15,10 +15,10 @@ export const SelectPool = ({ pool, pools, onSelect }: Props) => {
 
   return (
     <div className="flex justify-between items-center">
-      <span>Stake in Pool</span>
+      <span className="font-semibold">Stake in Pool</span>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center border border-blue-4 rounded-[16px] px-10 py-6"
+        className="flex items-center border border-blue-4 rounded-[16px] px-20 py-6"
       >
         <Image
           src={pool.reserves[0].logoURI.replace('thumb', 'small')}
@@ -31,7 +31,7 @@ export const SelectPool = ({ pool, pools, onSelect }: Props) => {
           className="-ml-10 bg-grey-1 rounded-full w-24 h-24 z-10"
         />
         <span className="ml-10">{pool.name}</span>
-        <IconChevronDown className="w-12 mx-10" />
+        <IconChevronDown className="w-12 ml-10" />
       </button>
       <SelectPoolModal
         pools={pools}

@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { TokenList, Token } from 'services/observables/tokens';
+import { RootState } from 'redux/index';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -43,6 +44,14 @@ const bancorSlice = createSlice({
     },
   },
 });
+
+export const getTokenById = (id: string) =>
+  createSelector(
+    (state: RootState) => state.bancor.tokens,
+    (tokens: Token[]) => {
+      return tokens.find((t) => t.address === id);
+    }
+  );
 
 export const {
   setTokenLists,
