@@ -40,6 +40,7 @@ import {
 } from 'utils/localStorage';
 import { loadCommonData } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
+import { CreatePool } from 'pages/CreatePool';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -130,6 +131,7 @@ export const App = () => {
               <Route exact strict path="/portfolio" component={Portfolio} />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
+              <Route exact strict path="/createPool" component={CreatePool} />
               <Route component={NotFound} />
             </Switch>
           </main>
