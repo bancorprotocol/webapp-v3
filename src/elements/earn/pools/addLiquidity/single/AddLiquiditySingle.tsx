@@ -6,10 +6,11 @@ import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidi
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { addLiquiditySingle } from 'services/web3/contracts/liquidityProtection/wrapper';
+import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 
 interface Props {
   pool: Pool;
@@ -30,6 +31,10 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       amount,
     });
   };
+
+  useEffect(() => {
+    setSelectedToken(tkn!);
+  }, [tkn]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
@@ -56,9 +61,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         />
       </div>
       <AddLiquiditySingleSpaceAvailable pool={pool} token={tkn} />
-      <button onClick={() => onStart()} className="btn-primary rounded w-full">
-        Stake and Protect
-      </button>
+      <AddLiquiditySingleCTA onStart={onStart} amount={amount} />
       {ModalApprove}
     </Widget>
   );

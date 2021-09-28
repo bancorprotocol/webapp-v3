@@ -1,3 +1,9 @@
+import { Widget } from 'components/widgets/Widget';
+
 export const AddLiquidityError = () => {
-  return <div>AddLiquidity Error</div>;
+  return (
+    <Widget title="Add Liquidity">
+      <div>ERROR</div>
+    </Widget>
+  );
 };

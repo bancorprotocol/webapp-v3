@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { ContractMethods } from 'services/web3/types';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ABILiquidityProtection } from './abi';
-import { buildContract, writeWeb3 } from '..';
+import { buildContract, web3, writeWeb3 } from '..';
 import { liquidityProtection$ } from 'services/observables/contracts';
 import { first, take } from 'rxjs/operators';
 import { expandToken, shrinkToken } from 'utils/formulas';
@@ -56,7 +56,8 @@ export const fetchLiquidityProtectionSettingsContract = async (
   liquidityProtectionContract: string
 ): Promise<string> => {
   const contract = buildLiquidityProtectionContract(
-    liquidityProtectionContract
+    liquidityProtectionContract,
+    web3
   );
   return contract.methods.settings().call();
 };
@@ -66,7 +67,8 @@ export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
     .pipe(first())
     .toPromise();
   const contract = buildLiquidityProtectionContract(
-    liquidityProtectionContract
+    liquidityProtectionContract,
+    web3
   );
 
   const result = await contract.methods.poolAvailableSpace(id).call();

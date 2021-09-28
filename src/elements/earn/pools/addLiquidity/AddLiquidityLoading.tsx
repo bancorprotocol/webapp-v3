@@ -1,3 +1,9 @@
+import { Widget } from 'components/widgets/Widget';
+
 export const AddLiquidityLoading = () => {
-  return <div>AddLiquidity Loading</div>;
+  return (
+    <Widget title="Add Liquidity">
+      <div>LOADING</div>
+    </Widget>
+  );
 };

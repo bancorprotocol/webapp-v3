@@ -15,7 +15,7 @@ export const SelectPool = ({ pool, pools, onSelect }: Props) => {
 
   return (
     <div className="flex justify-between items-center">
-      <span className="font-semibold">Stake in Pool</span>
+      <span className="font-medium">Stake in Pool</span>
       <button
         onClick={() => setIsModalOpen(true)}
         className="flex items-center border border-blue-4 rounded-[16px] px-20 py-6"

@@ -3,8 +3,8 @@ import { getPoolById } from 'redux/bancor/pool';
 import { Pool } from 'services/observables/tokens';
 import { RouteComponentProps } from 'react-router-dom';
 import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
-import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/AddLiquidityDual';
-import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/AddLiquidityEmpty';
+import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
+import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmpty';
 import { AddLiquidityLoading } from 'elements/earn/pools/addLiquidity/AddLiquidityLoading';
 import { AddLiquidityError } from 'elements/earn/pools/addLiquidity/AddLiquidityError';
 

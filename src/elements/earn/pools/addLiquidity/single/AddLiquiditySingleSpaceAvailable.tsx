@@ -18,12 +18,16 @@ export const AddLiquiditySingleSpaceAvailable = ({ pool, token }: Props) => {
   }, 15000);
 
   const init = useCallback(async () => {
-    const spaceAvailable = await getSpaceAvailable(
-      pool.pool_dlt_id,
-      token.decimals
-    );
-    setSpaceAvailableBnt(spaceAvailable.bnt);
-    setSpaceAvailableTkn(spaceAvailable.tkn);
+    try {
+      const spaceAvailable = await getSpaceAvailable(
+        pool.pool_dlt_id,
+        token.decimals
+      );
+      setSpaceAvailableBnt(spaceAvailable.bnt);
+      setSpaceAvailableTkn(spaceAvailable.tkn);
+    } catch (e) {
+      console.error('failed to fetch space available with msg: ', e.message);
+    }
   }, [token.decimals, pool.pool_dlt_id]);
 
   useEffect(() => {
@@ -33,7 +37,7 @@ export const AddLiquiditySingleSpaceAvailable = ({ pool, token }: Props) => {
   return (
     <div className="p-20 rounded bg-blue-0 my-20">
       <div className="flex justify-between">
-        <span className="font-semibold">Space Available</span>{' '}
+        <span className="font-medium">Space Available</span>{' '}
         <div className="text-right">
           <div>
             {prettifyNumber(spaceAvailableTkn)} {token && token.symbol}
