@@ -13,11 +13,15 @@ export const AddLiquiditySingleSpaceAvailable = ({ pool, token }: Props) => {
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
 
-  useInterval(async () => {
-    await init();
-  }, 15000);
+  useInterval(
+    async () => {
+      await fetchData();
+    },
+    15000,
+    false
+  );
 
-  const init = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     try {
       const spaceAvailable = await getSpaceAvailable(
         pool.pool_dlt_id,
@@ -28,11 +32,11 @@ export const AddLiquiditySingleSpaceAvailable = ({ pool, token }: Props) => {
     } catch (e) {
       console.error('failed to fetch space available with msg: ', e.message);
     }
-  }, [token.decimals, pool.pool_dlt_id]);
+  }, [pool.pool_dlt_id, token.decimals]);
 
   useEffect(() => {
-    void init();
-  }, [pool.pool_dlt_id, init]);
+    void fetchData();
+  }, [fetchData]);
 
   return (
     <div className="p-20 rounded bg-blue-0 my-20">

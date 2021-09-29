@@ -11,12 +11,20 @@ import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { addLiquiditySingle } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
+import { useDispatch } from 'react-redux';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { ErrorCode } from 'services/web3/types';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingle = ({ pool }: Props) => {
+  const dispatch = useDispatch();
   const tkn = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[0].address)
   );
@@ -25,11 +33,45 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [amount, setAmount] = useState('');
 
   const addProtection = async () => {
-    const txHash = await addLiquiditySingle({
-      pool,
-      token: selectedToken,
-      amount,
-    });
+    try {
+      const txHash = await addLiquiditySingle({
+        pool,
+        token: selectedToken,
+        amount,
+      });
+      dispatch(
+        addNotification({
+          type: NotificationType.pending,
+          title: 'Add Protection',
+          msg: `You staked ${prettifyNumber(amount)} ${
+            selectedToken.symbol
+          } for protection in pool ${pool.name}`,
+          txHash,
+        })
+      );
+    } catch (e) {
+      if (e.code === ErrorCode.DeniedTx) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. If this was by mistake, please try again.',
+          })
+        );
+      } else {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Staking ${prettifyNumber(amount)} ${
+              selectedToken.symbol
+            } for protection in pool ${
+              pool.name
+            } failed. Please try again or contact support.`,
+          })
+        );
+      }
+    }
   };
 
   useEffect(() => {
