@@ -1,5 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3';
 import {
@@ -11,7 +11,7 @@ import {
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/pools';
-import { Pool } from 'services/api/bancor';
+import { APIPool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
 import {
   sendConversionEvent,
@@ -20,11 +20,7 @@ import {
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
-import {
-  BancorNetwork,
-  BancorNetwork__factory,
-  Converter__factory,
-} from '../abis/types';
+import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { multicall } from '../multicall/multicall';
 
 export const getRateAndPriceImapct = async (
@@ -271,7 +267,7 @@ const buildTokenPoolCall = (pool: Pool, tokenAddress: string) => {
   };
 };
 
-const findPoolByToken = async (tkn: string): Promise<Pool> => {
+const findPoolByToken = async (tkn: string): Promise<APIPool> => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
   const pool = apiData.pools.find(

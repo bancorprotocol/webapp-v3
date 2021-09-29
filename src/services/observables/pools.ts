@@ -68,7 +68,10 @@ const apiPools$ = apiData$.pipe(
   shareReplay(1)
 );
 
-export const pools$ = combineLatest([apiPools$, anchorAndConverters$]).pipe(
+export const correctedPools$ = combineLatest([
+  apiPools$,
+  anchorAndConverters$,
+]).pipe(
   map(([pools, anchorAndConverters]) => {
     if (anchorAndConverters.length === 0) return pools;
     return updateArray(

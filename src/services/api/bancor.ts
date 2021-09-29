@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
+import { UTCTimestamp } from 'lightweight-charts';
 
 interface TokenMeta {
   id: string;
@@ -12,13 +13,22 @@ interface TokenMeta {
 }
 
 export interface WelcomeData {
-  total_liquidity: USDPrice;
+  total_liquidity: {
+    usd: string;
+    bnt: string;
+  };
+  total_liquidity_24h_ago: {
+    usd: string;
+    bnt: string;
+  };
   total_volume_24h: USDPrice;
+  total_volume_24h_ago: USDPrice;
   bnt_price_24h_ago: USDPrice;
   bnt_price: USDPrice;
   bnt_supply: string;
+  bnt_supply_24h_ago: string;
   swaps: Swap[];
-  pools: Pool[];
+  pools: APIPool[];
   tokens: APIToken[];
 }
 
@@ -26,10 +36,22 @@ export interface USDPrice {
   usd: null | string;
 }
 
-export interface Pool {
+export interface APIReserve {
+  address: string;
+  weight: string;
+  balance: string;
+  apr?: number;
+}
+
+export interface APIReward {
+  starts_at: UTCTimestamp;
+  ends_at: UTCTimestamp;
+}
+
+export interface APIPool {
   pool_dlt_id: string;
   converter_dlt_id: string;
-  reserves: Reserve[];
+  reserves: APIReserve[];
   name: string;
   liquidity: USDPrice;
   volume_24h: USDPrice;
@@ -39,12 +61,7 @@ export interface Pool {
   supply: string;
   decimals: number;
   isWhitelisted: boolean;
-}
-
-export interface Reserve {
-  address: string;
-  weight: string;
-  balance: string;
+  reward?: APIReward;
 }
 
 export interface Swap {
@@ -73,7 +90,7 @@ export interface TokenMetaWithReserve extends TokenMeta {
   decBalance: string;
 }
 
-export interface NewPool extends Pool {
+export interface NewPool extends APIPool {
   reserveTokens: TokenMetaWithReserve[];
   decFee: number;
 }
