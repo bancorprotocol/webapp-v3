@@ -28,6 +28,8 @@ import { APIReward, WelcomeData } from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
+import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
+import { web3 } from 'services/web3';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -272,13 +274,12 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   settingsContractAddress$,
 ]).pipe(
   switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
-    const contract = buildLiquidityProtectionSettingsContract(
-      liquidityProtectionSettingsContract
+    const contract = LiquidityProtectionSettings__factory.connect(
+      liquidityProtectionSettingsContract,
+      web3
     );
-    const res = await contract.methods
-      .minNetworkTokenLiquidityForMinting()
-      .call();
-    return shrinkToken(res, 18);
+    const res = await contract.minNetworkTokenLiquidityForMinting();
+    return shrinkToken(res.toString(), 18);
   }),
   distinctUntilChanged<string>(isEqual),
   shareReplay(1)

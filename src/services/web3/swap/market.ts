@@ -256,7 +256,7 @@ const calculateSpotPriceAndRate = async (
   return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
 };
 
-const buildTokenPoolCall = (pool: Pool, tokenAddress: string) => {
+const buildTokenPoolCall = (pool: APIPool, tokenAddress: string) => {
   const contract = Converter__factory.connect(pool.converter_dlt_id, web3);
 
   return {
