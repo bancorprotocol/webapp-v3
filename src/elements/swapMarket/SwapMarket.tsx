@@ -287,7 +287,7 @@ export const SwapMarket = ({
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
     else if (toToken.address === wethToken)
-      return 'You Receive token is not supported';
+      return 'WETH token is not supported';
     if (fromToken.balance) {
       const isInsufficientBalance = new BigNumber(fromToken.balance).lt(
         fromAmount

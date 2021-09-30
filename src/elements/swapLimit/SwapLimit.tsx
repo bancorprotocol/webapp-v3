@@ -293,7 +293,9 @@ export const SwapLimit = ({
     if (
       toToken.address === ethToken ||
       keeperDaoTokens.findIndex((x) => x.address === toToken.address) === -1 ||
-      keeperDaoTokens.findIndex((x) => x.address === fromToken.address) === -1
+      (fromToken.address !== ethToken &&
+        keeperDaoTokens.findIndex((x) => x.address === fromToken.address) ===
+          -1)
     )
       return true;
 
@@ -319,14 +321,15 @@ export const SwapLimit = ({
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
     else if (
+      fromToken.address !== ethToken &&
       keeperDaoTokens.findIndex((x) => x.address === fromToken.address) === -1
     )
-      return 'You Pay token is not supported';
+      return `${fromToken.symbol} token is not supported`;
     else if (
       toToken.address === ethToken ||
       keeperDaoTokens.findIndex((x) => x.address === toToken.address) === -1
     )
-      return 'You Receive token is not supported';
+      return `${toToken.symbol} token is not supported`;
 
     return 'Trade';
   };

@@ -55,7 +55,6 @@ export const loadCommonData = (dispatch: any) => {
 
   keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
     dispatch(setKeeperDaoTokens(keeperDaoTokens));
-    setKeeperDaoTokens(keeperDaoTokens);
   });
 
   poolsSub = pools$.subscribe((pools) => {
