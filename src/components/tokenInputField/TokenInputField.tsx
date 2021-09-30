@@ -20,7 +20,7 @@ interface TokenInputFieldProps {
   amountUsd?: string;
   setAmountUsd?: Function;
   onChange?: Function;
-  token: Token | null;
+  token?: Token;
   setToken?: Function;
   debounce?: Function;
   startEmpty?: boolean;
@@ -68,7 +68,7 @@ export const TokenInputField = ({
     (state) => state.user.loadingBalances
   );
 
-  const onInputChange = (text: string, token: Token | null) => {
+  const onInputChange = (text: string, token?: Token) => {
     text = sanitizeNumberInput(text);
     if (toggle) {
       const tokenAmount = sanitizeNumberInput(

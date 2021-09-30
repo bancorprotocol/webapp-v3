@@ -9,6 +9,12 @@ import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
 import { useHistory } from 'react-router-dom';
+import {
+  replaceFrom,
+  replaceLimit,
+  replaceTo,
+  switchTokens,
+} from 'utils/router';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -28,7 +34,7 @@ export const SwapWidget = ({
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState<Token | null>(null);
+  const [toToken, setToToken] = useState<Token | undefined>();
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
@@ -45,8 +51,8 @@ export const SwapWidget = ({
       if (to) {
         const toToken = tokens.find((x) => x.address === to);
         if (toToken) setToToken(toToken);
-        else setToToken(null);
-      } else setToToken(null);
+        else setToToken(undefined);
+      } else setToToken(undefined);
 
       setIsLimit(limit);
     }
@@ -76,77 +82,40 @@ export const SwapWidget = ({
     [toToken]
   );
 
-  const replaceLimit = (limit: boolean) => {
-    const toAddress =
-      !limit && fromToken.address === wethToken
-        ? tokens.find((x) => x.address === ethToken)?.address
-        : toToken
-        ? toToken.address
-        : '';
-
-    const url = `?from=${fromToken?.address}${
-      toToken ? '&to=' + toAddress : ''
-    }${limit ? '&limit=' + limit : ''}`;
-
-    if (!fromToken) history.push(limit ? '?limit=' + limit : '');
-    else if (url !== window.location.search) history.push(url);
-  };
-
-  const replaceFrom = (token: Token) => {
-    const toAddress =
-      !isLimit && token.address === wethToken
-        ? tokens.find((x) => x.address === ethToken)?.address
-        : toToken
-        ? toToken.address
-        : '';
-
-    const url = `?from=${token.address}${toAddress ? '&to=' + toAddress : ''}${
-      isLimit ? '&limit=' + isLimit : ''
-    }`;
-
-    if (url !== window.location.search) history.push(url);
-  };
-
-  const replaceTo = (token?: Token) => {
-    const url = `?from=${fromToken.address}${
-      token ? '&to=' + token.address : ''
-    }${isLimit ? '&limit=' + isLimit : ''}`;
-
-    if (url !== window.location.search) history.push(url);
-  };
-
-  const switchTokens = () => {
-    if (toToken) {
-      const url = `?from=${toToken.address}${
-        fromToken ? '&to=' + fromToken.address : ''
-      }${isLimit ? '&limit=' + isLimit : ''}`;
-      if (url !== window.location.search) {
-        history.push(url);
-      }
-    }
-  };
-
   return (
     <div className="bg-white dark:bg-blue-4 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
       <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
         <div>
           <div className="widget ">
-            <SwapHeader isLimit={isLimit} setIsLimit={replaceLimit} />
+            <SwapHeader
+              isLimit={isLimit}
+              setIsLimit={(limit: boolean) =>
+                replaceLimit(fromToken, tokens, limit, history, toToken)
+              }
+            />
             <hr className="widget-separator" />
             {isLimit ? (
               <SwapLimit
                 fromToken={fromToken}
-                setFromToken={replaceFrom}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, isLimit, history, toToken)
+                }
                 toToken={toToken}
-                setToToken={replaceTo}
+                setToToken={(to: Token) =>
+                  replaceTo(fromToken, isLimit, history, to)
+                }
                 switchTokens={switchTokens}
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
-                setFromToken={replaceFrom}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, isLimit, history, toToken)
+                }
                 toToken={toToken}
-                setToToken={replaceTo}
+                setToToken={(to: Token) =>
+                  replaceTo(fromToken, isLimit, history, to)
+                }
                 switchTokens={switchTokens}
               />
             )}

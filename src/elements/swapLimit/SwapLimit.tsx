@@ -43,7 +43,7 @@ enum Field {
 interface SwapLimitProps {
   fromToken: Token;
   setFromToken: Function;
-  toToken: Token | null;
+  toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
 }

@@ -34,7 +34,7 @@ import { useInterval } from 'hooks/useInterval';
 interface SwapMarketProps {
   fromToken: Token;
   setFromToken: Function;
-  toToken: Token | null;
+  toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
 }

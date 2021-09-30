@@ -12,10 +12,10 @@ export const PoolsTableCellActions = (pool: Pool) => {
   const href = pool.isProtected
     ? `https://app.bancor.network/eth/portfolio/stake/add/single/${pool.pool_dlt_id}`
     : `https://app.bancor.network/eth/pool/add/${pool.pool_dlt_id}`;
-  const tknAddress = pool.reserves.find(
-    (x) => x.address !== bntToken(chainId ? chainId : EthNetworks.Mainnet)
-  )?.address;
-  console.log('tknAddress', tknAddress);
+
+  const bnt = bntToken(chainId ? chainId : EthNetworks.Mainnet);
+  const tknAddress = pool.reserves.find((x) => x.address !== bnt)?.address;
+
   return (
     <div className="flex">
       <a
