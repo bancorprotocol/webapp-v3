@@ -325,8 +325,8 @@ export const SwapLimit = ({
       keeperDaoTokens.findIndex((x) => x.address === fromToken.address) === -1
     )
       return `${fromToken.symbol} token is not supported`;
+    if (toToken.address === ethToken) return 'Please change ETH to WETH';
     else if (
-      toToken.address === ethToken ||
       keeperDaoTokens.findIndex((x) => x.address === toToken.address) === -1
     )
       return `${toToken.symbol} token is not supported`;
