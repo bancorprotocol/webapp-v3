@@ -7,6 +7,7 @@ import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import BigNumber from 'bignumber.js';
 import { useHistory } from 'react-router-dom';
+import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 
 interface Props {
   pool: Pool;
@@ -58,7 +59,13 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
           bntTknRate={bntTknRate()}
           tknUsdPrice={tknUsdPrice}
         />
-        <button className="btn-primary rounded w-full mt-20">Supply</button>
+        <AddLiquidityEmptyCTA
+          pool={pool}
+          bnt={bnt}
+          tkn={tkn}
+          amountBnt={bntAmount}
+          amountTkn={tknAmount}
+        />
       </div>
     </Widget>
   );
