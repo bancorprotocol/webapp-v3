@@ -1,7 +1,7 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityEmptyStep1 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep1';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep2';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
@@ -22,7 +22,13 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
   );
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
-  const [tknUsdPrice, setTknUsdPrice] = useState('0.00');
+  const [tknUsdPrice, setTknUsdPrice] = useState('');
+
+  useEffect(() => {
+    setBntAmount('');
+    setTknAmount('');
+  }, [tknUsdPrice]);
+
   const history = useHistory();
   if (!tkn || !bnt) {
     history.push('/pools/add-liquidity/error');
