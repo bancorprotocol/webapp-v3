@@ -39,8 +39,8 @@ export const AddLiquiditySingleSpaceAvailable = ({ pool, token }: Props) => {
   }, [fetchData]);
 
   return (
-    <div className="p-20 rounded bg-blue-0 my-20">
-      <div className="flex justify-between">
+    <div className="p-20 rounded bg-blue-0 dark:bg-blue-5 my-20">
+      <div className="flex justify-between dark:text-grey-0">
         <span className="font-medium">Space Available</span>{' '}
         <div className="text-right">
           <div>

@@ -18,7 +18,7 @@ export const SelectPool = ({ pool, pools, onSelect }: Props) => {
       <span className="font-medium">Stake in Pool</span>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center border border-blue-4 rounded-[16px] px-20 py-6"
+        className="flex items-center border border-blue-4 dark:border-grey-3 rounded-[16px] px-20 py-6"
       >
         <Image
           src={pool.reserves[0].logoURI.replace('thumb', 'small')}

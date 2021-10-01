@@ -29,12 +29,12 @@ export const AddLiquidityDualTokenPrices = ({
       {[bnt, tkn].map((t) => (
         <div className="flex justify-between text-20 mt-5">
           <div>1 {t.symbol} = </div>
-          <div className="text-grey-4">
+          <div className="text-grey-4 dark:text-grey-3">
             ~{prettifyNumber(t.usdPrice!, true)}
           </div>
         </div>
       ))}
-      <div className="flex justify-between mt-20 text-grey-4">
+      <div className="flex justify-between mt-20 text-grey-4 dark:text-grey-3">
         <div>1 BNT ({prettifyNumber(bnt.usdPrice!, true)})</div>
         <div>{rateString()}</div>
       </div>

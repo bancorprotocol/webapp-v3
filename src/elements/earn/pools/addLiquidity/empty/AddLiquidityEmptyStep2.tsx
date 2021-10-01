@@ -66,7 +66,7 @@ export const AddLiquidityEmptyStep2 = ({
     <div className="space-y-20">
       <div className="flex items-center">
         <div
-          className={`flex justify-center items-center w-[34px] h-[34px] border-2 border-blue-0 rounded-full bg-white text-16 ${
+          className={`flex justify-center items-center w-[34px] h-[34px] border-2 border-blue-0 dark:border-blue-1 rounded-full bg-white dark:bg-blue-4 text-16 ${
             tknUsdPrice ? 'text-primary' : 'text-grey-3'
           }`}
         >
