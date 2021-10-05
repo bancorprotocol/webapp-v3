@@ -1,4 +1,4 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { Pool } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
@@ -79,17 +79,23 @@ export const getTopPools = createSelector(
   }
 );
 
+export interface SelectedPool {
+  status: 'loading' | 'ready';
+  pool?: Pool;
+  type?: 'empty' | 'single' | 'dual';
+}
+
 export const getPoolById = (id: string) =>
   createSelector(
     (state: RootState) => state.pool.pools,
     (pools: Pool[]) => {
       if (pools.length === 0) {
-        return null;
+        return { status: 'loading' } as SelectedPool;
       }
 
       const pool = pools.find((p) => p.pool_dlt_id === id);
       if (pool === undefined) {
-        return undefined;
+        return { status: 'ready' } as SelectedPool;
       }
       let type: 'empty' | 'single' | 'dual';
 
@@ -102,7 +108,7 @@ export const getPoolById = (id: string) =>
         type = poolHasLiquidity ? 'dual' : 'empty';
       }
 
-      return { pool, type };
+      return { status: 'ready', pool, type } as SelectedPool;
     }
   );
 
