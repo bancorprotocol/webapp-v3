@@ -4,6 +4,12 @@ import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/contracts/converter/wrapper';
+import {
+  addNotification,
+  NotificationType,
+} from 'redux/notification/notification';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { ErrorCode } from 'services/web3/types';
 
 interface Props {
   pool: Pool;
@@ -30,8 +36,37 @@ export const AddLiquidityEmptyCTA = ({
         { amount: amountTkn, token: tkn },
       ];
       const txHash = await addLiquidity(data, pool.converter_dlt_id);
+      dispatch(
+        addNotification({
+          type: NotificationType.pending,
+          title: 'Add Liquidity',
+          msg: `You added ${prettifyNumber(amountTkn)} ${
+            tkn.symbol
+          } and ${prettifyNumber(amountBnt)} ${bnt.symbol} to pool ${
+            pool.name
+          }`,
+          txHash,
+        })
+      );
     } catch (e) {
       console.error('Add liquidity failed with msg: ', e.message);
+      if (e.code === ErrorCode.DeniedTx) {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Rejected',
+            msg: 'You rejected the transaction. If this was by mistake, please try again.',
+          })
+        );
+      } else {
+        dispatch(
+          addNotification({
+            type: NotificationType.error,
+            title: 'Transaction Failed',
+            msg: `Adding liquidity to pool ${pool.name} failed. Please try again or contact support.`,
+          })
+        );
+      }
     }
   };
 

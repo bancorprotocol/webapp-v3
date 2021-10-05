@@ -35,7 +35,7 @@ export const ModalApproveNew = ({
             className={'btn-primary w-full my-15'}
             disabled={isLoading}
           >
-            Approve
+            {isLoading ? 'waiting for confirmation' : 'Approve'}
           </button>
           <p className="text-center text-grey-5">
             Want to approve before each transaction?

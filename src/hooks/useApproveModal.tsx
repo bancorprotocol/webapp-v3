@@ -11,6 +11,7 @@ import {
 } from 'redux/notification/notification';
 import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
+import { wait } from 'utils/pureFunctions';
 
 interface Tokens {
   token: Token;
@@ -34,7 +35,7 @@ export const useApproveModal = (
     if (count === nextIndex) {
       return onComplete();
     }
-
+    await wait(500);
     setTokenIndex(nextIndex);
     await checkApprovalRequired(nextIndex);
   };
@@ -58,7 +59,12 @@ export const useApproveModal = (
     const { token } = tokens[tokenIndex];
     try {
       setIsLoading(true);
-      const txHash = await setNetworkContractApproval(token, amount, contract);
+      const txHash = await setNetworkContractApproval(
+        token,
+        amount,
+        contract,
+        false
+      );
       dispatch(
         addNotification({
           type: NotificationType.pending,
