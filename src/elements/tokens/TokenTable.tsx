@@ -2,7 +2,6 @@ import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { LineData, UTCTimestamp } from 'lightweight-charts';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
@@ -123,14 +122,17 @@ export const TokenTable = () => {
       {
         id: 'actions',
         Header: '',
-        accessor: () => (
-          <NavLink
-            to="/"
-            className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
-          >
-            Trade
-          </NavLink>
-        ),
+        accessor: 'symbol',
+        Cell: (cellData) => {
+          return (
+            <NavLink
+              to={`/?from=${cellData.row.original.address}`}
+              className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
+            >
+              Trade
+            </NavLink>
+          );
+        },
         width: 50,
         minWidth: 50,
         disableSortBy: true,

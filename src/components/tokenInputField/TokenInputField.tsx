@@ -20,7 +20,7 @@ interface TokenInputFieldProps {
   amountUsd?: string;
   setAmountUsd?: Function;
   onChange?: Function;
-  token: Token | null;
+  token?: Token;
   setToken?: Function;
   debounce?: Function;
   startEmpty?: boolean;
@@ -56,7 +56,6 @@ export const TokenInputField = ({
   isLoading,
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showSelectToken, setSelectToken] = useState(!!startEmpty);
 
   const balance = fieldBalance ? fieldBalance : token ? token.balance : null;
   const balanceUsd =
@@ -69,7 +68,7 @@ export const TokenInputField = ({
     (state) => state.user.loadingBalances
   );
 
-  const onInputChange = (text: string, token: Token | null) => {
+  const onInputChange = (text: string, token?: Token) => {
     text = sanitizeNumberInput(text);
     if (toggle) {
       const tokenAmount = sanitizeNumberInput(
@@ -154,7 +153,16 @@ export const TokenInputField = ({
           )
         )}
       </div>
-      {!showSelectToken || token ? (
+      {startEmpty && !token ? (
+        <button
+          data-cy="selectTokenButton"
+          onClick={() => (selectable ? setIsOpen(true) : {})}
+          className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
+        >
+          Select a token
+          <IconChevronDown className="w-[10px] h-[6px] ml-10" />
+        </button>
+      ) : (
         <div className="flex items-start">
           <div
             className={`flex items-center mt-15 min-w-[135px] ${classNameGenerator(
@@ -222,22 +230,12 @@ export const TokenInputField = ({
             )}
           </div>
         </div>
-      ) : (
-        <button
-          data-cy="selectTokenButton"
-          onClick={() => (selectable ? setIsOpen(true) : {})}
-          className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
-        >
-          Select a token
-          <IconChevronDown className="w-[10px] h-[6px] ml-10" />
-        </button>
       )}
 
       <SearchableTokenList
         onClick={(token: Token) => {
           if (setToken) setToken(token);
           onInputChange(inputValue(), token);
-          setSelectToken(false);
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
