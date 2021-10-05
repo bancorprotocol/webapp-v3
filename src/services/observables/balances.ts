@@ -4,7 +4,7 @@ import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3';
 import { partition } from 'lodash';
 import { shrinkToken } from 'utils/formulas';
-import { multicall } from 'services/web3/multicall/multicall';
+import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 import { Token__factory } from 'services/web3/abis/types';
 import { Result } from '@ethersproject/abi/lib/coders/abstract-coder';
 import BigNumber from 'bignumber.js';
@@ -64,7 +64,7 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const buildTokenBalanceCall = (address: string, user: string) => {
+const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
   const contract = Token__factory.connect(address, web3);
 
   return {

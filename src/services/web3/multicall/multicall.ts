@@ -4,7 +4,7 @@ import { getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { Interface } from '@ethersproject/abi';
 
-interface MultiCall {
+export interface MultiCall {
   contractAddress: string;
   interface: Interface;
   methodName: string;

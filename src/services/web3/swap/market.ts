@@ -20,8 +20,13 @@ import {
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
-import { BancorNetwork__factory, Converter__factory } from '../abis/types';
-import { multicall } from '../multicall/multicall';
+import {
+  BancorNetwork__factory,
+  Converter__factory,
+  Multicall,
+} from '../abis/types';
+import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
+import { Result } from '@ethersproject/abi';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -50,10 +55,10 @@ export const getRateAndPriceImapct = async (
     const path = await contract.conversionPath(from.address, to.address);
 
     const fromAmountWei = expandToken(amount, fromToken.decimals);
-    const rateShape = {
+    const rateShape: MCInterface = {
       contractAddress: contract.address,
       interface: contract.interface,
-      methodName: contract.rateByPath.toString(),
+      methodName: 'rateByPath',
       methodParameters: [path, fromAmountWei],
     };
 
@@ -193,7 +198,7 @@ const findPath = async (from: string, to: string) => {
 const calculateSpotPriceAndRate = async (
   from: Token,
   to: Token,
-  rateShape: any
+  rateShape: MCInterface
 ) => {
   const network = await currentNetwork$.pipe(take(1)).toPromise();
 
@@ -206,20 +211,19 @@ const calculateSpotPriceAndRate = async (
     const fromShape = buildTokenPoolCall(pool, from.address);
     const toShape = buildTokenPoolCall(pool, to.address);
 
-    const [fromReserve, toReserve, rate]: any = await multicall(network, [
-      fromShape,
-      toShape,
-      rateShape,
-    ]);
+    const mCall = [fromShape, toShape, rateShape];
+    const res = await multicall(network, mCall);
 
-    return {
-      spotPrice: calcReserve(
-        shrinkToken(fromReserve[0].balance, from.decimals),
-        shrinkToken(toReserve[0].balance, to.decimals),
-        ppmToDec(pool.fee)
-      ),
-      rate: rate[0].rate,
-    };
+    if (res && res.length === mCall.length) {
+      return {
+        spotPrice: calcReserve(
+          shrinkToken(res[0].toString(), from.decimals),
+          shrinkToken(res[1].toString(), to.decimals),
+          ppmToDec(pool.fee)
+        ),
+        rate: res[2].toString(),
+      };
+    }
   }
 
   //First hop
@@ -232,37 +236,38 @@ const calculateSpotPriceAndRate = async (
   const bntShape2 = buildTokenPoolCall(toPool, bnt);
   const toShape2 = buildTokenPoolCall(toPool, to.address);
 
-  const [fromReserve1, bntReserve1, bntReserve2, toReserve2, rate]: any =
-    await multicall(network, [
-      fromShape1,
-      bntShape1,
-      bntShape2,
-      toShape2,
-      rateShape,
-    ]);
+  const mCall = [fromShape1, bntShape1, bntShape2, toShape2, rateShape];
+  const res = await multicall(network, mCall);
 
-  const spot1 = calcReserve(
-    shrinkToken(fromReserve1[0].balance, from.decimals),
-    shrinkToken(bntReserve1[0].balance, 18),
-    ppmToDec(fromPool.fee)
-  );
+  if (res && res.length === mCall.length) {
+    const spot1 = calcReserve(
+      shrinkToken(res[0].toString(), from.decimals),
+      shrinkToken(res[1].toString(), 18),
+      ppmToDec(fromPool.fee)
+    );
 
-  const spot2 = calcReserve(
-    shrinkToken(bntReserve2[0].balance, 18),
-    shrinkToken(toReserve2[0].balance, to.decimals),
-    ppmToDec(toPool.fee)
-  );
+    const spot2 = calcReserve(
+      shrinkToken(res[2].toString(), 18),
+      shrinkToken(res[3].toString(), to.decimals),
+      ppmToDec(toPool.fee)
+    );
 
-  return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
+    return { spotPrice: spot1.times(spot2), rate: res[4].toString() };
+  }
+
+  return { rate: '0', spotPrice: new BigNumber(0) };
 };
 
-const buildTokenPoolCall = (pool: APIPool, tokenAddress: string) => {
+const buildTokenPoolCall = (
+  pool: APIPool,
+  tokenAddress: string
+): MCInterface => {
   const contract = Converter__factory.connect(pool.converter_dlt_id, web3);
 
   return {
     contractAddress: contract.address,
     interface: contract.interface,
-    methodName: contract.getConnectorBalance.toString(),
+    methodName: 'getConnectorBalance',
     methodParameters: [tokenAddress],
   };
 };
