@@ -146,7 +146,7 @@ export const fetchKeeperDaoTokens = async (): Promise<KeeprDaoToken[]> => {
   try {
     const res = await axios.get(`${baseUrl}/tokenList`);
     const tokens: KeeprDaoToken[] = res.data.result.tokens;
-    return tokens.map((x) => ({ ...x, address: toChecksumAddress(x.address) }));
+    return tokens.map((x) => ({ ...x, address: utils.getAddress(x.address) }));
   } catch (error) {
     console.error('Failed fetching keeperDao Tokens: ', error);
     return [];
