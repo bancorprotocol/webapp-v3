@@ -102,7 +102,11 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           setToken={(token: Token) => setSelectedToken(token)}
         />
       </div>
-      <AddLiquiditySingleSpaceAvailable pool={pool} token={tkn} />
+      <AddLiquiditySingleSpaceAvailable
+        pool={pool}
+        token={tkn}
+        selectedToken={selectedToken}
+      />
       <AddLiquiditySingleCTA onStart={onStart} amount={amount} />
       {ModalApprove}
     </Widget>
