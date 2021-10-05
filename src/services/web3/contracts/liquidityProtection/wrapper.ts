@@ -14,8 +14,16 @@ import { Pool, Token } from 'services/observables/tokens';
 import { resolveTxOnConfirmation } from 'services/web3/index';
 import { user$ } from 'services/observables/user';
 import BigNumber from 'bignumber.js';
-import { buildConverterContract } from 'services/web3/contracts/converter/wrapper';
+import {
+  buildConverterContract,
+  buildV28ConverterContract,
+} from 'services/web3/contracts/converter/wrapper';
 import { buildLiquidityProtectionSettingsContract } from 'services/web3/contracts/swap/wrapper';
+import {
+  calculateBntNeededToOpenSpace,
+  calculatePriceDeviationTooHigh,
+} from 'utils/helperFunctions';
+import { sortBy } from 'lodash';
 
 export const buildLiquidityProtectionContract = (
   contractAddress: string,
@@ -76,6 +84,7 @@ export const fetchLiquidityProtectionSettingsContract = async (
 };
 
 export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
+  console.log('1');
   const liquidityProtectionContract = await liquidityProtection$
     .pipe(first())
     .toPromise();
@@ -83,7 +92,9 @@ export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
     liquidityProtectionContract,
     web3
   );
+  console.log('2');
 
+  console.log('liquidityProtectionContract', liquidityProtectionContract);
   const result = await contract.methods.poolAvailableSpace(id).call();
 
   return {
@@ -168,11 +179,67 @@ export const fetchBntNeededToOpenSpace = async (
       .networkTokensMinted(pool.pool_dlt_id)
       .call();
 
-  const bntNeeded = new BigNumber(bntBalance)
-    .div(tknBalance)
-    .plus(networkTokensMinted)
-    .minus(networkTokenMintingLimits)
-    .toString();
+  const bntNeeded = calculateBntNeededToOpenSpace(
+    bntBalance,
+    tknBalance,
+    networkTokensMinted,
+    networkTokenMintingLimits
+  );
 
   return shrinkToken(bntNeeded, 18);
+};
+
+export const checkPriceDeviationTooHigh = async (
+  pool: Pool,
+  selectedTkn: Token
+): Promise<boolean> => {
+  const converterContract = buildV28ConverterContract(
+    pool.converter_dlt_id,
+    web3
+  );
+  const liquidityProtection_dlt_id = await liquidityProtection$
+    .pipe(first())
+    .toPromise();
+  const liquidityProtectionSettings_dlt_id =
+    await fetchLiquidityProtectionSettingsContract(liquidityProtection_dlt_id);
+  const liquidityProtectionSettingsContract =
+    await buildLiquidityProtectionSettingsContract(
+      liquidityProtectionSettings_dlt_id
+    );
+
+  const [primaryReserveAddress, secondaryReserveAddress] = sortBy(
+    pool.reserves,
+    [(o) => o.address !== selectedTkn.address]
+  ).map((x) => x.address);
+
+  const [
+    recentAverageRate,
+    averageRateMaxDeviation,
+    primaryReserveBalance,
+    secondaryReserveBalance,
+  ] = await Promise.all([
+    converterContract.methods.recentAverageRate(selectedTkn.address).call(),
+    liquidityProtectionSettingsContract.methods
+      .averageRateMaxDeviation()
+      .call(),
+    converterContract.methods.reserveBalance(primaryReserveAddress).call(),
+    converterContract.methods.reserveBalance(secondaryReserveAddress).call(),
+  ]);
+
+  const averageRate = new BigNumber(recentAverageRate['1']).dividedBy(
+    recentAverageRate['0']
+  );
+
+  if (averageRate.isNaN()) {
+    throw new Error(
+      'Price deviation calculation failed. Please contact support.'
+    );
+  }
+
+  return calculatePriceDeviationTooHigh(
+    averageRate,
+    new BigNumber(primaryReserveBalance),
+    new BigNumber(secondaryReserveBalance),
+    new BigNumber(averageRateMaxDeviation)
+  );
 };

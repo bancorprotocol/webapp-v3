@@ -57,3 +57,41 @@ export const isUnsupportedNetwork = (
 ): boolean => {
   return network !== undefined && EthNetworks[network] === undefined;
 };
+
+export const calculateBntNeededToOpenSpace = (
+  bntBalance: string,
+  tknBalance: string,
+  networkTokensMinted: string,
+  networkTokenMintingLimits: string
+): string => {
+  return new BigNumber(bntBalance)
+    .div(tknBalance)
+    .plus(networkTokensMinted)
+    .minus(networkTokenMintingLimits)
+    .toString();
+};
+
+export const calculatePriceDeviationTooHigh = (
+  averageRate: BigNumber,
+  primaryReserveBalance: BigNumber,
+  secondaryReserveBalance: BigNumber,
+  averageRateMaxDeviation: BigNumber
+): boolean => {
+  const spotRate = primaryReserveBalance.dividedBy(secondaryReserveBalance);
+
+  const averageRateMaxDeviationBase = new BigNumber(oneMillion).minus(
+    averageRateMaxDeviation
+  );
+
+  const threshold = averageRate.dividedBy(spotRate);
+
+  const withinLowerThreshold = threshold.isGreaterThan(
+    averageRateMaxDeviationBase.dividedBy(oneMillion)
+  );
+
+  const withinHigherThreshold = oneMillion
+    .dividedBy(averageRateMaxDeviationBase)
+    .isGreaterThan(threshold);
+
+  return !(withinLowerThreshold && withinHigherThreshold);
+};

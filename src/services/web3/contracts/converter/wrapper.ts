@@ -3,7 +3,10 @@ import { CallReturn } from 'eth-multicall';
 import { ContractSendMethod } from 'web3-eth-contract';
 import { ContractMethods } from 'services/web3/types';
 import { buildContract, writeWeb3 } from 'services/web3/contracts';
-import { ABIConverter } from 'services/web3/contracts/converter/abi';
+import {
+  ABIConverter,
+  ABIConverterV28,
+} from 'services/web3/contracts/converter/abi';
 import { Token } from 'services/observables/tokens';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
@@ -50,6 +53,49 @@ export const buildConverterContract = (
   conversionFee: () => CallReturn<string>;
   geometricMean: (weis: string[]) => CallReturn<string>;
 }> => buildContract(ABIConverter, contractAddress, web3);
+
+export const buildV28ConverterContract = (
+  contractAddress?: string,
+  web3?: Web3
+): ContractMethods<{
+  acceptTokenOwnership: () => ContractSendMethod;
+  acceptOwnership: () => ContractSendMethod;
+  setConversionFee: (ppm: number) => ContractSendMethod;
+  addLiquidity: (
+    reserveTokens: string[],
+    reserveAmounts: string[],
+    minReturn: string
+  ) => ContractSendMethod;
+  removeLiquidity: (
+    amount: string,
+    reserveTokens: string[],
+    reserveMinReturnAmounts: string[]
+  ) => ContractSendMethod;
+  addReserve: (
+    reserveAddress: string,
+    connectorWeight: number
+  ) => ContractSendMethod;
+  getReturn: (
+    fromTokenAddress: string,
+    toTokenAddress: string,
+    wei: string
+  ) => CallReturn<{ '0': string; '1': string }>;
+  rateAndFee: (
+    fromTokenAddress: string,
+    toTokenAddress: string,
+    wei: string
+  ) => CallReturn<{ '0': string; '1': string }>;
+  recentAverageRate: (
+    tokenAddress: string
+  ) => CallReturn<{ '0': string; '1': string }>;
+  owner: () => CallReturn<string>;
+  version: () => CallReturn<string>;
+  converterType: () => CallReturn<string>;
+  connectorTokenCount: () => CallReturn<string>;
+  connectorTokens: (index: number) => CallReturn<string>;
+  conversionFee: () => CallReturn<string>;
+  reserveBalance: (reserveToken: string) => CallReturn<string>;
+}> => buildContract(ABIConverterV28, contractAddress, web3);
 
 export const addLiquidity = async (
   data: { token: Token; amount: string }[],
