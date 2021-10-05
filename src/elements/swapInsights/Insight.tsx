@@ -14,7 +14,7 @@ export interface InsightToken extends IntoTheBlock {
 
 interface InsightProps {
   fromToken: Token;
-  toToken: Token | null;
+  toToken?: Token;
   fromTokenIntoBlock?: IntoTheBlock;
   toTokenIntoBlock?: IntoTheBlock;
 }
