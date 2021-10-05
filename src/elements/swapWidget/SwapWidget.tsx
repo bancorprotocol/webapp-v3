@@ -98,25 +98,29 @@ export const SwapWidget = ({
               <SwapLimit
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, isLimit, history, toToken)
+                  replaceFrom(from, tokens, true, history, toToken)
                 }
                 toToken={toToken}
                 setToToken={(to: Token) =>
-                  replaceTo(fromToken, isLimit, history, to)
+                  replaceTo(fromToken, true, history, to)
                 }
-                switchTokens={switchTokens}
+                switchTokens={() =>
+                  switchTokens(fromToken, true, history, toToken)
+                }
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, isLimit, history, toToken)
+                  replaceFrom(from, tokens, false, history, toToken)
                 }
                 toToken={toToken}
                 setToToken={(to: Token) =>
-                  replaceTo(fromToken, isLimit, history, to)
+                  replaceTo(fromToken, false, history, to)
                 }
-                switchTokens={switchTokens}
+                switchTokens={() =>
+                  switchTokens(fromToken, false, history, toToken)
+                }
               />
             )}
           </div>

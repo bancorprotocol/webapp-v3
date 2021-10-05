@@ -7,11 +7,14 @@ const push = (url: string, history: any) => {
 
 const pushSwapParams = (
   history: any,
-  from?: string,
+  from: string,
   to?: string,
   limit?: boolean
 ) => {
-  push(`?from=${from}&to=${to}&limit${limit}`, history);
+  const url = `${from ? '?from=' + from : ''}${to ? '&to=' + to : ''}${
+    limit ? '&limit=true' : ''
+  }`;
+  if (url.trim() !== '') push(url, history);
 };
 
 export const replaceLimit = (
@@ -28,12 +31,7 @@ export const replaceLimit = (
       ? toToken.address
       : '';
 
-  const url = `?from=${fromToken?.address}${toToken ? '&to=' + toAddress : ''}${
-    limit ? '&limit=' + limit : ''
-  }`;
-
-  if (!fromToken) push(limit ? '?limit=' + limit : '', history);
-  else push(url, history);
+  pushSwapParams(history, fromToken.address, toAddress, limit);
 };
 
 export const replaceFrom = (
@@ -50,11 +48,7 @@ export const replaceFrom = (
       ? toToken.address
       : '';
 
-  const url = `?from=${fromToken.address}${
-    toAddress ? '&to=' + toAddress : ''
-  }${limit ? '&limit=' + limit : ''}`;
-
-  push(url, history);
+  pushSwapParams(history, fromToken.address, toAddress, limit);
 };
 
 export const replaceTo = (
@@ -63,24 +57,15 @@ export const replaceTo = (
   history: any,
   toToken?: Token
 ) => {
-  const url = `?from=${fromToken.address}${
-    toToken ? '&to=' + toToken.address : ''
-  }${limit ? '&limit=' + limit : ''}`;
-
-  push(url, history);
+  pushSwapParams(history, fromToken.address, toToken?.address, limit);
 };
 
 export const switchTokens = (
   fromToken: Token,
-  toToken: Token,
   limit: boolean,
-  history: any
+  history: any,
+  toToken?: Token
 ) => {
-  if (toToken) {
-    const url = `?from=${toToken.address}${
-      fromToken ? '&to=' + fromToken.address : ''
-    }${limit ? '&limit=' + limit : ''}`;
-
-    push(url, history);
-  }
+  if (toToken)
+    pushSwapParams(history, toToken.address, fromToken.address, limit);
 };
