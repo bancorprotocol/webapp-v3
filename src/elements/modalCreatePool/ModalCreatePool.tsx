@@ -38,10 +38,9 @@ export const ModalCreatePool = () => {
   }, [tokens, chainId]);
 
   const errorText = useCallback(() => {
-    console.log('check');
     if (
       token &&
-      pools.findIndex((x) => x.reserves[1].address === token.address) !== -1
+      pools.findIndex((x) => x.reserves[0].address === token.address) !== -1
     ) {
       return 'Pool Already Exists';
     }
