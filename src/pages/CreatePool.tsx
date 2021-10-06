@@ -23,7 +23,7 @@ export const CreatePool = () => {
   const confirm = async () => {
     if (!account || !chainId || !token) return;
 
-    dispatch(addNotification(await createPool(token, chainId, account)));
+    dispatch(addNotification(await createPool(token, fee, chainId, account)));
   };
 
   useEffect(() => {

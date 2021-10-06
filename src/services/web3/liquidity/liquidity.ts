@@ -2,13 +2,17 @@ import { NotificationType } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { bancorConverterRegistry$ } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
+import { decToPpm } from 'utils/helperFunctions';
 import { resolveTxOnConfirmation } from '..';
-import { bntToken } from '../config';
+import { bntToken, zeroAddress } from '../config';
+import { web3 } from '../contracts';
+import { buildConverterContract } from '../contracts/converter/wrapper';
 import { buildRegistryContract } from '../contracts/converterRegistry/wrapper';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
 
 export const createPool = async (
   token: Token,
+  fee: string,
   network: EthNetworks,
   user: string
 ) => {
@@ -16,29 +20,53 @@ export const createPool = async (
     const converterRegistryAddress = await bancorConverterRegistry$
       .pipe(take(1))
       .toPromise();
-    const contract = buildRegistryContract(converterRegistryAddress);
+    const regContract = buildRegistryContract(converterRegistryAddress);
+
+    const reserves = [bntToken(network), token.address];
+    const weights = ['50', '50'];
+
+    const poolAddress = await regContract.methods
+      .getLiquidityPoolByConfig(PoolType.Traditional, reserves, weights)
+      .call();
+
+    if (poolAddress !== zeroAddress)
+      return {
+        type: NotificationType.error,
+        title: 'Pool Already exist',
+        msg: `Temp`,
+      };
 
     const res = await resolveTxOnConfirmation({
-      tx: contract.methods.newConverter(
+      tx: regContract.methods.newConverter(
         PoolType.Traditional,
         token.name,
         token.symbol,
         token.decimals,
         50000,
-        [bntToken(network), token.address],
-        ['50', '50']
+        reserves,
+        weights
       ),
       user,
-      resolveImmediately: true,
     });
 
-    //TODO claim ownership and set fee with returned converter address
+    const converterAddress = await web3.eth.getTransactionReceipt(res);
+
+    const converter = buildConverterContract(converterAddress.logs[0].address);
+
+    await resolveTxOnConfirmation({
+      tx: converter.methods.acceptOwnership(),
+      user: user,
+    });
+    await resolveTxOnConfirmation({
+      tx: converter.methods.setConversionFee(decToPpm(fee)),
+      user: user,
+    });
 
     return {
       type: NotificationType.success,
       title: 'Success!',
       msg: 'Your pool was successfully created',
-      txHash: '',
+      txHash: res,
     };
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
