@@ -13,6 +13,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
+import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 
@@ -170,7 +171,7 @@ export const SearchableTokenList = ({
         </div>
       ) : (
         <>
-          <div className="mb-10 px-20">
+          <div className="mb-10 px-20 relative">
             <InputField
               input={search}
               setInput={setSearch}
@@ -178,6 +179,10 @@ export const SearchableTokenList = ({
               placeholder="Search name"
               borderGrey
             />
+            {search && <IconTimes
+              className="w-12 absolute top-0 right-[36px]"
+              onClick={() => setSearch('')}
+            />}
           </div>
           <div
             data-cy="searchableTokensList"
