@@ -18,6 +18,7 @@ import {
 } from 'redux/notification/notification';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   pool: Pool;
@@ -31,6 +32,15 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const history = useHistory();
   const [selectedToken, setSelectedToken] = useState<Token>(tkn!);
   const [amount, setAmount] = useState('');
+  const [amountUsd, setAmountUsd] = useState('');
+
+  const handleAmountChange = (amount: string, tkn?: Token) => {
+    setAmount(amount);
+    const usdAmount = new BigNumber(amount)
+      .times(tkn ? tkn.usdPrice! : selectedToken.usdPrice!)
+      .toString();
+    setAmountUsd(usdAmount);
+  };
 
   const addProtection = async () => {
     try {
@@ -98,6 +108,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           pool={pool}
           amount={amount}
           setAmount={setAmount}
+          amountUsd={amountUsd}
+          setAmountUsd={setAmountUsd}
           token={selectedToken}
           setToken={(token: Token) => setSelectedToken(token)}
         />
@@ -106,6 +118,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         pool={pool}
         token={tkn}
         selectedToken={selectedToken}
+        setSelectedToken={setSelectedToken}
+        setAmount={handleAmountChange}
       />
       <AddLiquiditySingleCTA onStart={onStart} amount={amount} />
       {ModalApprove}

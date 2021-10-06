@@ -10,18 +10,27 @@ import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
+import { useAppSelector } from 'redux/index';
+import { getTokenById } from 'redux/bancor/bancor';
 
 interface Props {
   pool: Pool;
   token: Token;
   selectedToken: Token;
+  setSelectedToken: Function;
+  setAmount: Function;
 }
 
 export const AddLiquiditySingleSpaceAvailable = ({
   pool,
   token,
   selectedToken,
+  setSelectedToken,
+  setAmount,
 }: Props) => {
+  const bnt = useAppSelector<Token | undefined>(
+    getTokenById(pool.reserves[1].address)
+  );
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =
     useState(false);
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
@@ -83,12 +92,17 @@ export const AddLiquiditySingleSpaceAvailable = ({
             <span className="font-medium">Space Available</span>{' '}
             <div className="text-right">
               {selectedToken.symbol === 'BNT' ? (
-                <div>{prettifyNumber(spaceAvailableBnt)} BNT</div>
+                <button onClick={() => setAmount(spaceAvailableBnt)}>
+                  {prettifyNumber(spaceAvailableBnt)} BNT
+                </button>
               ) : (
                 <div>
-                  <span className="mr-4">
+                  <button
+                    onClick={() => setAmount(spaceAvailableTkn)}
+                    className="mr-4"
+                  >
                     {prettifyNumber(spaceAvailableTkn)} {token && token.symbol}
-                  </span>
+                  </button>
                   {new BigNumber(spaceAvailableTkn).lte(1) && (
                     <Tooltip
                       content="Notify me when space opens up"
@@ -111,7 +125,14 @@ export const AddLiquiditySingleSpaceAvailable = ({
             <div className="flex justify-between dark:text-grey-0">
               <span className="font-medium">BNT needed to open up space</span>{' '}
               <div className="text-right">
-                <div>{prettifyNumber(bntNeeded)} BNT</div>
+                <button
+                  onClick={() => {
+                    setSelectedToken(bnt);
+                    setAmount(bntNeeded, bnt);
+                  }}
+                >
+                  {prettifyNumber(bntNeeded)} BNT
+                </button>
               </div>
             </div>
           )}

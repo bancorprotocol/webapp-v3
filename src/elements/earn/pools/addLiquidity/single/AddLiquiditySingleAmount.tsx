@@ -1,6 +1,5 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useState } from 'react';
 
 interface Props {
   pool: Pool;
@@ -8,6 +7,8 @@ interface Props {
   setToken: Function;
   amount: string;
   setAmount: Function;
+  amountUsd: string;
+  setAmountUsd: Function;
 }
 export const AddLiquiditySingleAmount = ({
   pool,
@@ -15,9 +16,9 @@ export const AddLiquiditySingleAmount = ({
   setToken,
   amount,
   setAmount,
+  amountUsd,
+  setAmountUsd,
 }: Props) => {
-  const [amountUsd, setAmountUsd] = useState('');
-
   return (
     <TokenInputField
       setInput={setAmount}
