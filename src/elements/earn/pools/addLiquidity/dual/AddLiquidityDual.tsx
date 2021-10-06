@@ -23,6 +23,8 @@ export const AddLiquidityDual = ({ pool }: Props) => {
   );
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
+  const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
+  const [errorBalanceTkn, setErrorBalanceTkn] = useState('');
 
   const history = useHistory();
   if (!tkn || !bnt) {
@@ -44,6 +46,10 @@ export const AddLiquidityDual = ({ pool }: Props) => {
         bntAmount={bntAmount}
         setBntAmount={setBntAmount}
         bntTknRate={bntTknRate()}
+        errorBalanceBnt={errorBalanceBnt}
+        setErrorBalanceBnt={setErrorBalanceBnt}
+        errorBalanceTkn={errorBalanceTkn}
+        setErrorBalanceTkn={setErrorBalanceTkn}
       />
       <div className="p-10 rounded bg-blue-0 dark:bg-blue-5 mt-20">
         <AddLiquidityDualTokenPrices

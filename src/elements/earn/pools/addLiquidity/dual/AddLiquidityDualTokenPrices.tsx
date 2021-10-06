@@ -35,7 +35,7 @@ export const AddLiquidityDualTokenPrices = ({
         </div>
       ))}
       <div className="flex justify-between mt-20 text-grey-4 dark:text-grey-3">
-        <div>1 BNT ({prettifyNumber(bnt.usdPrice!, true)})</div>
+        <div>1 BNT ({prettifyNumber(bnt.usdPrice!, true)}) =</div>
         <div>{rateString()}</div>
       </div>
     </div>
