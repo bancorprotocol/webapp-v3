@@ -13,12 +13,14 @@ interface Props {
   pool: Pool;
   token: Token;
   selectedToken: Token;
+  setSelectedToken: Function;
 }
 
 export const AddLiquiditySingleSpaceAvailable = ({
   pool,
   token,
   selectedToken,
+  setSelectedToken,
 }: Props) => {
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =
     useState(false);

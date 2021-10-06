@@ -106,6 +106,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         pool={pool}
         token={tkn}
         selectedToken={selectedToken}
+        setSelectedToken={(token: Token) => setSelectedToken(token)}
       />
       <AddLiquiditySingleCTA onStart={onStart} amount={amount} />
       {ModalApprove}

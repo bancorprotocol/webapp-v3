@@ -1,4 +1,4 @@
-import { SwapSwitch } from '../../elements/swapSwitch/SwapSwitch';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 
 interface Props {
