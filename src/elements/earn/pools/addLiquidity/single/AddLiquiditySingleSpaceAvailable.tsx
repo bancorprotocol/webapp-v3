@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
+import { Tooltip } from 'components/tooltip/Tooltip';
+import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 
 interface Props {
   pool: Pool;
@@ -84,7 +86,23 @@ export const AddLiquiditySingleSpaceAvailable = ({
                 <div>{prettifyNumber(spaceAvailableBnt)} BNT</div>
               ) : (
                 <div>
-                  {prettifyNumber(spaceAvailableTkn)} {token && token.symbol}
+                  <span className="mr-4">
+                    {prettifyNumber(spaceAvailableTkn)} {token && token.symbol}
+                  </span>
+                  {new BigNumber(spaceAvailableTkn).lte(1) && (
+                    <Tooltip
+                      content="Notify me when space opens up"
+                      button={
+                        <a
+                          href={`https://9000.hal.xyz/recipes/bancor-pool-liquidity-protocol?pool=${pool.pool_dlt_id}&token=${token.symbol}&value=10000&currency=USD`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <IconBell className="w-12" />
+                        </a>
+                      }
+                    />
+                  )}
                 </div>
               )}
             </div>
