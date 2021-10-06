@@ -63,6 +63,9 @@ export const AddLiquidityDual = ({ pool }: Props) => {
           tkn={tkn}
           amountBnt={bntAmount}
           amountTkn={tknAmount}
+          errorMsg={
+            errorBalanceTkn || errorBalanceBnt ? 'Insufficient Balance' : ''
+          }
         />
       </div>
     </Widget>

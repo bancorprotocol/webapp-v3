@@ -17,6 +17,7 @@ interface Props {
   tkn: Token;
   amountBnt: string;
   amountTkn: string;
+  errorMsg?: string;
 }
 
 export const AddLiquidityEmptyCTA = ({
@@ -25,6 +26,7 @@ export const AddLiquidityEmptyCTA = ({
   tkn,
   amountBnt,
   amountTkn,
+  errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
   const { account } = useWeb3React();
@@ -80,10 +82,17 @@ export const AddLiquidityEmptyCTA = ({
   );
 
   const button = () => {
+    if (errorMsg) {
+      return { label: errorMsg, disabled: true, variant: 'btn-error' };
+    }
     if (!amountBnt || !amountTkn) {
-      return { label: 'Enter amount', disabled: true };
+      return {
+        label: 'Enter amount',
+        disabled: true,
+        variant: 'btn-primary',
+      };
     } else {
-      return { label: 'Supply', disabled: false };
+      return { label: 'Supply', disabled: false, variant: 'btn-primary' };
     }
   };
 
@@ -100,7 +109,7 @@ export const AddLiquidityEmptyCTA = ({
       <button
         onClick={() => onClick()}
         disabled={button().disabled}
-        className="btn-primary rounded w-full mt-20"
+        className={`${button().variant} rounded w-full mt-20`}
       >
         {button().label}
       </button>
