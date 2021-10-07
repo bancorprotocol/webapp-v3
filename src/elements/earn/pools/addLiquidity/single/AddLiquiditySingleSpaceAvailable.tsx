@@ -19,6 +19,10 @@ interface Props {
   selectedToken: Token;
   setSelectedToken: Function;
   setAmount: Function;
+  spaceAvailableBnt: string;
+  setSpaceAvailableBnt: Function;
+  spaceAvailableTkn: string;
+  setSpaceAvailableTkn: Function;
 }
 
 export const AddLiquiditySingleSpaceAvailable = ({
@@ -27,14 +31,16 @@ export const AddLiquiditySingleSpaceAvailable = ({
   selectedToken,
   setSelectedToken,
   setAmount,
+  spaceAvailableBnt,
+  setSpaceAvailableBnt,
+  spaceAvailableTkn,
+  setSpaceAvailableTkn,
 }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[1].address)
   );
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =
     useState(false);
-  const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
-  const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
   const [bntNeeded, setBntNeeded] = useState('');
 
   useInterval(
@@ -73,7 +79,13 @@ export const AddLiquiditySingleSpaceAvailable = ({
     } catch (e) {
       console.error('failed to fetch space available with msg: ', e.message);
     }
-  }, [pool, token.decimals, selectedToken]);
+  }, [
+    pool,
+    token.decimals,
+    selectedToken,
+    setSpaceAvailableBnt,
+    setSpaceAvailableTkn,
+  ]);
 
   useEffect(() => {
     void fetchData();

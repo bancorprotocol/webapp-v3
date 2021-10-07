@@ -5,17 +5,25 @@ import { useDispatch } from 'react-redux';
 interface Props {
   onStart: Function;
   amount: string;
+  errorMsg: string;
 }
 
-export const AddLiquiditySingleCTA = ({ onStart, amount }: Props) => {
+export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   const dispatch = useDispatch();
   const { account } = useWeb3React();
 
   const button = () => {
+    if (errorMsg) {
+      return { label: errorMsg, disabled: true, variant: 'btn-error' };
+    }
     if (!amount) {
-      return { label: 'Enter amount', disabled: true };
+      return { label: 'Enter amount', disabled: true, variant: 'btn-primary' };
     } else {
-      return { label: 'Stake and Protect', disabled: false };
+      return {
+        label: 'Stake and Protect',
+        disabled: false,
+        variant: 'btn-primary',
+      };
     }
   };
 
@@ -31,7 +39,7 @@ export const AddLiquiditySingleCTA = ({ onStart, amount }: Props) => {
     <button
       onClick={() => onClick()}
       disabled={button().disabled}
-      className="btn-primary rounded w-full"
+      className={`${button().variant} rounded w-full`}
     >
       {button().label}
     </button>
