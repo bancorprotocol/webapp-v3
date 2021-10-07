@@ -12,6 +12,10 @@ interface Props {
   setBntAmount: Function;
   bntTknRate: string;
   tknUsdPrice: string;
+  errorBalanceBnt: string;
+  setErrorBalanceBnt: Function;
+  errorBalanceTkn: string;
+  setErrorBalanceTkn: Function;
 }
 
 export const AddLiquidityEmptyStep2 = ({
@@ -23,6 +27,10 @@ export const AddLiquidityEmptyStep2 = ({
   setBntAmount,
   bntTknRate,
   tknUsdPrice,
+  errorBalanceBnt,
+  setErrorBalanceBnt,
+  errorBalanceTkn,
+  setErrorBalanceTkn,
 }: Props) => {
   const [bntAmountUsd, setBntAmountUsd] = useState('');
   const [tknAmountUsd, setTknAmountUsd] = useState('');
@@ -62,9 +70,30 @@ export const AddLiquidityEmptyStep2 = ({
     setBntAmountUsd(bntAmountUsd);
   };
 
+  useEffect(() => {
+    if (new BigNumber(bntAmount).gt(bnt.balance || 0)) {
+      setErrorBalanceBnt('Insufficient Balance');
+    } else {
+      setErrorBalanceBnt('');
+    }
+
+    if (new BigNumber(tknAmount).gt(tkn.balance || 0)) {
+      setErrorBalanceTkn('Insufficient Balance');
+    } else {
+      setErrorBalanceTkn('');
+    }
+  }, [
+    bntAmount,
+    bnt.balance,
+    setErrorBalanceBnt,
+    tknAmount,
+    tkn.balance,
+    setErrorBalanceTkn,
+  ]);
+
   return (
-    <div className="space-y-20">
-      <div className="flex items-center">
+    <div>
+      <div className="flex items-center mb-20">
         <div
           className={`flex justify-center items-center w-[34px] h-[34px] border-2 border-blue-0 dark:border-blue-1 rounded-full bg-white dark:bg-blue-4 text-16 ${
             tknUsdPrice ? 'text-primary' : 'text-grey-3'
@@ -78,24 +107,34 @@ export const AddLiquidityEmptyStep2 = ({
           Enter stake amount
         </div>
       </div>
-      <TokenInputField
-        input={bntAmount}
-        setInput={(amount: string) => onBntAmountChange(amount)}
-        amountUsd={bntAmountUsd}
-        setAmountUsd={setBntAmountUsd}
-        token={bnt}
-        selectable={false}
-        disabled={!tknUsdPrice}
-      />
-      <TokenInputField
-        input={tknAmount}
-        setInput={(amount: string) => onTknAmountChange(amount)}
-        amountUsd={tknAmountUsd}
-        setAmountUsd={setTknAmountUsd}
-        token={tknWithPrice}
-        selectable={false}
-        disabled={!tknUsdPrice}
-      />
+      <div className="mb-20">
+        <TokenInputField
+          input={bntAmount}
+          setInput={(amount: string) => onBntAmountChange(amount)}
+          amountUsd={bntAmountUsd}
+          setAmountUsd={setBntAmountUsd}
+          token={bnt}
+          selectable={false}
+          disabled={!tknUsdPrice}
+        />
+        {errorBalanceBnt && (
+          <div className="mt-5 pl-[140px] text-error">{errorBalanceBnt}</div>
+        )}
+      </div>
+      <div className="mb-20">
+        <TokenInputField
+          input={tknAmount}
+          setInput={(amount: string) => onTknAmountChange(amount)}
+          amountUsd={tknAmountUsd}
+          setAmountUsd={setTknAmountUsd}
+          token={tknWithPrice}
+          selectable={false}
+          disabled={!tknUsdPrice}
+        />
+        {errorBalanceTkn && (
+          <div className="mt-5 pl-[140px] text-error">{errorBalanceTkn}</div>
+        )}
+      </div>
     </div>
   );
 };

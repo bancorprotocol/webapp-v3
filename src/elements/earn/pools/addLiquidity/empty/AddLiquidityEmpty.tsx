@@ -23,6 +23,8 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
   );
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
+  const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
+  const [errorBalanceTkn, setErrorBalanceTkn] = useState('');
   const [tknUsdPrice, setTknUsdPrice] = useState('');
 
   useEffect(() => {
@@ -58,6 +60,10 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
           setBntAmount={setBntAmount}
           bntTknRate={bntTknRate()}
           tknUsdPrice={tknUsdPrice}
+          errorBalanceBnt={errorBalanceBnt}
+          setErrorBalanceBnt={setErrorBalanceBnt}
+          errorBalanceTkn={errorBalanceTkn}
+          setErrorBalanceTkn={setErrorBalanceTkn}
         />
         <AddLiquidityEmptyCTA
           pool={pool}
@@ -65,6 +71,9 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
           tkn={tkn}
           amountBnt={bntAmount}
           amountTkn={tknAmount}
+          errorMsg={
+            errorBalanceTkn || errorBalanceBnt ? 'Insufficient Balance' : ''
+          }
         />
       </div>
     </Widget>
