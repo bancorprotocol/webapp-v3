@@ -6,13 +6,14 @@ import {
   tokens$,
   pools$,
   tokensNoBalance$,
+  tokenListMerged$,
 } from 'services/observables/tokens';
 import {
+  setAllTokens,
   setKeeperDaoTokens,
   setTokenList,
   setTokenLists,
 } from 'redux/bancor/bancor';
-import { Subscription } from 'rxjs';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
@@ -20,25 +21,17 @@ import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 
-let tokenSub: Subscription;
-let tokenListsSub: Subscription;
-let keeperDaoSub: Subscription;
-let loadingBalancesSub: Subscription;
-let poolsSub: Subscription;
-let statsSub: Subscription;
-
 export const loadCommonData = (dispatch: any) => {
-  if (!tokenListsSub || tokenListsSub.closed)
-    tokenListsSub = tokenLists$.subscribe((tokenLists) => {
-      dispatch(setTokenLists(tokenLists));
-    });
+  tokenLists$.subscribe((tokenLists) => {
+    dispatch(setTokenLists(tokenLists));
+  });
 
   tokensNoBalance$
     .pipe(take(1))
     .toPromise()
     .then((tokenList) => dispatch(setTokenList(tokenList)));
 
-  loadingBalancesSub = loadingBalances$.subscribe((loading) =>
+  loadingBalances$.subscribe((loading) =>
     dispatch(setLoadingBalances(loading))
   );
 
@@ -49,19 +42,23 @@ export const loadCommonData = (dispatch: any) => {
     userPreferredListIds$.next(firstFromList);
   } else userPreferredListIds$.next(userListIds);
 
-  tokenSub = tokens$.subscribe((tokenList) => {
+  tokens$.subscribe((tokenList) => {
     dispatch(setTokenList(tokenList));
   });
 
-  keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    dispatch(setKeeperDaoTokens(keeperDaoTokens));
+  tokenListMerged$.subscribe((tokenList) => {
+    dispatch(setAllTokens(tokenList));
   });
 
-  poolsSub = pools$.subscribe((pools) => {
+  keeperDaoTokens$.subscribe((keeperDaoTokens) => {
+    setKeeperDaoTokens(keeperDaoTokens);
+  });
+
+  pools$.subscribe((pools) => {
     dispatch(setPools(pools));
   });
 
-  statsSub = statistics$.subscribe((stats) => {
+  statistics$.subscribe((stats) => {
     dispatch(setStats(stats));
   });
 };

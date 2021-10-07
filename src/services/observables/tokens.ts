@@ -23,12 +23,13 @@ import { get7DaysAgo, mapIgnoreThrown } from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
-import { isEqual, sortBy } from 'lodash';
+import { isEqual, sortBy, uniqBy } from 'lodash';
 import { APIReward, WelcomeData } from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { buildLiquidityProtectionSettingsContract } from 'services/web3/contracts/swap/wrapper';
+import { fifteenSeconds$ } from './timers';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -137,7 +138,7 @@ export const tokenLists$ = from(
   })
 ).pipe(shareReplay(1));
 
-const tokenListMerged$ = combineLatest([
+export const tokenListMerged$ = combineLatest([
   userPreferredListIds$,
   tokenLists$,
 ]).pipe(
@@ -146,7 +147,8 @@ const tokenListMerged$ = combineLatest([
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
       );
-      return filteredTokenLists.flatMap((list) => list.tokens);
+      const merged = filteredTokenLists.flatMap((list) => list.tokens);
+      return uniqBy(merged, (x) => x.address);
     }
   ),
   map((tokens) =>
@@ -239,8 +241,9 @@ export const tokens$ = combineLatest([
   user$,
   tokensNoBalance$,
   currentNetwork$,
+  fifteenSeconds$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
+  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork, _]) => {
     if (user && tokensNoBalance) {
       setLoadingBalances(true);
       const updatedTokens = await fetchTokenBalances(
