@@ -6,15 +6,51 @@ import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiq
 import { AddLiquidityLoading } from 'elements/earn/pools/addLiquidity/AddLiquidityLoading';
 import { AddLiquidityError } from 'elements/earn/pools/addLiquidity/AddLiquidityError';
 import { useAppSelector } from 'redux/index';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchReserveBalances } from 'services/web3/contracts/liquidityProtection/wrapper';
+import BigNumber from 'bignumber.js';
 
 export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
   const { id } = props.match.params;
-  const { status, pool, type } = useAppSelector<SelectedPool>(getPoolById(id));
+  const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
+  const [isCheckingType, setIsCheckingType] = useState(false);
+  const [type, setType] = useState('');
+
+  const checkType = useCallback(async () => {
+    if (!pool) {
+      return;
+    }
+    setIsCheckingType(true);
+    if (pool.isProtected) {
+      setType('single');
+    } else {
+      const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
+
+      const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
+        new BigNumber(b).eq(0)
+      );
+
+      if (isPoolEmpty) {
+        setType('empty');
+      } else {
+        setType('dual');
+      }
+    }
+    setIsCheckingType(false);
+  }, [pool]);
+
+  useEffect(() => {
+    void checkType();
+  }, [id, checkType]);
+
+  const isLoading = () => {
+    return status === 'loading' || isCheckingType;
+  };
 
   return (
     <div>
       <div>
-        {status === 'loading' ? (
+        {isLoading() ? (
           <AddLiquidityLoading />
         ) : (
           <div>
