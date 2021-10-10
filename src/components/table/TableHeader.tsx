@@ -13,6 +13,15 @@ export const TableHeader = <D extends object>({
   headerGroups,
   columns,
 }: TableHeaderProps<D>) => {
+
+  const getColumn: (hg: HeaderGroup<D>) => TableColumn<D> = (() => {
+    const idToColumn = columns.reduce((map: Record<string, TableColumn<D>>, col) => {
+      map[col.id as string] = col;
+      return map;
+    }, {});
+    return (hg: HeaderGroup<D>) => idToColumn[(hg.getHeaderProps().key as string).replace('header_', '')];
+  })();
+
   const columnWidths = columns.map((c) => {
     return {
       id: c.id as string,
@@ -77,7 +86,7 @@ export const TableHeader = <D extends object>({
               )}
               title={undefined}
             >
-              <div className="flex items-center">
+              <div className={`flex items-center ${getColumn(column).headerClassName ?? ''}`}>
                 {column.render('Header')}
                 {getTooltip(column.getHeaderProps().key as string)}
                 {getSortBy(column.isSorted, column.isSortedDesc)}
