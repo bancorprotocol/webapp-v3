@@ -15,6 +15,10 @@ export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
   const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
   const [isCheckingType, setIsCheckingType] = useState(false);
   const [type, setType] = useState('');
+  const [reserveBalances, setReserveBalances] = useState({
+    tknBalance: '0',
+    bntBalance: '0',
+  });
 
   const checkType = useCallback(async () => {
     if (!pool) {
@@ -25,7 +29,7 @@ export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
       setType('single');
     } else {
       const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
-
+      setReserveBalances({ tknBalance, bntBalance });
       const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
         new BigNumber(b).eq(0)
       );
@@ -59,7 +63,12 @@ export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
             ) : (
               <div>
                 {type === 'single' && <AddLiquiditySingle pool={pool} />}
-                {type === 'dual' && <AddLiquidityDual pool={pool} />}
+                {type === 'dual' && (
+                  <AddLiquidityDual
+                    pool={pool}
+                    reserveBalances={reserveBalances}
+                  />
+                )}
                 {type === 'empty' && <AddLiquidityEmpty pool={pool} />}
               </div>
             )}
