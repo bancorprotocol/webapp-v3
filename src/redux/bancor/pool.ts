@@ -3,7 +3,6 @@ import { Pool } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
 import { orderBy } from 'lodash';
-import BigNumber from 'bignumber.js';
 
 interface PoolState {
   pools: Pool[];
@@ -82,7 +81,6 @@ export const getTopPools = createSelector(
 export interface SelectedPool {
   status: 'loading' | 'ready';
   pool?: Pool;
-  type?: 'empty' | 'single' | 'dual';
 }
 
 export const getPoolById = (id: string) =>
@@ -94,21 +92,7 @@ export const getPoolById = (id: string) =>
       }
 
       const pool = pools.find((p) => p.pool_dlt_id === id);
-      if (pool === undefined) {
-        return { status: 'ready' } as SelectedPool;
-      }
-      let type: 'empty' | 'single' | 'dual';
-
-      if (pool.isProtected) {
-        type = 'single';
-      } else {
-        const poolHasLiquidity = pool.reserves.some((reserve) =>
-          new BigNumber(reserve.balance).gt(0)
-        );
-        type = poolHasLiquidity ? 'dual' : 'empty';
-      }
-
-      return { status: 'ready', pool, type } as SelectedPool;
+      return { status: 'ready', pool } as SelectedPool;
     }
   );
 

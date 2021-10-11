@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
+import { web3 } from 'services/web3/contracts';
 
 interface Tokens {
   token: Token;
@@ -21,26 +22,52 @@ interface Tokens {
 export const useApproveModal = (
   tokens: Tokens[],
   onComplete: Function,
-  contract?: string,
-  resolveImmediately?: boolean
+  contract?: string
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [txHashes, setTxHashes] = useState<string[]>([]);
+
+  const awaitConfirmation = async () => {
+    console.log('awaitConfirmation');
+    const receipts = [];
+    for (const txHash of txHashes) {
+      try {
+        const receipt = await web3.eth.getTransactionReceipt(txHash);
+        receipts.push(receipt);
+      } catch (e) {
+        console.error('failed to getTransactionReceipt for approve token tx');
+        return;
+      }
+    }
+
+    const successCount = receipts.filter((r) => r && r.status === true).length;
+    if (successCount === txHashes.length) {
+      onComplete();
+    } else {
+      console.log('jan');
+      await wait(3000);
+      await awaitConfirmation();
+    }
+  };
+
   const dispatch = useDispatch();
 
-  const checkNextToken = async () => {
-    const nextIndex = tokenIndex + 1;
+  const checkNextToken = async (index = tokenIndex): Promise<any> => {
+    const nextIndex = index + 1;
+    console.log('checkNextToken', nextIndex);
     const count = tokens.length;
     if (count === nextIndex) {
-      return onComplete();
+      return awaitConfirmation();
     }
     await wait(500);
     setTokenIndex(nextIndex);
-    await checkApprovalRequired(nextIndex);
+    return checkApprovalRequired(nextIndex);
   };
 
   const checkApprovalRequired = async (tokenIndex: number = 0) => {
+    console.log('checkApprovalRequired');
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
@@ -49,13 +76,14 @@ export const useApproveModal = (
     );
 
     if (!isApprovalRequired) {
-      return checkNextToken();
+      return checkNextToken(tokenIndex);
     }
 
     setIsOpen(true);
   };
 
   const setApproval = async (amount?: string) => {
+    console.log('setApproval');
     const { token } = tokens[tokenIndex];
     try {
       setIsLoading(true);
@@ -63,8 +91,9 @@ export const useApproveModal = (
         token,
         amount,
         contract,
-        false
+        true
       );
+      setTxHashes(txHashes.concat([txHash]));
       dispatch(
         addNotification({
           type: NotificationType.pending,
@@ -109,6 +138,7 @@ export const useApproveModal = (
   };
 
   const onStart = async () => {
+    console.log('onStart');
     if (tokens.length === 0) {
       console.error('No tokens provided for approval!');
       return;

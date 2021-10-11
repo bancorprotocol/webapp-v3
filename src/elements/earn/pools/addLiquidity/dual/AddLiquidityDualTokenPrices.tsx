@@ -27,7 +27,7 @@ export const AddLiquidityDualTokenPrices = ({
     <div className="px-10 pt-10">
       <div className="font-medium mb-20">Tokens prices</div>
       {[bnt, tkn].map((t) => (
-        <div className="flex justify-between text-20 mt-5">
+        <div key={t.address} className="flex justify-between text-20 mt-5">
           <div>1 {t.symbol} = </div>
           <div className="text-grey-4 dark:text-grey-3">
             ~{prettifyNumber(t.usdPrice!, true)}
