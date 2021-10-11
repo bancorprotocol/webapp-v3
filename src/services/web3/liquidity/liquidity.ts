@@ -5,7 +5,7 @@ import { Token } from 'services/observables/tokens';
 import { decToPpm } from 'utils/helperFunctions';
 import { resolveTxOnConfirmation } from '..';
 import { bntToken, zeroAddress } from '../config';
-import { web3 } from '../contracts';
+import { web3, writeWeb3 } from '../contracts';
 import { buildConverterContract } from '../contracts/converter/wrapper';
 import { buildRegistryContract } from '../contracts/converterRegistry/wrapper';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
@@ -20,10 +20,13 @@ export const createPool = async (
     const converterRegistryAddress = await bancorConverterRegistry$
       .pipe(take(1))
       .toPromise();
-    const regContract = buildRegistryContract(converterRegistryAddress);
+    const regContract = buildRegistryContract(
+      converterRegistryAddress,
+      writeWeb3
+    );
 
     const reserves = [bntToken(network), token.address];
-    const weights = ['50', '50'];
+    const weights = ['500000', '500000'];
 
     const poolAddress = await regContract.methods
       .getLiquidityPoolByConfig(PoolType.Traditional, reserves, weights)
@@ -33,7 +36,7 @@ export const createPool = async (
       return {
         type: NotificationType.error,
         title: 'Pool Already exist',
-        msg: `Temp`,
+        msg: `The pool already exists on bancor`,
       };
 
     const res = await resolveTxOnConfirmation({
@@ -51,7 +54,10 @@ export const createPool = async (
 
     const converterAddress = await web3.eth.getTransactionReceipt(res);
 
-    const converter = buildConverterContract(converterAddress.logs[0].address);
+    const converter = buildConverterContract(
+      converterAddress.logs[0].address,
+      writeWeb3
+    );
 
     await resolveTxOnConfirmation({
       tx: converter.methods.acceptOwnership(),
@@ -79,7 +85,7 @@ export const createPool = async (
     return {
       type: NotificationType.error,
       title: 'Creating Pool Failed',
-      msg: `Temp`,
+      msg: `Fail creating pool. Please try again or contact support.`,
     };
   }
 };

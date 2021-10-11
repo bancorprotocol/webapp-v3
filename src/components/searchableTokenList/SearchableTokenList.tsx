@@ -23,6 +23,7 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens: string[];
   includedTokens: string[];
+  tokens: Token[];
 }
 
 interface SearchableTokenListLayoutProps {
@@ -75,12 +76,11 @@ export const SearchableTokenList = ({
   setIsOpen,
   excludedTokens = [],
   includedTokens = [],
+  tokens,
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
   const [userPreferredListIds, setUserLists] = useState(getTokenListLS());
-
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const tokensLists = useAppSelector<TokenList[]>(
     (state) => state.bancor.tokenLists
@@ -179,10 +179,12 @@ export const SearchableTokenList = ({
               placeholder="Search name"
               borderGrey
             />
-            {search && <IconTimes
-              className="w-12 absolute top-0 right-[36px]"
-              onClick={() => setSearch('')}
-            />}
+            {search && (
+              <IconTimes
+                className="w-12 absolute top-0 right-[36px]"
+                onClick={() => setSearch('')}
+              />
+            )}
           </div>
           <div
             data-cy="searchableTokensList"

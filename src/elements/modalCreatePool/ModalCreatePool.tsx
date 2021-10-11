@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
-import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { createPool } from 'services/web3/liquidity/liquidity';
 import { useWeb3React } from '@web3-react/core';
@@ -16,7 +15,9 @@ import { Modal } from 'components/modal/Modal';
 export const ModalCreatePool = () => {
   const { chainId, account } = useWeb3React();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
   const [fee, setFee] = useState<string>('0.2');
@@ -28,6 +29,7 @@ export const ModalCreatePool = () => {
     if (!account || !chainId || !token) return;
 
     dispatch(addNotification(await createPool(token, fee, chainId, account)));
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -80,10 +82,11 @@ export const ModalCreatePool = () => {
               <SelectToken
                 label="Second Token"
                 token={token}
+                tokens={allTokens}
                 setToken={setToken}
                 selectable
                 startEmpty
-                excludedTokens={bnt ? [bnt.address] : []}
+                excludedTokens={tokens ? tokens.map((x) => x.address) : []}
               />
             </div>
           </div>
