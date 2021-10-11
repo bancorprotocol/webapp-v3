@@ -4,9 +4,7 @@ import { EthNetworks } from 'services/web3//types';
 import { provider } from 'services/web3//wallet/connectors';
 import { Contract } from 'web3-eth-contract';
 
-export const web3 = new Web3(
-  Web3.givenProvider || provider(EthNetworks.Mainnet)
-);
+export const web3 = new Web3(provider(EthNetworks.Mainnet));
 
 export const writeWeb3 = new Web3(Web3.givenProvider);
 
