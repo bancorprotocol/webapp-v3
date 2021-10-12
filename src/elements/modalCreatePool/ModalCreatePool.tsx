@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
@@ -7,7 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 import { addNotification } from 'redux/notification/notification';
 import { EthNetworks } from 'services/web3/types';
-import { getNetworkVariables } from 'services/web3/config';
+import { getNetworkVariables, ropstenTokens } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
 import { InputField } from 'components/inputField/InputField';
 import { Modal } from 'components/modal/Modal';
@@ -82,7 +82,9 @@ export const ModalCreatePool = () => {
               <SelectToken
                 label="Second Token"
                 token={token}
-                tokens={allTokens}
+                tokens={
+                  chainId === EthNetworks.Ropsten ? ropstenTokens : allTokens
+                }
                 setToken={setToken}
                 selectable
                 startEmpty
