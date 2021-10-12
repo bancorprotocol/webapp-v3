@@ -44,7 +44,6 @@ export const useApproveModal = (
     const successCount = receipts.filter((r) => r && r.status === true).length;
     if (successCount === ref.current.length) {
       ref.current = [];
-      await wait(3000);
       onComplete();
     } else {
       await wait(3000);
@@ -137,7 +136,6 @@ export const useApproveModal = (
   };
 
   const onStart = async () => {
-    console.log('onStart');
     if (tokens.length === 0) {
       console.error('No tokens provided for approval!');
       return;
