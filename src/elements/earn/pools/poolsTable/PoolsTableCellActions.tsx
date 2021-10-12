@@ -3,6 +3,9 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { Pool } from 'services/observables/tokens';
+import { bntToken } from 'services/web3/config';
+import { useWeb3React } from '@web3-react/core';
+import { EthNetworks } from 'services/web3/types';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   return (
@@ -21,7 +24,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
         />
       </NavLink>
       <NavLink
-        to="/"
+        to={tknAddress ? `/?from=${tknAddress}` : '/'}
         className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
       >
         <Tooltip

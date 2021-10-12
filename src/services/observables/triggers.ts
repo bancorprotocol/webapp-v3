@@ -4,6 +4,7 @@ import {
   keeperDaoTokens$,
   listOfLists,
   tokens$,
+  pools$,
   tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
@@ -17,7 +18,6 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { take } from 'rxjs/operators';
 import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
-import { pools$ } from 'services/observables/tokens';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
@@ -57,7 +57,7 @@ export const loadCommonData = (dispatch: any) => {
   });
 
   keeperDaoSub = keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    setKeeperDaoTokens(keeperDaoTokens);
+    dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
   poolsSub = pools$.subscribe((pools) => {
