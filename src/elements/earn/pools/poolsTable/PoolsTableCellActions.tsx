@@ -8,6 +8,10 @@ import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
 
 export const PoolsTableCellActions = (pool: Pool) => {
+  const { chainId } = useWeb3React();
+  const bnt = bntToken(chainId ? chainId : EthNetworks.Mainnet);
+  const tknAddress = pool.reserves.find((x) => x.address !== bnt)?.address;
+
   return (
     <div className="flex">
       <NavLink
