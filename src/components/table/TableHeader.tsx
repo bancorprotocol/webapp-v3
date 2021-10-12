@@ -27,12 +27,8 @@ export const TableHeader = <D extends object>({
 
   const getStyleAttr = (column: HeaderGroup<D>) => {
     const style = column.getHeaderProps(column.getSortByToggleProps()).style;
-    return {
-      width: getColumn(column).width,
-      maxWidth: getColumn(column).maxWidth,
-      minWidth: getColumn(column).minWidth,
-      ...style,
-    };
+    const { width, minWidth, maxWidth } = getColumn(column);
+    return { width, maxWidth, minWidth, ...style };
   };
 
   const getTooltip = (column: HeaderGroup<D>) => {
