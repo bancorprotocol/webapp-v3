@@ -28,7 +28,14 @@ export const ModalCreatePool = () => {
     //isCreateDisabled() TS fails
     if (!account || !chainId || !token) return;
 
-    dispatch(addNotification(await createPool(token, fee, chainId, account)));
+    const notification = await createPool(
+      token,
+      (Number(fee) / 100).toString(),
+      chainId,
+      account,
+      (notification: any) => dispatch(addNotification(notification))
+    );
+    dispatch(addNotification(notification));
     setIsOpen(false);
   };
 
@@ -56,7 +63,7 @@ export const ModalCreatePool = () => {
       !token ||
       !fee ||
       numFee > 3 ||
-      numFee < -1 ||
+      numFee < 0 ||
       !!errorText()
     );
   };
