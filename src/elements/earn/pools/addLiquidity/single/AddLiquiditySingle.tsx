@@ -104,6 +104,9 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const handleError = () => {
     if (errorMsg) return errorMsg;
+    if (!spaceAvailableBnt || !spaceAvailableTkn) {
+      return '';
+    }
     if (selectedToken.symbol === 'BNT') {
       const isSpaceAvailable = new BigNumber(spaceAvailableBnt).gte(
         amount || 0
