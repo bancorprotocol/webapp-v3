@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import {
   getNetworkContractApproval,
   setNetworkContractApproval,
@@ -27,12 +27,11 @@ export const useApproveModal = (
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [txHashes, setTxHashes] = useState<string[]>([]);
+  const ref = useRef<string[]>([]);
 
-  const awaitConfirmation = async () => {
-    console.log('awaitConfirmation');
+  const awaitConfirmation = useCallback(async () => {
     const receipts = [];
-    for (const txHash of txHashes) {
+    for (const txHash of ref.current) {
       try {
         const receipt = await web3.eth.getTransactionReceipt(txHash);
         receipts.push(receipt);
@@ -43,20 +42,20 @@ export const useApproveModal = (
     }
 
     const successCount = receipts.filter((r) => r && r.status === true).length;
-    if (successCount === txHashes.length) {
+    if (successCount === ref.current.length) {
+      ref.current = [];
+      await wait(3000);
       onComplete();
     } else {
-      console.log('jan');
       await wait(3000);
       await awaitConfirmation();
     }
-  };
+  }, [onComplete]);
 
   const dispatch = useDispatch();
 
   const checkNextToken = async (index = tokenIndex): Promise<any> => {
     const nextIndex = index + 1;
-    console.log('checkNextToken', nextIndex);
     const count = tokens.length;
     if (count === nextIndex) {
       return awaitConfirmation();
@@ -67,7 +66,6 @@ export const useApproveModal = (
   };
 
   const checkApprovalRequired = async (tokenIndex: number = 0) => {
-    console.log('checkApprovalRequired');
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
@@ -83,7 +81,6 @@ export const useApproveModal = (
   };
 
   const setApproval = async (amount?: string) => {
-    console.log('setApproval');
     const { token } = tokens[tokenIndex];
     try {
       setIsLoading(true);
@@ -93,7 +90,8 @@ export const useApproveModal = (
         contract,
         true
       );
-      setTxHashes(txHashes.concat([txHash]));
+
+      ref.current = [...ref.current, txHash];
       dispatch(
         addNotification({
           type: NotificationType.pending,
@@ -112,6 +110,7 @@ export const useApproveModal = (
       );
       setIsOpen(false);
       setIsLoading(false);
+
       await checkNextToken();
     } catch (e) {
       if (e.code === ErrorCode.DeniedTx) {
