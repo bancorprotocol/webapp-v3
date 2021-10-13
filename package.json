@@ -28,7 +28,7 @@
     "bignumber.js": "^9.0.1",
     "cypress": "^8.0.0",
     "dayjs": "^1.10.5",
-    "ethers": "^5.4.6",
+    "ethers": "^5.4.7",
     "json-bigint": "^1.0.0",
     "lightweight-charts": "^3.5.0",
     "lodash": "^4.17.21",
