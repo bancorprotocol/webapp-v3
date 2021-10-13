@@ -29,7 +29,11 @@ import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { buildLiquidityProtectionSettingsContract } from 'services/web3/contracts/swap/wrapper';
+<<<<<<< HEAD
 import { fifteenSeconds$ } from './timers';
+=======
+import { web3 } from 'services/web3/contracts';
+>>>>>>> main
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -281,7 +285,8 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
     const contract = buildLiquidityProtectionSettingsContract(
-      liquidityProtectionSettingsContract
+      liquidityProtectionSettingsContract,
+      web3
     );
     const res = await contract.methods
       .minNetworkTokenLiquidityForMinting()

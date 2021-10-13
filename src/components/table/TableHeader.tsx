@@ -13,45 +13,34 @@ export const TableHeader = <D extends object>({
   headerGroups,
   columns,
 }: TableHeaderProps<D>) => {
-
   const getColumn: (hg: HeaderGroup<D>) => TableColumn<D> = (() => {
-    const idToColumn = columns.reduce((map: Record<string, TableColumn<D>>, col) => {
-      map[col.id as string] = col;
-      return map;
-    }, {});
-    return (hg: HeaderGroup<D>) => idToColumn[(hg.getHeaderProps().key as string).replace('header_', '')];
+    const idToColumn = columns.reduce(
+      (map: Record<string, TableColumn<D>>, col) => {
+        map[col.id as string] = col;
+        return map;
+      },
+      {}
+    );
+    return (hg: HeaderGroup<D>) =>
+      idToColumn[(hg.getHeaderProps().key as string).replace('header_', '')];
   })();
 
-  const columnWidths = columns.map((c) => {
-    return {
-      id: c.id as string,
-      width: c.width as number | undefined,
-      maxWidth: c.maxWidth as number | undefined,
-      minWidth: c.minWidth as number | undefined,
-    };
-  });
-
-  const getStyleAttr = ({ key, style }: { key: string; style: object }) => {
-    const id = key.replace('header_', '');
-    const widthStyles = columnWidths.find((x) => x.id === id);
-    return { id, ...widthStyles, ...style };
+  const getStyleAttr = (column: HeaderGroup<D>) => {
+    const style = column.getHeaderProps(column.getSortByToggleProps()).style;
+    const { width, minWidth, maxWidth } = getColumn(column);
+    return { width, maxWidth, minWidth, ...style };
   };
 
-  const tooltips = columns.map((c) => {
-    return { id: c.id, tooltip: c.tooltip };
-  });
-
-  const getTooltip = (key: string) => {
-    const id = key.replace('header_', '');
-    const found = tooltips.find((x) => x.id === id && x.tooltip);
-    if (found && found.tooltip)
+  const getTooltip = (column: HeaderGroup<D>) => {
+    const tooltip = getColumn(column).tooltip;
+    if (tooltip)
       return (
         <span className="inline-flex ml-5">
           <Tooltip
             button={
               <IconInfo className="w-[15px] h-[15px] text-grey-4 dark:text-grey-3" />
             }
-            content={found.tooltip}
+            content={tooltip}
           />
         </span>
       );
@@ -78,17 +67,16 @@ export const TableHeader = <D extends object>({
           {headerGroup.headers.map((column) => (
             <th
               {...column.getHeaderProps(column.getSortByToggleProps())}
-              style={getStyleAttr(
-                column.getHeaderProps(column.getSortByToggleProps()) as {
-                  key: string;
-                  style: object;
-                }
-              )}
+              style={getStyleAttr(column)}
               title={undefined}
             >
-              <div className={`flex items-center ${getColumn(column).headerClassName ?? ''}`}>
+              <div
+                className={`flex items-center ${
+                  getColumn(column).headerClassName ?? ''
+                }`}
+              >
                 {column.render('Header')}
-                {getTooltip(column.getHeaderProps().key as string)}
+                {getTooltip(column)}
                 {getSortBy(column.isSorted, column.isSortedDesc)}
               </div>
             </th>

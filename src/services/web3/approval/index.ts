@@ -39,7 +39,8 @@ const setApproval = async (
   token: string,
   user: string,
   spender: string,
-  amountWei?: string
+  amountWei?: string,
+  resolveImmediately?: boolean
 ): Promise<string> => {
   const isEth = token === ethToken;
   if (isEth) return '';
@@ -68,7 +69,7 @@ const setApproval = async (
     return await resolveTxOnConfirmation({
       tx,
       user,
-      resolveImmediately: true,
+      resolveImmediately: !!resolveImmediately,
     });
   } catch (e) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
@@ -104,7 +105,8 @@ export const getNetworkContractApproval = async (
 export const setNetworkContractApproval = async (
   token: Token,
   amount?: string,
-  contract?: string
+  contract?: string,
+  resolveImmediately?: boolean
 ) => {
   const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
   const USER = await user$.pipe(take(1)).toPromise();
@@ -113,6 +115,7 @@ export const setNetworkContractApproval = async (
     token.address,
     USER,
     contract ? contract : BANCOR_NETWORK,
-    amountWei
+    amountWei,
+    resolveImmediately
   );
 };

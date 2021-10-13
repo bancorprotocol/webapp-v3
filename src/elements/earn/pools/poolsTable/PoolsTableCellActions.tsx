@@ -9,20 +9,14 @@ import { EthNetworks } from 'services/web3/types';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();
-  const href = pool.isProtected
-    ? `https://app.bancor.network/eth/portfolio/stake/add/single/${pool.pool_dlt_id}`
-    : `https://app.bancor.network/eth/pool/add/${pool.pool_dlt_id}`;
-
   const bnt = bntToken(chainId ? chainId : EthNetworks.Mainnet);
   const tknAddress = pool.reserves.find((x) => x.address !== bnt)?.address;
 
   return (
     <div className="flex">
-      <a
-        href={href}
-        target="_blank"
+      <NavLink
+        to={`/pools/add-liquidity/${pool.pool_dlt_id}`}
         className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
-        rel="noreferrer"
       >
         <Tooltip
           content="Stake & Earn"
@@ -32,7 +26,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
             />
           }
         />
-      </a>
+      </NavLink>
       <NavLink
         to={tknAddress ? `/?from=${tknAddress}` : '/'}
         className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"

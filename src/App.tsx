@@ -6,8 +6,8 @@ import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
-import { Pools } from 'pages/Pools';
-import { Portfolio } from 'pages/Portfolio';
+import { Pools } from 'pages/earn/pools/Pools';
+import { Portfolio } from 'pages/earn/portfolio/Portfolio';
 import { Vote } from 'pages/Vote';
 import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
@@ -40,6 +40,9 @@ import {
 } from 'utils/localStorage';
 import { loadCommonData } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
+import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
+import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
+import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -127,7 +130,26 @@ export const App = () => {
               <Route exact strict path="/" component={Swap} />
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
+              <Route
+                exact
+                strict
+                path="/pools/add-liquidity/:id"
+                component={AddLiquidity}
+              />
               <Route exact strict path="/portfolio" component={Portfolio} />
+
+              <Route
+                exact
+                strict
+                path="/portfolio/rewards/claim"
+                component={RewardsClaim}
+              />
+              <Route
+                exact
+                strict
+                path="/portfolio/rewards/stake"
+                component={RewardsStake}
+              />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
               <Route component={NotFound} />
