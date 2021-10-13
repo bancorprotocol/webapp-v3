@@ -24,6 +24,7 @@ import {
   calculatePriceDeviationTooHigh,
 } from 'utils/helperFunctions';
 import { sortBy } from 'lodash';
+import { ethToken } from 'services/web3/config';
 
 export const buildLiquidityProtectionContract = (
   contractAddress: string,
@@ -124,6 +125,8 @@ export const addLiquiditySingle = async ({
   );
   const USER = await user$.pipe(take(1)).toPromise();
 
+  const fromIsEth = ethToken === token.address;
+
   return resolveTxOnConfirmation({
     tx: contract.methods.addLiquidity(
       pool.pool_dlt_id,
@@ -132,6 +135,7 @@ export const addLiquiditySingle = async ({
     ),
     user: USER,
     resolveImmediately: true,
+    ...(fromIsEth && { value: expandToken(amount, 18) }),
   });
 };
 
