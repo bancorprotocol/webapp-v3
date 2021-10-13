@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
-import { utils } from 'ethers';
+import { Contract, utils } from 'ethers';
 import { RegisteredContracts } from 'services/web3/types';
 import { Observable } from 'rxjs';
 import {
@@ -18,6 +18,7 @@ import {
 } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
 import { EthNetworkVariables } from 'services/web3/config';
+import { multicall } from 'services/web3/multicall/multicall';
 
 const zeroXContracts$ = currentNetwork$.pipe(
   switchMapIgnoreThrow(async (currentNetwork) =>
@@ -47,31 +48,40 @@ const fetchContractAddresses = async (
   );
 
   try {
-    const addresses = await Promise.all([
-      contract.addressOf(utils.formatBytes32String('BancorNetwork')),
-      contract.addressOf(utils.formatBytes32String('BancorConverterRegistry')),
-      contract.addressOf(utils.formatBytes32String('LiquidityProtectionStore')),
-      contract.addressOf(utils.formatBytes32String('LiquidityProtection')),
-      contract.addressOf(utils.formatBytes32String('StakingRewards')),
+    const addresses = await multicall(networkVariables.network, [
+      buildAddressCall(contract, 'BancorNetwork'),
+      buildAddressCall(contract, 'BancorConverterRegistry'),
+      buildAddressCall(contract, 'LiquidityProtectionStore'),
+      buildAddressCall(contract, 'LiquidityProtection'),
+      buildAddressCall(contract, 'StakingRewards'),
     ]);
 
-    return {
-      BancorNetwork: addresses[0],
-      BancorConverterRegistry: addresses[1],
-      LiquidityProtectionStore: addresses[2],
-      LiquidityProtection: addresses[3],
-      StakingRewards: addresses[4],
-    };
+    if (addresses)
+      return {
+        BancorNetwork: addresses[0].toString(),
+        BancorConverterRegistry: addresses[1].toString(),
+        LiquidityProtectionStore: addresses[2].toString(),
+        LiquidityProtection: addresses[3].toString(),
+        StakingRewards: addresses[4].toString(),
+      };
   } catch (error) {
-    return {
-      BancorNetwork: '',
-      BancorConverterRegistry: '',
-      LiquidityProtectionStore: '',
-      LiquidityProtection: '',
-      StakingRewards: '',
-    };
+    console.error(error);
   }
+  return {
+    BancorNetwork: '',
+    BancorConverterRegistry: '',
+    LiquidityProtectionStore: '',
+    LiquidityProtection: '',
+    StakingRewards: '',
+  };
 };
+
+const buildAddressCall = (registry: Contract, contract: string) => ({
+  contractAddress: registry.address,
+  interface: registry.interface,
+  methodName: 'addressOf',
+  methodParameters: [utils.formatBytes32String(contract)],
+});
 
 const pluckAndCache =
   (key: keyof RegisteredContracts) =>
@@ -107,7 +117,9 @@ export const liquidityProtectionStore$ = liquidityProtection$.pipe(
     );
     try {
       return await contract.store();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
 
     return '';
   }),
@@ -124,7 +136,9 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
     );
     try {
       return await contract.settings();
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
 
     return '';
   }),
