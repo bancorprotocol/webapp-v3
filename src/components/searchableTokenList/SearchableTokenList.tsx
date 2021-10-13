@@ -8,6 +8,7 @@ import {
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
+import { PreSuggestedToken } from 'components/searchableTokenList/PreSuggestedToken';
 import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
@@ -184,9 +185,16 @@ export const SearchableTokenList = ({
               onClick={() => setSearch('')}
             />}
           </div>
+          <PreSuggestedToken
+            onSelect={(token) => {
+              onClick(token);
+              onClose();
+            }}
+          />
+          <div className="border-b-2 dark:border-blue-1"></div>
           <div
             data-cy="searchableTokensList"
-            className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
+            className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 py-10"
           >
             {tokens
               .filter(
