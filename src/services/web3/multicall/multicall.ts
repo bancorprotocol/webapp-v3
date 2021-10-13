@@ -24,13 +24,16 @@ export const multicall = async (network: EthNetworks, calls: MultiCall[]) => {
       ),
     }));
 
-    const encodedRes = await multicallContract.aggregate(encoded);
-    const res = encodedRes.returnData.map((call, i) => {
-      return calls[i].interface.decodeFunctionResult(calls[i].methodName, call);
+    const encodedRes = await multicallContract.tryAggregate(false, encoded);
+    const res = encodedRes.map((call, i) => {
+      return calls[i].interface.decodeFunctionResult(
+        calls[i].methodName,
+        call.returnData
+      );
     });
 
     return res;
   } catch (error) {
-    console.error('error', error);
+    console.error(error);
   }
 };
