@@ -44,7 +44,7 @@ const fetchContractAddresses = async (
 ): Promise<RegisteredContracts> => {
   const contract = ContractRegistry__factory.connect(
     networkVariables.contractRegistry,
-    web3
+    web3.provider
   );
 
   try {
@@ -113,7 +113,7 @@ export const liquidityProtectionStore$ = liquidityProtection$.pipe(
   switchMap(async (liquidityProtection) => {
     const contract = LiquidityProtection__factory.connect(
       liquidityProtection,
-      web3
+      web3.provider
     );
     try {
       return await contract.store();
@@ -132,8 +132,9 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
   switchMap(async (liquidityProtection) => {
     const contract = LiquidityProtection__factory.connect(
       liquidityProtection,
-      web3
+      web3.provider
     );
+
     try {
       return await contract.settings();
     } catch (error) {

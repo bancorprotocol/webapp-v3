@@ -13,7 +13,10 @@ export interface MultiCall {
 
 export const multicall = async (network: EthNetworks, calls: MultiCall[]) => {
   const vars = getNetworkVariables(network);
-  const multicallContract = Multicall__factory.connect(vars.multiCall, web3);
+  const multicallContract = Multicall__factory.connect(
+    vars.multiCall,
+    web3.provider
+  );
 
   try {
     const encoded = calls.map((call) => ({

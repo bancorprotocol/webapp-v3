@@ -27,7 +27,7 @@ const getApproval = async (
   if (token === ethToken)
     return { allowanceWei: '', isApprovalRequired: false };
 
-  const tokenContract = Token__factory.connect(token, web3);
+  const tokenContract = Token__factory.connect(token, web3.provider);
   const allowanceWei = (
     await tokenContract.allowance(user, spender)
   ).toString();
@@ -47,7 +47,7 @@ const setApproval = async (
   const isEth = token === ethToken;
   if (isEth) return '';
 
-  const tokenContract = Token__factory.connect(token, writeWeb3);
+  const tokenContract = Token__factory.connect(token, writeWeb3.provider);
 
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 

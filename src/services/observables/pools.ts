@@ -34,7 +34,7 @@ const trueAnchors$ = bancorConverterRegistry$.pipe(
   switchMapIgnoreThrow(async (converterRegistry) => {
     const contract = ConverterRegistry__factory.connect(
       converterRegistry,
-      web3
+      web3.provider
     );
     return await contract.getAnchors();
   }),
@@ -48,7 +48,7 @@ const anchorAndConverters$ = combineLatest([
   switchMapIgnoreThrow(async ([anchorAddresses, converterRegistryAddress]) => {
     const contract = ConverterRegistry__factory.connect(
       converterRegistryAddress,
-      web3
+      web3.provider
     );
 
     const converters = await contract.getConvertersByAnchors(anchorAddresses);

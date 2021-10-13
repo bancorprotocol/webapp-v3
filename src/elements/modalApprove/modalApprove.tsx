@@ -75,7 +75,7 @@ export const ModalApprove = ({
         while (tx === null)
           try {
             await wait(2000);
-            tx = await web3.getTransactionReceipt(txHash);
+            tx = await web3.provider.getTransactionReceipt(txHash);
           } catch (error) {}
       }
       handleApproved();

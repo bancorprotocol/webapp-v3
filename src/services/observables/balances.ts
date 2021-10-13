@@ -65,7 +65,7 @@ export const fetchTokenBalances = async (
 };
 
 const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
-  const contract = Token__factory.connect(address, web3);
+  const contract = Token__factory.connect(address, web3.provider);
 
   return {
     contractAddress: contract.address,
@@ -76,4 +76,4 @@ const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
 };
 
 const fetchETH = async (user: string) =>
-  shrinkToken((await web3.getBalance(user)).toString(), 18);
+  shrinkToken((await web3.provider.getBalance(user)).toString(), 18);

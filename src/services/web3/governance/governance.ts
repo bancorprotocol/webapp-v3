@@ -15,7 +15,7 @@ export const getStakedAmount = async (
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
-    web3
+    web3.provider
   );
   const amount = await govContract.votesOf(user);
   return shrinkToken(amount.toString(), govToken.decimals);
@@ -33,7 +33,7 @@ export const stakeAmount = async (
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
-      writeWeb3
+      writeWeb3.provider
     );
 
     const txHash = await resolveTxOnConfirmation({
@@ -82,7 +82,7 @@ export const unstakeAmount = async (
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
-      writeWeb3
+      writeWeb3.provider
     );
 
     const txHash = await resolveTxOnConfirmation({
@@ -124,7 +124,7 @@ export const getUnstakeTimer = async (user: string) => {
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
-    web3
+    web3.provider
   );
   const locks = await govContract.voteLocks(user);
   const timeInSeconds = Number(locks) - Date.now() / 1000;

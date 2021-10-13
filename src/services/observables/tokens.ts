@@ -277,7 +277,7 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
     const contract = LiquidityProtectionSettings__factory.connect(
       liquidityProtectionSettingsContract,
-      web3
+      web3.provider
     );
     const res = await contract.minNetworkTokenLiquidityForMinting();
     return shrinkToken(res.toString(), 18);

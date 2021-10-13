@@ -8,24 +8,26 @@ import { EthNetworks } from 'services/web3//types';
 import { providers, Signer } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
-export let web3 = new providers.JsonRpcProvider(
-  buildAlchemyUrl(EthNetworks.Mainnet)
-);
+export const web3 = {
+  provider: new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet)),
+};
 
-export let writeWeb3 = window.ethereum
-  ? new Web3Provider(window.ethereum)
-  : new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet));
+export const writeWeb3 = {
+  provider: window.ethereum
+    ? new Web3Provider(window.ethereum)
+    : new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet)),
+};
 
 export const setProvider = (provider: any, write = true) => {
-  if (write) writeWeb3 = provider;
-  else web3 = provider;
+  if (write) writeWeb3.provider = provider;
+  else web3.provider = provider;
 };
 
 export const buildContract = (
   abi: ContractInterface,
   contractAddress: string,
   injectedWeb3?: Web3Provider | Signer
-) => new Contract(contractAddress, abi, injectedWeb3 || web3);
+) => new Contract(contractAddress, abi, injectedWeb3 || web3.provider);
 
 export const resolveTxOnConfirmation = async ({
   tx,

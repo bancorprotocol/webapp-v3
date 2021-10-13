@@ -40,7 +40,7 @@ export const getRateAndPriceImapct = async (
 
     const contract = BancorNetwork__factory.connect(
       networkContractAddress,
-      web3
+      web3.provider
     );
 
     const from =
@@ -93,7 +93,7 @@ export const getRate = async (
 
     const contract = BancorNetwork__factory.connect(
       networkContractAddress,
-      web3
+      web3.provider
     );
 
     const from = fromToken.address === wethToken ? ethToken : fromToken.address;
@@ -143,7 +143,7 @@ export const swap = async ({
 
   const contract = BancorNetwork__factory.connect(
     networkContractAddress,
-    writeWeb3
+    writeWeb3.provider
   );
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);
@@ -262,7 +262,10 @@ const buildTokenPoolCall = (
   pool: APIPool,
   tokenAddress: string
 ): MCInterface => {
-  const contract = Converter__factory.connect(pool.converter_dlt_id, web3);
+  const contract = Converter__factory.connect(
+    pool.converter_dlt_id,
+    web3.provider
+  );
 
   return {
     contractAddress: contract.address,
