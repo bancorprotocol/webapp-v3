@@ -39,8 +39,8 @@ const menu: MenuItem[] = [
     to: '/pools',
     icon: <IconEarn />,
     subMenu: [
-      // { label: 'Portfolio', to: '/portfolio' },
       { label: 'Pools', to: '/pools' },
+      // { label: 'Portfolio', to: '/portfolio' },
     ],
   },
   {

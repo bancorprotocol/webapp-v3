@@ -8,6 +8,7 @@ import {
   tokensNoBalance$,
 } from 'services/observables/tokens';
 import {
+  setBntPrice,
   setKeeperDaoTokens,
   setTokenList,
   setTokenLists,
@@ -19,6 +20,7 @@ import { loadingBalances$ } from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
+import { bntPrice$ } from 'services/observables/bancor';
 
 let tokenSub: Subscription;
 let tokenListsSub: Subscription;
@@ -26,6 +28,7 @@ let keeperDaoSub: Subscription;
 let loadingBalancesSub: Subscription;
 let poolsSub: Subscription;
 let statsSub: Subscription;
+let bntPriceSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   if (!tokenListsSub || tokenListsSub.closed)
@@ -63,5 +66,9 @@ export const loadCommonData = (dispatch: any) => {
 
   statsSub = statistics$.subscribe((stats) => {
     dispatch(setStats(stats));
+  });
+
+  bntPriceSub = bntPrice$.subscribe((bntPrice) => {
+    dispatch(setBntPrice(bntPrice));
   });
 };
