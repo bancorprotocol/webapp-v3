@@ -47,7 +47,7 @@ const setApproval = async (
   const isEth = token === ethToken;
   if (isEth) return '';
 
-  const tokenContract = Token__factory.connect(token, writeWeb3.provider);
+  const tokenContract = Token__factory.connect(token, writeWeb3.signer);
 
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 

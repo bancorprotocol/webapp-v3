@@ -143,7 +143,7 @@ export const swap = async ({
 
   const contract = BancorNetwork__factory.connect(
     networkContractAddress,
-    writeWeb3.provider
+    writeWeb3.signer
   );
 
   const fromWei = expandToken(fromAmount, fromToken.decimals);

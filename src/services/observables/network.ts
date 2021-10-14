@@ -27,7 +27,7 @@ export const setNetwork = async (chainId: EthNetworks) => {
     (chainId === EthNetworks.Mainnet || chainId === EthNetworks.Ropsten) &&
     currentChain !== chainId
   ) {
-    setProvider(new providers.JsonRpcProvider(buildAlchemyUrl(chainId)), false);
+    setProvider(new providers.JsonRpcProvider(buildAlchemyUrl(chainId)));
     currentNetworkReceiver$.next(chainId);
   }
 };

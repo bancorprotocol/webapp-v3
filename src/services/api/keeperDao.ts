@@ -234,7 +234,7 @@ export const cancelOrders = async (
   const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
   const contract = ExchangeProxy__factory.connect(
     exchangeProxyAddress,
-    writeWeb3.provider
+    writeWeb3.signer
   );
 
   try {

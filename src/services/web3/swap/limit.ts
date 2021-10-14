@@ -18,7 +18,7 @@ import { exchangeProxy$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 
 export const depositWeth = async (amount: string, user: string) => {
-  const tokenContract = Weth__factory.connect(wethToken, writeWeb3.provider);
+  const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);
 
   const tx = await tokenContract.deposit();
@@ -37,7 +37,7 @@ export const withdrawWeth = async (
   amount: string,
   user: string
 ): Promise<BaseNotification> => {
-  const tokenContract = Weth__factory.connect(wethToken, writeWeb3.provider);
+  const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);
 
   try {
@@ -90,12 +90,11 @@ export const createOrder = async (
   const txOrigin = await getTxOrigin();
   const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
 
-  const signer = writeWeb3.provider.getSigner();
-  const signature = await signer._signTypedData(
+  const signature = await writeWeb3.signer._signTypedData(
     domain(exchangeProxyAddress),
     types,
     {
-      signer: signer,
+      signer: writeWeb3.signer,
       sender: user,
       minGasPrice: ZERO,
       maxGasPrice: ZERO,

@@ -13,14 +13,19 @@ export const web3 = {
 };
 
 export const writeWeb3 = {
-  provider: window.ethereum
-    ? new Web3Provider(window.ethereum)
-    : new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet)),
+  signer: window.ethereum
+    ? new Web3Provider(window.ethereum).getSigner()
+    : new providers.JsonRpcProvider(
+        buildAlchemyUrl(EthNetworks.Mainnet)
+      ).getSigner(),
 };
 
-export const setProvider = (provider: any, write = true) => {
-  if (write) writeWeb3.provider = provider;
-  else web3.provider = provider;
+export const setProvider = (provider: providers.JsonRpcProvider) => {
+  web3.provider = provider;
+};
+
+export const setSigner = (signer: providers.JsonRpcSigner) => {
+  writeWeb3.signer = signer;
 };
 
 export const buildContract = (

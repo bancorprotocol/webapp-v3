@@ -33,7 +33,7 @@ export const stakeAmount = async (
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
-      writeWeb3.provider
+      writeWeb3.signer
     );
 
     const txHash = await resolveTxOnConfirmation({
@@ -82,7 +82,7 @@ export const unstakeAmount = async (
     const networkVars = await networkVars$.pipe(take(1)).toPromise();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
-      writeWeb3.provider
+      writeWeb3.signer
     );
 
     const txHash = await resolveTxOnConfirmation({
