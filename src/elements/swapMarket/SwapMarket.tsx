@@ -201,58 +201,20 @@ export const SwapMarket = ({
       return;
     }
 
-    try {
-      const txHash = await swap({
-        slippageTolerance,
-        fromToken,
-        toToken,
-        fromAmount,
-        toAmount,
-        user: account,
-        onConfirmation: onConfirmation,
-      });
+    dispatch(
+      addNotification(
+        await swap(
+          slippageTolerance,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          onConfirmation
+        )
+      )
+    );
 
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          },
-          txHash,
-        })
-      );
-    } catch (e: any) {
-      console.error('Swap failed with error: ', e);
-      if (e.code === ErrorCode.DeniedTx)
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the trade. If this was by mistake, please try again.',
-          })
-        );
-      else {
-        const conversion = getConversionLS();
-        sendConversionEvent(ConversionEvents.fail, {
-          conversion,
-          error: e.message,
-        });
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          })
-        );
-      }
-    } finally {
-      setShowModal(false);
-    }
+    setShowModal(false);
   };
 
   const handleSwitch = () => {

@@ -1,6 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { Pool, Token } from 'services/observables/tokens';
-import { resolveTxOnConfirmation } from 'services/web3';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
@@ -20,13 +19,10 @@ import {
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
-import {
-  BancorNetwork__factory,
-  Converter__factory,
-  Multicall,
-} from '../abis/types';
+import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
-import { Result } from '@ethersproject/abi';
+import { NotificationType } from 'redux/notification/notification';
+import { ErrorCode } from '../types';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -121,61 +117,86 @@ const calculateMinimumReturn = (
   return res === '0' ? '1' : res;
 };
 
-export const swap = async ({
-  slippageTolerance,
-  fromToken,
-  toToken,
-  fromAmount,
-  toAmount,
-  user,
-  onConfirmation,
-}: {
-  slippageTolerance: number;
-  fromToken: Token;
-  toToken: Token;
-  fromAmount: string;
-  toAmount: string;
-  user: string;
-  onConfirmation?: Function;
-}): Promise<string> => {
-  const fromIsEth = fromToken.address === ethToken;
-  const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
+export const swap = async (
+  slippageTolerance: number,
+  fromToken: Token,
+  toToken: Token,
+  fromAmount: string,
+  toAmount: string,
+  onConfirmation: Function
+) => {
+  try {
+    const fromIsEth = fromToken.address === ethToken;
+    const networkContractAddress = await bancorNetwork$
+      .pipe(take(1))
+      .toPromise();
 
-  const contract = BancorNetwork__factory.connect(
-    networkContractAddress,
-    writeWeb3.signer
-  );
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      writeWeb3.signer
+    );
 
-  const fromWei = expandToken(fromAmount, fromToken.decimals);
-  const expectedToWei = expandToken(toAmount, toToken.decimals);
-  const path = await findPath(fromToken.address, toToken.address);
+    const fromWei = expandToken(fromAmount, fromToken.decimals);
+    const expectedToWei = expandToken(toAmount, toToken.decimals);
+    const path = await findPath(fromToken.address, toToken.address);
 
-  const conversion = getConversionLS();
-  sendConversionEvent(ConversionEvents.wallet_req, conversion);
+    const conversion = getConversionLS();
+    sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
-  return resolveTxOnConfirmation({
-    tx: await contract.convertByPath(
+    const tx = await contract.convertByPath(
       path,
       fromWei,
       calculateMinimumReturn(expectedToWei, slippageTolerance),
       zeroAddress,
       zeroAddress,
-      0
-    ),
-    user,
-    onHash: () =>
-      sendConversionEvent(ConversionEvents.wallet_confirm, conversion),
-    onConfirmation: () => {
-      sendConversionEvent(ConversionEvents.success, {
-        ...conversion,
-        conversion_market_token_rate: fromToken.usdPrice,
-        transaction_category: 'Conversion',
+      0,
+      { from: fromIsEth ? fromWei : undefined }
+    );
+
+    console.log('no approve');
+    sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
+
+    return {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+      },
+      txHash: tx.hash,
+      onCompleted: () => {
+        sendConversionEvent(ConversionEvents.success, {
+          ...conversion,
+          conversion_market_token_rate: fromToken.usdPrice,
+          transaction_category: 'Conversion',
+        });
+        onConfirmation && onConfirmation();
+      },
+    };
+  } catch (e: any) {
+    console.error('Swap failed with error: ', e);
+    if (e.code === ErrorCode.DeniedTx)
+      return {
+        type: NotificationType.error,
+        title: 'Transaction Rejected',
+        msg: 'You rejected the trade. If this was by mistake, please try again.',
+      };
+    else {
+      const conversion = getConversionLS();
+      sendConversionEvent(ConversionEvents.fail, {
+        conversion,
+        error: e.message,
       });
-      onConfirmation && onConfirmation();
-    },
-    resolveImmediately: true,
-    ...(fromIsEth && { value: fromWei }),
-  });
+      return {
+        type: NotificationType.error,
+        title: 'Transaction Failed',
+        msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+      };
+    }
+  }
 };
 
 const findPath = async (from: string, to: string) => {
