@@ -1,8 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
 import { NULL_ADDRESS, hexUtils } from '@0x/utils';
-import { resolveTxOnConfirmation, web3 } from 'services/web3/index';
-import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
+import { ErrorCode, EthNetworks } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
 import { writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
@@ -21,16 +20,8 @@ export const depositWeth = async (amount: string, user: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);
 
-  const tx = await tokenContract.deposit();
-
-  const txHash = await resolveTxOnConfirmation({
-    value: wei,
-    tx,
-    user,
-    resolveImmediately: true,
-  });
-
-  return txHash;
+  const tx = await tokenContract.deposit({ from: wei });
+  return tx.hash;
 };
 
 export const withdrawWeth = async (
@@ -41,16 +32,13 @@ export const withdrawWeth = async (
   const wei = expandToken(amount, 18);
 
   try {
-    const txHash = await resolveTxOnConfirmation({
-      tx: await tokenContract.withdraw(wei),
-      user,
-      resolveImmediately: true,
-    });
+    const tx = await tokenContract.withdraw(wei);
+
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
       msg: 'Withdraw WETH is pending confirmation',
-      txHash,
+      txHash: tx.hash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: `Your withdraw of ${amount} WETH has been confirmed`,

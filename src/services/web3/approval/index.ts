@@ -1,7 +1,6 @@
 import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
-import { resolveTxOnConfirmation } from 'services/web3/index';
 import { bancorNetwork$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
@@ -62,19 +61,16 @@ const setApproval = async (
     );
     if (Number(allowanceWei) !== 0) {
       const tx = await tokenContract.approve(spender, '0');
-      await resolveTxOnConfirmation({ tx, user, resolveImmediately: true });
+      await tx.wait();
     }
   }
 
-  const tx = await tokenContract.approve(spender, amountFinal);
   try {
-    return await resolveTxOnConfirmation({
-      tx,
-      user,
-      resolveImmediately: true,
-    });
+    const tx = await tokenContract.approve(spender, amountFinal);
+    return tx.hash;
   } catch (e: any) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
+
     if (!isTxDenied) {
       // TODO send this error with failed contract to Sentry or GTM
       NULL_APPROVAL_CONTRACTS.push(token);
@@ -83,6 +79,7 @@ const setApproval = async (
         e.message
       );
     }
+
     throw e;
   }
 };

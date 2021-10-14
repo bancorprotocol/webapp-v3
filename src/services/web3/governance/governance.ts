@@ -3,7 +3,6 @@ import { take } from 'rxjs/operators';
 import { networkVars$ } from 'services/observables/network';
 import { Token } from 'services/observables/tokens';
 import { shrinkToken, expandToken } from 'utils/formulas';
-import { resolveTxOnConfirmation } from '..';
 import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';
@@ -25,7 +24,7 @@ export const stakeAmount = async (
   amount: string,
   user: string,
   govToken: Token,
-  onConfirmation?: (hash: string) => void
+  onConfirmation: Function
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -36,23 +35,20 @@ export const stakeAmount = async (
       writeWeb3.signer
     );
 
-    const txHash = await resolveTxOnConfirmation({
-      tx: await govContract.stake(expandedAmount),
-      user,
-      resolveImmediately: true,
-      onConfirmation,
-    });
+    const tx = await govContract.stake(expandedAmount);
+
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
       msg: 'Staking vBNT is pending confirmation',
-      txHash,
+      txHash: tx.hash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: `Your stake of ${amount} vBNT has been confirmed`,
         errorTitle: 'Transaction Failed',
         errorMsg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
       },
+      onCompleted: () => onConfirmation(),
     };
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
@@ -74,7 +70,7 @@ export const unstakeAmount = async (
   amount: string,
   user: string,
   govToken: Token,
-  onConfirmation?: (hash: string) => void
+  onConfirmation: Function
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -85,23 +81,20 @@ export const unstakeAmount = async (
       writeWeb3.signer
     );
 
-    const txHash = await resolveTxOnConfirmation({
-      tx: await govContract.unstake(expandedAmount),
-      user,
-      resolveImmediately: true,
-      onConfirmation,
-    });
+    const tx = await govContract.unstake(expandedAmount);
+
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
       msg: 'Unstaking vBNT is pending confirmation',
-      txHash,
+      txHash: tx.hash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: `Unstaking ${amount} vBNT has been confirmed`,
         errorTitle: 'Transaction Failed',
         errorMsg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
       },
+      onCompleted: () => onConfirmation(),
     };
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)

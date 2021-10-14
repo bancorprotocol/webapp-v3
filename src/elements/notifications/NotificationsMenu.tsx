@@ -27,7 +27,7 @@ export const NotificationsMenu = () => {
     if (!notification.txHash) return;
     try {
       const tx = await web3.provider.getTransactionReceipt(notification.txHash);
-      if (tx !== null)
+      if (tx !== null) {
         dispatch(
           setStatus({
             id: notification.id,
@@ -40,6 +40,8 @@ export const NotificationsMenu = () => {
               : notification.updatedInfo?.errorMsg,
           })
         );
+        notification.onCompleted && notification.onCompleted();
+      }
     } catch (e) {}
   };
 

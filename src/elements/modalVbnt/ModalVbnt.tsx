@@ -96,7 +96,7 @@ export const ModalVbnt = ({
     if (stake)
       dispatch(
         addNotification(
-          await stakeAmount(amount, account, token, (_) =>
+          await stakeAmount(amount, account, token, () =>
             refreshBalances(token, account, chainId)
           )
         )
@@ -104,7 +104,7 @@ export const ModalVbnt = ({
     else
       dispatch(
         addNotification(
-          await unstakeAmount(amount, account, token, (_) =>
+          await unstakeAmount(amount, account, token, () =>
             refreshBalances(token, account, chainId)
           )
         )

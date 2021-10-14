@@ -8,7 +8,7 @@ import {
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
 import { Token, tokens$ } from 'services/observables/tokens';
-import { resolveTxOnConfirmation, writeWeb3 } from 'services/web3';
+import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -238,19 +238,16 @@ export const cancelOrders = async (
   );
 
   try {
-    const txHash = await resolveTxOnConfirmation({
-      tx:
-        stringOrders.length === 1
-          ? await contract.cancelRfqOrder(stringOrders[0])
-          : await contract.batchCancelRfqOrders(stringOrders),
-      user,
-      resolveImmediately: true,
-    });
+    const tx =
+      stringOrders.length === 1
+        ? await contract.cancelRfqOrder(stringOrders[0])
+        : await contract.batchCancelRfqOrders(stringOrders);
+
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
       msg: 'Transaction is pending confirmationn',
-      txHash,
+      txHash: tx.hash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: 'Canceling your limit orders has been confirmed',
