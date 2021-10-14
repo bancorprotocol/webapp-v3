@@ -122,14 +122,17 @@ export const TokenTable = () => {
       {
         id: 'actions',
         Header: '',
-        accessor: () => (
-          <NavLink
-            to="/"
-            className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
-          >
-            Trade
-          </NavLink>
-        ),
+        accessor: 'symbol',
+        Cell: (cellData) => {
+          return (
+            <NavLink
+              to={`/?from=${cellData.row.original.address}`}
+              className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
+            >
+              Trade
+            </NavLink>
+          );
+        },
         width: 50,
         minWidth: 50,
         disableSortBy: true,

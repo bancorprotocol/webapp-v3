@@ -8,20 +8,55 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
+import { useHistory } from 'react-router-dom';
+import {
+  replaceFrom,
+  replaceLimit,
+  replaceTo,
+  switchTokens,
+} from 'utils/router';
 
 interface SwapWidgetProps {
   isLimit: boolean;
   setIsLimit: Function;
+  from: string | null;
+  to: string | null;
+  limit: string | null;
 }
 
-export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
+export const SwapWidget = ({
+  isLimit,
+  setIsLimit,
+  from,
+  to,
+  limit,
+}: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState<Token | null>(null);
+  const [toToken, setToToken] = useState<Token | undefined>();
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
+  const history = useHistory();
+
+  useEffect(() => {
+    if (tokens) {
+      if (from) {
+        const fromToken = tokens.find((x) => x.address === from);
+        if (fromToken) setFromToken(fromToken);
+        else setFromToken(tokens[0]);
+      } else setFromToken(tokens[0]);
+
+      if (to) {
+        const toToken = tokens.find((x) => x.address === to);
+        if (toToken) setToToken(toToken);
+        else setToToken(undefined);
+      } else setToToken(undefined);
+
+      setIsLimit(limit);
+    }
+  }, [from, to, limit, tokens, setIsLimit]);
 
   useAsyncEffect(
     async (isMounted) => {
@@ -47,58 +82,45 @@ export const SwapWidget = ({ isLimit, setIsLimit }: SwapWidgetProps) => {
     [toToken]
   );
 
-  useEffect(() => {
-    const findSetToken = (token: Token) => {
-      if (token) {
-        const found = tokens.find((x) => x.address === token.address);
-        if (found) return found;
-      }
-
-      return null;
-    };
-    const foundFrom = findSetToken(fromToken);
-    foundFrom ? setFromToken(foundFrom) : setFromToken(tokens[0]);
-
-    if (
-      toToken &&
-      fromToken &&
-      fromToken.address !== wethToken &&
-      toToken.address !== ethToken
-    ) {
-      const foundTo = findSetToken(toToken);
-      foundTo ? setToToken(foundTo) : setToToken(tokens[1]);
-    }
-  }, [tokens, fromToken, toToken]);
-
-  const switchTokens = () => {
-    if (toToken) {
-      setFromToken(toToken);
-      setToToken(fromToken);
-    }
-  };
-
   return (
     <div className="bg-white dark:bg-blue-4 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
       <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
         <div>
-          <div className="widget">
-            <SwapHeader isLimit={isLimit} setIsLimit={setIsLimit} />
+          <div className="widget ">
+            <SwapHeader
+              isLimit={isLimit}
+              setIsLimit={(limit: boolean) =>
+                replaceLimit(fromToken, tokens, limit, history, toToken)
+              }
+            />
             <hr className="widget-separator" />
             {isLimit ? (
               <SwapLimit
                 fromToken={fromToken}
-                setFromToken={setFromToken}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, true, history, toToken)
+                }
                 toToken={toToken}
-                setToToken={setToToken}
-                switchTokens={switchTokens}
+                setToToken={(to: Token) =>
+                  replaceTo(fromToken, true, history, to)
+                }
+                switchTokens={() =>
+                  switchTokens(fromToken, true, history, toToken)
+                }
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
-                setFromToken={setFromToken}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, false, history, toToken)
+                }
                 toToken={toToken}
-                setToToken={setToToken}
-                switchTokens={switchTokens}
+                setToToken={(to: Token) =>
+                  replaceTo(fromToken, false, history, to)
+                }
+                switchTokens={() =>
+                  switchTokens(fromToken, false, history, toToken)
+                }
               />
             )}
           </div>

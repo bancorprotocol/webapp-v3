@@ -24,6 +24,7 @@ import {
   calculatePriceDeviationTooHigh,
 } from 'utils/helperFunctions';
 import { sortBy } from 'lodash';
+import { ethToken } from 'services/web3/config';
 
 export const buildLiquidityProtectionContract = (
   contractAddress: string,
@@ -124,6 +125,8 @@ export const addLiquiditySingle = async ({
   );
   const USER = await user$.pipe(take(1)).toPromise();
 
+  const fromIsEth = ethToken === token.address;
+
   return resolveTxOnConfirmation({
     tx: contract.methods.addLiquidity(
       pool.pool_dlt_id,
@@ -132,13 +135,26 @@ export const addLiquiditySingle = async ({
     ),
     user: USER,
     resolveImmediately: true,
+    ...(fromIsEth && { value: expandToken(amount, 18) }),
   });
+};
+
+export const fetchReserveBalances = async (pool: Pool) => {
+  const converterContract = buildConverterContract(pool.converter_dlt_id, web3);
+
+  const tknBalance = await converterContract.methods
+    .getConnectorBalance(pool.reserves[0].address)
+    .call();
+  const bntBalance = await converterContract.methods
+    .getConnectorBalance(pool.reserves[1].address)
+    .call();
+
+  return { tknBalance, bntBalance };
 };
 
 export const fetchBntNeededToOpenSpace = async (
   pool: Pool
 ): Promise<string> => {
-  const converterContract = buildConverterContract(pool.converter_dlt_id, web3);
   const liquidityProtection_dlt_id = await liquidityProtection$
     .pipe(first())
     .toPromise();
@@ -161,14 +177,6 @@ export const fetchBntNeededToOpenSpace = async (
   const liquidityProtectionSystemStoreContract =
     buildLiquidityProtectionSystemStoreContract(systemStore_dlt_id, web3);
 
-  const tknBalance = await converterContract.methods
-    .getConnectorBalance(pool.reserves[0].address)
-    .call();
-
-  const bntBalance = await converterContract.methods
-    .getConnectorBalance(pool.reserves[1].address)
-    .call();
-
   const networkTokenMintingLimits =
     await liquidityProtectionSettingsContract.methods
       .networkTokenMintingLimits(pool.pool_dlt_id)
@@ -178,6 +186,8 @@ export const fetchBntNeededToOpenSpace = async (
     await liquidityProtectionSystemStoreContract.methods
       .networkTokensMinted(pool.pool_dlt_id)
       .call();
+
+  const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
 
   const bntNeeded = calculateBntNeededToOpenSpace(
     bntBalance,

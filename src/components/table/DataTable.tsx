@@ -12,6 +12,7 @@ import { classNameGenerator } from 'utils/pureFunctions';
 
 export type TableColumn<D extends object> = Column<D> & {
   tooltip?: string;
+  headerClassName?: string;
 };
 
 interface TableProps<D extends object> {

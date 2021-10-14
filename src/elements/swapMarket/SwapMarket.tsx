@@ -34,7 +34,7 @@ import { useInterval } from 'hooks/useInterval';
 interface SwapMarketProps {
   fromToken: Token;
   setFromToken: Function;
-  toToken: Token | null;
+  toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
 }
@@ -79,7 +79,9 @@ export const SwapMarket = ({
   };
 
   useInterval(() => {
-    if (toToken) loadRateAndPriceImapct(fromToken, toToken, fromAmount ?? '1');
+    if (toToken && fromToken.address !== wethToken) {
+      loadRateAndPriceImapct(fromToken, toToken, fromAmount ? fromAmount : '1');
+    }
   }, 15000);
 
   useEffect(() => {
@@ -87,8 +89,7 @@ export const SwapMarket = ({
   }, [fromAmount]);
 
   useEffect(() => {
-    if (toToken && toToken.address === wethToken) setToToken(undefined);
-    else if (fromToken && fromToken.address === wethToken) {
+    if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
       setPriceImpact('0.00');
@@ -97,7 +98,6 @@ export const SwapMarket = ({
         .times(eth?.usdPrice!)
         .toString();
       setToAmountUsd(usdAmount);
-      setToToken(eth);
       setToAmount(fromDebounce);
       setIsLoadingRate(false);
     } else {
@@ -279,12 +279,14 @@ export const SwapMarket = ({
     if (rate === '0') return true;
     if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
     if (!toToken) return true;
+    if (toToken.address === wethToken) return true;
     if (!account) return false;
     return false;
   };
 
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
+    else if (toToken.address === wethToken) return 'Please change WETH to ETH';
     if (fromToken.balance) {
       const isInsufficientBalance = new BigNumber(fromToken.balance).lt(
         fromAmount

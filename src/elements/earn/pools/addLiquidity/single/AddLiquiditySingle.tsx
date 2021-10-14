@@ -18,6 +18,7 @@ import {
 } from 'redux/notification/notification';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   pool: Pool;
@@ -31,6 +32,18 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const history = useHistory();
   const [selectedToken, setSelectedToken] = useState<Token>(tkn!);
   const [amount, setAmount] = useState('');
+  const [amountUsd, setAmountUsd] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
+  const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
+
+  const handleAmountChange = (amount: string, tkn?: Token) => {
+    setAmount(amount);
+    const usdAmount = new BigNumber(amount)
+      .times(tkn ? tkn.usdPrice! : selectedToken.usdPrice!)
+      .toString();
+    setAmountUsd(usdAmount);
+  };
 
   const addProtection = async () => {
     try {
@@ -89,6 +102,32 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     return <></>;
   }
 
+  const handleError = () => {
+    if (errorMsg) return errorMsg;
+    if (!spaceAvailableBnt || !spaceAvailableTkn) {
+      return '';
+    }
+    if (selectedToken.symbol === 'BNT') {
+      const isSpaceAvailable = new BigNumber(spaceAvailableBnt).gte(
+        amount || 0
+      );
+      if (isSpaceAvailable) {
+        return '';
+      } else {
+        return 'Not enough space available';
+      }
+    } else {
+      const isSpaceAvailable = new BigNumber(spaceAvailableTkn).gte(
+        amount || 0
+      );
+      if (isSpaceAvailable) {
+        return '';
+      } else {
+        return 'Not enough space available';
+      }
+    }
+  };
+
   return (
     <Widget title="Add Liquidity" subtitle="Single-Sided">
       <AddLiquiditySingleInfoBox />
@@ -98,17 +137,30 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           pool={pool}
           amount={amount}
           setAmount={setAmount}
+          amountUsd={amountUsd}
+          setAmountUsd={setAmountUsd}
           token={selectedToken}
           setToken={(token: Token) => setSelectedToken(token)}
+          errorMsg={errorMsg}
+          setErrorMsg={setErrorMsg}
         />
       </div>
       <AddLiquiditySingleSpaceAvailable
         pool={pool}
         token={tkn}
         selectedToken={selectedToken}
-        setSelectedToken={(token: Token) => setSelectedToken(token)}
+        setSelectedToken={setSelectedToken}
+        setAmount={handleAmountChange}
+        spaceAvailableBnt={spaceAvailableBnt}
+        setSpaceAvailableBnt={setSpaceAvailableBnt}
+        spaceAvailableTkn={spaceAvailableTkn}
+        setSpaceAvailableTkn={setSpaceAvailableTkn}
       />
-      <AddLiquiditySingleCTA onStart={onStart} amount={amount} />
+      <AddLiquiditySingleCTA
+        onStart={onStart}
+        amount={amount}
+        errorMsg={handleError()}
+      />
       {ModalApprove}
     </Widget>
   );
