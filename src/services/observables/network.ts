@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay, take } from 'rxjs/operators';
 import { getNetworkVariables } from 'services/web3/config';
 import { setProvider, web3 } from 'services/web3';
 import { EthNetworks } from 'services/web3/types';
@@ -21,8 +21,12 @@ export const currentNetwork$ = currentNetworkReceiver$.pipe(
   shareReplay(1)
 );
 
-export const setNetwork = (chainId: EthNetworks) => {
-  if (chainId === EthNetworks.Mainnet || chainId === EthNetworks.Ropsten) {
+export const setNetwork = async (chainId: EthNetworks) => {
+  const currentChain = await currentNetworkReceiver$.pipe(take(1)).toPromise();
+  if (
+    (chainId === EthNetworks.Mainnet || chainId === EthNetworks.Ropsten) &&
+    currentChain !== chainId
+  ) {
     setProvider(new providers.JsonRpcProvider(buildAlchemyUrl(chainId)), false);
     currentNetworkReceiver$.next(chainId);
   }

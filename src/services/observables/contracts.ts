@@ -83,31 +83,17 @@ const buildAddressCall = (registry: Contract, contract: string) => ({
   methodParameters: [utils.formatBytes32String(contract)],
 });
 
-const pluckAndCache =
-  (key: keyof RegisteredContracts) =>
-  (contractsObj$: Observable<RegisteredContracts>) =>
-    contractsObj$.pipe(
-      pluck(key),
-      map(utils.getAddress),
-      optimisticContract(key),
-      shareReplay(1)
-    );
-
-export const bancorNetwork$ = contractAddresses$.pipe(
-  pluckAndCache('BancorNetwork')
-);
+export const bancorNetwork$ = contractAddresses$.pipe(pluck('BancorNetwork'));
 
 export const liquidityProtection$ = contractAddresses$.pipe(
-  pluckAndCache('LiquidityProtection')
+  pluck('LiquidityProtection')
 );
 
 export const bancorConverterRegistry$ = contractAddresses$.pipe(
-  pluckAndCache('BancorConverterRegistry')
+  pluck('BancorConverterRegistry')
 );
 
-export const stakingRewards$ = contractAddresses$.pipe(
-  pluckAndCache('StakingRewards')
-);
+export const stakingRewards$ = contractAddresses$.pipe(pluck('StakingRewards'));
 
 export const liquidityProtectionStore$ = liquidityProtection$.pipe(
   switchMap(async (liquidityProtection) => {
