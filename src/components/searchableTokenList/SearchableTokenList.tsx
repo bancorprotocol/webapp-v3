@@ -24,6 +24,7 @@ interface SearchableTokenListProps {
   excludedTokens: string[];
   includedTokens: string[];
   tokens: Token[];
+  limit?: boolean;
 }
 
 interface SearchableTokenListLayoutProps {
@@ -77,6 +78,7 @@ export const SearchableTokenList = ({
   excludedTokens = [],
   includedTokens = [],
   tokens,
+  limit,
 }: SearchableTokenListProps) => {
   const [search, setSearch] = useState('');
   const [manage, setManage] = useState(false);
@@ -199,6 +201,7 @@ export const SearchableTokenList = ({
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
                     token.name.toLowerCase().includes(search.toLowerCase()))
               )
+              .slice(0, limit ? 300 : tokens.length)
               .map((token) => {
                 return (
                   <button

@@ -4,7 +4,6 @@ import { SearchableTokenList } from 'components/searchableTokenList/SearchableTo
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Image } from 'components/image/Image';
-import { useAppSelector } from 'redux/index';
 
 interface SelectTokenProps {
   label?: string;
@@ -80,6 +79,7 @@ export const SelectToken = ({
           setSelectToken(false);
         }}
         isOpen={isOpen}
+        limit
         setIsOpen={setIsOpen}
         tokens={tokens ? tokens : []}
         excludedTokens={excludedTokens}

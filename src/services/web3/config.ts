@@ -134,6 +134,8 @@ const ropstenTokenEmptyProps = {
   usd_volume_24: '0',
   isWhitelisted: false,
 };
+
+//Used to test create pool
 export const ropstenTokens: Token[] = [
   {
     address: '0x2080dD00237F1E2F3e95d501ae4a925496DBb200',
