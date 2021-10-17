@@ -6,9 +6,6 @@ import { EthNetworks } from 'services/web3/types';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 import { providers } from 'ethers';
 
-//@ts-ignore
-const { ethereum } = window;
-
 export const getChainID = (chain: string | number): EthNetworks =>
   typeof chain === 'string' ? parseInt(chain) : chain;
 

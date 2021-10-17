@@ -3,12 +3,13 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { useMemo } from 'react';
-import { SortingRule } from 'react-table';
+import { SortingRule, Row } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'redux/index';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
+import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 
 interface Props {
   search: string;
@@ -35,7 +36,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         ),
         accessor: 'name',
         Cell: (cellData) => PoolsTableCellName(cellData.row.original),
-        minWidth: 200,
+        minWidth: 225,
         sortDescFirst: true,
       },
       {
@@ -68,19 +69,25 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         Header: 'Rewards',
         accessor: 'reward',
         Cell: (cellData) => PoolsTableCellRewards(cellData.row.original),
-        minWidth: 250,
-        disableSortBy: true,
+        minWidth: 100,
+        sortDescFirst: true,
+        sortType: (a: Row<Pool>, b: Row<Pool>, id: string) => {
+          if (!!a.values[id] && !b.values[id]) return 1;
+          if (!a.values[id] && !!b.values[id]) return -1;
+          return a.values['liquidity'] > b.values['liquidity'] ? 1 : -1;
+        },
         tooltip:
-          'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',
+          'Active indicates a current liquidity mining program on the pool.',
       },
       {
         id: 'apr',
         Header: 'APR',
         accessor: 'apr',
-        Cell: (cellData) => `${cellData.value.toFixed(2)}%`,
-        minWidth: 80,
-        sortDescFirst: true,
-        tooltip: '24h fees annualized divided by liquidity in the pool. ',
+        headerClassName: 'justify-center',
+        Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
+        minWidth: 250,
+        disableSortBy: true,
+        tooltip: 'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
       },
       {
         id: 'actions',
