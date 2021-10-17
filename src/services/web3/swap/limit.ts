@@ -20,7 +20,7 @@ export const depositWeth = async (amount: string, user: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);
 
-  const tx = await tokenContract.deposit({ from: wei });
+  const tx = await tokenContract.deposit({ value: wei });
   return tx.hash;
 };
 

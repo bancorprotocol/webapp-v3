@@ -150,10 +150,9 @@ export const swap = async (
       zeroAddress,
       zeroAddress,
       0,
-      { from: fromIsEth ? fromWei : undefined }
+      { value: fromIsEth ? fromWei : undefined }
     );
 
-    console.log('no approve');
     sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
 
     return {
