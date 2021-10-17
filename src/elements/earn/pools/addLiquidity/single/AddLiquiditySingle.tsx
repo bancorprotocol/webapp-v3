@@ -17,6 +17,8 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
 import BigNumber from 'bignumber.js';
+import { getTokenById } from 'redux/bancor/bancor';
+import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   pool: Pool;

@@ -9,6 +9,7 @@ import {
 } from 'redux/notification/notification';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
+import { addLiquidity } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   pool: Pool;
