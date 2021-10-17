@@ -5,6 +5,8 @@ import { first, take } from 'rxjs/operators';
 import {
   bancorConverterRegistry$,
   liquidityProtection$,
+  settingsContractAddress$,
+  systemStoreAddress$,
 } from 'services/observables/contracts';
 import { Pool, Token } from 'services/observables/tokens';
 import { expandToken, shrinkToken } from 'utils/formulas';
@@ -17,6 +19,8 @@ import { web3, writeWeb3 } from '..';
 import {
   ConverterRegistry__factory,
   Converter__factory,
+  LiquidityProtectionSettings__factory,
+  LiquidityProtectionSystemStore__factory,
   LiquidityProtection__factory,
 } from '../abis/types';
 import { bntToken, ethToken, zeroAddress } from '../config';
@@ -200,21 +204,19 @@ export const checkPriceDeviationTooHigh = async (
   pool: Pool,
   selectedTkn: Token
 ): Promise<boolean> => {
-  const converterContract = buildV28ConverterContract(
+  const converterContract = Converter__factory.connect(
     pool.converter_dlt_id,
-    web3
+    web3.provider
   );
 
-  const liquidityProtection_dlt_id = await liquidityProtection$
-    .pipe(first())
+  const settingsAddress = await settingsContractAddress$
+    .pipe(take(1))
     .toPromise();
 
-  const liquidityProtectionSettings_dlt_id =
-    await fetchLiquidityProtectionSettingsContract(liquidityProtection_dlt_id);
-  const liquidityProtectionSettingsContract =
-    await buildLiquidityProtectionSettingsContract(
-      liquidityProtectionSettings_dlt_id
-    );
+  const settingsContract = LiquidityProtectionSettings__factory.connect(
+    settingsAddress,
+    web3.provider
+  );
 
   const [primaryReserveAddress, secondaryReserveAddress] = sortBy(
     pool.reserves,
@@ -227,17 +229,15 @@ export const checkPriceDeviationTooHigh = async (
     primaryReserveBalance,
     secondaryReserveBalance,
   ] = await Promise.all([
-    converterContract.methods.recentAverageRate(selectedTkn.address).call(),
-    liquidityProtectionSettingsContract.methods
-      .averageRateMaxDeviation()
-      .call(),
-    converterContract.methods.reserveBalance(primaryReserveAddress).call(),
-    converterContract.methods.reserveBalance(secondaryReserveAddress).call(),
+    converterContract.recentAverageRate(selectedTkn.address),
+    settingsContract.averageRateMaxDeviation(),
+    converterContract.reserveBalance(primaryReserveAddress),
+    converterContract.reserveBalance(secondaryReserveAddress),
   ]);
 
-  const averageRate = new BigNumber(recentAverageRate['1']).dividedBy(
-    recentAverageRate['0']
-  );
+  const averageRate = new BigNumber(
+    recentAverageRate['1'].toString()
+  ).dividedBy(new BigNumber(recentAverageRate['0'].toString()));
 
   if (averageRate.isNaN()) {
     throw new Error(
@@ -247,14 +247,13 @@ export const checkPriceDeviationTooHigh = async (
 
   return calculatePriceDeviationTooHigh(
     averageRate,
-    new BigNumber(primaryReserveBalance),
-    new BigNumber(secondaryReserveBalance),
+    new BigNumber(primaryReserveBalance.toString()),
+    new BigNumber(secondaryReserveBalance.toString()),
     new BigNumber(averageRateMaxDeviation)
   );
 };
 
 export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
-  console.log('1');
   const liquidityProtectionContract = await liquidityProtection$
     .pipe(first())
     .toPromise();
@@ -262,9 +261,7 @@ export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
     liquidityProtectionContract,
     web3.provider
   );
-  console.log('2');
 
-  console.log('liquidityProtectionContract', liquidityProtectionContract);
   const result = await contract.poolAvailableSpace(id);
 
   return {
@@ -276,45 +273,36 @@ export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
 export const fetchBntNeededToOpenSpace = async (
   pool: Pool
 ): Promise<string> => {
-  const liquidityProtection_dlt_id = await liquidityProtection$
-    .pipe(first())
+  const settingsAddress = await settingsContractAddress$
+    .pipe(take(1))
     .toPromise();
-  const liquidityProtectionSettings_dlt_id =
-    await fetchLiquidityProtectionSettingsContract(liquidityProtection_dlt_id);
-  const liquidityProtectionSettingsContract =
-    await buildLiquidityProtectionSettingsContract(
-      liquidityProtectionSettings_dlt_id
-    );
-
-  const liquidityProtectionContract = buildLiquidityProtectionContract(
-    liquidityProtection_dlt_id,
-    web3
+  const settingsContract = LiquidityProtectionSettings__factory.connect(
+    settingsAddress,
+    web3.provider
   );
 
-  const systemStore_dlt_id = await liquidityProtectionContract.methods
-    .systemStore()
-    .call();
-
-  const liquidityProtectionSystemStoreContract =
-    buildLiquidityProtectionSystemStoreContract(systemStore_dlt_id, web3);
+  const systemStoreAddress = await systemStoreAddress$
+    .pipe(take(1))
+    .toPromise();
+  const systemStoreContract = LiquidityProtectionSystemStore__factory.connect(
+    systemStoreAddress,
+    web3.provider
+  );
 
   const networkTokenMintingLimits =
-    await liquidityProtectionSettingsContract.methods
-      .networkTokenMintingLimits(pool.pool_dlt_id)
-      .call();
+    await settingsContract.networkTokenMintingLimits(pool.pool_dlt_id);
 
-  const networkTokensMinted =
-    await liquidityProtectionSystemStoreContract.methods
-      .networkTokensMinted(pool.pool_dlt_id)
-      .call();
+  const networkTokensMinted = await systemStoreContract.networkTokensMinted(
+    pool.pool_dlt_id
+  );
 
   const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
 
   const bntNeeded = calculateBntNeededToOpenSpace(
     bntBalance,
     tknBalance,
-    networkTokensMinted,
-    networkTokenMintingLimits
+    networkTokensMinted.toString(),
+    networkTokenMintingLimits.toString()
   );
 
   return shrinkToken(bntNeeded, 18);

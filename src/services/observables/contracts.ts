@@ -1,4 +1,4 @@
-import { optimisticContract, switchMapIgnoreThrow } from './customOperators';
+import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$, networkVars$ } from './network';
 import {
   distinctUntilChanged,
@@ -122,15 +122,31 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
     );
 
     try {
-      return await contract.settings();
+      return utils.getAddress(await contract.settings());
     } catch (error) {
       console.error(error);
     }
 
     return '';
   }),
-  map(utils.getAddress),
-  optimisticContract('LiquiditySettings'),
+  shareReplay(1)
+);
+
+export const systemStoreAddress$ = liquidityProtection$.pipe(
+  switchMap(async (liquidityProtection) => {
+    const contract = LiquidityProtection__factory.connect(
+      liquidityProtection,
+      web3.provider
+    );
+
+    try {
+      return utils.getAddress(await contract.systemStore());
+    } catch (error) {
+      console.error(error);
+    }
+
+    return '';
+  }),
   shareReplay(1)
 );
 

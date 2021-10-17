@@ -1,51 +1,57 @@
 import { stakingRewards$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { expandToken, shrinkToken } from 'utils/formulas';
+import { StakingRewards__factory } from '../abis/types';
+import { web3, writeWeb3 } from '..';
 
 export const stakeRewards = async ({
   maxAmount,
   poolId,
-  currentUser,
 }: {
   maxAmount: string;
   poolId: string;
-  currentUser: string;
 }): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
-  const contract = buildStakingRewardsContract(contractAddress, writeWeb3);
-  return resolveTxOnConfirmation({
-    tx: contract.methods.stakeRewards(expandToken(maxAmount, 18), poolId),
-    user: currentUser,
-    resolveImmediately: true,
-  });
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    writeWeb3.signer
+  );
+
+  return (await contract.stakeRewards(expandToken(maxAmount, 18), poolId)).hash;
 };
 
 export const claimRewards = async (user: string): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
-  const contract = buildStakingRewardsContract(contractAddress, writeWeb3);
-  return resolveTxOnConfirmation({
-    tx: contract.methods.claimRewards(),
-    user,
-    resolveImmediately: true,
-  });
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    writeWeb3.signer
+  );
+
+  return (await contract.claimRewards()).hash;
 };
 
 export const fetchTotalClaimedRewards = async (
   currentUser: string
 ): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
-  const contract = buildStakingRewardsContract(contractAddress);
-  const result = await contract.methods.totalClaimedRewards(currentUser).call();
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    web3.provider
+  );
+  const result = await contract.totalClaimedRewards(currentUser);
 
-  return shrinkToken(result, 18);
+  return shrinkToken(result.toString(), 18);
 };
 
 export const fetchPendingRewards = async (
   currentUser: string
 ): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
-  const contract = buildStakingRewardsContract(contractAddress);
-  const result = await contract.methods.pendingRewards(currentUser).call();
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    web3.provider
+  );
+  const result = await contract.pendingRewards(currentUser);
 
-  return shrinkToken(result, 18);
+  return shrinkToken(result.toString(), 18);
 };
