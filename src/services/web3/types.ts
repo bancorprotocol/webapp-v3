@@ -5,6 +5,12 @@ export enum EthNetworks {
   Ropsten = 3,
 }
 
+export enum PoolType {
+  Liquid = 0,
+  Traditional = 1,
+  ChainLink = 2,
+}
+
 export enum ErrorCode {
   DeniedTx = 4001,
 }

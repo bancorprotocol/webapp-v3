@@ -67,6 +67,7 @@ export const TokenInputField = ({
   const loadingBalances = useAppSelector<boolean>(
     (state) => state.user.loadingBalances
   );
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
   const onInputChange = (text: string, token?: Token) => {
     text = sanitizeNumberInput(text);
@@ -239,6 +240,7 @@ export const TokenInputField = ({
         }}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        tokens={tokens}
         excludedTokens={excludedTokens}
         includedTokens={includedTokens}
       />
