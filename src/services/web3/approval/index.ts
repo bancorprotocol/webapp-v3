@@ -68,6 +68,7 @@ const setApproval = async (
 
   try {
     const tx = await tokenContract.approve(spender, amountFinal);
+    if (!resolveImmediately) await tx.wait();
     return tx.hash;
   } catch (e: any) {
     const isTxDenied = e.message.toLowerCase().includes('denied');
