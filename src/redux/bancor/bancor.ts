@@ -7,6 +7,7 @@ interface BancorState {
   tokenLists: TokenList[];
   tokens: Token[];
   keeperDaoTokens: KeeprDaoToken[];
+  allTokens: Token[];
   bntPrice: string | null;
 }
 
@@ -14,6 +15,7 @@ export const initialState: BancorState = {
   tokenLists: [],
   tokens: [],
   keeperDaoTokens: [],
+  allTokens: [],
   bntPrice: null,
 };
 
@@ -26,6 +28,9 @@ const bancorSlice = createSlice({
     },
     setTokenList: (state, action) => {
       state.tokens = action.payload;
+    },
+    setAllTokens: (state, action) => {
+      state.allTokens = action.payload;
     },
     updateTokens: (state, action) => {
       const tokenToUpdate = action.payload as Token[];
@@ -45,6 +50,15 @@ const bancorSlice = createSlice({
   },
 });
 
+export const {
+  setTokenLists,
+  setTokenList,
+  setAllTokens,
+  setKeeperDaoTokens,
+  updateTokens,
+  setBntPrice,
+} = bancorSlice.actions;
+
 export const getTokenById = (id: string) =>
   createSelector(
     (state: RootState) => state.bancor.tokens,
@@ -52,13 +66,5 @@ export const getTokenById = (id: string) =>
       return tokens.find((t) => t.address === id);
     }
   );
-
-export const {
-  setTokenLists,
-  setTokenList,
-  setKeeperDaoTokens,
-  updateTokens,
-  setBntPrice,
-} = bancorSlice.actions;
 
 export const bancor = bancorSlice.reducer;

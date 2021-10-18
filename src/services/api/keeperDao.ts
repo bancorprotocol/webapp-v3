@@ -236,7 +236,7 @@ export const cancelOrders = async (
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: 'Transaction is pending confirmationn',
+      msg: 'Transaction is pending confirmation',
       txHash,
       updatedInfo: {
         successTitle: 'Success!',

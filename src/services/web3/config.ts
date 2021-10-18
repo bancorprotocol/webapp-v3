@@ -120,3 +120,39 @@ export const bntToken = (network: EthNetworks): string => {
   const vars = getNetworkVariables(network);
   return vars.bntToken;
 };
+
+const ropstenTokenEmptyProps = {
+  logoURI: ropstenImage,
+  chainId: 3,
+  balance: null,
+  decimals: 18,
+  usdPrice: '0',
+  liquidity: '0',
+  usd_24h_ago: '0',
+  price_change_24: 0,
+  price_history_7d: [{ time: 1630000000 as UTCTimestamp, value: 0 }],
+  usd_volume_24: '0',
+  isWhitelisted: false,
+};
+
+//Used to test create pool
+export const ropstenTokens: Token[] = [
+  {
+    address: '0x2080dD00237F1E2F3e95d501ae4a925496DBb200',
+    name: 'Test4',
+    symbol: 'TEST4',
+    ...ropstenTokenEmptyProps,
+  },
+  {
+    address: '0xf4e1355D07a953192c17010a46dfA1aaBB36BCf0',
+    name: 'Test5',
+    symbol: 'TEST5',
+    ...ropstenTokenEmptyProps,
+  },
+  {
+    address: '0xA79A95a1Cc1a586F8E1A069ff7D17AB6dB6acf3C',
+    name: 'Test6',
+    symbol: 'TEST6',
+    ...ropstenTokenEmptyProps,
+  },
+];
