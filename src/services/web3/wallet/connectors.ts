@@ -4,6 +4,7 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
 import { EthNetworks } from 'services/web3/types';
 
 const POLLING_INTERVAL = 15000;
@@ -29,6 +30,8 @@ const appName = 'phoenix';
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
+
+export const gnosisSafe = new SafeAppConnector();
 
 export const walletconnect = new WalletConnectConnector({
   rpc: { 1: RPC_URLS[1], 3: RPC_URLS[3] },

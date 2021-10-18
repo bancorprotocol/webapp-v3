@@ -61,6 +61,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           );
         })
         .catch((error) => {
+          console.error(error);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
           } else setError(true);
