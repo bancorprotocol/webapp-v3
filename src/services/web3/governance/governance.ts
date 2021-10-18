@@ -23,7 +23,10 @@ export const getStakedAmount = async (
 export const stakeAmount = async (
   amount: string,
   govToken: Token,
-  onConfirmation: Function
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -35,40 +38,22 @@ export const stakeAmount = async (
     );
 
     const tx = await govContract.stake(expandedAmount);
-
-    return {
-      type: NotificationType.pending,
-      title: 'Pending Confirmation',
-      msg: 'Staking vBNT is pending confirmation',
-      txHash: tx.hash,
-      updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: `Your stake of ${amount} vBNT has been confirmed`,
-        errorTitle: 'Transaction Failed',
-        errorMsg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
-      },
-      onCompleted: () => onConfirmation(),
-    };
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx)
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the transaction. If this was by mistake, please try again.',
-      };
-
-    return {
-      type: NotificationType.error,
-      title: 'Transaction Failed',
-      msg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
-    };
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
   }
 };
 
 export const unstakeAmount = async (
   amount: string,
   govToken: Token,
-  onConfirmation: Function
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -80,33 +65,12 @@ export const unstakeAmount = async (
     );
 
     const tx = await govContract.unstake(expandedAmount);
-
-    return {
-      type: NotificationType.pending,
-      title: 'Pending Confirmation',
-      msg: 'Unstaking vBNT is pending confirmation',
-      txHash: tx.hash,
-      updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: `Unstaking ${amount} vBNT has been confirmed`,
-        errorTitle: 'Transaction Failed',
-        errorMsg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
-      },
-      onCompleted: () => onConfirmation(),
-    };
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx)
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the transaction. If this was by mistake, please try again.',
-      };
-
-    return {
-      type: NotificationType.error,
-      title: 'Transaction Failed',
-      msg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
-    };
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
   }
 };
 

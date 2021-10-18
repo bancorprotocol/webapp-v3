@@ -40,7 +40,6 @@ export const NotificationsMenu = () => {
               : notification.updatedInfo?.errorMsg,
           })
         );
-        notification.onCompleted && notification.onCompleted();
       }
     } catch (e) {}
   };

@@ -8,6 +8,7 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
+  BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
@@ -23,7 +24,7 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { ErrorCode, EthNetworks } from 'services/web3/types';
+import { EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
@@ -174,6 +175,9 @@ export const SwapMarket = ({
     }
   };
 
+  const showNotification = (notification: BaseNotification) =>
+    dispatch(addNotification(notification));
+
   const onConfirmation = async () => {
     if (!(chainId && toToken && account)) return;
 
@@ -201,17 +205,51 @@ export const SwapMarket = ({
       return;
     }
 
-    dispatch(
-      addNotification(
-        await swap(
-          slippageTolerance,
-          fromToken,
-          toToken,
-          fromAmount,
-          toAmount,
-          onConfirmation
-        )
-      )
+    const conversion = getConversionLS();
+    await swap(
+      slippageTolerance,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      (txHash: string) =>
+        showNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+            errorTitle: 'Transaction Failed',
+            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+          },
+          txHash,
+        }),
+      () => {
+        sendConversionEvent(ConversionEvents.success, {
+          ...conversion,
+          conversion_market_token_rate: fromToken.usdPrice,
+          transaction_category: 'Conversion',
+        });
+        onConfirmation();
+      },
+      () =>
+        showNotification({
+          type: NotificationType.error,
+          title: 'Transaction Rejected',
+          msg: 'You rejected the trade. If this was by mistake, please try again.',
+        }),
+      (error: string) => {
+        sendConversionEvent(ConversionEvents.fail, {
+          conversion,
+          error,
+        });
+        showNotification({
+          type: NotificationType.error,
+          title: 'Transaction Failed',
+          msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+        });
+      }
     );
 
     setShowModal(false);

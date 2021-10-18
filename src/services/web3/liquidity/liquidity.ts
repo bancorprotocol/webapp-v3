@@ -30,8 +30,12 @@ export const createPool = async (
   token: Token,
   fee: string,
   network: EthNetworks,
-  user: string,
-  dispatcher: Function
+  noPool: Function,
+  onHash: (txHash: string) => void,
+  onAccept: (txHash: string) => void,
+  onFee: (txHash: string) => void,
+  rejected: Function,
+  failed: Function
 ) => {
   try {
     const converterRegistryAddress = await bancorConverterRegistry$
@@ -52,12 +56,7 @@ export const createPool = async (
       weights
     );
 
-    if (poolAddress !== zeroAddress)
-      return {
-        type: NotificationType.error,
-        title: 'Pool Already exist',
-        msg: `The pool already exists on Bancor`,
-      };
+    if (poolAddress !== zeroAddress) noPool();
 
     const tx = await regContract.newConverter(
       PoolType.Traditional,
@@ -69,78 +68,24 @@ export const createPool = async (
       weights
     );
 
-    return {
-      type: NotificationType.pending,
-      title: 'Pending Confirmation',
-      msg: 'Creating pool is pending confirmation',
-      txHash: tx.hash,
-      updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: 'Your pool was successfully created',
-        errorTitle: 'Creating Pool Failed',
-        errorMsg: 'Fail creating pool. Please try again or contact support.',
-      },
-      onCompleted: () => onPoolCreated(tx.hash, fee, dispatcher),
-    };
+    onHash(tx.hash);
+    await tx.wait();
+
+    const converterAddress = await web3.provider.getTransactionReceipt(tx.hash);
+    const converter = Converter__factory.connect(
+      converterAddress.logs[0].address,
+      writeWeb3.signer
+    );
+    const ownerShip = await converter.acceptOwnership();
+    onAccept(ownerShip.hash);
+    await ownerShip.wait();
+
+    const conversionFee = await converter.setConversionFee(decToPpm(fee));
+    onFee(conversionFee.hash);
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx)
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the transaction. If this was by mistake, please try again.',
-      };
-
-    return {
-      type: NotificationType.error,
-      title: 'Creating Pool Failed',
-      msg: `Fail creating pool. Please try again or contact support.`,
-    };
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
   }
-};
-
-const onPoolCreated = async (
-  txHash: string,
-  fee: string,
-  dispatcher: Function
-) => {
-  const converterAddress = await web3.provider.getTransactionReceipt(txHash);
-
-  const converter = Converter__factory.connect(
-    converterAddress.logs[0].address,
-    writeWeb3.signer
-  );
-
-  const ownerShip = await converter.acceptOwnership();
-
-  dispatcher({
-    type: NotificationType.pending,
-    title: 'Pending Confirmation',
-    msg: 'Accepting ownership is pending confirmation',
-    txHash: ownerShip.hash,
-    updatedInfo: {
-      successTitle: 'Success!',
-      successMsg: 'Ownership Accepted',
-      errorTitle: 'Ownership Failed',
-      errorMsg:
-        'Failed accepting ownership. Please try again or contact support.',
-    },
-    onCompleted: async () => {
-      const conversionFee = await converter.setConversionFee(decToPpm(fee));
-      dispatcher({
-        type: NotificationType.pending,
-        title: 'Pending Confirmation',
-        msg: 'Setting convertion fee is pending confirmation',
-        txHash: conversionFee,
-        updatedInfo: {
-          successTitle: 'Success!',
-          successMsg: 'Conversion fee has been set',
-          errorTitle: 'Conversion fee failed',
-          errorMsg:
-            'conversion fee setting failed. Please try again or contact support.',
-        },
-      });
-    },
-  });
 };
 
 export const addLiquidity = async (

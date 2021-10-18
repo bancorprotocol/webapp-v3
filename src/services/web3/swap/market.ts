@@ -123,7 +123,10 @@ export const swap = async (
   toToken: Token,
   fromAmount: string,
   toAmount: string,
-  onConfirmation: Function
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
 ) => {
   try {
     const fromIsEth = fromToken.address === ethToken;
@@ -155,46 +158,14 @@ export const swap = async (
 
     sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
 
-    return {
-      type: NotificationType.pending,
-      title: 'Pending Confirmation',
-      msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
-      updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
-        errorTitle: 'Transaction Failed',
-        errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-      },
-      txHash: tx.hash,
-      onCompleted: () => {
-        sendConversionEvent(ConversionEvents.success, {
-          ...conversion,
-          conversion_market_token_rate: fromToken.usdPrice,
-          transaction_category: 'Conversion',
-        });
-        onConfirmation && onConfirmation();
-      },
-    };
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
   } catch (e: any) {
     console.error('Swap failed with error: ', e);
-    if (e.code === ErrorCode.DeniedTx)
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the trade. If this was by mistake, please try again.',
-      };
-    else {
-      const conversion = getConversionLS();
-      sendConversionEvent(ConversionEvents.fail, {
-        conversion,
-        error: e.message,
-      });
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Failed',
-        msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-      };
-    }
+
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
   }
 };
 

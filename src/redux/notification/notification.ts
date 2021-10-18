@@ -15,7 +15,6 @@ export interface BaseNotification {
   showSeconds?: number;
   txHash?: string;
   updatedInfo?: UpdatedInfo;
-  onCompleted?: Function;
 }
 
 interface UpdatedInfo {
