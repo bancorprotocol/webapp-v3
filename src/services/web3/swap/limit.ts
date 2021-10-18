@@ -16,7 +16,7 @@ import { utils } from 'ethers';
 import { exchangeProxy$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 
-export const depositWeth = async (amount: string, user: string) => {
+export const depositWeth = async (amount: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);
 
@@ -25,8 +25,7 @@ export const depositWeth = async (amount: string, user: string) => {
 };
 
 export const withdrawWeth = async (
-  amount: string,
-  user: string
+  amount: string
 ): Promise<BaseNotification> => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
   const wei = expandToken(amount, 18);

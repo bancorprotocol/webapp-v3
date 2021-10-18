@@ -80,7 +80,7 @@ export const createPool = async (
         errorTitle: 'Creating Pool Failed',
         errorMsg: 'Fail creating pool. Please try again or contact support.',
       },
-      onCompleted: () => onPoolCreated(tx.hash, user, fee, dispatcher),
+      onCompleted: () => onPoolCreated(tx.hash, fee, dispatcher),
     };
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
@@ -100,7 +100,6 @@ export const createPool = async (
 
 const onPoolCreated = async (
   txHash: string,
-  user: string,
   fee: string,
   dispatcher: Function
 ) => {

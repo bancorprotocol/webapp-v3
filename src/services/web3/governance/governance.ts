@@ -22,7 +22,6 @@ export const getStakedAmount = async (
 
 export const stakeAmount = async (
   amount: string,
-  user: string,
   govToken: Token,
   onConfirmation: Function
 ) => {
@@ -68,7 +67,6 @@ export const stakeAmount = async (
 
 export const unstakeAmount = async (
   amount: string,
-  user: string,
   govToken: Token,
   onConfirmation: Function
 ) => {

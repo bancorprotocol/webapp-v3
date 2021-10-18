@@ -197,7 +197,7 @@ export const SwapMarket = ({
     if (!approved) return checkApproval();
 
     if (fromToken.address === wethToken) {
-      dispatch(addNotification(await withdrawWeth(fromAmount, account)));
+      dispatch(addNotification(await withdrawWeth(fromAmount)));
       return;
     }
 

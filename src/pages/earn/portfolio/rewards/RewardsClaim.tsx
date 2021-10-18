@@ -37,7 +37,7 @@ export const RewardsClaim = () => {
 
   const handleClaim = async () => {
     if (account) {
-      const txHash = await claimRewards(account);
+      const txHash = await claimRewards();
     }
   };
 

@@ -56,7 +56,7 @@ export const swapLimit = async (
   try {
     if (fromIsEth) {
       try {
-        const txHash = await depositWeth(from, user);
+        const txHash = await depositWeth(from);
         checkApproval({ ...fromToken, symbol: 'WETH', address: wethToken });
         return {
           type: NotificationType.pending,
@@ -225,8 +225,7 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
 };
 
 export const cancelOrders = async (
-  orders: OrderResponse[],
-  user: string
+  orders: OrderResponse[]
 ): Promise<BaseNotification> => {
   const stringOrders = orders.map((limitOrder) =>
     orderToStringOrder(limitOrder.order)

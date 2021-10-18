@@ -20,7 +20,7 @@ export const stakeRewards = async ({
   return (await contract.stakeRewards(expandToken(maxAmount, 18), poolId)).hash;
 };
 
-export const claimRewards = async (user: string): Promise<string> => {
+export const claimRewards = async (): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
   const contract = StakingRewards__factory.connect(
     contractAddress,
