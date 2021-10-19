@@ -6,75 +6,77 @@ import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiq
 import { AddLiquidityLoading } from 'elements/earn/pools/addLiquidity/AddLiquidityLoading';
 import { AddLiquidityError } from 'elements/earn/pools/addLiquidity/AddLiquidityError';
 import { useAppSelector } from 'redux/index';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { fetchReserveBalances } from 'services/web3/contracts/liquidityProtection/wrapper';
 import BigNumber from 'bignumber.js';
 
-export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
-  const { id } = props.match.params;
-  const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
-  const [isCheckingType, setIsCheckingType] = useState(false);
-  const [type, setType] = useState('');
-  const [reserveBalances, setReserveBalances] = useState({
-    tknBalance: '0',
-    bntBalance: '0',
-  });
+export const AddLiquidity = React.memo(
+  (props: RouteComponentProps<{ id: string }>) => {
+    const { id } = props.match.params;
+    const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
+    const [isCheckingType, setIsCheckingType] = useState(false);
+    const [type, setType] = useState('');
+    const [reserveBalances, setReserveBalances] = useState({
+      tknBalance: '0',
+      bntBalance: '0',
+    });
 
-  const checkType = useCallback(async () => {
-    if (!pool) {
-      return;
-    }
-    setIsCheckingType(true);
-    if (pool.isProtected) {
-      setType('single');
-    } else {
-      const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
-      setReserveBalances({ tknBalance, bntBalance });
-      const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
-        new BigNumber(b).eq(0)
-      );
-
-      if (isPoolEmpty) {
-        setType('empty');
-      } else {
-        setType('dual');
+    const checkType = useCallback(async () => {
+      if (!pool) {
+        return;
       }
-    }
-    setIsCheckingType(false);
-  }, [pool]);
+      setIsCheckingType(true);
+      if (pool.isProtected) {
+        setType('single');
+      } else {
+        const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
+        setReserveBalances({ tknBalance, bntBalance });
+        const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
+          new BigNumber(b).eq(0)
+        );
 
-  useEffect(() => {
-    void checkType();
-  }, [id, checkType]);
+        if (isPoolEmpty) {
+          setType('empty');
+        } else {
+          setType('dual');
+        }
+      }
+      setIsCheckingType(false);
+    }, [pool]);
 
-  const isLoading = () => {
-    return status === 'loading' || isCheckingType;
-  };
+    useEffect(() => {
+      void checkType();
+    }, [id, checkType]);
 
-  return (
-    <div>
+    const isLoading = () => {
+      return status === 'loading' || isCheckingType;
+    };
+
+    return (
       <div>
-        {isLoading() ? (
-          <AddLiquidityLoading />
-        ) : (
-          <div>
-            {!pool ? (
-              <AddLiquidityError />
-            ) : (
-              <div>
-                {type === 'single' && <AddLiquiditySingle pool={pool} />}
-                {type === 'dual' && (
-                  <AddLiquidityDual
-                    pool={pool}
-                    reserveBalances={reserveBalances}
-                  />
-                )}
-                {type === 'empty' && <AddLiquidityEmpty pool={pool} />}
-              </div>
-            )}
-          </div>
-        )}
+        <div>
+          {isLoading() ? (
+            <AddLiquidityLoading />
+          ) : (
+            <div>
+              {!pool ? (
+                <AddLiquidityError />
+              ) : (
+                <div>
+                  {type === 'single' && <AddLiquiditySingle pool={pool} />}
+                  {type === 'dual' && (
+                    <AddLiquidityDual
+                      pool={pool}
+                      reserveBalances={reserveBalances}
+                    />
+                  )}
+                  {type === 'empty' && <AddLiquidityEmpty pool={pool} />}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
