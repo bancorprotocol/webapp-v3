@@ -5,10 +5,10 @@ import { StakingRewards__factory } from '../abis/types';
 import { web3, writeWeb3 } from '..';
 
 export const stakeRewards = async ({
-  maxAmount,
+  amount,
   poolId,
 }: {
-  maxAmount: string;
+  amount: string;
   poolId: string;
 }): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
@@ -17,7 +17,7 @@ export const stakeRewards = async ({
     writeWeb3.signer
   );
 
-  return (await contract.stakeRewards(expandToken(maxAmount, 18), poolId)).hash;
+  return (await contract.stakeRewards(expandToken(amount, 18), poolId)).hash;
 };
 
 export const claimRewards = async (): Promise<string> => {

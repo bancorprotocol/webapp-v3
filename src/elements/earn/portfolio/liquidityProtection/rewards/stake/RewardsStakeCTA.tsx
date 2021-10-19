@@ -1,4 +1,6 @@
 import { Pool } from 'services/observables/tokens';
+import { stakeRewards } from 'services/web3/protection/rewards';
+import { useState } from 'react';
 
 interface Props {
   pool: Pool;
@@ -13,11 +15,34 @@ export const RewardsStakeCTA = ({
   errorBalance,
   bntAmount,
 }: Props) => {
-  const button = () => {
-    if (errorBalance) {
-      return { label: errorBalance, disabled: true, variant: 'btn-error' };
+  const [isBusy, setIsBusy] = useState(false);
+
+  const handleClick = async () => {
+    try {
+      setIsBusy(true);
+      const txHash = await stakeRewards({
+        amount: bntAmount,
+        poolId: pool.pool_dlt_id,
+      });
+    } catch (e) {
+      console.error('Staking Rewards failed with msg: ', e.message);
+    } finally {
+      setIsBusy(false);
     }
-    if (!bntAmount) {
+  };
+
+  const button = () => {
+    if (!account) {
+      return { label: 'Login', disabled: false, variant: 'btn-primary' };
+    } else if (isBusy) {
+      return {
+        label: 'Please wait ...',
+        disabled: true,
+        variant: 'btn-primary',
+      };
+    } else if (errorBalance) {
+      return { label: errorBalance, disabled: true, variant: 'btn-error' };
+    } else if (!bntAmount) {
       return {
         label: 'Enter amount',
         disabled: true,
@@ -33,6 +58,7 @@ export const RewardsStakeCTA = ({
   };
   return (
     <button
+      onClick={() => handleClick()}
       disabled={button().disabled}
       className={`${button().variant} rounded w-full mt-10`}
     >

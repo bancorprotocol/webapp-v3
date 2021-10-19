@@ -8,10 +8,12 @@ export const RewardsClaim = () => {
   const { claimableRewards, account } = useRewardsClaim({});
 
   return (
-    <Widget title="Claim Rewards">
-      <RewardsClaimInfo />
-      <RewardsClaimAmount amount={claimableRewards} />
-      <RewardsClaimCTA account={account} />
+    <Widget title="Claim Rewards" goBackRoute="/portfolio">
+      <div className="px-10 pb-10">
+        <RewardsClaimInfo />
+        <RewardsClaimAmount amount={claimableRewards} />
+        <RewardsClaimCTA account={account} />
+      </div>
     </Widget>
   );
 };

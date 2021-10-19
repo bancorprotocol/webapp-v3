@@ -25,7 +25,7 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
   } = useRewardsClaim({ pool });
 
   return (
-    <Widget title="Stake Rewards">
+    <Widget title="Stake Rewards" goBackRoute="/portfolio">
       <SelectPool pool={pool} pools={pools} onSelect={onSelect} />
       <div className="mt-20">
         <TokenInputField

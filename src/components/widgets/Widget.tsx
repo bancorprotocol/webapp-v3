@@ -5,13 +5,19 @@ import { useHistory } from 'react-router-dom';
 interface Props {
   title: string;
   subtitle?: string;
+  goBackRoute?: string;
   children: JSX.Element | JSX.Element[];
 }
-export const Widget = ({ title, subtitle, children }: Props) => {
+export const Widget = ({
+  title,
+  subtitle,
+  children,
+  goBackRoute = '/pools',
+}: Props) => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/pools');
+    history.push(goBackRoute);
   };
 
   return (
