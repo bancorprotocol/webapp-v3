@@ -41,6 +41,14 @@ export const getPools = createSelector(
   }
 );
 
+export const getProtectedPools = createSelector(
+  (state: RootState) => state.pool.pools,
+  (pools: Pool[]) => {
+    const protectedPools = pools.filter((p) => p.isProtected);
+    return orderBy(protectedPools, 'liquidity', 'desc');
+  }
+);
+
 export const getTopPools = createSelector(
   (state: RootState) => state.pool.pools,
   (pools: Pool[]) => {

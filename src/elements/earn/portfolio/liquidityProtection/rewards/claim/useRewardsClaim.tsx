@@ -5,7 +5,7 @@ import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
 import { getTokenById } from 'redux/bancor/bancor';
-import { getPools } from 'redux/bancor/pool';
+import { getProtectedPools } from 'redux/bancor/pool';
 import { useHistory } from 'react-router-dom';
 import BigNumber from 'bignumber.js';
 
@@ -18,7 +18,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const [errorBalance, setErrorBalance] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [bntAmountUsd, setBntAmountUsd] = useState('');
-  const pools = useAppSelector<Pool[]>(getPools);
+  const pools = useAppSelector<Pool[]>(getProtectedPools);
   const history = useHistory();
 
   const bnt = useAppSelector<Token | undefined>(
