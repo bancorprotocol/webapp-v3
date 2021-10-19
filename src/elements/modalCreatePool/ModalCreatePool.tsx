@@ -47,7 +47,7 @@ export const ModalCreatePool = () => {
       token,
       (Number(fee) / 100).toString(),
       chainId,
-      poolExistNotification(dispatch),
+      () => poolExistNotification(dispatch),
       (txHash: string) => poolCreateNotification(dispatch, txHash),
       (txHash: string) => ownershipNotification(dispatch, txHash),
       (txHash: string) => setFeeNotification(dispatch, txHash),
