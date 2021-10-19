@@ -31,6 +31,11 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
+import {
+  rejectNotification,
+  swapFailedNotification,
+  swapNotification,
+} from 'services/notifications/notifications';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -175,9 +180,6 @@ export const SwapMarket = ({
     }
   };
 
-  const showNotification = (notification: BaseNotification) =>
-    dispatch(addNotification(notification));
-
   const onConfirmation = async () => {
     if (!(chainId && toToken && account)) return;
 
@@ -213,18 +215,14 @@ export const SwapMarket = ({
       fromAmount,
       toAmount,
       (txHash: string) =>
-        showNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          },
-          txHash,
-        }),
+        swapNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          txHash
+        ),
       () => {
         sendConversionEvent(ConversionEvents.success, {
           ...conversion,
@@ -233,22 +231,19 @@ export const SwapMarket = ({
         });
         onConfirmation();
       },
-      () =>
-        showNotification({
-          type: NotificationType.error,
-          title: 'Transaction Rejected',
-          msg: 'You rejected the trade. If this was by mistake, please try again.',
-        }),
+      () => rejectNotification(dispatch),
       (error: string) => {
         sendConversionEvent(ConversionEvents.fail, {
           conversion,
           error,
         });
-        showNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-        });
+        swapFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
       }
     );
 
