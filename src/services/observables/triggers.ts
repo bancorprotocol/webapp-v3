@@ -53,7 +53,7 @@ export const loadCommonData = (dispatch: any) => {
   });
 
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    setKeeperDaoTokens(keeperDaoTokens);
+    dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
   pools$.subscribe((pools) => {
