@@ -5,7 +5,11 @@ import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { createPool } from 'services/web3/liquidity/liquidity';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
-import { addNotification } from 'redux/notification/notification';
+import {
+  addNotification,
+  BaseNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 import { EthNetworks } from 'services/web3/types';
 import { getNetworkVariables, ropstenTokens } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
@@ -24,18 +28,79 @@ export const ModalCreatePool = () => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
   const dispatch = useDispatch();
 
+  const showNotification = (notification: BaseNotification) =>
+    dispatch(addNotification(notification));
+
   const confirm = async () => {
     //isCreateDisabled() TS fails
     if (!account || !chainId || !token) return;
 
-    const notification = await createPool(
+    await createPool(
       token,
       (Number(fee) / 100).toString(),
       chainId,
-      account,
-      (notification: any) => dispatch(addNotification(notification))
+      showNotification({
+        type: NotificationType.error,
+        title: 'Pool Already exist',
+        msg: `The pool already exists on Bancor`,
+      }),
+      (txHash: string) =>
+        showNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: 'Creating pool is pending confirmation',
+          txHash,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: 'Your pool was successfully created',
+            errorTitle: 'Creating Pool Failed',
+            errorMsg:
+              'Fail creating pool. Please try again or contact support.',
+          },
+        }),
+
+      (txHash: string) =>
+        showNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: 'Accepting ownership is pending confirmation',
+          txHash,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: 'Ownership Accepted',
+            errorTitle: 'Ownership Failed',
+            errorMsg:
+              'Failed accepting ownership. Please try again or contact support.',
+          },
+        }),
+      (txHash: string) =>
+        showNotification({
+          type: NotificationType.pending,
+          title: 'Pending Confirmation',
+          msg: 'Setting convertion fee is pending confirmation',
+          txHash,
+          updatedInfo: {
+            successTitle: 'Success!',
+            successMsg: 'Conversion fee has been set',
+            errorTitle: 'Conversion fee failed',
+            errorMsg:
+              'conversion fee setting failed. Please try again or contact support.',
+          },
+        }),
+      () =>
+        showNotification({
+          type: NotificationType.error,
+          title: 'Transaction Rejected',
+          msg: 'You rejected the transaction. If this was by mistake, please try again.',
+        }),
+      () =>
+        showNotification({
+          type: NotificationType.error,
+          title: 'Creating Pool Failed',
+          msg: `Fail creating pool. Please try again or contact support.`,
+        })
     );
-    dispatch(addNotification(notification));
+
     setIsOpen(false);
   };
 

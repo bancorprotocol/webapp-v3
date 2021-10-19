@@ -1,10 +1,13 @@
-import { balanceShape, multi } from 'services/web3/contracts/shapes';
 import { EthNetworks } from 'services/web3/types';
 import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { partition } from 'lodash';
 import { shrinkToken } from 'utils/formulas';
+import { MultiCall, multicall } from 'services/web3/multicall/multicall';
+import { Token__factory } from 'services/web3/abis/types';
+import { Result } from '@ethersproject/abi/lib/coders/abstract-coder';
+import BigNumber from 'bignumber.js';
 
 interface TokenBalance {
   balance: string;
@@ -20,29 +23,26 @@ export const fetchTokenBalances = async (
     tokens,
     (token) => token.address === ethToken
   );
-  const shapes = tokensNoETH.map((x) => balanceShape(x.address, user));
+
+  const calls = tokensNoETH.map((x) => buildTokenBalanceCall(x.address, user));
 
   try {
     const [tokenBalances, ethBalance]: [
-      TokenBalance[][] | undefined,
+      Result[] | undefined,
       string | undefined
     ] = await Promise.all([
-      multi({
-        groupsOfShapes: [shapes],
-        currentNetwork,
-      }),
+      multicall(currentNetwork, calls),
       eth && fetchETH(user),
     ]);
-
-    if (tokenBalances && tokenBalances.length > 0) {
-      const balances = tokenBalances[0].map((token) => {
-        const inedx = tokensNoETH.findIndex((t) => t.address === token.address);
+    if (tokenBalances) {
+      const balances = tokenBalances.map((bn, index) => {
+        const balance = (bn[0] as BigNumber).toString();
         return {
-          ...tokensNoETH[inedx],
-          balance: token.balance
-            ? token.balance !== '0'
-              ? shrinkToken(token.balance, tokensNoETH[inedx].decimals)
-              : token.balance
+          ...tokensNoETH[index],
+          balance: balance
+            ? balance !== '0'
+              ? shrinkToken(balance, tokensNoETH[index].decimals)
+              : balance
             : null,
         };
       });
@@ -64,6 +64,16 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const fetchETH = async (user: string) => {
-  return shrinkToken(await web3.eth.getBalance(user), 18);
+const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
+  const contract = Token__factory.connect(address, web3.provider);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'balanceOf',
+    methodParameters: [user],
+  };
 };
+
+const fetchETH = async (user: string) =>
+  shrinkToken((await web3.provider.getBalance(user)).toString(), 18);

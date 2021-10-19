@@ -1,18 +1,12 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
-import { resolveTxOnConfirmation } from 'services/web3';
-import { web3, writeWeb3 } from 'services/web3/contracts';
+import { Pool, Token } from 'services/observables/tokens';
+import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
   ethToken,
   wethToken,
   zeroAddress,
 } from 'services/web3/config';
-import {
-  buildNetworkContract,
-  conversionPath,
-  getRateByPath,
-} from 'services/web3/contracts/network/wrapper';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/pools';
@@ -22,15 +16,13 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import {
-  buildPoolBalanceShape,
-  buildRateShape,
-  multi,
-} from '../contracts/shapes';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getConversionLS } from 'utils/localStorage';
-import Web3 from 'web3';
 import { ppmToDec } from 'utils/helperFunctions';
+import { BancorNetwork__factory, Converter__factory } from '../abis/types';
+import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
+import { NotificationType } from 'redux/notification/notification';
+import { ErrorCode } from '../types';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -42,6 +34,11 @@ export const getRateAndPriceImapct = async (
       .pipe(take(1))
       .toPromise();
 
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      web3.provider
+    );
+
     const from =
       fromToken.address === wethToken
         ? { ...fromToken, address: ethToken }
@@ -51,19 +48,15 @@ export const getRateAndPriceImapct = async (
         ? { ...toToken, address: ethToken }
         : toToken;
 
-    const path = await conversionPath({
-      from: from.address,
-      to: to.address,
-      networkContractAddress,
-      web3,
-    });
+    const path = await contract.conversionPath(from.address, to.address);
+
     const fromAmountWei = expandToken(amount, fromToken.decimals);
-    const rateShape = await buildRateShape({
-      networkContractAddress,
-      amount: fromAmountWei,
-      path,
-      web3,
-    });
+    const rateShape: MCInterface = {
+      contractAddress: contract.address,
+      interface: contract.interface,
+      methodName: 'rateByPath',
+      methodParameters: [path, fromAmountWei],
+    };
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const rate = shrinkToken(spotRate.rate, toToken.decimals);
@@ -94,26 +87,21 @@ export const getRate = async (
       .pipe(take(1))
       .toPromise();
 
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      web3.provider
+    );
+
     const from = fromToken.address === wethToken ? ethToken : fromToken.address;
     const to = toToken.address === wethToken ? ethToken : toToken.address;
 
-    const path = await conversionPath({
-      from,
-      to,
-      networkContractAddress,
-      web3,
-    });
+    const path = await contract.conversionPath(from, to);
 
     const fromAmountWei = expandToken(amount, fromToken.decimals);
-    const toAmountWei = await getRateByPath({
-      networkContractAddress,
-      amount: fromAmountWei,
-      path,
-      web3,
-    });
-    return shrinkToken(toAmountWei, toToken.decimals);
+    const toAmountWei = await contract.rateByPath(path, fromAmountWei);
+    return shrinkToken(toAmountWei.toString(), toToken.decimals);
   } catch (error) {
-    console.error('Failed fetching rate and price impact: ', error);
+    console.error('Failed fetching rate', error);
     return { rate: '0', priceImpact: '0.0000' };
   }
 };
@@ -129,61 +117,56 @@ const calculateMinimumReturn = (
   return res === '0' ? '1' : res;
 };
 
-export const swap = async ({
-  slippageTolerance,
-  fromToken,
-  toToken,
-  fromAmount,
-  toAmount,
-  user,
-  onConfirmation,
-}: {
-  slippageTolerance: number;
-  fromToken: Token;
-  toToken: Token;
-  fromAmount: string;
-  toAmount: string;
-  user: string;
-  onConfirmation?: Function;
-}): Promise<string> => {
-  const fromIsEth = fromToken.address === ethToken;
-  const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
+export const swap = async (
+  slippageTolerance: number,
+  fromToken: Token,
+  toToken: Token,
+  fromAmount: string,
+  toAmount: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
+) => {
+  try {
+    const fromIsEth = fromToken.address === ethToken;
+    const networkContractAddress = await bancorNetwork$
+      .pipe(take(1))
+      .toPromise();
 
-  const networkContract = buildNetworkContract(
-    networkContractAddress,
-    writeWeb3
-  );
+    const contract = BancorNetwork__factory.connect(
+      networkContractAddress,
+      writeWeb3.signer
+    );
 
-  const fromWei = expandToken(fromAmount, fromToken.decimals);
-  const expectedToWei = expandToken(toAmount, toToken.decimals);
-  const path = await findPath(fromToken.address, toToken.address);
+    const fromWei = expandToken(fromAmount, fromToken.decimals);
+    const expectedToWei = expandToken(toAmount, toToken.decimals);
+    const path = await findPath(fromToken.address, toToken.address);
 
-  const conversion = getConversionLS();
-  sendConversionEvent(ConversionEvents.wallet_req, conversion);
+    const conversion = getConversionLS();
+    sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
-  return resolveTxOnConfirmation({
-    tx: networkContract.methods.convertByPath(
+    const tx = await contract.convertByPath(
       path,
       fromWei,
       calculateMinimumReturn(expectedToWei, slippageTolerance),
       zeroAddress,
       zeroAddress,
-      0
-    ),
-    user,
-    onHash: () =>
-      sendConversionEvent(ConversionEvents.wallet_confirm, conversion),
-    onConfirmation: () => {
-      sendConversionEvent(ConversionEvents.success, {
-        ...conversion,
-        conversion_market_token_rate: fromToken.usdPrice,
-        transaction_category: 'Conversion',
-      });
-      onConfirmation && onConfirmation();
-    },
-    resolveImmediately: true,
-    ...(fromIsEth && { value: fromWei }),
-  });
+      0,
+      { value: fromIsEth ? fromWei : undefined }
+    );
+
+    sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
+
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    console.error('Swap failed with error: ', e);
+
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 const findPath = async (from: string, to: string) => {
@@ -206,7 +189,7 @@ const findPath = async (from: string, to: string) => {
 const calculateSpotPriceAndRate = async (
   from: Token,
   to: Token,
-  rateShape: any
+  rateShape: MCInterface
 ) => {
   const network = await currentNetwork$.pipe(take(1)).toPromise();
 
@@ -216,67 +199,71 @@ const calculateSpotPriceAndRate = async (
   if (to.address === bnt) pool = await findPoolByToken(from.address);
 
   if (pool) {
-    const fromShape = buildTokenPoolShape(pool, from.address);
-    const toShape = buildTokenPoolShape(pool, to.address);
+    const fromShape = buildTokenPoolCall(pool, from.address);
+    const toShape = buildTokenPoolCall(pool, to.address);
 
-    const [fromReserve, toReserve, rate]: any = await multi({
-      groupsOfShapes: [[fromShape], [toShape], [rateShape]],
-      currentNetwork: network,
-    });
+    const mCall = [fromShape, toShape, rateShape];
+    const res = await multicall(network, mCall);
 
-    return {
-      spotPrice: calcReserve(
-        shrinkToken(fromReserve[0].balance, from.decimals),
-        shrinkToken(toReserve[0].balance, to.decimals),
-        ppmToDec(pool.fee)
-      ),
-      rate: rate[0].rate,
-    };
+    if (res && res.length === mCall.length) {
+      return {
+        spotPrice: calcReserve(
+          shrinkToken(res[0].toString(), from.decimals),
+          shrinkToken(res[1].toString(), to.decimals),
+          ppmToDec(pool.fee)
+        ),
+        rate: res[2].toString(),
+      };
+    }
   }
 
   //First hop
   const fromPool = await findPoolByToken(from.address);
-  const fromShape1 = buildTokenPoolShape(fromPool, from.address);
-  const bntShape1 = buildTokenPoolShape(fromPool, bnt);
+  const fromShape1 = buildTokenPoolCall(fromPool, from.address);
+  const bntShape1 = buildTokenPoolCall(fromPool, bnt);
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
-  const bntShape2 = buildTokenPoolShape(toPool, bnt);
-  const toShape2 = buildTokenPoolShape(toPool, to.address);
+  const bntShape2 = buildTokenPoolCall(toPool, bnt);
+  const toShape2 = buildTokenPoolCall(toPool, to.address);
 
-  const [fromReserve1, bntReserve1, bntReserve2, toReserve2, rate]: any =
-    await multi({
-      groupsOfShapes: [
-        [fromShape1],
-        [bntShape1],
-        [bntShape2],
-        [toShape2],
-        [rateShape],
-      ],
-      currentNetwork: network,
-    });
+  const mCall = [fromShape1, bntShape1, bntShape2, toShape2, rateShape];
+  const res = await multicall(network, mCall);
 
-  const spot1 = calcReserve(
-    shrinkToken(fromReserve1[0].balance, from.decimals),
-    shrinkToken(bntReserve1[0].balance, 18),
-    ppmToDec(fromPool.fee)
-  );
+  if (res && res.length === mCall.length) {
+    const spot1 = calcReserve(
+      shrinkToken(res[0].toString(), from.decimals),
+      shrinkToken(res[1].toString(), 18),
+      ppmToDec(fromPool.fee)
+    );
 
-  const spot2 = calcReserve(
-    shrinkToken(bntReserve2[0].balance, 18),
-    shrinkToken(toReserve2[0].balance, to.decimals),
-    ppmToDec(toPool.fee)
-  );
+    const spot2 = calcReserve(
+      shrinkToken(res[2].toString(), 18),
+      shrinkToken(res[3].toString(), to.decimals),
+      ppmToDec(toPool.fee)
+    );
 
-  return { spotPrice: spot1.times(spot2), rate: rate[0].rate };
+    return { spotPrice: spot1.times(spot2), rate: res[4].toString() };
+  }
+
+  return { rate: '0', spotPrice: new BigNumber(0) };
 };
 
-const buildTokenPoolShape = (pool: APIPool, tokenAddress: string) => {
-  return buildPoolBalanceShape({
-    web3,
-    tokenAddress,
-    converterAddress: pool.converter_dlt_id,
-  });
+const buildTokenPoolCall = (
+  pool: APIPool,
+  tokenAddress: string
+): MCInterface => {
+  const contract = Converter__factory.connect(
+    pool.converter_dlt_id,
+    web3.provider
+  );
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'getConnectorBalance',
+    methodParameters: [tokenAddress],
+  };
 };
 
 const findPoolByToken = async (tkn: string): Promise<APIPool> => {

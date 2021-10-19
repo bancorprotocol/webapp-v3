@@ -8,6 +8,7 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
+  BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
@@ -23,7 +24,7 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { ErrorCode, EthNetworks } from 'services/web3/types';
+import { EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
@@ -174,6 +175,9 @@ export const SwapMarket = ({
     }
   };
 
+  const showNotification = (notification: BaseNotification) =>
+    dispatch(addNotification(notification));
+
   const onConfirmation = async () => {
     if (!(chainId && toToken && account)) return;
 
@@ -197,23 +201,19 @@ export const SwapMarket = ({
     if (!approved) return checkApproval();
 
     if (fromToken.address === wethToken) {
-      dispatch(addNotification(await withdrawWeth(fromAmount, account)));
+      dispatch(addNotification(await withdrawWeth(fromAmount)));
       return;
     }
 
-    try {
-      const txHash = await swap({
-        slippageTolerance,
-        fromToken,
-        toToken,
-        fromAmount,
-        toAmount,
-        user: account,
-        onConfirmation: onConfirmation,
-      });
-
-      dispatch(
-        addNotification({
+    const conversion = getConversionLS();
+    await swap(
+      slippageTolerance,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      (txHash: string) =>
+        showNotification({
           type: NotificationType.pending,
           title: 'Pending Confirmation',
           msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
@@ -224,35 +224,35 @@ export const SwapMarket = ({
             errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
           },
           txHash,
-        })
-      );
-    } catch (e) {
-      console.error('Swap failed with error: ', e);
-      if (e.code === ErrorCode.DeniedTx)
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the trade. If this was by mistake, please try again.',
-          })
-        );
-      else {
-        const conversion = getConversionLS();
+        }),
+      () => {
+        sendConversionEvent(ConversionEvents.success, {
+          ...conversion,
+          conversion_market_token_rate: fromToken.usdPrice,
+          transaction_category: 'Conversion',
+        });
+        onConfirmation();
+      },
+      () =>
+        showNotification({
+          type: NotificationType.error,
+          title: 'Transaction Rejected',
+          msg: 'You rejected the trade. If this was by mistake, please try again.',
+        }),
+      (error: string) => {
         sendConversionEvent(ConversionEvents.fail, {
           conversion,
-          error: e.message,
+          error,
         });
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          })
-        );
+        showNotification({
+          type: NotificationType.error,
+          title: 'Transaction Failed',
+          msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+        });
       }
-    } finally {
-      setShowModal(false);
-    }
+    );
+
+    setShowModal(false);
   };
 
   const handleSwitch = () => {

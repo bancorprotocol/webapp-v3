@@ -5,10 +5,10 @@ import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiqui
 import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmpty';
 import { useAppSelector } from 'redux/index';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchReserveBalances } from 'services/web3/contracts/liquidityProtection/wrapper';
 import BigNumber from 'bignumber.js';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { WidgetError } from 'components/widgets/WidgetError';
+import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
 
 export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
   const { id } = props.match.params;
