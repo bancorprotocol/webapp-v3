@@ -19,7 +19,11 @@ import {
   ropstenImage,
   ethToken,
 } from 'services/web3/config';
-import { get7DaysAgo, mapIgnoreThrown } from 'utils/pureFunctions';
+import {
+  get7DaysAgo,
+  mapIgnoreThrown,
+  sortTokenBalanceAlphabetic,
+} from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
@@ -253,7 +257,8 @@ export const tokens$ = combineLatest([
         currentNetwork
       );
       setLoadingBalances(false);
-      if (updatedTokens.length !== 0) return updatedTokens;
+      if (updatedTokens.length !== 0)
+        return updatedTokens.sort(sortTokenBalanceAlphabetic);
     }
 
     return tokensNoBalance;
