@@ -2,10 +2,11 @@ import { claimRewards } from 'services/web3/protection/rewards';
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
 
 interface Props {
+  claimableRewards: string | null;
   account?: string | null;
 }
 
-export const RewardsClaimCTA = ({ account }: Props) => {
+export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
   const handleClaim = async () => {
     if (account) {
       const txHash = await claimRewards();

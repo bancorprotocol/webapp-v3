@@ -26,29 +26,31 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
 
   return (
     <Widget title="Stake Rewards" goBackRoute="/portfolio">
-      <SelectPool pool={pool} pools={pools} onSelect={onSelect} />
-      <div className="mt-20">
-        <TokenInputField
-          input={bntAmount}
-          setInput={setBntAmount}
-          amountUsd={bntAmountUsd}
-          label="Stake Amount"
-          setAmountUsd={setBntAmountUsd}
-          token={bnt ? { ...bnt, balance: claimableRewards } : undefined}
-          selectable={false}
-          border
+      <div className="p-10">
+        <SelectPool pool={pool} pools={pools} onSelect={onSelect} />
+        <div className="mt-20">
+          <TokenInputField
+            input={bntAmount}
+            setInput={setBntAmount}
+            amountUsd={bntAmountUsd}
+            label="Stake Amount"
+            setAmountUsd={setBntAmountUsd}
+            token={bnt ? { ...bnt, balance: claimableRewards } : undefined}
+            selectable={false}
+            border
+          />
+          {errorBalance && (
+            <div className="mt-5 pl-[140px] text-error">{errorBalance}</div>
+          )}
+        </div>
+        <RewardsStakeSpaceAvailable pool={pool} />
+        <RewardsStakeCTA
+          pool={pool}
+          account={account}
+          errorBalance={errorBalance}
+          bntAmount={bntAmount}
         />
-        {errorBalance && (
-          <div className="mt-5 pl-[140px] text-error">{errorBalance}</div>
-        )}
       </div>
-      <RewardsStakeSpaceAvailable pool={pool} />
-      <RewardsStakeCTA
-        pool={pool}
-        account={account}
-        errorBalance={errorBalance}
-        bntAmount={bntAmount}
-      />
     </Widget>
   );
 };

@@ -12,7 +12,10 @@ export const RewardsClaim = () => {
       <div className="px-10 pb-10">
         <RewardsClaimInfo />
         <RewardsClaimAmount amount={claimableRewards} />
-        <RewardsClaimCTA account={account} />
+        <RewardsClaimCTA
+          account={account}
+          claimableRewards={claimableRewards}
+        />
       </div>
     </Widget>
   );
