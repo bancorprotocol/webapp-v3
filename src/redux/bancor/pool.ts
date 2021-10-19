@@ -2,7 +2,8 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { Pool } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
-import { orderBy } from 'lodash';
+import { isEqual, orderBy } from 'lodash';
+import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 interface PoolState {
   pools: Pool[];
@@ -83,8 +84,10 @@ export interface SelectedPool {
   pool?: Pool;
 }
 
+const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
+
 export const getPoolById = (id: string) =>
-  createSelector(
+  createDeepEqualSelector(
     (state: RootState) => state.pool.pools,
     (pools: Pool[]) => {
       if (pools.length === 0) {
