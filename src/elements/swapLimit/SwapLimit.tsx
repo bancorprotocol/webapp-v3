@@ -33,6 +33,8 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
+import { exchangeProxy$ } from 'services/observables/contracts';
+import { take } from 'rxjs/operators';
 
 enum Field {
   from,
@@ -73,6 +75,8 @@ export const SwapLimit = ({
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
+
+  const approveContract = useRef('');
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -216,7 +220,15 @@ export const SwapLimit = ({
   //Check if approval is required
   const checkApproval = async (token: Token) => {
     try {
-      const isApprovalReq = await getNetworkContractApproval(token, fromAmount);
+      const exchangeProxyAddress = await exchangeProxy$
+        .pipe(take(1))
+        .toPromise();
+      approveContract.current = exchangeProxyAddress;
+      const isApprovalReq = await getNetworkContractApproval(
+        token,
+        fromAmount,
+        exchangeProxyAddress
+      );
       if (isApprovalReq) {
         const conversion = getConversionLS();
         sendConversionEvent(ConversionEvents.approvePop, conversion);
@@ -507,6 +519,7 @@ export const SwapLimit = ({
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }
+          contract={approveContract.current}
         />
         <Modal
           title="Deposit ETH to WETH"
