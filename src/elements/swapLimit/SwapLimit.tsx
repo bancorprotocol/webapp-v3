@@ -75,6 +75,8 @@ export const SwapLimit = ({
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
+
+  const approveContract = useRef('');
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -221,6 +223,7 @@ export const SwapLimit = ({
       const exchangeProxyAddress = await exchangeProxy$
         .pipe(take(1))
         .toPromise();
+      approveContract.current = exchangeProxyAddress;
       const isApprovalReq = await getNetworkContractApproval(
         token,
         fromAmount,
@@ -516,6 +519,7 @@ export const SwapLimit = ({
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }
+          contract={approveContract.current}
         />
         <Modal
           title="Deposit ETH to WETH"
