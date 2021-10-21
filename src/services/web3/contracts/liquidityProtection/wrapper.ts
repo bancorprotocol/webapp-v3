@@ -85,7 +85,6 @@ export const fetchLiquidityProtectionSettingsContract = async (
 };
 
 export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
-  console.log('1');
   const liquidityProtectionContract = await liquidityProtection$
     .pipe(first())
     .toPromise();
@@ -93,9 +92,7 @@ export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
     liquidityProtectionContract,
     web3
   );
-  console.log('2');
 
-  console.log('liquidityProtectionContract', liquidityProtectionContract);
   const result = await contract.methods.poolAvailableSpace(id).call();
 
   return {

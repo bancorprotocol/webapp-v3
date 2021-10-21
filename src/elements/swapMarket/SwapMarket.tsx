@@ -145,7 +145,7 @@ export const SwapMarket = ({
         }
       }
     },
-    [fromToken, toToken, fromDebounce]
+    [fromToken?.address, toToken?.address, fromDebounce]
   );
 
   const usdSlippage = () => {

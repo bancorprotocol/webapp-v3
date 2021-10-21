@@ -246,9 +246,8 @@ export const tokens$ = combineLatest([
   user$,
   tokensNoBalance$,
   currentNetwork$,
-  fifteenSeconds$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork, _]) => {
+  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
     if (user && tokensNoBalance) {
       setLoadingBalances(true);
       const updatedTokens = await fetchTokenBalances(
