@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
@@ -33,7 +33,12 @@ export const SwapWidget = ({
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
-  const [fromToken, setFromToken] = useState(tokens[0]);
+  const ethOrFirst = useCallback(() => {
+    const eth = tokens.find((x) => x.address === ethToken);
+    return eth ? eth : tokens[0];
+  }, [tokens]);
+
+  const [fromToken, setFromToken] = useState(ethOrFirst());
   const [toToken, setToToken] = useState<Token | undefined>();
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
@@ -45,8 +50,8 @@ export const SwapWidget = ({
       if (from) {
         const fromToken = tokens.find((x) => x.address === from);
         if (fromToken) setFromToken(fromToken);
-        else setFromToken(tokens[0]);
-      } else setFromToken(tokens[0]);
+        else setFromToken(ethOrFirst());
+      } else setFromToken(ethOrFirst());
 
       if (to) {
         const toToken = tokens.find((x) => x.address === to);
@@ -56,7 +61,7 @@ export const SwapWidget = ({
 
       setIsLimit(limit);
     }
-  }, [from, to, limit, tokens, setIsLimit]);
+  }, [from, to, limit, tokens, setIsLimit, ethOrFirst]);
 
   useAsyncEffect(
     async (isMounted) => {

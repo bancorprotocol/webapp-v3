@@ -1,3 +1,5 @@
+import { Token } from 'services/observables/tokens';
+
 export const shortenString = (
   string: string,
   separator = '...',
@@ -80,3 +82,24 @@ export const wait = async (ms: number = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
+  if (a.balance && b.balance && b.balance !== '0' && a.balance !== '0')
+    return Number(b.balance) - Number(a.balance);
+
+  if (
+    (a.balance && a.balance !== '0') ||
+    a.symbol < b.symbol ||
+    a.name < b.name
+  )
+    return -1;
+
+  if (
+    (b.balance && b.balance !== '0') ||
+    a.symbol > b.symbol ||
+    a.name > b.name
+  )
+    return 1;
+
+  return 0;
+};
