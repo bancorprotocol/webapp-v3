@@ -30,6 +30,7 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
+import { useAsyncEffect } from 'use-async-effect';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -75,7 +76,7 @@ export const SwapMarket = ({
   ) => {
     if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-    setIsLoadingRate(false);
+    if (showAnimation) setIsLoadingRate(false);
     return res;
   };
 
@@ -91,10 +92,6 @@ export const SwapMarket = ({
   }, 15000);
 
   useEffect(() => {
-    setIsLoadingRate(true);
-  }, [fromAmount]);
-
-  useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
@@ -105,9 +102,12 @@ export const SwapMarket = ({
         .toString();
       setToAmountUsd(usdAmount);
       setToAmount(fromDebounce);
-      setIsLoadingRate(false);
-    } else {
-      (async () => {
+    }
+  }, [fromDebounce, fromToken, toToken, tokens]);
+
+  useAsyncEffect(
+    async (isMounted) => {
+      if (isMounted() && fromToken && fromToken.address !== wethToken) {
         if (
           (!fromDebounce || !parseFloat(fromDebounce)) &&
           fromToken &&
@@ -143,9 +143,10 @@ export const SwapMarket = ({
           if (fromDebounce) setPriceImpact(result.priceImpact);
           else setPriceImpact('0.00');
         }
-      })();
-    }
-  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
+      }
+    },
+    [fromToken, toToken, fromDebounce]
+  );
 
   const usdSlippage = () => {
     if (!toAmountUsd || !fromAmountUsd) return;
