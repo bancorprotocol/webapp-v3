@@ -92,6 +92,10 @@ export const SwapMarket = ({
   }, 15000);
 
   useEffect(() => {
+    setIsLoadingRate(true);
+  }, [fromAmount]);
+
+  useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
       const eth = tokens.find((x) => x.address === ethToken);
       setRate('1');
@@ -102,6 +106,7 @@ export const SwapMarket = ({
         .toString();
       setToAmountUsd(usdAmount);
       setToAmount(fromDebounce);
+      setIsLoadingRate(false);
     }
   }, [fromDebounce, fromToken, toToken, tokens]);
 
