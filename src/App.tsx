@@ -147,7 +147,7 @@ export const App = () => {
               <Route
                 exact
                 strict
-                path="/portfolio/rewards/stake"
+                path="/portfolio/rewards/stake/:id"
                 component={RewardsStake}
               />
               <Route exact strict path="/vote" component={Vote} />
