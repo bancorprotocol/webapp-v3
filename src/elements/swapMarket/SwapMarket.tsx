@@ -70,9 +70,10 @@ export const SwapMarket = ({
   const loadRateAndPriceImapct = async (
     fromToken: Token,
     toToken: Token,
-    amount: string
+    amount: string,
+    showAnimation = true
   ) => {
-    setIsLoadingRate(true);
+    if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
     setIsLoadingRate(false);
     return res;
@@ -80,7 +81,12 @@ export const SwapMarket = ({
 
   useInterval(() => {
     if (toToken && fromToken.address !== wethToken) {
-      loadRateAndPriceImapct(fromToken, toToken, fromAmount ? fromAmount : '1');
+      loadRateAndPriceImapct(
+        fromToken,
+        toToken,
+        fromAmount ? fromAmount : '1',
+        false
+      );
     }
   }, 15000);
 
