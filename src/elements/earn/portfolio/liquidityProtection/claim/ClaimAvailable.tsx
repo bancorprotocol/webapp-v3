@@ -1,6 +1,19 @@
+import { useDispatch } from 'react-redux';
+import { rejectNotification } from 'services/notifications/notifications';
+import { Token } from 'services/observables/tokens';
+import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
+import { prettifyNumber } from 'utils/helperFunctions';
 import { Image } from '../../../../../components/image/Image';
 
-export const ClaimAvailable = () => {
+interface ClaimAvailableProps {
+  bnt?: Token;
+  availableBNT: number;
+}
+
+export const ClaimAvailable = ({ bnt, availableBNT }: ClaimAvailableProps) => {
+  const dispatch = useDispatch();
+  const noBntToClaim = availableBNT === 0;
+
   return (
     <section className="content-section py-20">
       <h2 className="ml-[20px] md:ml-[44px]">Available to Claim</h2>
@@ -8,14 +21,32 @@ export const ClaimAvailable = () => {
       <div className="mx-[20px] md:mx-[44px] mt-30 mb-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Image
-              alt="BNT Logo"
-              className="w-30 mr-10"
-              src="https://assets.coingecko.com/coins/images/736/small/bancor-bnt.png?1628822309"
-            />
-            <span>No BNT to claim</span>
+            <Image alt="BNT Logo" className="w-30 mr-10" src={bnt?.logoURI} />
+            {noBntToClaim ? (
+              <span> No BNT to claim</span>
+            ) : (
+              <>
+                <span className="pr-10">{bnt?.symbol}</span>
+                <span className="pr-10 text-14">{availableBNT}</span>
+                <span className="text-12 text-primary dark:text-primary-light">{`(~${prettifyNumber(
+                  bnt && bnt.usdPrice ? Number(bnt.usdPrice) * availableBNT : 0,
+                  true
+                )})`}</span>
+              </>
+            )}
           </div>
-          <button className="btn-primary btn-sm rounded-[12px]" disabled>
+          <button
+            className="btn-primary btn-sm rounded-[12px]"
+            onClick={() =>
+              claimBnt(
+                () => {},
+                () => {},
+                () => rejectNotification(dispatch),
+                () => {}
+              )
+            }
+            disabled={noBntToClaim}
+          >
             Claim BNT
           </button>
         </div>

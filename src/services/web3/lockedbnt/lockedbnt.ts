@@ -9,17 +9,18 @@ import {
   LiquidityProtectionStore__factory,
   LiquidityProtection__factory,
 } from '../abis/types';
-import BigNumber from 'bignumber.js';
 import { ErrorCode } from '../types';
+import { shrinkToken } from 'utils/formulas';
+import { partition } from 'lodash';
 
-interface LockedBnt {
-  balance: string;
-  expirationDate: dayjs.Dayjs;
+export interface LockedBnt {
+  bnt: number;
+  expiry: dayjs.Dayjs;
 }
 
 interface LockedAvailableBnt {
   locked: LockedBnt[];
-  available: BigNumber;
+  available: number;
 }
 
 export const fetchLockedAvailableBalances = async (
@@ -42,6 +43,24 @@ export const fetchLockedAvailableBalances = async (
       0,
       lockedBalanceCount
     );
+
+    const bnts = lockedBalances['0'];
+    const expirys = lockedBalances['1'];
+
+    const res = bnts.map((bnt, index) => ({
+      bnt: Number(shrinkToken(bnt.toString(), 18)),
+      expiry: dayjs.unix(Number(expirys[index])),
+    }));
+
+    const now = dayjs(Date.now());
+    const [available, locked] = partition(res, (x) => x.expiry.isBefore(now));
+
+    const totalAvailable =
+      available.length === 0
+        ? 0
+        : available.map((x) => x.bnt).reduce((item, prev) => item + prev);
+
+    return { locked: locked, available: totalAvailable };
   } catch (error) {
     console.error(error);
   }
