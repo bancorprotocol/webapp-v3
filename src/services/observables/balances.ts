@@ -39,11 +39,10 @@ export const fetchTokenBalances = async (
         const balance = (bn[0] as BigNumber).toString();
         return {
           ...tokensNoETH[index],
-          balance: balance
-            ? balance !== '0'
+          balance:
+            balance !== '0'
               ? shrinkToken(balance, tokensNoETH[index].decimals)
-              : balance
-            : null,
+              : balance,
         };
       });
 

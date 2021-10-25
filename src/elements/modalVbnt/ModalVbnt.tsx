@@ -23,6 +23,13 @@ import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { updateTokens } from 'redux/bancor/bancor';
 import { EthNetworks } from 'services/web3/types';
+import {
+  rejectNotification,
+  stakeFailedNotification,
+  stakeNotification,
+  unstakeFailedNotification,
+  unstakeNotification,
+} from 'services/notifications/notifications';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -64,9 +71,6 @@ export const ModalVbnt = ({
     }
   }, [amount, token, percentages, fieldBlance]);
 
-  const showNotification = (notification: BaseNotification) =>
-    dispatch(addNotification(notification));
-
   //Check if approval is required
   const checkApproval = async () => {
     if (!token) return;
@@ -101,63 +105,19 @@ export const ModalVbnt = ({
       await stakeAmount(
         amount,
         token,
-        (txHash: string) =>
-          showNotification({
-            type: NotificationType.pending,
-            title: 'Pending Confirmation',
-            msg: 'Staking vBNT is pending confirmation',
-            txHash,
-            updatedInfo: {
-              successTitle: 'Success!',
-              successMsg: `Your stake of ${amount} vBNT has been confirmed`,
-              errorTitle: 'Transaction Failed',
-              errorMsg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
-            },
-          }),
+        (txHash: string) => stakeNotification(dispatch, amount, txHash),
         () => refreshBalances(token, account, chainId),
-        () =>
-          showNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          }),
-        () =>
-          showNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
-          })
+        () => rejectNotification(dispatch),
+        () => stakeFailedNotification(dispatch, amount)
       );
     else
       await unstakeAmount(
         amount,
         token,
-        (txHash: string) =>
-          showNotification({
-            type: NotificationType.pending,
-            title: 'Pending Confirmation',
-            msg: 'Unstaking vBNT is pending confirmation',
-            txHash,
-            updatedInfo: {
-              successTitle: 'Success!',
-              successMsg: `Unstaking ${amount} vBNT has been confirmed`,
-              errorTitle: 'Transaction Failed',
-              errorMsg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
-            },
-          }),
+        (txHash: string) => unstakeNotification(dispatch, amount, txHash),
         () => refreshBalances(token, account, chainId),
-        () =>
-          showNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          }),
-        () =>
-          showNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
-          })
+        () => rejectNotification(dispatch),
+        () => unstakeFailedNotification(dispatch, amount)
       );
   };
 

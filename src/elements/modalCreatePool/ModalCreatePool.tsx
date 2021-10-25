@@ -15,6 +15,14 @@ import { getNetworkVariables, ropstenTokens } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
 import { InputField } from 'components/inputField/InputField';
 import { Modal } from 'components/modal/Modal';
+import {
+  ownershipNotification,
+  poolCreateNotification,
+  poolExistNotification,
+  poolFailedNotification,
+  rejectNotification,
+  setFeeNotification,
+} from 'services/notifications/notifications';
 
 export const ModalCreatePool = () => {
   const { chainId, account } = useWeb3React();
@@ -39,66 +47,12 @@ export const ModalCreatePool = () => {
       token,
       (Number(fee) / 100).toString(),
       chainId,
-      showNotification({
-        type: NotificationType.error,
-        title: 'Pool Already exist',
-        msg: `The pool already exists on Bancor`,
-      }),
-      (txHash: string) =>
-        showNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: 'Creating pool is pending confirmation',
-          txHash,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: 'Your pool was successfully created',
-            errorTitle: 'Creating Pool Failed',
-            errorMsg:
-              'Fail creating pool. Please try again or contact support.',
-          },
-        }),
-
-      (txHash: string) =>
-        showNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: 'Accepting ownership is pending confirmation',
-          txHash,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: 'Ownership Accepted',
-            errorTitle: 'Ownership Failed',
-            errorMsg:
-              'Failed accepting ownership. Please try again or contact support.',
-          },
-        }),
-      (txHash: string) =>
-        showNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: 'Setting convertion fee is pending confirmation',
-          txHash,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: 'Conversion fee has been set',
-            errorTitle: 'Conversion fee failed',
-            errorMsg:
-              'conversion fee setting failed. Please try again or contact support.',
-          },
-        }),
-      () =>
-        showNotification({
-          type: NotificationType.error,
-          title: 'Transaction Rejected',
-          msg: 'You rejected the transaction. If this was by mistake, please try again.',
-        }),
-      () =>
-        showNotification({
-          type: NotificationType.error,
-          title: 'Creating Pool Failed',
-          msg: `Fail creating pool. Please try again or contact support.`,
-        })
+      () => poolExistNotification(dispatch),
+      (txHash: string) => poolCreateNotification(dispatch, txHash),
+      (txHash: string) => ownershipNotification(dispatch, txHash),
+      (txHash: string) => setFeeNotification(dispatch, txHash),
+      () => rejectNotification(dispatch),
+      () => poolFailedNotification(dispatch)
     );
 
     setIsOpen(false);

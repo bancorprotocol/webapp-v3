@@ -4,52 +4,53 @@ import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddL
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
 import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmpty';
 import { useAppSelector } from 'redux/index';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { WidgetError } from 'components/widgets/WidgetError';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
 
-export const AddLiquidity = (props: RouteComponentProps<{ id: string }>) => {
-  const { id } = props.match.params;
-  const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
-  const [isCheckingType, setIsCheckingType] = useState(false);
-  const [type, setType] = useState('');
-  const [reserveBalances, setReserveBalances] = useState({
-    tknBalance: '0',
-    bntBalance: '0',
-  });
+export const AddLiquidity = React.memo(
+  (props: RouteComponentProps<{ id: string }>) => {
+    const { id } = props.match.params;
+    const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
+    const [isCheckingType, setIsCheckingType] = useState(false);
+    const [type, setType] = useState('');
+    const [reserveBalances, setReserveBalances] = useState({
+      tknBalance: '0',
+      bntBalance: '0',
+    });
 
-  const checkType = useCallback(async () => {
-    if (!pool) {
-      return;
-    }
-    setIsCheckingType(true);
-    if (pool.isProtected) {
-      setType('single');
-    } else {
-      const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
-      setReserveBalances({ tknBalance, bntBalance });
-      const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
-        new BigNumber(b).eq(0)
-      );
-
-      if (isPoolEmpty) {
-        setType('empty');
-      } else {
-        setType('dual');
+    const checkType = useCallback(async () => {
+      if (!pool) {
+        return;
       }
-    }
-    setIsCheckingType(false);
-  }, [pool]);
+      setIsCheckingType(true);
+      if (pool.isProtected) {
+        setType('single');
+      } else {
+        const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
+        setReserveBalances({ tknBalance, bntBalance });
+        const isPoolEmpty = [tknBalance, bntBalance].some((b) =>
+          new BigNumber(b).eq(0)
+        );
 
-  useEffect(() => {
-    void checkType();
-  }, [id, checkType]);
+        if (isPoolEmpty) {
+          setType('empty');
+        } else {
+          setType('dual');
+        }
+      }
+      setIsCheckingType(false);
+    }, [pool]);
 
-  const isLoading = () => {
-    return status === 'loading' || isCheckingType;
-  };
+    useEffect(() => {
+      void checkType();
+    }, [id, checkType]);
+
+    const isLoading = () => {
+      return status === 'loading' || isCheckingType;
+    };
 
   return (
     <div>

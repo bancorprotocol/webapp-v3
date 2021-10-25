@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { sortBy } from 'lodash';
-import { NotificationType } from 'redux/notification/notification';
 import { first, take } from 'rxjs/operators';
 import {
   bancorConverterRegistry$,
@@ -257,13 +256,13 @@ export const fetchReserveBalances = async (pool: Pool) => {
     pool.converter_dlt_id,
     web3.provider
   );
-  const tknBalance = await converterContract
-    .getConnectorBalance(pool.reserves[0].address)
-    .toString();
+  const tknBalance = (
+    await converterContract.getConnectorBalance(pool.reserves[0].address)
+  ).toString();
 
-  const bntBalance = await converterContract
-    .getConnectorBalance(pool.reserves[1].address)
-    .toString();
+  const bntBalance = (
+    await converterContract.getConnectorBalance(pool.reserves[1].address)
+  ).toString();
 
   return { tknBalance, bntBalance };
 };

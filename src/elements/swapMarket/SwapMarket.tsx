@@ -31,6 +31,12 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
+import {
+  rejectNotification,
+  swapFailedNotification,
+  swapNotification,
+} from 'services/notifications/notifications';
+import { useAsyncEffect } from 'use-async-effect';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -71,17 +77,23 @@ export const SwapMarket = ({
   const loadRateAndPriceImapct = async (
     fromToken: Token,
     toToken: Token,
-    amount: string
+    amount: string,
+    showAnimation = true
   ) => {
-    setIsLoadingRate(true);
+    if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-    setIsLoadingRate(false);
+    if (showAnimation) setIsLoadingRate(false);
     return res;
   };
 
   useInterval(() => {
     if (toToken && fromToken.address !== wethToken) {
-      loadRateAndPriceImapct(fromToken, toToken, fromAmount ? fromAmount : '1');
+      loadRateAndPriceImapct(
+        fromToken,
+        toToken,
+        fromAmount ? fromAmount : '1',
+        false
+      );
     }
   }, 15000);
 
@@ -101,8 +113,12 @@ export const SwapMarket = ({
       setToAmountUsd(usdAmount);
       setToAmount(fromDebounce);
       setIsLoadingRate(false);
-    } else {
-      (async () => {
+    }
+  }, [fromDebounce, fromToken, toToken, tokens]);
+
+  useAsyncEffect(
+    async (isMounted) => {
+      if (isMounted() && fromToken && fromToken.address !== wethToken) {
         if (
           (!fromDebounce || !parseFloat(fromDebounce)) &&
           fromToken &&
@@ -138,9 +154,10 @@ export const SwapMarket = ({
           if (fromDebounce) setPriceImpact(result.priceImpact);
           else setPriceImpact('0.00');
         }
-      })();
-    }
-  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
+      }
+    },
+    [fromToken?.address, toToken?.address, fromDebounce]
+  );
 
   const usdSlippage = () => {
     if (!toAmountUsd || !fromAmountUsd) return;
@@ -174,9 +191,6 @@ export const SwapMarket = ({
       );
     }
   };
-
-  const showNotification = (notification: BaseNotification) =>
-    dispatch(addNotification(notification));
 
   const onConfirmation = async () => {
     if (!(chainId && toToken && account)) return;
@@ -213,18 +227,14 @@ export const SwapMarket = ({
       fromAmount,
       toAmount,
       (txHash: string) =>
-        showNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          },
-          txHash,
-        }),
+        swapNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          txHash
+        ),
       () => {
         sendConversionEvent(ConversionEvents.success, {
           ...conversion,
@@ -233,22 +243,19 @@ export const SwapMarket = ({
         });
         onConfirmation();
       },
-      () =>
-        showNotification({
-          type: NotificationType.error,
-          title: 'Transaction Rejected',
-          msg: 'You rejected the trade. If this was by mistake, please try again.',
-        }),
+      () => rejectNotification(dispatch),
       (error: string) => {
         sendConversionEvent(ConversionEvents.fail, {
           conversion,
           error,
         });
-        showNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-        });
+        swapFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
       }
     );
 

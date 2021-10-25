@@ -24,6 +24,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(pool ? pool.reserves[1].address : '')
   );
+
   const { account } = useWeb3React();
 
   const fetchClaimableRewards = async (account: string) => {
@@ -34,6 +35,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const onSelect = (pool: Pool) => {
     history.push(`/portfolio/rewards/stake/${pool.pool_dlt_id}`);
   };
+
 
   useInterval(
     async () => {
