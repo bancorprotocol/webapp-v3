@@ -63,10 +63,7 @@ export const SwapLimitTable = () => {
               onClick={async () =>
                 dispatch(
                   addNotification(
-                    await cancelOrders(
-                      orders.map((x) => x.orderRes),
-                      account
-                    )
+                    await cancelOrders(orders.map((x) => x.orderRes))
                   )
                 )
               }
@@ -78,9 +75,7 @@ export const SwapLimitTable = () => {
                 className={'btn-outline-secondary btn-sm rounded-10'}
                 onClick={async () =>
                   weth.balance &&
-                  dispatch(
-                    addNotification(await withdrawWeth(weth.balance, account))
-                  )
+                  dispatch(addNotification(await withdrawWeth(weth.balance)))
                 }
               >
                 Withdraw {prettifyNumber(weth.balance)} WETH
@@ -142,9 +137,7 @@ export const SwapLimitTable = () => {
                       }
                       onClick={async () =>
                         dispatch(
-                          addNotification(
-                            await cancelOrders([order.orderRes], account)
-                          )
+                          addNotification(await cancelOrders([order.orderRes]))
                         )
                       }
                     >

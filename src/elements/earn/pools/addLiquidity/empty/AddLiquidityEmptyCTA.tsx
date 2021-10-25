@@ -3,13 +3,13 @@ import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
-import { addLiquidity } from 'services/web3/contracts/converter/wrapper';
 import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
+import { addLiquidity } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   pool: Pool;

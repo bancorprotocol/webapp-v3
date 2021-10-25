@@ -5,6 +5,7 @@ import {
   distinctUntilChanged,
   map,
   pluck,
+  share,
   shareReplay,
   startWith,
 } from 'rxjs/operators';
@@ -13,39 +14,30 @@ import { bancorConverterRegistry$ } from './contracts';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
-import {
-  getAnchors,
-  getConvertersByAnchors,
-} from 'services/web3/contracts/converterRegistry/wrapper';
-import { web3 } from 'services/web3/contracts';
-import { toChecksumAddress } from 'web3-utils';
+import { web3 } from 'services/web3';
+import { utils } from 'ethers';
 import { updateArray } from 'utils/pureFunctions';
-
-const zipAnchorAndConverters = (
-  anchorAddresses: string[],
-  converterAddresses: string[]
-): ConverterAndAnchor[] => {
-  if (anchorAddresses.length !== converterAddresses.length)
-    throw new Error(
-      'was expecting as many anchor addresses as converter addresses'
-    );
-
-  const zipped = zip(anchorAddresses, converterAddresses) as [string, string][];
-  return zipped.map(([anchorAddress, converterAddress]) => ({
-    anchorAddress: toChecksumAddress(anchorAddress!),
-    converterAddress: toChecksumAddress(converterAddress!),
-  }));
-};
+import { ConverterRegistry__factory } from 'services/web3/abis/types';
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
   shareReplay(1)
 );
 
+export const apiTokens$ = apiData$.pipe(
+  pluck('tokens'),
+  distinctUntilChanged<WelcomeData['tokens']>(isEqual),
+  share()
+);
+
 const trueAnchors$ = bancorConverterRegistry$.pipe(
-  switchMapIgnoreThrow((converterRegistry) =>
-    getAnchors(converterRegistry, web3)
-  ),
+  switchMapIgnoreThrow(async (converterRegistry) => {
+    const contract = ConverterRegistry__factory.connect(
+      converterRegistry,
+      web3.provider
+    );
+    return await contract.getAnchors();
+  }),
   shareReplay(1)
 );
 
@@ -54,11 +46,12 @@ const anchorAndConverters$ = combineLatest([
   bancorConverterRegistry$,
 ]).pipe(
   switchMapIgnoreThrow(async ([anchorAddresses, converterRegistryAddress]) => {
-    const converters = await getConvertersByAnchors({
-      anchorAddresses,
+    const contract = ConverterRegistry__factory.connect(
       converterRegistryAddress,
-      web3,
-    });
+      web3.provider
+    );
+
+    const converters = await contract.getConvertersByAnchors(anchorAddresses);
     const anchorsAndConverters = zipAnchorAndConverters(
       anchorAddresses,
       converters
@@ -104,3 +97,19 @@ export const correctedPools$ = combineLatest([
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
 );
+
+const zipAnchorAndConverters = (
+  anchorAddresses: string[],
+  converterAddresses: string[]
+): ConverterAndAnchor[] => {
+  if (anchorAddresses.length !== converterAddresses.length)
+    throw new Error(
+      'was expecting as many anchor addresses as converter addresses'
+    );
+
+  const zipped = zip(anchorAddresses, converterAddresses) as [string, string][];
+  return zipped.map(([anchorAddress, converterAddress]) => ({
+    anchorAddress: utils.getAddress(anchorAddress!),
+    converterAddress: utils.getAddress(converterAddress!),
+  }));
+};

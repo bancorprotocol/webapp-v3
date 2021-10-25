@@ -95,7 +95,7 @@ export const getNetworkVariables = (
         govToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
         ethToken,
         liquidityProtectionToken: ethToken,
-        multiCall: '0x5Eb3fa2DFECdDe21C950813C665E9364fa609bD2',
+        multiCall: '0x5ba1e12693dc8f9c48aad8770482f4739beed696',
         converterContractForMaths: '0xe870d00176b2c71afd4c43cea550228e22be4abd',
         governanceContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
         etherscanUrl: 'https://etherscan.io',
@@ -108,7 +108,7 @@ export const getNetworkVariables = (
         govToken: '0x83ec8129b1F54BA5b0f47bD902A79C803e20A249',
         ethToken,
         liquidityProtectionToken: ethToken,
-        multiCall: '0xf3ad7e31b052ff96566eedd218a823430e74b406',
+        multiCall: '0x5ba1e12693dc8f9c48aad8770482f4739beed696',
         converterContractForMaths: '0x9a36b31ca768a860dab246cf080e7f042d1b7c0f',
         governanceContractAddress: '0x161f28A417361961E946Ae03EF0A425008b7F01B',
         etherscanUrl: 'https://ropsten.etherscan.io',
@@ -120,3 +120,39 @@ export const bntToken = (network: EthNetworks): string => {
   const vars = getNetworkVariables(network);
   return vars.bntToken;
 };
+
+const ropstenTokenEmptyProps = {
+  logoURI: ropstenImage,
+  chainId: 3,
+  balance: null,
+  decimals: 18,
+  usdPrice: '0',
+  liquidity: '0',
+  usd_24h_ago: '0',
+  price_change_24: 0,
+  price_history_7d: [{ time: 1630000000 as UTCTimestamp, value: 0 }],
+  usd_volume_24: '0',
+  isWhitelisted: false,
+};
+
+//Used to test create pool
+export const ropstenTokens: Token[] = [
+  {
+    address: '0x2080dD00237F1E2F3e95d501ae4a925496DBb200',
+    name: 'Test4',
+    symbol: 'TEST4',
+    ...ropstenTokenEmptyProps,
+  },
+  {
+    address: '0xf4e1355D07a953192c17010a46dfA1aaBB36BCf0',
+    name: 'Test5',
+    symbol: 'TEST5',
+    ...ropstenTokenEmptyProps,
+  },
+  {
+    address: '0xA79A95a1Cc1a586F8E1A069ff7D17AB6dB6acf3C',
+    name: 'Test6',
+    symbol: 'TEST6',
+    ...ropstenTokenEmptyProps,
+  },
+];

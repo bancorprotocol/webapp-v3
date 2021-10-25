@@ -8,19 +8,16 @@ import {
 import { take } from 'rxjs/operators';
 import { exchangeProxy$ } from 'services/observables/contracts';
 import { Token, tokens$ } from 'services/observables/tokens';
-import { resolveTxOnConfirmation } from 'services/web3';
+import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
-import {
-  buildExchangeProxyContract,
-  StringRfq,
-} from 'services/web3/contracts/exchangeProxy/wrapper';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sendConversionEvent, ConversionEvents } from './googleTagManager';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
+import { ExchangeProxy__factory } from 'services/web3/abis/types';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -30,6 +27,19 @@ enum OrderStatus {
   Filled,
   Cancelled,
   Expired,
+}
+
+interface StringRfq {
+  makerToken: string;
+  takerToken: string;
+  makerAmount: string;
+  takerAmount: string;
+  maker: string;
+  taker: string;
+  txOrigin: string;
+  pool: string;
+  expiry: string;
+  salt: string;
 }
 
 export const swapLimit = async (
@@ -46,7 +56,7 @@ export const swapLimit = async (
   try {
     if (fromIsEth) {
       try {
-        const txHash = await depositWeth(from, user);
+        const txHash = await depositWeth(from);
         checkApproval({ ...fromToken, symbol: 'WETH', address: wethToken });
         return {
           type: NotificationType.pending,
@@ -60,7 +70,7 @@ export const swapLimit = async (
             errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
           },
         };
-      } catch (e) {
+      } catch (e: any) {
         if (e.code === ErrorCode.DeniedTx)
           return {
             type: NotificationType.error,
@@ -96,7 +106,7 @@ export const swapLimit = async (
         msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
       };
     }
-  } catch (e) {
+  } catch (e: any) {
     sendConversionEvent(ConversionEvents.fail, {
       conversion,
       error: e.message,
@@ -136,7 +146,7 @@ export const fetchKeeperDaoTokens = async (): Promise<KeeprDaoToken[]> => {
   try {
     const res = await axios.get(`${baseUrl}/tokenList`);
     const tokens: KeeprDaoToken[] = res.data.result.tokens;
-    return tokens.map((x) => ({ ...x, address: toChecksumAddress(x.address) }));
+    return tokens.map((x) => ({ ...x, address: utils.getAddress(x.address) }));
   } catch (error) {
     console.error('Failed fetching keeperDao Tokens: ', error);
     return [];
@@ -165,11 +175,11 @@ const orderResToLimit = async (
   return orders.map((res) => {
     const payToken =
       tokens.find(
-        (x) => x.address === toChecksumAddress(res.order.makerToken)
+        (x) => x.address === utils.getAddress(res.order.makerToken)
       ) ?? tokens[0];
     const getToken =
       tokens.find(
-        (x) => x.address === toChecksumAddress(res.order.takerToken)
+        (x) => x.address === utils.getAddress(res.order.takerToken)
       ) ?? tokens[0];
 
     const payAmount = new BigNumber(res.order.makerAmount);
@@ -209,35 +219,34 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
     } else {
       throw new Error(`Unexpected response from server, ${res.data.message}`);
     }
-  } catch (e) {
+  } catch (e: any) {
     throw new Error(`Unexpected error during send order request ${e.message}`);
   }
 };
 
 export const cancelOrders = async (
-  orders: OrderResponse[],
-  user: string
+  orders: OrderResponse[]
 ): Promise<BaseNotification> => {
   const stringOrders = orders.map((limitOrder) =>
     orderToStringOrder(limitOrder.order)
   );
   const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
-  const contract = buildExchangeProxyContract(exchangeProxyAddress);
+  const contract = ExchangeProxy__factory.connect(
+    exchangeProxyAddress,
+    writeWeb3.signer
+  );
 
   try {
-    const txHash = await resolveTxOnConfirmation({
-      tx:
-        stringOrders.length === 1
-          ? contract.methods.cancelRfqOrder(stringOrders[0])
-          : contract.methods.batchCancelRfqOrders(stringOrders),
-      user,
-      resolveImmediately: true,
-    });
+    const tx =
+      stringOrders.length === 1
+        ? await contract.cancelRfqOrder(stringOrders[0])
+        : await contract.batchCancelRfqOrders(stringOrders);
+
     return {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
       msg: 'Transaction is pending confirmationn',
-      txHash,
+      txHash: tx.hash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: 'Canceling your limit orders has been confirmed',
@@ -246,7 +255,7 @@ export const cancelOrders = async (
           'Transaction had failed. Please try again or contact support.',
       },
     };
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx)
       return {
         type: NotificationType.error,
@@ -299,7 +308,7 @@ export interface RfqOrderJson {
   salt: string;
   chainId: number; // Ethereum Chain Id where the transaction is submitted.
   verifyingContract: string; // Address of the contract where the transaction should be sent.
-  signature: Signature;
+  signature: string;
 }
 
 interface Signature {

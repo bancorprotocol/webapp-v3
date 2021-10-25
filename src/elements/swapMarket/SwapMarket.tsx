@@ -8,6 +8,7 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
+  BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
@@ -23,13 +24,19 @@ import {
   sendConversionEvent,
   ConversionEvents,
 } from 'services/api/googleTagManager';
-import { ErrorCode, EthNetworks } from 'services/web3/types';
+import { EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
+import {
+  rejectNotification,
+  swapFailedNotification,
+  swapNotification,
+} from 'services/notifications/notifications';
+import { useAsyncEffect } from 'use-async-effect';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -70,17 +77,23 @@ export const SwapMarket = ({
   const loadRateAndPriceImapct = async (
     fromToken: Token,
     toToken: Token,
-    amount: string
+    amount: string,
+    showAnimation = true
   ) => {
-    setIsLoadingRate(true);
+    if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-    setIsLoadingRate(false);
+    if (showAnimation) setIsLoadingRate(false);
     return res;
   };
 
   useInterval(() => {
     if (toToken && fromToken.address !== wethToken) {
-      loadRateAndPriceImapct(fromToken, toToken, fromAmount ? fromAmount : '1');
+      loadRateAndPriceImapct(
+        fromToken,
+        toToken,
+        fromAmount ? fromAmount : '1',
+        false
+      );
     }
   }, 15000);
 
@@ -100,8 +113,12 @@ export const SwapMarket = ({
       setToAmountUsd(usdAmount);
       setToAmount(fromDebounce);
       setIsLoadingRate(false);
-    } else {
-      (async () => {
+    }
+  }, [fromDebounce, fromToken, toToken, tokens]);
+
+  useAsyncEffect(
+    async (isMounted) => {
+      if (isMounted() && fromToken && fromToken.address !== wethToken) {
         if (
           (!fromDebounce || !parseFloat(fromDebounce)) &&
           fromToken &&
@@ -137,9 +154,10 @@ export const SwapMarket = ({
           if (fromDebounce) setPriceImpact(result.priceImpact);
           else setPriceImpact('0.00');
         }
-      })();
-    }
-  }, [fromToken, toToken, setToToken, fromDebounce, tokens]);
+      }
+    },
+    [fromToken?.address, toToken?.address, fromDebounce]
+  );
 
   const usdSlippage = () => {
     if (!toAmountUsd || !fromAmountUsd) return;
@@ -197,62 +215,51 @@ export const SwapMarket = ({
     if (!approved) return checkApproval();
 
     if (fromToken.address === wethToken) {
-      dispatch(addNotification(await withdrawWeth(fromAmount, account)));
+      dispatch(addNotification(await withdrawWeth(fromAmount)));
       return;
     }
 
-    try {
-      const txHash = await swap({
-        slippageTolerance,
-        fromToken,
-        toToken,
-        fromAmount,
-        toAmount,
-        user: account,
-        onConfirmation: onConfirmation,
-      });
-
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          },
-          txHash,
-        })
-      );
-    } catch (e) {
-      console.error('Swap failed with error: ', e);
-      if (e.code === ErrorCode.DeniedTx)
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the trade. If this was by mistake, please try again.',
-          })
-        );
-      else {
-        const conversion = getConversionLS();
+    const conversion = getConversionLS();
+    await swap(
+      slippageTolerance,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      (txHash: string) =>
+        swapNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          txHash
+        ),
+      () => {
+        sendConversionEvent(ConversionEvents.success, {
+          ...conversion,
+          conversion_market_token_rate: fromToken.usdPrice,
+          transaction_category: 'Conversion',
+        });
+        onConfirmation();
+      },
+      () => rejectNotification(dispatch),
+      (error: string) => {
         sendConversionEvent(ConversionEvents.fail, {
           conversion,
-          error: e.message,
+          error,
         });
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
-          })
+        swapFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
         );
       }
-    } finally {
-      setShowModal(false);
-    }
+    );
+
+    setShowModal(false);
   };
 
   const handleSwitch = () => {

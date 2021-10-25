@@ -152,7 +152,7 @@ export const Vote = () => {
           content="Voting on Bancor DAO is free as it is using the Snapshot off-chain infrastructure. Every user can vote on every available proposal and help shape the future of the Bancor Protocol."
           button="Vote on Snapshot"
           onClick={() => {
-            window.open('https://vote.bancor.network/', '_blank');
+            window.open('https://vote.bancor.network/', '_blank', 'noopener');
           }}
           footer={
             <div className="flex items-end h-[48px]">

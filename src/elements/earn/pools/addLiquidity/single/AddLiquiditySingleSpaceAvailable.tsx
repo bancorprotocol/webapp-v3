@@ -1,17 +1,28 @@
 import { Pool, Token } from 'services/observables/tokens';
-import {
-  checkPriceDeviationTooHigh,
-  fetchBntNeededToOpenSpace,
-  getSpaceAvailable,
-} from 'services/web3/contracts/liquidityProtection/wrapper';
 import { useCallback, useEffect, useState } from 'react';
-import { prettifyNumber } from 'utils/helperFunctions';
+import {
+  calculateBntNeededToOpenSpace,
+  prettifyNumber,
+} from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
+import {
+  checkPriceDeviationTooHigh,
+  fetchBntNeededToOpenSpace,
+  getSpaceAvailable,
+} from 'services/web3/liquidity/liquidity';
+import { first } from 'rxjs/operators';
+import { liquidityProtection$ } from 'services/observables/contracts';
+import { web3 } from 'services/web3';
+import { shrinkToken } from 'utils/formulas';
+import {
+  Converter__factory,
+  LiquidityProtection__factory,
+} from 'services/web3/abis/types';
 
 interface Props {
   pool: Pool;

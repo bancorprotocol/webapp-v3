@@ -12,7 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 
 interface Tokens {
   token: Token;
@@ -33,7 +33,7 @@ export const useApproveModal = (
     const receipts = [];
     for (const txHash of ref.current) {
       try {
-        const receipt = await web3.eth.getTransactionReceipt(txHash);
+        const receipt = await web3.provider.getTransactionReceipt(txHash);
         receipts.push(receipt);
       } catch (e) {
         console.error('failed to getTransactionReceipt for approve token tx');
@@ -41,7 +41,7 @@ export const useApproveModal = (
       }
     }
 
-    const successCount = receipts.filter((r) => r && r.status === true).length;
+    const successCount = receipts.filter((r) => r && r.status).length;
     if (successCount === ref.current.length) {
       ref.current = [];
       onComplete();

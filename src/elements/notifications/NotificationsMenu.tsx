@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useInterval } from 'hooks/useInterval';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();
@@ -26,8 +26,8 @@ export const NotificationsMenu = () => {
   const checkStatus = async (notification: Notification) => {
     if (!notification.txHash) return;
     try {
-      const tx = await web3.eth.getTransactionReceipt(notification.txHash);
-      if (tx !== null)
+      const tx = await web3.provider.getTransactionReceipt(notification.txHash);
+      if (tx !== null) {
         dispatch(
           setStatus({
             id: notification.id,
@@ -40,6 +40,7 @@ export const NotificationsMenu = () => {
               : notification.updatedInfo?.errorMsg,
           })
         );
+      }
     } catch (e) {}
   };
 

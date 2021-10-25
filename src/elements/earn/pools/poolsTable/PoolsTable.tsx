@@ -9,6 +9,7 @@ import { useAppSelector } from 'redux/index';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
+import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 
 interface Props {
@@ -87,7 +88,8 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
         minWidth: 250,
         disableSortBy: true,
-        tooltip: 'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
+        tooltip:
+          'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
       },
       {
         id: 'actions',
@@ -108,15 +110,18 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <h2>Pools</h2>
-        <div className="relative">
-          <IconSearch className="absolute w-16 ml-14 text-grey-3" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search"
-            className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
-          />
+        <div className="flex align-center">
+          <div className="relative mr-16">
+            <IconSearch className="absolute w-16 ml-14 text-grey-3" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search"
+              className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
+            />
+          </div>
+          <ModalCreatePool />
         </div>
       </div>
 

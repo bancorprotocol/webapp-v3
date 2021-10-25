@@ -8,7 +8,7 @@ import {
   shareReplay,
 } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
-import { toChecksumAddress } from 'web3-utils';
+import { utils } from 'ethers';
 import { apiData$, correctedPools$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
@@ -18,18 +18,24 @@ import {
   buildWethToken,
   ropstenImage,
   ethToken,
+  wethToken,
 } from 'services/web3/config';
-import { get7DaysAgo, mapIgnoreThrown } from 'utils/pureFunctions';
+import {
+  get7DaysAgo,
+  mapIgnoreThrown,
+  sortTokenBalanceAlphabetic,
+} from 'utils/pureFunctions';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
-import { isEqual, sortBy } from 'lodash';
+import { isEqual, sortBy, uniqBy } from 'lodash';
 import { APIReward, WelcomeData } from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
-import { buildLiquidityProtectionSettingsContract } from 'services/web3/contracts/swap/wrapper';
-import { web3 } from 'services/web3/contracts';
+import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
+import { web3 } from 'services/web3';
+import { fifteenSeconds$ } from './timers';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -138,7 +144,7 @@ export const tokenLists$ = from(
   })
 ).pipe(shareReplay(1));
 
-const tokenListMerged$ = combineLatest([
+export const tokenListMerged$ = combineLatest([
   userPreferredListIds$,
   tokenLists$,
 ]).pipe(
@@ -147,13 +153,14 @@ const tokenListMerged$ = combineLatest([
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
       );
-      return filteredTokenLists.flatMap((list) => list.tokens);
+      const merged = filteredTokenLists.flatMap((list) => list.tokens);
+      return uniqBy(merged, (x) => x.address);
     }
   ),
   map((tokens) =>
     tokens.map((token) => ({
       ...token,
-      address: toChecksumAddress(token.address),
+      address: utils.getAddress(token.address),
     }))
   ),
   shareReplay()
@@ -165,74 +172,70 @@ export const tokensNoBalance$ = combineLatest([
   correctedPools$,
   currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([tokenList, apiTokens, pools, currentNetwork]) => {
-      const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map(
-        (x) => {
-          const usdPrice = x.rate.usd;
-          const price_24h = x.rate_24h_ago.usd;
-          const priceChanged =
-            usdPrice && price_24h && Number(price_24h) !== 0
-              ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
-              : 0;
-          const pool = pools.find((p) =>
-            p.reserves.find((r) => r.address === x.dlt_id)
-          );
-          const usdVolume24 = pool ? pool.volume_24h.usd : null;
-          const isWhitelisted = pool ? pool.isWhitelisted : false;
-
-          const seven_days_ago = get7DaysAgo().getUTCSeconds();
-          return {
-            address: x.dlt_id,
-            symbol: x.symbol,
-            decimals: x.decimals,
-            usdPrice,
-            liquidity: x.liquidity.usd,
-            usd_24h_ago: price_24h,
-            price_change_24: priceChanged,
-            price_history_7d: x.rates_7d
-              .filter((x) => !!x)
-              .map((x, i) => ({
-                value: Number(x),
-                time: (seven_days_ago + i * 360) as UTCTimestamp,
-              })),
-            usd_volume_24: usdVolume24,
-            isWhitelisted,
-          };
-        }
+  map(([tokenList, apiTokens, pools, currentNetwork]) => {
+    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
+      const usdPrice = x.rate.usd;
+      const price_24h = x.rate_24h_ago.usd;
+      const priceChanged =
+        usdPrice && price_24h && Number(price_24h) !== 0
+          ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
+          : 0;
+      const pool = pools.find((p) =>
+        p.reserves.find((r) => r.address === x.dlt_id)
       );
+      const usdVolume24 = pool ? pool.volume_24h.usd : null;
+      const isWhitelisted = pool ? pool.isWhitelisted : false;
 
-      let overlappingTokens: Token[] = [];
-      const eth = getEthToken(apiTokens, pools);
-      if (eth) overlappingTokens.push(eth);
+      const seven_days_ago = get7DaysAgo().getUTCSeconds();
+      return {
+        address: x.dlt_id,
+        symbol: x.symbol,
+        decimals: x.decimals,
+        usdPrice,
+        liquidity: x.liquidity.usd,
+        usd_24h_ago: price_24h,
+        price_change_24: priceChanged,
+        price_history_7d: x.rates_7d
+          .filter((x) => !!x)
+          .map((x, i) => ({
+            value: Number(x),
+            time: (seven_days_ago + i * 360) as UTCTimestamp,
+          })),
+        usd_volume_24: usdVolume24,
+        isWhitelisted,
+      };
+    });
 
-      newApiTokens.forEach((apiToken) => {
-        if (currentNetwork === EthNetworks.Mainnet) {
-          const found = tokenList.find(
-            (userToken) => userToken.address === apiToken.address
-          );
-          if (found) {
-            overlappingTokens.push({
-              ...found,
-              ...apiToken,
-              logoURI: getTokenLogoURI(found),
-            });
-          }
-        } else {
-          if (apiToken.address !== ethToken)
-            overlappingTokens.push({
-              chainId: EthNetworks.Ropsten,
-              name: apiToken.symbol,
-              logoURI: ropstenImage,
-              balance: null,
-              ...apiToken,
-            });
+    let overlappingTokens: Token[] = [];
+    const eth = getEthToken(apiTokens, pools);
+    if (eth) overlappingTokens.push(eth);
+
+    newApiTokens.forEach((apiToken) => {
+      if (currentNetwork === EthNetworks.Mainnet) {
+        const found = tokenList.find(
+          (userToken) => userToken.address === apiToken.address
+        );
+        if (found) {
+          overlappingTokens.push({
+            ...found,
+            ...apiToken,
+            logoURI: getTokenLogoURI(found),
+          });
         }
-      });
+      } else {
+        if (apiToken.address !== ethToken && apiToken.address !== wethToken)
+          overlappingTokens.push({
+            chainId: EthNetworks.Ropsten,
+            name: apiToken.symbol,
+            logoURI: ropstenImage,
+            balance: null,
+            ...apiToken,
+          });
+      }
+    });
 
-      return overlappingTokens;
-    }
-  ),
+    return overlappingTokens;
+  }),
   shareReplay(1)
 );
 
@@ -250,7 +253,8 @@ export const tokens$ = combineLatest([
         currentNetwork
       );
       setLoadingBalances(false);
-      if (updatedTokens.length !== 0) return updatedTokens;
+      if (updatedTokens.length !== 0)
+        return updatedTokens.sort(sortTokenBalanceAlphabetic);
     }
 
     return tokensNoBalance;
@@ -278,14 +282,12 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   settingsContractAddress$,
 ]).pipe(
   switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
-    const contract = buildLiquidityProtectionSettingsContract(
+    const contract = LiquidityProtectionSettings__factory.connect(
       liquidityProtectionSettingsContract,
-      web3
+      web3.provider
     );
-    const res = await contract.methods
-      .minNetworkTokenLiquidityForMinting()
-      .call();
-    return shrinkToken(res, 18);
+    const res = await contract.minNetworkTokenLiquidityForMinting();
+    return shrinkToken(res.toString(), 18);
   }),
   distinctUntilChanged<string>(isEqual),
   shareReplay(1)
