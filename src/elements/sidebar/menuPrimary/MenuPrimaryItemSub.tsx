@@ -18,6 +18,7 @@ export const MenuPrimaryItemSub = ({
       strict
       to={{ pathname: to }}
       target={href ? '_blank' : undefined}
+      rel={href ? 'noopener' : undefined}
       onClick={() => setIsSidebarOpen && setIsSidebarOpen(false)}
       activeClassName="!border-primary-light text-primary-light"
       className={`w-full flex items-center transition duration-300 border-l-2 border-grey-4 h-[28px] pl-30`}
