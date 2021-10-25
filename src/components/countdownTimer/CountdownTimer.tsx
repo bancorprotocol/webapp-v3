@@ -1,7 +1,8 @@
 import { UTCTimestamp } from 'lightweight-charts';
 import dayjs from 'dayjs';
 import { useInterval } from 'hooks/useInterval';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { formatTime } from 'utils/helperFunctions';
 
 interface Props {
   date: UTCTimestamp;
@@ -13,28 +14,24 @@ export const CountdownTimer = ({
   msgEnded,
   intervalSeconds = 1,
 }: Props) => {
+  const now = dayjs();
+  const end = dayjs(date);
   const [formatted, setFormatted] = useState('');
   const [hasEnded, setHasEnded] = useState(false);
-
-  const countdown = () => {
-    const now = dayjs();
-    const end = dayjs(date);
-    const countdown = dayjs
-      .duration(end.diff(now))
-      .format('M[m] D[d] HH[h] mm[m] ss[s]');
-    if (countdown.includes('-')) return null;
-    return countdown;
-  };
+  const [countdown, setCountdown] = useState(
+    dayjs.duration(end.diff(now)).asSeconds()
+  );
 
   useInterval(
     () => {
-      const res = countdown();
-      if (res) return setFormatted(res);
-      setFormatted(msgEnded ?? '');
-      setHasEnded(true);
+      if (countdown !== 0) setCountdown(countdown - 1);
+      else {
+        setFormatted(msgEnded ?? 'Ended');
+        setHasEnded(true);
+      }
     },
     hasEnded ? null : intervalSeconds * 1000
   );
 
-  return <div>{formatted}</div>;
+  return <div>{formatTime(countdown)}</div>;
 };

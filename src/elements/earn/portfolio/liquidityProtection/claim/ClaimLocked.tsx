@@ -3,6 +3,8 @@ import { Token } from 'services/observables/tokens';
 import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
+import { UTCTimestamp } from 'lightweight-charts';
 
 interface ClaimLockedProps {
   bnt?: Token;
@@ -50,7 +52,14 @@ export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
                       true
                     )})`}</div>
                   </div>
-                  <div>left to claim</div>
+                  <div className="flex">
+                    <div className="text-primary dark:text-primary-light font-semibold mr-10">
+                      <CountdownTimer
+                        date={lock.expiry.unix() as UTCTimestamp}
+                      />
+                    </div>
+                    left to claim
+                  </div>
                 </div>
               ))}
             </>
