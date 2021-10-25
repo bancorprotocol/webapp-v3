@@ -3,7 +3,7 @@ import { useAppSelector } from 'redux/index';
 import BigNumber from 'bignumber.js';
 
 interface Props {
-  amount: number | null;
+  amount: string | null;
 }
 
 export const RewardsClaimAmount = ({ amount }: Props) => {

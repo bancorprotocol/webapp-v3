@@ -5,10 +5,10 @@ import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiq
 import { useAppSelector } from 'redux/index';
 import React, { useCallback, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
-import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
-import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { WidgetError } from 'components/widgets/WidgetError';
+import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
+import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 
 export const AddLiquidity = React.memo(
   (props: RouteComponentProps<{ id: string }>) => {
