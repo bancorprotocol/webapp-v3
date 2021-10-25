@@ -5,6 +5,7 @@ import { ReactComponent as IconLock } from 'assets/icons/locked.svg';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { UTCTimestamp } from 'lightweight-charts';
+import { isMobile } from 'react-device-detect';
 
 interface ClaimLockedProps {
   bnt?: Token;
@@ -40,7 +41,7 @@ export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
                     className="w-full flex justify-between items-center"
                   >
                     <div className="flex items-center">
-                      <IconLock className="h-20 mr-16" />
+                      {!isMobile && <IconLock className="h-20 mr-16" />}
                       <Image
                         alt="BNT Logo"
                         className="w-30 mr-10"
@@ -61,7 +62,7 @@ export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
                           date={lock.expiry.unix() as UTCTimestamp}
                         />
                       </div>
-                      left to claim
+                      {!isMobile && 'left to claim'}
                     </div>
                   </div>
                   {index !== locked.length - 1 && (
