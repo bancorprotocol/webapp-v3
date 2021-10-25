@@ -1,139 +1,268 @@
-import { NotificationType } from 'redux/notification/notification';
-import { take } from 'rxjs/operators';
-import { bancorConverterRegistry$ } from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
-import { decToPpm } from 'utils/helperFunctions';
-import { resolveTxOnConfirmation } from '..';
-import { bntToken, zeroAddress } from '../config';
-import { web3, writeWeb3 } from '../contracts';
-import { buildConverterContract } from '../contracts/converter/wrapper';
-import { buildRegistryContract } from '../contracts/converterRegistry/wrapper';
+import BigNumber from 'bignumber.js';
+import { sortBy } from 'lodash';
+import { first, take } from 'rxjs/operators';
+import {
+  bancorConverterRegistry$,
+  liquidityProtection$,
+  settingsContractAddress$,
+  systemStoreAddress$,
+} from 'services/observables/contracts';
+import { Pool, Token } from 'services/observables/tokens';
+import { expandToken, shrinkToken } from 'utils/formulas';
+import {
+  calculateBntNeededToOpenSpace,
+  calculatePriceDeviationTooHigh,
+  decToPpm,
+} from 'utils/helperFunctions';
+import { web3, writeWeb3 } from '..';
+import {
+  ConverterRegistry__factory,
+  Converter__factory,
+  LiquidityProtectionSettings__factory,
+  LiquidityProtectionSystemStore__factory,
+  LiquidityProtection__factory,
+} from '../abis/types';
+import { bntToken, ethToken, zeroAddress } from '../config';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
 
 export const createPool = async (
   token: Token,
   fee: string,
   network: EthNetworks,
-  user: string,
-  dispatcher: Function
+  noPool: Function,
+  onHash: (txHash: string) => void,
+  onAccept: (txHash: string) => void,
+  onFee: (txHash: string) => void,
+  rejected: Function,
+  failed: Function
 ) => {
   try {
     const converterRegistryAddress = await bancorConverterRegistry$
       .pipe(take(1))
       .toPromise();
-    const regContract = buildRegistryContract(
+
+    const regContract = ConverterRegistry__factory.connect(
       converterRegistryAddress,
-      writeWeb3
+      writeWeb3.signer
     );
 
     const reserves = [bntToken(network), token.address];
     const weights = ['500000', '500000'];
 
-    const poolAddress = await regContract.methods
-      .getLiquidityPoolByConfig(PoolType.Traditional, reserves, weights)
-      .call();
+    const poolAddress = await regContract.getLiquidityPoolByConfig(
+      PoolType.Traditional,
+      reserves,
+      weights
+    );
 
-    if (poolAddress !== zeroAddress)
-      return {
-        type: NotificationType.error,
-        title: 'Pool Already exist',
-        msg: `The pool already exists on Bancor`,
-      };
+    if (poolAddress !== zeroAddress) noPool();
 
-    const txHash = await resolveTxOnConfirmation({
-      tx: regContract.methods.newConverter(
-        PoolType.Traditional,
-        token.name,
-        token.symbol,
-        token.decimals,
-        50000,
-        reserves,
-        weights
-      ),
-      resolveImmediately: true,
-      user,
-      onConfirmation: (hash) => onPoolCreated(hash, user, fee, dispatcher),
-    });
+    const tx = await regContract.newConverter(
+      PoolType.Traditional,
+      token.name,
+      token.symbol,
+      token.decimals,
+      50000,
+      reserves,
+      weights
+    );
 
-    return {
-      type: NotificationType.pending,
-      title: 'Pending Confirmation',
-      msg: 'Creating pool is pending confirmation',
-      txHash,
-      updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: 'Your pool was successfully created',
-        errorTitle: 'Creating Pool Failed',
-        errorMsg: 'Fail creating pool. Please try again or contact support.',
-      },
-    };
+    onHash(tx.hash);
+    await tx.wait();
+
+    const converterAddress = await web3.provider.getTransactionReceipt(tx.hash);
+    const converter = Converter__factory.connect(
+      converterAddress.logs[0].address,
+      writeWeb3.signer
+    );
+    const ownerShip = await converter.acceptOwnership();
+    onAccept(ownerShip.hash);
+    await ownerShip.wait();
+
+    const conversionFee = await converter.setConversionFee(decToPpm(fee));
+    onFee(conversionFee.hash);
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx)
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the transaction. If this was by mistake, please try again.',
-      };
-
-    return {
-      type: NotificationType.error,
-      title: 'Creating Pool Failed',
-      msg: `Fail creating pool. Please try again or contact support.`,
-    };
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
   }
 };
 
-const onPoolCreated = async (
-  txHash: string,
-  user: string,
-  fee: string,
-  dispatcher: Function
+export const addLiquidity = async (
+  data: { token: Token; amount: string }[],
+  converterAddress: string
 ) => {
-  const converterAddress = await web3.eth.getTransactionReceipt(txHash);
+  const contract = Converter__factory.connect(
+    converterAddress,
+    writeWeb3.signer
+  );
+  const amountsWei = data.map((item) => ({
+    address: item.token.address,
+    weiAmount: expandToken(item.amount, item.token.decimals),
+  }));
 
-  const converter = buildConverterContract(
-    converterAddress.logs[0].address,
-    writeWeb3
+  const ethAmount = amountsWei.find((amount) => amount.address === ethToken);
+  const value = ethAmount?.weiAmount;
+
+  const tx = await contract.addLiquidity(
+    amountsWei.map(({ address }) => address),
+    amountsWei.map(({ weiAmount }) => weiAmount),
+    '1',
+    { value }
   );
 
-  const ownerShip = await resolveTxOnConfirmation({
-    tx: converter.methods.acceptOwnership(),
-    user: user,
-    resolveImmediately: true,
-    onConfirmation: async () => {
-      const conversionFee = await resolveTxOnConfirmation({
-        tx: converter.methods.setConversionFee(decToPpm(fee)),
-        user: user,
-        resolveImmediately: true,
-      });
+  return tx.hash;
+};
 
-      dispatcher({
-        type: NotificationType.pending,
-        title: 'Pending Confirmation',
-        msg: 'Setting convertion fee is pending confirmation',
-        txHash: conversionFee,
-        updatedInfo: {
-          successTitle: 'Success!',
-          successMsg: 'Conversion fee has been set',
-          errorTitle: 'Conversion fee failed',
-          errorMsg:
-            'conversion fee setting failed. Please try again or contact support.',
-        },
-      });
-    },
-  });
+interface AddLiquidityProps {
+  pool: Pool;
+  token: Token;
+  amount: string;
+}
 
-  dispatcher({
-    type: NotificationType.pending,
-    title: 'Pending Confirmation',
-    msg: 'Accepting ownership is pending confirmation',
-    txHash: ownerShip,
-    updatedInfo: {
-      successTitle: 'Success!',
-      successMsg: 'Ownership Accepted',
-      errorTitle: 'Ownership Failed',
-      errorMsg:
-        'Failed accepting ownership. Please try again or contact support.',
-    },
-  });
+export const addLiquiditySingle = async ({
+  pool,
+  token,
+  amount,
+}: AddLiquidityProps) => {
+  const liquidityProtectionContract = await liquidityProtection$
+    .pipe(first())
+    .toPromise();
+
+  const contract = LiquidityProtection__factory.connect(
+    liquidityProtectionContract,
+    writeWeb3.signer
+  );
+  const fromIsEth = ethToken === token.address;
+  const tx = await contract.addLiquidity(
+    pool.pool_dlt_id,
+    token.address,
+    expandToken(amount, token.decimals),
+    { value: fromIsEth ? expandToken(amount, 18) : undefined }
+  );
+
+  return tx.hash;
+};
+
+export const checkPriceDeviationTooHigh = async (
+  pool: Pool,
+  selectedTkn: Token
+): Promise<boolean> => {
+  const converterContract = Converter__factory.connect(
+    pool.converter_dlt_id,
+    web3.provider
+  );
+
+  const settingsAddress = await settingsContractAddress$
+    .pipe(take(1))
+    .toPromise();
+
+  const settingsContract = LiquidityProtectionSettings__factory.connect(
+    settingsAddress,
+    web3.provider
+  );
+
+  const [primaryReserveAddress, secondaryReserveAddress] = sortBy(
+    pool.reserves,
+    [(o) => o.address !== selectedTkn.address]
+  ).map((x) => x.address);
+
+  const [
+    recentAverageRate,
+    averageRateMaxDeviation,
+    primaryReserveBalance,
+    secondaryReserveBalance,
+  ] = await Promise.all([
+    converterContract.recentAverageRate(selectedTkn.address),
+    settingsContract.averageRateMaxDeviation(),
+    converterContract.reserveBalance(primaryReserveAddress),
+    converterContract.reserveBalance(secondaryReserveAddress),
+  ]);
+
+  const averageRate = new BigNumber(
+    recentAverageRate['1'].toString()
+  ).dividedBy(new BigNumber(recentAverageRate['0'].toString()));
+
+  if (averageRate.isNaN()) {
+    throw new Error(
+      'Price deviation calculation failed. Please contact support.'
+    );
+  }
+
+  return calculatePriceDeviationTooHigh(
+    averageRate,
+    new BigNumber(primaryReserveBalance.toString()),
+    new BigNumber(secondaryReserveBalance.toString()),
+    new BigNumber(averageRateMaxDeviation)
+  );
+};
+
+export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
+  const liquidityProtectionContract = await liquidityProtection$
+    .pipe(first())
+    .toPromise();
+  const contract = LiquidityProtection__factory.connect(
+    liquidityProtectionContract,
+    web3.provider
+  );
+
+  const result = await contract.poolAvailableSpace(id);
+
+  return {
+    bnt: shrinkToken(result['1'].toString(), 18),
+    tkn: shrinkToken(result['0'].toString(), tknDecimals),
+  };
+};
+
+export const fetchBntNeededToOpenSpace = async (
+  pool: Pool
+): Promise<string> => {
+  const settingsAddress = await settingsContractAddress$
+    .pipe(take(1))
+    .toPromise();
+  const settingsContract = LiquidityProtectionSettings__factory.connect(
+    settingsAddress,
+    web3.provider
+  );
+
+  const systemStoreAddress = await systemStoreAddress$
+    .pipe(take(1))
+    .toPromise();
+  const systemStoreContract = LiquidityProtectionSystemStore__factory.connect(
+    systemStoreAddress,
+    web3.provider
+  );
+
+  const networkTokenMintingLimits =
+    await settingsContract.networkTokenMintingLimits(pool.pool_dlt_id);
+
+  const networkTokensMinted = await systemStoreContract.networkTokensMinted(
+    pool.pool_dlt_id
+  );
+
+  const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
+
+  const bntNeeded = calculateBntNeededToOpenSpace(
+    bntBalance,
+    tknBalance,
+    networkTokensMinted.toString(),
+    networkTokenMintingLimits.toString()
+  );
+
+  return shrinkToken(bntNeeded, 18);
+};
+
+export const fetchReserveBalances = async (pool: Pool) => {
+  const converterContract = Converter__factory.connect(
+    pool.converter_dlt_id,
+    web3.provider
+  );
+  const tknBalance = (
+    await converterContract.getConnectorBalance(pool.reserves[0].address)
+  ).toString();
+
+  const bntBalance = (
+    await converterContract.getConnectorBalance(pool.reserves[1].address)
+  ).toString();
+
+  return { tknBalance, bntBalance };
 };

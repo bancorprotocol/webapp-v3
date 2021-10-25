@@ -100,29 +100,6 @@ export const logger =
       })
     );
 
-export const optimisticContract =
-  (key: string) => (source: Observable<string>) => {
-    const cachedData = localStorage.getItem(key);
-
-    if (cachedData) {
-      return source.pipe(
-        startWith(cachedData),
-        distinctUntilChanged(),
-        tap((data) => {
-          const isSame = cachedData === data;
-          if (!isSame) {
-            localStorage.setItem(key, data);
-          }
-        })
-      );
-    } else {
-      return source.pipe(
-        distinctUntilChanged(),
-        tap((data) => localStorage.setItem(key, data))
-      );
-    }
-  };
-
 const getCachedPositions = (): string[] | false => {
   const cachedPositionIdsString = localStorage.getItem('positionIds');
   return cachedPositionIdsString

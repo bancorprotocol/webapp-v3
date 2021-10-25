@@ -5,12 +5,24 @@ import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { createPool } from 'services/web3/liquidity/liquidity';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
-import { addNotification } from 'redux/notification/notification';
+import {
+  addNotification,
+  BaseNotification,
+  NotificationType,
+} from 'redux/notification/notification';
 import { EthNetworks } from 'services/web3/types';
 import { getNetworkVariables, ropstenTokens } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
 import { InputField } from 'components/inputField/InputField';
 import { Modal } from 'components/modal/Modal';
+import {
+  ownershipNotification,
+  poolCreateNotification,
+  poolExistNotification,
+  poolFailedNotification,
+  rejectNotification,
+  setFeeNotification,
+} from 'services/notifications/notifications';
 
 export const ModalCreatePool = () => {
   const { chainId, account } = useWeb3React();
@@ -24,18 +36,25 @@ export const ModalCreatePool = () => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
   const dispatch = useDispatch();
 
+  const showNotification = (notification: BaseNotification) =>
+    dispatch(addNotification(notification));
+
   const confirm = async () => {
     //isCreateDisabled() TS fails
     if (!account || !chainId || !token) return;
 
-    const notification = await createPool(
+    await createPool(
       token,
       (Number(fee) / 100).toString(),
       chainId,
-      account,
-      (notification: any) => dispatch(addNotification(notification))
+      () => poolExistNotification(dispatch),
+      (txHash: string) => poolCreateNotification(dispatch, txHash),
+      (txHash: string) => ownershipNotification(dispatch, txHash),
+      (txHash: string) => setFeeNotification(dispatch, txHash),
+      () => rejectNotification(dispatch),
+      () => poolFailedNotification(dispatch)
     );
-    dispatch(addNotification(notification));
+
     setIsOpen(false);
   };
 

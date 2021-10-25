@@ -7,7 +7,7 @@ import {
 import { setNetworkContractApproval } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
-import { web3 } from 'services/web3/contracts';
+import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import {
   ConversionEvents,
@@ -75,11 +75,11 @@ export const ModalApprove = ({
         while (tx === null)
           try {
             await wait(2000);
-            tx = await web3.eth.getTransactionReceipt(txHash);
+            tx = await web3.provider.getTransactionReceipt(txHash);
           } catch (error) {}
       }
       handleApproved();
-    } catch (e) {
+    } catch (e: any) {
       setIsOpen(false);
       if (e.code === ErrorCode.DeniedTx)
         dispatch(

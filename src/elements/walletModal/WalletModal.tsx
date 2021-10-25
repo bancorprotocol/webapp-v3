@@ -12,8 +12,9 @@ import { openWalletModal } from 'redux/user/user';
 import { Image } from 'components/image/Image';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
-import { writeWeb3 } from 'services/web3/contracts';
 import useAsyncEffect from 'use-async-effect';
+import { setSigner } from 'services/web3';
+import { Web3Provider } from '@ethersproject/providers';
 
 export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
   const { activate, deactivate, account, connector, active } = useWeb3React();
@@ -48,7 +49,9 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
         .then(async () => {
           setIsOpen(false);
           setAutoLoginLS(true);
-          writeWeb3.setProvider(await connector.getProvider());
+          setSigner(
+            new Web3Provider(await connector.getProvider()).getSigner()
+          );
           const account = await connector.getAccount();
           sendWalletEvent(
             WalletEvents.connect,
@@ -58,6 +61,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
           );
         })
         .catch((error) => {
+          console.error(error);
           if (error instanceof UnsupportedChainIdError) {
             activate(connector);
           } else setError(true);
@@ -90,7 +94,7 @@ export const WalletModal = ({ isMobile }: { isMobile: boolean }) => {
       if (selectedWallet) return;
 
       if (connector) {
-        writeWeb3.setProvider(await connector.getProvider());
+        setSigner(new Web3Provider(await connector.getProvider()).getSigner());
         const wallet = SUPPORTED_WALLETS.find(
           async (x) => typeof x.connector === typeof connector
         );

@@ -1,4 +1,4 @@
-import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
+import BigNumber from 'bignumber.js';
 import { calcReserve } from './formulas';
 
 describe('calculate reserve spot', () => {

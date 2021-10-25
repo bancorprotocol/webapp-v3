@@ -1,4 +1,3 @@
-import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 import { RouteComponentProps } from 'react-router-dom';
 import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
@@ -7,8 +6,9 @@ import { AddLiquidityLoading } from 'elements/earn/pools/addLiquidity/AddLiquidi
 import { AddLiquidityError } from 'elements/earn/pools/addLiquidity/AddLiquidityError';
 import { useAppSelector } from 'redux/index';
 import React, { useCallback, useEffect, useState } from 'react';
-import { fetchReserveBalances } from 'services/web3/contracts/liquidityProtection/wrapper';
 import BigNumber from 'bignumber.js';
+import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
+import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 
 export const AddLiquidity = React.memo(
   (props: RouteComponentProps<{ id: string }>) => {

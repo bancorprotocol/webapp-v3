@@ -4,12 +4,10 @@ import { AddLiquiditySingleInfoBox } from './AddLiquiditySingleInfoBox';
 import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
 import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { addLiquiditySingle } from 'services/web3/contracts/liquidityProtection/wrapper';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
 import {
@@ -19,6 +17,8 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
 import BigNumber from 'bignumber.js';
+import { getTokenById } from 'redux/bancor/bancor';
+import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   pool: Pool;

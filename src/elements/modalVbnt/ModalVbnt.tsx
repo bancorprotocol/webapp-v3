@@ -11,17 +11,25 @@ import {
 import { useWeb3React } from '@web3-react/core';
 import {
   addNotification,
+  BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { getNetworkContractApproval } from 'services/web3/approval';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useDispatch } from 'react-redux';
-import { BigNumber } from '@0x/utils/lib/src/configured_bignumber';
+import BigNumber from 'bignumber.js';
 import { useEffect } from 'react';
 import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { updateTokens } from 'redux/bancor/bancor';
 import { EthNetworks } from 'services/web3/types';
+import {
+  rejectNotification,
+  stakeFailedNotification,
+  stakeNotification,
+  unstakeFailedNotification,
+  unstakeNotification,
+} from 'services/notifications/notifications';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -94,20 +102,22 @@ export const ModalVbnt = ({
     setAmount('');
     setIsOpen(false);
     if (stake)
-      dispatch(
-        addNotification(
-          await stakeAmount(amount, account, token, (_) =>
-            refreshBalances(token, account, chainId)
-          )
-        )
+      await stakeAmount(
+        amount,
+        token,
+        (txHash: string) => stakeNotification(dispatch, amount, txHash),
+        () => refreshBalances(token, account, chainId),
+        () => rejectNotification(dispatch),
+        () => stakeFailedNotification(dispatch, amount)
       );
     else
-      dispatch(
-        addNotification(
-          await unstakeAmount(amount, account, token, (_) =>
-            refreshBalances(token, account, chainId)
-          )
-        )
+      await unstakeAmount(
+        amount,
+        token,
+        (txHash: string) => unstakeNotification(dispatch, amount, txHash),
+        () => refreshBalances(token, account, chainId),
+        () => rejectNotification(dispatch),
+        () => unstakeFailedNotification(dispatch, amount)
       );
   };
 

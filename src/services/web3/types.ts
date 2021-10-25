@@ -1,10 +1,4 @@
-import { Contract } from 'web3-eth-contract';
-
 export type EthAddress = string;
-
-export interface ContractMethods<T> extends Contract {
-  methods: T;
-}
 
 export enum EthNetworks {
   Mainnet = 1,
@@ -19,6 +13,10 @@ export enum PoolType {
 
 export enum ErrorCode {
   DeniedTx = 4001,
+}
+
+export enum SignatureType {
+  EIP712 = 2,
 }
 
 export interface RegisteredContracts {
