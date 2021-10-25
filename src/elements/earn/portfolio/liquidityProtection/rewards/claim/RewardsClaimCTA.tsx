@@ -7,9 +7,7 @@ interface Props {
 
 export const RewardsClaimCTA = ({ account }: Props) => {
   const handleClaim = async () => {
-    if (account) {
-      const txHash = await claimRewards(account);
-    }
+    const txHash = await claimRewards();
   };
 
   return (
