@@ -52,28 +52,29 @@ export const AddLiquidity = React.memo(
       return status === 'loading' || isCheckingType;
     };
 
-  return (
-    <div>
-      {isLoading() ? (
-        <WidgetLoading title="Add Liquidity" />
-      ) : (
-        <div>
-          {!pool ? (
-            <WidgetError title="Add Liquidity" />
-          ) : (
-            <div>
-              {type === 'single' && <AddLiquiditySingle pool={pool} />}
-              {type === 'dual' && (
-                <AddLiquidityDual
-                  pool={pool}
-                  reserveBalances={reserveBalances}
-                />
-              )}
-              {type === 'empty' && <AddLiquidityEmpty pool={pool} />}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
+    return (
+      <div>
+        {isLoading() ? (
+          <WidgetLoading title="Add Liquidity" />
+        ) : (
+          <div>
+            {!pool ? (
+              <WidgetError title="Add Liquidity" />
+            ) : (
+              <div>
+                {type === 'single' && <AddLiquiditySingle pool={pool} />}
+                {type === 'dual' && (
+                  <AddLiquidityDual
+                    pool={pool}
+                    reserveBalances={reserveBalances}
+                  />
+                )}
+                {type === 'empty' && <AddLiquidityEmpty pool={pool} />}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+);
