@@ -1,3 +1,4 @@
+import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 import { RouteComponentProps } from 'react-router-dom';
 import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
@@ -8,7 +9,6 @@ import BigNumber from 'bignumber.js';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { WidgetError } from 'components/widgets/WidgetError';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
-import { getPoolById, SelectedPool } from 'redux/bancor/pool';
 
 export const AddLiquidity = React.memo(
   (props: RouteComponentProps<{ id: string }>) => {

@@ -5,13 +5,18 @@ import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rew
 import { RewardsClaimCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimCTA';
 
 export const RewardsClaim = () => {
-  const [claimableRewards, account] = useRewardsClaim();
+  const { claimableRewards, account } = useRewardsClaim({});
 
   return (
-    <Widget title="Claim Rewards">
-      <RewardsClaimInfo />
-      <RewardsClaimAmount amount={claimableRewards} />
-      <RewardsClaimCTA account={account} />
+    <Widget title="Claim Rewards" goBackRoute="/portfolio">
+      <div className="px-10 pb-10">
+        <RewardsClaimInfo />
+        <RewardsClaimAmount amount={claimableRewards} />
+        <RewardsClaimCTA
+          account={account}
+          claimableRewards={claimableRewards}
+        />
+      </div>
     </Widget>
   );
 };

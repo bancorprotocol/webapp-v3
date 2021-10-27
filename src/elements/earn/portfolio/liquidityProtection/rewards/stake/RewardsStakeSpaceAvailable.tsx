@@ -1,8 +1,8 @@
 import { Pool } from 'services/observables/tokens';
 import { useCallback, useEffect, useState } from 'react';
+import { getSpaceAvailable } from 'services/web3/liquidity/liquidity';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
-import { getSpaceAvailable } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   pool: Pool;
@@ -31,7 +31,7 @@ export const RewardsStakeSpaceAvailable = ({ pool }: Props) => {
   return (
     <div className="p-20 rounded bg-blue-0 dark:bg-blue-5 mt-20">
       <div className="flex justify-between dark:text-grey-0">
-        <span className="font-medium">Space Available</span>{' '}
+        <span className="font-medium">Space Available</span>
         <div className="text-right">{prettifyNumber(spaceAvailable)} BNT</div>
       </div>
     </div>
