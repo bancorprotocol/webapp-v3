@@ -129,6 +129,19 @@ export const sendWalletEvent = (
     });
 };
 
+export const sendInsight = (open: boolean) => {
+  sendGTM({
+    event: 'CE Insights',
+    event_properties: {
+      insights: open ? 'InsightsOn' : 'InsightsOff',
+    },
+    user_properties: undefined,
+    ga_event: {
+      category: 'Conversion',
+    },
+  });
+};
+
 export const sendGTMPath = (
   from: string | undefined,
   to: string,
