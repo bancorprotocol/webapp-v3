@@ -5,7 +5,8 @@ import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { sendInsight } from 'services/api/googleTagManager';
 
 export interface InsightToken extends IntoTheBlock {
   image: string;
@@ -30,6 +31,12 @@ export const Insight = ({
     false
   );
   const [show, setShow] = useState(isExpanded);
+
+  useEffect(() => {
+    const item = localStorage.getItem('insightsExpanded');
+    const open = item ? (JSON.parse(item) as boolean) : false;
+    sendInsight(open);
+  }, []);
 
   return (
     <div
