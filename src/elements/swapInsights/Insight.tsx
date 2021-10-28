@@ -32,12 +32,6 @@ export const Insight = ({
   );
   const [show, setShow] = useState(isExpanded);
 
-  useEffect(() => {
-    const item = localStorage.getItem('insightsExpanded');
-    const open = item ? (JSON.parse(item) as boolean) : false;
-    sendInsight(open);
-  }, []);
-
   return (
     <div
       onTransitionEnd={() => setShow(isExpanded)}
@@ -54,6 +48,7 @@ export const Insight = ({
           <button
             className="flex justify-center items-center"
             onClick={() => {
+              sendInsight(!isExpanded);
               setShow(!isExpanded);
               setIsExpanded(!isExpanded);
             }}
@@ -83,6 +78,7 @@ export const Insight = ({
           <button className="w-16 ml-12">
             <IconTimes
               onClick={() => {
+                sendInsight(!isExpanded);
                 setShow(!isExpanded);
                 setIsExpanded(!isExpanded);
               }}
