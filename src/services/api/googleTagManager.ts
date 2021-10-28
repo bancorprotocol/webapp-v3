@@ -131,12 +131,13 @@ export const sendWalletEvent = (
 
 export const sendInsight = (open: boolean) => {
   sendGTM({
-    event: 'CE Conversion Insights ' + open ? 'Open' : 'Closed',
+    event: `CE Conversion Insights ${open ? 'Open' : 'Closed'}`,
     event_properties: undefined,
     user_properties: undefined,
     ga_event: {
       category: 'Conversion',
     },
+    page: { swap_insights: open ? 'Open' : 'Closed' },
   });
 };
 
@@ -147,7 +148,6 @@ export const sendGTMPath = (
 ) => {
   const item = localStorage.getItem('insightsExpanded');
   const open = item ? (JSON.parse(item) as boolean) : false;
-  const inSwap = to === '' && from !== '';
   sendGTM({
     event: 'VP ' + to,
     page: {
@@ -158,6 +158,6 @@ export const sendGTMPath = (
     },
     user_properties: undefined,
     ga_event: undefined,
-    swap_insights: inSwap ? (open ? 'Open' : 'Closed') : undefined,
+    swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
   });
 };
