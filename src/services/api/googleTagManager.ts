@@ -7,17 +7,22 @@ declare global {
 
 export const googleTagManager = (id: string, name: string | null) => {
   if (window.dataLayer) return;
-  if (id && name)
-    window.dataLayer = [
-      {
-        wallet: {
-          id: id,
-          name: name,
-        },
-      },
-    ];
+
+  window.dataLayer = [
+    {
+      wallet:
+        id && name
+          ? {
+              id: id,
+              name: name,
+            }
+          : {},
+      page: { class: 'App' },
+    },
+  ];
+
   init(window, document, 'script', 'dataLayer', 'GTM-TCBKR7W');
-  sendGTMPath(undefined, window.location.pathname, true);
+  sendGTMPath(undefined, window.location.pathname);
 };
 
 const init = (w: any, d: any, s: any, l: any, i: any) => {
@@ -144,7 +149,6 @@ export const sendInsight = (open: boolean) => {
 export const sendGTMPath = (
   from: string | undefined,
   to: string,
-  firstVP = false,
   darkMode: boolean = false
 ) => {
   const item = localStorage.getItem('insightsExpanded');
@@ -158,7 +162,6 @@ export const sendGTMPath = (
       currency: 'USD',
       swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
     },
-    class: firstVP ? 'App' : undefined,
     user_properties: undefined,
     ga_event: undefined,
   });
