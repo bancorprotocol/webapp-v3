@@ -17,7 +17,7 @@ export const googleTagManager = (id: string, name: string | null) => {
       },
     ];
   init(window, document, 'script', 'dataLayer', 'GTM-TCBKR7W');
-  sendGTMPath(undefined, window.location.pathname);
+  sendGTMPath(undefined, window.location.pathname, true);
 };
 
 const init = (w: any, d: any, s: any, l: any, i: any) => {
@@ -144,6 +144,7 @@ export const sendInsight = (open: boolean) => {
 export const sendGTMPath = (
   from: string | undefined,
   to: string,
+  firstVP = false,
   darkMode: boolean = false
 ) => {
   const item = localStorage.getItem('insightsExpanded');
@@ -155,9 +156,10 @@ export const sendGTMPath = (
       to_path: to,
       theme: darkMode ? 'Dark' : 'Light',
       currency: 'USD',
+      swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
     },
+    class: firstVP ? 'App' : undefined,
     user_properties: undefined,
     ga_event: undefined,
-    swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
   });
 };
