@@ -36,7 +36,7 @@ export const fetchTokenBalances = async (
     ]);
     if (tokenBalances) {
       const balances = tokenBalances.map((bn, index) => {
-        const balance = (bn[0] as BigNumber).toString();
+        const balance = bn.length > 0 ? (bn[0] as BigNumber).toString() : '0';
         return {
           ...tokensNoETH[index],
           balance:
@@ -63,7 +63,10 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
+export const buildTokenBalanceCall = (
+  address: string,
+  user: string
+): MultiCall => {
   const contract = Token__factory.connect(address, web3.provider);
 
   return {

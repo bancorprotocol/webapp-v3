@@ -15,9 +15,12 @@ import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
 import { fifteenSeconds$ } from './timers';
 import { web3 } from 'services/web3';
-import { utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { updateArray } from 'utils/pureFunctions';
 import { ConverterRegistry__factory } from 'services/web3/abis/types';
+import { user$ } from './user';
+import { multicall } from 'services/web3/multicall/multicall';
+import { buildTokenBalanceCall } from './balances';
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
@@ -66,6 +69,37 @@ const apiPools$ = apiData$.pipe(
   pluck('pools'),
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
+);
+
+export const poolTokens$ = combineLatest([
+  anchorAndConverters$,
+  user$,
+  currentNetwork$,
+]).pipe(
+  switchMapIgnoreThrow(async ([anchorAndConverters, user, currentNetwork]) => {
+    if (!user) return [];
+
+    const calls = anchorAndConverters.map((x) =>
+      buildTokenBalanceCall(x.anchorAddress, user)
+    );
+
+    const res = await multicall(currentNetwork, calls);
+    if (res) {
+      const balances = res
+        .map((x, index) => {
+          const anchorConverter = anchorAndConverters[index];
+          return {
+            balance: x.length > 0 ? (x[0] as BigNumber).toString() : '0',
+            anchor: anchorConverter.anchorAddress,
+            converter: anchorConverter.converterAddress,
+          };
+        })
+        .filter((x) => x.balance !== '0');
+      console.log('balances', balances);
+    }
+
+    return [];
+  })
 );
 
 export const correctedPools$ = combineLatest([

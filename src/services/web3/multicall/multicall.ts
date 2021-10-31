@@ -29,6 +29,8 @@ export const multicall = async (network: EthNetworks, calls: MultiCall[]) => {
 
     const encodedRes = await multicallContract.tryAggregate(false, encoded);
     const res = encodedRes.map((call, i) => {
+      if (!call.success) return [];
+
       return calls[i].interface.decodeFunctionResult(
         calls[i].methodName,
         call.returnData
