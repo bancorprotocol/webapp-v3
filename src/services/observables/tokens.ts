@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
-import { apiData$, correctedPools$ } from './pools';
+import { apiData$, correctedPools$, partialPoolTokens$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -362,4 +362,53 @@ export const pools$ = combineLatest([
     }
   ),
   shareReplay(1)
+);
+
+export const poolTokens$ = combineLatest([
+  pools$,
+  partialPoolTokens$,
+  tokens$,
+]).pipe(
+  switchMapIgnoreThrow(async ([pools, partialPoolTokens, tokens]) => {
+    return partialPoolTokens.map((poolToken) => {
+      const pool = pools.find(
+        (x) => x.converter_dlt_id === poolToken.converter
+      );
+
+      if (pool) {
+        const tknReserve = pool.reserves[0];
+        const bntReserve = pool.reserves[1];
+
+        const tkn = tokens.find((x) => x.address === tknReserve.address);
+        const bnt = tokens.find((x) => x.address === bntReserve.address);
+
+        const amount = shrinkToken(poolToken.balance, pool.decimals);
+        const percent = new BigNumber(amount).div(
+          shrinkToken(poolToken.totalSupply, pool.decimals)
+        );
+
+        if (bnt && tkn) {
+          const tknAmount = percent.times(tknReserve.balance);
+          const bntAmount = percent.times(bntReserve.balance);
+
+          const value =
+            tkn.usdPrice && bnt.usdPrice
+              ? tknAmount
+                  .times(Number(tkn.usdPrice))
+                  .plus(bntAmount.times(Number(bnt.usdPrice)))
+              : new BigNumber(0);
+
+          return {
+            bnt: { token: bnt, amount: bntAmount },
+            tkn: { token: tkn, amount: tknAmount },
+            value,
+            anchor: poolToken.anchor,
+            converter: poolToken.converter,
+          };
+        }
+      }
+
+      return null;
+    });
+  })
 );

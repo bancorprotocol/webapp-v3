@@ -77,5 +77,16 @@ export const buildTokenBalanceCall = (
   };
 };
 
+export const buildTokenTotalSupplyCall = (address: string): MultiCall => {
+  const contract = Token__factory.connect(address, web3.provider);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'totalSupply',
+    methodParameters: [],
+  };
+};
+
 const fetchETH = async (user: string) =>
   shrinkToken((await web3.provider.getBalance(user)).toString(), 18);

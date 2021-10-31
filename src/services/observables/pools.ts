@@ -20,7 +20,8 @@ import { updateArray } from 'utils/pureFunctions';
 import { ConverterRegistry__factory } from 'services/web3/abis/types';
 import { user$ } from './user';
 import { multicall } from 'services/web3/multicall/multicall';
-import { buildTokenBalanceCall } from './balances';
+import { buildTokenBalanceCall, buildTokenTotalSupplyCall } from './balances';
+import { pools$ } from './tokens';
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),
@@ -71,7 +72,7 @@ const apiPools$ = apiData$.pipe(
   shareReplay(1)
 );
 
-export const poolTokens$ = combineLatest([
+export const partialPoolTokens$ = combineLatest([
   anchorAndConverters$,
   user$,
   currentNetwork$,
@@ -85,7 +86,7 @@ export const poolTokens$ = combineLatest([
 
     const res = await multicall(currentNetwork, calls);
     if (res) {
-      const balances = res
+      const partialPTokens = res
         .map((x, index) => {
           const anchorConverter = anchorAndConverters[index];
           return {
@@ -95,7 +96,17 @@ export const poolTokens$ = combineLatest([
           };
         })
         .filter((x) => x.balance !== '0');
-      console.log('balances', balances);
+
+      const calls = partialPTokens.map((x) =>
+        buildTokenTotalSupplyCall(x.anchor)
+      );
+      const total = await multicall(currentNetwork, calls);
+      if (total) {
+        return partialPTokens.map((token, index) => ({
+          totalSupply: total[index].toString(),
+          ...token,
+        }));
+      }
     }
 
     return [];
