@@ -113,6 +113,34 @@ export const addLiquidity = async (
   return tx.hash;
 };
 
+export const removeLiquidity = async (
+  converter: string,
+  amount: string,
+  poolDecimals: number,
+  reserves: string[],
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
+) => {
+  try {
+    const contract = Converter__factory.connect(converter, writeWeb3.signer);
+
+    const tx = await contract.removeLiquidity(
+      expandToken(amount, poolDecimals),
+      reserves,
+      ['1', '1']
+    );
+    onHash(tx.hash);
+
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
+};
+
 interface AddLiquidityProps {
   pool: Pool;
   token: Token;

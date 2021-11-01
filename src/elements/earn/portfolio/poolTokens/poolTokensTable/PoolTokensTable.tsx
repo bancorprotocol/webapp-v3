@@ -20,48 +20,55 @@ export const PoolTokensTable = () => {
     );
   }, [poolTokens, search]);
 
-  const columns: TableColumn<PoolToken>[] = [
-    {
-      id: 'name',
-      Header: 'Name',
-      accessor: 'bnt',
-      Cell: (cellData) => PoolTokensCellName(cellData.row.original),
-      minWidth: 130,
-      sortDescFirst: true,
-    },
-    {
-      id: 'amount',
-      Header: 'Amount',
-      accessor: 'amount',
-      Cell: (cellData) => prettifyNumber(cellData.value),
-      minWidth: 130,
-      sortDescFirst: true,
-    },
-    {
-      id: 'value',
-      Header: 'Value',
-      accessor: 'value',
-      Cell: (cellData) => prettifyNumber(cellData.value, true),
-      minWidth: 130,
-      sortDescFirst: true,
-    },
-    {
-      id: 'breakdown',
-      Header: 'Reserve Breakdown',
-      accessor: 'tkn',
-      Cell: (cellData) => PoolTokensCellReserve(cellData.row.original),
-      minWidth: 130,
-      sortDescFirst: true,
-    },
-    {
-      id: 'actions',
-      Header: '',
-      accessor: 'converter',
-      Cell: (cellData) => PoolTokensCellActions(cellData.value),
-      minWidth: 130,
-      sortDescFirst: true,
-    },
-  ];
+  const columns = useMemo<TableColumn<PoolToken>[]>(
+    () => [
+      {
+        id: 'name',
+        Header: 'Name',
+        accessor: 'bnt',
+        Cell: (cellData) => PoolTokensCellName(cellData.row.original),
+        minWidth: 130,
+      },
+      {
+        id: 'amount',
+        Header: 'Amount',
+        accessor: 'amount',
+        Cell: (cellData) => prettifyNumber(cellData.value),
+        minWidth: 130,
+      },
+      {
+        id: 'value',
+        Header: 'Value',
+        accessor: 'value',
+        Cell: (cellData) => prettifyNumber(cellData.value, true),
+        minWidth: 130,
+      },
+      {
+        id: 'breakdown',
+        Header: 'Reserve Breakdown',
+        accessor: 'tkn',
+        Cell: (cellData) => PoolTokensCellReserve(cellData.row.original),
+        minWidth: 130,
+      },
+      {
+        id: 'actions',
+        Header: '',
+        accessor: 'converter',
+        Cell: (cellData) => {
+          const row = cellData.row.original;
+
+          return PoolTokensCellActions(
+            row.converter,
+            row.amount,
+            row.poolDecimals,
+            [row.bnt.token.address, row.tkn.token.address]
+          );
+        },
+        minWidth: 130,
+      },
+    ],
+    []
+  );
 
   return (
     <section className="content-section pt-20 pb-10">
