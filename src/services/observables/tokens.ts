@@ -93,6 +93,20 @@ export interface Pool {
   isProtected: boolean;
 }
 
+export interface PoolToken {
+  bnt: {
+    token: Token;
+    amount: string;
+  };
+  tkn: {
+    token: Token;
+    amount: string;
+  };
+  value: string;
+  anchor: string;
+  converter: string;
+}
+
 export const listOfLists = [
   {
     uri: 'https://tokens.coingecko.com/ethereum/all.json',
@@ -370,45 +384,47 @@ export const poolTokens$ = combineLatest([
   tokens$,
 ]).pipe(
   switchMapIgnoreThrow(async ([pools, partialPoolTokens, tokens]) => {
-    return partialPoolTokens.map((poolToken) => {
-      const pool = pools.find(
-        (x) => x.converter_dlt_id === poolToken.converter
-      );
-
-      if (pool) {
-        const tknReserve = pool.reserves[0];
-        const bntReserve = pool.reserves[1];
-
-        const tkn = tokens.find((x) => x.address === tknReserve.address);
-        const bnt = tokens.find((x) => x.address === bntReserve.address);
-
-        const amount = shrinkToken(poolToken.balance, pool.decimals);
-        const percent = new BigNumber(amount).div(
-          shrinkToken(poolToken.totalSupply, pool.decimals)
+    return partialPoolTokens
+      .map((poolToken) => {
+        const pool = pools.find(
+          (x) => x.converter_dlt_id === poolToken.converter
         );
 
-        if (bnt && tkn) {
-          const tknAmount = percent.times(tknReserve.balance);
-          const bntAmount = percent.times(bntReserve.balance);
+        if (pool) {
+          const tknReserve = pool.reserves[0];
+          const bntReserve = pool.reserves[1];
 
-          const value =
-            tkn.usdPrice && bnt.usdPrice
-              ? tknAmount
-                  .times(Number(tkn.usdPrice))
-                  .plus(bntAmount.times(Number(bnt.usdPrice)))
-              : new BigNumber(0);
+          const tkn = tokens.find((x) => x.address === tknReserve.address);
+          const bnt = tokens.find((x) => x.address === bntReserve.address);
 
-          return {
-            bnt: { token: bnt, amount: bntAmount },
-            tkn: { token: tkn, amount: tknAmount },
-            value,
-            anchor: poolToken.anchor,
-            converter: poolToken.converter,
-          };
+          const amount = shrinkToken(poolToken.balance, pool.decimals);
+          const percent = new BigNumber(amount).div(
+            shrinkToken(poolToken.totalSupply, pool.decimals)
+          );
+
+          if (bnt && tkn) {
+            const tknAmount = percent.times(tknReserve.balance);
+            const bntAmount = percent.times(bntReserve.balance);
+
+            const value =
+              tkn.usdPrice && bnt.usdPrice
+                ? tknAmount
+                    .times(Number(tkn.usdPrice))
+                    .plus(bntAmount.times(Number(bnt.usdPrice)))
+                : new BigNumber(0);
+
+            return {
+              bnt: { token: bnt, amount: bntAmount.toString() },
+              tkn: { token: tkn, amount: tknAmount.toString() },
+              value: value.toString(),
+              anchor: poolToken.anchor,
+              converter: poolToken.converter,
+            };
+          }
         }
-      }
 
-      return null;
-    });
+        return null;
+      })
+      .filter((x) => !!x);
   })
 );

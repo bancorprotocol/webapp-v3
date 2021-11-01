@@ -1,9 +1,14 @@
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
+import { useAppSelector } from 'redux/index';
+import { PoolToken } from 'services/observables/tokens';
 
 export const PoolTokensTable = () => {
   const [search, setSearch] = useState('');
+  const poolTokens = useAppSelector<PoolToken[]>(
+    (state) => state.liquidity.poolTokens
+  );
 
   const data: any[] = [];
   const columns = useMemo<TableColumn<any>[]>(

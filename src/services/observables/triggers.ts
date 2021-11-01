@@ -7,6 +7,7 @@ import {
   pools$,
   tokensNoBalance$,
   tokenListMerged$,
+  poolTokens$,
 } from 'services/observables/tokens';
 import {
   setAllTokens,
@@ -22,6 +23,7 @@ import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
+import { setPoolTokens } from 'redux/liquidity/liquidity';
 
 export const loadCommonData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -67,4 +69,6 @@ export const loadCommonData = (dispatch: any) => {
   bntPrice$.subscribe((bntPrice) => {
     dispatch(setBntPrice(bntPrice));
   });
+
+  poolTokens$.subscribe((poolTokens) => dispatch(setPoolTokens(poolTokens)));
 };
