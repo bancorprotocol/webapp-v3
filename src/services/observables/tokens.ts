@@ -102,6 +102,7 @@ export interface PoolToken {
     token: Token;
     amount: string;
   };
+  amount: string;
   value: string;
   anchor: string;
   converter: string;
@@ -416,6 +417,7 @@ export const poolTokens$ = combineLatest([
             return {
               bnt: { token: bnt, amount: bntAmount.toString() },
               tkn: { token: tkn, amount: tknAmount.toString() },
+              amount,
               value: value.toString(),
               anchor: poolToken.anchor,
               converter: poolToken.converter,

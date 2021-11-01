@@ -3,6 +3,10 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { PoolToken } from 'services/observables/tokens';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { PoolTokensCellActions } from './PoolTokensCellActions';
+import { PoolTokensCellName } from './PoolTokensCellName';
+import { PoolTokensCellReserve } from './PoolTokensCellReserve';
 
 export const PoolTokensTable = () => {
   const [search, setSearch] = useState('');
@@ -10,42 +14,54 @@ export const PoolTokensTable = () => {
     (state) => state.liquidity.poolTokens
   );
 
-  const data: any[] = [];
-  const columns = useMemo<TableColumn<any>[]>(
-    () => [
-      {
-        id: 'name',
-        Header: 'Name',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
-        id: 'amount',
-        Header: 'Amount',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
-        id: 'value',
-        Header: 'Value',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
-        id: 'breakdown',
-        Header: 'Reserve Breakdown',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
-        id: 'actions',
-        Header: '',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-    ],
-    []
-  );
+  const data = useMemo<PoolToken[]>(() => {
+    return poolTokens.filter((p) =>
+      p.bnt.token.symbol.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [poolTokens, search]);
+
+  const columns: TableColumn<PoolToken>[] = [
+    {
+      id: 'name',
+      Header: 'Name',
+      accessor: 'bnt',
+      Cell: (cellData) => PoolTokensCellName(cellData.row.original),
+      minWidth: 130,
+      sortDescFirst: true,
+    },
+    {
+      id: 'amount',
+      Header: 'Amount',
+      accessor: 'amount',
+      Cell: (cellData) => prettifyNumber(cellData.value),
+      minWidth: 130,
+      sortDescFirst: true,
+    },
+    {
+      id: 'value',
+      Header: 'Value',
+      accessor: 'value',
+      Cell: (cellData) => prettifyNumber(cellData.value, true),
+      minWidth: 130,
+      sortDescFirst: true,
+    },
+    {
+      id: 'breakdown',
+      Header: 'Reserve Breakdown',
+      accessor: 'tkn',
+      Cell: (cellData) => PoolTokensCellReserve(cellData.row.original),
+      minWidth: 130,
+      sortDescFirst: true,
+    },
+    {
+      id: 'actions',
+      Header: '',
+      accessor: 'converter',
+      Cell: (cellData) => PoolTokensCellActions(cellData.value),
+      minWidth: 130,
+      sortDescFirst: true,
+    },
+  ];
 
   return (
     <section className="content-section pt-20 pb-10">
@@ -63,7 +79,7 @@ export const PoolTokensTable = () => {
         </div>
       </div>
 
-      <DataTable<any>
+      <DataTable<PoolToken>
         data={data}
         columns={columns}
         isLoading={!data.length}
