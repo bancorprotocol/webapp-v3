@@ -104,7 +104,7 @@ export interface PoolToken {
   };
   amount: string;
   value: string;
-  anchor: string;
+  poolDecimals: number;
   converter: string;
 }
 
@@ -419,7 +419,7 @@ export const poolTokens$ = combineLatest([
               tkn: { token: tkn, amount: tknAmount.toString() },
               amount,
               value: value.toString(),
-              anchor: poolToken.anchor,
+              poolDecimals: pool.decimals,
               converter: poolToken.converter,
             };
           }
