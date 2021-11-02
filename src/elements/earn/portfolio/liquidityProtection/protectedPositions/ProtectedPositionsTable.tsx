@@ -1,11 +1,20 @@
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { mainEntry } from 'services/web3/protection/positions';
+import useAsyncEffect from 'use-async-effect';
+import { useAppSelector } from 'redux/index';
+import { Pool } from 'services/observables/tokens';
 
 export const ProtectedPositionsTable = () => {
-  const [search, setSearch] = useState('');
+  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
 
-  const data: any[] = [];
+  const [search, setSearch] = useState('');
+  const { account } = useWeb3React();
+  const [positions, setPositions] = useState<any[]>([]);
+
+  const data = useMemo(() => positions, [positions]);
   const columns = useMemo<TableColumn<any>[]>(
     () => [
       {
@@ -15,7 +24,8 @@ export const ProtectedPositionsTable = () => {
         sortDescFirst: true,
       },
       {
-        id: 'initalStake',
+        id: 'initialStake',
+        accessor: 'initialStake',
         Header: 'Initial Stake',
         minWidth: 130,
         sortDescFirst: true,
@@ -23,6 +33,7 @@ export const ProtectedPositionsTable = () => {
       },
       {
         id: 'protected',
+        accessor: 'protectedAmount',
         Header: 'Protected',
         minWidth: 130,
         sortDescFirst: true,
@@ -31,6 +42,7 @@ export const ProtectedPositionsTable = () => {
       },
       {
         id: 'claimable',
+        accessor: 'claimableAmount',
         Header: 'Claimable',
         minWidth: 130,
         sortDescFirst: true,
@@ -47,6 +59,7 @@ export const ProtectedPositionsTable = () => {
       },
       {
         id: 'roi',
+        accessor: 'roi',
         Header: 'ROI',
         minWidth: 130,
         sortDescFirst: true,
@@ -70,6 +83,13 @@ export const ProtectedPositionsTable = () => {
     ],
     []
   );
+
+  useAsyncEffect(async () => {
+    if (account) {
+      const positions = await mainEntry(pools, account);
+      setPositions(positions);
+    }
+  }, [account]);
 
   return (
     <section className="content-section pt-20 pb-10">

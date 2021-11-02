@@ -1,5 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
@@ -21,7 +21,6 @@ import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
-import { NotificationType } from 'redux/notification/notification';
 import { ErrorCode } from '../types';
 
 export const getRateAndPriceImapct = async (

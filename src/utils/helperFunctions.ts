@@ -1,12 +1,13 @@
 import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
+import dayjs from 'dayjs';
 
 const oneMillion = new BigNumber(1000000);
 
 export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
 
-export const decToPpm = (dec: string): string =>
+export const decToPpm = (dec: string | number): string =>
   new BigNumber(dec).times(oneMillion).toFixed(0);
 
 export const prettifyNumber = (
@@ -97,4 +98,16 @@ export const calculatePriceDeviationTooHigh = (
     .isGreaterThan(threshold);
 
   return !(withinLowerThreshold && withinHigherThreshold);
+};
+
+export const rewindBlocksByDays = (
+  currentBlock: number,
+  days: number,
+  secondsPerBlock = 13.3
+) => {
+  if (!Number.isInteger(currentBlock))
+    throw new Error('Current block should be an integer');
+  const secondsToRewind = dayjs.duration(days, 'days').asSeconds();
+  const blocksToRewind = parseInt(String(secondsToRewind / secondsPerBlock));
+  return currentBlock - blocksToRewind;
 };
