@@ -5,7 +5,8 @@ import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { sendInsight } from 'services/api/googleTagManager';
 
 export interface InsightToken extends IntoTheBlock {
   image: string;
@@ -47,6 +48,7 @@ export const Insight = ({
           <button
             className="flex justify-center items-center"
             onClick={() => {
+              sendInsight(!isExpanded);
               setShow(!isExpanded);
               setIsExpanded(!isExpanded);
             }}
@@ -76,6 +78,7 @@ export const Insight = ({
           <button className="w-16 ml-12">
             <IconTimes
               onClick={() => {
+                sendInsight(!isExpanded);
                 setShow(!isExpanded);
                 setIsExpanded(!isExpanded);
               }}

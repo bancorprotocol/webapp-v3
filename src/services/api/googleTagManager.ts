@@ -7,15 +7,20 @@ declare global {
 
 export const googleTagManager = (id: string, name: string | null) => {
   if (window.dataLayer) return;
-  if (id && name)
-    window.dataLayer = [
-      {
-        wallet: {
-          id: id,
-          name: name,
-        },
-      },
-    ];
+
+  window.dataLayer = [
+    {
+      wallet:
+        id && name
+          ? {
+              id: id,
+              name: name,
+            }
+          : {},
+      page: { class: 'App' },
+    },
+  ];
+
   init(window, document, 'script', 'dataLayer', 'GTM-TCBKR7W');
   sendGTMPath(undefined, window.location.pathname);
 };
@@ -129,11 +134,25 @@ export const sendWalletEvent = (
     });
 };
 
+export const sendInsight = (open: boolean) => {
+  sendGTM({
+    event: `CE Conversion Insights ${open ? 'Open' : 'Closed'}`,
+    event_properties: undefined,
+    user_properties: undefined,
+    ga_event: {
+      category: 'Conversion',
+    },
+    page: { swap_insights: open ? 'Open' : 'Closed' },
+  });
+};
+
 export const sendGTMPath = (
   from: string | undefined,
   to: string,
   darkMode: boolean = false
-) =>
+) => {
+  const item = localStorage.getItem('insightsExpanded');
+  const open = item ? (JSON.parse(item) as boolean) : false;
   sendGTM({
     event: 'VP ' + to,
     page: {
@@ -141,7 +160,9 @@ export const sendGTMPath = (
       to_path: to,
       theme: darkMode ? 'Dark' : 'Light',
       currency: 'USD',
+      swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
     },
     user_properties: undefined,
     ga_event: undefined,
   });
+};

@@ -77,7 +77,8 @@ export const MenuPrimary = ({
           x.subMenu.some((sub) => sub.to === location.pathname)
       )
     );
-    sendGTMPath(prevLocation?.pathname, location.pathname, darkMode);
+    if (prevLocation?.pathname !== location.pathname)
+      sendGTMPath(prevLocation?.pathname, location.pathname, darkMode);
   }, [location, darkMode, prevLocation]);
 
   return (
