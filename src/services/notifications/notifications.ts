@@ -4,6 +4,7 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { Token } from 'services/observables/tokens';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 const showNotification = (notification: BaseNotification, dispatch: any) =>
   dispatch(addNotification(notification));
@@ -189,6 +190,57 @@ export const poolFailedNotification = (dispatch: any) =>
       type: NotificationType.error,
       title: 'Creating Pool Failed',
       msg: `Fail creating pool. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const stakeRewardsNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Staking Rewards',
+      msg: `You staked ${prettifyNumber(amount)} BNT in pool ${pool}`,
+      txHash,
+    },
+    dispatch
+  );
+
+export const claimRewardsNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Claimed Rewards',
+      msg: `You claimed ${prettifyNumber(amount)} BNT from your rewards.`,
+      txHash,
+    },
+    dispatch
+  );
+
+export const stakeRewardsFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Staking Rewards',
+      msg: `Failed to stake rewards. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const claimRewardsFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Claiming Rewards',
+      msg: `Failed to claim rewards. Please try again or contact support.`,
     },
     dispatch
   );
