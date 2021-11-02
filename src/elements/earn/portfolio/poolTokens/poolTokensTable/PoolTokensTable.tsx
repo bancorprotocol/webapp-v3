@@ -54,16 +54,7 @@ export const PoolTokensTable = () => {
         id: 'actions',
         Header: '',
         accessor: 'converter',
-        Cell: (cellData) => {
-          const row = cellData.row.original;
-
-          return PoolTokensCellActions(
-            row.converter,
-            row.amount,
-            row.poolDecimals,
-            [row.bnt.token.address, row.tkn.token.address]
-          );
-        },
+        Cell: (cellData) => PoolTokensCellActions(cellData.row.original),
         minWidth: 130,
       },
     ],

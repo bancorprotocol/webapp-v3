@@ -1,23 +1,16 @@
 import { useDispatch } from 'react-redux';
 import { rejectNotification } from 'services/notifications/notifications';
+import { PoolToken } from 'services/observables/tokens';
 import { removeLiquidity } from 'services/web3/liquidity/liquidity';
 
-export const PoolTokensCellActions = (
-  converter: string,
-  amount: string,
-  poolDecimals: number,
-  reserves: string[]
-) => {
+export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();
 
   return (
     <button
       onClick={() =>
         removeLiquidity(
-          converter,
-          amount,
-          poolDecimals,
-          reserves,
+          poolToken,
           () => {},
           () => {},
           () => rejectNotification(dispatch),

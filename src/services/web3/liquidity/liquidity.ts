@@ -7,8 +7,8 @@ import {
   settingsContractAddress$,
   systemStoreAddress$,
 } from 'services/observables/contracts';
-import { Pool, Token } from 'services/observables/tokens';
-import { expandToken, shrinkToken } from 'utils/formulas';
+import { Pool, PoolToken, Token } from 'services/observables/tokens';
+import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
 import {
   calculateBntNeededToOpenSpace,
   calculatePriceDeviationTooHigh,
@@ -114,22 +114,35 @@ export const addLiquidity = async (
 };
 
 export const removeLiquidity = async (
-  converter: string,
-  amount: string,
-  poolDecimals: number,
-  reserves: string[],
+  poolToken: PoolToken,
   onHash: (txHash: string) => void,
   onCompleted: Function,
   rejected: Function,
   failed: (error: string) => void
 ) => {
+  const slippage = 0.05;
   try {
-    const contract = Converter__factory.connect(converter, writeWeb3.signer);
+    const contract = Converter__factory.connect(
+      poolToken.converter,
+      writeWeb3.signer
+    );
+
+    const minBntReturn = expandToken(
+      poolToken.bnt.amount,
+      poolToken.poolDecimals
+    );
+    const minTknReturn = expandToken(
+      poolToken.tkn.amount,
+      poolToken.poolDecimals
+    );
 
     const tx = await contract.removeLiquidity(
-      expandToken(amount, poolDecimals),
-      reserves,
-      ['1', '1']
+      expandToken(poolToken.amount, poolToken.poolDecimals),
+      [poolToken.bnt.token.address, poolToken.tkn.token.address],
+      [
+        reduceBySlippage(minBntReturn, slippage),
+        reduceBySlippage(minTknReturn, slippage),
+      ]
     );
     onHash(tx.hash);
 

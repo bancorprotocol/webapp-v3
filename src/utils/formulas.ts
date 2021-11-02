@@ -47,3 +47,13 @@ export const calculatePercentageChange = (
 ): number => {
   return Number(((numberNow / numberBefore - 1) * 100).toFixed(2));
 };
+
+export const reduceBySlippage = (
+  value: string | number | BigNumber,
+  slippage: string | number | BigNumber
+) => {
+  const bigNumValue = new BigNumber(value);
+  const bigNumSlippage = new BigNumber(slippage);
+  const one = new BigNumber(1);
+  return bigNumValue.times(one.minus(bigNumSlippage)).toString();
+};
