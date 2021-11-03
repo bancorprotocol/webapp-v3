@@ -17,21 +17,21 @@ export const WithdrawLiquidityInfo = ({
             <IconInfo className="w-10 mr-10" />
             <span className="font-semibold">Important!</span>
           </div>
-          <p className="text-grey-4 dark:text-grey-3 ml-20 mt-5">
+          <div className="text-grey-4 dark:text-grey-3 ml-20 mt-5">
             {protectionNotReached && (
-              <div>
+              <p>
                 You still haven’t reached full protection. There is a risk for
                 impermanent loss and you might receive less than your original
                 stake amount as a result.
-              </div>
+              </p>
             )}
             {multiplierWillReset && (
-              <div>
+              <p>
                 Withdrawing will reset your rewards multiplier for all active
                 positions back to x1
-              </div>
+              </p>
             )}
-          </p>
+          </div>
         </div>
       )}
     </>

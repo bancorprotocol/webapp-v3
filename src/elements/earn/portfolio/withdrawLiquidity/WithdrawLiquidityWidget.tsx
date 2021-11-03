@@ -8,6 +8,7 @@ import { Pool, Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
+import { LinePercentage } from 'components/linePercentage/LinePercentage';
 
 export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
   const [amount, setAmount] = useState('');
@@ -24,6 +25,11 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
   const withdrawingBNT = true;
   const protectionNotReached = true;
   const multiplierWillReset = true;
+
+  const outputBreakdown = [
+    { color: 'blue-4', decPercent: 0.75, label: 'ETH' },
+    { color: 'primary', decPercent: 0.25, label: 'BNT' },
+  ];
 
   return (
     <Widget title="Withdraw" goBackRoute="/portfolio">
@@ -52,7 +58,9 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
         </div>
         <div className="flex justify-between items-center mt-20">
           <div>Output breakdown</div>
-          <div>%</div>
+          <div className="relative w-[180px]">
+            <LinePercentage percentages={outputBreakdown} />
+          </div>
         </div>
         {withdrawingBNT && (
           <div className="mt-20">
