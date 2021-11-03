@@ -8,14 +8,17 @@ interface TokenInputPercentageProps {
   label: string;
   token?: Token;
   balance?: string;
+  amount: string;
+  setAmount: Function;
 }
 
 export const TokenInputPercentage = ({
   token,
   balance,
   label,
+  amount,
+  setAmount,
 }: TokenInputPercentageProps) => {
-  const [amount, setAmount] = useState('');
   const [amountUSD, setAmountUSD] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
