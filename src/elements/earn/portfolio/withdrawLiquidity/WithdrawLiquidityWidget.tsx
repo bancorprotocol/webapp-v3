@@ -6,8 +6,8 @@ import { getProtectedPools } from 'redux/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { Pool, Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
-import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 
 export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
   const [amount, setAmount] = useState('');
@@ -21,6 +21,10 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
     history.push(`/portfolio/withdraw/${pool.pool_dlt_id}`);
   };
 
+  const withdrawingBNT = true;
+  const protectionNotReached = true;
+  const multiplierWillReset = true;
+
   return (
     <Widget title="Withdraw" goBackRoute="/portfolio">
       <div className="px-10 pb-10">
@@ -30,18 +34,10 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
           onSelect={onSelect}
           label="Pool"
         />
-        <div className="border border-warning rounded bg-warning bg-opacity-[5%] dark:bg-blue-2 dark:bg-opacity-100 p-20 text-12 mt-20">
-          <div className="text-warning flex items-center">
-            <IconInfo className="w-10 mr-10" />
-            <span className="font-semibold">Important!</span>
-          </div>
-          <p className="text-grey-4 dark:text-grey-3 ml-20 mt-5">
-            You still haven’t reached full protection. There is a risk for
-            impermanent loss and you might receive less than your original stake
-            amount as a result. Withdrawing will reset your rewards multiplier
-            for all active positions back to x1
-          </p>
-        </div>
+        <WithdrawLiquidityInfo
+          protectionNotReached={protectionNotReached}
+          multiplierWillReset={multiplierWillReset}
+        />
         <div className="my-20">
           <TokenInputPercentage
             label="Amount"
@@ -58,10 +54,12 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
           <div>Output breakdown</div>
           <div>%</div>
         </div>
-        <div className="mt-20">
-          BNT withdrawals are subject to a 24h lock period before they can be
-          claimed.
-        </div>
+        {withdrawingBNT && (
+          <div className="mt-20">
+            BNT withdrawals are subject to a 24h lock period before they can be
+            claimed.
+          </div>
+        )}
         <button
           onClick={() => {}}
           className={`btn-primary rounded w-full mt-20`}
