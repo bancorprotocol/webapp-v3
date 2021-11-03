@@ -198,11 +198,11 @@ const calculateSpotPriceAndRate = async (
   if (to.address === bnt) pool = await findPoolByToken(from.address);
 
   if (pool) {
-    const fromShape = buildTokenPoolCall(pool, from.address);
-    const toShape = buildTokenPoolCall(pool, to.address);
+    const fromShape = buildTokenPoolCall(pool.converter_dlt_id, from.address);
+    const toShape = buildTokenPoolCall(pool.converter_dlt_id, to.address);
 
     const mCall = [fromShape, toShape, rateShape];
-    const res = await multicall(network, mCall);
+    const res = await multicall(mCall);
 
     if (res && res.length === mCall.length) {
       return {
@@ -218,16 +218,19 @@ const calculateSpotPriceAndRate = async (
 
   //First hop
   const fromPool = await findPoolByToken(from.address);
-  const fromShape1 = buildTokenPoolCall(fromPool, from.address);
-  const bntShape1 = buildTokenPoolCall(fromPool, bnt);
+  const fromShape1 = buildTokenPoolCall(
+    fromPool.converter_dlt_id,
+    from.address
+  );
+  const bntShape1 = buildTokenPoolCall(fromPool.converter_dlt_id, bnt);
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
-  const bntShape2 = buildTokenPoolCall(toPool, bnt);
-  const toShape2 = buildTokenPoolCall(toPool, to.address);
+  const bntShape2 = buildTokenPoolCall(toPool.converter_dlt_id, bnt);
+  const toShape2 = buildTokenPoolCall(toPool.converter_dlt_id, to.address);
 
   const mCall = [fromShape1, bntShape1, bntShape2, toShape2, rateShape];
-  const res = await multicall(network, mCall);
+  const res = await multicall(mCall);
 
   if (res && res.length === mCall.length) {
     const spot1 = calcReserve(
@@ -248,14 +251,11 @@ const calculateSpotPriceAndRate = async (
   return { rate: '0', spotPrice: new BigNumber(0) };
 };
 
-const buildTokenPoolCall = (
-  pool: APIPool,
+export const buildTokenPoolCall = (
+  contractAddress: string,
   tokenAddress: string
 ): MCInterface => {
-  const contract = Converter__factory.connect(
-    pool.converter_dlt_id,
-    web3.provider
-  );
+  const contract = Converter__factory.connect(contractAddress, web3.provider);
 
   return {
     contractAddress: contract.address,

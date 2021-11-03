@@ -71,7 +71,7 @@ export const fetchedRewardsMultiplier = async (
   const calls = positions.map((position) =>
     buildRewardsMultiplierCall(contract, user, position)
   );
-  const res = await multicall(1, calls);
+  const res = await multicall(calls);
   if (res) return res.map((x) => shrinkToken(x.toString(), 6));
 
   return [];

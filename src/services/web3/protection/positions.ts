@@ -160,9 +160,7 @@ const fetchRawPositions = async (
     buildProtectedPositionCalls(contract, id.toString())
   );
 
-  const currentNetwork = await currentNetwork$.pipe(take(1)).toPromise();
-
-  const rawPositions = await multicall(currentNetwork, calls);
+  const rawPositions = await multicall(calls);
 
   const keys = [
     'owner',

@@ -30,13 +30,10 @@ export const fetchTokenBalances = async (
     const [tokenBalances, ethBalance]: [
       Result[] | undefined,
       string | undefined
-    ] = await Promise.all([
-      multicall(currentNetwork, calls),
-      eth && fetchETH(user),
-    ]);
+    ] = await Promise.all([multicall(calls), eth && fetchETH(user)]);
     if (tokenBalances) {
       const balances = tokenBalances.map((bn, index) => {
-        const balance = (bn[0] as BigNumber).toString();
+        const balance = bn.length > 0 ? (bn[0] as BigNumber).toString() : '0';
         return {
           ...tokensNoETH[index],
           balance:
@@ -63,7 +60,10 @@ export const fetchTokenBalances = async (
   return [];
 };
 
-const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
+export const buildTokenBalanceCall = (
+  address: string,
+  user: string
+): MultiCall => {
   const contract = Token__factory.connect(address, web3.provider);
 
   return {
@@ -71,6 +71,17 @@ const buildTokenBalanceCall = (address: string, user: string): MultiCall => {
     interface: contract.interface,
     methodName: 'balanceOf',
     methodParameters: [user],
+  };
+};
+
+export const buildTokenTotalSupplyCall = (address: string): MultiCall => {
+  const contract = Token__factory.connect(address, web3.provider);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'totalSupply',
+    methodParameters: [],
   };
 };
 

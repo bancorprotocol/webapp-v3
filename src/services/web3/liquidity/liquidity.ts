@@ -7,8 +7,8 @@ import {
   settingsContractAddress$,
   systemStoreAddress$,
 } from 'services/observables/contracts';
-import { Pool, Token } from 'services/observables/tokens';
-import { expandToken, shrinkToken } from 'utils/formulas';
+import { Pool, PoolToken, Token } from 'services/observables/tokens';
+import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
 import {
   calculateBntNeededToOpenSpace,
   calculatePriceDeviationTooHigh,
@@ -111,6 +111,45 @@ export const addLiquidity = async (
   );
 
   return tx.hash;
+};
+
+export const removeLiquidity = async (
+  poolToken: PoolToken,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
+) => {
+  const slippage = 0.05;
+  try {
+    const contract = Converter__factory.connect(
+      poolToken.converter,
+      writeWeb3.signer
+    );
+
+    const minBntReturn = expandToken(
+      reduceBySlippage(poolToken.bnt.amount, slippage),
+      poolToken.poolDecimals
+    );
+    const minTknReturn = expandToken(
+      reduceBySlippage(poolToken.tkn.amount, slippage),
+      poolToken.poolDecimals
+    );
+
+    const tx = await contract.removeLiquidity(
+      expandToken(poolToken.amount, poolToken.poolDecimals),
+      [poolToken.bnt.token.address, poolToken.tkn.token.address],
+      [minBntReturn, minTknReturn]
+    );
+    onHash(tx.hash);
+
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 interface AddLiquidityProps {

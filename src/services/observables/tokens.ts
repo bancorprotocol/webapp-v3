@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
-import { apiData$, correctedPools$ } from './pools';
+import { apiData$, correctedPools$, partialPoolTokens$ } from './pools';
 import { setLoadingBalances, user$ } from './user';
 import { switchMapIgnoreThrow } from './customOperators';
 import { currentNetwork$ } from './network';
@@ -35,6 +35,8 @@ import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
+import { multicall } from 'services/web3/multicall/multicall';
+import { buildTokenPoolCall } from 'services/web3/swap/market';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -92,6 +94,21 @@ export interface Pool {
   apr: number;
   reward?: APIReward;
   isProtected: boolean;
+}
+
+export interface PoolToken {
+  bnt: {
+    token: Token;
+    amount: string;
+  };
+  tkn: {
+    token: Token;
+    amount: string;
+  };
+  amount: string;
+  value: string;
+  poolDecimals: number;
+  converter: string;
 }
 
 export const listOfLists = [
@@ -367,4 +384,85 @@ export const pools$ = combineLatest([
     }
   ),
   shareReplay(1)
+);
+
+export const poolTokens$ = combineLatest([
+  pools$,
+  partialPoolTokens$,
+  tokens$,
+]).pipe(
+  switchMapIgnoreThrow(async ([pools, partialPoolTokens, tokens]) => {
+    const res = await Promise.all<{
+      bnt: {
+        token: Token;
+        amount: string;
+      };
+      tkn: {
+        token: Token;
+        amount: string;
+      };
+      amount: string;
+      value: string;
+      poolDecimals: number;
+      converter: string;
+    } | null>(
+      partialPoolTokens.map(async (poolToken) => {
+        const pool = pools.find(
+          (x) => x.converter_dlt_id === poolToken.converter
+        );
+
+        if (pool) {
+          const tkn = tokens.find(
+            (x) => x.address === pool.reserves[0].address
+          );
+          const bnt = tokens.find(
+            (x) => x.address === pool.reserves[1].address
+          );
+
+          const amount = shrinkToken(poolToken.balance, pool.decimals);
+          const percent = new BigNumber(amount).div(
+            shrinkToken(poolToken.totalSupply, pool.decimals)
+          );
+
+          if (bnt && tkn) {
+            const balances = await multicall(
+              pool.reserves.map((x) =>
+                buildTokenPoolCall(pool.converter_dlt_id, x.address)
+              )
+            );
+            if (balances) {
+              const tknBalanceWei = new BigNumber(balances[0].toString());
+              const bntBalanceWei = new BigNumber(balances[1].toString());
+
+              const tknAmount = percent.times(
+                shrinkToken(tknBalanceWei, pool.decimals)
+              );
+              const bntAmount = percent.times(
+                shrinkToken(bntBalanceWei, pool.decimals)
+              );
+
+              const value =
+                tkn.usdPrice && bnt.usdPrice
+                  ? tknAmount
+                      .times(Number(tkn.usdPrice))
+                      .plus(bntAmount.times(Number(bnt.usdPrice)))
+                  : new BigNumber(0);
+
+              return {
+                bnt: { token: bnt, amount: bntAmount.toString() },
+                tkn: { token: tkn, amount: tknAmount.toString() },
+                amount,
+                value: value.toString(),
+                poolDecimals: pool.decimals,
+                converter: poolToken.converter,
+              };
+            }
+          }
+        }
+
+        return null;
+      })
+    );
+    return res.filter((x) => !!x);
+  })
 );

@@ -48,7 +48,7 @@ const fetchContractAddresses = async (
   );
 
   try {
-    const addresses = await multicall(networkVariables.network, [
+    const addresses = await multicall([
       buildAddressCall(contract, 'BancorNetwork'),
       buildAddressCall(contract, 'BancorConverterRegistry'),
       buildAddressCall(contract, 'LiquidityProtectionStore'),
