@@ -1,22 +1,14 @@
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { useMemo, useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
-import { fetchProtectedPositions } from 'services/web3/protection/positions';
-import useAsyncEffect from 'use-async-effect';
-import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/observables/tokens';
+import { useMemo } from 'react';
 import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellStake';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
 
 export const ProtectedPositionsTable = () => {
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const { groupedPositions, search, setSearch } = useProtectedPositions();
 
-  const [search, setSearch] = useState('');
-  const { account } = useWeb3React();
-  const [positions, setPositions] = useState<any[]>([]);
-
-  const data = useMemo(() => positions, [positions]);
+  const data = useMemo(() => groupedPositions, [groupedPositions]);
   const columns = useMemo<TableColumn<any>[]>(
     () => [
       {
@@ -115,16 +107,20 @@ export const ProtectedPositionsTable = () => {
         tooltip:
           'The impermanent loss protection you have accrued. Impermanent loss protection starts 30 days after your deposit, at a rate of 30% and gradually increases 1% per day until you reach 100% protection.',
       },
+      {
+        id: 'expander',
+        Cell: ({ row }) =>
+          row.canExpand ? (
+            <span {...row.getToggleRowExpandedProps()}>
+              {row.isExpanded ? 'close' : 'open'}
+            </span>
+          ) : (
+            <button>withdraw</button>
+          ),
+      },
     ],
     []
   );
-
-  useAsyncEffect(async () => {
-    if (account && pools.length) {
-      const positions = await fetchProtectedPositions(pools, account);
-      setPositions(positions);
-    }
-  }, [account, pools.length]);
 
   return (
     <section className="content-section pt-20 pb-10">

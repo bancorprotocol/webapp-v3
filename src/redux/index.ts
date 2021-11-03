@@ -4,6 +4,7 @@ import { user } from 'redux/user/user';
 import { bancor } from 'redux/bancor/bancor';
 import { pool } from 'redux/bancor/pool';
 import { notification } from 'redux/notification/notification';
+import { position } from 'redux/bancor/position';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     notification,
     bancor,
     pool,
+    position,
   },
 });
 

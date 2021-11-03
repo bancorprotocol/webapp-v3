@@ -34,6 +34,11 @@ export interface ProtectedPosition {
   timestamp: string;
 }
 
+export interface ProtectedPositionGrouped extends ProtectedPosition {
+  id: string;
+  subRows: ProtectedPosition[];
+}
+
 interface ProtectedLiquidity {
   id: string;
   owner: string;

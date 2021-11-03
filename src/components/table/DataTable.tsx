@@ -1,6 +1,7 @@
 import {
   Column,
   SortingRule,
+  useExpanded,
   usePagination,
   useSortBy,
   useTable,
@@ -58,6 +59,7 @@ export const DataTable = <D extends object>({
       autoResetPage: false,
     },
     useSortBy,
+    useExpanded,
     usePagination
   );
 
