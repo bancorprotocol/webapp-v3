@@ -32,7 +32,7 @@ export const ProtectedPositionsTable = () => {
         Cell: (cellData) =>
           ProtectedPositionTableCellAmount({
             tknAmount: cellData.value.tknAmount,
-            usdAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
           }),
         minWidth: 130,
@@ -46,7 +46,7 @@ export const ProtectedPositionsTable = () => {
         Cell: (cellData) =>
           ProtectedPositionTableCellAmount({
             tknAmount: cellData.value.tknAmount,
-            usdAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
           }),
         minWidth: 130,
@@ -61,7 +61,7 @@ export const ProtectedPositionsTable = () => {
         Cell: (cellData) =>
           ProtectedPositionTableCellAmount({
             tknAmount: cellData.value.tknAmount,
-            usdAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
           }),
         minWidth: 130,
