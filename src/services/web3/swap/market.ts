@@ -203,7 +203,7 @@ const calculateSpotPriceAndRate = async (
     const toShape = buildTokenPoolCall(pool.converter_dlt_id, to.address);
 
     const mCall = [fromShape, toShape, rateShape];
-    const res = await multicall(network, mCall);
+    const res = await multicall(mCall);
 
     if (res && res.length === mCall.length) {
       return {
@@ -231,7 +231,7 @@ const calculateSpotPriceAndRate = async (
   const toShape2 = buildTokenPoolCall(toPool.converter_dlt_id, to.address);
 
   const mCall = [fromShape1, bntShape1, bntShape2, toShape2, rateShape];
-  const res = await multicall(network, mCall);
+  const res = await multicall(mCall);
 
   if (res && res.length === mCall.length) {
     const spot1 = calcReserve(

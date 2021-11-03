@@ -1,7 +1,6 @@
 import { web3 } from 'services/web3';
 import { Multicall__factory } from 'services/web3/abis/types';
-import { getNetworkVariables } from 'services/web3/config';
-import { EthNetworks } from 'services/web3/types';
+import { multiCallContract } from 'services/web3/config';
 import { Interface } from '@ethersproject/abi';
 
 export interface MultiCall {
@@ -11,10 +10,9 @@ export interface MultiCall {
   methodParameters: any[];
 }
 
-export const multicall = async (network: EthNetworks, calls: MultiCall[]) => {
-  const vars = getNetworkVariables(network);
+export const multicall = async (calls: MultiCall[]) => {
   const multicallContract = Multicall__factory.connect(
-    vars.multiCall,
+    multiCallContract,
     web3.provider
   );
 

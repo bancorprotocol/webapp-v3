@@ -421,7 +421,6 @@ export const poolTokens$ = combineLatest([
 
           if (bnt && tkn) {
             const balances = await multicall(
-              1,
               pool.reserves.map((x) =>
                 buildTokenPoolCall(pool.converter_dlt_id, x.address)
               )

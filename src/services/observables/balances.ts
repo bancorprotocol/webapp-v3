@@ -30,10 +30,7 @@ export const fetchTokenBalances = async (
     const [tokenBalances, ethBalance]: [
       Result[] | undefined,
       string | undefined
-    ] = await Promise.all([
-      multicall(currentNetwork, calls),
-      eth && fetchETH(user),
-    ]);
+    ] = await Promise.all([multicall(calls), eth && fetchETH(user)]);
     if (tokenBalances) {
       const balances = tokenBalances.map((bn, index) => {
         const balance = bn.length > 0 ? (bn[0] as BigNumber).toString() : '0';

@@ -75,16 +75,15 @@ const apiPools$ = apiData$.pipe(
 export const partialPoolTokens$ = combineLatest([
   anchorAndConverters$,
   user$,
-  currentNetwork$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([anchorAndConverters, user, currentNetwork]) => {
+  switchMapIgnoreThrow(async ([anchorAndConverters, user]) => {
     if (!user) return [];
 
     const calls = anchorAndConverters.map((x) =>
       buildTokenBalanceCall(x.anchorAddress, user)
     );
 
-    const res = await multicall(currentNetwork, calls);
+    const res = await multicall(calls);
     if (res) {
       const partialPTokens = res
         .map((x, index) => {
@@ -100,7 +99,7 @@ export const partialPoolTokens$ = combineLatest([
       const calls = partialPTokens.map((x) =>
         buildTokenTotalSupplyCall(x.anchor)
       );
-      const total = await multicall(currentNetwork, calls);
+      const total = await multicall(calls);
       if (total) {
         return partialPTokens.map((token, index) => ({
           totalSupply: total[index].toString(),
