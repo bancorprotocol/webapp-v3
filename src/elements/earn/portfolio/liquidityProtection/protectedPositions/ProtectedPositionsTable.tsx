@@ -4,16 +4,18 @@ import { useMemo } from 'react';
 import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellStake';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
+import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 
 export const ProtectedPositionsTable = () => {
   const { groupedPositions, search, setSearch } = useProtectedPositions();
 
   const data = useMemo(() => groupedPositions, [groupedPositions]);
-  const columns = useMemo<TableColumn<any>[]>(
+  const columns = useMemo<TableColumn<ProtectedPositionGrouped>[]>(
     () => [
       {
         id: 'liquidity',
         Header: 'Liquidity',
+        accessor: 'pool',
         Cell: (cellData) => cellData.row.original.pool.name,
         minWidth: 130,
         sortDescFirst: true,
@@ -64,11 +66,14 @@ export const ProtectedPositionsTable = () => {
       },
       {
         id: 'feesRewards',
+        accessor: 'rewardsMultiplier',
         Header: 'Fees & Rewards',
-        Cell: (cellData) =>
-          `${prettifyNumber(cellData.row.original.fees)} ${
-            cellData.row.original.reserveToken.symbol
-          }`,
+        Cell: (cellData) => {
+          const row = cellData.row.original;
+          return `${prettifyNumber(row.fees)} ${row.reserveToken.symbol} | X${
+            row.rewardsMultiplier
+          }`;
+        },
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -78,7 +83,7 @@ export const ProtectedPositionsTable = () => {
         id: 'roi',
         accessor: 'roi',
         Header: 'ROI',
-        Cell: (cellData) => `${(cellData.value * 100).toFixed(2)} %`,
+        Cell: (cellData) => `${(Number(cellData.value) * 100).toFixed(2)} %`,
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -91,8 +96,8 @@ export const ProtectedPositionsTable = () => {
         Cell: (cellData) => {
           return (
             <div>
-              <div>Day {(cellData.value.day * 100).toFixed(2)} %</div>
-              <div>Week {(cellData.value.week * 100).toFixed(2)} %</div>
+              <div>Day {(Number(cellData.value.day) * 100).toFixed(2)} %</div>
+              <div>Week {(Number(cellData.value.week) * 100).toFixed(2)} %</div>
             </div>
           );
         },
@@ -109,6 +114,7 @@ export const ProtectedPositionsTable = () => {
       },
       {
         id: 'expander',
+        accessor: 'subRows',
         Cell: ({ row }) =>
           row.canExpand ? (
             <span {...row.getToggleRowExpandedProps()}>

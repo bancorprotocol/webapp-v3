@@ -75,6 +75,7 @@ export const getGroupedPositions = createSelector(
             roi: sumRoi,
             aprs: val.aprs,
             timestamp: val.timestamp,
+            rewardsMultiplier: val.rewardsMultiplier,
             subRows: [],
           };
 

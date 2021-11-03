@@ -20,6 +20,7 @@ import { Pool, Reserve } from 'services/observables/tokens';
 import { fetchTokenSupply } from 'services/web3/token/token';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
 import { shrinkToken } from 'utils/formulas';
+import { fetchedRewardsMultiplier } from './rewards';
 
 export interface ProtectedPosition {
   id: string;
@@ -31,6 +32,7 @@ export interface ProtectedPosition {
   reserveToken: Reserve;
   roi: string;
   aprs: { day: string; week: string };
+  rewardsMultiplier: string;
   timestamp: string;
 }
 
@@ -39,7 +41,7 @@ export interface ProtectedPositionGrouped extends ProtectedPosition {
   subRows: ProtectedPosition[];
 }
 
-interface ProtectedLiquidity {
+export interface ProtectedLiquidity {
   id: string;
   owner: string;
   poolToken: string;
@@ -294,8 +296,6 @@ const fetchPoolAprs = async (
                   .minus(1)
                   .times(magnitude);
 
-                console.log(poolRoi.toString(), historicBalance.pool.name);
-
                 return {
                   calculatedAprDec: calculatedAprDec.isNegative()
                     ? '0'
@@ -374,6 +374,11 @@ export const fetchProtectedPositions = async (
     liquidityProtectionContract
   );
 
+  const rewardsMultiplier = await fetchedRewardsMultiplier(
+    currentUser,
+    rawPositions
+  );
+
   const positionsMerged = values(
     merge(
       keyBy(rawPositions, 'id'),
@@ -382,7 +387,7 @@ export const fetchProtectedPositions = async (
     )
   );
 
-  return positionsMerged.map((pos) => {
+  return positionsMerged.map((pos, index) => {
     const reserveToken = pos.pool.reserves.find(
       (reserve) => reserve.address === pos.reserveToken
     );
@@ -435,6 +440,7 @@ export const fetchProtectedPositions = async (
       aprs: pos.aprs,
       pool: pos.pool,
       fees,
+      rewardsMultiplier: rewardsMultiplier[index],
       timestamp: pos.timestamp,
     } as ProtectedPosition;
   });
