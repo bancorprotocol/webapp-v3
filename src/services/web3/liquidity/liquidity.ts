@@ -128,27 +128,25 @@ export const removeLiquidity = async (
     );
 
     const minBntReturn = expandToken(
-      poolToken.bnt.amount,
+      reduceBySlippage(poolToken.bnt.amount, slippage),
       poolToken.poolDecimals
     );
     const minTknReturn = expandToken(
-      poolToken.tkn.amount,
+      reduceBySlippage(poolToken.tkn.amount, slippage),
       poolToken.poolDecimals
     );
 
     const tx = await contract.removeLiquidity(
       expandToken(poolToken.amount, poolToken.poolDecimals),
       [poolToken.bnt.token.address, poolToken.tkn.token.address],
-      [
-        reduceBySlippage(minBntReturn, slippage),
-        reduceBySlippage(minTknReturn, slippage),
-      ]
+      [minBntReturn, minTknReturn]
     );
     onHash(tx.hash);
 
     await tx.wait();
     onCompleted();
   } catch (e: any) {
+    console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
   }
