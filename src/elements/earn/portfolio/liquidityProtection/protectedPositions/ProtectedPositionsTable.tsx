@@ -2,10 +2,12 @@ import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { mainEntry } from 'services/web3/protection/positions';
+import { fetchProtectedPositions } from 'services/web3/protection/positions';
 import useAsyncEffect from 'use-async-effect';
 import { useAppSelector } from 'redux/index';
 import { Pool } from 'services/observables/tokens';
+import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellStake';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export const ProtectedPositionsTable = () => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
@@ -27,6 +29,12 @@ export const ProtectedPositionsTable = () => {
         id: 'initialStake',
         accessor: 'initialStake',
         Header: 'Initial Stake',
+        Cell: (cellData) =>
+          ProtectedPositionTableCellAmount({
+            tknAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.tknAmount,
+            symbol: cellData.row.original.reserveToken.symbol,
+          }),
         minWidth: 130,
         sortDescFirst: true,
         tooltip: 'Amount of tokens you originally staked in the pool',
@@ -35,6 +43,12 @@ export const ProtectedPositionsTable = () => {
         id: 'protected',
         accessor: 'protectedAmount',
         Header: 'Protected',
+        Cell: (cellData) =>
+          ProtectedPositionTableCellAmount({
+            tknAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.tknAmount,
+            symbol: cellData.row.original.reserveToken.symbol,
+          }),
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -44,6 +58,12 @@ export const ProtectedPositionsTable = () => {
         id: 'claimable',
         accessor: 'claimableAmount',
         Header: 'Claimable',
+        Cell: (cellData) =>
+          ProtectedPositionTableCellAmount({
+            tknAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.tknAmount,
+            symbol: cellData.row.original.reserveToken.symbol,
+          }),
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -52,6 +72,10 @@ export const ProtectedPositionsTable = () => {
       {
         id: 'feesRewards',
         Header: 'Fees & Rewards',
+        Cell: (cellData) =>
+          `${prettifyNumber(cellData.row.original.fees)} ${
+            cellData.row.original.reserveToken.symbol
+          }`,
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -61,6 +85,7 @@ export const ProtectedPositionsTable = () => {
         id: 'roi',
         accessor: 'roi',
         Header: 'ROI',
+        Cell: (cellData) => `${(cellData.value * 100).toFixed(2)} %`,
         minWidth: 130,
         sortDescFirst: true,
         tooltip:
@@ -69,6 +94,15 @@ export const ProtectedPositionsTable = () => {
       {
         id: 'apr',
         Header: 'APR',
+        accessor: 'aprs',
+        Cell: (cellData) => {
+          return (
+            <div>
+              <div>Day {cellData.value.day}</div>
+              <div>Week {cellData.value.week}</div>
+            </div>
+          );
+        },
         minWidth: 130,
         sortDescFirst: true,
       },
@@ -85,11 +119,11 @@ export const ProtectedPositionsTable = () => {
   );
 
   useAsyncEffect(async () => {
-    if (account) {
-      const positions = await mainEntry(pools, account);
+    if (account && pools.length) {
+      const positions = await fetchProtectedPositions(pools, account);
       setPositions(positions);
     }
-  }, [account]);
+  }, [account, pools.length]);
 
   return (
     <section className="content-section pt-20 pb-10">

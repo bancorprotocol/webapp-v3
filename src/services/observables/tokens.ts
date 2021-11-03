@@ -35,7 +35,6 @@ import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
-import { fifteenSeconds$ } from './timers';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -66,13 +65,15 @@ export interface Token {
   isWhitelisted?: boolean;
 }
 
-interface Reserve {
+export interface Reserve {
   address: string;
   weight: string;
   balance: string;
   symbol: string;
   logoURI: string;
   rewardApr?: number;
+  decimals: number;
+  usdPrice: number | string | null;
 }
 
 export interface Pool {
@@ -327,6 +328,8 @@ export const pools$ = combineLatest([
               reserveTokenOne && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenOne)
                 : ropstenImage,
+            decimals: reserveTokenOne ? reserveTokenOne.decimals : 18,
+            usdPrice: reserveTokenOne ? reserveTokenOne.usdPrice : 0,
           },
           {
             ...pool.reserves[1],
@@ -336,6 +339,8 @@ export const pools$ = combineLatest([
               reserveTokenTwo && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenTwo)
                 : ropstenImage,
+            decimals: reserveTokenTwo ? reserveTokenTwo.decimals : 18,
+            usdPrice: reserveTokenTwo ? reserveTokenTwo.usdPrice : 0,
           },
         ];
 

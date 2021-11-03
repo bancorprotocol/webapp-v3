@@ -16,11 +16,25 @@ import { fromPairs, keyBy, merge, toPairs, uniq, values } from 'lodash';
 import dayjs from 'dayjs';
 import { decToPpm, rewindBlocksByDays } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { Pool } from 'services/observables/tokens';
+import { Pool, Reserve } from 'services/observables/tokens';
 import { fetchTokenSupply } from 'services/web3/token/token';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
+import { shrinkToken } from 'utils/formulas';
 
-export interface ProtectedLiquidity {
+export interface ProtectedPosition {
+  id: string;
+  pool: Pool;
+  fees: string;
+  initialStake: { usdAmount: string; tknAmount: string };
+  protectedAmount: { usdAmount: string; tknAmount: string };
+  claimableAmount: { usdAmount: string; tknAmount: string };
+  reserveToken: Reserve;
+  roi: string;
+  aprs: { day: string; week: string };
+  timestamp: string;
+}
+
+interface ProtectedLiquidity {
   id: string;
   owner: string;
   poolToken: string;
@@ -30,6 +44,32 @@ export interface ProtectedLiquidity {
   reserveRateN: string;
   reserveRateD: string;
   timestamp: string;
+}
+
+interface PositionReturn {
+  baseAmount: string;
+  networkAmount: string;
+  targetAmount: string;
+}
+
+interface RemoveLiquidityReturn {
+  id: string;
+  fullLiquidityReturn: PositionReturn;
+  currentLiquidityReturn: PositionReturn;
+  roiDec: string;
+}
+
+interface TimeScale {
+  blockHeight: number;
+  days: number;
+  label: string;
+}
+
+interface PoolHistoricBalance {
+  scale: TimeScale;
+  pool: Pool;
+  smartTokenSupply: string;
+  reserveBalances: { tknBalance: string; bntBalance: string };
 }
 
 const fetchPositionIds = async (
@@ -54,19 +94,6 @@ const buildProtectedPositionCalls = (
     methodParameters: [protectionId],
   };
 };
-
-interface PositionReturn {
-  baseAmount: string;
-  networkAmount: string;
-  targetAmount: string;
-}
-
-interface RemoveLiquidityReturn {
-  id: string;
-  fullLiquidityReturn: PositionReturn;
-  currentLiquidityReturn: PositionReturn;
-  roiDec: string;
-}
 
 const removeLiquidityReturn = async (
   contract: LiquidityProtection,
@@ -152,21 +179,6 @@ const fetchRawPositions = async (
     })) as ProtectedLiquidity[];
 };
 
-// new
-
-export interface TimeScale {
-  blockHeight: number;
-  days: number;
-  label: string;
-}
-
-export interface PoolHistoricBalance {
-  scale: TimeScale;
-  pool: Pool;
-  smartTokenSupply: string;
-  reserveBalances: { tknBalance: string; bntBalance: string };
-}
-
 const fetchHistoricBalances = async (
   positions: ProtectedLiquidity[],
   pools: Pool[]
@@ -232,7 +244,7 @@ const fetchPoolAprs = async (
   try {
     const historicBalances = await fetchHistoricBalances(positions, pools);
 
-    return await Promise.all(
+    const groupedById = await Promise.all(
       positions.map((position) =>
         Promise.all(
           historicBalances
@@ -277,12 +289,15 @@ const fetchPoolAprs = async (
                   .minus(1)
                   .times(magnitude);
 
+                console.log(poolRoi.toString(), historicBalance.pool.name);
+
                 return {
                   calculatedAprDec: calculatedAprDec.isNegative()
                     ? '0'
                     : calculatedAprDec.toString(),
                   id: position.id,
                   scaleId: historicBalance.scale.label,
+                  pool: historicBalance.pool,
                 };
               } catch (err) {
                 console.error('getting pool roi failed!', err, {
@@ -300,12 +315,24 @@ const fetchPoolAprs = async (
         )
       )
     );
+
+    return groupedById.map((group) => ({
+      id: group[0]!.id,
+      aprs: {
+        day: group[0]!.calculatedAprDec,
+        week: group[1]!.calculatedAprDec,
+      },
+      pool: group[0]!.pool,
+    }));
   } catch (e) {
     throw new Error(`Failed fetching pool aprs ${e}`);
   }
 };
 
-export const mainEntry = async (pools: Pool[], currentUser: string) => {
+export const fetchProtectedPositions = async (
+  pools: Pool[],
+  currentUser: string
+): Promise<ProtectedPosition[]> => {
   const liquidityProtectionStoreContractAddress =
     await liquidityProtectionStore$.pipe(take(1)).toPromise();
 
@@ -314,11 +341,6 @@ export const mainEntry = async (pools: Pool[], currentUser: string) => {
       liquidityProtectionStoreContractAddress,
       web3.provider
     );
-
-  const rawPositions = await fetchRawPositions(
-    liquidityProtectionStoreContract,
-    currentUser
-  );
 
   const liquidityProtectionContractAddress = await liquidityProtection$
     .pipe(take(1))
@@ -329,32 +351,86 @@ export const mainEntry = async (pools: Pool[], currentUser: string) => {
     web3.provider
   );
 
-  const positionsWithRoi = await Promise.all(
+  const rawPositions = await fetchRawPositions(
+    liquidityProtectionStoreContract,
+    currentUser
+  );
+
+  const positionsRoi = await Promise.all(
     rawPositions.map(
       async (pos) =>
         await removeLiquidityReturn(liquidityProtectionContract, pos)
     )
   );
 
-  // const res = await fetchPoolAprs(
-  //   pools,
-  //   rawPositions,
-  //   liquidityProtectionContract
-  // );
-  //
-  // console.log(res);
-
-  const merged = values(
-    merge(keyBy(rawPositions, 'id'), keyBy(positionsWithRoi, 'id'))
+  const positionsAprs = await fetchPoolAprs(
+    pools,
+    rawPositions,
+    liquidityProtectionContract
   );
 
-  return merged.map((pos) => ({
-    id: pos.id,
-    poolId: pos.poolToken,
-    reserveTokenId: pos.reserveToken,
-    initialStake: pos.reserveAmount,
-    protectedAmount: pos.fullLiquidityReturn.targetAmount,
-    claimableAmount: pos.currentLiquidityReturn.targetAmount,
-    roi: pos.roiDec,
-  }));
+  const positionsMerged = values(
+    merge(
+      keyBy(rawPositions, 'id'),
+      keyBy(positionsRoi, 'id'),
+      keyBy(positionsAprs, 'id')
+    )
+  );
+
+  return positionsMerged.map((pos) => {
+    const reserveToken = pos.pool.reserves.find(
+      (reserve) => reserve.address === pos.reserveToken
+    );
+    const { decimals, usdPrice } = reserveToken!;
+
+    const calcUsdPrice = (
+      amount: string,
+      price: string | number | null,
+      decimals: number
+    ) => {
+      return new BigNumber(shrinkToken(amount, decimals))
+        .times(price ?? 0)
+        .toString();
+    };
+
+    const initialStake = {
+      tknAmount: shrinkToken(pos.reserveAmount, decimals),
+      usdAmount: calcUsdPrice(pos.reserveAmount, usdPrice, decimals),
+    };
+
+    const protectedAmount = {
+      tknAmount: shrinkToken(pos.fullLiquidityReturn.targetAmount, decimals),
+      usdAmount: calcUsdPrice(
+        pos.fullLiquidityReturn.targetAmount,
+        usdPrice,
+        decimals
+      ),
+    };
+
+    const claimableAmount = {
+      tknAmount: shrinkToken(pos.currentLiquidityReturn.targetAmount, decimals),
+      usdAmount: calcUsdPrice(
+        pos.currentLiquidityReturn.targetAmount,
+        usdPrice,
+        decimals
+      ),
+    };
+
+    const fees = new BigNumber(protectedAmount.tknAmount)
+      .minus(initialStake.tknAmount)
+      .toString();
+
+    return {
+      id: pos.id,
+      reserveToken,
+      initialStake,
+      protectedAmount,
+      claimableAmount,
+      roi: pos.roiDec,
+      aprs: pos.aprs,
+      pool: pos.pool,
+      fees,
+      timestamp: pos.timestamp,
+    } as ProtectedPosition;
+  });
 };
