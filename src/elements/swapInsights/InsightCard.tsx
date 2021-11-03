@@ -1,30 +1,15 @@
+import {
+  LinePercentage,
+  LinePercentageData,
+} from 'components/linePercentage/LinePercentage';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { classNameGenerator } from 'utils/pureFunctions';
 
 interface InsightCardProps {
   label: string;
-  percentages: { color: string; decPercent: number }[];
+  percentages: LinePercentageData[];
   tooltip: string;
 }
-
-const linePercentages = (
-  percentages: {
-    color: string;
-    decPercent: number;
-  }[]
-) => {
-  let count = 0;
-  return percentages.map((x, index) => {
-    const i = percentages[percentages.length - 1 - index];
-    const linePercentage = 100 - count;
-    count += i.decPercent * 100;
-    return {
-      linePercentage,
-      percentage: i,
-      color: i.color,
-    };
-  });
-};
 
 export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
   return (
@@ -36,35 +21,7 @@ export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
         </div>
       </span>
       <div>
-        <div className="mb-10 flex justify-between h-20">
-          {data &&
-            data.percentages.map((p) => (
-              <div key={p.color}>
-                <span className={`text-${p.color} text-16 font-medium`}>
-                  {(p.decPercent * 100).toFixed(0) + '%'}
-                </span>
-              </div>
-            ))}
-        </div>
-        <div className="mb-20">
-          <div
-            className={`relative rounded-full${classNameGenerator({
-              ' opacity-30': !data,
-              ' bg-grey-3': !data,
-            })}`}
-          >
-            {data &&
-              linePercentages(data.percentages).map((p, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: p.linePercentage.toFixed(1) + '%',
-                  }}
-                  className={`h-[4px] absolute rounded-full bg-${p.color} `}
-                />
-              ))}
-          </div>
-        </div>
+        <LinePercentage showEmpty={!data} percentages={data?.percentages} />
       </div>
     </div>
   );

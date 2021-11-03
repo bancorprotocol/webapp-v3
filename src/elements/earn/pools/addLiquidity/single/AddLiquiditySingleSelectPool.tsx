@@ -18,7 +18,12 @@ export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
 
   return (
     <div className="my-20">
-      <SelectPool pool={pool} pools={pools} onSelect={onSelect} />
+      <SelectPool
+        pool={pool}
+        pools={pools}
+        onSelect={onSelect}
+        label="Stake in Pool"
+      />
     </div>
   );
 };

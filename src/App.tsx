@@ -43,6 +43,7 @@ import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
+import { WithdrawLiquidity } from 'pages/earn/portfolio/withdrawLiquidity/WithdrawLiquidity';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -149,6 +150,12 @@ export const App = () => {
                 strict
                 path="/portfolio/rewards/stake/:id"
                 component={RewardsStake}
+              />
+              <Route
+                exact
+                strict
+                path="/portfolio/withdraw/:id"
+                component={WithdrawLiquidity}
               />
               <Route exact strict path="/vote" component={Vote} />
               <Route exact strict path="/fiat" component={Fiat} />
