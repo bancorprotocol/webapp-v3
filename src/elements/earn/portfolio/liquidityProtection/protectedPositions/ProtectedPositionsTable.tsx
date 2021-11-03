@@ -22,6 +22,7 @@ export const ProtectedPositionsTable = () => {
       {
         id: 'liquidity',
         Header: 'Liquidity',
+        Cell: (cellData) => cellData.row.original.pool.name,
         minWidth: 130,
         sortDescFirst: true,
       },
@@ -98,8 +99,8 @@ export const ProtectedPositionsTable = () => {
         Cell: (cellData) => {
           return (
             <div>
-              <div>Day {cellData.value.day}</div>
-              <div>Week {cellData.value.week}</div>
+              <div>Day {(cellData.value.day * 100).toFixed(2)} %</div>
+              <div>Week {(cellData.value.week * 100).toFixed(2)} %</div>
             </div>
           );
         },
