@@ -11,24 +11,24 @@ interface LinePercentageProps {
   showEmpty?: boolean;
 }
 
+const linePercentages = (percentages: LinePercentageData[]) => {
+  let count = 0;
+  return percentages.map((_, index) => {
+    const i = percentages[percentages.length - 1 - index];
+    const linePercentage = 100 - count;
+    count += i.decPercent * 100;
+    return {
+      linePercentage,
+      percentage: i,
+      color: i.color,
+    };
+  });
+};
+
 export const LinePercentage = ({
   percentages,
   showEmpty,
 }: LinePercentageProps) => {
-  const linePercentages = (percentages: LinePercentageData[]) => {
-    let count = 0;
-    return percentages.map((_, index) => {
-      const i = percentages[percentages.length - 1 - index];
-      const linePercentage = 100 - count;
-      count += i.decPercent * 100;
-      return {
-        linePercentage,
-        percentage: i,
-        color: i.color,
-      };
-    });
-  };
-
   return (
     <>
       <div className="mb-10 flex justify-between h-20">

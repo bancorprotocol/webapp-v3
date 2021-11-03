@@ -11,6 +11,7 @@ interface TokenInputPercentageProps {
   amount: string;
   setAmount: Function;
 }
+const percentages = [25, 50, 75, 100];
 
 export const TokenInputPercentage = ({
   token,
@@ -20,23 +21,22 @@ export const TokenInputPercentage = ({
   setAmount,
 }: TokenInputPercentageProps) => {
   const [amountUSD, setAmountUSD] = useState('');
-  const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
 
-  const fieldBlance = balance
+  const fieldBalance = balance
     ? balance
     : token && token.balance
     ? token.balance
     : undefined;
 
   useEffect(() => {
-    if (amount && fieldBlance) {
-      const percentage = (Number(amount) / Number(fieldBlance)) * 100;
+    if (amount && fieldBalance) {
+      const percentage = (Number(amount) / Number(fieldBalance)) * 100;
       setSelPercentage(
         percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
       );
     }
-  }, [amount, token, percentages, fieldBlance]);
+  }, [amount, token, fieldBalance]);
 
   return (
     <>
@@ -50,7 +50,7 @@ export const TokenInputPercentage = ({
           selectable={false}
           amountUsd={amountUSD}
           setAmountUsd={setAmountUSD}
-          fieldBalance={fieldBlance}
+          fieldBalance={fieldBalance}
         />
       )}
       <div className="flex justify-between space-x-8 mt-15">
@@ -66,8 +66,8 @@ export const TokenInputPercentage = ({
             )} bg-opacity-0`}
             onClick={() => {
               setSelPercentage(index);
-              if (token && fieldBlance) {
-                const amount = new BigNumber(fieldBlance).times(
+              if (token && fieldBalance) {
+                const amount = new BigNumber(fieldBalance).times(
                   new BigNumber(slip / 100)
                 );
                 setAmount(amount.toString());
