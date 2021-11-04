@@ -9,11 +9,11 @@ import { isMobile } from 'react-device-detect';
 
 interface ClaimLockedProps {
   bnt?: Token;
-  locked: LockedBnt[];
+  lockedBNT: LockedBnt[];
 }
 
-export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
-  const noBntLocked = locked.length === 0;
+export const ClaimLocked = ({ bnt, lockedBNT }: ClaimLockedProps) => {
+  const noBntLocked = lockedBNT.length === 0;
 
   return (
     <section className="content-section py-20">
@@ -34,7 +34,7 @@ export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
             </div>
           ) : (
             <>
-              {locked.map((lock, index) => (
+              {lockedBNT.map((lock, index) => (
                 <div>
                   <div
                     key={lock.expiry.toString()}
@@ -65,7 +65,7 @@ export const ClaimLocked = ({ bnt, locked }: ClaimLockedProps) => {
                       {!isMobile && 'left to claim'}
                     </div>
                   </div>
-                  {index !== locked.length - 1 && (
+                  {index !== lockedBNT.length - 1 && (
                     <hr className="content-separator my-16" />
                   )}
                 </div>

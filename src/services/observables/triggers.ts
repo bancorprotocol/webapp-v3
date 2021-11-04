@@ -23,7 +23,18 @@ import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
-import { setPoolTokens } from 'redux/liquidity/liquidity';
+import {
+  setAvailableBNT,
+  setLockedBNT,
+  setPoolTokens,
+  setProtectedPositions,
+} from 'redux/liquidity/liquidity';
+import { Subscription } from 'rxjs';
+import { lockedAvailableBnt$, protectedPositions$ } from './liquidity';
+
+let poolTokensSub: Subscription;
+let lockedAvailableBntSub: Subscription;
+let protectedPositionsSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -69,6 +80,25 @@ export const loadCommonData = (dispatch: any) => {
   bntPrice$.subscribe((bntPrice) => {
     dispatch(setBntPrice(bntPrice));
   });
+};
 
-  poolTokens$.subscribe((poolTokens) => dispatch(setPoolTokens(poolTokens)));
+export const loadPortfolioData = (dispatch: any) => {
+  if (!poolTokensSub || poolTokensSub.closed)
+    poolTokensSub = poolTokens$.subscribe((poolTokens) =>
+      dispatch(setPoolTokens(poolTokens))
+    );
+
+  if (!lockedAvailableBntSub || lockedAvailableBntSub.closed)
+    lockedAvailableBnt$.subscribe((availableLocked) => {
+      if (availableLocked) {
+        dispatch(setAvailableBNT(availableLocked.available));
+        dispatch(setLockedBNT(availableLocked.locked));
+      }
+    });
+
+  if (!protectedPositionsSub || protectedPositionsSub.closed)
+    protectedPositions$.subscribe((protectedPositions) => {
+      if (protectedPositions)
+        dispatch(setProtectedPositions(protectedPositions));
+    });
 };

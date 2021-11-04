@@ -1,34 +1,17 @@
 import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/observables/tokens';
-import { useWeb3React } from '@web3-react/core';
-import useAsyncEffect from 'use-async-effect';
-import {
-  fetchProtectedPositions,
-  ProtectedPositionGrouped,
-} from 'services/web3/protection/positions';
-import { useDispatch } from 'react-redux';
-import { getGroupedPositions, setPositions } from 'redux/bancor/position';
+import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { useMemo, useState } from 'react';
 import { TableColumn } from 'components/table/DataTable';
 import { ProtectedPositionTableCellLiquidity } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellLiquidity';
 import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellStake';
 import { ProtectedPositionTableCellFees } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellFees';
 import { ProtectedPositionTableCellRoi } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellRoi';
+import { getGroupedPositions } from 'redux/liquidity/liquidity';
 
 export const useProtectedPositions = () => {
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
   const groupedPositions =
     useAppSelector<ProtectedPositionGrouped[]>(getGroupedPositions);
-  const { account } = useWeb3React();
-  const dispatch = useDispatch();
   const [search, setSearch] = useState('');
-
-  useAsyncEffect(async () => {
-    if (account && pools.length) {
-      const positions = await fetchProtectedPositions(pools, account);
-      dispatch(setPositions(positions));
-    }
-  }, [account, pools.length]);
 
   const data = useMemo(() => groupedPositions, [groupedPositions]);
   const columns = useMemo<TableColumn<ProtectedPositionGrouped>[]>(
