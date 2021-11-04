@@ -11,7 +11,6 @@ import {
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { multicall } from 'services/web3/multicall/multicall';
-import { currentNetwork$ } from 'services/observables/network';
 import { fromPairs, keyBy, merge, toPairs, uniq, values } from 'lodash';
 import dayjs from 'dayjs';
 import { decToPpm, rewindBlocksByDays } from 'utils/helperFunctions';
@@ -37,7 +36,6 @@ export interface ProtectedPosition {
 }
 
 export interface ProtectedPositionGrouped extends ProtectedPosition {
-  id: string;
   subRows: ProtectedPosition[];
 }
 
