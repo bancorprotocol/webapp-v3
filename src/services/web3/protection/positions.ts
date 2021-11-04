@@ -19,7 +19,7 @@ import { Pool, Reserve } from 'services/observables/tokens';
 import { fetchTokenSupply } from 'services/web3/token/token';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
 import { shrinkToken } from 'utils/formulas';
-import { fetchedRewardsMultiplier } from './rewards';
+import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 
 export interface ProtectedPosition {
   id: string;
@@ -29,9 +29,13 @@ export interface ProtectedPosition {
   protectedAmount: { usdAmount: string; tknAmount: string };
   claimableAmount: { usdAmount: string; tknAmount: string };
   reserveToken: Reserve;
-  roi: string;
+  roi: {
+    fees: string;
+    reserveRewards: string;
+  };
   aprs: { day: string; week: string };
   rewardsMultiplier: string;
+  rewardsAmount: string;
   timestamp: string;
 }
 
@@ -375,6 +379,8 @@ export const fetchProtectedPositions = async (
     rawPositions
   );
 
+  const rewardsAmount = await fetchedPendingRewards(currentUser, rawPositions);
+
   const positionsMerged = values(
     merge(
       keyBy(rawPositions, 'id'),
@@ -432,11 +438,14 @@ export const fetchProtectedPositions = async (
       initialStake,
       protectedAmount,
       claimableAmount,
-      roi: pos.roiDec,
+      roi: {
+        fees: pos.roiDec,
+      },
       aprs: pos.aprs,
       pool: pos.pool,
       fees,
       rewardsMultiplier: rewardsMultiplier[index],
+      rewardsAmount: rewardsAmount[index],
       timestamp: pos.timestamp,
     } as ProtectedPosition;
   });

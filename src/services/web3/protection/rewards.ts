@@ -89,3 +89,35 @@ const buildRewardsMultiplierCall = (
     methodParameters: [user, position.poolToken, position.reserveToken],
   };
 };
+
+export const fetchedPendingRewards = async (
+  user: string,
+  positions: ProtectedLiquidity[]
+) => {
+  const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    web3.provider
+  );
+
+  const calls = positions.map((position) =>
+    buildPnedingRewardsCall(contract, user, position)
+  );
+  const res = await multicall(calls);
+  if (res) return res.map((x) => shrinkToken(x.toString(), 18));
+
+  return [];
+};
+
+const buildPnedingRewardsCall = (
+  contract: StakingRewards,
+  user: string,
+  position: ProtectedLiquidity
+): MultiCall => {
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'pendingReserveRewards',
+    methodParameters: [user, position.poolToken, position.reserveToken],
+  };
+};

@@ -72,10 +72,16 @@ export const getGroupedPositions = createSelector(
               tknAmount: calcSum('claimableAmount.tknAmount'),
             },
             reserveToken: val.reserveToken,
-            roi: sumRoi,
+            roi: {
+              fees: sumRoi,
+              reserveRewards: new BigNumber(val.rewardsAmount)
+                .div(sumInitalStakeTkn)
+                .toString(),
+            },
             aprs: val.aprs,
             timestamp: val.timestamp,
             rewardsMultiplier: val.rewardsMultiplier,
+            rewardsAmount: val.rewardsAmount,
             subRows: [],
           };
 
