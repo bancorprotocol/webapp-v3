@@ -81,8 +81,7 @@ export const getGroupedPositions = createSelector(
           const sumInitalStakeUSD = calcSum('initialStake.usdAmount');
 
           const sumRoi = new BigNumber(sumFees)
-            .times(bntUSDPrice)
-            .div(sumInitalStakeUSD)
+            .div(sumInitalStakeTkn)
             .toString();
 
           item = {
@@ -105,7 +104,8 @@ export const getGroupedPositions = createSelector(
             roi: {
               fees: sumRoi,
               reserveRewards: new BigNumber(val.rewardsAmount)
-                .div(sumInitalStakeTkn)
+                .times(bntUSDPrice)
+                .div(sumInitalStakeUSD)
                 .toString(),
             },
             aprs: val.aprs,
