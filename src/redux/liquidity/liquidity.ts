@@ -129,6 +129,37 @@ export const getGroupedPositions = createSelector(
   }
 );
 
+export interface MyStakeSummary {
+  protectedValue: number;
+  claimableValue: number;
+  fees: number;
+}
+
+export const getStakeSummary = createSelector(
+  (state: RootState) => state.liquidity.protectedPositions,
+  (protectedPositions: ProtectedPosition[]) => {
+    const initialStake = protectedPositions
+      .map((x) => Number(x.initialStake.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const protectedValue = protectedPositions
+      .map((x) => Number(x.protectedAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const claimableValue = protectedPositions
+      .map((x) => Number(x.claimableAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const fees = protectedValue - initialStake;
+
+    return {
+      protectedValue,
+      claimableValue,
+      fees,
+    };
+  }
+);
+
 export const {
   setPoolTokens,
   setAvailableBNT,
