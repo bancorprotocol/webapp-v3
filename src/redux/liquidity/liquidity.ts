@@ -138,6 +138,8 @@ export interface MyStakeSummary {
 export const getStakeSummary = createSelector(
   (state: RootState) => state.liquidity.protectedPositions,
   (protectedPositions: ProtectedPosition[]) => {
+    if (protectedPositions.length === 0) return;
+
     const initialStake = protectedPositions
       .map((x) => Number(x.initialStake.usdAmount))
       .reduce((sum, current) => sum + current, 0);
