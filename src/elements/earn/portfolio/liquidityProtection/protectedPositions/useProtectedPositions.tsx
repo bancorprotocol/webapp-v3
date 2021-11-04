@@ -7,6 +7,7 @@ import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquid
 import { ProtectedPositionTableCellFees } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellFees';
 import { ProtectedPositionTableCellRoi } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellRoi';
 import { getGroupedPositions } from 'redux/liquidity/liquidity';
+import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
 
 export const useProtectedPositions = () => {
   const groupedPositions =
@@ -37,6 +38,7 @@ export const useProtectedPositions = () => {
           }),
         minWidth: 130,
         sortDescFirst: true,
+        headerClassName: 'justify-center',
         tooltip: 'Amount of tokens you originally staked in the pool',
       },
       {
@@ -51,6 +53,7 @@ export const useProtectedPositions = () => {
           }),
         minWidth: 130,
         sortDescFirst: true,
+        headerClassName: 'justify-center',
         tooltip:
           'Amount of tokens you can withdraw with 100% protection + fees',
       },
@@ -66,6 +69,7 @@ export const useProtectedPositions = () => {
           }),
         minWidth: 130,
         sortDescFirst: true,
+        headerClassName: 'justify-center',
         tooltip:
           'Amount of tokens you can withdraw right now (assuming you have not earned full protection, this value will be lower than Protected Value)',
       },
@@ -77,6 +81,7 @@ export const useProtectedPositions = () => {
           ProtectedPositionTableCellFees(cellData.row.original),
         minWidth: 130,
         sortDescFirst: true,
+        headerClassName: 'justify-center',
         tooltip:
           'Fees and rewards earned by your stake since you entered the pool.',
       },
@@ -88,6 +93,7 @@ export const useProtectedPositions = () => {
           ProtectedPositionTableCellRoi(cellData.row.original),
         minWidth: 130,
         sortDescFirst: true,
+        headerClassName: 'justify-center',
         tooltip:
           'The ROI of your fully protected value vs. your initial stake.',
       },
@@ -109,14 +115,9 @@ export const useProtectedPositions = () => {
       {
         id: 'expander',
         accessor: 'subRows',
-        Cell: ({ row }) =>
-          row.canExpand ? (
-            <span {...row.getToggleRowExpandedProps()}>
-              {row.isExpanded ? 'close' : 'open'}
-            </span>
-          ) : (
-            <button>withdraw</button>
-          ),
+        minWidth: 50,
+        width: 50,
+        Cell: ({ row }) => ProtectedPositionTableCellActions(row),
       },
     ],
     []
