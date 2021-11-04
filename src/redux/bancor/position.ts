@@ -31,6 +31,11 @@ export const getGroupedPositions = createSelector(
     return positions.reduce(
       ((obj) => (acc: ProtectedPositionGrouped[], val: ProtectedPosition) => {
         const symbol = val.reserveToken.symbol;
+
+        const bnt = val.pool.reserves[1];
+        const bntUSDPrice = bnt.usdPrice
+          ? new BigNumber(bnt.usdPrice)
+          : new BigNumber(0);
         const poolId = val.pool.pool_dlt_id;
         const id = `${poolId}-${symbol}`;
         const filtered = positions.filter(
@@ -51,8 +56,11 @@ export const getGroupedPositions = createSelector(
 
           const sumFees = calcSum('fees');
           const sumInitalStakeTkn = calcSum('initialStake.tknAmount');
+          const sumInitalStakeUSD = calcSum('initialStake.usdAmount');
+
           const sumRoi = new BigNumber(sumFees)
-            .div(sumInitalStakeTkn)
+            .times(bntUSDPrice)
+            .div(sumInitalStakeUSD)
             .toString();
 
           item = {
@@ -60,7 +68,7 @@ export const getGroupedPositions = createSelector(
             pool: val.pool,
             fees: sumFees,
             initialStake: {
-              usdAmount: calcSum('initialStake.usdAmount'),
+              usdAmount: sumInitalStakeUSD,
               tknAmount: sumInitalStakeTkn,
             },
             protectedAmount: {
