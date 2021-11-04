@@ -1,6 +1,7 @@
 import { createSelector, createSlice, RootState } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
+import { Rewards } from 'services/observables/liquidity';
 import { PoolToken } from 'services/observables/tokens';
 import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
@@ -13,6 +14,7 @@ interface LiquidityState {
   availableBNT: number;
   lockedBNT: LockedBnt[];
   protectedPositions: ProtectedPosition[];
+  rewards?: Rewards;
 }
 
 const initialState: LiquidityState = {
@@ -20,6 +22,7 @@ const initialState: LiquidityState = {
   availableBNT: 0,
   lockedBNT: [],
   protectedPositions: [],
+  rewards: undefined,
 };
 
 const liquiditySlice = createSlice({
@@ -37,6 +40,9 @@ const liquiditySlice = createSlice({
     },
     setProtectedPositions: (state, action) => {
       state.protectedPositions = action.payload;
+    },
+    setRewards: (state, action) => {
+      state.rewards = action.payload;
     },
   },
 });
@@ -128,6 +134,7 @@ export const {
   setAvailableBNT,
   setLockedBNT,
   setProtectedPositions,
+  setRewards,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;

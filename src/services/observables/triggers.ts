@@ -28,13 +28,19 @@ import {
   setLockedBNT,
   setPoolTokens,
   setProtectedPositions,
+  setRewards,
 } from 'redux/liquidity/liquidity';
 import { Subscription } from 'rxjs';
-import { lockedAvailableBnt$, protectedPositions$ } from './liquidity';
+import {
+  lockedAvailableBnt$,
+  protectedPositions$,
+  rewards$,
+} from './liquidity';
 
 let poolTokensSub: Subscription;
 let lockedAvailableBntSub: Subscription;
 let protectedPositionsSub: Subscription;
+let rewardsSub: Subscription;
 
 export const loadCommonData = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -100,5 +106,10 @@ export const loadPortfolioData = (dispatch: any) => {
     protectedPositions$.subscribe((protectedPositions) => {
       if (protectedPositions)
         dispatch(setProtectedPositions(protectedPositions));
+    });
+
+  if (!rewardsSub || rewardsSub.closed)
+    rewards$.subscribe((rewards) => {
+      if (rewards) dispatch(setRewards(rewards));
     });
 };
