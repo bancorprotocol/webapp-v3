@@ -104,12 +104,11 @@ export const loadPortfolioData = (dispatch: any) => {
 
   if (!protectedPositionsSub || protectedPositionsSub.closed)
     protectedPositions$.subscribe((protectedPositions) => {
-      if (protectedPositions)
-        dispatch(setProtectedPositions(protectedPositions));
+      dispatch(setProtectedPositions(protectedPositions));
     });
 
   if (!rewardsSub || rewardsSub.closed)
     rewards$.subscribe((rewards) => {
-      if (rewards) dispatch(setRewards(rewards));
+      dispatch(setRewards(rewards));
     });
 };

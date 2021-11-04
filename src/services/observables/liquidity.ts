@@ -22,6 +22,8 @@ export const lockedAvailableBnt$ = combineLatest([user$]).pipe(
 export const protectedPositions$ = combineLatest([pools$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
     if (user) return await fetchProtectedPositions(pools, user);
+
+    return [];
   }),
   shareReplay(1)
 );
