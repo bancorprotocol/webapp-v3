@@ -4,10 +4,15 @@ import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useDispatch } from 'react-redux';
 import { loadPortfolioData } from 'services/observables/triggers';
+import { useAppSelector } from 'redux/index';
+import { PoolToken } from 'services/observables/tokens';
 
 export const Portfolio = () => {
   const [selectedTab, setSelectedTab] = useState<'protection' | 'pooltokens'>(
     'protection'
+  );
+  const poolTokens = useAppSelector<PoolToken[]>(
+    (state) => state.liquidity.poolTokens
   );
   const dispatch = useDispatch();
   useEffect(() => {
@@ -28,16 +33,18 @@ export const Portfolio = () => {
         >
           Liquidity Protection
         </button>
-        <button
-          onClick={() => setSelectedTab('pooltokens')}
-          className={`pb-4 w-[110px] text-right ${classNameGenerator({
-            'font-semibold border-b-2 border-primary':
-              selectedTab === 'pooltokens',
-            'font-light border-b border-grey-3': selectedTab !== 'pooltokens',
-          })}`}
-        >
-          Pool Tokens
-        </button>
+        {!!poolTokens.length && (
+          <button
+            onClick={() => setSelectedTab('pooltokens')}
+            className={`pb-4 w-[110px] text-right ${classNameGenerator({
+              'font-semibold border-b-2 border-primary':
+                selectedTab === 'pooltokens',
+              'font-light border-b border-grey-3': selectedTab !== 'pooltokens',
+            })}`}
+          >
+            Pool Tokens
+          </button>
+        )}
       </div>
       {selectedTab === 'protection' && <LiquidityProtection />}
       {selectedTab === 'pooltokens' && <PoolTokens />}
