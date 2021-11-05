@@ -5,7 +5,7 @@ import {
   LiquidityProtectionStore,
   LiquidityProtectionStore__factory,
 } from 'services/web3/abis/types';
-import { web3 } from 'services/web3/index';
+import { web3, writeWeb3 } from 'services/web3/index';
 import {
   liquidityProtection$,
   liquidityProtectionStore$,
@@ -494,8 +494,9 @@ export const fetchProtectedPositions = async (
 };
 
 export const withdrawProtection = async (
-  position: ProtectedPosition,
-  percentage: string
+  positionId: string,
+  amount: string,
+  tknAmount: string
 ) => {
   const liquidityProtectionContractAddress = await liquidityProtection$
     .pipe(take(1))
@@ -503,15 +504,15 @@ export const withdrawProtection = async (
 
   const liquidityProtectionContract = LiquidityProtection__factory.connect(
     liquidityProtectionContractAddress,
-    web3.provider
+    writeWeb3.signer
   );
 
-  try {
-    const txHash = await liquidityProtectionContract.removeLiquidity(
-      position.positionId,
+  const percentage = new BigNumber(tknAmount).div(amount).toNumber();
+
+  return (
+    await liquidityProtectionContract.removeLiquidity(
+      positionId,
       decToPpm(percentage)
-    );
-  } catch (e) {
-    console.error('failed to withdraw from protected position', e);
-  }
+    )
+  ).hash;
 };

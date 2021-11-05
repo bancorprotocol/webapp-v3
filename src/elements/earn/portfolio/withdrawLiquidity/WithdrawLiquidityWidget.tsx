@@ -6,7 +6,10 @@ import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInput
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
 import { Modal } from 'components/modal/Modal';
-import { ProtectedPosition } from 'services/web3/protection/positions';
+import {
+  ProtectedPosition,
+  withdrawProtection,
+} from 'services/web3/protection/positions';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -19,20 +22,30 @@ export const WithdrawLiquidityWidget = ({
   isModalOpen,
   setIsModalOpen,
 }: Props) => {
-  const { pool } = protectedPosition;
+  const { positionId, reserveToken, currentCoveragePercent } =
+    protectedPosition;
+  const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
   const token = useAppSelector<Token | undefined>(
-    getTokenById(pool ? pool.reserves[0].address : '')
+    getTokenById(reserveToken.address)
   );
 
-  const withdrawingBNT = true;
-  const protectionNotReached = true;
+  const withdrawingBNT = token ? token.symbol === 'BNT' : false;
+  const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
 
   const outputBreakdown = [
     { color: 'blue-4', decPercent: 0.75, label: 'ETH' },
     { color: 'primary', decPercent: 0.25, label: 'BNT' },
   ];
+
+  const withdraw = async () => {
+    try {
+      const txHash = await withdrawProtection(positionId, amount, tknAmount);
+    } catch (e) {
+      console.error('failed to withdraw from protected position', e);
+    }
+  };
 
   return (
     <Modal
@@ -62,7 +75,7 @@ export const WithdrawLiquidityWidget = ({
         </div>
         <div className="flex justify-between items-center">
           <div>Output amount</div>
-          <div>123 ETH</div>
+          <div>??? ETH</div>
         </div>
         <div className="flex justify-between items-center mt-20">
           <div>Output breakdown</div>
@@ -77,7 +90,7 @@ export const WithdrawLiquidityWidget = ({
           </div>
         )}
         <button
-          onClick={() => {}}
+          onClick={() => withdraw()}
           className={`btn-primary rounded w-full mt-20`}
         >
           Withdraw
