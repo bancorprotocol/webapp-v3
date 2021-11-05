@@ -14,6 +14,7 @@ interface LiquidityState {
   availableBNT: number;
   lockedBNT: LockedBnt[];
   protectedPositions: ProtectedPosition[];
+  hasInitialized: boolean;
   rewards?: Rewards;
 }
 
@@ -22,6 +23,7 @@ const initialState: LiquidityState = {
   availableBNT: 0,
   lockedBNT: [],
   protectedPositions: [],
+  hasInitialized: false,
   rewards: undefined,
 };
 
@@ -43,6 +45,9 @@ const liquiditySlice = createSlice({
     },
     setRewards: (state, action) => {
       state.rewards = action.payload;
+    },
+    setHasInitialized: (state) => {
+      state.hasInitialized = true;
     },
   },
 });
@@ -170,6 +175,7 @@ export const {
   setLockedBNT,
   setProtectedPositions,
   setRewards,
+  setHasInitialized,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;
