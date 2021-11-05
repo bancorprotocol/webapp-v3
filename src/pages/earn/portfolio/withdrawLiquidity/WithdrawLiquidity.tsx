@@ -3,7 +3,6 @@ import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { RouteComponentProps } from 'react-router-dom';
 import { useAppSelector } from 'redux/index';
 import { SelectedPool, getPoolById } from 'redux/bancor/pool';
-import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidity/WithdrawLiquidityWidget';
 
 export const WithdrawLiquidity = (
   props: RouteComponentProps<{ id: string }>
@@ -18,13 +17,7 @@ export const WithdrawLiquidity = (
       {status === 'loading' ? (
         <WidgetLoading title={title} />
       ) : (
-        <div>
-          {!pool ? (
-            <WidgetError title={title} />
-          ) : (
-            <WithdrawLiquidityWidget pool={pool} />
-          )}
-        </div>
+        <div>{!pool ? <WidgetError title={title} /> : <div>--</div>}</div>
       )}
     </div>
   );

@@ -57,6 +57,7 @@ export const DataTable = <D extends object>({
       autoResetSortBy: false,
       disableSortRemove: true,
       autoResetPage: false,
+      autoResetExpanded: false,
     },
     useSortBy,
     useExpanded,

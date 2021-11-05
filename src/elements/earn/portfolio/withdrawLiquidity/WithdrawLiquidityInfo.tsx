@@ -12,7 +12,7 @@ export const WithdrawLiquidityInfo = ({
   return (
     <>
       {(protectionNotReached || multiplierWillReset) && (
-        <div className="border border-warning rounded bg-warning bg-opacity-[5%] dark:bg-blue-2 dark:bg-opacity-100 p-20 text-12 mt-20">
+        <div className="border border-warning rounded bg-warning bg-opacity-[5%] dark:bg-blue-2 dark:bg-opacity-100 p-20 text-12">
           <div className="text-warning flex items-center">
             <IconInfo className="w-10 mr-10" />
             <span className="font-semibold">Important!</span>

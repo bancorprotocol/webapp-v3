@@ -1,26 +1,29 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
-import { getProtectedPools } from 'redux/bancor/pool';
-import { SelectPool } from 'components/selectPool/SelectPool';
-import { Pool, Token } from 'services/observables/tokens';
-import { Widget } from 'components/widgets/Widget';
+import { Token } from 'services/observables/tokens';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
+import { Modal } from 'components/modal/Modal';
+import { ProtectedPosition } from 'services/web3/protection/positions';
 
-export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
+interface Props {
+  protectedPosition: ProtectedPosition;
+  isModalOpen: boolean;
+  setIsModalOpen: Function;
+}
+
+export const WithdrawLiquidityWidget = ({
+  protectedPosition,
+  isModalOpen,
+  setIsModalOpen,
+}: Props) => {
+  const { pool } = protectedPosition;
   const [amount, setAmount] = useState('');
-  const pools = useAppSelector<Pool[]>(getProtectedPools);
   const token = useAppSelector<Token | undefined>(
     getTokenById(pool ? pool.reserves[0].address : '')
   );
-  const history = useHistory();
-
-  const onSelect = (pool: Pool) => {
-    history.push(`/portfolio/withdraw/${pool.pool_dlt_id}`);
-  };
 
   const withdrawingBNT = true;
   const protectionNotReached = true;
@@ -32,14 +35,12 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
   ];
 
   return (
-    <Widget title="Withdraw" goBackRoute="/portfolio">
-      <div className="px-10 pb-10">
-        <SelectPool
-          pool={pool}
-          pools={pools}
-          onSelect={onSelect}
-          label="Pool"
-        />
+    <Modal
+      setIsOpen={setIsModalOpen}
+      isOpen={isModalOpen}
+      title="Withdraw Protection"
+    >
+      <div className="px-20 pb-20">
         <WithdrawLiquidityInfo
           protectionNotReached={protectionNotReached}
           multiplierWillReset={multiplierWillReset}
@@ -47,7 +48,14 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
         <div className="my-20">
           <TokenInputPercentage
             label="Amount"
-            token={token}
+            token={
+              token
+                ? {
+                    ...token,
+                    balance: protectedPosition.claimableAmount.tknAmount,
+                  }
+                : undefined
+            }
             amount={amount}
             setAmount={setAmount}
           />
@@ -75,6 +83,6 @@ export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
           Withdraw
         </button>
       </div>
-    </Widget>
+    </Modal>
   );
 };
