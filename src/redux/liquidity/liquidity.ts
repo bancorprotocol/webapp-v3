@@ -59,14 +59,14 @@ export const getGroupedPositions = createSelector(
           ? new BigNumber(bnt.usdPrice)
           : new BigNumber(0);
         const poolId = val.pool.pool_dlt_id;
-        const id = `${poolId}-${symbol}`;
+        const groupId = `${poolId}-${symbol}`;
         const filtered = protectedPositions.filter(
           (pos) =>
             pos.pool.pool_dlt_id === poolId &&
             pos.reserveToken.symbol === symbol
         );
 
-        let item: ProtectedPositionGrouped = obj.get(id);
+        let item: ProtectedPositionGrouped = obj.get(groupId);
 
         if (!item) {
           const calcSum = (key: string): string => {
@@ -85,7 +85,8 @@ export const getGroupedPositions = createSelector(
             .toString();
 
           item = {
-            id,
+            groupId: groupId,
+            positionId: val.positionId,
             pool: val.pool,
             fees: sumFees,
             initialStake: {
@@ -109,13 +110,14 @@ export const getGroupedPositions = createSelector(
                 .toString(),
             },
             aprs: val.aprs,
-            timestamp: val.timestamp,
+            timestamps: val.timestamps,
+            currentCoveragePercent: val.currentCoveragePercent,
             rewardsMultiplier: val.rewardsMultiplier,
             rewardsAmount: val.rewardsAmount,
             subRows: [],
           };
 
-          obj.set(id, item);
+          obj.set(groupId, item);
           acc.push(item);
         }
 

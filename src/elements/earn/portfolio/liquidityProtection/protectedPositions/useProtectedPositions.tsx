@@ -8,6 +8,7 @@ import { ProtectedPositionTableCellFees } from 'elements/earn/portfolio/liquidit
 import { ProtectedPositionTableCellRoi } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellRoi';
 import { getGroupedPositions } from 'redux/liquidity/liquidity';
 import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
+import { ProtectedPositionTableCellClaimable } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellClaimable';
 
 export const useProtectedPositions = () => {
   const groupedPositions =
@@ -61,12 +62,7 @@ export const useProtectedPositions = () => {
         id: 'claimable',
         accessor: 'claimableAmount',
         Header: 'Claimable',
-        Cell: (cellData) =>
-          ProtectedPositionTableCellAmount({
-            tknAmount: cellData.value.tknAmount,
-            usdAmount: cellData.value.usdAmount,
-            symbol: cellData.row.original.reserveToken.symbol,
-          }),
+        Cell: (cellData) => ProtectedPositionTableCellClaimable(cellData.row),
         minWidth: 130,
         sortDescFirst: true,
         headerClassName: 'justify-center',

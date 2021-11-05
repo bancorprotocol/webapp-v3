@@ -1,6 +1,7 @@
 import {
   LiquidityProtection,
   LiquidityProtection__factory,
+  LiquidityProtectionSettings__factory,
   LiquidityProtectionStore,
   LiquidityProtectionStore__factory,
 } from 'services/web3/abis/types';
@@ -8,12 +9,17 @@ import { web3 } from 'services/web3/index';
 import {
   liquidityProtection$,
   liquidityProtectionStore$,
+  settingsContractAddress$,
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { multicall } from 'services/web3/multicall/multicall';
 import { fromPairs, keyBy, merge, toPairs, uniq, values } from 'lodash';
 import dayjs from 'dayjs';
-import { decToPpm, rewindBlocksByDays } from 'utils/helperFunctions';
+import {
+  calculateProgressLevel,
+  decToPpm,
+  rewindBlocksByDays,
+} from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Pool, Reserve } from 'services/observables/tokens';
 import { fetchTokenSupply } from 'services/web3/token/token';
@@ -22,7 +28,7 @@ import { shrinkToken } from 'utils/formulas';
 import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 
 export interface ProtectedPosition {
-  id: string;
+  positionId: string;
   pool: Pool;
   fees: string;
   initialStake: { usdAmount: string; tknAmount: string };
@@ -36,10 +42,16 @@ export interface ProtectedPosition {
   aprs: { day: string; week: string };
   rewardsMultiplier: string;
   rewardsAmount: string;
-  timestamp: string;
+  timestamps: {
+    initalStake: string;
+    insuranceStart: string;
+    fullCoverage: string;
+  };
+  currentCoveragePercent: number;
 }
 
 export interface ProtectedPositionGrouped extends ProtectedPosition {
+  groupId: string;
   subRows: ProtectedPosition[];
 }
 
@@ -338,6 +350,15 @@ export const fetchProtectedPositions = async (
   pools: Pool[],
   currentUser: string
 ): Promise<ProtectedPosition[]> => {
+  const liquidityProtectionSettingsContractAddress =
+    await settingsContractAddress$.pipe(take(1)).toPromise();
+
+  const liquidityProtectionSettingsContract =
+    LiquidityProtectionSettings__factory.connect(
+      liquidityProtectionSettingsContractAddress,
+      web3.provider
+    );
+
   const liquidityProtectionStoreContractAddress =
     await liquidityProtectionStore$.pipe(take(1)).toPromise();
 
@@ -355,6 +376,11 @@ export const fetchProtectedPositions = async (
     liquidityProtectionContractAddress,
     web3.provider
   );
+
+  const minProtectionDelay =
+    await liquidityProtectionSettingsContract.minProtectionDelay();
+  const maxProtectionDelay =
+    await liquidityProtectionSettingsContract.maxProtectionDelay();
 
   const rawPositions = await fetchRawPositions(
     liquidityProtectionStoreContract,
@@ -432,8 +458,23 @@ export const fetchProtectedPositions = async (
       .minus(initialStake.tknAmount)
       .toString();
 
+    const timestamps = {
+      initalStake: pos.timestamp,
+      insuranceStart: new BigNumber(pos.timestamp)
+        .plus(minProtectionDelay.toString())
+        .toString(),
+      fullCoverage: new BigNumber(pos.timestamp)
+        .plus(maxProtectionDelay.toString())
+        .toString(),
+    };
+
+    const currentCoveragePercent = calculateProgressLevel(
+      Number(timestamps.initalStake),
+      Number(timestamps.fullCoverage)
+    );
+
     return {
-      id: pos.id,
+      positionId: pos.id,
       reserveToken,
       initialStake,
       protectedAmount,
@@ -446,7 +487,31 @@ export const fetchProtectedPositions = async (
       fees,
       rewardsMultiplier: rewardsMultiplier[index],
       rewardsAmount: rewardsAmount[index],
-      timestamp: pos.timestamp,
+      timestamps,
+      currentCoveragePercent,
     } as ProtectedPosition;
   });
+};
+
+export const withdrawProtection = async (
+  position: ProtectedPosition,
+  percentage: string
+) => {
+  const liquidityProtectionContractAddress = await liquidityProtection$
+    .pipe(take(1))
+    .toPromise();
+
+  const liquidityProtectionContract = LiquidityProtection__factory.connect(
+    liquidityProtectionContractAddress,
+    web3.provider
+  );
+
+  try {
+    const txHash = await liquidityProtectionContract.removeLiquidity(
+      position.positionId,
+      decToPpm(percentage)
+    );
+  } catch (e) {
+    console.error('failed to withdraw from protected position', e);
+  }
 };

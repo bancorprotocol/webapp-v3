@@ -111,3 +111,16 @@ export const rewindBlocksByDays = (
   const blocksToRewind = parseInt(String(secondsToRewind / secondsPerBlock));
   return currentBlock - blocksToRewind;
 };
+
+export const calculateProgressLevel = (
+  startTimeSeconds: number,
+  endTimeSeconds: number
+) => {
+  if (endTimeSeconds < startTimeSeconds)
+    throw new Error('End time should be greater than start time');
+  const totalWaitingTime = endTimeSeconds - startTimeSeconds;
+  const now = dayjs().unix();
+  if (now >= endTimeSeconds) return 1;
+  const timeWaited = now - startTimeSeconds;
+  return timeWaited / totalWaitingTime;
+};

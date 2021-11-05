@@ -5,7 +5,7 @@ export const ProtectedPositionTableCellRoi = (
   position: ProtectedPositionGrouped
 ) => {
   const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
-  const isSubRow = !position.id.includes('-');
+  const isSubRow = !position.groupId;
 
   return (
     <div className="flex flex-col">

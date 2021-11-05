@@ -4,7 +4,7 @@ import { Image } from 'components/image/Image';
 export const ProtectedPositionTableCellLiquidity = (
   position: ProtectedPositionGrouped
 ) => {
-  const isSubRow = !position.id.includes('-');
+  const isSubRow = false;
   return (
     <div className={isSubRow ? 'border-l-2 border-primary pl-10' : ''}>
       <div className="flex items-center">
