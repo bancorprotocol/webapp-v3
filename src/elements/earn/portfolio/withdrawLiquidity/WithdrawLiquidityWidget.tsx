@@ -10,6 +10,7 @@ import {
   ProtectedPosition,
   withdrawProtection,
 } from 'services/web3/protection/positions';
+import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -22,10 +23,11 @@ export const WithdrawLiquidityWidget = ({
   isModalOpen,
   setIsModalOpen,
 }: Props) => {
-  const { positionId, reserveToken, currentCoveragePercent } =
+  const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
+  const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
@@ -41,6 +43,14 @@ export const WithdrawLiquidityWidget = ({
 
   const withdraw = async () => {
     try {
+      const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
+        pool,
+        token!
+      );
+      if (isPriceDeviationToHigh) {
+        setIsPriceDeviationToHigh(isPriceDeviationToHigh);
+        return;
+      }
       const txHash = await withdrawProtection(positionId, amount, tknAmount);
     } catch (e) {
       console.error('failed to withdraw from protected position', e);
@@ -87,6 +97,12 @@ export const WithdrawLiquidityWidget = ({
           <div className="mt-20">
             BNT withdrawals are subject to a 24h lock period before they can be
             claimed.
+          </div>
+        )}
+        {isPriceDeviationToHigh && (
+          <div className="p-20 rounded bg-error font-medium mt-20 text-white">
+            Due to price volatility, withdrawing from your protected position is
+            currently not available. Please try again in a few minutes.
           </div>
         )}
         <button
