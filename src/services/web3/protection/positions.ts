@@ -26,6 +26,7 @@ import { fetchTokenSupply } from 'services/web3/token/token';
 import { fetchReserveBalances } from 'services/web3/liquidity/liquidity';
 import { shrinkToken } from 'utils/formulas';
 import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
+import { ErrorCode } from '../types';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -496,23 +497,34 @@ export const fetchProtectedPositions = async (
 export const withdrawProtection = async (
   positionId: string,
   amount: string,
-  tknAmount: string
+  tknAmount: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
 ) => {
-  const liquidityProtectionContractAddress = await liquidityProtection$
-    .pipe(take(1))
-    .toPromise();
+  try {
+    const liquidityProtectionContractAddress = await liquidityProtection$
+      .pipe(take(1))
+      .toPromise();
 
-  const liquidityProtectionContract = LiquidityProtection__factory.connect(
-    liquidityProtectionContractAddress,
-    writeWeb3.signer
-  );
+    const liquidityProtectionContract = LiquidityProtection__factory.connect(
+      liquidityProtectionContractAddress,
+      writeWeb3.signer
+    );
 
-  const percentage = new BigNumber(tknAmount).div(amount).toNumber();
-
-  return (
-    await liquidityProtectionContract.removeLiquidity(
+    const percentage = new BigNumber(amount).div(tknAmount);
+    const tx = await liquidityProtectionContract.removeLiquidity(
       positionId,
       decToPpm(percentage)
-    )
-  ).hash;
+    );
+    onHash(tx.hash);
+
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };

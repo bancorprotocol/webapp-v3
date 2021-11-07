@@ -5,9 +5,10 @@ import dayjs from 'dayjs';
 
 const oneMillion = new BigNumber(1000000);
 
-export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
+export const ppmToDec = (ppm: number | string | BigNumber) =>
+  new BigNumber(ppm).div(oneMillion);
 
-export const decToPpm = (dec: string | number): string =>
+export const decToPpm = (dec: number | string | BigNumber): string =>
   new BigNumber(dec).times(oneMillion).toFixed(0);
 
 export const prettifyNumber = (
