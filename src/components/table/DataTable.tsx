@@ -73,11 +73,13 @@ export const DataTable = <D extends object>({
       >
         <table {...getTableProps()}>
           <TableHeader<D> headerGroups={headerGroups} columns={columns} />
-          <TableBody<D>
-            getTableBodyProps={getTableBodyProps}
-            prepareRow={prepareRow}
-            page={page}
-          />
+          {!isLoading && (
+            <TableBody<D>
+              getTableBodyProps={getTableBodyProps}
+              prepareRow={prepareRow}
+              page={page}
+            />
+          )}
         </table>
       </div>
       {isLoading && (

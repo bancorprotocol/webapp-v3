@@ -2,13 +2,11 @@ import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable } from 'components/table/DataTable';
 import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
-import { useAppSelector } from 'redux/index';
 
 export const ProtectedPositionsTable = () => {
   const { data, columns, search, setSearch } = useProtectedPositions();
-  const hasInitialized = useAppSelector<boolean>(
-    (state) => state.liquidity.hasInitialized
-  );
+
+  const loading = true;
 
   return (
     <section className="content-section pt-20 pb-10">
@@ -29,7 +27,7 @@ export const ProtectedPositionsTable = () => {
       <DataTable<ProtectedPositionGrouped>
         data={data}
         columns={columns}
-        isLoading={!hasInitialized}
+        isLoading={loading}
         stickyColumn
       />
     </section>

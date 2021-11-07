@@ -24,9 +24,7 @@ import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
 import {
-  setAvailableBNT,
-  setHasInitialized,
-  setLockedBNT,
+  setLockedAvailableBNT,
   setPoolTokens,
   setProtectedPositions,
   setRewards,
@@ -96,17 +94,15 @@ export const loadPortfolioData = (dispatch: any) => {
     );
 
   if (!lockedAvailableBntSub || lockedAvailableBntSub.closed)
-    lockedAvailableBnt$.subscribe((availableLocked) => {
-      if (availableLocked) {
-        dispatch(setAvailableBNT(availableLocked.available));
-        dispatch(setLockedBNT(availableLocked.locked));
+    lockedAvailableBnt$.subscribe((lockedAvailableBnt) => {
+      if (lockedAvailableBnt) {
+        dispatch(setLockedAvailableBNT(lockedAvailableBnt));
       }
     });
 
   if (!protectedPositionsSub || protectedPositionsSub.closed)
     protectedPositions$.subscribe((protectedPositions) => {
       dispatch(setProtectedPositions(protectedPositions));
-      dispatch(setHasInitialized());
     });
 
   if (!rewardsSub || rewardsSub.closed)

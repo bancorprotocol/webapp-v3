@@ -18,7 +18,7 @@ export interface LockedBnt {
   expiry: dayjs.Dayjs;
 }
 
-interface LockedAvailableBnt {
+export interface LockedAvailableBnt {
   locked: LockedBnt[];
   available: number;
 }

@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
 import { Rewards } from 'services/observables/liquidity';
 import { PoolToken } from 'services/observables/tokens';
-import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
+import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
   ProtectedPosition,
   ProtectedPositionGrouped,
@@ -11,19 +11,18 @@ import {
 
 interface LiquidityState {
   poolTokens: PoolToken[];
-  availableBNT: number;
-  lockedBNT: LockedBnt[];
+  lockedAvailableBNT: LockedAvailableBnt;
   protectedPositions: ProtectedPosition[];
-  hasInitialized: boolean;
   rewards?: Rewards;
 }
 
 const initialState: LiquidityState = {
   poolTokens: [],
-  availableBNT: 0,
-  lockedBNT: [],
+  lockedAvailableBNT: {
+    locked: [],
+    available: 0,
+  },
   protectedPositions: [],
-  hasInitialized: false,
   rewards: undefined,
 };
 
@@ -34,20 +33,14 @@ const liquiditySlice = createSlice({
     setPoolTokens: (state, action) => {
       state.poolTokens = action.payload;
     },
-    setAvailableBNT: (state, action) => {
-      state.availableBNT = action.payload;
-    },
-    setLockedBNT: (state, action) => {
-      state.lockedBNT = action.payload;
+    setLockedAvailableBNT: (state, action) => {
+      state.lockedAvailableBNT = action.payload;
     },
     setProtectedPositions: (state, action) => {
       state.protectedPositions = action.payload;
     },
     setRewards: (state, action) => {
       state.rewards = action.payload;
-    },
-    setHasInitialized: (state) => {
-      state.hasInitialized = true;
     },
   },
 });
@@ -171,11 +164,9 @@ export const getStakeSummary = createSelector(
 
 export const {
   setPoolTokens,
-  setAvailableBNT,
-  setLockedBNT,
+  setLockedAvailableBNT,
   setProtectedPositions,
   setRewards,
-  setHasInitialized,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;

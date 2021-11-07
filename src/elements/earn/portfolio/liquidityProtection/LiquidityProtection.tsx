@@ -8,7 +8,7 @@ import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Token } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
-import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
+import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { EthNetworks } from 'services/web3/types';
 
 export const LiquidityProtection = () => {
@@ -16,11 +16,8 @@ export const LiquidityProtection = () => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(bntToken(chainId ?? EthNetworks.Mainnet))
   );
-  const availableBNT = useAppSelector<number>(
-    (state) => state.liquidity.availableBNT
-  );
-  const lockedBNT = useAppSelector<LockedBnt[]>(
-    (state) => state.liquidity.lockedBNT
+  const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
+    (state) => state.liquidity.lockedAvailableBNT
   );
 
   return (
@@ -43,8 +40,8 @@ export const LiquidityProtection = () => {
         your BNT here
       </p>
       <div className="grid xl:grid-cols-2 gap-40">
-        <ClaimAvailable bnt={bnt} availableBNT={availableBNT} />
-        <ClaimLocked bnt={bnt} lockedBNT={lockedBNT} />
+        <ClaimAvailable bnt={bnt} availableBNT={lockedAvailableBNT.available} />
+        <ClaimLocked bnt={bnt} lockedBNT={lockedAvailableBNT.locked} />
       </div>
     </div>
   );
