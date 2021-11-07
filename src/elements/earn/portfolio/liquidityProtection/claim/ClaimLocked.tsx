@@ -42,11 +42,8 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
             ) : (
               <>
                 {lockedBNT.map((lock, index) => (
-                  <div>
-                    <div
-                      key={lock.expiry.toString()}
-                      className="w-full flex justify-between items-center"
-                    >
+                  <div key={lock.expiry.toString()}>
+                    <div className="w-full flex justify-between items-center">
                       <div className="flex items-center">
                         {!isMobile && <IconLock className="h-20 mr-16" />}
                         <Image
@@ -65,9 +62,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                       </div>
                       <div className="flex text-12">
                         <div className="text-primary dark:text-primary-light font-semibold mr-10 text-14">
-                          <CountdownTimer
-                            date={lock.expiry.unix() as UTCTimestamp}
-                          />
+                          <CountdownTimer date={lock.expiry as UTCTimestamp} />
                         </div>
                         {!isMobile && 'left to claim'}
                       </div>
