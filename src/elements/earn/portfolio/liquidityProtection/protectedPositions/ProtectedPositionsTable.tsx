@@ -3,10 +3,8 @@ import { DataTable } from 'components/table/DataTable';
 import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 
-export const ProtectedPositionsTable = () => {
+export const ProtectedPositionsTable = ({ loading }: { loading: boolean }) => {
   const { data, columns, search, setSearch } = useProtectedPositions();
-
-  const loading = true;
 
   return (
     <section className="content-section pt-20 pb-10">

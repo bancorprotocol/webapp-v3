@@ -18,12 +18,20 @@ import {
 } from 'redux/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { take } from 'rxjs/operators';
-import { loadingBalances$ } from './user';
+import {
+  loadingBalances$,
+  loadingLockedBnt$,
+  loadingPositions$,
+  loadingRewards$,
+} from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
 import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
 import {
+  setLoadingLockedBnt,
+  setLoadingPositions,
+  setLoadingRewards,
   setLockedAvailableBNT,
   setPoolTokens,
   setProtectedPositions,
@@ -85,9 +93,29 @@ export const loadCommonData = (dispatch: any) => {
   bntPrice$.subscribe((bntPrice) => {
     dispatch(setBntPrice(bntPrice));
   });
+
+  loadingPositions$.subscribe((loadingPositions) =>
+    dispatch(setLoadingPositions(loadingPositions))
+  );
+  loadingRewards$.subscribe((loadingRewards) =>
+    dispatch(setLoadingRewards(loadingRewards))
+  );
+  loadingLockedBnt$.subscribe((loadingLockedBnt) =>
+    dispatch(setLoadingLockedBnt(loadingLockedBnt))
+  );
 };
 
 export const loadPortfolioData = (dispatch: any) => {
+  if (!protectedPositionsSub || protectedPositionsSub.closed)
+    protectedPositions$.subscribe((protectedPositions) => {
+      dispatch(setProtectedPositions(protectedPositions));
+    });
+
+  if (!rewardsSub || rewardsSub.closed)
+    rewards$.subscribe((rewards) => {
+      dispatch(setRewards(rewards));
+    });
+
   if (!poolTokensSub || poolTokensSub.closed)
     poolTokensSub = poolTokens$.subscribe((poolTokens) =>
       dispatch(setPoolTokens(poolTokens))
@@ -98,15 +126,5 @@ export const loadPortfolioData = (dispatch: any) => {
       if (lockedAvailableBnt) {
         dispatch(setLockedAvailableBNT(lockedAvailableBnt));
       }
-    });
-
-  if (!protectedPositionsSub || protectedPositionsSub.closed)
-    protectedPositions$.subscribe((protectedPositions) => {
-      dispatch(setProtectedPositions(protectedPositions));
-    });
-
-  if (!rewardsSub || rewardsSub.closed)
-    rewards$.subscribe((rewards) => {
-      dispatch(setRewards(rewards));
     });
 };

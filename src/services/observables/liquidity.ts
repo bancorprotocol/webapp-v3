@@ -10,18 +10,22 @@ import {
 import { switchMapIgnoreThrow } from './customOperators';
 import { fifteenSeconds$ } from './timers';
 import { pools$ } from './tokens';
-import { user$ } from './user';
-
-export const lockedAvailableBnt$ = combineLatest([user$]).pipe(
-  switchMapIgnoreThrow(async ([user]) => {
-    if (user) return await fetchLockedAvailableBalances(user);
-  }),
-  shareReplay(1)
-);
+import {
+  setLoadingPositions,
+  setLoadingRewards,
+  setLoadingLockedBnt,
+  user$,
+} from './user';
 
 export const protectedPositions$ = combineLatest([pools$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
-    if (user) return await fetchProtectedPositions(pools, user);
+    if (user) {
+      const positions = await fetchProtectedPositions(pools, user);
+      setLoadingPositions(false);
+      return positions;
+    }
+
+    setLoadingPositions(false);
 
     return [];
   }),
@@ -43,11 +47,30 @@ export const rewards$ = combineLatest([user$, fifteenSeconds$]).pipe(
         .plus(claimedRewards)
         .toString();
 
+      setLoadingRewards(false);
+
       return {
         pendingRewards,
         totalRewards,
       };
     }
+
+    setLoadingRewards(false);
+  }),
+  shareReplay(1)
+);
+
+export const lockedAvailableBnt$ = combineLatest([user$]).pipe(
+  switchMapIgnoreThrow(async ([user]) => {
+    if (user) {
+      setLoadingRewards(true);
+      setLoadingPositions(true);
+      setLoadingLockedBnt(true);
+      const lockedAvailableBalances = await fetchLockedAvailableBalances(user);
+      setLoadingLockedBnt(false);
+      return lockedAvailableBalances;
+    }
+    setLoadingLockedBnt(false);
   }),
   shareReplay(1)
 );

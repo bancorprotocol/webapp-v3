@@ -8,13 +8,16 @@ import { Image } from '../../../../../components/image/Image';
 interface ClaimAvailableProps {
   bnt?: Token;
   availableBNT: number;
+  loading: boolean;
 }
 
-export const ClaimAvailable = ({ bnt, availableBNT }: ClaimAvailableProps) => {
+export const ClaimAvailable = ({
+  bnt,
+  availableBNT,
+  loading,
+}: ClaimAvailableProps) => {
   const dispatch = useDispatch();
   const noBntToClaim = availableBNT === 0;
-
-  const loading = true;
 
   return (
     <section className="content-section py-20">

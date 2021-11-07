@@ -10,12 +10,11 @@ import { isMobile } from 'react-device-detect';
 interface ClaimLockedProps {
   bnt?: Token;
   lockedBNT: LockedBnt[];
+  loading: boolean;
 }
 
-export const ClaimLocked = ({ bnt, lockedBNT }: ClaimLockedProps) => {
+export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
   const noBntLocked = lockedBNT.length === 0;
-
-  const loading = true;
 
   return (
     <section className="content-section py-20">

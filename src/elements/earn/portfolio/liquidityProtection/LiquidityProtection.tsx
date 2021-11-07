@@ -19,6 +19,13 @@ export const LiquidityProtection = () => {
   const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
     (state) => state.liquidity.lockedAvailableBNT
   );
+  const loadingLockedBnt = useAppSelector<boolean>(
+    (state) => state.liquidity.loadingLockedBnt
+  );
+
+  const loadingPositions = useAppSelector<boolean>(
+    (state) => state.liquidity.loadingPositions
+  );
 
   return (
     <div className="space-y-30">
@@ -28,11 +35,11 @@ export const LiquidityProtection = () => {
       </p>
 
       <div className="grid xl:grid-cols-2 gap-40">
-        <MyStake />
+        <MyStake loading={loadingPositions} />
         <MyRewards />
       </div>
 
-      <ProtectedPositionsTable />
+      <ProtectedPositionsTable loading={loadingPositions} />
 
       <h2>Closed Positions</h2>
       <p>
@@ -40,8 +47,16 @@ export const LiquidityProtection = () => {
         your BNT here
       </p>
       <div className="grid xl:grid-cols-2 gap-40">
-        <ClaimAvailable bnt={bnt} availableBNT={lockedAvailableBNT.available} />
-        <ClaimLocked bnt={bnt} lockedBNT={lockedAvailableBNT.locked} />
+        <ClaimAvailable
+          bnt={bnt}
+          availableBNT={lockedAvailableBNT.available}
+          loading={loadingLockedBnt}
+        />
+        <ClaimLocked
+          bnt={bnt}
+          lockedBNT={lockedAvailableBNT.locked}
+          loading={loadingLockedBnt}
+        />
       </div>
     </div>
   );

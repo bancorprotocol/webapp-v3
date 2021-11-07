@@ -2,12 +2,14 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { NavLink } from 'react-router-dom';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
+import { useAppSelector } from 'redux/index';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
     useMyRewards();
-
-  const loading = true;
+  const loading = useAppSelector<boolean>(
+    (state) => state.liquidity.loadingRewards
+  );
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light">
