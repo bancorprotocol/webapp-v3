@@ -40,14 +40,16 @@ export const MyRewards = () => {
                 <span className="md:text-16 font-semibold mr-5">
                   {prettifyNumber(totalRewards)} BNT
                 </span>
-                <span className="text-12 text-primary">
+                <span className="text-12 text-primary dark:text-primary-light">
                   (~
                   {prettifyNumber(totalRewardsUsd, true)})
                 </span>
               </div>
             ) : (
               <div>
-                <span className="md:text-16 font-semibold mr-5">--</span>
+                <span className="md:text-16 text-primary dark:text-primary-light font-semibold mr-5">
+                  --
+                </span>
               </div>
             )}
           </div>
@@ -62,14 +64,16 @@ export const MyRewards = () => {
                 <span className="md:text-16 font-semibold mr-5">
                   {prettifyNumber(claimableRewards)} BNT
                 </span>
-                <span className="text-12 text-primary">
+                <span className="text-12 text-primary dark:text-primary-light">
                   (~
                   {prettifyNumber(claimableRewardsUsd, true)})
                 </span>
               </div>
             ) : (
               <div>
-                <span className="md:text-16 font-semibold mr-5">--</span>
+                <span className="md:text-16 text-primary dark:text-primary-light font-semibold mr-5">
+                  --
+                </span>
               </div>
             )}
           </div>
