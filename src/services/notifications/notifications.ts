@@ -280,3 +280,39 @@ export const withdrawProtectedPositionFailed = (
     },
     dispatch
   );
+
+export const removeLiquidity = (
+  dispatch: any,
+  amount: string,
+  symbol: string,
+  txHash: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Removing ${amount} ${symbol} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your withdraw of ${amount} ${symbol} has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Removing ${amount} ${symbol} had failed. Please try again or contact support`,
+      },
+    },
+    dispatch
+  );
+
+export const removeLiquidityFailed = (
+  dispatch: any,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Removing ${amount} ${symbol} had failed. Please try again or contact support`,
+    },
+    dispatch
+  );
