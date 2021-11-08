@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Token } from 'services/observables/tokens';
@@ -7,6 +7,7 @@ import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
 import { Modal } from 'components/modal/Modal';
 import {
+  getWithdrawBreakdown,
   ProtectedPosition,
   withdrawProtection,
 } from 'services/web3/protection/positions';
@@ -18,6 +19,8 @@ import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
+import { useDebounce } from 'hooks/useDebounce';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -35,22 +38,23 @@ export const WithdrawLiquidityWidget = ({
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
+  const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
   const approveContract = useRef('');
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
+  const [breakdown, setBreakdown] = useState<
+    { tkn: number; bnt: number } | undefined
+  >();
   const gov = getNetworkVariables(chainId ?? EthNetworks.Mainnet).govToken;
   const govToken = useAppSelector<Token | undefined>(getTokenById(gov));
+  const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
-  const withdrawingBNT = token ? token.symbol === 'BNT' : false;
+  const withdrawingBNT = reserveToken.address === bnt;
   const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
-
-  const outputBreakdown = [
-    { color: 'blue-4', decPercent: 0.75, label: 'ETH' },
-    { color: 'primary', decPercent: 0.25, label: 'BNT' },
-  ];
+  const withdrawDisabled = amount.trim() === '' || amount > tknAmount;
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted())
@@ -58,6 +62,28 @@ export const WithdrawLiquidityWidget = ({
         .pipe(take(1))
         .toPromise();
   }, []);
+
+  useAsyncEffect(
+    async (isMounted) => {
+      if (isMounted()) {
+        if (withdrawDisabled || withdrawingBNT) return;
+        const res = await getWithdrawBreakdown(
+          positionId,
+          amountDebounce,
+          tknAmount
+        );
+        if (res.actualAmount === res.expectedAmount) setBreakdown(undefined);
+        {
+          const percentage = new BigNumber(res.actualAmount)
+            .div(res.expectedAmount)
+            .toNumber();
+
+          setBreakdown({ tkn: percentage, bnt: 1 - percentage });
+        }
+      }
+    },
+    [amountDebounce]
+  );
 
   const withdraw = async () => {
     await withdrawProtection(
@@ -87,8 +113,7 @@ export const WithdrawLiquidityWidget = ({
       return;
     }
 
-    if (reserveToken.address === bntToken(chainId ?? EthNetworks.Mainnet))
-      onStart();
+    if (withdrawingBNT) onStart();
     else withdraw();
   };
 
@@ -107,24 +132,34 @@ export const WithdrawLiquidityWidget = ({
           <div className="my-20">
             <TokenInputPercentage
               label="Amount"
-              token={
-                token
-                  ? {
-                      ...token,
-                      balance: protectedPosition.claimableAmount.tknAmount,
-                    }
-                  : undefined
-              }
+              token={token}
+              debounce={setAmountebounce}
+              balance={tknAmount}
               amount={amount}
               setAmount={setAmount}
             />
           </div>
-          <div className="flex justify-between items-center mt-20">
-            <div>Output breakdown</div>
-            <div className="relative w-[180px]">
-              <LinePercentage percentages={outputBreakdown} />
+          {breakdown && (
+            <div className="flex justify-between items-center mt-20">
+              <div>Output breakdown</div>
+              <div className="relative w-[180px]">
+                <LinePercentage
+                  percentages={[
+                    {
+                      color: 'blue-4',
+                      decPercent: breakdown.tkn,
+                      label: token?.symbol,
+                    },
+                    {
+                      color: 'primary',
+                      decPercent: breakdown.bnt,
+                      label: 'BNT',
+                    },
+                  ]}
+                />
+              </div>
             </div>
-          </div>
+          )}
           {withdrawingBNT && (
             <div className="mt-20">
               BNT withdrawals are subject to a 24h lock period before they can
@@ -139,6 +174,7 @@ export const WithdrawLiquidityWidget = ({
           )}
           <button
             onClick={() => handleWithdraw()}
+            disabled={withdrawDisabled}
             className={`btn-primary rounded w-full mt-20`}
           >
             Withdraw

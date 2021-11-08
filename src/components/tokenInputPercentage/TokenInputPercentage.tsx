@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Token } from 'services/observables/tokens';
 import { classNameGenerator } from 'utils/pureFunctions';
 
@@ -10,6 +10,7 @@ interface TokenInputPercentageProps {
   balance?: string;
   amount: string;
   setAmount: Function;
+  debounce?: Function;
 }
 const percentages = [25, 50, 75, 100];
 
@@ -19,6 +20,7 @@ export const TokenInputPercentage = ({
   label,
   amount,
   setAmount,
+  debounce,
 }: TokenInputPercentageProps) => {
   const [amountUSD, setAmountUSD] = useState('');
   const [selPercentage, setSelPercentage] = useState<number>(-1);
@@ -35,8 +37,9 @@ export const TokenInputPercentage = ({
       setSelPercentage(
         percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
       );
+      if (debounce) debounce(amount);
     }
-  }, [amount, token, fieldBalance]);
+  }, [amount, token, fieldBalance, debounce]);
 
   return (
     <>
@@ -46,6 +49,7 @@ export const TokenInputPercentage = ({
           token={token}
           input={amount}
           label={label}
+          debounce={debounce}
           setInput={setAmount}
           selectable={false}
           amountUsd={amountUSD}

@@ -528,3 +528,36 @@ export const withdrawProtection = async (
     else failed(e.message);
   }
 };
+
+export const getWithdrawBreakdown = async (
+  id: string,
+  amount: string,
+  tknAmount: string
+) => {
+  const now = dayjs().unix();
+  const liquidityProtectionContractAddress = await liquidityProtection$
+    .pipe(take(1))
+    .toPromise();
+
+  const constract = LiquidityProtection__factory.connect(
+    liquidityProtectionContractAddress,
+    web3.provider
+  );
+
+  const percentage = new BigNumber(amount).div(tknAmount);
+
+  const res = await constract.removeLiquidityReturn(
+    id,
+    decToPpm(percentage),
+    now
+  );
+  const expectedAmount = res[0].toString();
+  const actualAmount = res[1].toString();
+  const bntAmount = res[2].toString();
+
+  return {
+    expectedAmount,
+    actualAmount,
+    bntAmount,
+  };
+};
