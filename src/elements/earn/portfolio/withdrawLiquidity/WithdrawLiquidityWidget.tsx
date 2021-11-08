@@ -117,6 +117,7 @@ export const WithdrawLiquidityWidget = ({
       () => {},
       () => {}
     );
+    setIsModalOpen(false);
   };
 
   const [onStart, ModalApprove] = useApproveModal(
