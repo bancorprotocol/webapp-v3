@@ -203,9 +203,15 @@ export const stakeRewardsNotification = (
   showNotification(
     {
       type: NotificationType.pending,
-      title: 'Staking Rewards',
-      msg: `You staked ${prettifyNumber(amount)} BNT in pool ${pool}`,
+      title: 'Pending Confirmation',
+      msg: `Staking ${amount} BNT rewards is Pending Confirmation`,
       txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} BNT rewards were successfully staked into the ${pool} pool`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Staking ${amount} BNT rewards had failed. Please try again or contact support.`,
+      },
     },
     dispatch
   );
@@ -218,9 +224,15 @@ export const claimRewardsNotification = (
   showNotification(
     {
       type: NotificationType.pending,
-      title: 'Claimed Rewards',
-      msg: `You claimed ${prettifyNumber(amount)} BNT from your rewards.`,
+      title: 'Pending Confirmation',
+      msg: `Rewards claiming of ${amount} is Pending Confirmation`,
       txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} BNT rewards were successfully claimed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Claiming ${amount} BNT rewards had failed. Please try again or contact support.`,
+      },
     },
     dispatch
   );
