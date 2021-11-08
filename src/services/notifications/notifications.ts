@@ -281,7 +281,7 @@ export const withdrawProtectedPositionFailed = (
     dispatch
   );
 
-export const removeLiquidity = (
+export const removeLiquidityNotification = (
   dispatch: any,
   amount: string,
   symbol: string,
@@ -303,7 +303,7 @@ export const removeLiquidity = (
     dispatch
   );
 
-export const removeLiquidityFailed = (
+export const removeLiquidityNotificationFailed = (
   dispatch: any,
   amount: string,
   symbol: string

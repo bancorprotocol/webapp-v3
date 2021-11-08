@@ -54,7 +54,9 @@ export const WithdrawLiquidityWidget = ({
   const [breakdown, setBreakdown] = useState<
     { tkn: number; bnt: number } | undefined
   >();
-  const gov = getNetworkVariables(chainId ?? EthNetworks.Mainnet).govToken;
+  const gov = getNetworkVariables(
+    chainId ? chainId : EthNetworks.Mainnet
+  ).govToken;
   const govToken = useAppSelector<Token | undefined>(getTokenById(gov));
   const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
