@@ -328,3 +328,24 @@ export const removeLiquidityNotificationFailed = (
     },
     dispatch
   );
+
+export const claimBntNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Claiming locked ${amount} BNT is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} locked BNT were successfully claimed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Claiming locked ${amount} BNT had failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );

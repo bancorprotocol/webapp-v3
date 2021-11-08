@@ -1,5 +1,8 @@
 import { useDispatch } from 'react-redux';
-import { rejectNotification } from 'services/notifications/notifications';
+import {
+  claimBntNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
 import { Token } from 'services/observables/tokens';
 import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -51,7 +54,13 @@ export const ClaimAvailable = ({
               className="btn-primary btn-sm rounded-[12px]"
               onClick={() =>
                 claimBnt(
-                  () => {},
+                  (txHash) => {
+                    claimBntNotification(
+                      dispatch,
+                      txHash,
+                      prettifyNumber(availableBNT)
+                    );
+                  },
                   () => {},
                   () => rejectNotification(dispatch),
                   () => {}
