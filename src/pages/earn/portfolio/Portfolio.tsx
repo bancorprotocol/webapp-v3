@@ -21,8 +21,10 @@ export const Portfolio = () => {
 
   return (
     <div className="max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">
-      <h1 className="text-[30px] font-semibold">Portfolio</h1>
-      <div className="text-16 my-20">
+      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0">
+        Portfolio
+      </h1>
+      <div className="text-16 my-20 pl-10 md:pl-0">
         <button
           onClick={() => setSelectedTab('protection')}
           className={`pb-4 w-[170px] text-left ${classNameGenerator({

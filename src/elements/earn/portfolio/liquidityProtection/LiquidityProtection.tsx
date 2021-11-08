@@ -29,7 +29,7 @@ export const LiquidityProtection = () => {
 
   return (
     <div className="space-y-30">
-      <p>
+      <p className="pl-10 md:pl-0">
         Manage your protected positions in Bancor pools and track and analyze
         your returns.
       </p>
@@ -41,8 +41,8 @@ export const LiquidityProtection = () => {
 
       <ProtectedPositionsTable loading={loadingPositions} />
 
-      <h2>Closed Positions</h2>
-      <p>
+      <h2 className="pl-10 md:pl-0">Closed Positions</h2>
+      <p className="pl-10 md:pl-0">
         When unstaking protected positions, you will be able to see and claim
         your BNT here
       </p>
