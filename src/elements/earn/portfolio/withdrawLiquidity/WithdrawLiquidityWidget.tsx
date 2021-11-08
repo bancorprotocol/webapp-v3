@@ -128,6 +128,7 @@ export const WithdrawLiquidityWidget = ({
         () => rejectNotification(dispatch),
         () => withdrawProtectedPositionFailed(dispatch, token, amount)
       );
+    setIsModalOpen(false);
   };
 
   const [onStart, ModalApprove] = useApproveModal(
