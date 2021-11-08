@@ -61,7 +61,8 @@ export const WithdrawLiquidityWidget = ({
   const withdrawingBNT = reserveToken.address === bnt;
   const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
-  const withdrawDisabled = amount.trim() === '' || amount > tknAmount;
+  const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
+  const withdrawDisabled = amount > tknAmount || emtpyAmount;
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted())
@@ -101,8 +102,9 @@ export const WithdrawLiquidityWidget = ({
           amountDebounce,
           tknAmount
         );
-        if (res.actualAmount === res.expectedAmount) setBreakdown(undefined);
-        {
+
+        if (res.bntAmount === '0') setBreakdown(undefined);
+        else {
           const percentage = new BigNumber(res.actualAmount)
             .div(res.expectedAmount)
             .toNumber();
@@ -204,7 +206,7 @@ export const WithdrawLiquidityWidget = ({
             disabled={withdrawDisabled}
             className={`btn-primary rounded w-full mt-20`}
           >
-            Withdraw
+            {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
           </button>
         </div>
       </Modal>
