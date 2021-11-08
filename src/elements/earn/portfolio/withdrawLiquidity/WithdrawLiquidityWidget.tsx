@@ -63,8 +63,30 @@ export const WithdrawLiquidityWidget = ({
         .toPromise();
   }, []);
 
+  const showVBNTWarning = () => {
+    if (!amount) {
+      return false;
+    }
+    const isBalanceSufficient = new BigNumber(
+      govToken ? govToken.balance ?? 0 : 0
+    ).gte(amount);
+    if (isBalanceSufficient) {
+      return false;
+    }
+
+    return new BigNumber(govToken ? govToken.balance ?? 0 : 0).lt(
+      protectedPosition.initialStake.tknAmount
+    );
+  };
+
   useAsyncEffect(
     async (isMounted) => {
+      const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
+        pool,
+        token!
+      );
+      setIsPriceDeviationToHigh(isPriceDeviationToHigh);
+
       if (isMounted()) {
         if (withdrawDisabled || withdrawingBNT) return;
         const res = await getWithdrawBreakdown(
@@ -104,15 +126,6 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const handleWithdraw = async () => {
-    const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
-      pool,
-      token!
-    );
-    if (isPriceDeviationToHigh) {
-      setIsPriceDeviationToHigh(isPriceDeviationToHigh);
-      return;
-    }
-
     if (withdrawingBNT) onStart();
     else withdraw();
   };
@@ -170,6 +183,11 @@ export const WithdrawLiquidityWidget = ({
             <div className="p-20 rounded bg-error font-medium mt-20 text-white">
               Due to price volatility, withdrawing from your protected position
               is currently not available. Please try again in a few minutes.
+            </div>
+          )}
+          {showVBNTWarning() && (
+            <div className="p-20 rounded bg-error font-medium mt-20 text-white">
+              Insufficient VBNT balance.
             </div>
           )}
           <button
