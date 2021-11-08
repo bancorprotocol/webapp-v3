@@ -140,8 +140,10 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const handleWithdraw = async () => {
-    if (withdrawingBNT) onStart();
-    else withdraw();
+    if (withdrawingBNT) {
+      setIsModalOpen(false);
+      onStart();
+    } else withdraw();
   };
 
   return (
