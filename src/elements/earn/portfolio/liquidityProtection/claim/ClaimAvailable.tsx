@@ -40,7 +40,9 @@ export const ClaimAvailable = ({
               ) : (
                 <>
                   <span className="pr-10">{bnt?.symbol}</span>
-                  <span className="pr-10 text-14">{availableBNT}</span>
+                  <span className="pr-10 text-14">
+                    {prettifyNumber(availableBNT)}
+                  </span>
                   <span className="text-12 text-primary dark:text-primary-light">{`(~${prettifyNumber(
                     bnt && bnt.usdPrice
                       ? Number(bnt.usdPrice) * availableBNT
