@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
-import { Token } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
 import { Modal } from 'components/modal/Modal';
 import {
+  fetchProtectedPositions,
   getWithdrawBreakdown,
   ProtectedPosition,
   withdrawProtection,
@@ -27,6 +28,7 @@ import {
   withdrawProtectedPositionFailed,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
+import { setProtectedPositions } from 'redux/liquidity/liquidity';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -39,8 +41,8 @@ export const WithdrawLiquidityWidget = ({
   isModalOpen,
   setIsModalOpen,
 }: Props) => {
-  const { chainId } = useWeb3React();
   const dispatch = useDispatch();
+  const { chainId, account } = useWeb3React();
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
@@ -51,6 +53,7 @@ export const WithdrawLiquidityWidget = ({
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
+  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
   const [breakdown, setBreakdown] = useState<
     { tkn: number; bnt: number } | undefined
   >();
@@ -74,6 +77,9 @@ export const WithdrawLiquidityWidget = ({
   }, []);
 
   const showVBNTWarning = () => {
+    if (token && token.address !== bnt) {
+      return false;
+    }
     if (!amount) {
       return false;
     }
@@ -124,9 +130,14 @@ export const WithdrawLiquidityWidget = ({
         positionId,
         amount,
         tknAmount,
-        (txHash: string) =>
-          withdrawProtectedPosition(dispatch, token, amount, txHash),
-        () => {},
+        (txHash: string) => {
+          withdrawProtectedPosition(dispatch, token, amount, txHash);
+          setIsModalOpen(false);
+        },
+        async () => {
+          const positions = await fetchProtectedPositions(pools, account!);
+          dispatch(setProtectedPositions(positions));
+        },
         () => rejectNotification(dispatch),
         () => withdrawProtectedPositionFailed(dispatch, token, amount)
       );
