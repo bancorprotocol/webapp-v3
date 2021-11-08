@@ -4,9 +4,9 @@ import { Image } from 'components/image/Image';
 export const ProtectedPositionTableCellLiquidity = (
   position: ProtectedPositionGrouped
 ) => {
-  const isSubRow = false;
+  const isGroup = position.groupId && position.groupId.includes('-');
   return (
-    <div className={isSubRow ? 'border-l-2 border-primary pl-10' : ''}>
+    <div className={!isGroup ? 'border-l-2 border-primary pl-10' : ''}>
       <div className="flex items-center">
         <Image
           src={position.reserveToken.logoURI}
