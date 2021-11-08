@@ -244,3 +244,39 @@ export const claimRewardsFailedNotification = (dispatch: any) =>
     },
     dispatch
   );
+
+export const withdrawProtectedPosition = (
+  dispatch: any,
+  token: Token,
+  amount: string,
+  txHash: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Withdrawal of ${amount} ${token.symbol} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your withdraw of ${amount} ${token.symbol} has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Withdrawing ${amount} ${token.symbol} had failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const withdrawProtectedPositionFailed = (
+  dispatch: any,
+  token: Token,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Withdrawing ${amount} ${token.symbol} had failed. Please try again or contact support.`,
+    },
+    dispatch
+  );

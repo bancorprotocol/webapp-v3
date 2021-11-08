@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Token } from 'services/observables/tokens';
@@ -21,6 +21,12 @@ import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
 import { useDebounce } from 'hooks/useDebounce';
 import BigNumber from 'bignumber.js';
+import {
+  withdrawProtectedPosition,
+  rejectNotification,
+  withdrawProtectedPositionFailed,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -34,6 +40,7 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const { chainId } = useWeb3React();
+  const dispatch = useDispatch();
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
@@ -108,15 +115,17 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const withdraw = async () => {
-    await withdrawProtection(
-      positionId,
-      amount,
-      tknAmount,
-      () => {},
-      () => {},
-      () => {},
-      () => {}
-    );
+    if (token)
+      await withdrawProtection(
+        positionId,
+        amount,
+        tknAmount,
+        (txHash: string) =>
+          withdrawProtectedPosition(dispatch, token, amount, txHash),
+        () => {},
+        () => rejectNotification(dispatch),
+        () => withdrawProtectedPositionFailed(dispatch, token, amount)
+      );
   };
 
   const [onStart, ModalApprove] = useApproveModal(
