@@ -67,7 +67,8 @@ export const WithdrawLiquidityWidget = ({
   const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
-  const withdrawDisabled = amount > tknAmount || emtpyAmount;
+  const tokenInsufficent = Number(amount) > Number(tknAmount);
+  const withdrawDisabled = emtpyAmount || tokenInsufficent;
 
   useAsyncEffect(async (isMounted) => {
     if (isMounted())
@@ -176,6 +177,11 @@ export const WithdrawLiquidityWidget = ({
               debounce={setAmountebounce}
               balance={tknAmount}
               amount={amount}
+              errorMsg={
+                tokenInsufficent
+                  ? 'Token balance is currently insufficient'
+                  : undefined
+              }
               setAmount={setAmount}
             />
           </div>

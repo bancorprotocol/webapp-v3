@@ -9,6 +9,7 @@ interface TokenInputPercentageProps {
   token?: Token;
   balance?: string;
   amount: string;
+  errorMsg?: string;
   setAmount: Function;
   debounce?: Function;
 }
@@ -19,6 +20,7 @@ export const TokenInputPercentage = ({
   balance,
   label,
   amount,
+  errorMsg,
   setAmount,
   debounce,
 }: TokenInputPercentageProps) => {
@@ -49,6 +51,7 @@ export const TokenInputPercentage = ({
           token={token}
           input={amount}
           label={label}
+          errorMsg={errorMsg}
           debounce={debounce}
           setInput={setAmount}
           selectable={false}
