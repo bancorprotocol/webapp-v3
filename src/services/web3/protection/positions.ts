@@ -388,6 +388,8 @@ export const fetchProtectedPositions = async (
     currentUser
   );
 
+  if (rawPositions.length === 0) return [];
+
   const positionsRoi = await Promise.all(
     rawPositions.map(
       async (pos) =>
