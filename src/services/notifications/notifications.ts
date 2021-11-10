@@ -4,6 +4,7 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { Token } from 'services/observables/tokens';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 const showNotification = (notification: BaseNotification, dispatch: any) =>
   dispatch(addNotification(notification));
@@ -189,6 +190,162 @@ export const poolFailedNotification = (dispatch: any) =>
       type: NotificationType.error,
       title: 'Creating Pool Failed',
       msg: `Fail creating pool. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const stakeRewardsNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Staking ${amount} BNT rewards is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} BNT rewards were successfully staked into the ${pool} pool`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Staking ${amount} BNT rewards had failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const claimRewardsNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Rewards claiming of ${amount} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} BNT rewards were successfully claimed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Claiming ${amount} BNT rewards had failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const stakeRewardsFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Staking Rewards',
+      msg: `Failed to stake rewards. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const claimRewardsFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Claiming Rewards',
+      msg: `Failed to claim rewards. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const withdrawProtectedPosition = (
+  dispatch: any,
+  token: Token,
+  amount: string,
+  txHash: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Withdrawal of ${amount} ${token.symbol} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your withdraw of ${amount} ${token.symbol} has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Withdrawing ${amount} ${token.symbol} had failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const withdrawProtectedPositionFailed = (
+  dispatch: any,
+  token: Token,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Withdrawing ${amount} ${token.symbol} had failed. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const removeLiquidityNotification = (
+  dispatch: any,
+  amount: string,
+  symbol: string,
+  txHash: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Removing ${amount} ${symbol} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your withdraw of ${amount} ${symbol} has been confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Removing ${amount} ${symbol} had failed. Please try again or contact support`,
+      },
+    },
+    dispatch
+  );
+
+export const removeLiquidityNotificationFailed = (
+  dispatch: any,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Removing ${amount} ${symbol} had failed. Please try again or contact support`,
+    },
+    dispatch
+  );
+
+export const claimBntNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Claiming locked ${amount} BNT is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${amount} locked BNT were successfully claimed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Claiming locked ${amount} BNT had failed. Please try again or contact support.`,
+      },
     },
     dispatch
   );

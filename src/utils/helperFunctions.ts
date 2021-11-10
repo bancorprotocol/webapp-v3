@@ -1,12 +1,14 @@
 import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
+import dayjs from 'dayjs';
 
 const oneMillion = new BigNumber(1000000);
 
-export const ppmToDec = (ppm: string) => new BigNumber(ppm).div(oneMillion);
+export const ppmToDec = (ppm: number | string | BigNumber) =>
+  new BigNumber(ppm).div(oneMillion);
 
-export const decToPpm = (dec: string): string =>
+export const decToPpm = (dec: number | string | BigNumber): string =>
   new BigNumber(dec).times(oneMillion).toFixed(0);
 
 export const prettifyNumber = (
@@ -99,4 +101,28 @@ export const calculatePriceDeviationTooHigh = (
   return !(withinLowerThreshold && withinHigherThreshold);
 };
 
+export const rewindBlocksByDays = (
+  currentBlock: number,
+  days: number,
+  secondsPerBlock = 13.3
+) => {
+  if (!Number.isInteger(currentBlock))
+    throw new Error('Current block should be an integer');
+  const secondsToRewind = dayjs.duration(days, 'days').asSeconds();
+  const blocksToRewind = parseInt(String(secondsToRewind / secondsPerBlock));
+  return currentBlock - blocksToRewind;
+};
+
+export const calculateProgressLevel = (
+  startTimeSeconds: number,
+  endTimeSeconds: number
+) => {
+  if (endTimeSeconds < startTimeSeconds)
+    throw new Error('End time should be greater than start time');
+  const totalWaitingTime = endTimeSeconds - startTimeSeconds;
+  const now = dayjs().unix();
+  if (now >= endTimeSeconds) return 1;
+  const timeWaited = now - startTimeSeconds;
+  return timeWaited / totalWaitingTime;
+};
 export const IS_IN_IFRAME = window.self !== window.top;

@@ -1,8 +1,8 @@
 import { Widget } from 'components/widgets/Widget';
 
-export const AddLiquidityError = () => {
+export const WidgetError = ({ title = 'ERROR' }) => {
   return (
-    <Widget title="Add Liquidity">
+    <Widget title={title}>
       <div className="bg-error rounded p-20 text-white text-center">
         <div className="font-semibold mb-10">
           Invalid Pool or Pool not found!

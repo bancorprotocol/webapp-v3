@@ -4,18 +4,24 @@ import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Image } from '../image/Image';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
-interface Props {
+interface SelectPoolProps {
   pool: Pool;
   pools: Pool[];
+  label: string;
   onSelect: Function;
 }
 
-export const SelectPool = ({ pool, pools, onSelect }: Props) => {
+export const SelectPool = ({
+  pool,
+  pools,
+  label,
+  onSelect,
+}: SelectPoolProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="flex justify-between items-center">
-      <span className="font-medium">Stake in Pool</span>
+      <span className="font-medium">{label}</span>
       <button
         onClick={() => setIsModalOpen(true)}
         className="flex items-center border border-blue-4 dark:border-grey-3 rounded-[16px] px-20 py-6"

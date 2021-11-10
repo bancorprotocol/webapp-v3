@@ -11,7 +11,6 @@ import { isEqual } from 'lodash';
 import { getContractAddressesForChainOrThrow } from '@0x/contract-addresses';
 import { Contract, utils } from 'ethers';
 import { RegisteredContracts } from 'services/web3/types';
-import { Observable } from 'rxjs';
 import {
   ContractRegistry__factory,
   LiquidityProtection__factory,
@@ -48,7 +47,7 @@ const fetchContractAddresses = async (
   );
 
   try {
-    const addresses = await multicall(networkVariables.network, [
+    const addresses = await multicall([
       buildAddressCall(contract, 'BancorNetwork'),
       buildAddressCall(contract, 'BancorConverterRegistry'),
       buildAddressCall(contract, 'LiquidityProtectionStore'),
@@ -147,11 +146,5 @@ export const systemStoreAddress$ = liquidityProtection$.pipe(
 
     return '';
   }),
-  shareReplay(1)
-);
-
-export const govTokenAddress$ = networkVars$.pipe(
-  pluck('govToken'),
-  map(utils.getAddress),
   shareReplay(1)
 );
