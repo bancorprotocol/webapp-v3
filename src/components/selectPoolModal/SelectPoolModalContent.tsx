@@ -9,6 +9,9 @@ interface Props {
 }
 export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
   const [search, setSearch] = useState('');
+  const filteredPools = pools.filter((pool) =>
+    pool.reserves[0].symbol.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <>
@@ -26,7 +29,7 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
           <span>Pools</span>
           <span>APR</span>
         </div>
-        {pools.map((pool) => (
+        {filteredPools.map((pool) => (
           <button
             key={pool.pool_dlt_id}
             onClick={() => onSelect(pool)}
