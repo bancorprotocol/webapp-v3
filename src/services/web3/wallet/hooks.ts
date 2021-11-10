@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import { injected } from 'services/web3/wallet/connectors';
+import { gnosisSafe, injected } from 'services/web3/wallet/connectors';
 import { getAutoLoginLS, setAutoLoginLS } from 'utils/localStorage';
+import { IS_IN_IFRAME } from 'utils/helperFunctions';
 
 export const useAutoConnect = () => {
   const { activate, active } = useWeb3React();
@@ -9,7 +10,15 @@ export const useAutoConnect = () => {
   const [triedAutoLogin, setTriedAutoLogin] = useState(false);
 
   useEffect(() => {
-    if (getAutoLoginLS())
+    if (IS_IN_IFRAME)
+      gnosisSafe.isSafeApp().then((loadedInSafe) => {
+        if (loadedInSafe) {
+          activate(gnosisSafe, undefined, true).catch(() => {
+            setTriedAutoLogin(true);
+          });
+        }
+      });
+    else if (getAutoLoginLS())
       injected.isAuthorized().then((isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true)

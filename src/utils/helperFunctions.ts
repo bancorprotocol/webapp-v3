@@ -125,3 +125,4 @@ export const calculateProgressLevel = (
   const timeWaited = now - startTimeSeconds;
   return timeWaited / totalWaitingTime;
 };
+export const IS_IN_IFRAME = window.self !== window.top;
