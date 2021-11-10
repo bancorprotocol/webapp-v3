@@ -67,7 +67,7 @@ export const ModalVbnt = ({
     }
   }, [amount, token, percentages, fieldBlance]);
 
-  const handleStake = async () => {
+  const handleStakeUnstake = async () => {
     if (stakeDisabled || !account || !chainId) return;
 
     if (stake)
@@ -90,9 +90,9 @@ export const ModalVbnt = ({
       );
   };
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const [checkApprove, ModalApprove] = useApproveModal(
     [{ amount: amount, token: token }],
-    handleStake,
+    handleStakeUnstake,
     getNetworkVariables(chainId ? chainId : EthNetworks.Mainnet)
       .governanceContractAddress
   );
@@ -138,7 +138,8 @@ export const ModalVbnt = ({
               onClick={() => {
                 setAmount('');
                 setIsOpen(false);
-                onStart();
+                if (stake) checkApprove();
+                else handleStakeUnstake();
               }}
               disabled={stakeDisabled}
               className={`btn-primary rounded w-full mt-30 mb-10`}
