@@ -10,6 +10,7 @@ import { TablePagination } from 'components/table/TablePagination';
 import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { useEffect } from 'react';
 
 export type TableColumn<D extends object> = Column<D> & {
   tooltip?: string;
@@ -22,6 +23,7 @@ interface TableProps<D extends object> {
   defaultSort?: SortingRule<D>;
   isLoading?: boolean;
   stickyColumn?: boolean;
+  search?: string;
 }
 
 export const DataTable = <D extends object>({
@@ -30,6 +32,7 @@ export const DataTable = <D extends object>({
   defaultSort,
   isLoading,
   stickyColumn,
+  search,
 }: TableProps<D>) => {
   const {
     getTableProps,
@@ -63,6 +66,10 @@ export const DataTable = <D extends object>({
     useExpanded,
     usePagination
   );
+
+  useEffect(() => {
+    gotoPage(0);
+  }, [gotoPage, search]);
 
   return (
     <>

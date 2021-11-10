@@ -17,8 +17,8 @@ export const useProtectedPositions = () => {
 
   const data = useMemo(
     () =>
-      groupedPositions.filter((row) =>
-        row.pool.name.toLowerCase().includes(search.toLowerCase())
+      groupedPositions.filter((pos) =>
+        pos.reserveToken.symbol.toLowerCase().includes(search.toLowerCase())
       ),
     [groupedPositions, search]
   );
