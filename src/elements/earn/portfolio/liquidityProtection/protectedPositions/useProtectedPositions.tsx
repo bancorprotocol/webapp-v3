@@ -15,7 +15,13 @@ export const useProtectedPositions = () => {
     useAppSelector<ProtectedPositionGrouped[]>(getGroupedPositions);
   const [search, setSearch] = useState('');
 
-  const data = useMemo(() => groupedPositions, [groupedPositions]);
+  const data = useMemo(
+    () =>
+      groupedPositions.filter((row) =>
+        row.pool.name.toLowerCase().includes(search.toLowerCase())
+      ),
+    [groupedPositions, search]
+  );
   const columns = useMemo<TableColumn<ProtectedPositionGrouped>[]>(
     () => [
       {
