@@ -1,6 +1,12 @@
 import { Pool } from 'services/observables/tokens';
 import { stakeRewards } from 'services/web3/protection/rewards';
 import { useState } from 'react';
+import {
+  stakeRewardsFailedNotification,
+  stakeRewardsNotification,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   pool: Pool;
@@ -16,6 +22,8 @@ export const RewardsStakeCTA = ({
   bntAmount,
 }: Props) => {
   const [isBusy, setIsBusy] = useState(false);
+  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleClick = async () => {
     try {
@@ -24,14 +32,17 @@ export const RewardsStakeCTA = ({
         amount: bntAmount,
         poolId: pool.pool_dlt_id,
       });
+      stakeRewardsNotification(dispatch, txHash, bntAmount, pool.name);
+      history.push('/portfolio');
     } catch (e) {
       console.error('Staking Rewards failed with msg: ', e.message);
+      stakeRewardsFailedNotification(dispatch);
     } finally {
       setIsBusy(false);
     }
   };
 
-  const button = () => {
+  const btnOptions = () => {
     if (!account) {
       return { label: 'Login', disabled: false, variant: 'btn-primary' };
     } else if (isBusy) {
@@ -56,13 +67,16 @@ export const RewardsStakeCTA = ({
       };
     }
   };
+
+  const btn = btnOptions();
+
   return (
     <button
       onClick={() => handleClick()}
-      disabled={button().disabled}
-      className={`${button().variant} rounded w-full mt-10`}
+      disabled={btn.disabled}
+      className={`${btn.variant} rounded w-full mt-10`}
     >
-      {button().label}
+      {btn.label}
     </button>
   );
 };

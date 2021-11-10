@@ -1,5 +1,11 @@
 import { claimRewards } from 'services/web3/protection/rewards';
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
+import {
+  claimRewardsFailedNotification,
+  claimRewardsNotification,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   claimableRewards: string | null;
@@ -7,9 +13,19 @@ interface Props {
 }
 
 export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+
   const handleClaim = async () => {
-    if (account) {
-      const txHash = await claimRewards();
+    if (account && claimableRewards) {
+      try {
+        const txHash = await claimRewards();
+        claimRewardsNotification(dispatch, txHash, claimableRewards);
+        history.push('/portfolio');
+      } catch (e) {
+        console.error('Claiming Rewards failed with msg: ', e.message);
+        claimRewardsFailedNotification(dispatch);
+      }
     }
   };
 

@@ -1,80 +1,238 @@
-import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
-import { getProtectedPools } from 'redux/bancor/pool';
-import { SelectPool } from 'components/selectPool/SelectPool';
 import { Pool, Token } from 'services/observables/tokens';
-import { Widget } from 'components/widgets/Widget';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
+import { Modal } from 'components/modal/Modal';
+import {
+  fetchProtectedPositions,
+  getWithdrawBreakdown,
+  ProtectedPosition,
+  withdrawProtection,
+} from 'services/web3/protection/positions';
+import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
+import { useApproveModal } from 'hooks/useApproveModal';
+import { liquidityProtection$ } from 'services/observables/contracts';
+import { take } from 'rxjs/operators';
+import { bntToken, getNetworkVariables } from 'services/web3/config';
+import { EthNetworks } from 'services/web3/types';
+import { useWeb3React } from '@web3-react/core';
+import useAsyncEffect from 'use-async-effect';
+import { useDebounce } from 'hooks/useDebounce';
+import BigNumber from 'bignumber.js';
+import {
+  withdrawProtectedPosition,
+  rejectNotification,
+  withdrawProtectedPositionFailed,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { setProtectedPositions } from 'redux/liquidity/liquidity';
 
-export const WithdrawLiquidityWidget = ({ pool }: { pool: Pool }) => {
+interface Props {
+  protectedPosition: ProtectedPosition;
+  isModalOpen: boolean;
+  setIsModalOpen: Function;
+}
+
+export const WithdrawLiquidityWidget = ({
+  protectedPosition,
+  isModalOpen,
+  setIsModalOpen,
+}: Props) => {
+  const dispatch = useDispatch();
+  const { chainId, account } = useWeb3React();
+  const { positionId, reserveToken, currentCoveragePercent, pool } =
+    protectedPosition;
+  const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
-  const pools = useAppSelector<Pool[]>(getProtectedPools);
+  const [amountDebounce, setAmountebounce] = useDebounce('');
+  const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
+  const approveContract = useRef('');
   const token = useAppSelector<Token | undefined>(
-    getTokenById(pool ? pool.reserves[0].address : '')
+    getTokenById(reserveToken.address)
   );
-  const history = useHistory();
+  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const [breakdown, setBreakdown] = useState<
+    { tkn: number; bnt: number } | undefined
+  >();
+  const gov = getNetworkVariables(
+    chainId ? chainId : EthNetworks.Mainnet
+  ).govToken;
+  const govToken = useAppSelector<Token | undefined>(getTokenById(gov));
+  const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
-  const onSelect = (pool: Pool) => {
-    history.push(`/portfolio/withdraw/${pool.pool_dlt_id}`);
+  const withdrawingBNT = reserveToken.address === bnt;
+  const protectionNotReached = currentCoveragePercent !== 1;
+  const multiplierWillReset = true;
+  const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
+  const tokenInsufficent = Number(amount) > Number(tknAmount);
+  const withdrawDisabled = emtpyAmount || tokenInsufficent;
+
+  useAsyncEffect(async (isMounted) => {
+    if (isMounted())
+      approveContract.current = await liquidityProtection$
+        .pipe(take(1))
+        .toPromise();
+  }, []);
+
+  const showVBNTWarning = () => {
+    if (token && token.address !== bnt) {
+      return false;
+    }
+    if (!amount) {
+      return false;
+    }
+    const isBalanceSufficient = new BigNumber(
+      govToken ? govToken.balance ?? 0 : 0
+    ).gte(amount);
+    if (isBalanceSufficient) {
+      return false;
+    }
+
+    return new BigNumber(govToken ? govToken.balance ?? 0 : 0).lt(
+      protectedPosition.initialStake.tknAmount
+    );
   };
 
-  const withdrawingBNT = true;
-  const protectionNotReached = true;
-  const multiplierWillReset = true;
+  useAsyncEffect(
+    async (isMounted) => {
+      const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
+        pool,
+        token!
+      );
+      setIsPriceDeviationToHigh(isPriceDeviationToHigh);
 
-  const outputBreakdown = [
-    { color: 'blue-4', decPercent: 0.75, label: 'ETH' },
-    { color: 'primary', decPercent: 0.25, label: 'BNT' },
-  ];
+      if (isMounted()) {
+        if (withdrawDisabled || withdrawingBNT) return;
+        const res = await getWithdrawBreakdown(
+          positionId,
+          amountDebounce,
+          tknAmount
+        );
+
+        if (res.bntAmount === '0') setBreakdown(undefined);
+        else {
+          const percentage = new BigNumber(res.actualAmount)
+            .div(res.expectedAmount)
+            .toNumber();
+
+          setBreakdown({ tkn: percentage, bnt: 1 - percentage });
+        }
+      }
+    },
+    [amountDebounce]
+  );
+
+  const withdraw = async () => {
+    if (token)
+      await withdrawProtection(
+        positionId,
+        amount,
+        tknAmount,
+        (txHash: string) => {
+          withdrawProtectedPosition(dispatch, token, amount, txHash);
+          setIsModalOpen(false);
+        },
+        async () => {
+          const positions = await fetchProtectedPositions(pools, account!);
+          dispatch(setProtectedPositions(positions));
+        },
+        () => rejectNotification(dispatch),
+        () => withdrawProtectedPositionFailed(dispatch, token, amount)
+      );
+    setIsModalOpen(false);
+  };
+
+  const [onStart, ModalApprove] = useApproveModal(
+    [{ amount: amount, token: govToken! }],
+    withdraw,
+    approveContract.current
+  );
+
+  const handleWithdraw = async () => {
+    if (withdrawingBNT) {
+      setIsModalOpen(false);
+      onStart();
+    } else withdraw();
+  };
 
   return (
-    <Widget title="Withdraw" goBackRoute="/portfolio">
-      <div className="px-10 pb-10">
-        <SelectPool
-          pool={pool}
-          pools={pools}
-          onSelect={onSelect}
-          label="Pool"
-        />
-        <WithdrawLiquidityInfo
-          protectionNotReached={protectionNotReached}
-          multiplierWillReset={multiplierWillReset}
-        />
-        <div className="my-20">
-          <TokenInputPercentage
-            label="Amount"
-            token={token}
-            amount={amount}
-            setAmount={setAmount}
+    <>
+      <Modal
+        setIsOpen={setIsModalOpen}
+        isOpen={isModalOpen}
+        title="Withdraw Protection"
+      >
+        <div className="px-20 pb-20">
+          <WithdrawLiquidityInfo
+            protectionNotReached={protectionNotReached}
+            multiplierWillReset={multiplierWillReset}
           />
-        </div>
-        <div className="flex justify-between items-center">
-          <div>Output amount</div>
-          <div>123 ETH</div>
-        </div>
-        <div className="flex justify-between items-center mt-20">
-          <div>Output breakdown</div>
-          <div className="relative w-[180px]">
-            <LinePercentage percentages={outputBreakdown} />
+          <div className="my-20">
+            <TokenInputPercentage
+              label="Amount"
+              token={token}
+              debounce={setAmountebounce}
+              balance={tknAmount}
+              amount={amount}
+              errorMsg={
+                tokenInsufficent
+                  ? 'Token balance is currently insufficient'
+                  : undefined
+              }
+              setAmount={setAmount}
+            />
           </div>
+          {breakdown && (
+            <div className="flex justify-between items-center mt-20">
+              <div>Output breakdown</div>
+              <div className="relative w-[180px]">
+                <LinePercentage
+                  percentages={[
+                    {
+                      color: 'blue-4',
+                      decPercent: breakdown.tkn,
+                      label: token?.symbol,
+                    },
+                    {
+                      color: 'primary',
+                      decPercent: breakdown.bnt,
+                      label: 'BNT',
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+          )}
+          {withdrawingBNT && (
+            <div className="mt-20">
+              BNT withdrawals are subject to a 24h lock period before they can
+              be claimed.
+            </div>
+          )}
+          {isPriceDeviationToHigh && (
+            <div className="p-20 rounded bg-error font-medium mt-20 text-white">
+              Due to price volatility, withdrawing from your protected position
+              is currently not available. Please try again in a few minutes.
+            </div>
+          )}
+          {showVBNTWarning() && (
+            <div className="p-20 rounded bg-error font-medium mt-20 text-white">
+              Insufficient VBNT balance.
+            </div>
+          )}
+          <button
+            onClick={() => handleWithdraw()}
+            disabled={withdrawDisabled}
+            className={`btn-primary rounded w-full mt-20`}
+          >
+            {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
+          </button>
         </div>
-        {withdrawingBNT && (
-          <div className="mt-20">
-            BNT withdrawals are subject to a 24h lock period before they can be
-            claimed.
-          </div>
-        )}
-        <button
-          onClick={() => {}}
-          className={`btn-primary rounded w-full mt-20`}
-        >
-          Withdraw
-        </button>
-      </div>
-    </Widget>
+      </Modal>
+      {ModalApprove}
+    </>
   );
 };

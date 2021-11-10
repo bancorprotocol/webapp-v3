@@ -1,6 +1,7 @@
 import {
   Column,
   SortingRule,
+  useExpanded,
   usePagination,
   useSortBy,
   useTable,
@@ -56,8 +57,10 @@ export const DataTable = <D extends object>({
       autoResetSortBy: false,
       disableSortRemove: true,
       autoResetPage: false,
+      autoResetExpanded: false,
     },
     useSortBy,
+    useExpanded,
     usePagination
   );
 
@@ -70,16 +73,18 @@ export const DataTable = <D extends object>({
       >
         <table {...getTableProps()}>
           <TableHeader<D> headerGroups={headerGroups} columns={columns} />
-          <TableBody<D>
-            getTableBodyProps={getTableBodyProps}
-            prepareRow={prepareRow}
-            page={page}
-          />
+          {!isLoading && (
+            <TableBody<D>
+              getTableBodyProps={getTableBodyProps}
+              prepareRow={prepareRow}
+              page={page}
+            />
+          )}
         </table>
       </div>
       {isLoading && (
         <div className="space-y-20 p-20">
-          {[...Array(10)].map((_, index) => (
+          {[...Array(3)].map((_, index) => (
             <div
               key={index}
               className="w-full h-[30px] loading-skeleton !rounded-10"

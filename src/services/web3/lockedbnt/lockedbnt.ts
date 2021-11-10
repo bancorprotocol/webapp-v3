@@ -15,10 +15,10 @@ import { partition } from 'lodash';
 
 export interface LockedBnt {
   bnt: number;
-  expiry: dayjs.Dayjs;
+  expiry: number;
 }
 
-interface LockedAvailableBnt {
+export interface LockedAvailableBnt {
   locked: LockedBnt[];
   available: number;
 }
@@ -49,11 +49,13 @@ export const fetchLockedAvailableBalances = async (
 
     const res = bnts.map((bnt, index) => ({
       bnt: Number(shrinkToken(bnt.toString(), 18)),
-      expiry: dayjs.unix(Number(expirys[index])),
+      expiry: Number(expirys[index]),
     }));
 
     const now = dayjs(Date.now());
-    const [available, locked] = partition(res, (x) => x.expiry.isBefore(now));
+    const [available, locked] = partition(res, (x) =>
+      dayjs.unix(x.expiry).isBefore(now)
+    );
 
     const totalAvailable =
       available.length === 0

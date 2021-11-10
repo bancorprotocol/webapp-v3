@@ -290,17 +290,24 @@ export const fetchBntNeededToOpenSpace = async (
   return shrinkToken(bntNeeded, 18);
 };
 
-export const fetchReserveBalances = async (pool: Pool) => {
+export const fetchReserveBalances = async (
+  pool: Pool,
+  blockHeight?: number
+) => {
   const converterContract = Converter__factory.connect(
     pool.converter_dlt_id,
     web3.provider
   );
   const tknBalance = (
-    await converterContract.getConnectorBalance(pool.reserves[0].address)
+    await converterContract.getConnectorBalance(pool.reserves[0].address, {
+      blockTag: blockHeight,
+    })
   ).toString();
 
   const bntBalance = (
-    await converterContract.getConnectorBalance(pool.reserves[1].address)
+    await converterContract.getConnectorBalance(pool.reserves[1].address, {
+      blockTag: blockHeight,
+    })
   ).toString();
 
   return { tknBalance, bntBalance };
