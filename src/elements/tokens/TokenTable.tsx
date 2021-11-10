@@ -165,6 +165,7 @@ export const TokenTable = () => {
         defaultSort={defaultSort}
         isLoading={!tokens.length}
         stickyColumn
+        search={searchInput}
       />
     </section>
   );

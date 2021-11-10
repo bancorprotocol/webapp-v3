@@ -131,6 +131,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         defaultSort={defaultSort}
         isLoading={!pools.length}
         stickyColumn
+        search={search}
       />
     </section>
   );

@@ -27,6 +27,7 @@ export const ProtectedPositionsTable = ({ loading }: { loading: boolean }) => {
         columns={columns}
         isLoading={loading}
         stickyColumn
+        search={search}
       />
     </section>
   );
