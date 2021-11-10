@@ -217,14 +217,16 @@ export const Vote = () => {
           </div>
         </div>
       </div>
-      <ModalVbnt
-        isOpen={stakeModal}
-        setIsOpen={setStakeModal}
-        token={govToken}
-        stake={isStake}
-        stakeBalance={stakeAmount}
-        onCompleted={refresh}
-      />
+      {govToken && (
+        <ModalVbnt
+          isOpen={stakeModal}
+          setIsOpen={setStakeModal}
+          token={govToken}
+          stake={isStake}
+          stakeBalance={stakeAmount}
+          onCompleted={refresh}
+        />
+      )}
     </div>
   );
 };
