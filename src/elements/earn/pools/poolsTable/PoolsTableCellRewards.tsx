@@ -12,7 +12,7 @@ export const PoolsTableCellRewards = (pool: Pool) => {
       <Tooltip
         content={
           <span>
-            Rewards end in <CountdownTimer date={ends_at} />
+            Rewards end in <CountdownTimer date={ends_at / 1000} />
           </span>
         }
         button={<IconClock className="w-10" />}

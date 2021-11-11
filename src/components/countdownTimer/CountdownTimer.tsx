@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { formatTime } from 'utils/helperFunctions';
 
 interface CountdownTimerProps {
-  date: number;
+  date?: number; //In seconds
   msgEnded?: string;
   intervalSeconds?: number;
 }
@@ -15,7 +15,7 @@ export const CountdownTimer = ({
   intervalSeconds = 1,
 }: CountdownTimerProps) => {
   const now = dayjs().unix();
-  const [countdown, setCountdown] = useState(date - now);
+  const [countdown, setCountdown] = useState(date ? date - now : -1);
   const timerEnded = countdown <= 0;
 
   useInterval(
