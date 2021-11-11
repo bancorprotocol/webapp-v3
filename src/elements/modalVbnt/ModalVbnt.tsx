@@ -9,13 +9,6 @@ import {
   unstakeAmount,
 } from 'services/web3/governance/governance';
 import { useWeb3React } from '@web3-react/core';
-import {
-  addNotification,
-  BaseNotification,
-  NotificationType,
-} from 'redux/notification/notification';
-import { getNetworkContractApproval } from 'services/web3/approval';
-import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import { useEffect } from 'react';
@@ -30,11 +23,13 @@ import {
   unstakeFailedNotification,
   unstakeNotification,
 } from 'services/notifications/notifications';
+import { useApproveModal } from 'hooks/useApproveModal';
+import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 
 interface ModalVbntProps {
   setIsOpen: Function;
   isOpen: boolean;
-  token?: Token;
+  token: Token;
   stake: boolean;
   stakeBalance?: string;
   onCompleted?: Function;
@@ -53,11 +48,12 @@ export const ModalVbnt = ({
   const [amountUSD, setAmountUSD] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
-  const [showApprove, setShowApprove] = useState(false);
   const dispatch = useDispatch();
 
+  const stakeDisabled = !account || !chainId || !amount || Number(amount) === 0;
+
   const fieldBlance = stake
-    ? token && token.balance
+    ? token.balance
       ? token.balance
       : undefined
     : stakeBalance;
@@ -71,36 +67,9 @@ export const ModalVbnt = ({
     }
   }, [amount, token, percentages, fieldBlance]);
 
-  //Check if approval is required
-  const checkApproval = async () => {
-    if (!token) return;
+  const handleStakeUnstake = async () => {
+    if (stakeDisabled || !account || !chainId) return;
 
-    try {
-      const isApprovalReq = await getNetworkContractApproval(
-        token,
-        amount,
-        getNetworkVariables(chainId ? chainId : 0).governanceContractAddress
-      );
-      if (isApprovalReq) setShowApprove(true);
-      else await handleStake(true);
-    } catch (e) {
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
-        })
-      );
-    }
-  };
-
-  const handleStake = async (approved: boolean = false) => {
-    if (!account || !token || !chainId || !amount || Number(amount) === 0)
-      return;
-    if (!approved) return checkApproval();
-
-    setAmount('');
-    setIsOpen(false);
     if (stake)
       await stakeAmount(
         amount,
@@ -121,6 +90,13 @@ export const ModalVbnt = ({
       );
   };
 
+  const [checkApprove, ModalApprove] = useApproveModal(
+    [{ amount: amount, token: token }],
+    handleStakeUnstake,
+    getNetworkVariables(chainId ? chainId : EthNetworks.Mainnet)
+      .governanceContractAddress
+  );
+
   const refreshBalances = async (
     token: Token,
     account: string,
@@ -131,8 +107,6 @@ export const ModalVbnt = ({
     dispatch(updateTokens(balances));
     if (onCompleted) onCompleted();
   };
-
-  const isStakeDisabled = () => !token || !amount || Number(amount) === 0;
 
   return (
     <>
@@ -153,50 +127,21 @@ export const ModalVbnt = ({
                 the amount in Dollars or Token input
               </div>
             )}
-            {token && (
-              <TokenInputField
-                border
-                token={token}
-                input={amount}
-                label={`${stake ? 'Stake' : 'Unstake'} amount`}
-                setInput={setAmount}
-                selectable={false}
-                amountUsd={amountUSD}
-                setAmountUsd={setAmountUSD}
-                fieldBalance={fieldBlance}
-              />
-            )}
-            <div className="flex justify-between space-x-8 mt-15">
-              <div className="md:w-[125px]" />
-              {percentages.map((slip, index) => (
-                <button
-                  key={'slippage' + slip}
-                  className={`btn-sm rounded-10 h-[34px] w-[66px] text-14 ${classNameGenerator(
-                    {
-                      'btn-outline-secondary': selPercentage !== index,
-                      'btn-primary': selPercentage === index,
-                    }
-                  )} bg-opacity-0`}
-                  onClick={() => {
-                    setSelPercentage(index);
-                    if (token && fieldBlance) {
-                      const amount = new BigNumber(fieldBlance).times(
-                        new BigNumber(slip / 100)
-                      );
-                      setAmount(amount.toString());
-                      setAmountUSD(
-                        (amount.toNumber() * Number(token.usdPrice)).toString()
-                      );
-                    }
-                  }}
-                >
-                  +{slip}%
-                </button>
-              ))}
-            </div>
+            <TokenInputPercentage
+              label={`${stake ? 'Stake' : 'Unstake'} amount`}
+              token={token}
+              balance={fieldBlance}
+              amount={amount}
+              setAmount={setAmount}
+            />
             <button
-              onClick={() => handleStake()}
-              disabled={isStakeDisabled()}
+              onClick={() => {
+                setAmount('');
+                setIsOpen(false);
+                if (stake) checkApprove();
+                else handleStakeUnstake();
+              }}
+              disabled={stakeDisabled}
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >
               {`${stake ? 'Stake' : 'Unstake'} vBNT`}
@@ -204,19 +149,7 @@ export const ModalVbnt = ({
           </div>
         </div>
       </Modal>
-      <ModalApprove
-        isOpen={showApprove}
-        setIsOpen={setShowApprove}
-        amount={amount}
-        fromToken={token}
-        handleApproved={() => handleStake(true)}
-        waitForApproval={true}
-        contract={
-          chainId
-            ? getNetworkVariables(chainId).governanceContractAddress
-            : undefined
-        }
-      />
+      {ModalApprove}
     </>
   );
 };
