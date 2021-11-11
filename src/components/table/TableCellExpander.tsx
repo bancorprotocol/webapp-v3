@@ -5,16 +5,29 @@ import { PropsWithChildren } from 'react';
 interface Props {
   getExpandedContent?: () => JSX.Element;
   getCollapsedContent?: () => JSX.Element;
-  getCannotExpandContent?: () => JSX.Element;
+  getCannotExpandContent?: () => JSX.Element | string;
   cellData: PropsWithChildren<CellProps<any>>;
   canExpandMultiple?: boolean;
 }
+
+const getDefaultExpandedContent = () => (
+  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
+    <IconChevronDown className="w-14 rotate-180" />
+  </button>
+);
+const getDefaultCollapsedContent = () => (
+  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
+    <IconChevronDown className="w-14 rotate-180" />
+  </button>
+);
+const getDefaultCannotExpandContent = () => '';
+
 export const TableCellExpander = ({
   cellData,
   canExpandMultiple = false,
-  getExpandedContent,
-  getCollapsedContent,
-  getCannotExpandContent,
+  getExpandedContent = getDefaultExpandedContent,
+  getCollapsedContent = getDefaultCollapsedContent,
+  getCannotExpandContent = getDefaultCannotExpandContent,
 }: Props) => {
   const {
     row: { canExpand, isExpanded, toggleRowExpanded },
@@ -30,25 +43,9 @@ export const TableCellExpander = ({
 
   return canExpand ? (
     <span onClick={() => handleClick()}>
-      {isExpanded ? (
-        getExpandedContent ? (
-          getExpandedContent()
-        ) : (
-          <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-            <IconChevronDown className="w-14 rotate-180" />
-          </button>
-        )
-      ) : getCollapsedContent ? (
-        getCollapsedContent()
-      ) : (
-        <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-          <IconChevronDown className="w-14" />
-        </button>
-      )}
+      {isExpanded ? getExpandedContent() : getCollapsedContent()}
     </span>
-  ) : getCannotExpandContent ? (
-    getCannotExpandContent()
   ) : (
-    ''
+    getCannotExpandContent()
   );
 };
