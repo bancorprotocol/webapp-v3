@@ -1,28 +1,22 @@
-import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
-import { Row } from 'react-table';
-import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import {
+  ProtectedPosition,
+  ProtectedPositionGrouped,
+} from 'services/web3/protection/positions';
+import { CellProps } from 'react-table';
 import { ReactComponent as IconWithdraw } from 'assets/icons/withdraw.svg';
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidity/WithdrawLiquidityWidget';
+import { TableCellExpander } from 'components/table/TableCellExpander';
 
 export const ProtectedPositionTableCellActions = (
-  row: Row<ProtectedPositionGrouped>
+  cellData: PropsWithChildren<
+    CellProps<ProtectedPositionGrouped, ProtectedPosition[]>
+  >
 ) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { row } = cellData;
 
-  return row.canExpand ? (
-    <span {...row.getToggleRowExpandedProps()}>
-      {row.isExpanded ? (
-        <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-          <IconChevronDown className="w-14 rotate-180" />
-        </button>
-      ) : (
-        <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-          <IconChevronDown className="w-14" />
-        </button>
-      )}
-    </span>
-  ) : (
+  const canNotExpandContent = (
     <>
       <WithdrawLiquidityWidget
         protectedPosition={row.original}
@@ -37,4 +31,9 @@ export const ProtectedPositionTableCellActions = (
       </button>
     </>
   );
+
+  return TableCellExpander({
+    cellData,
+    canNotExpandContent,
+  });
 };
