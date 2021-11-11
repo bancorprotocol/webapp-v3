@@ -148,4 +148,10 @@ export const ropstenTokens: Token[] = [
     symbol: 'TEST6',
     ...ropstenTokenEmptyProps,
   },
+  {
+    address: '0x07d79EDBC43dFB94a6Db1dd99Bf06E7C06272687',
+    name: 'PenTest Token',
+    symbol: 'PENTEST',
+    ...ropstenTokenEmptyProps,
+  },
 ];
