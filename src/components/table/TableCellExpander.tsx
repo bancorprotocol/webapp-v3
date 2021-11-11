@@ -17,7 +17,7 @@ const getDefaultExpandedContent = () => (
 );
 const getDefaultCollapsedContent = () => (
   <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14 rotate-180" />
+    <IconChevronDown className="w-14" />
   </button>
 );
 const getDefaultCannotExpandContent = () => '';
