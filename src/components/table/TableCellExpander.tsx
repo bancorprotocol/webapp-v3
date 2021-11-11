@@ -5,7 +5,7 @@ import { PropsWithChildren } from 'react';
 interface Props {
   isExpandedContent?: () => JSX.Element;
   isCollapsedContent?: () => JSX.Element;
-  canNotExpandContent?: () => JSX.Element;
+  cannotExpandContent?: () => JSX.Element;
   cellData: PropsWithChildren<CellProps<any>>;
   canExpandMultiple?: boolean;
 }
@@ -14,7 +14,7 @@ export const TableCellExpander = ({
   canExpandMultiple = false,
   isExpandedContent,
   isCollapsedContent,
-  canNotExpandContent,
+  cannotExpandContent,
 }: Props) => {
   const {
     row: { canExpand, isExpanded, toggleRowExpanded },
@@ -46,8 +46,8 @@ export const TableCellExpander = ({
         </button>
       )}
     </span>
-  ) : canNotExpandContent ? (
-    canNotExpandContent()
+  ) : cannotExpandContent ? (
+    cannotExpandContent()
   ) : (
     ''
   );
