@@ -154,4 +154,10 @@ export const ropstenTokens: Token[] = [
     symbol: 'PENTEST',
     ...ropstenTokenEmptyProps,
   },
+  {
+    address: '0xb63303eAc901dBFaC854C531Ce4B281542F85364',
+    name: 'DOZZ Token',
+    symbol: 'DOZZ',
+    ...ropstenTokenEmptyProps,
+  },
 ];
