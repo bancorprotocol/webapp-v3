@@ -14,7 +14,7 @@ export const Statistics = () => {
             <div className="flex items-end">
               {item.change24h && (
                 <div
-                  className={`mb-10 lg:mb-5 animate-bounce-15s ${
+                  className={`mb-10 lg:mb-5 ${
                     item.change24h > 0
                       ? 'animate-bounce-2s'
                       : 'animate-bounce-2s-invert'
