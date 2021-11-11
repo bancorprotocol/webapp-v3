@@ -22,7 +22,7 @@ export const TableCellExpander = ({
   } = cellData;
 
   const handleClick = () => {
-    if (!canExpandMultiple) {
+    if (!canExpandMultiple && !isExpanded) {
       toggleAllRowsExpanded(false);
     }
     toggleRowExpanded(!isExpanded);
