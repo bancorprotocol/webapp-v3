@@ -16,7 +16,7 @@ export const ProtectedPositionTableCellActions = (
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { row } = cellData;
 
-  const cannotExpandContent = () => (
+  const getCannotExpandContent = () => (
     <>
       <WithdrawLiquidityWidget
         protectedPosition={row.original}
@@ -34,6 +34,6 @@ export const ProtectedPositionTableCellActions = (
 
   return TableCellExpander({
     cellData,
-    cannotExpandContent,
+    getCannotExpandContent,
   });
 };
