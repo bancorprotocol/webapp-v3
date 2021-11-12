@@ -12,6 +12,7 @@ interface TokenInputPercentageProps {
   errorMsg?: string;
   setAmount: Function;
   debounce?: Function;
+  balanceLabel?: string;
 }
 const percentages = [25, 50, 75, 100];
 
@@ -23,6 +24,7 @@ export const TokenInputPercentage = ({
   errorMsg,
   setAmount,
   debounce,
+  balanceLabel = 'Balance',
 }: TokenInputPercentageProps) => {
   const [amountUSD, setAmountUSD] = useState('');
   const [selPercentage, setSelPercentage] = useState<number>(-1);
@@ -58,6 +60,7 @@ export const TokenInputPercentage = ({
           amountUsd={amountUSD}
           setAmountUsd={setAmountUSD}
           fieldBalance={fieldBalance}
+          balanceLabel={balanceLabel}
         />
       )}
       <div className="flex justify-between space-x-8 mt-15">

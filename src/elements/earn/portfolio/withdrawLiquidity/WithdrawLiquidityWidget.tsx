@@ -29,6 +29,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
+import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -163,7 +164,9 @@ export const WithdrawLiquidityWidget = ({
       <Modal
         setIsOpen={setIsModalOpen}
         isOpen={isModalOpen}
-        title="Withdraw Protection"
+        title="Withdraw"
+        large
+        titleElement={<SwapSwitch />}
       >
         <div className="px-20 pb-20">
           <WithdrawLiquidityInfo
@@ -172,7 +175,7 @@ export const WithdrawLiquidityWidget = ({
           />
           <div className="my-20">
             <TokenInputPercentage
-              label="Amount"
+              label="Pool"
               token={token}
               debounce={setAmountebounce}
               balance={tknAmount}
@@ -183,6 +186,7 @@ export const WithdrawLiquidityWidget = ({
                   : undefined
               }
               setAmount={setAmount}
+              balanceLabel="Claimable amount"
             />
           </div>
           {breakdown && (

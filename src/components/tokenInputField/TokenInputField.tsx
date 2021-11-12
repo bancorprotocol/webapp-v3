@@ -31,6 +31,7 @@ interface TokenInputFieldProps {
   excludedTokens?: string[];
   includedTokens?: string[];
   isLoading?: boolean;
+  balanceLabel?: string;
 }
 
 export const TokenInputField = ({
@@ -54,6 +55,7 @@ export const TokenInputField = ({
   excludedTokens = [],
   includedTokens = [],
   isLoading,
+  balanceLabel = 'Balance',
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -146,7 +148,7 @@ export const TokenInputField = ({
                 'cursor-not-allowed': disabled,
               })}`}
             >
-              Balance: {prettifyNumber(balance)}
+              {balanceLabel}: {prettifyNumber(balance)}
               <span className="text-primary ml-4">
                 (~{prettifyNumber(balanceUsd, true)})
               </span>
