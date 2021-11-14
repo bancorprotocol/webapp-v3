@@ -86,7 +86,7 @@ const buildRewardsMultiplierCall = (
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'rewardsMultiplier',
-    methodParameters: [user, position.poolToken, position.reserveToken],
+    methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
 };
 
@@ -118,6 +118,6 @@ const buildPnedingRewardsCall = (
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'pendingReserveRewards',
-    methodParameters: [user, position.poolToken, position.reserveToken],
+    methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
 };
