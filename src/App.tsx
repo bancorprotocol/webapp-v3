@@ -128,9 +128,14 @@ export const App = () => {
           <main className={`max-w-[1400px] mx-auto mb-30`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
-              <Route exact strict path="/eth/swap">
-                <Redirect to="/" />
-              </Route>
+              <Route
+                exact
+                strict
+                path="/eth/swap"
+                render={(props) => {
+                  return <Redirect to={`/${props.location.search}`} />;
+                }}
+              />
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
               <Route exact strict path="/eth/data">
