@@ -4,7 +4,6 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { StakingRewards, StakingRewards__factory } from '../abis/types';
 import { web3, writeWeb3 } from '..';
 import { ProtectedLiquidity } from './positions';
-import { BigNumber } from 'bignumber.js';
 import { multicall, MultiCall } from '../multicall/multicall';
 
 export const stakeRewards = async ({
@@ -15,12 +14,35 @@ export const stakeRewards = async ({
   poolId: string;
 }): Promise<string> => {
   const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
+
   const contract = StakingRewards__factory.connect(
     contractAddress,
     writeWeb3.signer
   );
 
   return (await contract.stakeRewards(expandToken(amount, 18), poolId)).hash;
+};
+
+export const stakePoolLevelRewards = async ({
+  amount,
+  poolId,
+  reserveId,
+  newPoolId,
+}: {
+  amount: string;
+  poolId: string;
+  reserveId: string;
+  newPoolId: string;
+}): Promise<string> => {
+  const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
+  const contract = StakingRewards__factory.connect(
+    contractAddress,
+    writeWeb3.signer
+  );
+
+  return (
+    await contract.stakeReserveRewards(poolId, reserveId, amount, newPoolId)
+  ).hash;
 };
 
 export const claimRewards = async (): Promise<string> => {
