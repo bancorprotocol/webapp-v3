@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { Loading } from 'pages/Loading';
@@ -43,7 +43,6 @@ import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
-import { WithdrawLiquidity } from 'pages/earn/portfolio/withdrawLiquidity/WithdrawLiquidity';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -129,22 +128,53 @@ export const App = () => {
           <main className={`max-w-[1400px] mx-auto mb-30`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
+              <Route exact strict path="/eth/swap">
+                <Redirect to="/" />
+              </Route>
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
+              <Route exact strict path="/eth/data">
+                <Redirect to="/pools" />
+              </Route>
               <Route
                 exact
                 strict
                 path="/pools/add-liquidity/:id"
                 component={AddLiquidity}
               />
+              <Route
+                exact
+                strict
+                path="/eth/portfolio/stake/add/single/:id"
+                render={(props) => (
+                  <Redirect
+                    to={`/pools/add-liquidity/${props.match.params.id}`}
+                  />
+                )}
+              />
+              <Route
+                exact
+                strict
+                path="/eth/pool/add/:id"
+                render={(props) => (
+                  <Redirect
+                    to={`/pools/add-liquidity/${props.match.params.id}`}
+                  />
+                )}
+              />
               <Route exact strict path="/portfolio" component={Portfolio} />
-
+              <Route exact strict path="/eth/portfolio">
+                <Redirect to="/portfolio" />
+              </Route>
               <Route
                 exact
                 strict
                 path="/portfolio/rewards/claim"
                 component={RewardsClaim}
               />
+              <Route exact strict path="/eth/portfolio/stake/rewards/withdraw">
+                <Redirect to="/portfolio/rewards/claim" />
+              </Route>
               <Route
                 exact
                 strict
@@ -154,11 +184,21 @@ export const App = () => {
               <Route
                 exact
                 strict
-                path="/portfolio/withdraw/:id"
-                component={WithdrawLiquidity}
+                path="/eth/portfolio/stake/rewards/restake/:id"
+                render={(props) => (
+                  <Redirect
+                    to={`/portfolio/rewards/stake/${props.match.params.id}`}
+                  />
+                )}
               />
               <Route exact strict path="/vote" component={Vote} />
+              <Route exact strict path="/eth/vote">
+                <Redirect to="/vote" />
+              </Route>
               <Route exact strict path="/fiat" component={Fiat} />
+              <Route exact strict path="/eth/fiat">
+                <Redirect to="/fiat" />
+              </Route>
               <Route component={NotFound} />
             </Switch>
           </main>
