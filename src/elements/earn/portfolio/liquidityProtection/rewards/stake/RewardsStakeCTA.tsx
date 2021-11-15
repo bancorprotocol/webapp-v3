@@ -7,6 +7,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { prettifyNumber } from '../../../../../../utils/helperFunctions';
 
 interface Props {
   pool: Pool;
@@ -32,7 +33,12 @@ export const RewardsStakeCTA = ({
         amount: bntAmount,
         poolId: pool.pool_dlt_id,
       });
-      stakeRewardsNotification(dispatch, txHash, bntAmount, pool.name);
+      stakeRewardsNotification(
+        dispatch,
+        txHash,
+        prettifyNumber(bntAmount),
+        pool.name
+      );
       history.push('/portfolio');
     } catch (e) {
       console.error('Staking Rewards failed with msg: ', e.message);
