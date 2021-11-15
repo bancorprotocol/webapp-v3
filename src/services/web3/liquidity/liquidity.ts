@@ -370,7 +370,7 @@ export const buildRemoveLiquidityReturnCall = (
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'removeLiquidityReturn',
-    methodParameters: [id, portion, removeTimestamp],
+    methodParameters: [id, portion, String(removeTimestamp)],
   };
 };
 

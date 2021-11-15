@@ -13,7 +13,7 @@ import {
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { MultiCall, multicall } from 'services/web3/multicall/multicall';
-import { uniq } from 'lodash';
+import { keyBy, merge, uniq, values } from 'lodash';
 import dayjs from 'dayjs';
 import {
   calculateAPR,
@@ -46,7 +46,7 @@ export interface ProtectedPosition {
   reserveToken: Reserve;
   roi: {
     fees: string;
-    reserveRewards: string;
+    reserveRewards?: string;
   };
   aprs: { day: string; week: string };
   rewardsMultiplier: string;
@@ -135,26 +135,25 @@ const fetchROI = async (
   const fullWaitTimeUnix = timeNow.add(1, 'year').unix();
   const portion = decToPpm(1);
 
-  const currentReturn = positions.map((x) =>
-    buildRemoveLiquidityReturnCall(contract, x.id, portion, timeNowUnix)
-  );
-  const fullReturn = positions.map((x) =>
-    buildRemoveLiquidityReturnCall(contract, x.id, portion, fullWaitTimeUnix)
-  );
+  const calls = positions.map((x) => [
+    buildRemoveLiquidityReturnCall(contract, x.id, portion, timeNowUnix),
+    buildRemoveLiquidityReturnCall(contract, x.id, portion, fullWaitTimeUnix),
+  ]);
 
-  const res = await multicall([...currentReturn, ...fullReturn]);
+  const res = await multicall(calls.flat());
 
   if (res) {
     return positions.map((position, i) => {
       const { decimals, usdPrice } = position.reserveToken;
 
-      const currentTargetAmount = res[i].toString();
-      const fullTargetAmount = res[i + 1].toString();
+      const currentTargetAmount = res[i][0].toString();
+      const fullTargetAmount = res[i + 1][0].toString();
 
       const protectedAmount = {
         tknAmount: shrinkToken(fullTargetAmount, decimals),
         usdAmount: calcUsdPrice(fullTargetAmount, usdPrice, decimals),
       };
+
       const claimableAmount = {
         tknAmount: shrinkToken(currentTargetAmount, decimals),
         usdAmount: calcUsdPrice(currentTargetAmount, usdPrice, decimals),
@@ -170,6 +169,7 @@ const fetchROI = async (
         .toString();
 
       return {
+        id: position.id,
         roiDec,
         protectedAmount,
         claimableAmount,
@@ -220,7 +220,7 @@ const fetchPoolAprs = async (
 
     const res = await multicall(calls.flat());
     if (res) {
-      return positions.map((pos, i) => {
+      return positions.map((position, i) => {
         const roiDay = res[i].toString();
         const roiWeek = res[i + 1].toString();
 
@@ -228,6 +228,7 @@ const fetchPoolAprs = async (
         const aprWeek = calculateAPR(roiWeek, 52);
 
         return {
+          id: position.id,
           aprDay: aprDay.isNegative() ? '0' : aprDay.toString(),
           aprWeek: aprWeek.isNegative() ? '0' : aprWeek.toString(),
         };
@@ -341,7 +342,17 @@ export const fetchProtectedPositions = async (
 
   const rewardsAmount = await fetchedPendingRewards(currentUser, rawPositions);
 
-  const final = rawPositions.map((position, index) => {
+  const positions = values(
+    merge(
+      keyBy(rawPositions, 'id'),
+      keyBy(positionsRoi, 'id'),
+      keyBy(positionsAPR, 'id'),
+      keyBy(rewardsMultiplier, 'id'),
+      keyBy(rewardsAmount, 'id')
+    )
+  );
+
+  const final = positions.map((position, index) => {
     const pool = pools.find((x) => x.pool_dlt_id === position.poolToken);
     const { decimals, usdPrice } = position.reserveToken;
 
@@ -367,24 +378,26 @@ export const fetchProtectedPositions = async (
 
     return {
       positionId: position.id,
-      reserveToken: position.reserveToken,
-      initialStake,
-      protectedAmount: positionsRoi[index].protectedAmount,
-      claimableAmount: positionsRoi[index].claimableAmount,
-      roi: {
-        fees: positionsRoi[index].roiDec,
-      },
-      aprs: positionsAPR[index],
       pool: pool!,
-      fees: positionsRoi[index].fees,
-      rewardsMultiplier: rewardsMultiplier[index],
-      rewardsAmount: rewardsAmount[index],
+      fees: position.fees,
+      initialStake,
+      protectedAmount: position.protectedAmount,
+      claimableAmount: position.claimableAmount,
+      reserveToken: position.reserveToken,
+      roi: {
+        fees: position.roiDec,
+      },
+      aprs: {
+        day: position.aprDay,
+        week: position.aprWeek,
+      },
+      rewardsMultiplier: position.rewardsMultiplier,
+      rewardsAmount: position.rewardsAmount,
       timestamps,
       currentCoveragePercent,
     };
   });
 
-  // @ts-ignore
   return final;
 };
 
