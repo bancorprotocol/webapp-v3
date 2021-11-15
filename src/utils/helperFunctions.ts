@@ -48,7 +48,7 @@ export const formatTime = (
 ): string =>
   dayjs
     .duration(seconds * 1000)
-    .format(`${withDays ? 'M [Months] D [Days]' : ''} HH[:]mm[:]ss`);
+    .format(`${withDays ? 'M [Months] D [Days] ' : ''}HH[:]mm[:]ss`);
 
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {
