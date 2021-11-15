@@ -145,9 +145,10 @@ const fetchROI = async (
   if (res) {
     return positions.map((position, i) => {
       const { decimals, usdPrice } = position.reserveToken;
+      const index = i * 2;
 
-      const currentTargetAmount = res[i][0].toString();
-      const fullTargetAmount = res[i + 1][0].toString();
+      const currentTargetAmount = res[index][0].toString();
+      const fullTargetAmount = res[index + 1][0].toString();
 
       const protectedAmount = {
         tknAmount: shrinkToken(fullTargetAmount, decimals),
@@ -221,8 +222,9 @@ const fetchPoolAprs = async (
     const res = await multicall(calls.flat());
     if (res) {
       return positions.map((position, i) => {
-        const roiDay = res[i].toString();
-        const roiWeek = res[i + 1].toString();
+        const index = i * 2;
+        const roiDay = res[index].toString();
+        const roiWeek = res[index + 1].toString();
 
         const aprDay = calculateAPR(roiDay, 365);
         const aprWeek = calculateAPR(roiWeek, 52);
@@ -266,13 +268,14 @@ const fetchHistoricBalances = async (
 
   if (resDay && resWeek)
     return relevantPools.map((pool, i) => {
-      const supplyDay = resDay[i].toString();
-      const tknDay = resDay[i + 1].toString();
-      const bntDay = resDay[i + 2].toString();
+      const index = i * 3;
+      const supplyDay = resDay[index].toString();
+      const tknDay = resDay[index + 1].toString();
+      const bntDay = resDay[index + 2].toString();
 
-      const supplyWeek = resWeek[i].toString();
-      const tknWeek = resWeek[i + 1].toString();
-      const bntWeek = resWeek[i + 2].toString();
+      const supplyWeek = resWeek[index].toString();
+      const tknWeek = resWeek[index + 1].toString();
+      const bntWeek = resWeek[index + 2].toString();
 
       return { supplyDay, tknDay, bntDay, supplyWeek, tknWeek, bntWeek, pool };
     });
