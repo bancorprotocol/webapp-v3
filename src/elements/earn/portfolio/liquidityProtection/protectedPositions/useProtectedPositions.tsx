@@ -117,8 +117,8 @@ export const useProtectedPositions = () => {
       {
         id: 'expander',
         accessor: 'subRows',
-        minWidth: 50,
-        width: 50,
+        minWidth: 250,
+        width: 250,
         Cell: (cellData) => ProtectedPositionTableCellActions(cellData),
       },
     ],

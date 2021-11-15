@@ -41,7 +41,12 @@ export const stakePoolLevelRewards = async ({
   );
 
   return (
-    await contract.stakeReserveRewards(poolId, reserveId, amount, newPoolId)
+    await contract.stakeReserveRewards(
+      poolId,
+      reserveId,
+      expandToken(amount, 18),
+      newPoolId
+    )
   ).hash;
 };
 

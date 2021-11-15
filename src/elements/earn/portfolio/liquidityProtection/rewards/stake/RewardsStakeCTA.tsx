@@ -1,5 +1,8 @@
 import { Pool } from 'services/observables/tokens';
-import { stakeRewards } from 'services/web3/protection/rewards';
+import {
+  stakePoolLevelRewards,
+  stakeRewards,
+} from 'services/web3/protection/rewards';
 import { useState } from 'react';
 import {
   stakeRewardsFailedNotification,
@@ -7,13 +10,15 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { prettifyNumber } from '../../../../../../utils/helperFunctions';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 
 interface Props {
   pool: Pool;
   account?: string | null;
   errorBalance: string;
   bntAmount: string;
+  position?: ProtectedPositionGrouped;
 }
 
 export const RewardsStakeCTA = ({
@@ -21,6 +26,7 @@ export const RewardsStakeCTA = ({
   account,
   errorBalance,
   bntAmount,
+  position,
 }: Props) => {
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
@@ -29,10 +35,20 @@ export const RewardsStakeCTA = ({
   const handleClick = async () => {
     try {
       setIsBusy(true);
-      const txHash = await stakeRewards({
-        amount: bntAmount,
-        poolId: pool.pool_dlt_id,
-      });
+      let txHash = '';
+      if (position) {
+        txHash = await stakePoolLevelRewards({
+          newPoolId: pool.pool_dlt_id,
+          reserveId: position.reserveToken.address,
+          amount: bntAmount,
+          poolId: position.pool.pool_dlt_id,
+        });
+      } else {
+        txHash = await stakeRewards({
+          amount: bntAmount,
+          poolId: pool.pool_dlt_id,
+        });
+      }
       stakeRewardsNotification(
         dispatch,
         txHash,

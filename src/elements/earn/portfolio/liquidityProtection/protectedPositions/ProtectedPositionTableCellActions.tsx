@@ -7,6 +7,8 @@ import { ReactComponent as IconWithdraw } from 'assets/icons/withdraw.svg';
 import { PropsWithChildren, useState } from 'react';
 import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidity/WithdrawLiquidityWidget';
 import { TableCellExpander } from 'components/table/TableCellExpander';
+import { StakeRewardsBtn } from '../rewards/StakeRewardsBtn';
+import BigNumber from 'bignumber.js';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -15,11 +17,14 @@ export const ProtectedPositionTableCellActions = (
 ) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { row } = cellData;
+  const position = row.original;
+  const canStakeRewards =
+    new BigNumber(position.rewardsAmount).gt(0) && position.groupId;
 
   const getCannotExpandContent = () => (
     <>
       <WithdrawLiquidityWidget
-        protectedPosition={row.original}
+        protectedPosition={position}
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
@@ -32,8 +37,19 @@ export const ProtectedPositionTableCellActions = (
     </>
   );
 
-  return TableCellExpander({
-    cellData,
-    getCannotExpandContent,
-  });
+  return (
+    <div className="flex justify-end">
+      {canStakeRewards && (
+        <StakeRewardsBtn
+          buttonLabel="Stake Rewards"
+          buttonClass="btn-primary btn-sm rounded-[12px] !h-[35px] mr-10"
+          posGroupId={position.groupId}
+        />
+      )}
+      {TableCellExpander({
+        cellData,
+        getCannotExpandContent,
+      })}
+    </div>
+  );
 };

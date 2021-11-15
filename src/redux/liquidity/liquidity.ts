@@ -144,6 +144,14 @@ export const getGroupedPositions = createSelector(
   }
 );
 
+export const getPositionById = (id: string) =>
+  createSelector(
+    getGroupedPositions,
+    (positions: ProtectedPositionGrouped[]) => {
+      return positions.find((pos) => pos.groupId === id);
+    }
+  );
+
 export interface MyStakeSummary {
   protectedValue: number;
   claimableValue: number;
