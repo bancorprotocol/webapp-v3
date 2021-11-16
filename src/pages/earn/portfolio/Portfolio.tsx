@@ -1,9 +1,7 @@
 import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection/LiquidityProtection';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { useDispatch } from 'react-redux';
-import { loadPortfolioData } from 'services/observables/triggers';
 import { useAppSelector } from 'redux/index';
 import { PoolToken } from 'services/observables/tokens';
 
@@ -14,10 +12,6 @@ export const Portfolio = () => {
   const poolTokens = useAppSelector<PoolToken[]>(
     (state) => state.liquidity.poolTokens
   );
-  const dispatch = useDispatch();
-  useEffect(() => {
-    loadPortfolioData(dispatch);
-  }, [dispatch]);
 
   return (
     <div className="max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">

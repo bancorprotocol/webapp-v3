@@ -38,7 +38,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
-import { loadCommonData } from 'services/observables/triggers';
+import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
@@ -70,7 +70,7 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    loadCommonData(dispatch);
+    subscribeToObservables(dispatch);
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));

@@ -37,19 +37,13 @@ import {
   setProtectedPositions,
   setRewards,
 } from 'redux/liquidity/liquidity';
-import { Subscription } from 'rxjs';
 import {
   lockedAvailableBnt$,
   protectedPositions$,
   rewards$,
 } from './liquidity';
 
-let poolTokensSub: Subscription;
-let lockedAvailableBntSub: Subscription;
-let protectedPositionsSub: Subscription;
-let rewardsSub: Subscription;
-
-export const loadCommonData = (dispatch: any) => {
+export const subscribeToObservables = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });
@@ -94,6 +88,22 @@ export const loadCommonData = (dispatch: any) => {
     dispatch(setBntPrice(bntPrice));
   });
 
+  protectedPositions$.subscribe((protectedPositions) => {
+    dispatch(setProtectedPositions(protectedPositions));
+  });
+
+  rewards$.subscribe((rewards) => {
+    dispatch(setRewards(rewards));
+  });
+
+  poolTokens$.subscribe((poolTokens) => dispatch(setPoolTokens(poolTokens)));
+
+  lockedAvailableBnt$.subscribe((lockedAvailableBnt) => {
+    if (lockedAvailableBnt) {
+      dispatch(setLockedAvailableBNT(lockedAvailableBnt));
+    }
+  });
+
   loadingPositions$.subscribe((loadingPositions) =>
     dispatch(setLoadingPositions(loadingPositions))
   );
@@ -103,28 +113,4 @@ export const loadCommonData = (dispatch: any) => {
   loadingLockedBnt$.subscribe((loadingLockedBnt) =>
     dispatch(setLoadingLockedBnt(loadingLockedBnt))
   );
-};
-
-export const loadPortfolioData = (dispatch: any) => {
-  if (!protectedPositionsSub || protectedPositionsSub.closed)
-    protectedPositions$.subscribe((protectedPositions) => {
-      dispatch(setProtectedPositions(protectedPositions));
-    });
-
-  if (!rewardsSub || rewardsSub.closed)
-    rewards$.subscribe((rewards) => {
-      dispatch(setRewards(rewards));
-    });
-
-  if (!poolTokensSub || poolTokensSub.closed)
-    poolTokensSub = poolTokens$.subscribe((poolTokens) =>
-      dispatch(setPoolTokens(poolTokens))
-    );
-
-  if (!lockedAvailableBntSub || lockedAvailableBntSub.closed)
-    lockedAvailableBnt$.subscribe((lockedAvailableBnt) => {
-      if (lockedAvailableBnt) {
-        dispatch(setLockedAvailableBNT(lockedAvailableBnt));
-      }
-    });
 };
