@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
-import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
@@ -47,18 +46,13 @@ import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
-  const [loading, setLoading] = useState(true);
+  useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const triedAutoLogin = useAutoConnect();
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
-
-  useEffect(() => {
-    if (chainId || triedAutoLogin || !getAutoLoginLS()) setLoading(false);
-  }, [setLoading, chainId, triedAutoLogin]);
 
   useEffect(() => {
     const usd = getUsdToggleLS();
@@ -115,9 +109,7 @@ export const App = () => {
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      {loading ? (
-        <Loading />
-      ) : unsupportedNetwork ? (
+      {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
         <div
