@@ -22,6 +22,7 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
     errorBalance,
     pools,
     onSelect,
+    position,
   } = useRewardsClaim({ pool });
 
   return (
@@ -54,6 +55,7 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
           account={account}
           errorBalance={errorBalance}
           bntAmount={bntAmount}
+          position={position}
         />
       </div>
     </Widget>
