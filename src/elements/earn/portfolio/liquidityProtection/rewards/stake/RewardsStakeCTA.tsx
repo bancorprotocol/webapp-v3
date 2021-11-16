@@ -3,15 +3,24 @@ import {
   stakePoolLevelRewards,
   stakeRewards,
 } from 'services/web3/protection/rewards';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
+  rejectNotification,
   stakeRewardsFailedNotification,
   stakeRewardsNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
+import {
+  fetchProtectedPositions,
+  ProtectedPositionGrouped,
+} from 'services/web3/protection/positions';
+import {
+  setLoadingPositions,
+  setProtectedPositions,
+} from 'redux/liquidity/liquidity';
+import { useAppSelector } from 'redux/index';
 
 interface Props {
   pool: Pool;
@@ -31,24 +40,17 @@ export const RewardsStakeCTA = ({
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
+  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
 
-  const handleClick = async () => {
-    try {
-      setIsBusy(true);
-      let txHash = '';
-      if (position) {
-        txHash = await stakePoolLevelRewards({
-          newPoolId: pool.pool_dlt_id,
-          reserveId: position.reserveToken.address,
-          amount: bntAmount,
-          poolId: position.pool.pool_dlt_id,
-        });
-      } else {
-        txHash = await stakeRewards({
-          amount: bntAmount,
-          poolId: pool.pool_dlt_id,
-        });
-      }
+  const onCompleted = useCallback(async () => {
+    dispatch(setLoadingPositions(true));
+    const positions = await fetchProtectedPositions(pools, account!);
+    dispatch(setProtectedPositions(positions));
+    dispatch(setLoadingPositions(false));
+  }, [account, dispatch, pools]);
+
+  const onHash = useCallback(
+    (txHash: string) => {
       stakeRewardsNotification(
         dispatch,
         txHash,
@@ -56,9 +58,36 @@ export const RewardsStakeCTA = ({
         pool.name
       );
       history.push('/portfolio');
+    },
+    [bntAmount, dispatch, history, pool.name]
+  );
+
+  const handleClick = async () => {
+    try {
+      setIsBusy(true);
+      if (position) {
+        await stakePoolLevelRewards({
+          newPoolId: pool.pool_dlt_id,
+          reserveId: position.reserveToken.address,
+          amount: bntAmount,
+          poolId: position.pool.pool_dlt_id,
+          onHash: (txHash) => onHash(txHash),
+          onCompleted: () => onCompleted(),
+          rejected: () => rejectNotification(dispatch),
+          failed: () => stakeRewardsFailedNotification(dispatch),
+        });
+      } else {
+        await stakeRewards({
+          amount: bntAmount,
+          poolId: pool.pool_dlt_id,
+          onHash: (txHash) => onHash(txHash),
+          onCompleted: () => onCompleted(),
+          rejected: () => rejectNotification(dispatch),
+          failed: () => stakeRewardsFailedNotification(dispatch),
+        });
+      }
     } catch (e) {
       console.error('Staking Rewards failed with msg: ', e.message);
-      stakeRewardsFailedNotification(dispatch);
     } finally {
       setIsBusy(false);
     }

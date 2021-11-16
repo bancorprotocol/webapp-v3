@@ -5,22 +5,40 @@ import { StakingRewards, StakingRewards__factory } from '../abis/types';
 import { web3, writeWeb3 } from '..';
 import { ProtectedLiquidity } from './positions';
 import { multicall, MultiCall } from '../multicall/multicall';
+import { ErrorCode } from '../types';
 
 export const stakeRewards = async ({
   amount,
   poolId,
+  onHash,
+  onCompleted,
+  rejected,
+  failed,
 }: {
   amount: string;
   poolId: string;
-}): Promise<string> => {
-  const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
+  onHash: (txHash: string) => void;
+  onCompleted: Function;
+  rejected: Function;
+  failed: (error: string) => void;
+}) => {
+  try {
+    const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
 
-  const contract = StakingRewards__factory.connect(
-    contractAddress,
-    writeWeb3.signer
-  );
+    const contract = StakingRewards__factory.connect(
+      contractAddress,
+      writeWeb3.signer
+    );
 
-  return (await contract.stakeRewards(expandToken(amount, 18), poolId)).hash;
+    const tx = await contract.stakeRewards(expandToken(amount, 18), poolId);
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
+  } catch (e) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 export const stakePoolLevelRewards = async ({
@@ -28,26 +46,41 @@ export const stakePoolLevelRewards = async ({
   poolId,
   reserveId,
   newPoolId,
+  onHash,
+  onCompleted,
+  rejected,
+  failed,
 }: {
   amount: string;
   poolId: string;
   reserveId: string;
   newPoolId: string;
-}): Promise<string> => {
-  const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
-  const contract = StakingRewards__factory.connect(
-    contractAddress,
-    writeWeb3.signer
-  );
+  onHash: (txHash: string) => void;
+  onCompleted: Function;
+  rejected: Function;
+  failed: (error: string) => void;
+}) => {
+  try {
+    const contractAddress = await stakingRewards$.pipe(take(1)).toPromise();
+    const contract = StakingRewards__factory.connect(
+      contractAddress,
+      writeWeb3.signer
+    );
 
-  return (
-    await contract.stakeReserveRewards(
+    const tx = await contract.stakeReserveRewards(
       poolId,
       reserveId,
       expandToken(amount, 18),
       newPoolId
-    )
-  ).hash;
+    );
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
+  } catch (e) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 export const claimRewards = async (): Promise<string> => {
