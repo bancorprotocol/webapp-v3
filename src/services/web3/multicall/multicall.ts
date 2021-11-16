@@ -10,7 +10,7 @@ export interface MultiCall {
   methodParameters: any[];
 }
 
-export const multicall = async (calls: MultiCall[]) => {
+export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
   const multicallContract = Multicall__factory.connect(
     multiCallContract,
     web3.provider
@@ -25,7 +25,9 @@ export const multicall = async (calls: MultiCall[]) => {
       ),
     }));
 
-    const encodedRes = await multicallContract.tryAggregate(false, encoded);
+    const encodedRes = await multicallContract.tryAggregate(false, encoded, {
+      blockTag: blockHeight,
+    });
     const res = encodedRes.map((call, i) => {
       if (!call.success) return [];
 

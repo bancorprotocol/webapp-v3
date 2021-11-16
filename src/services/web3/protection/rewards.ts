@@ -99,7 +99,11 @@ export const fetchedRewardsMultiplier = async (
     buildRewardsMultiplierCall(contract, user, position)
   );
   const res = await multicall(calls);
-  if (res) return res.map((x) => shrinkToken(x.toString(), 6));
+  if (res)
+    return res.map((x, i) => ({
+      id: positions[i].id,
+      rewardsMultiplier: shrinkToken(x.toString(), 6),
+    }));
 
   return [];
 };
@@ -113,7 +117,7 @@ const buildRewardsMultiplierCall = (
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'rewardsMultiplier',
-    methodParameters: [user, position.poolToken, position.reserveToken],
+    methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
 };
 
@@ -131,7 +135,11 @@ export const fetchedPendingRewards = async (
     buildPnedingRewardsCall(contract, user, position)
   );
   const res = await multicall(calls);
-  if (res) return res.map((x) => shrinkToken(x.toString(), 18));
+  if (res)
+    return res.map((x, i) => ({
+      id: positions[i].id,
+      rewardsAmount: shrinkToken(x.toString(), 18),
+    }));
 
   return [];
 };
@@ -145,6 +153,6 @@ const buildPnedingRewardsCall = (
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'pendingReserveRewards',
-    methodParameters: [user, position.poolToken, position.reserveToken],
+    methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
 };
