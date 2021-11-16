@@ -18,10 +18,13 @@ import { web3, writeWeb3 } from '..';
 import {
   ConverterRegistry__factory,
   Converter__factory,
+  LiquidityProtection,
+  LiquidityProtectionSettings,
   LiquidityProtectionSettings__factory,
   LiquidityProtectionSystemStore__factory,
   LiquidityProtection__factory,
 } from '../abis/types';
+import { MultiCall } from 'services/web3/multicall/multicall';
 import { bntToken, ethToken, zeroAddress } from '../config';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
 
@@ -311,4 +314,77 @@ export const fetchReserveBalances = async (
   ).toString();
 
   return { tknBalance, bntBalance };
+};
+
+export const buildReserveBalancesCall = (pool: Pool): MultiCall[] => {
+  const contract = Converter__factory.connect(
+    pool.converter_dlt_id,
+    web3.provider
+  );
+  const buildCall = (address: string): MultiCall => {
+    return {
+      contractAddress: contract.address,
+      interface: contract.interface,
+      methodName: 'getConnectorBalance',
+      methodParameters: [address],
+    };
+  };
+
+  return [
+    buildCall(pool.reserves[0].address),
+    buildCall(pool.reserves[1].address),
+  ];
+};
+
+export const buildPoolROICall = (
+  contract: LiquidityProtection,
+  poolToken: string,
+  reserveToken: string,
+  reserveAmount: string,
+  poolRateN: string,
+  poolRateD: string,
+  reserveRateN: string,
+  reserveRateD: string
+): MultiCall => ({
+  contractAddress: contract.address,
+  interface: contract.interface,
+  methodName: 'poolROI',
+  methodParameters: [
+    poolToken,
+    reserveToken,
+    reserveAmount,
+    poolRateN,
+    poolRateD,
+    reserveRateN,
+    reserveRateD,
+  ],
+});
+
+export const buildRemoveLiquidityReturnCall = (
+  contract: LiquidityProtection,
+  id: string,
+  portion: string,
+  removeTimestamp: number
+): MultiCall => {
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'removeLiquidityReturn',
+    methodParameters: [id, portion, String(removeTimestamp)],
+  };
+};
+
+export const buildProtectionDelayCall = (
+  contract: LiquidityProtectionSettings
+): MultiCall[] => {
+  const buildCall = (methodName: string): MultiCall => {
+    return {
+      contractAddress: contract.address,
+      interface: contract.interface,
+      methodName: methodName,
+      methodParameters: [],
+    };
+  };
+
+  return [buildCall('minProtectionDelay'), buildCall('maxProtectionDelay')];
 };

@@ -36,17 +36,6 @@ export const sanitizeNumberInput = (
   else return sanitized;
 };
 
-export const findOrThrow = <T>(
-  arr: readonly T[],
-  iteratee: (obj: T, index: number, arr: readonly T[]) => unknown,
-  message?: string
-) => {
-  const res = arr.find(iteratee);
-  if (!res)
-    throw new Error(message || 'Failed to find object in find or throw');
-  return res;
-};
-
 export const updateArray = <T>(
   arr: T[],
   conditioner: (element: T) => boolean,
@@ -62,20 +51,6 @@ export const mapIgnoreThrown = async <T, V>(
     input.map((val, index) => iteratee(val, index).catch(() => IGNORE_TOKEN))
   );
   return res.filter((res) => res !== IGNORE_TOKEN) as V[];
-};
-
-export const splitArrayByVal = <T>(
-  arr: T[],
-  predicate: (value: T) => boolean
-) => {
-  return arr.reduce<[T[], T[]]>(
-    (result, element) => {
-      const res: T[] = result[predicate(element) ? 0 : 1];
-      res.push(element);
-      return result;
-    },
-    [[], []]
-  );
 };
 
 export const wait = async (ms: number = 0) =>
