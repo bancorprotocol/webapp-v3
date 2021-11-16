@@ -4,18 +4,20 @@ import { useState } from 'react';
 import { formatTime } from 'utils/helperFunctions';
 
 interface CountdownTimerProps {
-  date: number;
+  date?: number;
   msgEnded?: string;
   intervalSeconds?: number;
+  withDays?: boolean;
 }
 
 export const CountdownTimer = ({
   date,
   msgEnded,
+  withDays = false,
   intervalSeconds = 1,
 }: CountdownTimerProps) => {
-  const now = dayjs().unix();
-  const [countdown, setCountdown] = useState(date - now);
+  const now = dayjs().unix() * 1000;
+  const [countdown, setCountdown] = useState(date ? date - now : -1);
   const timerEnded = countdown <= 0;
 
   useInterval(
@@ -25,5 +27,9 @@ export const CountdownTimer = ({
     timerEnded ? null : intervalSeconds * 1000
   );
 
-  return <div>{timerEnded ? msgEnded ?? 'Ended' : formatTime(countdown)}</div>;
+  return (
+    <div>
+      {timerEnded ? msgEnded ?? 'Ended' : formatTime(countdown, withDays)}
+    </div>
+  );
 };

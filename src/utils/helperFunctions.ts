@@ -42,9 +42,13 @@ export const formatDuration = (duration: plugin.Duration): string => {
   return sentence;
 };
 
-export const formatTime = (seconds: number): string => {
-  return new Date(seconds * 1000).toISOString().substr(11, 8);
-};
+export const formatTime = (
+  seconds: number,
+  withDays: boolean = false
+): string =>
+  dayjs
+    .duration(seconds * 1000)
+    .format(`${withDays ? 'M [Months] D [Days] ' : ''}HH[:]mm[:]ss`);
 
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {

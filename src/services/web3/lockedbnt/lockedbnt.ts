@@ -49,7 +49,7 @@ export const fetchLockedAvailableBalances = async (
 
     const res = bnts.map((bnt, index) => ({
       bnt: Number(shrinkToken(bnt.toString(), 18)),
-      expiry: Number(expirys[index]),
+      expiry: Number(expirys[index]) * 1000,
     }));
 
     const now = dayjs(Date.now());
