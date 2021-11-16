@@ -29,6 +29,7 @@ export const StakeRewardsBtn = ({
       history.push(`/portfolio/rewards/stake/${pool.pool_dlt_id}`);
     }
   };
+
   return (
     <>
       <SelectPoolModal
