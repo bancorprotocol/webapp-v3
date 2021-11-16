@@ -74,7 +74,6 @@ export const unstakeAmount = async (
   }
 };
 
-//Remaining time in seconds
 export const getUnstakeTimer = async (user: string) => {
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
   const govContract = Governance__factory.connect(
@@ -82,6 +81,6 @@ export const getUnstakeTimer = async (user: string) => {
     web3.provider
   );
   const locks = await govContract.voteLocks(user);
-  const timeInSeconds = Number(locks) - Date.now() / 1000;
-  return timeInSeconds < 0 ? 0 : timeInSeconds;
+  const time = Number(locks) * 1000;
+  return time < 0 ? 0 : time;
 };
