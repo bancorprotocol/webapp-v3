@@ -15,4 +15,12 @@
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
     }
+
+    .legal ul {
+        @apply list-disc list-outside ml-20;
+    }
+
+    .legal ul li {
+        @apply py-10;
+    }
 }
