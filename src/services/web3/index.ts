@@ -9,18 +9,20 @@ import { providers, Signer } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
 export const web3 = {
-  provider: new providers.JsonRpcProvider(buildAlchemyUrl(EthNetworks.Mainnet)),
+  provider: new providers.WebSocketProvider(
+    buildAlchemyUrl(EthNetworks.Mainnet)
+  ),
 };
 
 export const writeWeb3 = {
   signer: window.ethereum
     ? new Web3Provider(window.ethereum).getSigner()
-    : new providers.JsonRpcProvider(
+    : new providers.WebSocketProvider(
         buildAlchemyUrl(EthNetworks.Mainnet)
       ).getSigner(),
 };
 
-export const setProvider = (provider: providers.JsonRpcProvider) => {
+export const setProvider = (provider: providers.WebSocketProvider) => {
   web3.provider = provider;
 };
 
