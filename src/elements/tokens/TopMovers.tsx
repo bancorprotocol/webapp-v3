@@ -4,7 +4,6 @@ import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { orderBy } from 'lodash';
 
-
 interface Props {
   setSearch: Function;
 }
@@ -15,7 +14,6 @@ export const TopMovers = ({ setSearch }: Props) => {
   const handleClick = (token: Token) => {
     setSearch(token.name);
   };
-
 
   return (
     <section className="content-section pt-20 pb-10">
@@ -55,7 +53,7 @@ export const TopMovers = ({ setSearch }: Props) => {
                         </div>
                       </div>
                     </div>
-                   </button> 
+                  </button>
                 );
               })
             : [...Array(20)].map((_, index) => (
