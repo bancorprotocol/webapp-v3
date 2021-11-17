@@ -82,5 +82,5 @@ export const getUnstakeTimer = async (user: string) => {
   );
   const locks = await govContract.voteLocks(user);
   const time = Number(locks) * 1000;
-  return time < 0 ? 0 : time;
+  if (time > 0) return time;
 };

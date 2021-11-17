@@ -59,7 +59,7 @@ export const Vote = () => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [unstakeTime, setUnstakeTime] = useState<number>(0);
+  const [unstakeTime, setUnstakeTime] = useState<number | undefined>();
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -80,7 +80,7 @@ export const Vote = () => {
       setUnstakeTime(unstakeTimer);
       setStakeAmount(stakedAmount);
     } else {
-      setUnstakeTime(0);
+      setUnstakeTime(undefined);
       setStakeAmount(undefined);
     }
   }, [account, govToken]);
@@ -178,19 +178,19 @@ export const Vote = () => {
 
             <button
               className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
-                unstakeTime !== 0 || !stakeAmount || Number(stakeAmount) === 0
+                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
                   ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
                   : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
               }`}
               disabled={
-                unstakeTime !== 0 || !stakeAmount || Number(stakeAmount) === 0
+                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
               }
               onClick={() => {
                 setIsStake(false);
                 setStakeModal(true);
               }}
             >
-              {unstakeTime !== 0 && (
+              {unstakeTime && (
                 <span className="mr-[3px]">
                   <CountdownTimer date={unstakeTime} />
                 </span>
