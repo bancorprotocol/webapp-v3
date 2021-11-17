@@ -3,7 +3,7 @@ import { Notification } from 'redux/notification/notification';
 
 const selected_lists = 'selected_list_ids';
 const conversion = 'conversion';
-const autoLogin = 'autoLogin';
+const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
