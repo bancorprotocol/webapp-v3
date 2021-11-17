@@ -25,7 +25,7 @@ const RPC_URLS: { [chainId: number]: string } = {
   3: buildAlchemyUrl(EthNetworks.Ropsten),
 };
 
-const appName = 'phoenix';
+const appName = 'bancor';
 
 export const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
