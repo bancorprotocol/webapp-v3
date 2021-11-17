@@ -9,6 +9,7 @@ import { useAppSelector } from 'redux/index';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -56,7 +57,7 @@ export const SettingsMenu = () => {
             ))}
             <input
               type="text"
-              className={`w-[69px] dark:bg-blue-2 outline-none border border-primary text-center text-12 rounded-[12px] ${
+              className={`w-[69px] dark:bg-blue-2 outline-none border border-grey-3 text-center text-12 rounded-[12px] ${
                 currentSlippage === Number(customSlippage) / 100
                   ? 'bg-primary text-white placeholder-white'
                   : ''
@@ -82,7 +83,16 @@ export const SettingsMenu = () => {
 
       <hr className="border-grey-3 mt-15 mb-10" />
 
-      <div className="text-12">Version 3.0.4</div>
+      <div className="text-center">
+        <NavLink exact strict to="/terms-of-use" className="hover:underline">
+          Terms of Use
+        </NavLink>
+        <span className="mx-10">|</span>
+        <NavLink exact strict to="/privacy-policy" className="hover:underline">
+          Privacy Policy
+        </NavLink>
+        <div className="text-12 mt-10">Version 3.0.4</div>
+      </div>
     </>
   );
 
