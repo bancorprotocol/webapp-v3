@@ -332,11 +332,11 @@ export const fetchProtectedPositions = async (
     rawPositions
   );
 
-  const positionsAPR = await fetchPoolAprs(
-    pools,
-    rawPositions,
-    liquidityProtectionContract
-  );
+  // const positionsAPR = await fetchPoolAprs(
+  //   pools,
+  //   rawPositions,
+  //   liquidityProtectionContract
+  // );
 
   const rewardsMultiplier = await fetchedRewardsMultiplier(
     currentUser,
@@ -349,7 +349,7 @@ export const fetchProtectedPositions = async (
     merge(
       keyBy(rawPositions, 'id'),
       keyBy(positionsRoi, 'id'),
-      keyBy(positionsAPR, 'id'),
+      //keyBy(positionsAPR, 'id'),
       keyBy(rewardsMultiplier, 'id'),
       keyBy(rewardsAmount, 'id')
     )
@@ -391,8 +391,8 @@ export const fetchProtectedPositions = async (
         fees: position.roiDec,
       },
       aprs: {
-        day: position.aprDay,
-        week: position.aprWeek,
+        day: '0', //position.aprDay,
+        week: '0', //position.aprWeek,
       },
       rewardsMultiplier: position.rewardsMultiplier,
       rewardsAmount: position.rewardsAmount,

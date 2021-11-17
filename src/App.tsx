@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
-import { Loading } from 'pages/Loading';
 import { NotFound } from 'pages/NotFound';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { Tokens } from 'pages/Tokens';
@@ -38,7 +37,7 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
-import { loadCommonData } from 'services/observables/triggers';
+import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
@@ -49,18 +48,13 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
-  const [loading, setLoading] = useState(true);
+  useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const triedAutoLogin = useAutoConnect();
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
-
-  useEffect(() => {
-    if (chainId || triedAutoLogin || !getAutoLoginLS()) setLoading(false);
-  }, [setLoading, chainId, triedAutoLogin]);
 
   useEffect(() => {
     const usd = getUsdToggleLS();
@@ -72,7 +66,7 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    loadCommonData(dispatch);
+    subscribeToObservables(dispatch);
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
@@ -117,9 +111,7 @@ export const App = () => {
         setIsSidebarOpen={setIsSidebarOpen}
       />
 
-      {loading ? (
-        <Loading />
-      ) : unsupportedNetwork ? (
+      {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
         <div

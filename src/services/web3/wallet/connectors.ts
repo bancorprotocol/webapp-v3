@@ -9,7 +9,7 @@ import { EthNetworks } from 'services/web3/types';
 
 const POLLING_INTERVAL = 15000;
 
-export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = false) => {
+export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = true) => {
   const net = EthNetworks.Mainnet === network ? 'mainnet' : 'ropsten';
   const id =
     network === EthNetworks.Mainnet
