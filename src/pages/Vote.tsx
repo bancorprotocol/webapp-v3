@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
+import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useInterval } from 'hooks/useInterval';
 import { useCallback, useState } from 'react';
@@ -87,10 +88,6 @@ export const Vote = () => {
   useEffect(() => {
     refresh();
   }, [refresh]);
-
-  useInterval(() => {
-    if (unstakeTime !== 0) setUnstakeTime(unstakeTime - 1);
-  }, 1000);
 
   return (
     <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
@@ -193,7 +190,12 @@ export const Vote = () => {
                 setStakeModal(true);
               }}
             >
-              {unstakeTime !== 0 && formatTime(unstakeTime)} Unstake Tokens
+              {unstakeTime !== 0 && (
+                <span className="mr-[3px]">
+                  <CountdownTimer date={unstakeTime} />
+                </span>
+              )}
+              Unstake Tokens
             </button>
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 ml-2" />

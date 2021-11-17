@@ -49,10 +49,10 @@ export const fetchLockedAvailableBalances = async (
 
     const res = bnts.map((bnt, index) => ({
       bnt: Number(shrinkToken(bnt.toString(), 18)),
-      expiry: Number(expirys[index]) * 1000,
+      expiry: Number(expirys[index]),
     }));
 
-    const now = dayjs(Date.now());
+    const now = dayjs().unix() * 1000;
     const [available, locked] = partition(res, (x) =>
       dayjs.unix(x.expiry).isBefore(now)
     );
@@ -62,7 +62,10 @@ export const fetchLockedAvailableBalances = async (
         ? 0
         : available.map((x) => x.bnt).reduce((item, prev) => item + prev);
 
-    return { locked: locked, available: totalAvailable };
+    return {
+      locked: locked.map((x) => ({ ...x, expiry: x.expiry * 1000 })),
+      available: totalAvailable,
+    };
   } catch (error) {
     console.error(error);
   }

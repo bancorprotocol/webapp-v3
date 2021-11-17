@@ -6,15 +6,15 @@ import { formatTime } from 'utils/helperFunctions';
 interface CountdownTimerProps {
   date?: number;
   msgEnded?: string;
-  intervalSeconds?: number;
+  interval?: number;
   withDays?: boolean;
 }
 
 export const CountdownTimer = ({
   date,
-  msgEnded,
+  msgEnded = '',
   withDays = false,
-  intervalSeconds = 1,
+  interval = 1000,
 }: CountdownTimerProps) => {
   const now = dayjs().unix() * 1000;
   const [countdown, setCountdown] = useState(date ? date - now : -1);
@@ -22,14 +22,10 @@ export const CountdownTimer = ({
 
   useInterval(
     () => {
-      setCountdown(countdown - 1);
+      setCountdown(countdown - interval);
     },
-    timerEnded ? null : intervalSeconds * 1000
+    timerEnded ? null : interval
   );
 
-  return (
-    <div>
-      {timerEnded ? msgEnded ?? 'Ended' : formatTime(countdown, withDays)}
-    </div>
-  );
+  return <div>{timerEnded ? msgEnded : formatTime(countdown, withDays)}</div>;
 };
