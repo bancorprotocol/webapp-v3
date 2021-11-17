@@ -23,15 +23,6 @@ export const LayoutHeader = ({
 
   return (
     <>
-      <div
-        className={`hidden md:block absolute w-full top-[60px] transition-all duration-500 ${
-          isMinimized ? 'pl-[96px]' : 'pl-[230px]'
-        } pl-[230px] pr-30`}
-      >
-        <div className="flex items-center justify-center mx-auto w-[140px] h-[39px] bg-white dark:bg-blue-4 rounded-b-20 text-grey-3 text-12">
-          Beta Interface
-        </div>
-      </div>
       <header className="layout-header">
         <div
           className={`transition-all duration-500 ${
@@ -63,9 +54,6 @@ export const LayoutHeader = ({
           </div>
         </div>
       </header>
-      <div className="md:hidden fixed flex items-center justify-center h-[39px] bg-grey-1 dark:bg-blue-2 text-grey-3 text-12 w-full top-[75px] z-30">
-        Beta Interface
-      </div>
       <LayoutHeaderMobile>
         <button onClick={() => setIsSidebarOpen(true)}>
           <IconHamburger className="w-[27px]" />

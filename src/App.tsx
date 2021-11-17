@@ -43,6 +43,8 @@ import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
+import { TermsOfUse } from './pages/TermsOfUse';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -121,11 +123,11 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <div
-          className={`md:mr-[30px] pt-[110px] transition-all duration-500 ${
+          className={`md:mr-[30px] pt-[75px] transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1400px] mx-auto mb-30`}>
+          <main className={`max-w-[1400px] mx-auto mb-30 pt-20`}>
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route
@@ -204,6 +206,13 @@ export const App = () => {
               <Route exact strict path="/eth/fiat">
                 <Redirect to="/fiat" />
               </Route>
+              <Route exact strict path="/terms-of-use" component={TermsOfUse} />
+              <Route
+                exact
+                strict
+                path="/privacy-policy"
+                component={PrivacyPolicy}
+              />
               <Route component={NotFound} />
             </Switch>
           </main>
