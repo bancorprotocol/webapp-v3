@@ -209,7 +209,7 @@ export const Vote = () => {
             </div>
 
             <a
-              href="https://app.bancor.network/eth/vote-legacy/"
+              href="https://etherscan.io/address/0x892f481bd6e9d7d26ae365211d9b45175d5d00e4"
               target="_blank"
               className="flex items-center text-primary dark:text-primary-light font-medium"
               rel="noreferrer"
