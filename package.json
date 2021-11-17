@@ -1,6 +1,6 @@
 {
   "name": "webapp-v2",
-  "version": "3.0.4",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@0x/contract-addresses": "^6.3.0",

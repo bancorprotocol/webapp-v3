@@ -91,7 +91,6 @@ export const SettingsMenu = () => {
         <NavLink exact strict to="/privacy-policy" className="hover:underline">
           Privacy Policy
         </NavLink>
-        <div className="text-12 mt-10">Version 3.0.4</div>
       </div>
     </>
   );
