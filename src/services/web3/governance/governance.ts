@@ -6,6 +6,7 @@ import { shrinkToken, expandToken } from 'utils/formulas';
 import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';
+import dayjs from 'utils/dayjs';
 
 export const getStakedAmount = async (
   user: string,
@@ -75,6 +76,7 @@ export const unstakeAmount = async (
 };
 
 export const getUnstakeTimer = async (user: string) => {
+  const now = dayjs().unix() * 1000;
   const networkVars = await networkVars$.pipe(take(1)).toPromise();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
@@ -82,5 +84,7 @@ export const getUnstakeTimer = async (user: string) => {
   );
   const locks = await govContract.voteLocks(user);
   const time = Number(locks) * 1000;
-  return time < 0 ? 0 : time;
+  if (time - now > 0) return time;
+
+  return undefined;
 };
