@@ -99,21 +99,21 @@ export const useProtectedPositions = () => {
         tooltip:
           'The ROI of your fully protected value vs. your initial stake.',
       },
-      // {
-      //   id: 'apr',
-      //   Header: 'APR',
-      //   accessor: 'aprs',
-      //   Cell: (cellData) => {
-      //     return (
-      //       <div>
-      //         <div>Day {(Number(cellData.value.day) * 100).toFixed(2)} %</div>
-      //         <div>Week {(Number(cellData.value.week) * 100).toFixed(2)} %</div>
-      //       </div>
-      //     );
-      //   },
-      //   minWidth: 130,
-      //   sortDescFirst: true,
-      // },
+      {
+        id: 'apr',
+        Header: 'APR',
+        accessor: 'aprs',
+        Cell: (cellData) => {
+          return (
+            <div>
+              <div>Day {(Number(cellData.value.day) * 100).toFixed(2)} %</div>
+              <div>Week {(Number(cellData.value.week) * 100).toFixed(2)} %</div>
+            </div>
+          );
+        },
+        minWidth: 130,
+        sortDescFirst: true,
+      },
       {
         id: 'expander',
         accessor: 'subRows',
