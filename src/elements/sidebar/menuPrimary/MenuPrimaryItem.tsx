@@ -50,7 +50,7 @@ export const MenuPrimaryItem = ({
       </NavLink>
 
       <div
-        className={`ml-[35px] my-4 transition-all duration-500 ease-in-out overflow-hidden`}
+        className={`ml-[35px] transition-all duration-500 ease-in-out overflow-hidden`}
         style={{
           height: `${isActive && !isMinimized ? subMenu.length * 28 : 0}px`,
         }}
