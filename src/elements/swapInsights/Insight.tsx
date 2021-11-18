@@ -7,6 +7,7 @@ import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
 import { sendInsight } from 'services/api/googleTagManager';
+import { Tooltip } from 'components/tooltip/Tooltip';
 
 export interface InsightToken extends IntoTheBlock {
   image: string;
@@ -19,6 +20,8 @@ interface InsightProps {
   fromTokenIntoBlock?: IntoTheBlock;
   toTokenIntoBlock?: IntoTheBlock;
 }
+
+const insightsButton = () => {};
 
 export const Insight = ({
   fromToken,
@@ -45,16 +48,27 @@ export const Insight = ({
         }`}
       >
         <div className="flex items-center transition-none">
-          <button
-            className="flex justify-center items-center"
-            onClick={() => {
-              sendInsight(!isExpanded);
-              setShow(!isExpanded);
-              setIsExpanded(!isExpanded);
-            }}
-          >
-            <IconLightbulb className="w-[17px] h-[24px]" />
-          </button>
+          {!isExpanded ? (
+            <Tooltip
+              onClick={() => {
+                sendInsight(!isExpanded);
+                setShow(!isExpanded);
+                setIsExpanded(!isExpanded);
+              }}
+              button={<IconLightbulb className="w-[17px] h-[24px]" />}
+              content={'Insight'}
+            />
+          ) : (
+            <button
+              onClick={() => {
+                sendInsight(!isExpanded);
+                setShow(!isExpanded);
+                setIsExpanded(!isExpanded);
+              }}
+            >
+              <IconLightbulb className="w-[17px] h-[24px]" />
+            </button>
+          )}
           <div
             className={`text-20 font-semibold ${
               isExpanded ? 'ml-10' : 'ml-30'
