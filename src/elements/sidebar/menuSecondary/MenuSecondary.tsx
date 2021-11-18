@@ -1,8 +1,5 @@
-import { ReactComponent as IconApps } from 'assets/icons/apps.svg';
 import { ReactComponent as IconCommunity } from 'assets/icons/community.svg';
 import { ReactComponent as IconDeveloper } from 'assets/icons/developers.svg';
-import { ReactComponent as IconWallet } from 'assets/icons/bancorwallet.svg';
-import { ReactComponent as IconX } from 'assets/icons/bancorx.svg';
 import { ReactComponent as IconAnalytics } from 'assets/icons/bancoranalytics.svg';
 import { ReactComponent as IconTwitter } from 'assets/icons/twitter.svg';
 import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
@@ -10,7 +7,6 @@ import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';
 import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { ReactComponent as IconDocument } from 'assets/icons/document.svg';
 import { ReactComponent as IconGithub } from 'assets/icons/github.svg';
-import { ReactComponent as IconBntee } from 'assets/icons/bnteeshop.svg';
 
 import { Popover } from '@headlessui/react';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
@@ -27,36 +23,16 @@ export interface SecondarySubMenuItem {
 
 export interface SecondaryMenuItem {
   label: string;
+  to?: string;
   icon: JSX.Element;
-  subMenu: SecondarySubMenuItem[];
+  subMenu?: SecondarySubMenuItem[];
 }
 
 const menu: SecondaryMenuItem[] = [
   {
-    label: 'Apps',
-    icon: <IconApps />,
-    subMenu: [
-      {
-        label: 'Bancor X',
-        to: 'https://x.bancor.network',
-        icon: <IconX />,
-      },
-      // {
-      //   label: 'Bancor Wallet',
-      //   to: 'https://wallet.bancor.network',
-      //   icon: <IconWallet />,
-      // },
-      {
-        label: 'BNTEE Shop',
-        to: 'https://www.bntee.shop/',
-        icon: <IconBntee />,
-      },
-      {
-        label: 'Bancor Analytics',
-        to: 'https://duneanalytics.com/Bancor/bancor_1',
-        icon: <IconAnalytics />,
-      },
-    ],
+    label: 'Analytics',
+    to: 'https://duneanalytics.com/Bancor/bancor_1',
+    icon: <IconAnalytics />,
   },
   {
     label: 'Community',
@@ -146,7 +122,7 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
               >
                 <MenuSecondaryItem {...item} />
               </Popover.Button>
-              {indexDesktop === index && (
+              {indexDesktop === index && item.subMenu && (
                 <Popover.Panel
                   static
                   onMouseEnter={() => openPopover(index)}
@@ -156,7 +132,6 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
                   } ${indexDesktop === index ? 'opacity-100' : 'opacity-0'}`}
                 >
                   <div className="absolute h-14 w-14 transform bottom-24 left-[-7px] rotate-45 bg-blue-4" />
-
                   <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
                     <div className="dropdown-header flex justify-between">
                       <h3 className="text-16 font-semibold">{item.label}</h3>
@@ -183,7 +158,7 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
           return (
             <button
               key={index}
-              onClick={() => openMobileMenu(index)}
+              onClick={() => !item.to && openMobileMenu(index)}
               className="w-full"
             >
               <MenuSecondaryItem {...item} />
@@ -199,7 +174,7 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
         showHeader
       >
         <div className="space-y-20">
-          {menu[indexMobile].subMenu.map((subItem, index) => {
+          {menu[indexMobile].subMenu?.map((subItem, index) => {
             return <MenuSecondaryItemSub key={index} {...subItem} />;
           })}
         </div>
