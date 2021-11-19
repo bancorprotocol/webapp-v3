@@ -44,6 +44,10 @@ interface SwapMarketProps {
   toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
+  fromAmount: string;
+  setFromAmount: Function;
+  fromAmountUsd: string;
+  setFromAmountUsd: Function;
 }
 
 export const SwapMarket = ({
@@ -52,13 +56,16 @@ export const SwapMarket = ({
   toToken,
   setToToken,
   switchTokens,
+  fromAmount,
+  setFromAmount,
+  fromAmountUsd,
+  setFromAmountUsd,
 }: SwapMarketProps) => {
   const { chainId, account } = useWeb3React();
-  const [fromAmount, setFromAmount] = useState('');
+  
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');
-  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [priceImpact, setPriceImpact] = useState('');
   const [fromError, setFromError] = useState('');
@@ -96,10 +103,13 @@ export const SwapMarket = ({
       );
     }
   }, 15000);
-
   useEffect(() => {
     setIsLoadingRate(true);
-  }, [fromAmount]);
+    //We have to do this so it gets into the useAsync effect condition . if not the you recieve field is not being calculated properly
+    if(fromAmount !==''){
+      setFromDebounce(fromAmount);
+    }
+  }, [fromAmount,setFromDebounce]);
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
