@@ -12,7 +12,7 @@ export const TopMovers = ({ setSearch }: Props) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const topTokens = orderBy(tokens, 'price_change_24', 'desc').slice(0, 20);
   const handleClick = (token: Token) => {
-    setSearch(token.name);
+    setSearch(token.symbol);
   };
 
   return (
