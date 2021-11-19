@@ -105,11 +105,7 @@ export const SwapMarket = ({
   }, 15000);
   useEffect(() => {
     setIsLoadingRate(true);
-    //We have to do this so it gets into the useAsync effect condition . if not the you recieve field is not being calculated properly
-    if (fromAmount !== '') {
-      setFromDebounce(fromAmount);
-    }
-  }, [fromAmount, setFromDebounce]);
+  }, [fromAmount]);
 
   useEffect(() => {
     if (fromToken && fromToken.address === wethToken) {
