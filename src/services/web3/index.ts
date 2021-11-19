@@ -1,17 +1,21 @@
 import { Web3Provider } from '@ethersproject/providers';
-import {
-  Contract,
-  ContractInterface,
-  ContractTransaction,
-} from '@ethersproject/contracts';
+import { Contract, ContractInterface } from '@ethersproject/contracts';
 import { EthNetworks } from 'services/web3//types';
 import { providers, Signer } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 
+const getProvider = () => {
+  if (process.env.REACT_APP_ALCHEMY_MAINNET) {
+    return new providers.WebSocketProvider(
+      buildAlchemyUrl(EthNetworks.Mainnet)
+    );
+  } else {
+    return providers.getDefaultProvider(EthNetworks.Mainnet);
+  }
+};
+
 export const web3 = {
-  provider: new providers.WebSocketProvider(
-    buildAlchemyUrl(EthNetworks.Mainnet)
-  ),
+  provider: getProvider(),
 };
 
 export const writeWeb3 = {
