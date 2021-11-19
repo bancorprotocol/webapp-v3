@@ -6,6 +6,7 @@ import { setSigner } from 'services/web3';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
+import { isMobile } from 'react-device-detect';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -66,9 +67,20 @@ export const useWalletConnect = (): UseWalletConnect => {
     setAutoLoginLS(false);
   };
 
+  const isMetaMaskMobile =
+    isMobile && window.ethereum && window.ethereum.isMetaMask;
+
   useAsyncEffect(
     async (isMounted) => {
       if (selectedWallet) return;
+
+      if (isMetaMaskMobile) {
+        const wallet = SUPPORTED_WALLETS.find(
+          (wallet) => wallet.name === 'MetaMask'
+        )!;
+        await handleConnect(wallet);
+        return;
+      }
 
       if (connector) {
         setSigner(new Web3Provider(await connector.getProvider()).getSigner());
