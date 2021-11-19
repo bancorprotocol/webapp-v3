@@ -39,6 +39,7 @@ export interface WalletInfo {
   connector: AbstractConnector;
   name: string;
   icon: string;
+  mobile?: boolean;
 }
 
 export const SUPPORTED_WALLETS: WalletInfo[] = [
@@ -46,16 +47,19 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: injected,
     name: 'MetaMask',
     icon: metamaskLogo,
+    mobile: true,
   },
   {
     connector: walletconnect,
     name: 'WalletConnect',
     icon: walletConnectLogo,
+    mobile: true,
   },
   {
     connector: walletlink,
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
+    mobile: true,
   },
   {
     connector: injected,
@@ -86,6 +90,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: fortmatic,
     name: 'Fortmatic',
     icon: fortmaticLogo,
+    mobile: true,
   },
   {
     connector: portis,
