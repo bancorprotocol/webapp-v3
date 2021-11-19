@@ -42,7 +42,6 @@ export const SwapWidget = ({
   const [fromAmount, setFromAmount] = useState('');
   const [fromAmountUsd, setFromAmountUsd] = useState('');
 
-
   const [toToken, setToToken] = useState<Token | undefined>();
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
@@ -113,12 +112,10 @@ export const SwapWidget = ({
                 setToToken={(to: Token) =>
                   replaceTo(fromToken, true, history, to)
                 }
-
                 fromAmount={fromAmount}
                 setFromAmount={setFromAmount}
-                fromAmountUsd={fromAmountUsd}               
+                fromAmountUsd={fromAmountUsd}
                 setFromAmountUsd={setFromAmountUsd}
-
                 switchTokens={() =>
                   switchTokens(fromToken, true, history, toToken)
                 }
@@ -133,12 +130,10 @@ export const SwapWidget = ({
                 setToToken={(to: Token) =>
                   replaceTo(fromToken, false, history, to)
                 }
-
                 fromAmount={fromAmount}
                 setFromAmount={setFromAmount}
-                fromAmountUsd={fromAmountUsd}               
+                fromAmountUsd={fromAmountUsd}
                 setFromAmountUsd={setFromAmountUsd}
-
                 switchTokens={() =>
                   switchTokens(fromToken, false, history, toToken)
                 }
