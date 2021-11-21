@@ -35,6 +35,7 @@ import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 import { ErrorCode } from '../types';
 import { buildTokenTotalSupplyCall } from 'services/observables/balances';
 import { Result } from '@ethersproject/abi';
+import { changeGas } from '../config';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -424,9 +425,18 @@ export const withdrawProtection = async (
     );
 
     const percentage = new BigNumber(amount).div(tknAmount);
+
+    const estimate =
+      await liquidityProtectionContract.estimateGas.removeLiquidity(
+        positionId,
+        decToPpm(percentage)
+      );
+    const gasLimit = changeGas(estimate.toString());
+
     const tx = await liquidityProtectionContract.removeLiquidity(
       positionId,
-      decToPpm(percentage)
+      decToPpm(percentage),
+      { gasLimit }
     );
     onHash(tx.hash);
 
