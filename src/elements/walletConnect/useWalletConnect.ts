@@ -10,6 +10,7 @@ import { isMobile } from 'react-device-detect';
 import { useAppSelector } from '../../redux';
 import { openWalletModal } from '../../redux/user/user';
 import { useDispatch } from 'react-redux';
+import { openNewTab } from 'utils/pureFunctions';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -45,29 +46,35 @@ export const useWalletConnect = (): UseWalletConnect => {
   };
 
   const handleConnect = async (wallet: WalletInfo) => {
+    const { connector, url } = wallet;
+    if (url) {
+      setIsOpen(false);
+      return openNewTab(url);
+    }
+
     sendWalletEvent(WalletEvents.click, {
       wallet_name: wallet.name,
     });
     setIsPending(true);
     setSelectedWallet(wallet);
-    const { connector } = wallet;
 
-    try {
-      await activate(connector, undefined, true);
-      setIsOpen(false);
-      setAutoLoginLS(true);
-      setSigner(new Web3Provider(await connector.getProvider()).getSigner());
-      const account = await connector.getAccount();
-      sendWalletEvent(
-        WalletEvents.connect,
-        undefined,
-        account || '',
-        wallet.name
-      );
-    } catch (e) {
-      console.error('failed to connect wallet. ', e.message);
-      setIsError(true);
-    }
+    if (connector)
+      try {
+        await activate(connector, undefined, true);
+        setIsOpen(false);
+        setAutoLoginLS(true);
+        setSigner(new Web3Provider(await connector.getProvider()).getSigner());
+        const account = await connector.getAccount();
+        sendWalletEvent(
+          WalletEvents.connect,
+          undefined,
+          account || '',
+          wallet.name
+        );
+      } catch (e) {
+        console.error('failed to connect wallet. ', e.message);
+        setIsError(true);
+      }
   };
 
   const handleDisconnect = () => {

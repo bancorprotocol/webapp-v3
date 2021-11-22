@@ -18,8 +18,6 @@ import coinbaseWalletLogo from 'assets/logos/coinbaseWallet.svg';
 import ledgerLogo from 'assets/logos/ledger.svg';
 import trezorLogo from 'assets/logos/trezor.svg';
 import frameLogo from 'assets/logos/frame.png';
-import lattisLogo from 'assets/logos/lattis.png';
-import torusLogo from 'assets/logos/torus.svg';
 import gnosisSafeLogo from 'assets/logos/gnosisSafe.svg';
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -36,10 +34,11 @@ export const getLibrary = (provider: any): Web3Provider => {
 };
 
 export interface WalletInfo {
-  connector: AbstractConnector;
+  connector?: AbstractConnector;
   name: string;
   icon: string;
   mobile?: boolean;
+  url?: string;
 }
 
 export const SUPPORTED_WALLETS: WalletInfo[] = [
@@ -62,24 +61,19 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     mobile: true,
   },
   {
-    connector: injected,
     name: 'Ledger',
     icon: ledgerLogo,
+    url: 'https://www.ledger.com/academy/security/the-safest-way-to-use-metamask',
   },
   {
-    connector: injected,
     name: 'Trezor',
     icon: trezorLogo,
+    url: 'https://wiki.trezor.io/Apps:MetaMask',
   },
   {
     connector: gnosisSafe,
     name: 'GnosisSafe',
     icon: gnosisSafeLogo,
-  },
-  {
-    connector: injected,
-    name: 'Lattice',
-    icon: lattisLogo,
   },
   {
     connector: frame,
@@ -96,10 +90,5 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: portis,
     name: 'Portis',
     icon: portisLogo,
-  },
-  {
-    connector: injected,
-    name: 'Torus',
-    icon: torusLogo,
   },
 ];
