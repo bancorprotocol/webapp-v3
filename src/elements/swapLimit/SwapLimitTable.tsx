@@ -1,5 +1,4 @@
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { useWeb3React } from '@web3-react/core';
 import { useInterval } from 'hooks/useInterval';
@@ -13,11 +12,13 @@ import { useAppSelector } from 'redux/index';
 import { wethToken } from 'services/web3/config';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
+import { SearchInput } from 'components/searchInput/SearchInput';
 
 export const SwapLimitTable = () => {
   const { account } = useWeb3React();
   const [orders, setOrders] = useState<LimitOrder[]>([]);
   const [weth, setWeth] = useState<Token>();
+  const [search, setSearch] = useState('');
   const dispatch = useDispatch();
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
 
@@ -49,14 +50,11 @@ export const SwapLimitTable = () => {
         <div
           className={'flex flex-col md:flex-row md:items-center md:space-x-10'}
         >
-          <div className="relative">
-            <IconSearch className="absolute w-12 ml-10 text-grey-3" />
-            <input
-              type="text"
-              placeholder="Search"
-              className="block w-full border border-grey-3 rounded-10 pl-30 h-28 focus:outline-none focus:border-primary"
-            />
-          </div>
+          <SearchInput
+            value={search}
+            setValue={setSearch}
+            className="max-w-[160px] rounded-10 h-[35px]"
+          />
           <div className={'flex'}>
             <button
               className={'btn-outline-secondary btn-sm rounded-10 mr-10'}
