@@ -1,7 +1,6 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { useMemo } from 'react';
 import { SortingRule, Row } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
@@ -11,10 +10,11 @@ import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTable
 import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
 import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
+import { SearchInput } from 'components/searchInput/SearchInput';
 
 interface Props {
   search: string;
-  setSearch: Function;
+  setSearch: (value: string) => void;
 }
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
@@ -111,17 +111,16 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <h2>Pools</h2>
         <div className="flex align-center">
-          <div className="relative mr-16">
-            <IconSearch className="absolute w-16 ml-14 text-grey-3" />
-            <input
-              type="text"
+          <div className="mr-16">
+            <SearchInput
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search"
-              className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
+              setValue={setSearch}
+              className="max-w-[160px] rounded-10 h-[35px]"
             />
           </div>
-          <ModalCreatePool />
+          <div className="hidden md:block">
+            <ModalCreatePool />
+          </div>
         </div>
       </div>
 

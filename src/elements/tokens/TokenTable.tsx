@@ -4,16 +4,21 @@ import { useAppSelector } from 'redux/index';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { NavLink } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
+import { SearchInput } from 'components/searchInput/SearchInput';
 
-export const TokenTable = () => {
+interface Props {
+  searchInput: string;
+  setSearchInput: (value: string) => void;
+}
+
+export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
-  const [searchInput, setSearchInput] = useState('');
+
   const data = useMemo<Token[]>(() => {
     return tokens.filter(
       (t) =>
@@ -147,16 +152,11 @@ export const TokenTable = () => {
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <h2>Tokens</h2>
-        <div className="relative">
-          <IconSearch className="absolute w-16 ml-14 text-grey-3" />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search"
-            className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
-          />
-        </div>
+        <SearchInput
+          value={searchInput}
+          setValue={setSearchInput}
+          className="max-w-[160px] rounded-10 h-[35px]"
+        />
       </div>
 
       <DataTable<Token>
