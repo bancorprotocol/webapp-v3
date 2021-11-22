@@ -4,7 +4,6 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { Token } from 'services/observables/tokens';
-import { prettifyNumber } from 'utils/helperFunctions';
 
 const showNotification = (notification: BaseNotification, dispatch: any) =>
   dispatch(addNotification(notification));

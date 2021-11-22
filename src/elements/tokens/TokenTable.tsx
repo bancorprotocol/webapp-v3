@@ -4,7 +4,7 @@ import { useAppSelector } from 'redux/index';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';

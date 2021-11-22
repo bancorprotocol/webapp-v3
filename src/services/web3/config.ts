@@ -5,7 +5,6 @@ import { calculatePercentageChange } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { EthNetworks } from './types';
 import { BigNumber } from 'bignumber.js';
-import { BigNumberish } from 'ethers';
 
 export interface EthNetworkVariables {
   network: EthNetworks;
