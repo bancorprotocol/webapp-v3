@@ -44,7 +44,7 @@ export const ModalVbnt = ({
   const { account, chainId } = useWeb3React();
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
-  const [_, setSelPercentage] = useState<number>(-1);
+  const [, setSelPercentage] = useState<number>(-1);
   const dispatch = useDispatch();
 
   const stakeDisabled = !account || !chainId || !amount || Number(amount) === 0;
