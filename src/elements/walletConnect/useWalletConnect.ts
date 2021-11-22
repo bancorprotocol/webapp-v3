@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
@@ -34,54 +34,62 @@ export const useWalletConnect = (): UseWalletConnect => {
   const isOpen = useAppSelector<boolean>((state) => state.user.walletModal);
   const dispatch = useDispatch();
 
-  const setIsOpen = (value: boolean) => {
-    dispatch(openWalletModal(value));
-  };
+  const setIsOpen = useCallback(
+    (value: boolean) => {
+      dispatch(openWalletModal(value));
+    },
+    [dispatch]
+  );
 
-  const handleOpenModal = () => {
+  const handleOpenModal = useCallback(() => {
     sendWalletEvent(WalletEvents.popup);
     setIsError(false);
     setIsPending(false);
     setIsOpen(true);
-  };
+  }, [setIsOpen]);
 
-  const handleConnect = async (wallet: WalletInfo) => {
-    const { connector, url } = wallet;
-    if (url) {
-      setIsOpen(false);
-      return openNewTab(url);
-    }
-
-    sendWalletEvent(WalletEvents.click, {
-      wallet_name: wallet.name,
-    });
-    setIsPending(true);
-    setSelectedWallet(wallet);
-
-    if (connector)
-      try {
-        await activate(connector, undefined, true);
+  const handleConnect = useCallback(
+    async (wallet: WalletInfo) => {
+      const { connector, url } = wallet;
+      if (url) {
         setIsOpen(false);
-        setAutoLoginLS(true);
-        setSigner(new Web3Provider(await connector.getProvider()).getSigner());
-        const account = await connector.getAccount();
-        sendWalletEvent(
-          WalletEvents.connect,
-          undefined,
-          account || '',
-          wallet.name
-        );
-      } catch (e) {
-        console.error('failed to connect wallet. ', e.message);
-        setIsError(true);
+        return openNewTab(url);
       }
-  };
 
-  const handleDisconnect = () => {
+      sendWalletEvent(WalletEvents.click, {
+        wallet_name: wallet.name,
+      });
+      setIsPending(true);
+      setSelectedWallet(wallet);
+
+      if (connector)
+        try {
+          await activate(connector, undefined, true);
+          setIsOpen(false);
+          setAutoLoginLS(true);
+          setSigner(
+            new Web3Provider(await connector.getProvider()).getSigner()
+          );
+          const account = await connector.getAccount();
+          sendWalletEvent(
+            WalletEvents.connect,
+            undefined,
+            account || '',
+            wallet.name
+          );
+        } catch (e) {
+          console.error('failed to connect wallet. ', e.message);
+          setIsError(true);
+        }
+    },
+    [activate, setIsOpen]
+  );
+
+  const handleDisconnect = useCallback(() => {
     setSelectedWallet(undefined);
     deactivate();
     setAutoLoginLS(false);
-  };
+  }, [deactivate]);
 
   const isMetaMaskMobile =
     isMobile && window.ethereum && window.ethereum.isMetaMask;
