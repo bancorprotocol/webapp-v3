@@ -1,7 +1,6 @@
 import { SwapWidget } from 'elements/swapWidget/SwapWidget';
 import { useState } from 'react';
 import { SwapLimitTable } from 'elements/swapLimit/SwapLimitTable';
-import { RouteComponentProps } from 'react-router-dom';
 import { useQuery } from 'hooks/useQuery';
 
 export const Swap = () => {

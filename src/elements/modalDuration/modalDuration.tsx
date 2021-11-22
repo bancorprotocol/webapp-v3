@@ -28,7 +28,7 @@ export const ModalDuration = ({
 
   const daysItems: DurationItem[] = Array.from(
     { length: 31 },
-    (item, index: number) => ({
+    (index: number) => ({
       id: index.toString(),
       title: index,
     })
@@ -36,7 +36,7 @@ export const ModalDuration = ({
 
   const hoursItems: DurationItem[] = Array.from(
     { length: 24 },
-    (item, index: number) => ({
+    (index: number) => ({
       id: index.toString(),
       title: index,
     })
@@ -44,7 +44,7 @@ export const ModalDuration = ({
 
   const minutesItems: DurationItem[] = Array.from(
     { length: 60 },
-    (item, index: number) => ({
+    (index: number) => ({
       id: index.toString(),
       title: index,
     })

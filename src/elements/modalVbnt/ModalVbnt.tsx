@@ -2,15 +2,13 @@ import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token } from 'services/observables/tokens';
-import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { classNameGenerator, wait } from 'utils/pureFunctions';
+import { wait } from 'utils/pureFunctions';
 import {
   stakeAmount,
   unstakeAmount,
 } from 'services/web3/governance/governance';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
-import BigNumber from 'bignumber.js';
 import { useEffect } from 'react';
 import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';
@@ -45,9 +43,8 @@ export const ModalVbnt = ({
 }: ModalVbntProps) => {
   const { account, chainId } = useWeb3React();
   const [amount, setAmount] = useState('');
-  const [amountUSD, setAmountUSD] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
-  const [selPercentage, setSelPercentage] = useState<number>(-1);
+  const [, setSelPercentage] = useState<number>(-1);
   const dispatch = useDispatch();
 
   const stakeDisabled = !account || !chainId || !amount || Number(amount) === 0;
@@ -75,7 +72,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => stakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(token, account, chainId),
+        () => refreshBalances(token, account),
         () => rejectNotification(dispatch),
         () => stakeFailedNotification(dispatch, amount)
       );
@@ -84,7 +81,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => unstakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(token, account, chainId),
+        () => refreshBalances(token, account),
         () => rejectNotification(dispatch),
         () => unstakeFailedNotification(dispatch, amount)
       );
@@ -97,13 +94,9 @@ export const ModalVbnt = ({
       .governanceContractAddress
   );
 
-  const refreshBalances = async (
-    token: Token,
-    account: string,
-    chainId: EthNetworks
-  ) => {
+  const refreshBalances = async (token: Token, account: string) => {
     await wait(8000);
-    const balances = await fetchTokenBalances([token], account, chainId);
+    const balances = await fetchTokenBalances([token], account);
     dispatch(updateTokens(balances));
     if (onCompleted) onCompleted();
   };

@@ -12,29 +12,25 @@ import {
   settingsContractAddress$,
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
-import { MultiCall, multicall } from 'services/web3/multicall/multicall';
-import { keyBy, merge, uniq, values } from 'lodash';
+import { multicall } from 'services/web3/multicall/multicall';
+import { keyBy, merge, values } from 'lodash';
 import dayjs from 'dayjs';
 import {
-  calculateAPR,
   calculateProgressLevel,
   calcUsdPrice,
   decToPpm,
-  rewindBlocksByDays,
 } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Pool, Reserve } from 'services/observables/tokens';
 import {
-  buildPoolROICall,
   buildProtectionDelayCall,
   buildRemoveLiquidityReturnCall,
-  buildReserveBalancesCall,
 } from 'services/web3/liquidity/liquidity';
 import { shrinkToken } from 'utils/formulas';
 import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 import { ErrorCode } from '../types';
-import { buildTokenTotalSupplyCall } from 'services/observables/balances';
 import { Result } from '@ethersproject/abi';
+import { changeGas } from '../config';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -182,105 +178,6 @@ const fetchROI = async (
   return [];
 };
 
-const fetchPoolAprs = async (
-  pools: Pool[],
-  positions: ProtectedLiquidity[],
-  contract: LiquidityProtection
-) => {
-  const historicBalances = await fetchHistoricBalances(positions, pools);
-
-  if (historicBalances) {
-    const calls = positions.map((position) => {
-      const balance = historicBalances.filter(
-        (x) => x.pool.pool_dlt_id === position.poolToken
-      )[0];
-
-      return [
-        buildPoolROICall(
-          contract,
-          position.poolToken,
-          position.reserveToken.address,
-          position.reserveAmount,
-          new BigNumber(balance.tknDay).times(2).toString(),
-          balance.supplyDay,
-          balance.bntDay,
-          balance.tknDay
-        ),
-        buildPoolROICall(
-          contract,
-          position.poolToken,
-          position.reserveToken.address,
-          position.reserveAmount,
-          new BigNumber(balance.tknWeek).times(2).toString(),
-          balance.supplyWeek,
-          balance.bntWeek,
-          balance.tknWeek
-        ),
-      ];
-    });
-
-    const res = await multicall(calls.flat());
-    if (res) {
-      return positions.map((position, i) => {
-        const index = i * 2;
-        const roiDay = res[index].toString();
-        const roiWeek = res[index + 1].toString();
-
-        const aprDay = calculateAPR(roiDay, 365);
-        const aprWeek = calculateAPR(roiWeek, 52);
-
-        return {
-          id: position.id,
-          aprDay: aprDay.isNegative() ? '0' : aprDay.toString(),
-          aprWeek: aprWeek.isNegative() ? '0' : aprWeek.toString(),
-        };
-      });
-    }
-  }
-
-  return [];
-};
-const fetchHistoricBalances = async (
-  positions: ProtectedLiquidity[],
-  pools: Pool[]
-) => {
-  const blockNow = await web3.provider.getBlockNumber();
-
-  const dayBlock = rewindBlocksByDays(blockNow, 1);
-  const weekBlock = rewindBlocksByDays(blockNow, 7);
-
-  const uniqueAnchors = uniq(positions.map((pos) => pos.poolToken));
-  const relevantPools = pools.filter((pool) =>
-    uniqueAnchors.some((anchor) => pool.pool_dlt_id === anchor)
-  );
-
-  const calls = relevantPools.map((pool) => {
-    const supply = buildTokenTotalSupplyCall(pool.pool_dlt_id);
-    const reserveBalances = buildReserveBalancesCall(pool);
-
-    return [supply, ...reserveBalances];
-  });
-
-  const [resDay, resWeek] = await Promise.all([
-    multicall(calls.flat(), dayBlock),
-    multicall(calls.flat(), weekBlock),
-  ]);
-
-  if (resDay && resWeek)
-    return relevantPools.map((pool, i) => {
-      const index = i * 3;
-      const supplyDay = resDay[index].toString();
-      const tknDay = resDay[index + 1].toString();
-      const bntDay = resDay[index + 2].toString();
-
-      const supplyWeek = resWeek[index].toString();
-      const tknWeek = resWeek[index + 1].toString();
-      const bntWeek = resWeek[index + 2].toString();
-
-      return { supplyDay, tknDay, bntDay, supplyWeek, tknWeek, bntWeek, pool };
-    });
-};
-
 export const fetchProtectedPositions = async (
   pools: Pool[],
   currentUser: string
@@ -355,7 +252,7 @@ export const fetchProtectedPositions = async (
     )
   );
 
-  const final = positions.map((position, index) => {
+  const final = positions.map((position) => {
     const pool = pools.find((x) => x.pool_dlt_id === position.poolToken);
     const { decimals, usdPrice } = position.reserveToken;
 
@@ -424,9 +321,18 @@ export const withdrawProtection = async (
     );
 
     const percentage = new BigNumber(amount).div(tknAmount);
+
+    const estimate =
+      await liquidityProtectionContract.estimateGas.removeLiquidity(
+        positionId,
+        decToPpm(percentage)
+      );
+    const gasLimit = changeGas(estimate.toString());
+
     const tx = await liquidityProtectionContract.removeLiquidity(
       positionId,
-      decToPpm(percentage)
+      decToPpm(percentage),
+      { gasLimit }
     );
     onHash(tx.hash);
 

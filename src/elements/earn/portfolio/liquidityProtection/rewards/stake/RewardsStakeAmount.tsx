@@ -5,6 +5,6 @@ interface Props {
   claimableAmount: string | null;
 }
 
-export const RewardsStakeAmount = ({ pool, claimableAmount }: Props) => {
+export const RewardsStakeAmount = ({ claimableAmount }: Props) => {
   return <div>claimable amount: {claimableAmount}</div>;
 };

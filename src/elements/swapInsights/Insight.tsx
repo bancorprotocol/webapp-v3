@@ -5,9 +5,9 @@ import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
-import { useEffect, useState } from 'react';
 import { sendInsight } from 'services/api/googleTagManager';
 import { Tooltip } from 'components/tooltip/Tooltip';
+import { useState } from 'react';
 
 export interface InsightToken extends IntoTheBlock {
   image: string;
@@ -20,8 +20,6 @@ interface InsightProps {
   fromTokenIntoBlock?: IntoTheBlock;
   toTokenIntoBlock?: IntoTheBlock;
 }
-
-const insightsButton = () => {};
 
 export const Insight = ({
   fromToken,

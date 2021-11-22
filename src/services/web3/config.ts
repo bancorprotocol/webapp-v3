@@ -4,6 +4,7 @@ import { Token } from 'services/observables/tokens';
 import { calculatePercentageChange } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { EthNetworks } from './types';
+import { BigNumber } from 'bignumber.js';
 
 export interface EthNetworkVariables {
   network: EthNetworks;
@@ -22,6 +23,11 @@ export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const ropstenImage: string =
   'https://ropsten.etherscan.io/images/main/empty-token.png';
+
+const gasBuffer = 1.05;
+
+export const changeGas = (gasEstimation: string) =>
+  new BigNumber(gasEstimation).times(gasBuffer).toFixed(0);
 
 export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   const eth = apiTokens && apiTokens.find((x) => x.dlt_id === ethToken);
