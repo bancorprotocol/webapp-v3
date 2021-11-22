@@ -10,7 +10,7 @@ import { isMobile } from 'react-device-detect';
 import { useAppSelector } from '../../redux';
 import { openWalletModal } from '../../redux/user/user';
 import { useDispatch } from 'react-redux';
-import { openNewTab } from 'utils/pureFunctions';
+import { openNewTab, wait } from 'utils/pureFunctions';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 export interface UseWalletConnect {
@@ -80,13 +80,14 @@ export const useWalletConnect = (): UseWalletConnect => {
             new Web3Provider(await connector.getProvider()).getSigner()
           );
           const account = await connector.getAccount();
-          setIsPending(false);
           sendWalletEvent(
             WalletEvents.connect,
             undefined,
             account || '',
             wallet.name
           );
+          await wait(500);
+          setIsPending(false);
         } catch (e) {
           console.error('failed to connect wallet. ', e.message);
           setIsError(true);
