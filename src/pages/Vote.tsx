@@ -2,7 +2,6 @@ import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
-import { useInterval } from 'hooks/useInterval';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';

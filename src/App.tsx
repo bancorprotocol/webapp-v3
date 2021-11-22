@@ -30,7 +30,6 @@ import { useAppSelector } from 'redux/index';
 import { googleTagManager } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import {
-  getAutoLoginLS,
   getDarkModeLS,
   getNotificationsLS,
   getSlippageToleranceLS,

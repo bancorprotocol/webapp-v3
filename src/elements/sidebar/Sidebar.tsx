@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { MenuPrimary } from 'elements/sidebar/menuPrimary/MenuPrimary';
 import { SidebarHeader } from 'elements/sidebar/SidebarHeader';
 import { MenuSecondary } from 'elements/sidebar/menuSecondary/MenuSecondary';

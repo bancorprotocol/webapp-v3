@@ -252,8 +252,7 @@ export const SwapLimit = ({
     await wait(4000);
     const balances = await fetchTokenBalances(
       weth ? [fromToken, weth] : [fromToken],
-      account,
-      chainId
+      account
     );
     dispatch(updateTokens(balances));
   };

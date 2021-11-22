@@ -113,6 +113,10 @@ export interface PoolToken {
 
 export const listOfLists = [
   {
+    uri: 'https://tokens.1inch.eth.link',
+    name: '1inch',
+  },
+  {
     uri: 'https://tokens.coingecko.com/ethereum/all.json',
     name: 'CoinGecko',
   },
@@ -123,10 +127,6 @@ export const listOfLists = [
   {
     uri: 'https://zapper.fi/api/token-list',
     name: 'Zapper Token List',
-  },
-  {
-    uri: 'https://tokens.1inch.eth.link',
-    name: '1inch',
   },
   {
     uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
@@ -257,19 +257,11 @@ export const tokensNoBalance$ = combineLatest([
   shareReplay(1)
 );
 
-export const tokens$ = combineLatest([
-  user$,
-  tokensNoBalance$,
-  currentNetwork$,
-]).pipe(
-  switchMapIgnoreThrow(async ([user, tokensNoBalance, currentNetwork]) => {
+export const tokens$ = combineLatest([user$, tokensNoBalance$]).pipe(
+  switchMapIgnoreThrow(async ([user, tokensNoBalance]) => {
     if (user && tokensNoBalance) {
       setLoadingBalances(true);
-      const updatedTokens = await fetchTokenBalances(
-        tokensNoBalance,
-        user,
-        currentNetwork
-      );
+      const updatedTokens = await fetchTokenBalances(tokensNoBalance, user);
       setLoadingBalances(false);
       if (updatedTokens.length !== 0)
         return updatedTokens.sort(sortTokenBalanceAlphabetic);
