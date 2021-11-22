@@ -14,7 +14,7 @@ import {
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
 import { EthNetworks } from 'services/web3/types';
-import { formatTime, prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber } from 'utils/helperFunctions';
 import { openNewTab } from 'utils/pureFunctions';
 
 interface VoteCardProps {
