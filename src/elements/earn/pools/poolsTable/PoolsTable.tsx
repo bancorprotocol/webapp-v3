@@ -118,8 +118,9 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
               className="max-w-[160px] rounded-10 h-[35px]"
             />
           </div>
-
-          <ModalCreatePool />
+          <div className="hidden md:block">
+            <ModalCreatePool />
+          </div>
         </div>
       </div>
 
