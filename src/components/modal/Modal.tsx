@@ -81,7 +81,7 @@ export const Modal = ({
                   {title && title}
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="rounded-10 px-5 py-2 focus:outline-none"
                   >
                     <IconTimes className="w-14" />
                   </button>
