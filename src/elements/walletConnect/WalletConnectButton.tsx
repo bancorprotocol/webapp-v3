@@ -4,25 +4,16 @@ import { Image } from 'components/image/Image';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 
 export const WalletConnectButton = ({
-  handleOpenModal,
-  handleDisconnect,
+  handleWalletButtonClick,
   account,
   selectedWallet,
 }: UseWalletConnect) => {
   const buttonText = account ? shortenString(account) : 'Connect Wallet';
 
-  const handleClick = () => {
-    if (account) {
-      handleDisconnect();
-    } else {
-      handleOpenModal();
-    }
-  };
-
   return (
     <button
       className="flex items-center md:btn-outline-secondary md:btn-sm md:mr-40"
-      onClick={() => handleClick()}
+      onClick={() => handleWalletButtonClick()}
     >
       {selectedWallet && account ? (
         <Image

@@ -7,14 +7,8 @@ import { WalletConnectModalError } from './WalletConnectModalError';
 export const WalletConnectModal = (props: UseWalletConnect) => {
   const { isPending, isError } = props;
 
-  const title = isError
-    ? 'Wallet Error'
-    : isPending
-    ? 'Connecting to ...'
-    : 'Connect Wallet';
-
   return (
-    <Modal title={title} {...props}>
+    <Modal {...props}>
       <div className="max-h-[calc(70vh-60px)] overflow-auto px-20">
         {isError ? (
           <WalletConnectModalError {...props} />

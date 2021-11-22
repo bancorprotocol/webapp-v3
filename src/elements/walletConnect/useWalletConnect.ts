@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
@@ -23,6 +23,8 @@ export interface UseWalletConnect {
   account?: string | null;
   selectedWallet?: WalletInfo;
   SUPPORTED_WALLETS: WalletInfo[];
+  title: string;
+  handleWalletButtonClick: () => void;
 }
 
 export const useWalletConnect = (): UseWalletConnect => {
@@ -91,6 +93,14 @@ export const useWalletConnect = (): UseWalletConnect => {
     setAutoLoginLS(false);
   }, [deactivate]);
 
+  const handleWalletButtonClick = useCallback(() => {
+    if (account) {
+      handleDisconnect();
+    } else {
+      handleOpenModal();
+    }
+  }, [account, handleDisconnect, handleOpenModal]);
+
   const isMetaMaskMobile =
     isMobile && window.ethereum && window.ethereum.isMetaMask;
 
@@ -119,6 +129,16 @@ export const useWalletConnect = (): UseWalletConnect => {
     [connector, selectedWallet]
   );
 
+  const title = useMemo(
+    () =>
+      isError
+        ? 'Wallet Error'
+        : isPending
+        ? 'Connecting to ...'
+        : 'Connect Wallet',
+    [isError, isPending]
+  );
+
   return {
     isOpen,
     setIsOpen,
@@ -130,5 +150,7 @@ export const useWalletConnect = (): UseWalletConnect => {
     account,
     selectedWallet,
     SUPPORTED_WALLETS,
+    title,
+    handleWalletButtonClick,
   };
 };
