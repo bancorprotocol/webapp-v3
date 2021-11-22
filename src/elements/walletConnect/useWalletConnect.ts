@@ -11,6 +11,7 @@ import { useAppSelector } from '../../redux';
 import { openWalletModal } from '../../redux/user/user';
 import { useDispatch } from 'react-redux';
 import { openNewTab } from 'utils/pureFunctions';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -63,6 +64,12 @@ export const useWalletConnect = (): UseWalletConnect => {
       });
       setIsPending(true);
       setSelectedWallet(wallet);
+
+      if (
+        connector instanceof WalletConnectConnector &&
+        connector.walletConnectProvider?.wc?.uri
+      )
+        connector.walletConnectProvider = undefined;
 
       if (connector)
         try {
