@@ -80,6 +80,7 @@ export const useWalletConnect = (): UseWalletConnect => {
             new Web3Provider(await connector.getProvider()).getSigner()
           );
           const account = await connector.getAccount();
+          setIsPending(false);
           sendWalletEvent(
             WalletEvents.connect,
             undefined,
