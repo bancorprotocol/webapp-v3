@@ -99,6 +99,8 @@ export const useWalletConnect = (): UseWalletConnect => {
     setSelectedWallet(undefined);
     deactivate();
     setAutoLoginLS(false);
+    setIsPending(false);
+    setIsError(false);
   }, [deactivate]);
 
   const handleWalletButtonClick = useCallback(() => {
