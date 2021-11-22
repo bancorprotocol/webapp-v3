@@ -5,7 +5,7 @@ import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
 import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
@@ -19,6 +19,9 @@ import { ErrorCode } from 'services/web3/types';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
 import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
+import { useAsyncEffect } from 'use-async-effect';
+import { take } from 'rxjs/operators';
+import { liquidityProtection$ } from 'services/observables/contracts';
 
 interface Props {
   pool: Pool;
@@ -30,6 +33,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     getTokenById(pool.reserves[0].address)
   );
   const history = useHistory();
+  const approveContract = useRef('');
   const [selectedToken, setSelectedToken] = useState<Token>(tkn!);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
@@ -87,6 +91,13 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     }
   };
 
+  useAsyncEffect(async (isMounted) => {
+    if (isMounted())
+      approveContract.current = await liquidityProtection$
+        .pipe(take(1))
+        .toPromise();
+  }, []);
+
   useEffect(() => {
     setSelectedToken(tkn!);
   }, [tkn]);
@@ -94,7 +105,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addProtection,
-    pool.converter_dlt_id
+    approveContract.current
   );
 
   if (!tkn) {
