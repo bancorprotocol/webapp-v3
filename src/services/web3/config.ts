@@ -28,7 +28,7 @@ export const ropstenImage: string =
 const gasBuffer = 1.05;
 
 export const changeGas = (gasEstimation: string) =>
-  new BigNumber(gasEstimation).times(gasBuffer).toString();
+  new BigNumber(gasEstimation).times(gasBuffer).toFixed(0);
 
 export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   const eth = apiTokens && apiTokens.find((x) => x.dlt_id === ethToken);
