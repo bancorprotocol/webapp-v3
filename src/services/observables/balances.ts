@@ -1,4 +1,3 @@
-import { EthNetworks } from 'services/web3/types';
 import { Token } from './tokens';
 import { ethToken } from 'services/web3/config';
 import { web3 } from 'services/web3';
@@ -9,15 +8,9 @@ import { Token__factory } from 'services/web3/abis/types';
 import { Result } from '@ethersproject/abi/lib/coders/abstract-coder';
 import BigNumber from 'bignumber.js';
 
-interface TokenBalance {
-  balance: string;
-  address: string;
-}
-
 export const fetchTokenBalances = async (
   tokens: Token[],
-  user: string,
-  currentNetwork: EthNetworks
+  user: string
 ): Promise<Token[]> => {
   const [eth, tokensNoETH] = partition(
     tokens,

@@ -1,9 +1,6 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  calculateBntNeededToOpenSpace,
-  prettifyNumber,
-} from 'utils/helperFunctions';
+import { prettifyNumber } from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
@@ -15,14 +12,6 @@ import {
   fetchBntNeededToOpenSpace,
   getSpaceAvailable,
 } from 'services/web3/liquidity/liquidity';
-import { first } from 'rxjs/operators';
-import { liquidityProtection$ } from 'services/observables/contracts';
-import { web3 } from 'services/web3';
-import { shrinkToken } from 'utils/formulas';
-import {
-  Converter__factory,
-  LiquidityProtection__factory,
-} from 'services/web3/abis/types';
 
 interface Props {
   pool: Pool;

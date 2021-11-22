@@ -1,5 +1,5 @@
 import { Summary } from 'services/api/intoTheBlock';
-import { pick, sum, toPairs } from 'lodash';
+import { pick, toPairs } from 'lodash';
 
 export const Speedometer = ({ summary }: { summary: Summary | null }) => {
   const rotation = summary ? summary.score * 180 : 90;

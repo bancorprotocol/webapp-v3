@@ -1,9 +1,5 @@
 import { Web3Provider } from '@ethersproject/providers';
-import {
-  Contract,
-  ContractInterface,
-  ContractTransaction,
-} from '@ethersproject/contracts';
+import { Contract, ContractInterface } from '@ethersproject/contracts';
 import { EthNetworks } from 'services/web3//types';
 import { providers, Signer } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
