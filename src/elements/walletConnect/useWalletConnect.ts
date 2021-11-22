@@ -7,6 +7,9 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
 import { isMobile } from 'react-device-detect';
+import { useAppSelector } from '../../redux';
+import { openWalletModal } from '../../redux/user/user';
+import { useDispatch } from 'react-redux';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -25,8 +28,14 @@ export const useWalletConnect = (): UseWalletConnect => {
   const { activate, deactivate, account, connector } = useWeb3React();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo>();
+
+  const isOpen = useAppSelector<boolean>((state) => state.user.walletModal);
+  const dispatch = useDispatch();
+
+  const setIsOpen = (value: boolean) => {
+    dispatch(openWalletModal(value));
+  };
 
   const handleOpenModal = () => {
     sendWalletEvent(WalletEvents.popup);

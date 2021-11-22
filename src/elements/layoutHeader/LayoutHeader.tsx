@@ -7,7 +7,9 @@ import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { getNetworkName } from 'utils/helperFunctions';
-import { WalletConnect } from '../walletConnect/WalletConnect';
+import { useWalletConnect } from '../walletConnect/useWalletConnect';
+import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
+import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;
@@ -19,6 +21,7 @@ export const LayoutHeader = ({
   setIsSidebarOpen,
 }: LayoutHeaderProps) => {
   const { chainId } = useWeb3React();
+  const wallet = useWalletConnect();
 
   return (
     <>
@@ -45,7 +48,7 @@ export const LayoutHeader = ({
             </div>
 
             <div className="flex items-center">
-              <WalletConnect />
+              <WalletConnectButton {...wallet} />
               <NotificationsMenu />
               <span className="text-grey-3 text-20 mx-16">|</span>
               <SettingsMenu />
@@ -63,9 +66,10 @@ export const LayoutHeader = ({
         <div className="flex items-center justify-end">
           <NotificationsMenu />
           <div className="bg-grey-4 w-[1px] h-30 mx-10" />
-          <WalletConnect />
+          <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>
+      <WalletConnectModal {...wallet} />
     </>
   );
 };
