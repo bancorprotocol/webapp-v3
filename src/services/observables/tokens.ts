@@ -113,6 +113,10 @@ export interface PoolToken {
 
 export const listOfLists = [
   {
+    uri: 'https://tokens.1inch.eth.link',
+    name: '1inch',
+  },
+  {
     uri: 'https://tokens.coingecko.com/ethereum/all.json',
     name: 'CoinGecko',
   },
@@ -123,10 +127,6 @@ export const listOfLists = [
   {
     uri: 'https://zapper.fi/api/token-list',
     name: 'Zapper Token List',
-  },
-  {
-    uri: 'https://tokens.1inch.eth.link',
-    name: '1inch',
   },
   {
     uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
