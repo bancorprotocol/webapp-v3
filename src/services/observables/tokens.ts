@@ -332,7 +332,9 @@ export const pools$ = combineLatest([
           {
             ...pool.reserves[0],
             rewardApr: Number(pool.reserves[0].apr) / 10000,
-            symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
+            symbol: reserveTokenOne
+              ? reserveTokenOne.symbol
+              : pool.name.replace('/BNT', ''),
             logoURI:
               reserveTokenOne && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenOne)
@@ -343,7 +345,9 @@ export const pools$ = combineLatest([
           {
             ...pool.reserves[1],
             rewardApr: Number(pool.reserves[1].apr) / 10000,
-            symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
+            symbol: reserveTokenTwo
+              ? reserveTokenTwo.symbol
+              : pool.name.replace('/BNT', ''),
             logoURI:
               reserveTokenTwo && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenTwo)
@@ -378,19 +382,15 @@ export const pools$ = combineLatest([
   shareReplay(1)
 );
 
-export const poolTokens$ = combineLatest([
-  pools$,
-  partialPoolTokens$,
-  tokens$,
-]).pipe(
-  switchMapIgnoreThrow(async ([pools, partialPoolTokens, tokens]) => {
+export const poolTokens$ = combineLatest([pools$, partialPoolTokens$]).pipe(
+  switchMapIgnoreThrow(async ([pools, partialPoolTokens]) => {
     const res = await Promise.all<{
       bnt: {
-        token: Token;
+        token: Reserve;
         amount: string;
       };
       tkn: {
-        token: Token;
+        token: Reserve;
         amount: string;
       };
       amount: string;
@@ -404,12 +404,8 @@ export const poolTokens$ = combineLatest([
         );
 
         if (pool) {
-          const tkn = tokens.find(
-            (x) => x.address === pool.reserves[0].address
-          );
-          const bnt = tokens.find(
-            (x) => x.address === pool.reserves[1].address
-          );
+          const tkn = pool.reserves[0];
+          const bnt = pool.reserves[1];
 
           const amount = shrinkToken(poolToken.balance, pool.decimals);
           const percent = new BigNumber(amount).div(
