@@ -59,9 +59,9 @@ export const subscribeToObservables = (dispatch: any) => {
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
-    const firstFromList = [listOfLists[0].name];
-    setTokenListLS(firstFromList);
-    userPreferredListIds$.next(firstFromList);
+    const twoLists = [listOfLists[0].name, listOfLists[1].name];
+    setTokenListLS(twoLists);
+    userPreferredListIds$.next(twoLists);
   } else userPreferredListIds$.next(userListIds);
 
   tokens$.subscribe((tokenList) => {
