@@ -337,16 +337,27 @@ export const SwapLimit = ({
 
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
-    else if (
+
+    if (
       fromToken.address !== ethToken &&
       keeperDaoTokens.findIndex((x) => x.address === fromToken.address) === -1
     )
       return `${fromToken.symbol} token is not supported`;
+
     if (toToken.address === ethToken) return 'Please change ETH to WETH';
-    else if (
-      keeperDaoTokens.findIndex((x) => x.address === toToken.address) === -1
-    )
+
+    if (keeperDaoTokens.findIndex((x) => x.address === toToken.address) === -1)
       return `${toToken.symbol} token is not supported`;
+
+    if (
+      !fromAmount ||
+      !toAmount ||
+      !rate ||
+      new BigNumber(fromAmount).eq(0) ||
+      new BigNumber(toAmount).eq(0) ||
+      new BigNumber(rate).eq(0)
+    )
+      return 'Enter Amount';
 
     if (!account) return 'Connect your wallet';
     return 'Trade';
