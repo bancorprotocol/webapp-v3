@@ -1,7 +1,7 @@
 import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
 
-const selected_lists = 'selectedTokenLists';
+const selected_lists = 'userTokenLists';
 const conversion = 'conversion';
 const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
