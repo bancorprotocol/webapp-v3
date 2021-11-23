@@ -7,11 +7,6 @@ import { notification } from 'redux/notification/notification';
 import { liquidity } from './liquidity/liquidity';
 
 export const store = configureStore({
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      immutableCheck: { warnAfter: 128 },
-      serializableCheck: { warnAfter: 128 },
-    }),
   reducer: {
     user,
     notification,
