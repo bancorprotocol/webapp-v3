@@ -340,9 +340,7 @@ export const pools$ = combineLatest([
           {
             ...pool.reserves[0],
             rewardApr: Number(pool.reserves[0].apr) / 10000,
-            symbol: reserveTokenOne
-              ? reserveTokenOne.symbol
-              : pool.name.replace('/BNT', ''),
+            symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
             logoURI:
               reserveTokenOne && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenOne)
@@ -353,9 +351,7 @@ export const pools$ = combineLatest([
           {
             ...pool.reserves[1],
             rewardApr: Number(pool.reserves[1].apr) / 10000,
-            symbol: reserveTokenTwo
-              ? reserveTokenTwo.symbol
-              : pool.name.replace('/BNT', ''),
+            symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
             logoURI:
               reserveTokenTwo && currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenTwo)
