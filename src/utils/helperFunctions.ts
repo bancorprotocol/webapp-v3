@@ -3,6 +3,8 @@ import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
 import dayjs from 'dayjs';
 import { shrinkToken } from './formulas';
+import { APIPool } from '../services/api/bancor';
+import { Pool } from '../services/observables/tokens';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -140,3 +142,17 @@ export const calcUsdPrice = (
 ) => new BigNumber(shrinkToken(amount, decimals)).times(price ?? 0).toString();
 
 export const IS_IN_IFRAME = window.self !== window.top;
+
+export const findPoolByConverter = (
+  converter: string,
+  pools: Pool[],
+  apiPools: APIPool[]
+): APIPool | Pool | undefined => {
+  const poolExists = pools.find((x) => x.converter_dlt_id === converter);
+
+  if (poolExists) {
+    return poolExists;
+  } else {
+    return apiPools.find((x) => x.converter_dlt_id === converter);
+  }
+};

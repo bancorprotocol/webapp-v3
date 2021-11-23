@@ -29,12 +29,7 @@ import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { isEqual, sortBy, uniqBy } from 'lodash';
-import {
-  APIPool,
-  APIReserve,
-  APIReward,
-  WelcomeData,
-} from 'services/api/bancor';
+import { APIReward, WelcomeData } from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
@@ -42,6 +37,7 @@ import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
 import { multicall } from 'services/web3/multicall/multicall';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
+import { findPoolByConverter } from '../../utils/helperFunctions';
 
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
@@ -103,17 +99,18 @@ export interface Pool {
 
 export interface PoolToken {
   bnt: {
-    token: Token;
+    token: Reserve;
     amount: string;
   };
   tkn: {
-    token: Token;
+    token: Reserve;
     amount: string;
   };
   amount: string;
   value: string;
   poolDecimals: number;
   converter: string;
+  poolName: string;
 }
 
 export const listOfLists = [
@@ -392,37 +389,15 @@ export const poolTokens$ = combineLatest([
   apiData$,
 ]).pipe(
   switchMapIgnoreThrow(async ([pools, partialPoolTokens, apiData]) => {
-    const res = await Promise.all<{
-      bnt: {
-        token: Reserve | APIReserve;
-        amount: string;
-      };
-      tkn: {
-        token: Reserve | APIReserve;
-        amount: string;
-      };
-      amount: string;
-      value: string;
-      poolDecimals: number;
-      converter: string;
-    } | null>(
+    const res = await Promise.all<PoolToken | null>(
       partialPoolTokens.map(async (poolToken) => {
-        let pool: APIPool | Pool;
-        const poolExists = pools.find(
-          (x) => x.converter_dlt_id === poolToken.converter
+        const pool = findPoolByConverter(
+          poolToken.converter,
+          pools,
+          apiData.pools
         );
-
-        if (poolExists) {
-          pool = poolExists;
-        } else {
-          const apiPoolExists = apiData.pools.find(
-            (x) => x.converter_dlt_id === poolToken.converter
-          );
-          if (apiPoolExists) {
-            pool = apiPoolExists;
-          } else {
-            return null;
-          }
+        if (!pool) {
+          return null;
         }
         const tkn = pool.reserves[0];
         const bnt = pool.reserves[1];
@@ -437,44 +412,53 @@ export const poolTokens$ = combineLatest([
             buildTokenPoolCall(pool.converter_dlt_id, x.address)
           )
         );
-        if (balances) {
-          const tknBalanceWei = new BigNumber(balances[0].toString());
-          const bntBalanceWei = new BigNumber(balances[1].toString());
-
-          const tknAmount = percent.times(
-            shrinkToken(tknBalanceWei, pool.decimals)
-          );
-          const bntAmount = percent.times(
-            shrinkToken(bntBalanceWei, pool.decimals)
-          );
-
-          const value = tknAmount
-            // @ts-ignore
-            .times(Number(tkn.usdPrice || 0))
-            // @ts-ignore
-            .plus(bntAmount.times(Number(bnt.usdPrice || 0)))
-            .toString();
-
-          return {
-            bnt: {
-              token: { symbol: 'BNT', logoURI: ropstenImage, ...bnt },
-              amount: bntAmount.toString(),
-            },
-            tkn: {
-              token: {
-                symbol: pool.name.replace('/BNT', ''),
-                logoURI: ropstenImage,
-                ...tkn,
-              },
-              amount: tknAmount.toString(),
-            },
-            amount,
-            value: value,
-            poolDecimals: pool.decimals,
-            converter: poolToken.converter,
-          };
+        if (!balances) {
+          return null;
         }
-        return null;
+        const tknBalanceWei = new BigNumber(balances[0].toString());
+        const bntBalanceWei = new BigNumber(balances[1].toString());
+
+        const tknAmount = percent.times(
+          shrinkToken(tknBalanceWei, pool.decimals)
+        );
+        const bntAmount = percent.times(
+          shrinkToken(bntBalanceWei, pool.decimals)
+        );
+
+        const value = tknAmount
+          // @ts-ignore
+          .times(Number(tkn.usdPrice || 0))
+          // @ts-ignore
+          .plus(bntAmount.times(Number(bnt.usdPrice || 0)))
+          .toString();
+
+        return {
+          bnt: {
+            token: {
+              symbol: 'BNT',
+              logoURI: ropstenImage,
+              usdPrice: '0',
+              decimals: 0,
+              ...bnt,
+            },
+            amount: bntAmount.toString(),
+          },
+          tkn: {
+            token: {
+              symbol: pool.name.replace('/BNT', ''),
+              logoURI: ropstenImage,
+              usdPrice: '0',
+              decimals: 0,
+              ...tkn,
+            },
+            amount: tknAmount.toString(),
+          },
+          amount,
+          value: value,
+          poolDecimals: pool.decimals,
+          converter: poolToken.converter,
+          poolName: pool.name,
+        };
       })
     );
     return res.filter((x) => !!x);
