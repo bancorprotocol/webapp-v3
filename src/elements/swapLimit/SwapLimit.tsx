@@ -118,7 +118,7 @@ export const SwapLimit = ({
         setFromAmountUsd(usdAmount);
       }
     },
-    [fromToken,setFromAmount,setFromAmountUsd]
+    [fromToken, setFromAmount, setFromAmountUsd]
   );
   const calcTo = useCallback(
     (from: string, rate: string) => {
