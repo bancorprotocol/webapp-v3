@@ -29,7 +29,12 @@ import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { fetchTokenBalances } from './balances';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { isEqual, sortBy, uniqBy } from 'lodash';
-import { APIReward, WelcomeData } from 'services/api/bancor';
+import {
+  APIPool,
+  APIReserve,
+  APIReward,
+  WelcomeData,
+} from 'services/api/bancor';
 import BigNumber from 'bignumber.js';
 import { UTCTimestamp } from 'lightweight-charts';
 import { settingsContractAddress$ } from 'services/observables/contracts';
@@ -385,15 +390,19 @@ export const pools$ = combineLatest([
   shareReplay(1)
 );
 
-export const poolTokens$ = combineLatest([pools$, partialPoolTokens$]).pipe(
-  switchMapIgnoreThrow(async ([pools, partialPoolTokens]) => {
+export const poolTokens$ = combineLatest([
+  pools$,
+  partialPoolTokens$,
+  apiData$,
+]).pipe(
+  switchMapIgnoreThrow(async ([pools, partialPoolTokens, apiData]) => {
     const res = await Promise.all<{
       bnt: {
-        token: Reserve;
+        token: Reserve | APIReserve;
         amount: string;
       };
       tkn: {
-        token: Reserve;
+        token: Reserve | APIReserve;
         amount: string;
       };
       amount: string;
@@ -402,55 +411,73 @@ export const poolTokens$ = combineLatest([pools$, partialPoolTokens$]).pipe(
       converter: string;
     } | null>(
       partialPoolTokens.map(async (poolToken) => {
-        const pool = pools.find(
+        let pool: APIPool | Pool;
+        const poolExists = pools.find(
           (x) => x.converter_dlt_id === poolToken.converter
         );
 
-        if (pool) {
-          const tkn = pool.reserves[0];
-          const bnt = pool.reserves[1];
-
-          const amount = shrinkToken(poolToken.balance, pool.decimals);
-          const percent = new BigNumber(amount).div(
-            shrinkToken(poolToken.totalSupply, pool.decimals)
+        if (poolExists) {
+          pool = poolExists;
+        } else {
+          const apiPoolExists = apiData.pools.find(
+            (x) => x.converter_dlt_id === poolToken.converter
           );
-
-          if (bnt && tkn) {
-            const balances = await multicall(
-              pool.reserves.map((x) =>
-                buildTokenPoolCall(pool.converter_dlt_id, x.address)
-              )
-            );
-            if (balances) {
-              const tknBalanceWei = new BigNumber(balances[0].toString());
-              const bntBalanceWei = new BigNumber(balances[1].toString());
-
-              const tknAmount = percent.times(
-                shrinkToken(tknBalanceWei, pool.decimals)
-              );
-              const bntAmount = percent.times(
-                shrinkToken(bntBalanceWei, pool.decimals)
-              );
-
-              const value =
-                tkn.usdPrice && bnt.usdPrice
-                  ? tknAmount
-                      .times(Number(tkn.usdPrice))
-                      .plus(bntAmount.times(Number(bnt.usdPrice)))
-                  : new BigNumber(0);
-
-              return {
-                bnt: { token: bnt, amount: bntAmount.toString() },
-                tkn: { token: tkn, amount: tknAmount.toString() },
-                amount,
-                value: value.toString(),
-                poolDecimals: pool.decimals,
-                converter: poolToken.converter,
-              };
-            }
+          if (apiPoolExists) {
+            pool = apiPoolExists;
+          } else {
+            return null;
           }
         }
+        const tkn = pool.reserves[0];
+        const bnt = pool.reserves[1];
 
+        const amount = shrinkToken(poolToken.balance, pool.decimals);
+        const percent = new BigNumber(amount).div(
+          shrinkToken(poolToken.totalSupply, pool.decimals)
+        );
+
+        const balances = await multicall(
+          pool.reserves.map((x) =>
+            buildTokenPoolCall(pool.converter_dlt_id, x.address)
+          )
+        );
+        if (balances) {
+          const tknBalanceWei = new BigNumber(balances[0].toString());
+          const bntBalanceWei = new BigNumber(balances[1].toString());
+
+          const tknAmount = percent.times(
+            shrinkToken(tknBalanceWei, pool.decimals)
+          );
+          const bntAmount = percent.times(
+            shrinkToken(bntBalanceWei, pool.decimals)
+          );
+
+          const value = tknAmount
+            // @ts-ignore
+            .times(Number(tkn.usdPrice || 0))
+            // @ts-ignore
+            .plus(bntAmount.times(Number(bnt.usdPrice || 0)))
+            .toString();
+
+          return {
+            bnt: {
+              token: { symbol: 'BNT', logoURI: ropstenImage, ...bnt },
+              amount: bntAmount.toString(),
+            },
+            tkn: {
+              token: {
+                symbol: pool.name.replace('/BNT', ''),
+                logoURI: ropstenImage,
+                ...tkn,
+              },
+              amount: tknAmount.toString(),
+            },
+            amount,
+            value: value,
+            poolDecimals: pool.decimals,
+            converter: poolToken.converter,
+          };
+        }
         return null;
       })
     );
