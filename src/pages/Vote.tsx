@@ -15,6 +15,7 @@ import {
 } from 'services/web3/governance/governance';
 import { EthNetworks } from 'services/web3/types';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { openNewTab } from 'utils/pureFunctions';
 
 interface VoteCardProps {
   title: string;
@@ -148,7 +149,7 @@ export const Vote = () => {
           content="Voting on Bancor DAO is free as it is using the Snapshot off-chain infrastructure. Every user can vote on every available proposal and help shape the future of the Bancor Protocol."
           button="Vote on Snapshot"
           onClick={() => {
-            window.open('https://vote.bancor.network/', '_blank', 'noopener');
+            openNewTab('https://vote.bancor.network/');
           }}
           footer={
             <div className="flex items-end h-[48px]">

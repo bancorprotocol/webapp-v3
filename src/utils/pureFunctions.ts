@@ -78,3 +78,6 @@ export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
 
   return 0;
 };
+
+export const openNewTab = (url: string) =>
+  window.open(url, '_blank', 'noopener');
