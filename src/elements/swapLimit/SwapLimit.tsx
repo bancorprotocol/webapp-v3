@@ -48,6 +48,10 @@ interface SwapLimitProps {
   toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
+  fromAmount: string;
+  setFromAmount: Function;
+  fromAmountUsd: string;
+  setFromAmountUsd: Function;
 }
 
 export const SwapLimit = ({
@@ -56,13 +60,15 @@ export const SwapLimit = ({
   toToken,
   setToToken,
   switchTokens,
+  fromAmount,
+  setFromAmount,
+  fromAmountUsd,
+  setFromAmountUsd,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
   const { account, chainId } = useWeb3React();
-  const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');
-  const [fromAmountUsd, setFromAmountUsd] = useState('');
   const [rate, setRate] = useState('');
   const [marketRate, setMarketRate] = useState(-1);
   const [percentage, setPercentage] = useState('');
@@ -112,7 +118,7 @@ export const SwapLimit = ({
         setFromAmountUsd(usdAmount);
       }
     },
-    [fromToken]
+    [fromToken, setFromAmount, setFromAmountUsd]
   );
   const calcTo = useCallback(
     (from: string, rate: string) => {
@@ -342,6 +348,7 @@ export const SwapLimit = ({
     )
       return `${toToken.symbol} token is not supported`;
 
+    if (!account) return 'Connect your wallet';
     return 'Trade';
   };
 
@@ -357,7 +364,6 @@ export const SwapLimit = ({
           setAmountUsd={setFromAmountUsd}
           onChange={(val: string) => {
             setFromAmount(val);
-            handleFieldChanged(Field.from, val, toAmount, rate);
           }}
           border
           selectable
