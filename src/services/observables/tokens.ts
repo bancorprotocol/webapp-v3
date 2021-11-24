@@ -327,34 +327,37 @@ export const pools$ = combineLatest([
         const reserveTokenOne = tokens.find(
           (t) => t.address === pool.reserves[0].address
         );
+
+        if (!reserveTokenOne) return null;
+
         const reserveTokenTwo = tokens.find(
           (t) => t.address === pool.reserves[1].address
         );
 
-        if (!reserveTokenOne || !reserveTokenTwo) return null;
+        if (!reserveTokenTwo) return null;
 
         const reserves: Reserve[] = [
           {
             ...pool.reserves[0],
             rewardApr: Number(pool.reserves[0].apr) / 10000,
-            symbol: reserveTokenOne ? reserveTokenOne.symbol : 'n/a',
+            symbol: reserveTokenOne.symbol,
             logoURI:
-              reserveTokenOne && currentNetwork === EthNetworks.Mainnet
+              currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenOne)
                 : ropstenImage,
-            decimals: reserveTokenOne ? reserveTokenOne.decimals : 18,
-            usdPrice: reserveTokenOne ? reserveTokenOne.usdPrice : 0,
+            decimals: reserveTokenOne.decimals,
+            usdPrice: reserveTokenOne.usdPrice,
           },
           {
             ...pool.reserves[1],
             rewardApr: Number(pool.reserves[1].apr) / 10000,
-            symbol: reserveTokenTwo ? reserveTokenTwo.symbol : 'n/a',
+            symbol: reserveTokenTwo.symbol,
             logoURI:
-              reserveTokenTwo && currentNetwork === EthNetworks.Mainnet
+              currentNetwork === EthNetworks.Mainnet
                 ? getTokenLogoURI(reserveTokenTwo)
                 : ropstenImage,
-            decimals: reserveTokenTwo ? reserveTokenTwo.decimals : 18,
-            usdPrice: reserveTokenTwo ? reserveTokenTwo.usdPrice : 0,
+            decimals: reserveTokenTwo.decimals,
+            usdPrice: reserveTokenTwo.usdPrice,
           },
         ];
 
