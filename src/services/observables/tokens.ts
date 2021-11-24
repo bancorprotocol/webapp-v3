@@ -313,6 +313,7 @@ export const pools$ = combineLatest([
 ]).pipe(
   switchMapIgnoreThrow(
     async ([pools, tokens, minMintingBalance, currentNetwork]) => {
+      const tokensMap = new Map(tokens.map((t) => [t.address, t]));
       const newPools: (Pool | null)[] = pools.map((pool) => {
         let apr = 0;
         const liquidity = Number(pool.liquidity.usd ?? 0);
@@ -324,15 +325,11 @@ export const pools$ = combineLatest([
             .times(100)
             .toNumber();
         }
-        const reserveTokenOne = tokens.find(
-          (t) => t.address === pool.reserves[0].address
-        );
+        const reserveTokenOne = tokensMap.get(pool.reserves[0].address);
 
         if (!reserveTokenOne) return null;
 
-        const reserveTokenTwo = tokens.find(
-          (t) => t.address === pool.reserves[1].address
-        );
+        const reserveTokenTwo = tokensMap.get(pool.reserves[1].address);
 
         if (!reserveTokenTwo) return null;
 
