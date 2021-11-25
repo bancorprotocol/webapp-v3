@@ -59,22 +59,16 @@ export const wait = async (ms: number = 0) =>
 export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
-  if (a.balance && b.balance && b.balance !== '0' && a.balance !== '0')
-    return Number(b.balance) - Number(a.balance);
+  const diff = Number(b.balance) - Number(a.balance);
+  if (diff > 0) return diff;
 
-  if (
-    (a.balance && a.balance !== '0') ||
-    a.symbol < b.symbol ||
-    a.name < b.name
-  )
-    return -1;
+  const aSymbol = a.symbol.toUpperCase();
+  const bSymbol = b.symbol.toUpperCase();
 
-  if (
-    (b.balance && b.balance !== '0') ||
-    a.symbol > b.symbol ||
-    a.name > b.name
-  )
-    return 1;
+  if (diff === 0) {
+    if (aSymbol < bSymbol) return -1;
+    if (aSymbol > bSymbol) return 1;
+  }
 
   return 0;
 };
