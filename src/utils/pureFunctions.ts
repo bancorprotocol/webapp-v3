@@ -59,24 +59,10 @@ export const wait = async (ms: number = 0) =>
 export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
-  if (a.balance && b.balance && b.balance !== '0' && a.balance !== '0')
-    return Number(b.balance) - Number(a.balance);
+  const diff = Number(b.balance) - Number(a.balance);
+  if (diff !== 0) return diff;
 
-  if (
-    (a.balance && a.balance !== '0') ||
-    a.symbol < b.symbol ||
-    a.name < b.name
-  )
-    return -1;
-
-  if (
-    (b.balance && b.balance !== '0') ||
-    a.symbol > b.symbol ||
-    a.name > b.name
-  )
-    return 1;
-
-  return 0;
+  return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase());
 };
 
 export const openNewTab = (url: string) =>
