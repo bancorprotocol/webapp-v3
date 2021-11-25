@@ -10,18 +10,18 @@ import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
-import {
-  addNotification,
-  NotificationType,
-} from 'redux/notification/notification';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { ErrorCode } from 'services/web3/types';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
 import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
 import { useAsyncEffect } from 'use-async-effect';
 import { take } from 'rxjs/operators';
 import { liquidityProtection$ } from 'services/observables/contracts';
+import {
+  addLiquiditySingleFailedNotification,
+  addLiquiditySingleNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
 
 interface Props {
   pool: Pool;
@@ -50,45 +50,32 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   };
 
   const addProtection = async () => {
-    try {
-      const txHash = await addLiquiditySingle({
-        pool,
-        token: selectedToken,
-        amount,
-      });
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Add Protection',
-          msg: `You staked ${prettifyNumber(amount)} ${
-            selectedToken.symbol
-          } for protection in pool ${pool.name}`,
+    const cleanAmount = prettifyNumber(amount);
+    await addLiquiditySingle(
+      pool,
+      selectedToken,
+      amount,
+      (txHash: string) =>
+        addLiquiditySingleNotification(
+          dispatch,
           txHash,
-        })
-      );
-    } catch (e) {
-      if (e.code === ErrorCode.DeniedTx) {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          })
-        );
-      } else {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Staking ${prettifyNumber(amount)} ${
-              selectedToken.symbol
-            } for protection in pool ${
-              pool.name
-            } failed. Please try again or contact support.`,
-          })
-        );
-      }
-    }
+          cleanAmount,
+          selectedToken.symbol,
+          pool.name
+        ),
+      () => {
+        if (window.location.pathname.includes(pool.pool_dlt_id))
+          history.push('/portfolio');
+      },
+      () => rejectNotification(dispatch),
+      () =>
+        addLiquiditySingleFailedNotification(
+          dispatch,
+          cleanAmount,
+          selectedToken.symbol,
+          pool.name
+        )
+    );
   };
 
   useAsyncEffect(async (isMounted) => {
