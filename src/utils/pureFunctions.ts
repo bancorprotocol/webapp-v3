@@ -60,17 +60,9 @@ export const get7DaysAgo = () => new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
 export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
   const diff = Number(b.balance) - Number(a.balance);
-  if (diff > 0) return diff;
+  if (diff !== 0) return diff;
 
-  const aSymbol = a.symbol.toUpperCase();
-  const bSymbol = b.symbol.toUpperCase();
-
-  if (diff === 0) {
-    if (aSymbol < bSymbol) return -1;
-    if (aSymbol > bSymbol) return 1;
-  }
-
-  return 0;
+  return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase());
 };
 
 export const openNewTab = (url: string) =>
