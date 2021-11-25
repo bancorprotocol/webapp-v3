@@ -11,6 +11,7 @@ import {
   rejectNotification,
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { useCallback } from 'react';
 
 interface Props {
   pool: Pool;
@@ -33,7 +34,7 @@ export const AddLiquidityEmptyCTA = ({
   const { account } = useWeb3React();
   const history = useHistory();
 
-  const handleAddLiquidity = async () => {
+  const handleAddLiquidity = useCallback(async () => {
     const data = [
       { amount: amountBnt, token: bnt },
       { amount: amountTkn, token: tkn },
@@ -68,7 +69,7 @@ export const AddLiquidityEmptyCTA = ({
           pool.name
         )
     );
-  };
+  }, [amountTkn, tkn, amountBnt, bnt, pool, dispatch, history]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [
