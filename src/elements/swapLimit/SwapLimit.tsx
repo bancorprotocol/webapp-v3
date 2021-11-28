@@ -21,7 +21,6 @@ import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { getNetworkContractApproval } from 'services/web3/approval';
-import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   sendConversionEvent,
@@ -35,6 +34,7 @@ import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
 import { exchangeProxy$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
+import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 
 enum Field {
   from,
@@ -520,26 +520,12 @@ export const SwapLimit = ({
           }
           contract={approveContract.current}
         />
-        <Modal
-          title="Deposit ETH to WETH"
-          isOpen={showEthModal}
+        <ModalDepositETH
+          amount={fromAmount}
           setIsOpen={setShowEthModal}
-          onClose={() => setShowEthModal(false)}
-        >
-          <>
-            <div>Deposited ETH Will Be Converted to WETH</div>
-            <button
-              className="btn-primary rounded w-full"
-              onClick={() => {
-                setShowEthModal(false);
-                handleSwap(true);
-              }}
-            >
-              Confirm
-            </button>
-          </>
-        </Modal>
-
+          isOpen={showEthModal}
+          onConfirm={() => handleSwap(true)}
+        />
         <button
           className="btn-primary rounded w-full"
           onClick={() => {
