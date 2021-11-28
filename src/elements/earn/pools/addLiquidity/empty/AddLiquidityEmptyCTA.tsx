@@ -35,14 +35,13 @@ export const AddLiquidityEmptyCTA = ({
   const history = useHistory();
 
   const handleAddLiquidity = useCallback(async () => {
-    const data = [
-      { amount: amountBnt, token: bnt },
-      { amount: amountTkn, token: tkn },
-    ];
     const cleanTkn = prettifyNumber(amountTkn);
     const cleanBnt = prettifyNumber(amountBnt);
     await addLiquidity(
-      data,
+      amountBnt,
+      bnt,
+      amountTkn,
+      tkn,
       pool.converter_dlt_id,
       (txHash: string) =>
         addLiquidityNotification(

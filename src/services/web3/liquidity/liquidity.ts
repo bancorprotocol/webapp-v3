@@ -91,7 +91,10 @@ export const createPool = async (
 };
 
 export const addLiquidity = async (
-  data: { token: Token; amount: string }[],
+  bntAmount: string,
+  bnt: Token,
+  tknAmount: string,
+  tkn: Token,
   converterAddress: string,
   onHash: (txHash: string) => void,
   onCompleted: Function,
@@ -103,25 +106,22 @@ export const addLiquidity = async (
       converterAddress,
       writeWeb3.signer
     );
-    const amountsWei = data.map((item) => ({
-      address: item.token.address,
-      weiAmount: expandToken(item.amount, item.token.decimals),
-    }));
+    const tknWei = expandToken(tknAmount, tkn.decimals);
+    const bntWei = expandToken(bntAmount, bnt.decimals);
 
-    const ethAmount = amountsWei.find((amount) => amount.address === ethToken);
-    const value = ethAmount?.weiAmount;
+    const value = tkn.address === ethToken ? tknWei : undefined;
 
     const estimate = await contract.estimateGas.addLiquidity(
-      amountsWei.map(({ address }) => address),
-      amountsWei.map(({ weiAmount }) => weiAmount),
+      [bnt.address, tkn.address],
+      [bntWei, tknWei],
       '1',
       { value }
     );
     const gasLimit = changeGas(estimate.toString());
 
     const tx = await contract.addLiquidity(
-      amountsWei.map(({ address }) => address),
-      amountsWei.map(({ weiAmount }) => weiAmount),
+      [bnt.address, tkn.address],
+      [bntWei, tknWei],
       '1',
       { value, gasLimit }
     );
