@@ -3,13 +3,15 @@ import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
-import {
-  addNotification,
-  NotificationType,
-} from 'redux/notification/notification';
-import { prettifyNumber } from 'utils/helperFunctions';
-import { ErrorCode } from 'services/web3/types';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
+import { useHistory } from 'react-router-dom';
+import {
+  addLiquidityFailedNotification,
+  addLiquidityNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { useCallback } from 'react';
 
 interface Props {
   pool: Pool;
@@ -30,47 +32,43 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const { account } = useWeb3React();
+  const history = useHistory();
 
-  const handleAddLiquidity = async () => {
-    try {
-      const data = [
-        { amount: amountBnt, token: bnt },
-        { amount: amountTkn, token: tkn },
-      ];
-      const txHash = await addLiquidity(data, pool.converter_dlt_id);
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Add Liquidity',
-          msg: `You added ${prettifyNumber(amountTkn)} ${
-            tkn.symbol
-          } and ${prettifyNumber(amountBnt)} ${bnt.symbol} to pool ${
-            pool.name
-          }`,
+  const handleAddLiquidity = useCallback(async () => {
+    const cleanTkn = prettifyNumber(amountTkn);
+    const cleanBnt = prettifyNumber(amountBnt);
+    await addLiquidity(
+      amountBnt,
+      bnt,
+      amountTkn,
+      tkn,
+      pool.converter_dlt_id,
+      (txHash: string) =>
+        addLiquidityNotification(
+          dispatch,
           txHash,
-        })
-      );
-    } catch (e) {
-      console.error('Add liquidity failed with msg: ', e.message);
-      if (e.code === ErrorCode.DeniedTx) {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          })
-        );
-      } else {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `Adding liquidity to pool ${pool.name} failed. Please try again or contact support.`,
-          })
-        );
-      }
-    }
-  };
+          cleanTkn,
+          tkn.symbol,
+          cleanBnt,
+          bnt.symbol,
+          pool.name
+        ),
+      () => {
+        if (window.location.pathname.includes(pool.pool_dlt_id))
+          history.push('/portfolio');
+      },
+      () => rejectNotification(dispatch),
+      () =>
+        addLiquidityFailedNotification(
+          dispatch,
+          cleanTkn,
+          tkn.symbol,
+          cleanBnt,
+          bnt.symbol,
+          pool.name
+        )
+    );
+  }, [amountTkn, tkn, amountBnt, bnt, pool, dispatch, history]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [

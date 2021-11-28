@@ -348,3 +348,83 @@ export const claimBntNotification = (
     },
     dispatch
   );
+
+export const addLiquiditySingleNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Add Protection',
+      msg: `Staking ${amount} ${symbol} for Protection is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `You Staked ${amount} ${symbol} for Protection in Pool ${pool}`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Staking ${amount} ${symbol} for Protection in Pool ${pool} failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const addLiquiditySingleFailedNotification = (
+  dispatch: any,
+  amount: string,
+  symbol: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Staking ${amount} ${symbol} for protection in pool ${pool} failed. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const addLiquidityNotification = (
+  dispatch: any,
+  txHash: string,
+  amountTkn: string,
+  tkn: string,
+  amountBnt: string,
+  bnt: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Add Liquidity',
+      msg: `Adding ${amountTkn} ${tkn} and ${amountBnt} ${bnt} to pool ${pool} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `You Added ${amountTkn} ${tkn} and ${amountBnt} ${bnt} to pool ${pool}`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Adding ${amountTkn} ${tkn} and ${amountBnt} ${bnt} to pool ${pool} failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const addLiquidityFailedNotification = (
+  dispatch: any,
+  amountTkn: string,
+  tkn: string,
+  amountBnt: string,
+  bnt: string,
+  pool: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Adding ${amountTkn} ${tkn} and ${amountBnt} ${bnt} to pool ${pool} failed. Please try again or contact support.`,
+    },
+    dispatch
+  );

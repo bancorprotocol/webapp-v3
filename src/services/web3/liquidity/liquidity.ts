@@ -91,37 +91,50 @@ export const createPool = async (
 };
 
 export const addLiquidity = async (
-  data: { token: Token; amount: string }[],
-  converterAddress: string
+  bntAmount: string,
+  bnt: Token,
+  tknAmount: string,
+  tkn: Token,
+  converterAddress: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
 ) => {
-  const contract = Converter__factory.connect(
-    converterAddress,
-    writeWeb3.signer
-  );
-  const amountsWei = data.map((item) => ({
-    address: item.token.address,
-    weiAmount: expandToken(item.amount, item.token.decimals),
-  }));
+  try {
+    const contract = Converter__factory.connect(
+      converterAddress,
+      writeWeb3.signer
+    );
+    const tknWei = expandToken(tknAmount, tkn.decimals);
+    const bntWei = expandToken(bntAmount, bnt.decimals);
 
-  const ethAmount = amountsWei.find((amount) => amount.address === ethToken);
-  const value = ethAmount?.weiAmount;
+    const value = tkn.address === ethToken ? tknWei : undefined;
 
-  const estimate = await contract.estimateGas.addLiquidity(
-    amountsWei.map(({ address }) => address),
-    amountsWei.map(({ weiAmount }) => weiAmount),
-    '1',
-    { value }
-  );
-  const gasLimit = changeGas(estimate.toString());
+    const estimate = await contract.estimateGas.addLiquidity(
+      [bnt.address, tkn.address],
+      [bntWei, tknWei],
+      '1',
+      { value }
+    );
+    const gasLimit = changeGas(estimate.toString());
 
-  const tx = await contract.addLiquidity(
-    amountsWei.map(({ address }) => address),
-    amountsWei.map(({ weiAmount }) => weiAmount),
-    '1',
-    { value, gasLimit }
-  );
+    const tx = await contract.addLiquidity(
+      [bnt.address, tkn.address],
+      [bntWei, tknWei],
+      '1',
+      { value, gasLimit }
+    );
 
-  return tx.hash;
+    onHash(tx.hash);
+
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 export const removeLiquidity = async (
@@ -163,43 +176,50 @@ export const removeLiquidity = async (
   }
 };
 
-interface AddLiquidityProps {
-  pool: Pool;
-  token: Token;
-  amount: string;
-}
+export const addLiquiditySingle = async (
+  pool: Pool,
+  token: Token,
+  amount: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
+) => {
+  try {
+    const liquidityProtectionContract = await liquidityProtection$
+      .pipe(first())
+      .toPromise();
 
-export const addLiquiditySingle = async ({
-  pool,
-  token,
-  amount,
-}: AddLiquidityProps) => {
-  const liquidityProtectionContract = await liquidityProtection$
-    .pipe(first())
-    .toPromise();
+    const contract = LiquidityProtection__factory.connect(
+      liquidityProtectionContract,
+      writeWeb3.signer
+    );
+    const fromIsEth = ethToken === token.address;
 
-  const contract = LiquidityProtection__factory.connect(
-    liquidityProtectionContract,
-    writeWeb3.signer
-  );
-  const fromIsEth = ethToken === token.address;
+    const estimate = await contract.estimateGas.addLiquidity(
+      pool.pool_dlt_id,
+      token.address,
+      expandToken(amount, token.decimals),
+      { value: fromIsEth ? expandToken(amount, 18) : undefined }
+    );
+    const gasLimit = changeGas(estimate.toString());
 
-  const estimate = await contract.estimateGas.addLiquidity(
-    pool.pool_dlt_id,
-    token.address,
-    expandToken(amount, token.decimals),
-    { value: fromIsEth ? expandToken(amount, 18) : undefined }
-  );
-  const gasLimit = changeGas(estimate.toString());
+    const tx = await contract.addLiquidity(
+      pool.pool_dlt_id,
+      token.address,
+      expandToken(amount, token.decimals),
+      { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
+    );
+    onHash(tx.hash);
 
-  const tx = await contract.addLiquidity(
-    pool.pool_dlt_id,
-    token.address,
-    expandToken(amount, token.decimals),
-    { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
-  );
+    await tx.wait();
 
-  return tx.hash;
+    onCompleted();
+  } catch (e: any) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
+  }
 };
 
 export const checkPriceDeviationTooHigh = async (
