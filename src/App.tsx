@@ -19,6 +19,7 @@ import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
 import {
   setDarkMode,
+  setShowBanner,
   setSlippageTolerance,
   setUsdToggle,
 } from 'redux/user/user';
@@ -32,6 +33,7 @@ import { EthNetworks } from 'services/web3/types';
 import {
   getDarkModeLS,
   getNotificationsLS,
+  getShowBannerLS,
   getSlippageToleranceLS,
   getUsdToggleLS,
   setNotificationsLS,
@@ -54,6 +56,7 @@ export const App = () => {
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
+  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
   useEffect(() => {
     const usd = getUsdToggleLS();
@@ -69,6 +72,9 @@ export const App = () => {
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
+
+    const showBanner = getShowBannerLS();
+    if (showBanner || showBanner === undefined) dispatch(setShowBanner(true));
   }, [dispatch]);
 
   useEffect(() => {
@@ -114,7 +120,9 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <div
-          className={`md:mr-[30px] pt-[75px] transition-all duration-500 ${
+          className={`md:mr-[30px] ${
+            showBanner ? 'pt-[150px]' : 'pt-[75px]'
+          } pt-[150px] transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >

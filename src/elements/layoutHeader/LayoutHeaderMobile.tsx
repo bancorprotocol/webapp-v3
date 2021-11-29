@@ -5,8 +5,15 @@ interface LayoutHeaderMobileProps {
 }
 export const LayoutHeaderMobile = ({ children }: LayoutHeaderMobileProps) => {
   return (
-    <header className="layout-header-mobile">
-      <div className="layout-header-mobile-content text-white">{children}</div>
+    <header className="h-[115px] relative">
+      <div className="layout-header-mobile h-[75px]">
+        <div className="layout-header-mobile-content text-white">
+          {children}
+        </div>
+      </div>
+      <div className="absolute sticky top-[75px] w-full h-40 bg-blue-4 border-t">
+        marketing banner
+      </div>
     </header>
   );
 };

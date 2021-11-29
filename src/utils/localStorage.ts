@@ -5,6 +5,7 @@ const selected_lists = 'userTokenLists';
 const conversion = 'conversion';
 const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
+const showBanner = 'showBanner';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
@@ -43,6 +44,15 @@ export const getDarkModeLS = (): boolean => {
 
 export const setDarkModeLS = (flag: boolean) => {
   localStorage.setItem(darkMode, JSON.stringify(flag));
+};
+
+export const getShowBannerLS = (): boolean | undefined => {
+  const show = localStorage.getItem(showBanner);
+  return show ? JSON.parse(show) : undefined;
+};
+
+export const setShowBannerLS = (flag: boolean) => {
+  localStorage.setItem(showBanner, JSON.stringify(flag));
 };
 
 export const getSlippageToleranceLS = (): number => {
