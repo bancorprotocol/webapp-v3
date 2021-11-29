@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
+  getShowBannerLS,
   setDarkModeLS,
   setShowBannerLS,
   setSlippageToleranceLS,
@@ -23,7 +24,7 @@ export const initialState: UserState = {
   usdToggle: false,
   locale: 'en',
   loadingBalances: false,
-  showBanner: false,
+  showBanner: getShowBannerLS() !== false,
 };
 
 const userSlice = createSlice({
