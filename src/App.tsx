@@ -19,6 +19,7 @@ import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
 import {
   setDarkMode,
+  setShowBanner,
   setSlippageTolerance,
   setUsdToggle,
 } from 'redux/user/user';
@@ -32,6 +33,7 @@ import { EthNetworks } from 'services/web3/types';
 import {
   getDarkModeLS,
   getNotificationsLS,
+  getShowBannerLS,
   getSlippageToleranceLS,
   getUsdToggleLS,
   setNotificationsLS,
@@ -43,6 +45,7 @@ import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 import { TermsOfUse } from './pages/TermsOfUse';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -69,6 +72,9 @@ export const App = () => {
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
+
+    const showBanner = getShowBannerLS();
+    if (showBanner || showBanner === undefined) dispatch(setShowBanner(true));
   }, [dispatch]);
 
   useEffect(() => {
@@ -84,6 +90,8 @@ export const App = () => {
     setUser(account);
     googleTagManager('', '');
   }, [account]);
+
+  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
   return (
     <BrowserRouter>
@@ -118,7 +126,12 @@ export const App = () => {
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1400px] mx-auto mb-30 pt-20`}>
+          {showBanner && <MarketingBanner />}
+          <main
+            className={`max-w-[1400px] mx-auto mb-30 ${
+              showBanner ? 'pt-40 md:pt-20' : 'pt-20'
+            }`}
+          >
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route

@@ -10,6 +10,8 @@ import { getNetworkName } from 'utils/helperFunctions';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
+import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
+import { useAppSelector } from 'redux/index';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;
@@ -22,6 +24,7 @@ export const LayoutHeader = ({
 }: LayoutHeaderProps) => {
   const { chainId } = useWeb3React();
   const wallet = useWalletConnect();
+  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
   return (
     <>
@@ -69,6 +72,7 @@ export const LayoutHeader = ({
           <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>
+      {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
   );
