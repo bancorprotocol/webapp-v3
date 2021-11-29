@@ -4,6 +4,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
+import { useAppSelector } from '../../redux';
 
 interface ModalFullscreenProps {
   title?: string | JSX.Element | JSX.Element[];
@@ -20,6 +21,8 @@ export const ModalFullscreen = ({
   isOpen,
   showHeader,
 }: ModalFullscreenProps) => {
+  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
+
   return (
     <>
       <Transition
@@ -50,7 +53,11 @@ export const ModalFullscreen = ({
               </LayoutHeaderMobile>
             )}
 
-            <main className={`px-20 ${showHeader ? 'pt-[100px]' : ''}`}>
+            <main
+              className={`px-20 ${
+                showHeader ? (showBanner ? 'pt-[00px]' : 'pt-[100px]') : ''
+              }`}
+            >
               {title && (
                 <div className="flex justify-between border-b border-grey-2 dark:border-grey-4 pb-10 mb-20 text-20 font-semibold">
                   {title}

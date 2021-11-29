@@ -121,8 +121,8 @@ export const App = () => {
       ) : (
         <div
           className={`md:mr-[30px] ${
-            showBanner ? 'pt-[150px]' : 'pt-[75px]'
-          } pt-[150px] transition-all duration-500 ${
+            showBanner ? 'md:pt-[25px]' : 'pt-[75px]'
+          } transition-all duration-500 ${
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >

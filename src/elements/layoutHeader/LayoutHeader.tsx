@@ -5,17 +5,14 @@ import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { ReactComponent as IconBancorv3 } from 'assets/logos/bancorv3.svg';
-import { ReactComponent as IconSlogan } from 'assets/logos/discoverDefiSlogan.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { getNetworkName } from 'utils/helperFunctions';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { useAppSelector } from '../../redux';
-import { useDispatch } from 'react-redux';
-import { setShowBanner } from '../../redux/user/user';
+import { MarketingBanner } from '../marketingBanner/MarketingBanner';
+import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;
@@ -29,25 +26,10 @@ export const LayoutHeader = ({
   const { chainId } = useWeb3React();
   const wallet = useWalletConnect();
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
-  const dispatch = useDispatch();
-  const handleCloseBanner = () => {
-    dispatch(setShowBanner(false));
-  };
   return (
     <>
       <header className={`layout-header ${showBanner ? 'h-[140px]' : 'h-60'}`}>
-        {showBanner && (
-          <div className="flex justify-center items-center bg-blue-4 border-b border-[#5D687A] w-full absolute top-0 h-[80px] text-white">
-            <button
-              className="absolute right-20 p-10"
-              onClick={() => handleCloseBanner()}
-            >
-              <IconTimes className="w-16" />
-            </button>
-            <IconBancorv3 className="mr-20" />
-            <IconSlogan />
-          </div>
-        )}
+        {showBanner && <MarketingBanner />}
 
         <div
           className={`transition-all duration-500 ${
@@ -96,6 +78,7 @@ export const LayoutHeader = ({
           <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>
+      {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
   );
