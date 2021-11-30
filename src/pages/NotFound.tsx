@@ -9,6 +9,12 @@ export const NotFound = () => {
   const fill = darkMode ? blue4 : 'white';
   return (
     <div>
+      <div className="flex flex-col items-center text-center">
+        <div className="text-4xl">Page Not Found!</div>
+        <div className="text-20 mt-10">
+          The page you're looking for is not available.
+        </div>
+      </div>
       <svg
         className="mx-auto"
         fill="none"
@@ -3930,8 +3936,8 @@ export const NotFound = () => {
             y2="258.235"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#3A86FF" />
-            <stop offset="1" stop-color="#8EB8FE" />
+            <stop stopColor="#3A86FF" />
+            <stop offset="1" stopColor="#8EB8FE" />
           </linearGradient>
           <linearGradient
             id="paint1_linear_8811_267341"
@@ -3941,8 +3947,8 @@ export const NotFound = () => {
             y2="338.072"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#3A86FF" />
-            <stop offset="1" stop-color="#8EB8FE" />
+            <stop stopColor="#3A86FF" />
+            <stop offset="1" stopColor="#8EB8FE" />
           </linearGradient>
           <linearGradient
             id="paint2_linear_8811_267341"
@@ -3952,8 +3958,8 @@ export const NotFound = () => {
             y2="438.491"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#3A86FF" />
-            <stop offset="1" stop-color="#8EB8FE" />
+            <stop stopColor="#3A86FF" />
+            <stop offset="1" stopColor="#8EB8FE" />
           </linearGradient>
         </defs>
       </svg>
