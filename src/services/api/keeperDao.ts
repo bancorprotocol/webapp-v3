@@ -308,7 +308,7 @@ export interface RfqOrderJson {
   salt: string;
   chainId: number; // Ethereum Chain Id where the transaction is submitted.
   verifyingContract: string; // Address of the contract where the transaction should be sent.
-  signature: string;
+  signature: Signature;
 }
 
 interface Signature {
