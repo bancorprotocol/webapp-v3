@@ -27,7 +27,6 @@
     "@web3-react/walletlink-connector": "^6.2.3",
     "axios": "^0.24.0",
     "bignumber.js": "^9.0.1",
-    "cypress": "^8.0.0",
     "dayjs": "^1.10.5",
     "ethers": "^5.5.1",
     "json-bigint": "^1.0.0",
@@ -49,31 +48,53 @@
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^8.0.2",
+    "@testing-library/jest-dom": "^5.15.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/react-hooks": "^7.0.2",
+    "@testing-library/user-event": "^13.5.0",
     "@typechain/ethers-v5": "^8.0.2",
     "@types/json-bigint": "^1.0.0",
     "@types/numeral": "^2.0.1",
     "@types/react-table": "^7.7.2",
     "autoprefixer": "^9",
+    "cypress": "^9.1.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
     "husky": "^6.0.0",
+    "is-ci": "^3.0.1",
+    "is-ci-cli": "^2.2.0",
     "lint-staged": "^11.0.0",
+    "msw": "^0.35.0",
     "postcss": "^7",
     "prettier": "^2.3.0",
     "react-redux": "^7.2.6",
+    "serve": "^13.0.2",
+    "start-server-and-test": "^1.14.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@2.2.4",
     "typechain": "^6.0.2",
     "typescript": "^4.1.2"
   },
   "scripts": {
+    "start": "TAILWIND_MODE=watch craco start",
+    "start:cli": "BROWSER=none craco start",
+    "build": "craco build",
+    "test": "is-ci \"test:coverage\" \"test:watch\"",
+    "test:jest": "craco test",
+    "test:coverage": "CI=1 yarn test:jest --coverage",
+    "cy:install": "cypress install",
+    "cy:run": "cypress run",
+    "cy:open": "cypress open",
+    "test:e2e:dev": "start-server-and-test start:cli http://localhost:3000 cy:open",
+    "pretest:e2e:run": "yarn build",
+    "test:e2e:run": "start-server-and-test serve http://localhost:3000 cy:run",
+    "test:e2e": "is-ci \"test:e2e:run\" \"test:e2e:dev\"",
+    "serve": "serve --no-clipboard --single --listen 3000 build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "compile-abis": "typechain --target ethers-v5 --out-dir src/services/web3/abis/types './src/services/web3/abis/*.json'",
     "postinstall": "yarn compile-abis",
-    "start": "TAILWIND_MODE=watch craco start",
-    "build": "craco build",
-    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "husky": {
@@ -84,6 +105,17 @@
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --write"
+    ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "src/(.*)": "<rootDir>/src/$1"
+    },
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/**/*.stories.{js,jsx,ts,tsx}",
+      "!src/test/**/*.{js,jsx,ts,tsx}"
     ]
   },
   "eslintConfig": {

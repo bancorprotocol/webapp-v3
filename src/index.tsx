@@ -8,6 +8,9 @@ import { I18nProvider } from 'i18n/i18nProvider';
 import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
+import { initMocks } from 'test/server/index';
+
+initMocks();
 
 ReactDOM.render(
   <Provider store={store}>

@@ -7,6 +7,11 @@ interface SwapHeaderProps {
   setIsLimit: Function;
 }
 
+export enum TEST_IDS {
+  MarketButton = 'market-button',
+  LimitButton ='limit-button'
+};
+
 export const SwapHeader = ({ isLimit, setIsLimit }: SwapHeaderProps) => {
   const marketActive = classNameGenerator({
     'swap-header-active': !isLimit,
@@ -20,11 +25,19 @@ export const SwapHeader = ({ isLimit, setIsLimit }: SwapHeaderProps) => {
     <div>
       <div className="swap-header">
         <div>
-          <button className={marketActive} onClick={() => setIsLimit(false)}>
+          <button
+            className={marketActive}
+            onClick={() => setIsLimit(false)}
+            data-testId={TEST_IDS.MarketButton}
+          >
             Market
           </button>
           <span className="mx-12">|</span>
-          <button className={limitActive} onClick={() => setIsLimit(true)}>
+          <button
+            className={limitActive}
+            onClick={() => setIsLimit(true)}
+            data-testId={TEST_IDS.LimitButton}
+          >
             Limit
           </button>
         </div>

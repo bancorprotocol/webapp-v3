@@ -2,6 +2,7 @@ import axios from 'axios';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
 import { UTCTimestamp } from 'lightweight-charts';
+import { API_URL } from 'config';
 
 interface TokenMeta {
   id: string;
@@ -108,7 +109,7 @@ export const getWelcomeData = async (
   try {
     const { data } = await axios.get<WelcomeData>(
       network === EthNetworks.Mainnet
-        ? 'https://api-v2.bancor.network/welcome'
+        ? `${API_URL}/welcome`
         : 'https://serve-ropsten-ptdczarhfq-nw.a.run.app/welcome'
     );
     return {
