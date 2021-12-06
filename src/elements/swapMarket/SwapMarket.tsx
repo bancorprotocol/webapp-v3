@@ -3,7 +3,12 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
+import {
+  getRateAndPriceImapct,
+  getRateAndPriceImapctV3,
+  swap,
+  swapV3,
+} from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
@@ -64,6 +69,7 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
+  const [isSwapV3, setIsSwapV3] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const dispatch = useDispatch();
@@ -81,8 +87,11 @@ export const SwapMarket = ({
   ) => {
     if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    const v3Res = await getRateAndPriceImapctV3(fromToken, toToken, amount);
+    const isV3 = Number(v3Res.rate) > Number(res.rate);
+    setIsSwapV3(isV3);
     if (showAnimation) setIsLoadingRate(false);
-    return res;
+    return isV3 ? v3Res : res;
   };
 
   useInterval(() => {
@@ -215,44 +224,75 @@ export const SwapMarket = ({
     }
 
     const conversion = getConversionLS();
-    await swap(
-      slippageTolerance,
-      fromToken,
-      toToken,
-      fromAmount,
-      toAmount,
-      (txHash: string) =>
-        swapNotification(
-          dispatch,
-          fromToken,
-          toToken,
-          fromAmount,
-          toAmount,
-          txHash
-        ),
-      () => {
-        sendConversionEvent(ConversionEvents.success, {
-          ...conversion,
-          conversion_market_token_rate: fromToken.usdPrice,
-          transaction_category: 'Conversion',
-        });
-        onConfirmation();
-      },
-      () => rejectNotification(dispatch),
-      (error: string) => {
-        sendConversionEvent(ConversionEvents.fail, {
-          conversion,
-          error,
-        });
-        swapFailedNotification(
-          dispatch,
-          fromToken,
-          toToken,
-          fromAmount,
-          toAmount
-        );
-      }
-    );
+    if (isSwapV3)
+      swapV3(
+        slippageTolerance,
+        fromToken,
+        toToken,
+        fromAmount,
+        toAmount,
+        (txHash: string) =>
+          swapNotification(
+            dispatch,
+            fromToken,
+            toToken,
+            fromAmount,
+            toAmount,
+            txHash
+          ),
+        () => {
+          onConfirmation();
+        },
+        () => rejectNotification(dispatch),
+        () => {
+          swapFailedNotification(
+            dispatch,
+            fromToken,
+            toToken,
+            fromAmount,
+            toAmount
+          );
+        }
+      );
+    else
+      await swap(
+        slippageTolerance,
+        fromToken,
+        toToken,
+        fromAmount,
+        toAmount,
+        (txHash: string) =>
+          swapNotification(
+            dispatch,
+            fromToken,
+            toToken,
+            fromAmount,
+            toAmount,
+            txHash
+          ),
+        () => {
+          sendConversionEvent(ConversionEvents.success, {
+            ...conversion,
+            conversion_market_token_rate: fromToken.usdPrice,
+            transaction_category: 'Conversion',
+          });
+          onConfirmation();
+        },
+        () => rejectNotification(dispatch),
+        (error: string) => {
+          sendConversionEvent(ConversionEvents.fail, {
+            conversion,
+            error,
+          });
+          swapFailedNotification(
+            dispatch,
+            fromToken,
+            toToken,
+            fromAmount,
+            toAmount
+          );
+        }
+      );
 
     setShowModal(false);
   };
@@ -358,7 +398,12 @@ export const SwapMarket = ({
             {toToken && (
               <>
                 <div className="flex justify-between items-center mt-15">
-                  <span>Rate</span>
+                  <div className="flex">
+                    Best Rate
+                    <div className="ml-5 px-5 rounded bg-blue-0 dark:bg-blue-5 text-primary-dark dark:text-primary-light">
+                      {isSwapV3 ? 'V3' : 'V2'}
+                    </div>
+                  </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[140px]"></div>
                   ) : (

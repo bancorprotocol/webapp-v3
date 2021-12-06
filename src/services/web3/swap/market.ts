@@ -275,3 +275,25 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
 
   throw new Error('No pool found');
 };
+
+//V3
+
+export const getRateAndPriceImapctV3 = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
+  return { rate: '0', priceImpact: '0.0000' };
+};
+
+export const swapV3 = async (
+  slippageTolerance: number,
+  fromToken: Token,
+  toToken: Token,
+  fromAmount: string,
+  toAmount: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: (error: string) => void
+) => {};
