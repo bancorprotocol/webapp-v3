@@ -42,29 +42,29 @@ export const buildContract = (
 const keepAlive = (
   provider: providers.WebSocketProvider,
   onDisconnect: (err: any) => void,
-  expectedPongBack = 15000,
   checkInterval = 7500
 ) => {
   let pingTimeout: NodeJS.Timeout | null = null;
   let keepAliveInterval: NodeJS.Timeout | null = null;
 
-  provider.on('open', () => {
+  provider._websocket.onopen = () => {
     keepAliveInterval = setInterval(() => {
-      provider._websocket.ping();
+      if (
+        provider._websocket.readyState === WebSocket.OPEN ||
+        provider._websocket.readyState === WebSocket.CONNECTING
+      )
+        return;
 
-      pingTimeout = setTimeout(() => {
-        provider._websocket.terminate();
-      }, expectedPongBack);
+      provider._websocket.close();
     }, checkInterval);
-  });
+  };
 
-  provider.on('close', (err: any) => {
+  provider._websocket.onclose = (err: any) => onError(err);
+  provider._websocket.onerror = (err: any) => onError(err);
+
+  const onError = (err: any) => {
     if (keepAliveInterval) clearInterval(keepAliveInterval);
     if (pingTimeout) clearTimeout(pingTimeout);
     onDisconnect(err);
-  });
-
-  provider.on('pong', () => {
-    if (pingTimeout) clearInterval(pingTimeout);
-  });
+  };
 };
