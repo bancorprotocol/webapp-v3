@@ -30,6 +30,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
+import { wait } from '../../../../utils/pureFunctions';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -155,6 +156,7 @@ export const WithdrawLiquidityWidget = ({
   const handleWithdraw = async () => {
     if (withdrawingBNT) {
       setIsModalOpen(false);
+      await wait(1000);
       onStart();
     } else withdraw();
   };
