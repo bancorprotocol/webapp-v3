@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Pool, Token } from 'services/observables/tokens';
@@ -127,7 +127,7 @@ export const WithdrawLiquidityWidget = ({
     [amountDebounce]
   );
 
-  const withdraw = async () => {
+  const withdraw = useCallback(async () => {
     if (token)
       await withdrawProtection(
         positionId,
@@ -145,7 +145,16 @@ export const WithdrawLiquidityWidget = ({
         () => withdrawProtectedPositionFailed(dispatch, token, amount)
       );
     setIsModalOpen(false);
-  };
+  }, [
+    account,
+    amount,
+    dispatch,
+    pools,
+    positionId,
+    setIsModalOpen,
+    tknAmount,
+    token,
+  ]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount: amount, token: govToken! }],
@@ -153,13 +162,13 @@ export const WithdrawLiquidityWidget = ({
     approveContract.current
   );
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = useCallback(async () => {
     if (withdrawingBNT) {
       setIsModalOpen(false);
       await wait(1000);
       onStart();
     } else withdraw();
-  };
+  }, [onStart, setIsModalOpen, withdraw, withdrawingBNT]);
 
   return (
     <>
@@ -230,7 +239,7 @@ export const WithdrawLiquidityWidget = ({
             </div>
           )}
           <button
-            onClick={() => handleWithdraw()}
+            onClick={handleWithdraw}
             disabled={withdrawDisabled}
             className={`btn-primary rounded w-full mt-20`}
           >
