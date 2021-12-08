@@ -1,5 +1,9 @@
 import { Token } from 'services/observables/tokens';
-import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
+import {
+  getOrderDetails,
+  RfqOrderJson,
+  sendOrders,
+} from 'services/api/keeperDao';
 import { NULL_ADDRESS } from '@0x/utils';
 import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
@@ -13,8 +17,6 @@ import {
 import { expandToken } from 'utils/formulas';
 import { Weth__factory } from '../abis/types';
 import { utils } from 'ethers';
-import { exchangeProxy$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 
 export const depositWeth = async (amount: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
@@ -72,25 +74,24 @@ export const createOrder = async (
   const expiry = Number(dayjs().unix() + seconds);
   const fromAmountWei = new BigNumber(expandToken(from, fromToken.decimals));
   const toAmountWei = new BigNumber(expandToken(to, toToken.decimals));
-  const txOrigin = await getTxOrigin();
-  const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
   const salt = Number(utils.hexlify(utils.randomBytes(6)));
+  const orderDetails = await getOrderDetails();
 
   const order = {
-    maker: user,
-    taker: NULL_ADDRESS,
-    expiry: expiry,
+    maker: user.toLowerCase(),
+    taker: NULL_ADDRESS.toLocaleLowerCase(),
+    expiry,
     makerAmount: fromAmountWei.toString(),
-    makerToken: fromToken.address,
-    pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
+    makerToken: fromToken.address.toLowerCase(),
+    pool: orderDetails.pool,
     salt,
     takerAmount: toAmountWei.toString(),
-    takerToken: toToken.address,
-    txOrigin: txOrigin,
+    takerToken: toToken.address.toLowerCase(),
+    txOrigin: orderDetails.txOrigin,
   };
 
   const signature = await writeWeb3.signer._signTypedData(
-    domain(exchangeProxyAddress),
+    domain(orderDetails.verifyingContract),
     types,
     order
   );
@@ -104,7 +105,7 @@ export const createOrder = async (
     makerAmount: order.makerAmount,
     makerToken: order.makerToken.toLowerCase(),
     pool: order.pool,
-    salt: order.salt.toString(),
+    salt: order.salt,
     signature: {
       r: splittedSign.r,
       s: splittedSign.s,
@@ -114,7 +115,7 @@ export const createOrder = async (
     takerAmount: order.takerAmount,
     takerToken: order.takerToken.toLowerCase(),
     txOrigin: order.txOrigin.toLowerCase(),
-    verifyingContract: exchangeProxyAddress.toLowerCase(),
+    verifyingContract: orderDetails.verifyingContract.toLowerCase(),
   };
 
   await sendOrders([jsonOrder]);
@@ -128,7 +129,7 @@ const domain = (exchangeProxyAddress: string) => ({
 });
 
 const types = {
-  MetaTransactionData: [
+  RfqOrder: [
     { type: 'address', name: 'makerToken' },
     { type: 'address', name: 'takerToken' },
     { type: 'uint128', name: 'makerAmount' },
