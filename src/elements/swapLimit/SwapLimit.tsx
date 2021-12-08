@@ -234,7 +234,7 @@ export const SwapLimit = ({
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
-    } catch (e) {
+    } catch (e: any) {
       dispatch(
         addNotification({
           type: NotificationType.error,
