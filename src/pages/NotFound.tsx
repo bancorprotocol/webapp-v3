@@ -1,5 +1,4 @@
 import { NotFoundSvg } from 'assets/notFoundSvg';
-import { useAppSelector } from 'redux/index';
 
 export const NotFound = () => {
   return (
