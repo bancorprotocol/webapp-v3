@@ -30,7 +30,6 @@ import { useAppSelector } from 'redux/index';
 import { googleTagManager } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import {
-  getAutoLoginLS,
   getDarkModeLS,
   getNotificationsLS,
   getSlippageToleranceLS,
@@ -44,6 +43,7 @@ import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 import { TermsOfUse } from './pages/TermsOfUse';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
+import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -86,6 +86,8 @@ export const App = () => {
     googleTagManager('', '');
   }, [account]);
 
+  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
+
   return (
     <BrowserRouter>
       <nav className={'hidden md:block'}>
@@ -119,7 +121,12 @@ export const App = () => {
             isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
           }`}
         >
-          <main className={`max-w-[1400px] mx-auto mb-30 pt-20`}>
+          {showBanner && <MarketingBanner />}
+          <main
+            className={`max-w-[1400px] mx-auto mb-30 ${
+              showBanner ? 'pt-40 md:pt-20' : 'pt-20'
+            }`}
+          >
             <Switch>
               <Route exact strict path="/" component={Swap} />
               <Route
