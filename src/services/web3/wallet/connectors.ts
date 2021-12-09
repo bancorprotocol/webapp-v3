@@ -19,8 +19,8 @@ export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = true) => {
 };
 
 const RPC_URLS: { [chainId: number]: string } = {
-  1: buildAlchemyUrl(EthNetworks.Mainnet),
-  3: buildAlchemyUrl(EthNetworks.Ropsten),
+  1: buildAlchemyUrl(EthNetworks.Mainnet, false),
+  3: buildAlchemyUrl(EthNetworks.Ropsten, false),
 };
 
 const appName = 'bancor';
