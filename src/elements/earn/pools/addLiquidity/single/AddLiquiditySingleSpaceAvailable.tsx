@@ -76,7 +76,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
           setBntNeeded('');
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('failed to fetch space available with msg: ', e.message);
     }
   }, [

@@ -7,8 +7,6 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
 import { EthNetworks } from 'services/web3/types';
 
-const POLLING_INTERVAL = 15000;
-
 export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = true) => {
   const net = EthNetworks.Mainnet === network ? 'mainnet' : 'ropsten';
   const id =
@@ -36,7 +34,6 @@ export const gnosisSafe = new SafeAppConnector();
 export const walletconnect = new WalletConnectConnector({
   rpc: { 1: RPC_URLS[1], 3: RPC_URLS[3] },
   qrcode: true,
-  pollingInterval: POLLING_INTERVAL,
 });
 
 export const walletlink = new WalletLinkConnector({

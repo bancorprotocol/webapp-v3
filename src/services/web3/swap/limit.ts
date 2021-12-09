@@ -1,7 +1,11 @@
 import { Token } from 'services/observables/tokens';
-import { getTxOrigin, RfqOrderJson, sendOrders } from 'services/api/keeperDao';
-import { NULL_ADDRESS, hexUtils } from '@0x/utils';
-import { ErrorCode, EthNetworks } from 'services/web3/types';
+import {
+  getOrderDetails,
+  RfqOrderJson,
+  sendOrders,
+} from 'services/api/keeperDao';
+import { NULL_ADDRESS } from '@0x/utils';
+import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
 import { wethToken } from 'services/web3/config';
 import { writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
@@ -13,8 +17,6 @@ import {
 import { expandToken } from 'utils/formulas';
 import { Weth__factory } from '../abis/types';
 import { utils } from 'ethers';
-import { exchangeProxy$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 
 export const depositWeth = async (amount: string) => {
   const tokenContract = Weth__factory.connect(wethToken, writeWeb3.signer);
@@ -69,50 +71,55 @@ export const createOrder = async (
   user: string,
   seconds: number
 ): Promise<void> => {
-  const now = dayjs().unix();
-  const expiry = new BigNumber(now + seconds);
-
+  const expiry = Number(dayjs().unix() + seconds);
   const fromAmountWei = new BigNumber(expandToken(from, fromToken.decimals));
   const toAmountWei = new BigNumber(expandToken(to, toToken.decimals));
-  const txOrigin = await getTxOrigin();
-  const exchangeProxyAddress = await exchangeProxy$.pipe(take(1)).toPromise();
+  const salt = Number(utils.hexlify(utils.randomBytes(6)));
+  const orderDetails = await getOrderDetails();
 
-  const signature = await writeWeb3.signer._signTypedData(
-    domain(exchangeProxyAddress),
-    types,
-    {
-      signer: writeWeb3.signer,
-      sender: user,
-      minGasPrice: ZERO,
-      maxGasPrice: ZERO,
-      expirationTimeSeconds: expiry.toString(10),
-      salt: ZERO,
-      callData: hexUtils.leftPad(0),
-      value: ZERO,
-      feeToken: NULL_ADDRESS,
-      feeAmount: ZERO,
-    }
-  );
-
-  const jsonOrder: RfqOrderJson = {
+  const order = {
     maker: user.toLowerCase(),
     taker: NULL_ADDRESS.toLocaleLowerCase(),
-    chainId: EthNetworks.Mainnet,
-    expiry: expiry.toNumber(),
-    makerAmount: fromAmountWei.toString().toLowerCase(),
+    expiry,
+    makerAmount: fromAmountWei.toString(),
     makerToken: fromToken.address.toLowerCase(),
-    pool: '0x000000000000000000000000000000000000000000000000000000000000002d',
-    salt: utils.randomBytes(16).toString().toLowerCase(),
-    signature,
-    takerAmount: toAmountWei.toString().toLowerCase(),
+    pool: orderDetails.pool,
+    salt,
+    takerAmount: toAmountWei.toString(),
     takerToken: toToken.address.toLowerCase(),
-    txOrigin: txOrigin.toLowerCase(),
-    verifyingContract: exchangeProxyAddress.toLowerCase(),
+    txOrigin: orderDetails.txOrigin,
+  };
+
+  const signature = await writeWeb3.signer._signTypedData(
+    domain(orderDetails.verifyingContract),
+    types,
+    order
+  );
+
+  const splittedSign = utils.splitSignature(signature);
+  const jsonOrder: RfqOrderJson = {
+    maker: order.maker.toLowerCase(),
+    taker: order.taker,
+    chainId: EthNetworks.Mainnet,
+    expiry: order.expiry,
+    makerAmount: order.makerAmount,
+    makerToken: order.makerToken.toLowerCase(),
+    pool: order.pool,
+    salt: order.salt,
+    signature: {
+      r: splittedSign.r,
+      s: splittedSign.s,
+      v: splittedSign.v,
+      signatureType: SignatureType.EIP712,
+    },
+    takerAmount: order.takerAmount,
+    takerToken: order.takerToken.toLowerCase(),
+    txOrigin: order.txOrigin.toLowerCase(),
+    verifyingContract: orderDetails.verifyingContract.toLowerCase(),
   };
 
   await sendOrders([jsonOrder]);
 };
-const ZERO = new BigNumber(0).toString(10);
 
 const domain = (exchangeProxyAddress: string) => ({
   chainId: 1,
@@ -122,22 +129,16 @@ const domain = (exchangeProxyAddress: string) => ({
 });
 
 const types = {
-  EIP712Domain: [
-    { name: 'name', type: 'string' },
-    { name: 'version', type: 'string' },
-    { name: 'chainId', type: 'uint256' },
-    { name: 'verifyingContract', type: 'address' },
-  ],
-  MetaTransactionData: [
-    { type: 'address', name: 'signer' },
-    { type: 'address', name: 'sender' },
-    { type: 'uint256', name: 'minGasPrice' },
-    { type: 'uint256', name: 'maxGasPrice' },
-    { type: 'uint256', name: 'expirationTimeSeconds' },
+  RfqOrder: [
+    { type: 'address', name: 'makerToken' },
+    { type: 'address', name: 'takerToken' },
+    { type: 'uint128', name: 'makerAmount' },
+    { type: 'uint128', name: 'takerAmount' },
+    { type: 'address', name: 'maker' },
+    { type: 'address', name: 'taker' },
+    { type: 'address', name: 'txOrigin' },
+    { type: 'bytes32', name: 'pool' },
+    { type: 'uint64', name: 'expiry' },
     { type: 'uint256', name: 'salt' },
-    { type: 'bytes', name: 'callData' },
-    { type: 'uint256', name: 'value' },
-    { type: 'address', name: 'feeToken' },
-    { type: 'uint256', name: 'feeAmount' },
   ],
 };

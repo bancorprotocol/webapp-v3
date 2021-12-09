@@ -180,7 +180,7 @@ export const SwapMarket = ({
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowModal(true);
       } else await handleSwap(true);
-    } catch (e) {
+    } catch (e: any) {
       dispatch(
         addNotification({
           type: NotificationType.error,
