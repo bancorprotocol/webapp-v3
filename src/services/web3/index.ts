@@ -60,7 +60,11 @@ const keepAlive = async (
       )
         return;
 
-      web3.provider._websocket.close();
+      try {
+        web3.provider._websocket.close();
+      } catch (error) {
+        console.error('Failed closing websocket', error);
+      }
     }, checkInterval);
   };
 
