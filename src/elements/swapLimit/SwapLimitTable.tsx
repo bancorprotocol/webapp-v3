@@ -51,6 +51,18 @@ export const SwapLimitTable = () => {
     );
   }, [orders, search]);
 
+  const handleWithdrawWeth = useCallback(async () => {
+    weth &&
+      weth.balance &&
+      dispatch(addNotification(await withdrawWeth(weth.balance)));
+  }, [dispatch, weth]);
+
+  const handleCancelOrders = useCallback(async () => {
+    dispatch(
+      addNotification(await cancelOrders(orders.map((x) => x.orderRes)))
+    );
+  }, [dispatch, orders]);
+
   const columns = useMemo<TableColumn<LimitOrder>[]>(
     () => [
       {
@@ -166,23 +178,14 @@ export const SwapLimitTable = () => {
           />
           <button
             className={'btn-outline-secondary btn-sm rounded-10'}
-            onClick={async () =>
-              dispatch(
-                addNotification(
-                  await cancelOrders(orders.map((x) => x.orderRes))
-                )
-              )
-            }
+            onClick={() => handleCancelOrders()}
           >
             Cancel All
           </button>
           {weth && weth.balance && (
             <button
               className={'btn-outline-secondary btn-sm rounded-10'}
-              onClick={async () =>
-                weth.balance &&
-                dispatch(addNotification(await withdrawWeth(weth.balance)))
-              }
+              onClick={() => handleWithdrawWeth()}
             >
               Withdraw {prettifyNumber(weth.balance)} WETH
             </button>
