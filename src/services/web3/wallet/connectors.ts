@@ -13,14 +13,12 @@ export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = true) => {
     network === EthNetworks.Mainnet
       ? (process.env.REACT_APP_ALCHEMY_MAINNET as string)
       : (process.env.REACT_APP_ALCHEMY_ROPSTEN as string);
-  return `${wss ? 'wss' : 'https'}://eth-${net}${
-    wss ? '.ws' : ''
-  }.alchemyapi.io/v2/${id}`;
+  return `${wss ? 'wss' : 'https'}://eth-${net}.alchemyapi.io/v2/${id}`;
 };
 
 const RPC_URLS: { [chainId: number]: string } = {
-  1: buildAlchemyUrl(EthNetworks.Mainnet),
-  3: buildAlchemyUrl(EthNetworks.Ropsten),
+  1: buildAlchemyUrl(EthNetworks.Mainnet, false),
+  3: buildAlchemyUrl(EthNetworks.Ropsten, false),
 };
 
 const appName = 'bancor';
