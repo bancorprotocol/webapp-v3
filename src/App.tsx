@@ -44,6 +44,7 @@ import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 import { TermsOfUse } from './pages/TermsOfUse';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
+import { keepWSOpen } from 'services/web3';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -67,6 +68,7 @@ export const App = () => {
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
     subscribeToObservables(dispatch);
+    keepWSOpen();
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
