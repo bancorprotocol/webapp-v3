@@ -8,6 +8,7 @@ import {
   fortmatic,
   portis,
   gnosisSafe,
+  torus,
 } from 'services/web3/wallet/connectors';
 
 import metamaskLogo from 'assets/logos/metamask.png';
@@ -19,6 +20,7 @@ import ledgerLogo from 'assets/logos/ledger.svg';
 import trezorLogo from 'assets/logos/trezor.svg';
 import frameLogo from 'assets/logos/frame.png';
 import gnosisSafeLogo from 'assets/logos/gnosisSafe.svg';
+import torusLogo from 'assets/logos/torus.svg';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -90,5 +92,10 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: portis,
     name: 'Portis',
     icon: portisLogo,
+  },
+  {
+    connector: torus,
+    name: 'Torus',
+    icon: torusLogo,
   },
 ];
