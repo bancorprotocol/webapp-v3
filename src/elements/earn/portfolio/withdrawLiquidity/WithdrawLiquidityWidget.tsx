@@ -79,24 +79,27 @@ export const WithdrawLiquidityWidget = ({
         .toPromise();
   }, []);
 
-  const showVBNTWarning = () => {
+  const showVBNTWarning = useCallback(() => {
     if (token && token.address !== bnt) {
       return false;
     }
     if (!amount) {
       return false;
     }
-    const isBalanceSufficient = new BigNumber(
-      govToken ? govToken.balance ?? 0 : 0
-    ).gte(amount);
-    if (isBalanceSufficient) {
-      return false;
-    }
-
-    return new BigNumber(govToken ? govToken.balance ?? 0 : 0).lt(
-      protectedPosition.initialStake.tknAmount
-    );
-  };
+    const govTokenBalance = govToken ? govToken.balance ?? 0 : 0;
+    const initalStake = protectedPosition.initialStake.tknAmount;
+    return new BigNumber(amount)
+      .div(tknAmount)
+      .times(initalStake)
+      .gt(govTokenBalance);
+  }, [
+    amount,
+    bnt,
+    govToken,
+    protectedPosition.initialStake.tknAmount,
+    tknAmount,
+    token,
+  ]);
 
   useAsyncEffect(
     async (isMounted) => {
@@ -235,7 +238,7 @@ export const WithdrawLiquidityWidget = ({
           )}
           {showVBNTWarning() && (
             <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-              Insufficient VBNT balance.
+              Insufficient vBNT balance.
             </div>
           )}
           <button
