@@ -7,6 +7,7 @@ export const NotFoundSvg = () => {
   const numberLines = blue4;
   const stroke = darkMode ? 'white' : blue4;
   const fill = darkMode ? blue4 : 'white';
+
   return (
     <svg
       width="100%"
