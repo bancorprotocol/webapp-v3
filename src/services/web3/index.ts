@@ -26,6 +26,7 @@ export const keepWSOpen = () => {
       console.error('Failed closing websocket', error);
     }
     try {
+      console.log('Reconnecting websocket');
       const network = await currentNetwork$.pipe(take(1)).toPromise();
       web3.provider = new providers.WebSocketProvider(buildAlchemyUrl(network));
     } catch (error) {
