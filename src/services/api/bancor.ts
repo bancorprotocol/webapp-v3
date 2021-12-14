@@ -27,7 +27,6 @@ export interface WelcomeData {
   bnt_price: USDPrice;
   bnt_supply: string;
   bnt_supply_24h_ago: string;
-  swaps: Swap[];
   pools: APIPool[];
   tokens: APIToken[];
 }
@@ -62,17 +61,6 @@ export interface APIPool {
   decimals: number;
   isWhitelisted: boolean;
   reward?: APIReward;
-}
-
-export interface Swap {
-  source_token_dlt_id: string;
-  target_token_dlt_id: string;
-  tx_hash: string;
-  input_amount: string;
-  output_amount: string;
-  amount: USDPrice;
-  timestamp: number;
-  account_dlt_id: string;
 }
 
 export interface APIToken {
@@ -118,12 +106,6 @@ export const getWelcomeData = async (
         ...pool,
         converter_dlt_id: utils.getAddress(pool.converter_dlt_id),
         pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
-      })),
-      swaps: data.swaps.map((swap) => ({
-        ...swap,
-        account_dlt_id: utils.getAddress(swap.account_dlt_id),
-        source_token_dlt_id: utils.getAddress(swap.source_token_dlt_id),
-        target_token_dlt_id: utils.getAddress(swap.target_token_dlt_id),
       })),
       tokens: data.tokens.map((token) => ({
         ...token,
