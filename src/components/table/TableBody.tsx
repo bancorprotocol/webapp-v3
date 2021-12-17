@@ -13,7 +13,7 @@ export const TableBody = <D extends object>({
 }: TableBodyProps<D>) => {
   return (
     <tbody {...getTableBodyProps()}>
-      {page.map((row, i) => {
+      {page.map((row) => {
         prepareRow(row);
         return (
           <tr {...row.getRowProps()} className="group">

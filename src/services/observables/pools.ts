@@ -21,7 +21,6 @@ import { ConverterRegistry__factory } from 'services/web3/abis/types';
 import { user$ } from './user';
 import { multicall } from 'services/web3/multicall/multicall';
 import { buildTokenBalanceCall, buildTokenTotalSupplyCall } from './balances';
-import { pools$ } from './tokens';
 
 export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
   switchMapIgnoreThrow(([networkVersion]) => getWelcomeData(networkVersion)),

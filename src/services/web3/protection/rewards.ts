@@ -6,6 +6,7 @@ import { web3, writeWeb3 } from '..';
 import { ProtectedLiquidity } from './positions';
 import { multicall, MultiCall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
+import { changeGas } from '../config';
 
 export const stakeRewards = async ({
   amount,
@@ -30,11 +31,19 @@ export const stakeRewards = async ({
       writeWeb3.signer
     );
 
-    const tx = await contract.stakeRewards(expandToken(amount, 18), poolId);
+    const estimate = await contract.estimateGas.stakeRewards(
+      expandToken(amount, 18),
+      poolId
+    );
+    const gasLimit = changeGas(estimate.toString());
+
+    const tx = await contract.stakeRewards(expandToken(amount, 18), poolId, {
+      gasLimit,
+    });
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
@@ -76,7 +85,7 @@ export const stakePoolLevelRewards = async ({
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
@@ -90,7 +99,10 @@ export const claimRewards = async (): Promise<string> => {
     writeWeb3.signer
   );
 
-  return (await contract.claimRewards()).hash;
+  const estimate = await contract.estimateGas.claimRewards();
+  const gasLimit = changeGas(estimate.toString());
+
+  return (await contract.claimRewards({ gasLimit })).hash;
 };
 
 export const fetchTotalClaimedRewards = async (

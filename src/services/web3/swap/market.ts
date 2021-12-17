@@ -3,6 +3,7 @@ import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
+  changeGas,
   ethToken,
   wethToken,
   zeroAddress,
@@ -145,7 +146,7 @@ export const swap = async (
     const conversion = getConversionLS();
     sendConversionEvent(ConversionEvents.wallet_req, conversion);
 
-    const tx = await contract.convertByPath(
+    const estimate = await contract.estimateGas.convertByPath(
       path,
       fromWei,
       calculateMinimumReturn(expectedToWei, slippageTolerance),
@@ -153,6 +154,17 @@ export const swap = async (
       zeroAddress,
       0,
       { value: fromIsEth ? fromWei : undefined }
+    );
+    const gasLimit = changeGas(estimate.toString());
+
+    const tx = await contract.convertByPath(
+      path,
+      fromWei,
+      calculateMinimumReturn(expectedToWei, slippageTolerance),
+      zeroAddress,
+      zeroAddress,
+      0,
+      { value: fromIsEth ? fromWei : undefined, gasLimit }
     );
 
     sendConversionEvent(ConversionEvents.wallet_confirm, conversion);

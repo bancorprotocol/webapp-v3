@@ -6,11 +6,12 @@ export const ProtectedPositionTableCellRoi = (
 ) => {
   const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
   const isSubRow = !position.groupId;
+  const fees = Number(position.roi.fees);
 
   return (
     <div className="flex flex-col">
       <div className="flex items-center justify-center font-medium h-24">
-        {(Number(position.roi.fees) * 100).toFixed(2)} %
+        {fees > 0 ? (fees * 100).toFixed(2) : '0.00'} %
       </div>
       {hasRewards && !isSubRow && (
         <div className="flex justify-center">

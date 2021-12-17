@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useRef } from 'react';
+import { Fragment } from 'react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 
@@ -28,18 +28,15 @@ export const Modal = ({
   onClose,
   large,
 }: ModalProps) => {
-  const refDiv = useRef(null);
-
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
-          initialFocus={refDiv}
           as="div"
           className="fixed inset-0 z-50"
           onClose={() => (onClose ? onClose() : setIsOpen(false))}
         >
-          <div ref={refDiv} className="min-h-screen px-4 text-center">
+          <div className="min-h-screen px-4 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -84,13 +81,15 @@ export const Modal = ({
                   {title && title}
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="rounded-10 px-5 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="rounded-10 px-5 py-2 focus:outline-none"
                   >
                     <IconTimes className="w-14" />
                   </button>
                 </Dialog.Title>
-                {separator && <hr className="widget-separator m-0" />}
-                {children}
+                <div>
+                  {separator && <hr className="widget-separator m-0" />}
+                  {children}
+                </div>
               </div>
             </Transition.Child>
           </div>

@@ -1,4 +1,3 @@
-import { NotificationType } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
 import { networkVars$ } from 'services/observables/network';
 import { Token } from 'services/observables/tokens';

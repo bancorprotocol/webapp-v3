@@ -7,14 +7,14 @@ interface CountdownTimerProps {
   date?: number;
   msgEnded?: string;
   interval?: number;
-  withDays?: boolean;
+  onEnded?: () => void;
 }
 
 export const CountdownTimer = ({
   date,
   msgEnded = '',
-  withDays = false,
   interval = 1000,
+  onEnded,
 }: CountdownTimerProps) => {
   const now = dayjs().unix() * 1000;
   const [countdown, setCountdown] = useState(date ? date - now : -1);
@@ -23,9 +23,10 @@ export const CountdownTimer = ({
   useInterval(
     () => {
       setCountdown(countdown - interval);
+      if (onEnded && countdown <= interval) onEnded();
     },
     timerEnded ? null : interval
   );
 
-  return <div>{timerEnded ? msgEnded : formatTime(countdown, withDays)}</div>;
+  return <div>{timerEnded ? msgEnded : formatTime(countdown)}</div>;
 };

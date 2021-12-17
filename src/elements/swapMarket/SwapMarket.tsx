@@ -8,7 +8,6 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
   addNotification,
-  BaseNotification,
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
@@ -181,7 +180,7 @@ export const SwapMarket = ({
         sendConversionEvent(ConversionEvents.approvePop, conversion);
         setShowModal(true);
       } else await handleSwap(true);
-    } catch (e) {
+    } catch (e: any) {
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -196,11 +195,7 @@ export const SwapMarket = ({
     if (!(chainId && toToken && account)) return;
 
     await wait(4000);
-    const balances = await fetchTokenBalances(
-      [fromToken, toToken],
-      account,
-      chainId
-    );
+    const balances = await fetchTokenBalances([fromToken, toToken], account);
     dispatch(updateTokens(balances));
   };
 

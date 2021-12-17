@@ -144,7 +144,7 @@ export const getGroupedPositions = createSelector(
   }
 );
 
-export const getPositionById = (id: string) =>
+export const getPositionById = (id: string): any =>
   createSelector(
     getGroupedPositions,
     (positions: ProtectedPositionGrouped[]) => {
