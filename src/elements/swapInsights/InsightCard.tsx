@@ -3,7 +3,6 @@ import {
   LinePercentageData,
 } from 'components/linePercentage/LinePercentage';
 import { Tooltip } from 'components/tooltip/Tooltip';
-import { classNameGenerator } from 'utils/pureFunctions';
 
 interface InsightCardProps {
   label: string;

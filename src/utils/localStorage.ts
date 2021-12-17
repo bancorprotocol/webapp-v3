@@ -1,13 +1,14 @@
 import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
 
-const selected_lists = 'selected_list_ids';
+const selected_lists = 'userTokenLists';
 const conversion = 'conversion';
 const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
+const showBanner = 'showBanner';
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
@@ -72,4 +73,13 @@ export const getNotificationsLS = (): Notification[] => {
 
 export const setNotificationsLS = (notify: Notification[]) => {
   localStorage.setItem(notifications, JSON.stringify(notify));
+};
+
+export const getShowBannerLS = (): boolean | undefined => {
+  const show = localStorage.getItem(showBanner);
+  return show ? JSON.parse(show) : undefined;
+};
+
+export const setShowBannerLS = (flag: boolean) => {
+  localStorage.setItem(showBanner, JSON.stringify(flag));
 };

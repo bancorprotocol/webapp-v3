@@ -41,7 +41,7 @@ export const NotificationsMenu = () => {
           })
         );
       }
-    } catch (e) {}
+    } catch (e: any) {}
   };
 
   useInterval(async () => {

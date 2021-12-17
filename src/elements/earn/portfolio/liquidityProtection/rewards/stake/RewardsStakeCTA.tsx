@@ -86,7 +86,7 @@ export const RewardsStakeCTA = ({
           failed: () => stakeRewardsFailedNotification(dispatch),
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error('Staking Rewards failed with msg: ', e.message);
     } finally {
       setIsBusy(false);

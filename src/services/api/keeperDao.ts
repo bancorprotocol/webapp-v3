@@ -6,7 +6,6 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
-import { exchangeProxy$ } from 'services/observables/contracts';
 import { Token, tokens$ } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
@@ -18,6 +17,7 @@ import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
+import { exchangeProxy$ } from 'services/observables/contracts';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -127,14 +127,19 @@ export const swapLimit = async (
   }
 };
 
-export const getTxOrigin = async (): Promise<string> => {
-  const res = await getInfo();
-  return res.txOrigin;
-};
-const getInfo = async () => {
+export const getOrderDetails = async (): Promise<OrderDetails> => {
   const res = await axios.get(`${baseUrl}/info`);
   return res.data.result.orderDetails;
 };
+
+type OrderDetails = {
+  verifyingContract: string;
+  chainId: number;
+  txOrigin: string;
+  taker: string;
+  pool: string;
+};
+
 export interface KeeprDaoToken {
   address: string;
   chainId: number;
@@ -305,10 +310,10 @@ export interface RfqOrderJson {
   txOrigin: string;
   pool: string;
   expiry: number;
-  salt: string;
+  salt: number;
   chainId: number; // Ethereum Chain Id where the transaction is submitted.
   verifyingContract: string; // Address of the contract where the transaction should be sent.
-  signature: string;
+  signature: Signature;
 }
 
 interface Signature {

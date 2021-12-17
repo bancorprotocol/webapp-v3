@@ -9,7 +9,6 @@ import { removeLiquidity } from 'services/web3/liquidity/liquidity';
 
 export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();
-  const poolName = `${poolToken.bnt.token.symbol}/${poolToken.bnt.token.symbol}`;
 
   return (
     <button
@@ -20,7 +19,7 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
             removeLiquidityNotification(
               dispatch,
               poolToken.amount,
-              poolName,
+              poolToken.poolName,
               txHash
             ),
           () => {},
@@ -29,7 +28,7 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
             removeLiquidityNotificationFailed(
               dispatch,
               poolToken.amount,
-              poolName
+              poolToken.poolName
             )
         )
       }

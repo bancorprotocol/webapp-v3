@@ -35,7 +35,7 @@ export const useApproveModal = (
       try {
         const receipt = await web3.provider.getTransactionReceipt(txHash);
         receipts.push(receipt);
-      } catch (e) {
+      } catch (e: any) {
         console.error('failed to getTransactionReceipt for approve token tx');
         return;
       }
@@ -111,7 +111,7 @@ export const useApproveModal = (
       setIsLoading(false);
 
       await checkNextToken();
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === ErrorCode.DeniedTx) {
         dispatch(
           addNotification({

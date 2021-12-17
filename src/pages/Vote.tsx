@@ -2,7 +2,6 @@ import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
-import { useInterval } from 'hooks/useInterval';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,7 +14,8 @@ import {
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
 import { EthNetworks } from 'services/web3/types';
-import { formatTime, prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { openNewTab } from 'utils/pureFunctions';
 
 interface VoteCardProps {
   title: string;
@@ -60,6 +60,7 @@ export const Vote = () => {
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [unstakeTime, setUnstakeTime] = useState<number | undefined>();
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -149,7 +150,7 @@ export const Vote = () => {
           content="Voting on Bancor DAO is free as it is using the Snapshot off-chain infrastructure. Every user can vote on every available proposal and help shape the future of the Bancor Protocol."
           button="Vote on Snapshot"
           onClick={() => {
-            window.open('https://vote.bancor.network/', '_blank', 'noopener');
+            openNewTab('https://vote.bancor.network/');
           }}
           footer={
             <div className="flex items-end h-[48px]">
@@ -175,28 +176,39 @@ export const Vote = () => {
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
-
-            <button
-              className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
-                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
-                  ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
-                  : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
-              }`}
-              disabled={
-                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
-              }
-              onClick={() => {
-                setIsStake(false);
-                setStakeModal(true);
-              }}
-            >
-              {unstakeTime && (
-                <span className="mr-[3px]">
-                  <CountdownTimer date={unstakeTime} />
-                </span>
+            <div className="md:flex items-center w-full">
+              <button
+                className={`text-12 font-medium btn-sm rounded-10 w-full mt-20 md:mt-0 md:max-w-[190px]  ${
+                  (!!unstakeTime ||
+                    !stakeAmount ||
+                    Number(stakeAmount) === 0) &&
+                  !isUnlocked
+                    ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
+                    : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
+                }`}
+                disabled={
+                  (!!unstakeTime ||
+                    !stakeAmount ||
+                    Number(stakeAmount) === 0) &&
+                  !isUnlocked
+                }
+                onClick={() => {
+                  setIsStake(false);
+                  setStakeModal(true);
+                }}
+              >
+                Unstake Tokens
+              </button>
+              {unstakeTime && !isUnlocked && (
+                <div className="flex text-12 text-grey-3 md:ml-10 justify-center md:justify-start mt-10 md:mt-0 md:text-left w-full">
+                  <span className="mr-4">Unstake available in</span>
+                  <CountdownTimer
+                    date={unstakeTime}
+                    onEnded={() => setIsUnlocked(true)}
+                  />
+                </div>
               )}
-              Unstake Tokens
-            </button>
+            </div>
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 ml-2" />
           <div className="flex flex-col max-w-[525px] min-h-[170px] py-24 pl-24 md:pl-8">

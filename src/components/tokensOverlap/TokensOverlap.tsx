@@ -1,7 +1,7 @@
 import { Image } from 'components/image/Image';
-import { Token } from 'services/observables/tokens';
+import { Reserve, Token } from 'services/observables/tokens';
 
-export const TokensOverlap = ({ tokens }: { tokens: Token[] }) => {
+export const TokensOverlap = ({ tokens }: { tokens: Token[] | Reserve[] }) => {
   return (
     <div className="flex">
       {tokens.map((token, index) => (

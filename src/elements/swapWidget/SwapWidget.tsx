@@ -4,7 +4,7 @@ import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
-import { ethToken, wethToken } from 'services/web3/config';
+import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
