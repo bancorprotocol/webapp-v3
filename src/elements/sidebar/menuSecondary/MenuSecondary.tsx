@@ -1,6 +1,6 @@
 import { ReactComponent as IconCommunity } from 'assets/icons/community.svg';
 import { ReactComponent as IconDeveloper } from 'assets/icons/developers.svg';
-import { ReactComponent as IconAnalytics } from 'assets/icons/bancoranalytics.svg';
+import { ReactComponent as IconAnalytics } from 'assets/icons/analytics.svg';
 import { ReactComponent as IconTwitter } from 'assets/icons/twitter.svg';
 import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
 import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';

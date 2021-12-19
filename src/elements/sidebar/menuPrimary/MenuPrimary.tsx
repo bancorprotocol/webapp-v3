@@ -1,4 +1,4 @@
-import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
+import { ReactComponent as IconTrade } from 'assets/icons/trade.svg';
 import { ReactComponent as IconEarn } from 'assets/icons/earn.svg';
 import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
 import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
@@ -37,7 +37,7 @@ const menu: MenuItem[] = [
   {
     label: 'Trade',
     to: '/',
-    icon: <IconSync />,
+    icon: <IconTrade/>,
     subMenu: [
       { label: 'Swap', to: '/' },
       { label: 'Tokens', to: '/tokens' },
