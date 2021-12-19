@@ -10,6 +10,7 @@ import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryI
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { isMobile } from 'react-device-detect';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -25,19 +26,23 @@ export const SettingsMenu = () => {
   const content = (
     <>
       <div className="space-y-15">
-        <div className="flex justify-between">
-          <div>Color Mode</div>
-          <div className="flex items-center">
-            <button onClick={() => dispatch(setDarkMode(false))}>
-              <IconSun className="w-20" />
-            </button>
-            <span className="mx-10">|</span>
-            <button onClick={() => dispatch(setDarkMode(true))}>
-              <IconMoon className="w-15" />
-            </button>
-          </div>
-        </div>
-        <hr className="border-grey-3 mt-15 mb-10" />
+        {isMobile && (
+          <>
+            <div className="flex justify-between">
+              <div>Color Mode</div>
+              <div className="flex items-center">
+                <button onClick={() => dispatch(setDarkMode(false))}>
+                  <IconSun className="w-20" />
+                </button>
+                <span className="mx-10">|</span>
+                <button onClick={() => dispatch(setDarkMode(true))}>
+                  <IconMoon className="w-15" />
+                </button>
+              </div>
+            </div>
+            <hr className="border-grey-3 mt-15 mb-10" />
+          </>
+        )}
 
         <div>
           <div className="mb-15">Slippage Tolerance</div>

@@ -12,6 +12,7 @@ import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
+import { DarkMode } from 'elements/settings/DarkMode';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;
@@ -50,10 +51,10 @@ export const LayoutHeader = ({
               </button>
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center gap-x-20">
               <WalletConnectButton {...wallet} />
+              <DarkMode />
               <NotificationsMenu />
-              <span className="text-grey-3 text-20 mx-16">|</span>
               <SettingsMenu />
             </div>
           </div>
