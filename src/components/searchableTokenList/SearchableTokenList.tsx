@@ -16,6 +16,7 @@ import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
+import { SuggestedTokens } from './SuggestedTokens';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -70,6 +71,8 @@ const SearchableTokenListLayout = ({
     </Modal>
   );
 };
+
+const suggestedTokens = ['BNT', 'ETH', 'WBTC', 'USDC', 'USDT'];
 
 export const SearchableTokenList = ({
   onClick,
@@ -192,6 +195,18 @@ export const SearchableTokenList = ({
             data-cy="searchableTokensList"
             className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
           >
+            <div className="pb-12">
+              <SuggestedTokens
+                allTokens={tokens}
+                suggestedTokens={suggestedTokens}
+                onClick={(token) => {
+                  onClick(token);
+                  onClose();
+                }}
+              />
+            </div>
+            <hr className="border-grey-2 dark:border-blue-1" />
+
             {tokens
               .filter(
                 (token) =>
