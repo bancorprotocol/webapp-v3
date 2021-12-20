@@ -4,6 +4,7 @@ import { InjectedConnector } from '@web3-react/injected-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { TorusConnector } from '@web3-react/torus-connector';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
 import { EthNetworks } from 'services/web3/types';
 
@@ -49,4 +50,8 @@ export const fortmatic = new FortmaticConnector({
 export const portis = new PortisConnector({
   dAppId: process.env.REACT_APP_PORTIS_DAPP_ID as string,
   networks: [1, 100],
+});
+
+export const torus = new TorusConnector({
+  chainId: 1
 });
