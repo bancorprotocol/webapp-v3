@@ -88,15 +88,47 @@ export const SettingsMenu = () => {
 
       <hr className="border-grey-3 mt-15 mb-10" />
 
-      <div className="text-center">
-        <NavLink exact strict to="/terms-of-use" className="hover:underline">
-          Terms of Use
-        </NavLink>
-        <span className="mx-10">|</span>
-        <NavLink exact strict to="/privacy-policy" className="hover:underline">
-          Privacy Policy
-        </NavLink>
-      </div>
+      {isMobile ? (
+        <>
+          <div>
+            <NavLink
+              exact
+              strict
+              to="/privacy-policy"
+              className="hover:underline"
+            >
+              Privacy Policy
+            </NavLink>
+          </div>
+          <hr className="border-grey-3 mt-15 mb-10" />
+          <div>
+            <NavLink
+              exact
+              strict
+              to="/terms-of-use"
+              className="hover:underline"
+            >
+              Terms of Use
+            </NavLink>
+            <hr className="border-grey-3 mt-15 mb-10" />
+          </div>
+        </>
+      ) : (
+        <div className="text-center">
+          <NavLink exact strict to="/terms-of-use" className="hover:underline">
+            Terms of Use
+          </NavLink>
+          <span className="mx-10">|</span>
+          <NavLink
+            exact
+            strict
+            to="/privacy-policy"
+            className="hover:underline"
+          >
+            Privacy Policy
+          </NavLink>
+        </div>
+      )}
     </>
   );
 
