@@ -123,14 +123,14 @@ const Template: ComponentStory<typeof DataTable> = (args) => {
   );
 };
 
-export const TableMain = Template.bind({});
+export const Table = Template.bind({});
 
-TableMain.args = {
+Table.args = {
   isLoading: false,
   stickyColumn: false,
 };
 
-TableMain.parameters = {
+Table.parameters = {
   design: {
     type: 'figma',
     url: 'https://www.figma.com/file/fwADI9wqDrRAdlMX8EddCw/Bancor-v3?node-id=7879%3A257081',
