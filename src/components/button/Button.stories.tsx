@@ -3,7 +3,7 @@ import { withDesign } from 'storybook-addon-designs';
 import { Button } from './Button';
 
 export default {
-  title: 'Components',
+  title: 'Components/Buttons',
   component: Button,
   decorators: [withDesign],
 } as ComponentMeta<typeof Button>;
