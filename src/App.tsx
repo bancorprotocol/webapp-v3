@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  BrowserRouter,
-  Redirect,
-  Route,
-  Switch,
-  useLocation,
-} from 'react-router-dom';
+import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { NotFound } from 'pages/NotFound';
@@ -54,7 +48,6 @@ import { keepWSOpen } from 'services/web3';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const { pathname } = useLocation();
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
@@ -137,11 +130,9 @@ export const App = () => {
             }`}
           >
             <Switch>
-              <Redirect from="/:url*(/+)" to={pathname.slice(0, -1)} />
               <Route exact strict path="/" component={Swap} />
               <Route
                 exact
-                strict
                 path="/eth/swap"
                 render={(props) => {
                   return <Redirect to={`/${props.location.search}`} />;
@@ -149,7 +140,7 @@ export const App = () => {
               />
               <Route exact strict path="/tokens" component={Tokens} />
               <Route exact strict path="/pools" component={Pools} />
-              <Route exact strict path="/eth/data">
+              <Route exact path="/eth/data">
                 <Redirect to="/pools" />
               </Route>
               <Route
@@ -160,7 +151,6 @@ export const App = () => {
               />
               <Route
                 exact
-                strict
                 path="/eth/portfolio/stake/add/single/:id"
                 render={(props) => (
                   <Redirect
@@ -170,7 +160,6 @@ export const App = () => {
               />
               <Route
                 exact
-                strict
                 path="/eth/pool/add/:id"
                 render={(props) => (
                   <Redirect
@@ -179,7 +168,7 @@ export const App = () => {
                 )}
               />
               <Route exact strict path="/portfolio" component={Portfolio} />
-              <Route exact strict path="/eth/portfolio">
+              <Route exact path="/eth/portfolio">
                 <Redirect to="/portfolio" />
               </Route>
               <Route
@@ -188,7 +177,7 @@ export const App = () => {
                 path="/portfolio/rewards/claim"
                 component={RewardsClaim}
               />
-              <Route exact strict path="/eth/portfolio/stake/rewards/withdraw">
+              <Route exact path="/eth/portfolio/stake/rewards/withdraw">
                 <Redirect to="/portfolio/rewards/claim" />
               </Route>
               <Route
@@ -199,7 +188,6 @@ export const App = () => {
               />
               <Route
                 exact
-                strict
                 path="/eth/portfolio/stake/rewards/restake/:id"
                 render={(props) => (
                   <Redirect
@@ -208,11 +196,11 @@ export const App = () => {
                 )}
               />
               <Route exact strict path="/vote" component={Vote} />
-              <Route exact strict path="/eth/vote">
+              <Route exact path="/eth/vote">
                 <Redirect to="/vote" />
               </Route>
               <Route exact strict path="/fiat" component={Fiat} />
-              <Route exact strict path="/eth/fiat">
+              <Route exact path="/eth/fiat">
                 <Redirect to="/fiat" />
               </Route>
               <Route exact strict path="/terms-of-use" component={TermsOfUse} />
