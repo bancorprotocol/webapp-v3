@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Redirect,
+  Route,
+  Switch,
+  useLocation,
+} from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { Swap } from 'pages/Swap';
 import { NotFound } from 'pages/NotFound';
@@ -48,6 +54,7 @@ import { keepWSOpen } from 'services/web3';
 
 export const App = () => {
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
@@ -130,6 +137,7 @@ export const App = () => {
             }`}
           >
             <Switch>
+              <Redirect from="/:url*(/+)" to={pathname.slice(0, -1)} />
               <Route exact strict path="/" component={Swap} />
               <Route
                 exact
