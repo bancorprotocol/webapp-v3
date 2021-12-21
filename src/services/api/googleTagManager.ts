@@ -160,7 +160,7 @@ export const sendGTMPath = (
       to_path: to,
       theme: darkMode ? 'Dark' : 'Light',
       currency: 'USD',
-      swap_insights: to === '/' ? (open ? 'Open' : 'Closed') : undefined,
+      swap_insights: to === '/swap' ? (open ? 'Open' : 'Closed') : undefined,
     },
     user_properties: undefined,
     ga_event: undefined,

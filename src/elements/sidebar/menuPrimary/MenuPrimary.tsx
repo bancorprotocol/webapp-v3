@@ -36,10 +36,10 @@ const menu: MenuItem[] = [
   },
   {
     label: 'Trade',
-    to: '/',
+    to: '/swap',
     icon: <IconSync />,
     subMenu: [
-      { label: 'Swap', to: '/' },
+      { label: 'Swap', to: '/swap' },
       { label: 'Tokens', to: '/tokens' },
     ],
   },

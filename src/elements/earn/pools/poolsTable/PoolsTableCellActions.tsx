@@ -28,7 +28,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
         />
       </NavLink>
       <NavLink
-        to={tknAddress ? `/?from=${tknAddress}` : '/'}
+        to={tknAddress ? `/?from=${tknAddress}` : '/swap'}
         className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
       >
         <Tooltip

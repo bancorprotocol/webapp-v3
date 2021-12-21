@@ -130,7 +130,10 @@ export const App = () => {
             }`}
           >
             <Switch>
-              <Route exact strict path="/" component={Swap} />
+              <Route exact path="/">
+                <Redirect to="/swap" />
+              </Route>
+              <Route exact strict path="/swap" component={Swap} />
               <Route
                 exact
                 path="/eth/swap"
