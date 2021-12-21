@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors');
+const colors = require('./src/styles/plugins/colors');
 const buttons = require('./src/styles/plugins/buttons');
 
 module.exports = {

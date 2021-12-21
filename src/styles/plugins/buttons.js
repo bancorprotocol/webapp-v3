@@ -22,6 +22,7 @@ module.exports = function () {
         ...base,
         backgroundColor: theme(`colors.${key}`).DEFAULT,
         color: theme('colors.white'),
+        [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
         '&:hover': {
           backgroundColor: theme(`colors.${key}`).DEFAULT,
         },
@@ -30,6 +31,7 @@ module.exports = function () {
         },
         '&:disabled': {
           ...baseDisabled,
+          backgroundColor: theme(`colors.${key}.500`),
         },
       };
     });
