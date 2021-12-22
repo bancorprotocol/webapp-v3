@@ -1,6 +1,7 @@
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useHistory } from 'react-router-dom';
+import { pools } from 'utils/router';
 
 interface Props {
   title: string;
@@ -12,7 +13,7 @@ export const Widget = ({
   title,
   subtitle,
   children,
-  goBackRoute = '/pools',
+  goBackRoute = pools,
 }: Props) => {
   const history = useHistory();
 

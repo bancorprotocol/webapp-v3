@@ -6,6 +6,7 @@ export const tokens = '/tokens';
 export const pools = '/pools';
 export const addLiquidity = '/pools/add-liquidity/:id';
 export const addLiquidityByID = (id: string) => `/pools/add-liquidity/${id}`;
+export const addLiquidityError = '/pools/add-liquidity/error';
 export const portfolio = '/portfolio';
 export const portfolioRewardsClaim = '/portfolio/rewards/claim';
 export const portfolioRewardsStake = '/portfolio/rewards/stake/:id';
@@ -16,7 +17,7 @@ export const fiat = '/fiat';
 export const tos = '/terms-of-use';
 export const privacyPolicy = '/privacy-policy';
 
-const push = (url: string, history: any) => {
+export const push = (url: string, history: any) => {
   if (url !== window.location.search) history.push(url);
 };
 

@@ -22,6 +22,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
+import { push, addLiquidityError } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -134,9 +135,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     spaceAvailableBnt,
     spaceAvailableTkn,
   ]);
-
   if (!tkn) {
-    history.push('/pools/add-liquidity/error');
+    push(addLiquidityError, history);
     return <></>;
   }
 

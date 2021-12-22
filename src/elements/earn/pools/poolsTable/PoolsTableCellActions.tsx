@@ -6,7 +6,7 @@ import { Pool } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
 import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
-import { swap } from 'utils/router';
+import { addLiquidityByID, swap } from 'utils/router';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();
@@ -16,7 +16,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
   return (
     <div className="flex">
       <NavLink
-        to={`/pools/add-liquidity/${pool.pool_dlt_id}`}
+        to={addLiquidityByID(pool.pool_dlt_id)}
         className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
       >
         <Tooltip

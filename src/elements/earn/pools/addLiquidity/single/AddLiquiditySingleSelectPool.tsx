@@ -3,6 +3,7 @@ import { useAppSelector } from 'redux/index';
 import { getPools } from 'redux/bancor/pool';
 import { useHistory } from 'react-router-dom';
 import { SelectPool } from 'components/selectPool/SelectPool';
+import { addLiquidityByID, push } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -13,7 +14,7 @@ export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
   const pools = useAppSelector<Pool[]>(getPools);
 
   const onSelect = (pool: Pool) => {
-    history.push(`/pools/add-liquidity/${pool.pool_dlt_id}`);
+    push(addLiquidityByID(pool.pool_dlt_id), history);
   };
 
   return (

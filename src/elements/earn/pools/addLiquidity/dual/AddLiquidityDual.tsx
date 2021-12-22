@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
+import { addLiquidityError, push } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -46,7 +47,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
 
   const history = useHistory();
   if (!tkn || !bnt) {
-    history.push('/pools/add-liquidity/error');
+    push(addLiquidityError, history);
     return <></>;
   }
 
