@@ -1,6 +1,21 @@
 import { Token } from 'services/observables/tokens';
 import { wethToken, ethToken } from 'services/web3/config';
 
+export const swap = '/swap';
+export const tokens = '/tokens';
+export const pools = '/pools';
+export const addLiquidity = '/pools/add-liquidity/:id';
+export const addLiquidityByID = (id: string) => `/pools/add-liquidity/${id}`;
+export const portfolio = '/portfolio';
+export const portfolioRewardsClaim = '/portfolio/rewards/claim';
+export const portfolioRewardsStake = '/portfolio/rewards/stake/:id';
+export const portfolioRewardsStakeByID = (id: string) =>
+  `/portfolio/rewards/stake/${id}`;
+export const vote = '/vote';
+export const fiat = '/fiat';
+export const tos = '/terms-of-use';
+export const privacyPolicy = '/privacy-policy';
+
 const push = (url: string, history: any) => {
   if (url !== window.location.search) history.push(url);
 };

@@ -8,6 +8,7 @@ import { MenuPrimaryItem } from 'elements/sidebar/menuPrimary/MenuPrimaryItem';
 import { sendGTMPath } from 'services/api/googleTagManager';
 import usePrevious from 'hooks/usePrevious';
 import { useAppSelector } from 'redux/index';
+import { swap } from 'utils/router';
 
 export interface BaseMenuItem {
   label: string;
@@ -36,10 +37,10 @@ const menu: MenuItem[] = [
   },
   {
     label: 'Trade',
-    to: '/swap',
+    to: swap,
     icon: <IconSync />,
     subMenu: [
-      { label: 'Swap', to: '/swap' },
+      { label: 'Swap', to: swap },
       { label: 'Tokens', to: '/tokens' },
     ],
   },

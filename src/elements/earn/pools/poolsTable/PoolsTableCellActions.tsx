@@ -6,6 +6,7 @@ import { Pool } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
 import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
+import { swap } from 'utils/router';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();
@@ -28,7 +29,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
         />
       </NavLink>
       <NavLink
-        to={tknAddress ? `/?from=${tknAddress}` : '/swap'}
+        to={tknAddress ? `/?from=${tknAddress}` : swap}
         className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
       >
         <Tooltip
