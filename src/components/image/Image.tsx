@@ -13,6 +13,7 @@ const imageOnErrorHandler = (
   event: SyntheticEvent<HTMLImageElement, Event>
 ) => {
   event.currentTarget.src = ropstenImage;
+  event.currentTarget.onerror = null;
 };
 
 export const Image = ({ src, alt, className, lazy = true }: ImageProps) => {
