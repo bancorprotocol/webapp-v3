@@ -8,13 +8,16 @@ interface ImageProps {
   className: string;
   lazy?: boolean;
 }
+
+const imageOnErrorHandler = (
+  event: SyntheticEvent<HTMLImageElement, Event>
+) => {
+  event.currentTarget.src = ropstenImage;
+};
+
 export const Image = ({ src, alt, className, lazy = true }: ImageProps) => {
   const [loaded, setLoaded] = useState(false);
-  const imageOnErrorHandler = (
-    event: SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    event.currentTarget.src = ropstenImage;
-  };
+
   return (
     <img
       src={src ? src : ropstenImage}
