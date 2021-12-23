@@ -36,6 +36,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
+import { ApprovalContract } from 'hooks/useApproveModal';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -173,7 +174,8 @@ export const SwapMarket = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
-        fromAmount
+        fromAmount,
+        ApprovalContract.BancorNetwork
       );
       if (isApprovalReq) {
         const conversion = getConversionLS();
@@ -435,6 +437,7 @@ export const SwapMarket = ({
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
         waitForApproval={true}
+        contract={ApprovalContract.BancorNetwork}
       />
     </>
   );

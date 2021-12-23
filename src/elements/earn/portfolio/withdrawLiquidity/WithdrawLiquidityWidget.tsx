@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Pool, Token } from 'services/observables/tokens';
@@ -13,9 +13,7 @@ import {
   withdrawProtection,
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
-import { useApproveModal } from 'hooks/useApproveModal';
-import { liquidityProtection$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
+import { ApprovalContract, useApproveModal } from 'hooks/useApproveModal';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { useWeb3React } from '@web3-react/core';
@@ -51,7 +49,6 @@ export const WithdrawLiquidityWidget = ({
   const [amount, setAmount] = useState('');
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
-  const approveContract = useRef('');
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
@@ -71,13 +68,6 @@ export const WithdrawLiquidityWidget = ({
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
   const tokenInsufficent = Number(amount) > Number(tknAmount);
   const withdrawDisabled = emtpyAmount || tokenInsufficent;
-
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted())
-      approveContract.current = await liquidityProtection$
-        .pipe(take(1))
-        .toPromise();
-  }, []);
 
   const showVBNTWarning = useCallback(() => {
     if (token && token.address !== bnt) {
@@ -162,7 +152,7 @@ export const WithdrawLiquidityWidget = ({
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount: amount, token: govToken! }],
     withdraw,
-    approveContract.current
+    ApprovalContract.LiquidityProtection
   );
 
   const handleWithdraw = useCallback(async () => {

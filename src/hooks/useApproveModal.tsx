@@ -19,10 +19,17 @@ interface Tokens {
   amount: string;
 }
 
+export enum ApprovalContract {
+  BancorNetwork,
+  ExchangeProxy,
+  LiquidityProtection,
+  Governance,
+}
+
 export const useApproveModal = (
   tokens: Tokens[],
   onComplete: Function,
-  contract?: string
+  contract: ApprovalContract | string = ApprovalContract.BancorNetwork
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -85,8 +92,8 @@ export const useApproveModal = (
       setIsLoading(true);
       const txHash = await setNetworkContractApproval(
         token,
-        amount,
         contract,
+        amount,
         true
       );
 

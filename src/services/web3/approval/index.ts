@@ -11,6 +11,7 @@ import {
 import { ethToken } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
 import { Token__factory } from '../abis/types';
+import { ApprovalContract } from 'hooks/useApproveModal';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -89,15 +90,14 @@ const setApproval = async (
 export const getNetworkContractApproval = async (
   token: Token,
   amount: string,
-  contract?: string
+  contract: ApprovalContract | string
 ): Promise<boolean> => {
-  const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-  const USER = await user$.pipe(take(1)).toPromise();
+  const user = await user$.pipe(take(1)).toPromise();
   const amountWei = expandToken(amount, token.decimals);
   const { isApprovalRequired } = await getApproval(
     token.address,
-    USER,
-    contract ? contract : BANCOR_NETWORK,
+    user,
+    await getApprovalAddress(contract),
     amountWei
   );
   return isApprovalRequired;
@@ -105,18 +105,34 @@ export const getNetworkContractApproval = async (
 
 export const setNetworkContractApproval = async (
   token: Token,
+  contract: ApprovalContract | string,
   amount?: string,
-  contract?: string,
   resolveImmediately?: boolean
 ) => {
-  const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-  const USER = await user$.pipe(take(1)).toPromise();
+  const user = await user$.pipe(take(1)).toPromise();
   const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
   return await setApproval(
     token.address,
-    USER,
-    contract ? contract : BANCOR_NETWORK,
+    user,
+    await getApprovalAddress(contract),
     amountWei,
     resolveImmediately
   );
+};
+
+const getApprovalAddress = async (
+  contract: ApprovalContract | string
+): Promise<string> => {
+  if (typeof contract === 'string') return contract;
+
+  switch (contract) {
+    case ApprovalContract.BancorNetwork:
+      return await bancorNetwork$.pipe(take(1)).toPromise();
+    case ApprovalContract.ExchangeProxy:
+      return await bancorNetwork$.pipe(take(1)).toPromise();
+    case ApprovalContract.LiquidityProtection:
+      return await bancorNetwork$.pipe(take(1)).toPromise();
+    case ApprovalContract.Governance:
+      return await bancorNetwork$.pipe(take(1)).toPromise();
+  }
 };

@@ -15,6 +15,7 @@ import {
 } from 'services/api/googleTagManager';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
+import { ApprovalContract } from 'hooks/useApproveModal';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -23,7 +24,7 @@ interface ModalApproveProps {
   fromToken?: Token;
   handleApproved: Function;
   waitForApproval?: boolean;
-  contract?: string;
+  contract: ApprovalContract;
 }
 
 export const ModalApprove = ({
@@ -51,8 +52,8 @@ export const ModalApprove = ({
       });
       const txHash = await setNetworkContractApproval(
         fromToken,
-        amount,
-        contract
+        contract,
+        amount
       );
       dispatch(
         addNotification({

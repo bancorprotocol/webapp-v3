@@ -5,18 +5,15 @@ import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
 import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { ApprovalContract, useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
 import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
-import { useAsyncEffect } from 'use-async-effect';
-import { take } from 'rxjs/operators';
-import { liquidityProtection$ } from 'services/observables/contracts';
 import {
   addLiquiditySingleFailedNotification,
   addLiquiditySingleNotification,
@@ -36,7 +33,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     getTokenById(pool.reserves[1].address)
   );
   const history = useHistory();
-  const approveContract = useRef('');
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
@@ -90,17 +86,10 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     );
   };
 
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted())
-      approveContract.current = await liquidityProtection$
-        .pipe(take(1))
-        .toPromise();
-  }, []);
-
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addProtection,
-    approveContract.current
+    ApprovalContract.LiquidityProtection
   );
 
   const handleError = useCallback(() => {
