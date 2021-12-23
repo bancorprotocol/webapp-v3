@@ -1,23 +1,26 @@
 import { Token } from 'services/observables/tokens';
 import { wethToken, ethToken } from 'services/web3/config';
 
+const liquidityBase = '/pools/add-liquidity/';
+const rewardsBase = '/portfolio/rewards/';
 export const swap = '/swap';
 export const tokens = '/tokens';
 export const pools = '/pools';
-export const addLiquidity = '/pools/add-liquidity/:id';
-export const addLiquidityByID = (id: string) => `/pools/add-liquidity/${id}`;
-export const addLiquidityError = '/pools/add-liquidity/error';
-export const portfolio = '/portfolio';
-export const portfolioRewardsClaim = '/portfolio/rewards/claim';
-export const portfolioRewardsStake = '/portfolio/rewards/stake/:id';
-export const portfolioRewardsStakeByID = (id: string) =>
-  `/portfolio/rewards/stake/${id}`;
-export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
-  `/portfolio/rewards/stake/${id}?posGroupId=${pos}`;
 export const vote = '/vote';
 export const fiat = '/fiat';
 export const tos = '/terms-of-use';
 export const privacyPolicy = '/privacy-policy';
+export const portfolio = '/portfolio';
+export const addLiquidity = `${liquidityBase}:id`;
+export const addLiquidityError = `${liquidityBase}error`;
+export const portfolioRewardsClaim = `${rewardsBase}claim`;
+export const portfolioRewardsStake = `${rewardsBase}stake/:id`;
+
+export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
+export const portfolioRewardsStakeByID = (id: string) =>
+  `${rewardsBase}stake/${id}`;
+export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
+  `${rewardsBase}${id}?posGroupId=${pos}`;
 
 export const push = (url: string, history: any) => {
   if (url !== window.location.search) history.push(url);
