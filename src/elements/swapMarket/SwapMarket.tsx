@@ -11,7 +11,10 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
-import { getNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  getNetworkContractApproval,
+} from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
@@ -36,7 +39,6 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
-import { ApprovalContract } from 'hooks/useApproveModal';
 
 interface SwapMarketProps {
   fromToken: Token;

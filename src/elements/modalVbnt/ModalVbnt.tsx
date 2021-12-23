@@ -19,8 +19,9 @@ import {
   unstakeFailedNotification,
   unstakeNotification,
 } from 'services/notifications/notifications';
-import { ApprovalContract, useApproveModal } from 'hooks/useApproveModal';
+import { useApproveModal } from 'hooks/useApproveModal';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface ModalVbntProps {
   setIsOpen: Function;

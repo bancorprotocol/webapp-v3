@@ -20,7 +20,10 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
-import { getNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  getNetworkContractApproval,
+} from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   sendConversionEvent,
@@ -33,7 +36,6 @@ import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
-import { ApprovalContract } from 'hooks/useApproveModal';
 
 enum Field {
   from,

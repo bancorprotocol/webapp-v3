@@ -4,7 +4,10 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { setNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  setNetworkContractApproval,
+} from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
@@ -15,7 +18,6 @@ import {
 } from 'services/api/googleTagManager';
 import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
-import { ApprovalContract } from 'hooks/useApproveModal';
 
 interface ModalApproveProps {
   setIsOpen: Function;

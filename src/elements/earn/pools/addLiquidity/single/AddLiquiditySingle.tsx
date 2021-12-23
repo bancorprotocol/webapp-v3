@@ -7,7 +7,7 @@ import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { ApprovalContract, useApproveModal } from 'hooks/useApproveModal';
+import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -19,6 +19,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface Props {
   pool: Pool;

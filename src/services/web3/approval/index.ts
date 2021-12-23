@@ -15,12 +15,18 @@ import {
 import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
 import { Token__factory } from '../abis/types';
-import { ApprovalContract } from 'hooks/useApproveModal';
 import { currentNetwork$ } from 'services/observables/network';
 
 interface GetApprovalReturn {
   allowanceWei: string;
   isApprovalRequired: boolean;
+}
+
+export enum ApprovalContract {
+  BancorNetwork,
+  ExchangeProxy,
+  LiquidityProtection,
+  Governance,
 }
 
 const getApproval = async (

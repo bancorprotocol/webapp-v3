@@ -1,6 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
+  ApprovalContract,
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
@@ -17,13 +18,6 @@ import { web3 } from 'services/web3';
 interface Tokens {
   token: Token;
   amount: string;
-}
-
-export enum ApprovalContract {
-  BancorNetwork,
-  ExchangeProxy,
-  LiquidityProtection,
-  Governance,
 }
 
 export const useApproveModal = (

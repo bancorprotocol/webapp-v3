@@ -13,7 +13,7 @@ import {
   withdrawProtection,
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
-import { ApprovalContract, useApproveModal } from 'hooks/useApproveModal';
+import { useApproveModal } from 'hooks/useApproveModal';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { useWeb3React } from '@web3-react/core';
@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from '../../../../utils/pureFunctions';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface Props {
   protectedPosition: ProtectedPosition;
