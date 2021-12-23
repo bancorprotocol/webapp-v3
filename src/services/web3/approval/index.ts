@@ -1,17 +1,22 @@
 import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
-import { bancorNetwork$ } from 'services/observables/contracts';
+import {
+  bancorNetwork$,
+  exchangeProxy$,
+  liquidityProtection$,
+} from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
 import {
   NULL_APPROVAL_CONTRACTS,
   UNLIMITED_WEI,
 } from 'services/web3/approval/constants';
-import { ethToken } from 'services/web3/config';
+import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
 import { Token__factory } from '../abis/types';
 import { ApprovalContract } from 'hooks/useApproveModal';
+import { currentNetwork$ } from 'services/observables/network';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -129,10 +134,11 @@ const getApprovalAddress = async (
     case ApprovalContract.BancorNetwork:
       return await bancorNetwork$.pipe(take(1)).toPromise();
     case ApprovalContract.ExchangeProxy:
-      return await bancorNetwork$.pipe(take(1)).toPromise();
+      return await exchangeProxy$.pipe(take(1)).toPromise();
     case ApprovalContract.LiquidityProtection:
-      return await bancorNetwork$.pipe(take(1)).toPromise();
+      return await liquidityProtection$.pipe(take(1)).toPromise();
     case ApprovalContract.Governance:
-      return await bancorNetwork$.pipe(take(1)).toPromise();
+      const network = await currentNetwork$.pipe(take(1)).toPromise();
+      return getNetworkVariables(network).governanceContractAddress;
   }
 };
