@@ -6,6 +6,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { portfolio, push } from 'utils/router';
 
 interface Props {
   claimableRewards: string | null;
@@ -21,7 +22,7 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
       try {
         const txHash = await claimRewards();
         claimRewardsNotification(dispatch, txHash, claimableRewards);
-        history.push('/portfolio');
+        push(portfolio, history);
       } catch (e: any) {
         console.error('Claiming Rewards failed with msg: ', e.message);
         claimRewardsFailedNotification(dispatch);

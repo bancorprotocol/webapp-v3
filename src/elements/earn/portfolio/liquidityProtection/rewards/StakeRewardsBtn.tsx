@@ -4,6 +4,11 @@ import { useAppSelector } from 'redux/index';
 import { Pool } from 'services/observables/tokens';
 import { getProtectedPools } from 'redux/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
+import {
+  portfolioRewardsStakeByID,
+  portfolioRewardsStakeByIDnPos,
+  push,
+} from 'utils/router';
 
 interface Props {
   buttonLabel: string;
@@ -21,13 +26,12 @@ export const StakeRewardsBtn = ({
   const pools = useAppSelector<Pool[]>(getProtectedPools);
 
   const onSelect = (pool: Pool) => {
-    if (posGroupId) {
-      history.push(
-        `/portfolio/rewards/stake/${pool.pool_dlt_id}?posGroupId=${posGroupId}`
+    if (posGroupId)
+      push(
+        portfolioRewardsStakeByIDnPos(pool.pool_dlt_id, posGroupId),
+        history
       );
-    } else {
-      history.push(`/portfolio/rewards/stake/${pool.pool_dlt_id}`);
-    }
+    else push(portfolioRewardsStakeByID(pool.pool_dlt_id), history);
   };
 
   return (

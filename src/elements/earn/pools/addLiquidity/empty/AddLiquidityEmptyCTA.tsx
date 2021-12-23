@@ -12,6 +12,7 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
+import { portfolio, push } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -55,7 +56,7 @@ export const AddLiquidityEmptyCTA = ({
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          push(portfolio, history);
       },
       () => rejectNotification(dispatch),
       () =>

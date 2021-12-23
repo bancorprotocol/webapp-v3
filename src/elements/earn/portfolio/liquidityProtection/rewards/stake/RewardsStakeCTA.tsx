@@ -21,6 +21,7 @@ import {
   setProtectedPositions,
 } from 'redux/liquidity/liquidity';
 import { useAppSelector } from 'redux/index';
+import { portfolio, push } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -57,7 +58,7 @@ export const RewardsStakeCTA = ({
         prettifyNumber(bntAmount),
         pool.name
       );
-      history.push('/portfolio');
+      push(portfolio, history);
     },
     [bntAmount, dispatch, history, pool.name]
   );

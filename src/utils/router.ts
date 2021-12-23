@@ -12,6 +12,8 @@ export const portfolioRewardsClaim = '/portfolio/rewards/claim';
 export const portfolioRewardsStake = '/portfolio/rewards/stake/:id';
 export const portfolioRewardsStakeByID = (id: string) =>
   `/portfolio/rewards/stake/${id}`;
+export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
+  `/portfolio/rewards/stake/${id}?posGroupId=${pos}`;
 export const vote = '/vote';
 export const fiat = '/fiat';
 export const tos = '/terms-of-use';

@@ -11,6 +11,11 @@ import BigNumber from 'bignumber.js';
 import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'redux/liquidity/liquidity';
+import {
+  push,
+  portfolioRewardsStakeByID,
+  portfolioRewardsStakeByIDnPos,
+} from 'utils/router';
 
 interface Props {
   pool?: Pool;
@@ -46,13 +51,12 @@ export const useRewardsClaim = ({ pool }: Props) => {
   };
 
   const onSelect = (pool: Pool) => {
-    if (posGroupId) {
-      history.push(
-        `/portfolio/rewards/stake/${pool.pool_dlt_id}?posGroupId=${posGroupId}`
+    if (posGroupId)
+      push(
+        portfolioRewardsStakeByIDnPos(pool.pool_dlt_id, posGroupId),
+        history
       );
-    } else {
-      history.push(`/portfolio/rewards/stake/${pool.pool_dlt_id}`);
-    }
+    else push(portfolioRewardsStakeByID(pool.pool_dlt_id), history);
   };
 
   useInterval(

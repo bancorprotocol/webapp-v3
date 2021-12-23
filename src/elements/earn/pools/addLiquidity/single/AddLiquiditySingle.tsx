@@ -22,7 +22,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
-import { push, addLiquidityError } from 'utils/router';
+import { push, addLiquidityError, portfolio } from 'utils/router';
 
 interface Props {
   pool: Pool;
@@ -78,7 +78,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          push(portfolio, history);
       },
       () => rejectNotification(dispatch),
       () =>
