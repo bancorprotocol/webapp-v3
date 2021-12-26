@@ -1,6 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
+  ApprovalContract,
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
@@ -22,7 +23,7 @@ interface Tokens {
 export const useApproveModal = (
   tokens: Tokens[],
   onComplete: Function,
-  contract?: string
+  contract: ApprovalContract | string = ApprovalContract.BancorNetwork
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -68,8 +69,8 @@ export const useApproveModal = (
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
-      amount,
-      contract
+      contract,
+      amount
     );
 
     if (!isApprovalRequired) {
@@ -85,8 +86,8 @@ export const useApproveModal = (
       setIsLoading(true);
       const txHash = await setNetworkContractApproval(
         token,
-        amount,
         contract,
+        amount,
         true
       );
 
