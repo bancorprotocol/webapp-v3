@@ -100,8 +100,8 @@ const setApproval = async (
 
 export const getNetworkContractApproval = async (
   token: Token,
-  amount: string,
-  contract: ApprovalContract | string
+  contract: ApprovalContract | string,
+  amount: string
 ): Promise<boolean> => {
   const user = await user$.pipe(take(1)).toPromise();
   const amountWei = expandToken(amount, token.decimals);

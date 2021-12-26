@@ -176,8 +176,8 @@ export const SwapMarket = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
-        fromAmount,
-        ApprovalContract.BancorNetwork
+        ApprovalContract.BancorNetwork,
+        fromAmount
       );
       if (isApprovalReq) {
         const conversion = getConversionLS();

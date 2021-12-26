@@ -222,8 +222,8 @@ export const SwapLimit = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         token,
-        fromAmount,
-        ApprovalContract.ExchangeProxy
+        ApprovalContract.ExchangeProxy,
+        fromAmount
       );
       if (isApprovalReq) {
         const conversion = getConversionLS();

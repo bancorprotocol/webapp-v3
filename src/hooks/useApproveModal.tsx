@@ -69,8 +69,8 @@ export const useApproveModal = (
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
-      amount,
-      contract
+      contract,
+      amount
     );
 
     if (!isApprovalRequired) {
