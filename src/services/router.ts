@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router-dom';
 import { Token } from 'services/observables/tokens';
 import { wethToken, ethToken } from 'services/web3/config';
 
@@ -16,6 +17,68 @@ export const addLiquidityError = `${liquidityBase}error`;
 export const portfolioRewardsClaim = `${rewardsBase}claim`;
 export const portfolioRewardsStake = `${rewardsBase}stake/:id`;
 
+export const useNavigation = () => {
+  const history = useHistory();
+
+  const push = (url: string) => {
+    if (url !== window.location.search) history.push(url);
+  };
+
+  const pushSwapParams = (from: string, to?: string, limit?: boolean) => {
+    const url = `${from ? '?from=' + from : ''}${to ? '&to=' + to : ''}${
+      limit ? '&limit=true' : ''
+    }`;
+    if (url.trim() !== '') push(url);
+  };
+
+  const replaceLimit = (
+    fromToken: Token,
+    tokens: Token[],
+    limit: boolean,
+    toToken?: Token
+  ) => {
+    const toAddress =
+      !limit && fromToken.address === wethToken
+        ? tokens.find((x) => x.address === ethToken)?.address
+        : toToken
+        ? toToken.address
+        : '';
+
+    pushSwapParams(fromToken.address, toAddress, limit);
+  };
+
+  const replaceFrom = (
+    fromToken: Token,
+    tokens: Token[],
+    limit: boolean,
+    toToken?: Token
+  ) => {
+    const toAddress =
+      !limit && fromToken.address === wethToken
+        ? tokens.find((x) => x.address === ethToken)?.address
+        : toToken
+        ? toToken.address
+        : '';
+
+    pushSwapParams(fromToken.address, toAddress, limit);
+  };
+
+  const replaceTo = (fromToken: Token, limit: boolean, toToken?: Token) => {
+    pushSwapParams(fromToken.address, toToken?.address, limit);
+  };
+
+  const switchTokens = (
+    fromToken: Token,
+    limit: boolean,
+
+    toToken?: Token
+  ) => {
+    if (toToken) pushSwapParams(toToken.address, fromToken.address, limit);
+  };
+
+  return { replaceLimit, replaceFrom, replaceTo, switchTokens };
+};
+
 export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
 export const portfolioRewardsStakeByID = (id: string) =>
   `${rewardsBase}stake/${id}`;
@@ -24,69 +87,4 @@ export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
 
 export const push = (url: string, history: any) => {
   if (url !== window.location.search) history.push(url);
-};
-
-const pushSwapParams = (
-  history: any,
-  from: string,
-  to?: string,
-  limit?: boolean
-) => {
-  const url = `${from ? '?from=' + from : ''}${to ? '&to=' + to : ''}${
-    limit ? '&limit=true' : ''
-  }`;
-  if (url.trim() !== '') push(url, history);
-};
-
-export const replaceLimit = (
-  fromToken: Token,
-  tokens: Token[],
-  limit: boolean,
-  history: any,
-  toToken?: Token
-) => {
-  const toAddress =
-    !limit && fromToken.address === wethToken
-      ? tokens.find((x) => x.address === ethToken)?.address
-      : toToken
-      ? toToken.address
-      : '';
-
-  pushSwapParams(history, fromToken.address, toAddress, limit);
-};
-
-export const replaceFrom = (
-  fromToken: Token,
-  tokens: Token[],
-  limit: boolean,
-  history: any,
-  toToken?: Token
-) => {
-  const toAddress =
-    !limit && fromToken.address === wethToken
-      ? tokens.find((x) => x.address === ethToken)?.address
-      : toToken
-      ? toToken.address
-      : '';
-
-  pushSwapParams(history, fromToken.address, toAddress, limit);
-};
-
-export const replaceTo = (
-  fromToken: Token,
-  limit: boolean,
-  history: any,
-  toToken?: Token
-) => {
-  pushSwapParams(history, fromToken.address, toToken?.address, limit);
-};
-
-export const switchTokens = (
-  fromToken: Token,
-  limit: boolean,
-  history: any,
-  toToken?: Token
-) => {
-  if (toToken)
-    pushSwapParams(history, toToken.address, fromToken.address, limit);
 };
