@@ -6,9 +6,9 @@ import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/A
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import BigNumber from 'bignumber.js';
-import { useHistory } from 'react-router-dom';
+
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
-import { push, addLiquidityError } from 'services/router';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -32,9 +32,9 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const history = useHistory();
+  const { pushLiquidityError } = useNavigation();
   if (!tkn || !bnt) {
-    push(addLiquidityError, history);
+    pushLiquidityError();
     return <></>;
   }
 

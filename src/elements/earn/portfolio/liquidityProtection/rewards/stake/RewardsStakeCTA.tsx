@@ -10,7 +10,7 @@ import {
   stakeRewardsNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   fetchProtectedPositions,
@@ -21,7 +21,7 @@ import {
   setProtectedPositions,
 } from 'redux/liquidity/liquidity';
 import { useAppSelector } from 'redux/index';
-import { portfolio, push } from 'services/router';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -40,7 +40,7 @@ export const RewardsStakeCTA = ({
 }: Props) => {
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const { pushPortfolio } = useNavigation();
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
 
   const onCompleted = useCallback(async () => {
@@ -58,9 +58,9 @@ export const RewardsStakeCTA = ({
         prettifyNumber(bntAmount),
         pool.name
       );
-      push(portfolio, history);
+      pushPortfolio();
     },
-    [bntAmount, dispatch, history, pool.name]
+    [bntAmount, dispatch, pushPortfolio, pool.name]
   );
 
   const handleClick = async () => {

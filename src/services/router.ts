@@ -17,12 +17,30 @@ export const addLiquidityError = `${liquidityBase}error`;
 export const portfolioRewardsClaim = `${rewardsBase}claim`;
 export const portfolioRewardsStake = `${rewardsBase}stake/:id`;
 
+export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
+export const portfolioRewardsStakeByID = (id: string) =>
+  `${rewardsBase}stake/${id}`;
+export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
+  `${rewardsBase}${id}?posGroupId=${pos}`;
+
 export const useNavigation = () => {
   const history = useHistory();
 
   const push = (url: string) => {
     if (url !== window.location.search) history.push(url);
   };
+
+  const pushPortfolio = () => push(portfolio);
+
+  const pushLiquidityError = () => push(addLiquidityError);
+
+  const pushRewardsStakeByID = (id: string) =>
+    push(portfolioRewardsStakeByID(id));
+
+  const pushRewardsStakeByIDnPos = (id: string, pos: string) =>
+    push(portfolioRewardsStakeByIDnPos(id, pos));
+
+  const pushAddLiquidityByID = (id: string) => push(addLiquidityByID(id));
 
   const pushSwapParams = (from: string, to?: string, limit?: boolean) => {
     const url = `${from ? '?from=' + from : ''}${to ? '&to=' + to : ''}${
@@ -76,15 +94,16 @@ export const useNavigation = () => {
     if (toToken) pushSwapParams(toToken.address, fromToken.address, limit);
   };
 
-  return { replaceLimit, replaceFrom, replaceTo, switchTokens };
-};
-
-export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
-export const portfolioRewardsStakeByID = (id: string) =>
-  `${rewardsBase}stake/${id}`;
-export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
-  `${rewardsBase}${id}?posGroupId=${pos}`;
-
-export const push = (url: string, history: any) => {
-  if (url !== window.location.search) history.push(url);
+  return {
+    push,
+    replaceLimit,
+    replaceFrom,
+    replaceTo,
+    switchTokens,
+    pushPortfolio,
+    pushLiquidityError,
+    pushRewardsStakeByID,
+    pushRewardsStakeByIDnPos,
+    pushAddLiquidityByID,
+  };
 };

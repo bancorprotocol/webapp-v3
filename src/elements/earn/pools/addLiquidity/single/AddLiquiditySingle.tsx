@@ -6,7 +6,6 @@ import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidi
 import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
@@ -22,7 +21,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
-import { push, addLiquidityError, portfolio } from 'services/router';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -36,7 +35,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[1].address)
   );
-  const history = useHistory();
+  const { pushPortfolio, pushLiquidityError } = useNavigation();
   const approveContract = useRef('');
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
@@ -78,7 +77,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          push(portfolio, history);
+          pushPortfolio();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -136,7 +135,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     spaceAvailableTkn,
   ]);
   if (!tkn) {
-    push(addLiquidityError, history);
+    pushLiquidityError();
     return <></>;
   }
 
