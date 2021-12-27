@@ -20,7 +20,10 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
 import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
-import { getNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  getNetworkContractApproval,
+} from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   sendConversionEvent,
@@ -32,8 +35,6 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
-import { exchangeProxy$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 
 enum Field {
@@ -76,7 +77,6 @@ export const SwapLimit = ({
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
 
-  const approveContract = useRef('');
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -220,14 +220,10 @@ export const SwapLimit = ({
   //Check if approval is required
   const checkApproval = async (token: Token) => {
     try {
-      const exchangeProxyAddress = await exchangeProxy$
-        .pipe(take(1))
-        .toPromise();
-      approveContract.current = exchangeProxyAddress;
       const isApprovalReq = await getNetworkContractApproval(
         token,
-        fromAmount,
-        exchangeProxyAddress
+        ApprovalContract.ExchangeProxy,
+        fromAmount
       );
       if (isApprovalReq) {
         const conversion = getConversionLS();
@@ -518,7 +514,7 @@ export const SwapLimit = ({
           handleApproved={() =>
             handleSwap(true, fromToken.address === ethToken)
           }
-          contract={approveContract.current}
+          contract={ApprovalContract.ExchangeProxy}
         />
         <ModalDepositETH
           amount={fromAmount}

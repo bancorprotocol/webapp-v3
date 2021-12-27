@@ -11,7 +11,10 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
-import { getNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  getNetworkContractApproval,
+} from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
@@ -173,6 +176,7 @@ export const SwapMarket = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
+        ApprovalContract.BancorNetwork,
         fromAmount
       );
       if (isApprovalReq) {
@@ -435,6 +439,7 @@ export const SwapMarket = ({
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
         waitForApproval={true}
+        contract={ApprovalContract.BancorNetwork}
       />
     </>
   );
