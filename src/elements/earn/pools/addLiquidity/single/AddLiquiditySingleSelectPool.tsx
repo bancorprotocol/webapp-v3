@@ -3,7 +3,7 @@ import { useAppSelector } from 'redux/index';
 import { getPools } from 'redux/bancor/pool';
 import { useHistory } from 'react-router-dom';
 import { SelectPool } from 'components/selectPool/SelectPool';
-import { addLiquidityByID, push } from 'utils/router';
+import { addLiquidityByID, push } from 'services/router';
 
 interface Props {
   pool: Pool;

@@ -13,7 +13,7 @@ import {
   tokens,
   tos,
   vote,
-} from 'utils/router';
+} from 'services/router';
 import { AddLiquidity } from './earn/pools/AddLiquidity';
 import { Pools } from './earn/pools/Pools';
 import { Portfolio } from './earn/portfolio/Portfolio';

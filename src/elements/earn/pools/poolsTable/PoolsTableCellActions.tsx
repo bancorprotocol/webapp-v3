@@ -6,7 +6,7 @@ import { Pool } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
 import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
-import { addLiquidityByID, swap } from 'utils/router';
+import { addLiquidityByID, swap } from 'services/router';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();

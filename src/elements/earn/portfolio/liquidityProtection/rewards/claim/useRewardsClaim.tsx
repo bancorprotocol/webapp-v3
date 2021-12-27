@@ -15,7 +15,7 @@ import {
   push,
   portfolioRewardsStakeByID,
   portfolioRewardsStakeByIDnPos,
-} from 'utils/router';
+} from 'services/router';
 
 interface Props {
   pool?: Pool;

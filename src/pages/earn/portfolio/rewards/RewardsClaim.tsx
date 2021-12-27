@@ -3,7 +3,7 @@ import { RewardsClaimAmount } from 'elements/earn/portfolio/liquidityProtection/
 import { RewardsClaimInfo } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimInfo';
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { RewardsClaimCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimCTA';
-import { portfolio } from 'utils/router';
+import { portfolio } from 'services/router';
 
 export const RewardsClaim = () => {
   const { claimableRewards, account } = useRewardsClaim({});

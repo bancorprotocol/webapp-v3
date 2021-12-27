@@ -1,4 +1,4 @@
-import { swap } from 'utils/router';
+import { swap } from 'services/router';
 
 declare global {
   interface Window {

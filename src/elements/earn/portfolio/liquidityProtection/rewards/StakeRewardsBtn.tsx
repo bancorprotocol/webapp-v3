@@ -8,7 +8,7 @@ import {
   portfolioRewardsStakeByID,
   portfolioRewardsStakeByIDnPos,
   push,
-} from 'utils/router';
+} from 'services/router';
 
 interface Props {
   buttonLabel: string;

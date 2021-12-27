@@ -21,7 +21,7 @@ import {
   setProtectedPositions,
 } from 'redux/liquidity/liquidity';
 import { useAppSelector } from 'redux/index';
-import { portfolio, push } from 'utils/router';
+import { portfolio, push } from 'services/router';
 
 interface Props {
   pool: Pool;

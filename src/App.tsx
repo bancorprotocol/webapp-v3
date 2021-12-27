@@ -33,7 +33,7 @@ import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
-import { Router } from 'pages/router';
+import { Router } from 'pages/Router';
 
 export const App = () => {
   const dispatch = useDispatch();

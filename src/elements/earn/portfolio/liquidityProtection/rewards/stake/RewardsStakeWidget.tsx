@@ -5,7 +5,7 @@ import { RewardsStakeCTA } from 'elements/earn/portfolio/liquidityProtection/rew
 import { RewardsStakeSpaceAvailable } from 'elements/earn/portfolio/liquidityProtection/rewards/stake/RewardsStakeSpaceAvailable';
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { portfolio } from 'utils/router';
+import { portfolio } from 'services/router';
 
 interface Props {
   pool: Pool;

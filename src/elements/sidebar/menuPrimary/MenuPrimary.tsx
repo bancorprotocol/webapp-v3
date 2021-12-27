@@ -8,7 +8,7 @@ import { MenuPrimaryItem } from 'elements/sidebar/menuPrimary/MenuPrimaryItem';
 import { sendGTMPath } from 'services/api/googleTagManager';
 import usePrevious from 'hooks/usePrevious';
 import { useAppSelector } from 'redux/index';
-import { fiat, pools, portfolio, swap, tokens, vote } from 'utils/router';
+import { fiat, pools, portfolio, swap, tokens, vote } from 'services/router';
 
 export interface BaseMenuItem {
   label: string;

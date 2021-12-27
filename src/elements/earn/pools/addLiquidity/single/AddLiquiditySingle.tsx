@@ -22,7 +22,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
-import { push, addLiquidityError, portfolio } from 'utils/router';
+import { push, addLiquidityError, portfolio } from 'services/router';
 
 interface Props {
   pool: Pool;

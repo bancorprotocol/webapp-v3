@@ -6,7 +6,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { portfolio, push } from 'utils/router';
+import { portfolio, push } from 'services/router';
 
 interface Props {
   claimableRewards: string | null;

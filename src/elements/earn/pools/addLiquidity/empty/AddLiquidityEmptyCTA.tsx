@@ -12,7 +12,7 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
-import { portfolio, push } from 'utils/router';
+import { portfolio, push } from 'services/router';
 
 interface Props {
   pool: Pool;

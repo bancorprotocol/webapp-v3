@@ -4,7 +4,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { NavLink } from 'react-router-dom';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { pools } from 'utils/router';
+import { pools } from 'services/router';
 
 interface SidebarHeaderProps {
   isMinimized: boolean;

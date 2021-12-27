@@ -14,7 +14,7 @@ import {
   replaceLimit,
   replaceTo,
   switchTokens,
-} from 'utils/router';
+} from 'services/router';
 
 interface SwapWidgetProps {
   isLimit: boolean;

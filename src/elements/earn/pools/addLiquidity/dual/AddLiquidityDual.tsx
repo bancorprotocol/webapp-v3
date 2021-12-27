@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
-import { addLiquidityError, push } from 'utils/router';
+import { addLiquidityError, push } from 'services/router';
 
 interface Props {
   pool: Pool;

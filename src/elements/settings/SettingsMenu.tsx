@@ -10,7 +10,7 @@ import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryI
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { privacyPolicy, tos } from 'utils/router';
+import { privacyPolicy, tos } from 'services/router';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);

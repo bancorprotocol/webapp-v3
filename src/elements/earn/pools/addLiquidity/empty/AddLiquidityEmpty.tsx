@@ -8,7 +8,7 @@ import { getTokenById } from 'redux/bancor/bancor';
 import BigNumber from 'bignumber.js';
 import { useHistory } from 'react-router-dom';
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
-import { push, addLiquidityError } from 'utils/router';
+import { push, addLiquidityError } from 'services/router';
 
 interface Props {
   pool: Pool;
