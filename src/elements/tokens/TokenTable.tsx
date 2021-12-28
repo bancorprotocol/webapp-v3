@@ -10,6 +10,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { NavLink } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { swapByfrom } from 'services/router';
 
 interface Props {
   searchInput: string;
@@ -131,7 +132,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         Cell: (cellData) => {
           return (
             <NavLink
-              to={`/?from=${cellData.row.original.address}`}
+              to={swapByfrom(cellData.row.original.address)}
               className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
             >
               Trade

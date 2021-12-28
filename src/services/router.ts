@@ -22,6 +22,8 @@ export const portfolioRewardsStakeByID = (id: string) =>
   `${rewardsBase}stake/${id}`;
 export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
   `${rewardsBase}${id}?posGroupId=${pos}`;
+export const swapByfrom = (from?: string) =>
+  `${swap}${from ? `?from=${from}` : ''}`;
 
 export const useNavigation = () => {
   const history = useHistory();
@@ -85,12 +87,7 @@ export const useNavigation = () => {
     pushSwapParams(fromToken.address, toToken?.address, limit);
   };
 
-  const switchTokens = (
-    fromToken: Token,
-    limit: boolean,
-
-    toToken?: Token
-  ) => {
+  const switchTokens = (fromToken: Token, limit: boolean, toToken?: Token) => {
     if (toToken) pushSwapParams(toToken.address, fromToken.address, limit);
   };
 
