@@ -34,6 +34,8 @@ export const useNavigation = () => {
 
   const pushPortfolio = () => push(portfolio);
 
+  const pushPools = () => push(pools);
+
   const pushLiquidityError = () => push(addLiquidityError);
 
   const pushRewardsStakeByID = (id: string) =>
@@ -92,11 +94,11 @@ export const useNavigation = () => {
   };
 
   return {
-    push,
     replaceLimit,
     replaceFrom,
     replaceTo,
     switchTokens,
+    pushPools,
     pushPortfolio,
     pushLiquidityError,
     pushRewardsStakeByID,

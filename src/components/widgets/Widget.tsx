@@ -1,24 +1,18 @@
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-
-import { pools, useNavigation } from 'services/router';
+import { useNavigation } from 'services/router';
 
 interface Props {
   title: string;
   subtitle?: string;
-  goBackRoute?: string;
+  goBack?: Function;
   children: JSX.Element | JSX.Element[];
 }
-export const Widget = ({
-  title,
-  subtitle,
-  children,
-  goBackRoute = pools,
-}: Props) => {
-  const { push } = useNavigation();
+export const Widget = ({ title, subtitle, children }: Props) => {
+  const { pushPools } = useNavigation();
 
   const goBack = () => {
-    push(goBackRoute);
+    goBack ? goBack() : pushPools();
   };
 
   return (
