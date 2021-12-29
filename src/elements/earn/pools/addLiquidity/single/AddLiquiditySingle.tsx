@@ -6,7 +6,6 @@ import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidi
 import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
@@ -19,6 +18,7 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
+import { useNavigation } from 'services/router';
 import { ApprovalContract } from 'services/web3/approval';
 
 interface Props {
@@ -33,7 +33,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[1].address)
   );
-  const history = useHistory();
+  const { pushPortfolio, pushLiquidityError } = useNavigation();
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
@@ -74,7 +74,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          pushPortfolio();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -124,9 +124,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     spaceAvailableBnt,
     spaceAvailableTkn,
   ]);
-
   if (!tkn) {
-    history.push('/pools/add-liquidity/error');
+    pushLiquidityError();
     return <></>;
   }
 

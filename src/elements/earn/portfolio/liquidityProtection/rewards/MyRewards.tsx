@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
 import { useAppSelector } from 'redux/index';
+import { portfolioRewardsClaim } from 'services/router';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
@@ -17,7 +18,7 @@ export const MyRewards = () => {
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex mr-[20px] md:mr-[44px] space-x-8">
           <NavLink
-            to="/portfolio/rewards/claim"
+            to={portfolioRewardsClaim}
             className="btn-outline-primary btn-sm rounded-[12px]"
           >
             Claim

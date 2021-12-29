@@ -6,8 +6,9 @@ import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/A
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import BigNumber from 'bignumber.js';
-import { useHistory } from 'react-router-dom';
+
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -26,15 +27,14 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
   const [errorBalanceTkn, setErrorBalanceTkn] = useState('');
   const [tknUsdPrice, setTknUsdPrice] = useState('');
-
   useEffect(() => {
     setBntAmount('');
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const history = useHistory();
+  const { pushLiquidityError } = useNavigation();
   if (!tkn || !bnt) {
-    history.push('/pools/add-liquidity/error');
+    pushLiquidityError();
     return <></>;
   }
 

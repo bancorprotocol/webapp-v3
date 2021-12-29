@@ -8,13 +8,7 @@ import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
-import { useHistory } from 'react-router-dom';
-import {
-  replaceFrom,
-  replaceLimit,
-  replaceTo,
-  switchTokens,
-} from 'utils/router';
+import { useNavigation } from 'services/router';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -32,6 +26,8 @@ export const SwapWidget = ({
   limit,
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const { replaceLimit, replaceFrom, replaceTo, switchTokens } =
+    useNavigation();
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
@@ -43,7 +39,6 @@ export const SwapWidget = ({
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
-  const history = useHistory();
 
   useEffect(() => {
     if (tokens) {
@@ -95,7 +90,7 @@ export const SwapWidget = ({
             <SwapHeader
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
-                replaceLimit(fromToken, tokens, limit, history, toToken)
+                replaceLimit(fromToken, tokens, limit, toToken)
               }
             />
             <hr className="widget-separator" />
@@ -103,29 +98,21 @@ export const SwapWidget = ({
               <SwapLimit
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, true, history, toToken)
+                  replaceFrom(from, tokens, true, toToken)
                 }
                 toToken={toToken}
-                setToToken={(to: Token) =>
-                  replaceTo(fromToken, true, history, to)
-                }
-                switchTokens={() =>
-                  switchTokens(fromToken, true, history, toToken)
-                }
+                setToToken={(to: Token) => replaceTo(fromToken, true, to)}
+                switchTokens={() => switchTokens(fromToken, true, toToken)}
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, false, history, toToken)
+                  replaceFrom(from, tokens, false, toToken)
                 }
                 toToken={toToken}
-                setToToken={(to: Token) =>
-                  replaceTo(fromToken, false, history, to)
-                }
-                switchTokens={() =>
-                  switchTokens(fromToken, false, history, toToken)
-                }
+                setToToken={(to: Token) => replaceTo(fromToken, false, to)}
+                switchTokens={() => switchTokens(fromToken, false, toToken)}
               />
             )}
           </div>
