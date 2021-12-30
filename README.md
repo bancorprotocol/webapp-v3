@@ -11,10 +11,7 @@ Open Source Token Swap and Pool Liquidity Portal
 
 ## How to contribute
 
-1. Talk to us, we will assign you to an issue
-2. Fork the repo
-3. Run `yarn && yarn start`
-4. Create a Pull Request
+Please contribute by reporting issues and feature suggestions.
 
 ## Available Scripts
 
