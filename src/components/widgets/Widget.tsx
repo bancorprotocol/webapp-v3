@@ -1,20 +1,13 @@
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { useNavigation } from 'services/router';
 
 interface Props {
   title: string;
   subtitle?: string;
-  goBack?: Function;
+  goBack: Function;
   children: JSX.Element | JSX.Element[];
 }
-export const Widget = ({ title, subtitle, children }: Props) => {
-  const { pushPools } = useNavigation();
-
-  const goBack = () => {
-    goBack ? goBack() : pushPools();
-  };
-
+export const Widget = ({ title, subtitle, children, goBack }: Props) => {
   return (
     <section className="widget mx-auto">
       <div className="flex justify-between py-16 px-20">
