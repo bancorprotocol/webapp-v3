@@ -23,7 +23,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(bntReserve.address)
   );
-  const { pushLiquidityError } = useNavigation();
+  const { pushLiquidityError, pushPools } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
@@ -52,7 +52,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   }
 
   return (
-    <Widget title="Add Liquidity">
+    <Widget title="Add Liquidity" goBack={pushPools}>
       <AddLiquidityDualStakeAmount
         tkn={tknWithUsd()}
         bnt={bnt}

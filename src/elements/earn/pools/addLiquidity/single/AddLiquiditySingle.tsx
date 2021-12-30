@@ -33,7 +33,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[1].address)
   );
-  const { pushPortfolio, pushLiquidityError } = useNavigation();
+  const { pushPortfolio, pushPools, pushLiquidityError } = useNavigation();
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
@@ -130,7 +130,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   }
 
   return (
-    <Widget title="Add Liquidity" subtitle="Single-Sided">
+    <Widget title="Add Liquidity" subtitle="Single-Sided" goBack={pushPools}>
       <AddLiquiditySingleInfoBox />
       <div className="px-10">
         <AddLiquiditySingleSelectPool pool={pool} />
