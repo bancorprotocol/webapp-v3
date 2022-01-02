@@ -10,6 +10,6 @@
 }
 
 .input-field-border {
-  @apply border-2 border-blue-0;
+  @apply border-2 border-primary;
   @apply dark:border-blue-1;
 }

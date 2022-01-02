@@ -29,7 +29,7 @@ export const RewardsStakeSpaceAvailable = ({ pool }: Props) => {
   }, [fetchData, pool.pool_dlt_id]);
 
   return (
-    <div className="p-20 rounded bg-blue-0 dark:bg-blue-5 mt-20">
+    <div className="p-20 rounded bg-primary dark:bg-blue-5 mt-20">
       <div className="flex justify-between dark:text-gray-0">
         <span className="font-medium">Space Available</span>
         <div className="text-right">{prettifyNumber(spaceAvailable)} BNT</div>

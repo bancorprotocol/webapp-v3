@@ -15,12 +15,12 @@
 
   .widget-block {
     @apply rounded-30 mt-12 p-12;
-    @apply bg-blue-0;
+    @apply bg-primary;
     @apply dark:bg-blue-5;
   }
 
   .widget-block-icon {
-    @apply absolute mt-[-35px] ml-[16px] flex justify-center items-center w-[42px] h-[42px] bg-white dark:bg-charcoal border-2 border-blue-0 dark:border-blue-5 rounded-full;
+    @apply absolute mt-[-35px] ml-[16px] flex justify-center items-center w-[42px] h-[42px] bg-white dark:bg-charcoal border-2 border-primary dark:border-blue-5 rounded-full;
   }
 
   .widget-separator {

@@ -133,7 +133,7 @@ export const SearchableTokenList = ({
               );
               return (
                 <div
-                  className={`flex justify-between items-center border-2 border-silver dark:border-gray-4 rounded px-15 py-6 ${
+                  className={`flex justify-between items-center border-2 border-silver dark:border-grey rounded px-15 py-6 ${
                     isSelected ? 'border-primary dark:border-primary-light' : ''
                   }`}
                   key={tokenList.name}

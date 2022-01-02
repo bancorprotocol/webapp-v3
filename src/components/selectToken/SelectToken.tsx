@@ -60,7 +60,7 @@ export const SelectToken = ({
 
             {selectable && (
               <div>
-                <IconChevronDown className="w-[10px] mr-10 text-gray-4 dark:text-graphite" />
+                <IconChevronDown className="w-[10px] mr-10 text-grey dark:text-graphite" />
               </div>
             )}
           </div>

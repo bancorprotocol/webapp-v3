@@ -117,7 +117,7 @@ export const SwapWidget = ({
             )}
           </div>
           {isLimit ? (
-            <div className="text-center text-10 text-gray-4 mt-18">
+            <div className="text-center text-10 text-grey mt-18">
               Limit orders are powered by KeeperDAO
             </div>
           ) : (

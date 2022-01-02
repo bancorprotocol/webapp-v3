@@ -72,7 +72,7 @@ export const PoolTokensTable = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
-            className="block w-full max-w-[160px] border border-silver rounded-10 pl-[38px] h-[35px] dark:bg-charcoal dark:border-gray-4 focus:outline-none focus:border-primary"
+            className="block w-full max-w-[160px] border border-silver rounded-10 pl-[38px] h-[35px] dark:bg-charcoal dark:border-grey focus:outline-none focus:border-primary"
           />
         </div>
       </div>

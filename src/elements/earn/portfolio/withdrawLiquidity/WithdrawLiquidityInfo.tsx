@@ -17,7 +17,7 @@ export const WithdrawLiquidityInfo = ({
             <IconInfo className="w-10 mr-10" />
             <span className="font-semibold">Important!</span>
           </div>
-          <div className="text-gray-4 dark:text-graphite ml-20 mt-5">
+          <div className="text-grey dark:text-graphite ml-20 mt-5">
             {protectionNotReached && (
               <p>
                 You still haven’t reached full protection. There is a risk for

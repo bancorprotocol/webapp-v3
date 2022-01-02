@@ -30,7 +30,7 @@ export const TopPools = ({ setSearch }: Props) => {
                   <button
                     onClick={() => handleClick(pool)}
                     key={`pool-table-key-${index}`}
-                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-primary dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
                     <div className="flex">
                       <Image

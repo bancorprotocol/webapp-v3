@@ -15,7 +15,7 @@ export const ProtectedPositionTableCellLiquidity = (
         />
         <div className="font-medium">{position.reserveToken.symbol}</div>
       </div>
-      <div className="ml-[34px] text-12 text-gray-4 mt-4">
+      <div className="ml-[34px] text-12 text-grey mt-4">
         {position.pool.name}
       </div>
     </div>

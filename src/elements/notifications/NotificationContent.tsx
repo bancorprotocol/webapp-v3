@@ -116,7 +116,7 @@ export const NotificationContent = ({
           </div>
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
-          <span className="text-gray-4 dark:text-graphite">
+          <span className="text-grey dark:text-graphite">
             {dayjs.unix(timestamp).fromNow(true)}
           </span>
         </div>
@@ -134,7 +134,7 @@ export const NotificationContent = ({
           View on Etherscan <IconLink className="w-14 ml-6" />
         </a>
       ) : (
-        <p className="ml-[22px] text-gray-4 dark:text-graphite">{msg}</p>
+        <p className="ml-[22px] text-grey dark:text-graphite">{msg}</p>
       )}
     </div>
   );

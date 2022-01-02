@@ -24,12 +24,12 @@ export const SwapSwitch = () => {
   }`;
 
   const coinIconStyles = isEnabled
-    ? 'text-gray-4'
+    ? 'text-grey'
     : 'text-charcoal dark:text-graphite';
 
   const dollarIconStyles = isEnabled
     ? 'text-primary dark:text-primary-light'
-    : 'dark:text-gray-4';
+    : 'dark:text-grey';
 
   return (
     <div className="flex items-center space-x-4 text-14">
