@@ -17,7 +17,6 @@ module.exports = function () {
     };
 
     Object.keys(theme('colors')).forEach((key) => {
-      console.log('what', theme(`colors.${key}`));
       if (!theme(`colors.${key}`)) return;
       button[`.btn-${key}`] = {
         ...base,

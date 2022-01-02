@@ -11,13 +11,13 @@ module.exports = {
       ...colors,
 
       primary: {
-        DEFAULT: '#3A86FF',
-        light: '#80B0FF',
-        dark: '#0053D8',
+        DEFAULT: '#10BBD5',
+        light: '#DBF5F9',
+        dark: '#08A2C3',
       },
 
       success: {
-        DEFAULT: '#0FC7A6',
+        DEFAULT: '#67D79F',
       },
 
       warning: {
@@ -25,7 +25,7 @@ module.exports = {
       },
 
       error: {
-        DEFAULT: '#FF3F56',
+        DEFAULT: '#E27D8A',
       },
 
       blue: {
