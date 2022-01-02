@@ -473,7 +473,7 @@ export const SwapLimit = ({
                     key={'slippage' + slip}
                     className={`btn-sm rounded-10 h-[34px] text-14 ${classNameGenerator(
                       {
-                        'btn-outline-secondary': selPercentage !== index,
+                        'btn-outline-grey-1': selPercentage !== index,
                         'btn-primary': selPercentage === index,
                       }
                     )} bg-opacity-0`}
