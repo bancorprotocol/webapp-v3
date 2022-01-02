@@ -25,10 +25,10 @@ export const MenuPrimaryItem = ({
         to={to}
         exact
         strict
-        activeClassName="text-primary-light border-primary-light"
+        activeClassName="text-primary border-primary dark:text-primary-dark dark:border-primary-dark"
         className={`flex items-center justify-between w-full text-16 font-medium border-l-[5px] h-[44px] transition-all duration-500 ${
           isActive
-            ? 'text-primary-light border-primary-light'
+            ? 'text-primary border-primary dark:text-primary-dark dark:border-primary-dark'
             : 'border-charcoal border-l-[5px] hover:border-gray-0'
         }`}
       >

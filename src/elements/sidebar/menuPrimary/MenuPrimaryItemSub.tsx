@@ -20,7 +20,7 @@ export const MenuPrimaryItemSub = ({
       target={href ? '_blank' : undefined}
       rel={href ? 'noopener' : undefined}
       onClick={() => setIsSidebarOpen && setIsSidebarOpen(false)}
-      activeClassName="!border-primary-light text-primary-light"
+      activeClassName="text-primary border-primary dark:text-primary-dark dark:border-primary-dark"
       className={`w-full flex items-center transition duration-300 border-l-2 border-gray-4 h-[28px] pl-30`}
     >
       {label} {href && <IconLink className="w-14 ml-6" />}
