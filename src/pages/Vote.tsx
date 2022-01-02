@@ -183,7 +183,7 @@ export const Vote = () => {
                     !stakeAmount ||
                     Number(stakeAmount) === 0) &&
                   !isUnlocked
-                    ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
+                    ? 'btn-outline-grey-1 text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
                     : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
                 }`}
                 disabled={

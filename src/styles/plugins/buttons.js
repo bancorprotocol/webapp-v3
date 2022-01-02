@@ -59,9 +59,9 @@ module.exports = function () {
       };
     });
 
-    button[`.btn-secondary`] = {
+    button[`.btn-grey-1`] = {
       ...base,
-      '@apply text-grey-4 bg-secondary': '',
+      '@apply text-grey-4 bg-grey-1': '',
       '@apply dark:text-grey-3 dark:bg-blue-2': '',
       '@apply focus:ring-grey-4 focus:ring-opacity-50': '',
       '&:disabled': {
@@ -69,7 +69,7 @@ module.exports = function () {
       },
     };
 
-    button[`.btn-outline-secondary`] = {
+    button[`.btn-outline-grey-1`] = {
       ...base,
       '@apply text-blue-4 bg-white': '',
       '@apply dark:text-grey-2 dark:bg-blue-2': '',

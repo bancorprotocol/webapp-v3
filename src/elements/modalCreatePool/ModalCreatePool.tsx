@@ -82,7 +82,7 @@ export const ModalCreatePool = () => {
   return (
     <>
       <button
-        className="btn-outline-secondary rounded-[12px] h-[35px]"
+        className="btn-outline-grey-1 rounded-[12px] h-[35px]"
         onClick={() => setIsOpen(true)}
       >
         Create Pool

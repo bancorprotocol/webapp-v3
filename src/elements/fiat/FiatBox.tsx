@@ -45,7 +45,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
       <div className="flex items-center my-20 font-medium">
         Available Operations
         {fiatIn && (
-          <div className="text-10 text-white font-semibold bg-success-500 rounded-10 px-15 py-2 ml-10">
+          <div className="text-10 text-white font-semibold bg-success rounded-10 px-15 py-2 ml-10">
             Fiat in
           </div>
         )}
