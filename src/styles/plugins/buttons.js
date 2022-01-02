@@ -17,17 +17,17 @@ module.exports = function () {
     };
 
     Object.keys(theme('colors')).forEach((key) => {
-      if (!theme(`colors.${key}.500`)) return;
+      console.log('what', theme(`colors.${key}`));
+      if (!theme(`colors.${key}`)) return;
       button[`.btn-${key}`] = {
         ...base,
-        backgroundColor: theme(`colors.${key}.500`),
+        backgroundColor: theme(`colors.${key}`).DEFAULT,
         color: theme('colors.white'),
-        [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
         '&:hover': {
-          backgroundColor: theme(`colors.${key}.700`),
+          backgroundColor: theme(`colors.${key}`).DEFAULT,
         },
         '&:active': {
-          backgroundColor: theme(`colors.${key}.400`),
+          backgroundColor: theme(`colors.${key}`).DEFAULT,
         },
         '&:disabled': {
           ...baseDisabled,
@@ -36,22 +36,21 @@ module.exports = function () {
     });
 
     Object.keys(theme('colors')).forEach((key) => {
-      if (!theme(`colors.${key}.500`)) return;
+      if (!theme(`colors.${key}`)) return;
       button[`.btn-outline-${key}`] = {
         ...base,
         backgroundColor: theme(`colors.transparent`),
         border: '2px solid',
-        borderColor: theme(`colors.${key}.500`),
-        color: theme(`colors.${key}.500`),
-        [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
+        borderColor: theme(`colors.${key}`).DEFAULT,
+        color: theme(`colors.${key}`).DEFAULT,
         '&:hover': {
-          backgroundColor: theme(`colors.${key}.500`),
+          backgroundColor: theme(`colors.${key}`).DEFAULT,
           color: theme(`colors.white`),
         },
         '&:active': {
-          backgroundColor: theme(`colors.${key}.400`),
+          backgroundColor: theme(`colors.${key}`).DEFAULT,
           color: theme(`colors.white`),
-          borderColor: theme(`colors.${key}.400`),
+          borderColor: theme(`colors.${key}`).DEFAULT,
         },
         '&:disabled': {
           ...baseDisabled,
