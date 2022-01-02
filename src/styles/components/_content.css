@@ -8,6 +8,6 @@
   }
 
   .content-separator {
-    @apply border-t-2 border-silver dark:border-blue-1;
+    @apply border-t-2 border-silver dark:border-black-low;
   }
 }

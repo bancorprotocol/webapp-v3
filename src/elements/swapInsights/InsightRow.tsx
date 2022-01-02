@@ -62,7 +62,7 @@ export const InsightRow = ({
   ];
 
   return (
-    <div className="grid grid-cols-9 py-24 px-4 gap-x-40 border-t dark:border-blue-1">
+    <div className="grid grid-cols-9 py-24 px-4 gap-x-40 border-t dark:border-black-low">
       <div className="col-span-3">
         <Speedometer summary={data ? data.summary : null} />
       </div>

@@ -21,7 +21,7 @@ export const AddLiquidityEmptyStep1 = ({
   return (
     <div className="px-10">
       <div className="flex items-center">
-        <div className="flex justify-center items-center w-[34px] h-[34px] border-2 border-primary dark:border-blue-1 rounded-full text-primary text-16">
+        <div className="flex justify-center items-center w-[34px] h-[34px] border-2 border-primary dark:border-black-low rounded-full text-primary text-16">
           1
         </div>
         <div className="ml-10 font-medium">Please enter the token prices</div>
@@ -31,7 +31,7 @@ export const AddLiquidityEmptyStep1 = ({
           <div className="text-20 ml-10 mb-6">1 BNT =</div>
           <input
             type="text"
-            className="px-20 py-12 border-2 border-primary dark:border-blue-1 dark:bg-charcoal text-20 text-right rounded-20 w-full focus:outline-none text-graphite"
+            className="px-20 py-12 border-2 border-primary dark:border-black-low dark:bg-charcoal text-20 text-right rounded-20 w-full focus:outline-none text-graphite"
             value={`~${prettifyNumber(bnt.usdPrice!, true)}`}
           />
         </div>
@@ -39,7 +39,7 @@ export const AddLiquidityEmptyStep1 = ({
           <div className="text-20 ml-10 mb-6">1 {tkn.symbol} =</div>
           <input
             type="text"
-            className="px-20 py-12 border-2 border-primary dark:border-blue-1 dark:bg-charcoal text-20 text-right rounded-20 w-full focus:outline-none focus:border-primary"
+            className="px-20 py-12 border-2 border-primary dark:border-black-low dark:bg-charcoal text-20 text-right rounded-20 w-full focus:outline-none focus:border-primary"
             placeholder="~$0.00"
             value={tknUsdPrice ? `~$${tknUsdPrice}` : ''}
             onChange={(e) =>
@@ -48,7 +48,7 @@ export const AddLiquidityEmptyStep1 = ({
           />
         </div>
       </div>
-      <div className="ml-10 mt-10 text-grey dark:text-gray-0">
+      <div className="ml-10 mt-10 text-grey dark:text-white">
         1 BNT ({prettifyNumber(bnt.usdPrice!, true)}) ={' '}
         {new BigNumber(tknUsdPrice).gt(0) ? prettifyNumber(bntTknRate) : 0}{' '}
         {tkn.symbol} (

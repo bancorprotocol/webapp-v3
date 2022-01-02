@@ -205,7 +205,7 @@ export const SearchableTokenList = ({
                 }}
               />
             </div>
-            <hr className="border-silver dark:border-blue-1" />
+            <hr className="border-silver dark:border-black-low" />
 
             {tokens
               .filter(
@@ -245,7 +245,7 @@ export const SearchableTokenList = ({
                 );
               })}
           </div>
-          <hr className="border-silver dark:border-blue-1" />
+          <hr className="border-silver dark:border-black-low" />
           <div className="flex justify-center items-center h-[59px] my-5">
             <button
               onClick={() => {

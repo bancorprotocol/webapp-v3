@@ -32,9 +32,7 @@ export const SelectToken = ({
   return (
     <>
       <div className="flex justify-between items-center">
-        <div className="text-charcoal dark:text-gray-0 font-medium">
-          {label}
-        </div>
+        <div className="text-charcoal dark:text-white font-medium">{label}</div>
         {!showSelectToken || token ? (
           <div
             className={`flex items-center ${classNameGenerator({

@@ -127,7 +127,7 @@ export const TokenInputField = ({
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
-    'border-primary dark:border-blue-1': border,
+    'border-primary dark:border-black-low': border,
     '!border-error': errorMsg,
   })}`;
 

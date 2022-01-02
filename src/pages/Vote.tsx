@@ -39,9 +39,7 @@ const VoteCard = ({
         <div className="text-primary dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
       </div>
-      <div className="text-14 text-grey dark:text-gray-0 mb-auto">
-        {content}
-      </div>
+      <div className="text-14 text-grey dark:text-white mb-auto">{content}</div>
       <button
         className="btn-primary rounded w-[220px] h-[37px] mt-20 text-14"
         onClick={() => onClick()}
@@ -92,10 +90,10 @@ export const Vote = () => {
 
   return (
     <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
-      <div className="font-bold text-3xl text-charcoal dark:text-gray-0 mb-18">
+      <div className="font-bold text-3xl text-charcoal dark:text-white mb-18">
         Vote
       </div>
-      <div className="text-charcoal dark:text-gray-0 mb-44">
+      <div className="text-charcoal dark:text-white mb-44">
         Bancor is a DAO managed by vBNT stakers who determine the future of the
         protocol with their proposals.
       </div>
@@ -116,10 +114,10 @@ export const Vote = () => {
             setStakeModal(true);
           }}
           footer={
-            <div className="grid grid-cols-2 text-grey dark:text-gray-0">
+            <div className="grid grid-cols-2 text-grey dark:text-white">
               <div>
                 {!account || (govToken && govToken.balance) ? (
-                  <div className="text-charcoal font-semibold text-20 dark:text-gray-0 mb-4">
+                  <div className="text-charcoal font-semibold text-20 dark:text-white mb-4">
                     {govToken && govToken.balance
                       ? `${prettifyNumber(govToken.balance)} ${govToken.symbol}`
                       : '--'}
@@ -131,7 +129,7 @@ export const Vote = () => {
               </div>
               <div>
                 {!account || stakeAmount ? (
-                  <div className="text-charcoal font-semibold text-20 dark:text-gray-0 mb-4">
+                  <div className="text-charcoal font-semibold text-20 dark:text-white mb-4">
                     {stakeAmount && govToken
                       ? `${prettifyNumber(stakeAmount)} ${govToken.symbol}`
                       : '--'}
@@ -168,11 +166,11 @@ export const Vote = () => {
 
         <div className="flex flex-col md:flex-row md:col-span-2 md:items-center bg-white dark:bg-charcoal shadow hover:shadow-lg dark:shadow-none rounded-20 mb-20">
           <div className="flex flex-col max-w-[520px] min-h-[170px] p-24">
-            <div className="text-16 text-charcoal dark:text-gray-0 mb-18 font-medium">
+            <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
               Unstake from Governance
             </div>
 
-            <div className="text-12 text-grey dark:text-gray-0 mb-auto">
+            <div className="text-12 text-grey dark:text-white mb-auto">
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
@@ -212,11 +210,11 @@ export const Vote = () => {
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 ml-2" />
           <div className="flex flex-col max-w-[525px] min-h-[170px] py-24 pl-24 md:pl-8">
-            <div className="text-16 text-charcoal dark:text-gray-0 mb-18 font-medium">
+            <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
               Legacy onchain contract
             </div>
 
-            <div className="text-12 text-grey dark:text-gray-0 mb-auto">
+            <div className="text-12 text-grey dark:text-white mb-auto">
               View previous votes and decisions made onchain.
             </div>
 
