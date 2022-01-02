@@ -177,14 +177,14 @@ export const SwapLimitTable = () => {
             className="max-w-[160px] rounded-10 h-[35px]"
           />
           <button
-            className={'btn-outline-grey-1 btn-sm rounded-10'}
+            className={'btn-outline-secondary btn-sm rounded-10'}
             onClick={() => handleCancelOrders()}
           >
             Cancel All
           </button>
           {weth && weth.balance && (
             <button
-              className={'btn-outline-grey-1 btn-sm rounded-10'}
+              className={'btn-outline-secondary btn-sm rounded-10'}
               onClick={() => handleWithdrawWeth()}
             >
               Withdraw {prettifyNumber(weth.balance)} WETH

@@ -59,7 +59,7 @@ module.exports = function () {
       };
     });
 
-    button[`.btn-grey-1`] = {
+    button[`.btn-secondary`] = {
       ...base,
       '@apply text-grey-4 bg-grey-1': '',
       '@apply dark:text-grey-3 dark:bg-blue-2': '',
@@ -69,7 +69,7 @@ module.exports = function () {
       },
     };
 
-    button[`.btn-outline-grey-1`] = {
+    button[`.btn-outline-secondary`] = {
       ...base,
       '@apply text-blue-4 bg-white': '',
       '@apply dark:text-grey-2 dark:bg-blue-2': '',
