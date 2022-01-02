@@ -28,18 +28,18 @@ export const TopMovers = ({ setSearch }: Props) => {
                   <button
                     onClick={() => handleClick(token)}
                     key={token.address}
-                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
                     <div
                       key={token.address}
-                      className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                      className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                     >
                       <img
                         src={token.logoURI.replace('thumb', 'small')}
                         alt="Token Logo"
                         className="w-50 h-50 rounded-full"
                       />
-                      <div className="ml-10 text-12 dark:text-grey-3">
+                      <div className="ml-10 text-12 dark:text-graphite">
                         <div className="font-medium">{token.symbol}</div>
                         <div>{prettifyNumber(token.usdPrice ?? 0, true)}</div>
                         <div

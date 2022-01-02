@@ -8,16 +8,16 @@ interface Props {
 }
 
 const defaultClassName =
-  'block w-full border border-grey-2 pl-[38px] pr-[38px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary';
+  'block w-full border border-silver pl-[38px] pr-[38px] dark:bg-charcoal dark:border-gray-4 focus:outline-none focus:border-primary';
 
 export const SearchInput = ({ value, setValue, className }: Props) => {
   return (
     <div className="relative">
-      <IconSearch className="absolute w-16 ml-14 text-grey-3" />
+      <IconSearch className="absolute w-16 ml-14 text-graphite" />
       {value.length > 0 && (
         <button
           onClick={() => setValue('')}
-          className="absolute h-full right-0 mr-14 text-grey-3 hover:text-error"
+          className="absolute h-full right-0 mr-14 text-graphite hover:text-error"
         >
           <IconClose className="w-12" />
         </button>

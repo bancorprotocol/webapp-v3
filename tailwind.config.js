@@ -9,39 +9,32 @@ module.exports = {
   theme: {
     colors: {
       ...colors,
-
       primary: {
         DEFAULT: '#10BBD5',
         light: '#DBF5F9',
         dark: '#08A2C3',
       },
-
       success: {
         DEFAULT: '#67D79F',
       },
-
       warning: {
         DEFAULT: '#FF8A00',
       },
-
       error: {
         DEFAULT: '#E27D8A',
       },
-
+      fog: '#F4F4F4',
+      graphite: '#BFBFC3',
+      silver: '#E4E4E6',
+      charcoal: '#18181A',
+      grey: '#303034',
       blue: {
         0: '#ECF4FE',
         1: '#213B55',
-        2: '#1C344D',
-        3: '#132D47',
-        4: '#0A2540',
         5: '#0E3154',
       },
-
-      grey: {
+      gray: {
         0: '#F5F5F5',
-        1: '#F2F5F9',
-        2: '#E6EBF2',
-        3: '#97A5B8',
         4: '#5A687C',
         5: '#6B7C93',
       },

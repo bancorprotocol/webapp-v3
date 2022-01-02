@@ -100,7 +100,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
         </div>
       ) : (
         <div className="p-20 rounded bg-blue-0 dark:bg-blue-5 my-20">
-          <div className="flex justify-between dark:text-grey-0">
+          <div className="flex justify-between dark:text-gray-0">
             <span className="font-medium">Space Available</span>{' '}
             <div className="text-right">
               {selectedToken.symbol === 'BNT' ? (
@@ -134,7 +134,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
             </div>
           </div>
           {bntNeeded && (
-            <div className="flex justify-between dark:text-grey-0">
+            <div className="flex justify-between dark:text-gray-0">
               <span className="font-medium">BNT needed to open up space</span>{' '}
               <div className="text-right">
                 <button

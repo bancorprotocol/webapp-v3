@@ -92,7 +92,7 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-40 text-blue-4 dark:text-grey-0 text-14 max-w-[1140px] mx-10 md:mx-auto mb-20 md:mt-20">
+    <div className="grid md:grid-cols-2 gap-40 text-charcoal dark:text-gray-0 text-14 max-w-[1140px] mx-10 md:mx-auto mb-20 md:mt-20">
       <div className="mt-20 mx-16 md:ml-5">
         <div className="font-medium text-2xl md:font-semibold md:text-3xl mb-20">
           Fiat Gateway Providers
@@ -103,12 +103,12 @@ export const Fiat = () => {
           & more.
         </div>
       </div>
-      <div className="bg-white shadow dark:shadow-none hover:shadow-lg dark:bg-blue-4 px-20 py-16 rounded-20 text-12">
+      <div className="bg-white shadow dark:shadow-none hover:shadow-lg dark:bg-charcoal px-20 py-16 rounded-20 text-12">
         <div className="flex items-center mb-8 text-16">
           <IconInfo className="w-15 h-15 mr-10" />
           Fiat Services
         </div>
-        <div className="dark:text-grey-3">
+        <div className="dark:text-graphite">
           Fiat services on Bancor are provided by third-parties. Bancor is not
           associated with, responsible or liable for the performance of these
           third-party services. Any claims & questions should be addressed with

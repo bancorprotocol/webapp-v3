@@ -7,7 +7,7 @@ export const MenuSecondaryItemSub = ({
 }: SecondarySubMenuItem) => {
   return (
     <a
-      className="flex items-center text-14 hover:text-grey-3 transition duration-300"
+      className="flex items-center text-14 hover:text-graphite transition duration-300"
       href={to}
       target="_blank"
       rel="noreferrer"

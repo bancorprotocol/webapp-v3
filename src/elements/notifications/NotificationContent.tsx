@@ -63,11 +63,9 @@ export const NotificationContent = ({
     }, showSeconds! * 1000);
 
     return () => {
-      timer.current && clearTimeout(timer.current)
-    }
+      timer.current && clearTimeout(timer.current);
+    };
   }, [isAlert, onRemove, type, showSeconds, id, isHovering]);
-
-
 
   const StatusIcon = () => {
     switch (type) {
@@ -75,7 +73,7 @@ export const NotificationContent = ({
         return (
           <div className="relative flex justify-center items-center">
             <IconBancor className="absolute w-5 text-primary" />
-            <div className="absolute w-14 h-14 border border-grey-1 rounded-full" />
+            <div className="absolute w-14 h-14 border border-fog rounded-full" />
             <div className="w-14 h-14 border-t border-r border-primary rounded-full animate-spin" />
           </div>
         );
@@ -118,7 +116,7 @@ export const NotificationContent = ({
           </div>
 
           <h4 className="text-12 font-medium mx-8">{title}</h4>
-          <span className="text-grey-4 dark:text-grey-3">
+          <span className="text-gray-4 dark:text-graphite">
             {dayjs.unix(timestamp).fromNow(true)}
           </span>
         </div>
@@ -136,7 +134,7 @@ export const NotificationContent = ({
           View on Etherscan <IconLink className="w-14 ml-6" />
         </a>
       ) : (
-        <p className="ml-[22px] text-grey-4 dark:text-grey-3">{msg}</p>
+        <p className="ml-[22px] text-gray-4 dark:text-graphite">{msg}</p>
       )}
     </div>
   );

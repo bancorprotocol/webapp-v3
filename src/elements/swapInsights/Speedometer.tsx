@@ -21,7 +21,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
     rotation > 110
       ? 'text-success'
       : rotation > 70
-      ? 'text-grey-3'
+      ? 'text-graphite'
       : 'text-error';
 
   return (
@@ -45,7 +45,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
             cy="34"
             r="31.8"
             fill="none"
-            className="text-grey-3"
+            className="text-graphite"
             stroke="currentColor"
             strokeWidth="1"
             strokeDasharray="20 200"
@@ -96,7 +96,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
               <stop offset="0%" stopColor={gradientColour} stopOpacity="40%" />
               <stop
                 offset="55%"
-                className="text-white dark:text-blue-4"
+                className="text-white dark:text-charcoal"
                 stopColor="currentColor"
                 stopOpacity="0%"
               />
@@ -117,7 +117,7 @@ export const Speedometer = ({ summary }: { summary: Summary | null }) => {
           <div>Bearish</div>
         </div>
         <div>
-          <div className="text-20 font-semibold text-grey-3">
+          <div className="text-20 font-semibold text-graphite">
             {summary ? summary.neutral : 0}
           </div>
           <div>Neutral</div>

@@ -20,7 +20,7 @@ export const InsightRow = ({
           percentages: [
             { color: 'success', decPercent: data.inOutOfTheMoney.in },
             {
-              color: 'grey-3',
+              color: 'graphite',
               decPercent: data.inOutOfTheMoney.between,
             },
             { color: 'error', decPercent: data.inOutOfTheMoney.out },
@@ -34,7 +34,7 @@ export const InsightRow = ({
             'The total holdings of whales and Investors that own more than 0.1% of the circulating supply',
           percentages: [
             { color: 'primary', decPercent: data.concentration },
-            { color: 'grey-3', decPercent: 1 - data.concentration },
+            { color: 'graphite', decPercent: 1 - data.concentration },
           ],
         }
       : null,
@@ -69,7 +69,7 @@ export const InsightRow = ({
       <div className="flex flex-col justify-between col-span-6">
         <div className="flex items-center col-span-6">
           <img
-            className="rounded-full h-20 w-20 bg-grey-2"
+            className="rounded-full h-20 w-20 bg-silver"
             src={token.logoURI}
             alt="Token Logo"
           />

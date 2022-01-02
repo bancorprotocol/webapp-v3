@@ -32,7 +32,9 @@ export const SelectToken = ({
   return (
     <>
       <div className="flex justify-between items-center">
-        <div className="text-blue-4 dark:text-grey-0 font-medium">{label}</div>
+        <div className="text-charcoal dark:text-gray-0 font-medium">
+          {label}
+        </div>
         {!showSelectToken || token ? (
           <div
             className={`flex items-center ${classNameGenerator({
@@ -45,7 +47,7 @@ export const SelectToken = ({
                 <Image
                   src={token.logoURI}
                   alt="Token"
-                  className="bg-grey-2 rounded-full h-28 w-28"
+                  className="bg-silver rounded-full h-28 w-28"
                 />
                 <span className="text-20 mx-10">{token.symbol}</span>
               </>
@@ -58,7 +60,7 @@ export const SelectToken = ({
 
             {selectable && (
               <div>
-                <IconChevronDown className="w-[10px] mr-10 text-grey-4 dark:text-grey-3" />
+                <IconChevronDown className="w-[10px] mr-10 text-gray-4 dark:text-graphite" />
               </div>
             )}
           </div>

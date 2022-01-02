@@ -28,7 +28,7 @@ export const NotificationAlert = ({
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <div className="px-20 py-20 max-w-sm w-full bg-white dark:bg-blue-2 shadow-header rounded pointer-events-auto overflow-hidden">
+      <div className="px-20 py-20 max-w-sm w-full bg-white dark:bg-grey shadow-header rounded pointer-events-auto overflow-hidden">
         <NotificationContent data={data} onRemove={hide} isAlert />
       </div>
     </Transition>

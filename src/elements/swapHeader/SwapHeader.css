@@ -1,5 +1,5 @@
 .swap-header {
-  @apply flex justify-between text-grey-3 text-20 py-16 px-20;
+  @apply flex justify-between text-graphite text-20 py-16 px-20;
 }
 
 .swap-header button {
@@ -7,6 +7,6 @@
 }
 
 .swap-header-active {
-  @apply text-blue-4 font-semibold;
-  @apply dark:text-grey-0;
+  @apply text-charcoal font-semibold;
+  @apply dark:text-gray-0;
 }

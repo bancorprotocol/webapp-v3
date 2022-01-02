@@ -16,7 +16,7 @@ export const SwapSwitch = () => {
   const switchStyles = `swap-switch !min-w-[0px] ${
     isEnabled
       ? 'bg-primary border-primary dark:bg-primary-light dark:border-primary-light'
-      : 'bg-blue-1 border-blue-1 dark:bg-grey-3 dark:border-grey-3'
+      : 'bg-blue-1 border-blue-1 dark:bg-graphite dark:border-graphite'
   }`;
 
   const switchToggleStyles = `swap-switch-toggle ${
@@ -24,12 +24,12 @@ export const SwapSwitch = () => {
   }`;
 
   const coinIconStyles = isEnabled
-    ? 'text-grey-4'
-    : 'text-blue-4 dark:text-grey-3';
+    ? 'text-gray-4'
+    : 'text-charcoal dark:text-graphite';
 
   const dollarIconStyles = isEnabled
     ? 'text-primary dark:text-primary-light'
-    : 'dark:text-grey-4';
+    : 'dark:text-gray-4';
 
   return (
     <div className="flex items-center space-x-4 text-14">

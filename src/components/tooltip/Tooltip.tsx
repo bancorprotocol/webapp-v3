@@ -13,7 +13,7 @@ interface TooltipProps {
 export const Tooltip = ({
   content,
   button = (
-    <IconInfo className="w-[10px] h-[10px] text-grey-4 dark:text-grey-0" />
+    <IconInfo className="w-[10px] h-[10px] text-gray-4 dark:text-gray-0" />
   ),
   onClick,
   placement,

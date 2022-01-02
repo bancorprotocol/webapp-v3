@@ -22,8 +22,8 @@ export const TableBody = <D extends object>({
                 <td
                   {...cell.getCellProps()}
                   className={`${
-                    row.isExpanded ? '!bg-blue-0 dark:!bg-blue-2' : ''
-                  } group-hover:bg-blue-0 dark:group-hover:bg-blue-2`}
+                    row.isExpanded ? '!bg-blue-0 dark:!bg-grey' : ''
+                  } group-hover:bg-blue-0 dark:group-hover:bg-grey`}
                 >
                   {cell.render('Cell')}
                 </td>

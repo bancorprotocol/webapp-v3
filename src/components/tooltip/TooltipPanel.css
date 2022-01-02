@@ -7,13 +7,13 @@
 @layer components {
   .tooltip-panel {
     @apply absolute max-w-[280px] py-16 px-20 rounded z-40;
-    @apply bg-white dark:bg-blue-2;
+    @apply bg-white dark:bg-grey;
     @apply shadow-header dark:shadow-none;
-    @apply text-grey-4 dark:text-grey-0;
+    @apply text-gray-4 dark:text-gray-0;
   }
   .tooltip-arrow {
     @apply absolute h-10 w-10;
-    @apply bg-white dark:bg-blue-2;
+    @apply bg-white dark:bg-grey;
   }
 }
 

@@ -38,7 +38,7 @@ export const ModalFullscreen = ({
           className="fixed inset-0 z-50 overflow-y-auto min-w-full min-h-full"
           onClose={() => setIsOpen(false)}
         >
-          <div className="inline-block min-w-full min-h-full text-left align-middle transition-all transform bg-white dark:bg-blue-3">
+          <div className="inline-block min-w-full min-h-full text-left align-middle transition-all transform bg-white dark:bg-black">
             {showHeader && (
               <LayoutHeaderMobile>
                 <button onClick={() => setIsOpen(false)}>
@@ -52,7 +52,7 @@ export const ModalFullscreen = ({
 
             <main className={`px-20 ${showHeader ? 'pt-[100px]' : ''}`}>
               {title && (
-                <div className="flex justify-between border-b border-grey-2 dark:border-grey-4 pb-10 mb-20 text-20 font-semibold">
+                <div className="flex justify-between border-b border-silver dark:border-gray-4 pb-10 mb-20 text-20 font-semibold">
                   {title}
                 </div>
               )}

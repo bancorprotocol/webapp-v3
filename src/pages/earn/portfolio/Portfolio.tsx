@@ -14,7 +14,7 @@ export const Portfolio = () => {
   );
 
   return (
-    <div className="max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">
+    <div className="max-w-[1140px] mx-auto bg-fog dark:bg-black">
       <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0">
         Portfolio
       </h1>
@@ -24,7 +24,7 @@ export const Portfolio = () => {
           className={`pb-4 w-[170px] text-left ${classNameGenerator({
             'font-semibold border-b-2 border-primary':
               selectedTab === 'protection',
-            'font-light border-b border-grey-3': selectedTab !== 'protection',
+            'font-light border-b border-graphite': selectedTab !== 'protection',
           })}`}
         >
           Liquidity Protection
@@ -35,7 +35,8 @@ export const Portfolio = () => {
             className={`pb-4 w-[110px] text-right ${classNameGenerator({
               'font-semibold border-b-2 border-primary':
                 selectedTab === 'pooltokens',
-              'font-light border-b border-grey-3': selectedTab !== 'pooltokens',
+              'font-light border-b border-graphite':
+                selectedTab !== 'pooltokens',
             })}`}
           >
             Pool Tokens

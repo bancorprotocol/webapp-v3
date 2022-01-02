@@ -4,13 +4,13 @@
   .widget {
     @apply max-w-[483px] 2xl:min-w-[483px] p-10 md:rounded-30;
     @apply bg-white md:shadow-widget;
-    @apply dark:bg-blue-4 dark:shadow-none;
+    @apply dark:bg-charcoal dark:shadow-none;
   }
 
   .widget-large {
     @apply w-full md:rounded-20;
     @apply bg-white md:shadow-widget;
-    @apply dark:bg-blue-4 dark:shadow-none;
+    @apply dark:bg-charcoal dark:shadow-none;
   }
 
   .widget-block {
@@ -20,12 +20,12 @@
   }
 
   .widget-block-icon {
-    @apply absolute mt-[-35px] ml-[16px] flex justify-center items-center w-[42px] h-[42px] bg-white dark:bg-blue-4 border-2 border-blue-0 dark:border-blue-5 rounded-full;
+    @apply absolute mt-[-35px] ml-[16px] flex justify-center items-center w-[42px] h-[42px] bg-white dark:bg-charcoal border-2 border-blue-0 dark:border-blue-5 rounded-full;
   }
 
   .widget-separator {
     @apply border-t mb-20 -mx-10;
-    @apply border-grey-2;
+    @apply border-silver;
     @apply dark:border-blue-1;
   }
 }
