@@ -28,7 +28,7 @@ export const SuggestedTokens = ({
         {suggestedTokenList.map((token) => (
           <button
             onClick={() => onClick(token!)}
-            className="bg-primary dark:bg-blue-5 dark:hover:bg-blue-1 pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
+            className="bg-primary dark:bg-black-disabled dark:hover:bg-black-low pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
           >
             <Image
               src={token!.logoURI}

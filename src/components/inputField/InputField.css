@@ -5,11 +5,11 @@
 }
 
 .input-field-bg-grey {
-  @apply bg-gray-0;
-  @apply dark:bg-blue-1;
+  @apply bg-white;
+  @apply dark:bg-black-low;
 }
 
 .input-field-border {
   @apply border-2 border-primary;
-  @apply dark:border-blue-1;
+  @apply dark:border-black-low;
 }

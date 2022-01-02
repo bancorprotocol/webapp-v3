@@ -8,5 +8,5 @@
 
 .swap-header-active {
   @apply text-charcoal font-semibold;
-  @apply dark:text-gray-0;
+  @apply dark:text-white;
 }

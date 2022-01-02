@@ -16,7 +16,7 @@ export const SwapSwitch = () => {
   const switchStyles = `swap-switch !min-w-[0px] ${
     isEnabled
       ? 'bg-primary border-primary dark:bg-primary-light dark:border-primary-light'
-      : 'bg-blue-1 border-blue-1 dark:bg-graphite dark:border-graphite'
+      : 'bg-black-low border-black-low dark:bg-graphite dark:border-graphite'
   }`;
 
   const switchToggleStyles = `swap-switch-toggle ${
