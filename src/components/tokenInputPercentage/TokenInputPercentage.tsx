@@ -70,7 +70,7 @@ export const TokenInputPercentage = ({
             key={'slippage' + slip}
             className={`btn-sm rounded-10 h-[34px] w-[66px] text-14 ${classNameGenerator(
               {
-                'btn-outline-grey-1': selPercentage !== index,
+                'btn-outline-secondary': selPercentage !== index,
                 'btn-primary': selPercentage === index,
               }
             )} bg-opacity-0`}

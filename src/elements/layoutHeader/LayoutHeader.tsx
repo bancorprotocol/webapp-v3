@@ -36,7 +36,7 @@ export const LayoutHeader = ({
         >
           <div className="layout-header-content">
             <div className="flex items-center">
-              <button className="btn-grey-1 btn-sm">
+              <button className="btn-secondary btn-sm">
                 <div
                   className={`${
                     !chainId || chainId === EthNetworks.Mainnet
