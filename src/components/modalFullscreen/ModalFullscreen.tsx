@@ -52,7 +52,7 @@ export const ModalFullscreen = ({
 
             <main className={`px-20 ${showHeader ? 'pt-[100px]' : ''}`}>
               {title && (
-                <div className="flex justify-between border-b border-silver dark:border-gray-4 pb-10 mb-20 text-20 font-semibold">
+                <div className="flex justify-between border-b border-silver dark:border-grey pb-10 mb-20 text-20 font-semibold">
                   {title}
                 </div>
               )}

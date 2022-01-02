@@ -68,7 +68,7 @@ export const LayoutHeader = ({
         </div>
         <div className="flex items-center justify-end">
           <NotificationsMenu />
-          <div className="bg-gray-4 w-[1px] h-30 mx-10" />
+          <div className="bg-grey w-[1px] h-30 mx-10" />
           <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>

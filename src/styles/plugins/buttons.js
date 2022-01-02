@@ -59,9 +59,9 @@ module.exports = function () {
 
     button[`.btn-secondary`] = {
       ...base,
-      '@apply text-gray-4 bg-fog': '',
+      '@apply text-grey bg-fog': '',
       '@apply dark:text-graphite dark:bg-grey': '',
-      '@apply focus:ring-gray-4 focus:ring-opacity-50': '',
+      '@apply focus:ring-grey focus:ring-opacity-50': '',
       '&:disabled': {
         ...baseDisabled,
       },
@@ -71,7 +71,7 @@ module.exports = function () {
       ...base,
       '@apply text-charcoal bg-white': '',
       '@apply dark:text-silver dark:bg-grey': '',
-      '@apply focus:ring-gray-4 focus:ring-opacity-50': '',
+      '@apply focus:ring-grey focus:ring-opacity-50': '',
       '@apply border border-graphite': '',
       '&:disabled': {
         ...baseDisabled,

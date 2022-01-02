@@ -10,7 +10,7 @@
   }
 
   .table-responsive thead tr {
-    @apply text-left text-gray-4 dark:text-graphite h-[56px];
+    @apply text-left text-grey dark:text-graphite h-[56px];
   }
 
   .table-responsive thead th {
@@ -26,7 +26,7 @@
   }
 
   .table-responsive tbody tr {
-    @apply bg-white dark:bg-charcoal hover:bg-blue-0 dark:hover:bg-grey;
+    @apply bg-white dark:bg-charcoal hover:bg-primary dark:hover:bg-grey;
   }
 
   .table-responsive tbody td {

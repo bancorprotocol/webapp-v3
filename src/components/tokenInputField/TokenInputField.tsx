@@ -127,7 +127,7 @@ export const TokenInputField = ({
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
-    'border-blue-0 dark:border-blue-1': border,
+    'border-primary dark:border-blue-1': border,
     '!border-error': errorMsg,
   })}`;
 
@@ -193,7 +193,7 @@ export const TokenInputField = ({
 
             {selectable && (
               <div>
-                <IconChevronDown className="w-[10px] h-[6px] mr-10 text-gray-4 dark:text-graphite" />
+                <IconChevronDown className="w-[10px] h-[6px] mr-10 text-grey dark:text-graphite" />
               </div>
             )}
           </div>

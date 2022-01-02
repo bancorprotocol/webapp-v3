@@ -7,7 +7,7 @@ export const RewardsClaimInfo = () => {
         <IconInfo className="w-10 mr-10" />
         <span className="font-semibold">Important!</span>
       </div>
-      <p className="text-gray-4 dark:text-graphite ml-20 mt-5">
+      <p className="text-grey dark:text-graphite ml-20 mt-5">
         Withdrawing rewards will reset your rewards multiplier for all active
         positions back to x1 and reduce the future rewards you are able to
         receive. In order to claim and stake your rewards without resetting your

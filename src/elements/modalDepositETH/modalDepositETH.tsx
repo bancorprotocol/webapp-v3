@@ -24,13 +24,13 @@ export const ModalDepositETH = ({
         <IconDeposit className="w-40 h-40" />
         <div className="text-20 my-20">Confirm WETH deposit</div>
 
-        <div className="text-12 border border-silver dark:border-gray-4 rounded-20 p-15 w-full">
-          <div className="text-gray-4 dark:text-graphite mb-5">
+        <div className="text-12 border border-silver dark:border-grey rounded-20 p-15 w-full">
+          <div className="text-grey dark:text-graphite mb-5">
             You Will Receive
           </div>
           {amount} WETH
         </div>
-        <div className="my-15 text-gray-4 dark:text-graphite">
+        <div className="my-15 text-grey dark:text-graphite">
           WETH is a token that represents ETH 1:1 and conforms to the ERC20
           token standard
         </div>

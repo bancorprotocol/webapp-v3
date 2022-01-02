@@ -15,7 +15,7 @@ export const ProtectedPositionTableCellFees = (
       </div>
       {hasRewards && !isSubRow && (
         <div className="flex justify-center">
-          <div className="text-12 text-primary mt-4 bg-blue-0 rounded-10 px-5 py-2">
+          <div className="text-12 text-primary mt-4 bg-primary rounded-10 px-5 py-2">
             + {prettifyNumber(position.rewardsAmount)} BNT | X
             {Number(position.rewardsMultiplier).toFixed(2)}
           </div>

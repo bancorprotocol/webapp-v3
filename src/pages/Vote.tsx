@@ -39,7 +39,7 @@ const VoteCard = ({
         <div className="text-primary dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
       </div>
-      <div className="text-14 text-gray-4 dark:text-gray-0 mb-auto">
+      <div className="text-14 text-grey dark:text-gray-0 mb-auto">
         {content}
       </div>
       <button
@@ -116,7 +116,7 @@ export const Vote = () => {
             setStakeModal(true);
           }}
           footer={
-            <div className="grid grid-cols-2 text-gray-4 dark:text-gray-0">
+            <div className="grid grid-cols-2 text-grey dark:text-gray-0">
               <div>
                 {!account || (govToken && govToken.balance) ? (
                   <div className="text-charcoal font-semibold text-20 dark:text-gray-0 mb-4">
@@ -172,7 +172,7 @@ export const Vote = () => {
               Unstake from Governance
             </div>
 
-            <div className="text-12 text-gray-4 dark:text-gray-0 mb-auto">
+            <div className="text-12 text-grey dark:text-gray-0 mb-auto">
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
@@ -216,7 +216,7 @@ export const Vote = () => {
               Legacy onchain contract
             </div>
 
-            <div className="text-12 text-gray-4 dark:text-gray-0 mb-auto">
+            <div className="text-12 text-grey dark:text-gray-0 mb-auto">
               View previous votes and decisions made onchain.
             </div>
 
