@@ -33,7 +33,7 @@ export const SuggestedTokens = ({
             <Image
               src={token!.logoURI}
               alt={`${token!.symbol} Token`}
-              className="bg-grey-2 rounded-full h-28 w-28 mb-5"
+              className="bg-silver rounded-full h-28 w-28 mb-5"
             />
             <span className="text-12">{token!.symbol}</span>
           </button>

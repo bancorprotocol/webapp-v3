@@ -53,7 +53,7 @@ export const LayoutHeader = ({
             <div className="flex items-center">
               <WalletConnectButton {...wallet} />
               <NotificationsMenu />
-              <span className="text-grey-3 text-20 mx-16">|</span>
+              <span className="text-graphite text-20 mx-16">|</span>
               <SettingsMenu />
             </div>
           </div>
@@ -68,7 +68,7 @@ export const LayoutHeader = ({
         </div>
         <div className="flex items-center justify-end">
           <NotificationsMenu />
-          <div className="bg-grey-4 w-[1px] h-30 mx-10" />
+          <div className="bg-gray-4 w-[1px] h-30 mx-10" />
           <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>

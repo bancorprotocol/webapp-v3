@@ -6,7 +6,7 @@ export const WalletConnectModalList = ({
   SUPPORTED_WALLETS,
 }: UseWalletConnect) => {
   const className =
-    'flex items-center w-full px-16 py-10 border-2 border-grey-2 dark:border-grey-4 rounded-20 hover:border-primary dark:hover:border-primary focus:outline-none focus:border-primary dark:focus:border-primary';
+    'flex items-center w-full px-16 py-10 border-2 border-silver dark:border-gray-4 rounded-20 hover:border-primary dark:hover:border-primary focus:outline-none focus:border-primary dark:focus:border-primary';
   return (
     <div className="flex flex-col mb-20 mt-10 space-y-15">
       {SUPPORTED_WALLETS.map((wallet, index) => (

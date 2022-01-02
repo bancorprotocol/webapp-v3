@@ -102,7 +102,7 @@ export const ModalApprove = ({
             <IconLock className="w-[22px] text-white" />
           </div>
           <h2 className="text-20 mb-8">Approve {fromToken.symbol}</h2>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-gray-5">
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.
           </p>
@@ -112,7 +112,7 @@ export const ModalApprove = ({
           >
             Approve
           </button>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-gray-5">
             Want to approve before each transaction?
           </p>
           <button onClick={() => approve(amount)} className="underline">

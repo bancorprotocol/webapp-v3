@@ -113,7 +113,7 @@ export const ModalVbnt = ({
           <div className="flex flex-col items-center text-12 mx-20">
             <div className="text-20 font-semibold mb-10"></div>
             {false && (
-              <div className="text-blue-4 text-12 mx-10 text-center">
+              <div className="text-charcoal text-12 mx-10 text-center">
                 Chose the amount you want to stake. you can decide if you want
                 the amount in Dollars or Token input
               </div>

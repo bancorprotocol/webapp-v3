@@ -20,7 +20,7 @@ export const MarketingBanner = () => {
       <a
         href="https://try.bancor.network"
         target="_blank"
-        className="hidden w-full md:flex pl-40 items-center bg-blue-4 h-[60px] rounded"
+        className="hidden w-full md:flex pl-40 items-center bg-charcoal h-[60px] rounded"
         rel="noreferrer"
       >
         <button

@@ -16,11 +16,11 @@ export const Sidebar = ({
 }: SidebarProps) => {
   return (
     <div
-      className={`fixed h-full text-grey-2 transition-all duration-500 ease-in-out z-50 ${
+      className={`fixed h-full text-silver transition-all duration-500 ease-in-out z-50 ${
         isMinimized ? 'w-[66px]' : 'w-[200px]'
       }`}
     >
-      <div className="pt-[25px] h-full bg-blue-4 rounded-r">
+      <div className="pt-[25px] h-full bg-charcoal rounded-r">
         <div className="flex flex-col justify-between h-full">
           <section className="overflow-hidden overflow-y-auto">
             <SidebarHeader

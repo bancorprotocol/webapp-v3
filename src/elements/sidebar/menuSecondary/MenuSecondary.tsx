@@ -127,11 +127,11 @@ export const MenuSecondary = ({ isMinimized }: MenuSecondaryProps) => {
                   static
                   onMouseEnter={() => openPopover(index)}
                   onMouseLeave={() => closePopover(200)}
-                  className={`absolute w-[225px] py-20 bg-blue-4 bottom-[-18px] px-24 left-0 rounded z-10 transition ease-out duration-500 ${
+                  className={`absolute w-[225px] py-20 bg-charcoal bottom-[-18px] px-24 left-0 rounded z-10 transition ease-out duration-500 ${
                     isMinimized ? 'ml-[66px]' : 'ml-[200px]'
                   } ${indexDesktop === index ? 'opacity-100' : 'opacity-0'}`}
                 >
-                  <div className="absolute h-14 w-14 transform bottom-24 left-[-7px] rotate-45 bg-blue-4" />
+                  <div className="absolute h-14 w-14 transform bottom-24 left-[-7px] rotate-45 bg-charcoal" />
                   <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
                     <div className="dropdown-header flex justify-between">
                       <h3 className="text-16 font-semibold">{item.label}</h3>

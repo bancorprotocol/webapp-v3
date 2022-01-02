@@ -46,7 +46,7 @@ export const Modal = ({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-blue-3 bg-opacity-70" />
+              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-70" />
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
@@ -66,7 +66,7 @@ export const Modal = ({
               <div
                 className={`inline-block w-full ${
                   large ? 'max-w-[485px]' : 'max-w-[380px]'
-                } overflow-hidden align-middle transition-all transform rounded-20 bg-white dark:bg-blue-4 text-left`}
+                } overflow-hidden align-middle transition-all transform rounded-20 bg-white dark:bg-charcoal text-left`}
               >
                 <Dialog.Title className="flex justify-between items-center px-20 text-20 font-semibold h-[60px]">
                   {showBackButton && (

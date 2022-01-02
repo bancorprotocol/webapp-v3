@@ -66,13 +66,13 @@ export const PoolTokensTable = () => {
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <h2>Pool Tokens</h2>
         <div className="relative">
-          <IconSearch className="absolute w-16 ml-14 text-grey-3" />
+          <IconSearch className="absolute w-16 ml-14 text-graphite" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search"
-            className="block w-full max-w-[160px] border border-grey-2 rounded-10 pl-[38px] h-[35px] dark:bg-blue-4 dark:border-grey-4 focus:outline-none focus:border-primary"
+            className="block w-full max-w-[160px] border border-silver rounded-10 pl-[38px] h-[35px] dark:bg-charcoal dark:border-gray-4 focus:outline-none focus:border-primary"
           />
         </div>
       </div>

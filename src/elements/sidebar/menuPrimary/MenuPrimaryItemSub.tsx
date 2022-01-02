@@ -21,7 +21,7 @@ export const MenuPrimaryItemSub = ({
       rel={href ? 'noopener' : undefined}
       onClick={() => setIsSidebarOpen && setIsSidebarOpen(false)}
       activeClassName="!border-primary-light text-primary-light"
-      className={`w-full flex items-center transition duration-300 border-l-2 border-grey-4 h-[28px] pl-30`}
+      className={`w-full flex items-center transition duration-300 border-l-2 border-gray-4 h-[28px] pl-30`}
     >
       {label} {href && <IconLink className="w-14 ml-6" />}
     </NavLink>

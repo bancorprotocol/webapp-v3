@@ -445,7 +445,7 @@ export const SwapLimit = ({
                 <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
                 <div className="relative w-full">
                   {isLoadingRate && (
-                    <div className="absolute flex justify-end bottom-[17px] bg-white dark:bg-blue-4 h-[21px] w-full pr-15">
+                    <div className="absolute flex justify-end bottom-[17px] bg-white dark:bg-charcoal h-[21px] w-full pr-15">
                       <div className="loading-skeleton h-[24px] w-4/5"></div>
                     </div>
                   )}
@@ -508,7 +508,7 @@ export const SwapLimit = ({
                     }}
                     format
                     placeholder="Custom"
-                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-grey-3 p-6"
+                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-graphite p-6"
                   />
                 </div>
               </div>

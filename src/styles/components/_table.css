@@ -1,48 +1,49 @@
 @import 'tailwindcss/components';
 
 @layer components {
-    .table-responsive {
-        @apply relative overflow-x-scroll md:overflow-x-auto;
-    }
+  .table-responsive {
+    @apply relative overflow-x-scroll md:overflow-x-auto;
+  }
 
-    .table-responsive table {
-        @apply table-auto w-full relative;
-    }
+  .table-responsive table {
+    @apply table-auto w-full relative;
+  }
 
-    .table-responsive thead tr {
-        @apply text-left text-grey-4 dark:text-grey-3 h-[56px];
-    }
+  .table-responsive thead tr {
+    @apply text-left text-gray-4 dark:text-graphite h-[56px];
+  }
 
-    .table-responsive thead th {
-        @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-grey-2 dark:bg-blue-1;
-    }
+  .table-responsive thead th {
+    @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-silver dark:bg-blue-1;
+  }
 
-    .table-responsive tbody tr {
-        @apply border-b border-grey-2 dark:border-blue-1;
-    }
+  .table-responsive tbody tr {
+    @apply border-b border-silver dark:border-blue-1;
+  }
 
-    .table-responsive tbody {
-        @apply relative;
-    }
+  .table-responsive tbody {
+    @apply relative;
+  }
 
-    .table-responsive tbody tr {
-        @apply bg-white dark:bg-blue-4 hover:bg-blue-0 dark:hover:bg-blue-2;
-    }
+  .table-responsive tbody tr {
+    @apply bg-white dark:bg-charcoal hover:bg-blue-0 dark:hover:bg-grey;
+  }
 
-    .table-responsive tbody td {
-        @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-blue-4;
-    }
+  .table-responsive tbody td {
+    @apply h-[70px] first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-charcoal;
+  }
 
-    .table-sticky-cell {
-        @apply first:sticky first:left-0 first:z-20;
-    }
+  .table-sticky-cell {
+    @apply first:sticky first:left-0 first:z-20;
+  }
 
-    .table-sticky-column thead th,
-    .table-sticky-column tbody td {
-        @apply table-sticky-cell;
-    }
+  .table-sticky-column thead th,
+  .table-sticky-column tbody td {
+    @apply table-sticky-cell;
+  }
 
-    .table-responsive tbody td table tr, .table-responsive tbody td table td {
-        @apply bg-opacity-0 dark:bg-opacity-0;
-    }
+  .table-responsive tbody td table tr,
+  .table-responsive tbody td table td {
+    @apply bg-opacity-0 dark:bg-opacity-0;
+  }
 }

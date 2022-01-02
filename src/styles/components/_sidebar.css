@@ -4,6 +4,6 @@
   .sidebar-toggle {
     @apply absolute flex justify-center items-center right-0 -mr-12 w-[25px] h-[25px];
     @apply transition-transform ease-in-out duration-500 transform transform-gpu;
-    @apply border-[1px] border-white rounded-full bg-blue-4;
+    @apply border-[1px] border-white rounded-full bg-charcoal;
   }
 }
