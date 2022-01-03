@@ -16,7 +16,6 @@ module.exports = {
       },
       success: {
         DEFAULT: '#67D79F',
-        approve: '',
       },
       warning: {
         DEFAULT: '#FF8A00',
@@ -32,7 +31,7 @@ module.exports = {
       grey: '#303034',
       approve: '#4EC987',
       black: {
-        DEFAULT: '#18181A', //100% Opacity
+        DEFAULT: '#000000',
         medium: '#CC18181A', //80% Opacity
         low: '#8018181A', //50% Opacity
         disabled: '#3318181A', //20% Opacity

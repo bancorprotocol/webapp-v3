@@ -14,11 +14,11 @@
   }
 
   .table-responsive thead th {
-    @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-silver dark:bg-black-low;
+    @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-silver dark:bg-charcoal border-b border-silver dark:border-black;
   }
 
   .table-responsive tbody tr {
-    @apply border-b border-silver dark:border-black-low;
+    @apply border-b border-silver dark:border-black;
   }
 
   .table-responsive tbody {

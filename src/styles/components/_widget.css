@@ -15,8 +15,8 @@
 
   .widget-block {
     @apply rounded-30 mt-12 p-12;
-    @apply bg-primary;
-    @apply dark:bg-black-disabled;
+    @apply bg-fog;
+    @apply dark:bg-grey;
   }
 
   .widget-block-icon {
