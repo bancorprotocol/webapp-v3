@@ -1,7 +1,7 @@
 .layout-header {
   @apply hidden md:fixed w-full md:flex items-center justify-center h-60 z-40;
   @apply bg-white shadow-header;
-  @apply dark:bg-black dark:shadow-none;
+  @apply dark:bg-black dark:shadow-none dark:border dark:border-charcoal;
 }
 
 .layout-header-content {
