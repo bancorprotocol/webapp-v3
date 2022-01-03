@@ -8,6 +8,7 @@ import { MenuPrimaryItem } from 'elements/sidebar/menuPrimary/MenuPrimaryItem';
 import { sendGTMPath } from 'services/api/googleTagManager';
 import usePrevious from 'hooks/usePrevious';
 import { useAppSelector } from 'redux/index';
+import { fiat, pools, portfolio, swap, tokens, vote } from 'services/router';
 
 export interface BaseMenuItem {
   label: string;
@@ -27,34 +28,34 @@ interface MenuPrimaryProps {
 const menu: MenuItem[] = [
   {
     label: 'Earn',
-    to: '/pools',
+    to: pools,
     icon: <IconEarn />,
     subMenu: [
-      { label: 'Pools', to: '/pools' },
-      { label: 'Portfolio', to: '/portfolio' },
+      { label: 'Pools', to: pools },
+      { label: 'Portfolio', to: portfolio },
     ],
   },
   {
     label: 'Trade',
-    to: '/',
+    to: swap,
     icon: <IconSync />,
     subMenu: [
-      { label: 'Swap', to: '/' },
-      { label: 'Tokens', to: '/tokens' },
+      { label: 'Swap', to: swap },
+      { label: 'Tokens', to: tokens },
     ],
   },
   {
     label: 'DAO',
-    to: '/vote',
+    to: vote,
     icon: <IconVote />,
     subMenu: [
-      { label: 'Vote', to: '/vote' },
+      { label: 'Vote', to: vote },
       { label: 'Governance', to: 'https://gov.bancor.network' },
     ],
   },
   {
     label: 'Fiat',
-    to: '/fiat',
+    to: fiat,
     icon: <IconFiat />,
     subMenu: [],
   },

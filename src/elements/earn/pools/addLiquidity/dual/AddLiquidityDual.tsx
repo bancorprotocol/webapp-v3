@@ -4,10 +4,11 @@ import { AddLiquidityDualStakeAmount } from 'elements/earn/pools/addLiquidity/du
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -22,6 +23,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const bnt = useAppSelector<Token | undefined>(
     getTokenById(bntReserve.address)
   );
+  const { pushLiquidityError } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
@@ -44,9 +46,8 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
     return tknWithUsd as Token;
   };
 
-  const history = useHistory();
   if (!tkn || !bnt) {
-    history.push('/pools/add-liquidity/error');
+    pushLiquidityError();
     return <></>;
   }
 

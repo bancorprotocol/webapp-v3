@@ -4,6 +4,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { NavLink } from 'react-router-dom';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { pools } from 'services/router';
 
 interface SidebarHeaderProps {
   isMinimized: boolean;
@@ -19,7 +20,7 @@ export const SidebarHeader = ({
     <>
       <div className={'flex justify-between items-center mb-12'}>
         <div>
-          <NavLink to={'/pools'} className="flex items-center mb-5 pl-[25px] ">
+          <NavLink to={pools} className="flex items-center mb-5 pl-[25px] ">
             <IconBancor className="w-[18px] mr-24" />
             <IconBancorText className="w-[76px]" />
           </NavLink>

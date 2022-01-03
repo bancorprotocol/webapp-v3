@@ -10,10 +10,8 @@ import {
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { getNetworkVariables } from 'services/web3/config';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { updateTokens } from 'redux/bancor/bancor';
-import { EthNetworks } from 'services/web3/types';
 import {
   rejectNotification,
   stakeFailedNotification,
@@ -23,6 +21,7 @@ import {
 } from 'services/notifications/notifications';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -90,8 +89,7 @@ export const ModalVbnt = ({
   const [checkApprove, ModalApprove] = useApproveModal(
     [{ amount: amount, token: token }],
     handleStakeUnstake,
-    getNetworkVariables(chainId ? chainId : EthNetworks.Mainnet)
-      .governanceContractAddress
+    ApprovalContract.Governance
   );
 
   const refreshBalances = async (token: Token, account: string) => {

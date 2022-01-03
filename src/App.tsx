@@ -1,14 +1,7 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
-import { Swap } from 'pages/Swap';
-import { NotFound } from 'pages/NotFound';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
-import { Tokens } from 'pages/Tokens';
-import { Pools } from 'pages/earn/pools/Pools';
-import { Portfolio } from 'pages/earn/portfolio/Portfolio';
-import { Vote } from 'pages/Vote';
-import { Fiat } from 'pages/Fiat';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
@@ -38,12 +31,9 @@ import {
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
-import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
-import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
-import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
-import { TermsOfUse } from './pages/TermsOfUse';
-import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
+import { keepWSOpen } from 'services/web3';
+import { Router } from 'pages/Router';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -67,6 +57,7 @@ export const App = () => {
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
     subscribeToObservables(dispatch);
+    keepWSOpen();
 
     const dark = getDarkModeLS();
     if (dark) dispatch(setDarkMode(dark));
@@ -127,93 +118,7 @@ export const App = () => {
               showBanner ? 'pt-40 md:pt-20' : 'pt-20'
             }`}
           >
-            <Switch>
-              <Route exact strict path="/" component={Swap} />
-              <Route
-                exact
-                strict
-                path="/eth/swap"
-                render={(props) => {
-                  return <Redirect to={`/${props.location.search}`} />;
-                }}
-              />
-              <Route exact strict path="/tokens" component={Tokens} />
-              <Route exact strict path="/pools" component={Pools} />
-              <Route exact strict path="/eth/data">
-                <Redirect to="/pools" />
-              </Route>
-              <Route
-                exact
-                strict
-                path="/pools/add-liquidity/:id"
-                component={AddLiquidity}
-              />
-              <Route
-                exact
-                strict
-                path="/eth/portfolio/stake/add/single/:id"
-                render={(props) => (
-                  <Redirect
-                    to={`/pools/add-liquidity/${props.match.params.id}`}
-                  />
-                )}
-              />
-              <Route
-                exact
-                strict
-                path="/eth/pool/add/:id"
-                render={(props) => (
-                  <Redirect
-                    to={`/pools/add-liquidity/${props.match.params.id}`}
-                  />
-                )}
-              />
-              <Route exact strict path="/portfolio" component={Portfolio} />
-              <Route exact strict path="/eth/portfolio">
-                <Redirect to="/portfolio" />
-              </Route>
-              <Route
-                exact
-                strict
-                path="/portfolio/rewards/claim"
-                component={RewardsClaim}
-              />
-              <Route exact strict path="/eth/portfolio/stake/rewards/withdraw">
-                <Redirect to="/portfolio/rewards/claim" />
-              </Route>
-              <Route
-                exact
-                strict
-                path="/portfolio/rewards/stake/:id"
-                component={RewardsStake}
-              />
-              <Route
-                exact
-                strict
-                path="/eth/portfolio/stake/rewards/restake/:id"
-                render={(props) => (
-                  <Redirect
-                    to={`/portfolio/rewards/stake/${props.match.params.id}`}
-                  />
-                )}
-              />
-              <Route exact strict path="/vote" component={Vote} />
-              <Route exact strict path="/eth/vote">
-                <Redirect to="/vote" />
-              </Route>
-              <Route exact strict path="/fiat" component={Fiat} />
-              <Route exact strict path="/eth/fiat">
-                <Redirect to="/fiat" />
-              </Route>
-              <Route exact strict path="/terms-of-use" component={TermsOfUse} />
-              <Route
-                exact
-                strict
-                path="/privacy-policy"
-                component={PrivacyPolicy}
-              />
-              <Route component={NotFound} />
-            </Switch>
+            <Router />
           </main>
         </div>
       )}

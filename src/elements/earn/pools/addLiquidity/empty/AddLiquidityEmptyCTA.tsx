@@ -4,7 +4,6 @@ import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
-import { useHistory } from 'react-router-dom';
 import {
   addLiquidityFailedNotification,
   addLiquidityNotification,
@@ -12,6 +11,7 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -32,7 +32,7 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const { account } = useWeb3React();
-  const history = useHistory();
+  const { pushPortfolio } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
@@ -55,7 +55,7 @@ export const AddLiquidityEmptyCTA = ({
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          pushPortfolio();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -68,7 +68,7 @@ export const AddLiquidityEmptyCTA = ({
           pool.name
         )
     );
-  }, [amountTkn, tkn, amountBnt, bnt, pool, dispatch, history]);
+  }, [amountTkn, tkn, amountBnt, bnt, pool, pushPortfolio, dispatch]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [

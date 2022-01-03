@@ -1,19 +1,19 @@
 import { Pool } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { getPools } from 'redux/bancor/pool';
-import { useHistory } from 'react-router-dom';
 import { SelectPool } from 'components/selectPool/SelectPool';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
-  const history = useHistory();
+  const { pushAddLiquidityByID } = useNavigation();
   const pools = useAppSelector<Pool[]>(getPools);
 
   const onSelect = (pool: Pool) => {
-    history.push(`/pools/add-liquidity/${pool.pool_dlt_id}`);
+    pushAddLiquidityByID(pool.pool_dlt_id);
   };
 
   return (

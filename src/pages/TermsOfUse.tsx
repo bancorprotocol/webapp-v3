@@ -130,11 +130,11 @@ export const TermsOfUse = () => {
         Terms and our Privacy Policy, a current version of which is available at
         <a
           target="_blank"
-          href="https://www.bancor.network/privacy-policy"
+          href="https://app.bancor.network/privacy-policy"
           rel="noopener noreferrer nofollow"
           data-radium="true"
         >
-          https://www.bancor.network/privacy-policy
+          https://app.bancor.network/privacy-policy
         </a>
         , which is incorporated herein by reference and which may be modified
         from time to time at our sole discretion and without prior notice.
