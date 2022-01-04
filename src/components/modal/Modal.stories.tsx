@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { withDesign } from 'storybook-addon-designs';
 
 export default {
-  title: 'Components/Modal',
+  title: 'Components/Modal/Normal',
   component: Modal,
   decorators: [withDesign],
 } as ComponentMeta<typeof Modal>;

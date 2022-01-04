@@ -3,11 +3,11 @@ import { withDesign } from 'storybook-addon-designs';
 import colors from 'styles/plugins/colors';
 
 export default {
-  title: 'Foundation/Colors',
+  title: 'DesignSystem/Colors',
   decorators: [withDesign],
 } as ComponentMeta<any>;
 
-const Template: ComponentStory<any> = () => {
+export const Colors: ComponentStory<any> = () => {
   return (
     <div className="bg-white p-20 rounded shadow">
       <div className="overflow-x-scroll space-y-[50px] ">
@@ -70,8 +70,6 @@ const Template: ComponentStory<any> = () => {
     </div>
   );
 };
-
-export const Colors = Template.bind({});
 
 Colors.parameters = {
   design: {
