@@ -1,6 +1,8 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 import { Widget } from './Widget';
+import { store } from '../../redux';
+import { Provider } from 'react-redux';
 
 export default {
   title: 'Components/Widgets',
@@ -8,7 +10,11 @@ export default {
   decorators: [withDesign],
 } as ComponentMeta<typeof Widget>;
 
-const Template: ComponentStory<typeof Widget> = (args) => <Widget {...args} />;
+const Template: ComponentStory<typeof Widget> = (args) => (
+  <Provider store={store}>
+    <Widget {...args} />
+  </Provider>
+);
 
 export const Main = Template.bind({});
 
