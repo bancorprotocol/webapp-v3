@@ -17,7 +17,7 @@ export const Button = ({
   outlined = false,
   ...props
 }: ButtonProps) => {
-  const btnOutlined = outlined ? 'btn-outline-' : '';
+  const btnOutlined = outlined ? 'outline-' : '';
   const btnVariant = `btn-${btnOutlined}${variant}`;
   const btnSize = `btn-${size}`;
 
