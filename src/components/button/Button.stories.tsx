@@ -8,6 +8,24 @@ export default {
   decorators: [withDesign],
 } as ComponentMeta<typeof Button>;
 
+const options = [
+  {
+    label: 'DEFAULT',
+    classname: () => '',
+    disabled: false,
+  },
+  {
+    label: 'HOVER',
+    classname: (variant: string) => `btn-${variant}-hover`,
+    disabled: false,
+  },
+  {
+    label: 'DISABLED',
+    classname: () => '',
+    disabled: true,
+  },
+];
+
 export const Variants: ComponentStory<typeof Button> = (args) => {
   return (
     <div className="space-y-20">
@@ -15,32 +33,25 @@ export const Variants: ComponentStory<typeof Button> = (args) => {
         return (
           <div key={variant} className="space-y-10">
             <h2 className="uppercase">{variant}</h2>
-            <div className="flex items-center space-x-20">
-              <div className="min-w-[120px]">DEFAULT</div>
-              {Object.values(ButtonSize).map((size) => {
-                return (
-                  <Button key={size} {...args} variant={variant} size={size}>
-                    Text
-                  </Button>
-                );
-              })}
-            </div>
-            <div className="flex items-center space-x-20">
-              <div className="min-w-[120px]">DISABLED</div>
-              {Object.values(ButtonSize).map((size) => {
-                return (
-                  <Button
-                    key={size}
-                    {...args}
-                    variant={variant}
-                    size={size}
-                    disabled
-                  >
-                    Text
-                  </Button>
-                );
-              })}
-            </div>
+            {options.map((option) => (
+              <div className="flex items-center space-x-20" key={option.label}>
+                <div className="min-w-[120px]">{option.label}</div>
+                {Object.values(ButtonSize).map((size) => {
+                  return (
+                    <Button
+                      key={size}
+                      {...args}
+                      variant={variant}
+                      size={size}
+                      className={option.classname(variant)}
+                      disabled={option.disabled}
+                    >
+                      Click me now
+                    </Button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         );
       })}
