@@ -27,20 +27,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = ({
   variant = ButtonVariant.PRIMARY,
-  size = ButtonSize.MEDIUM,
+  size = ButtonSize.LARGE,
   className = '',
   outlined = false,
   ...props
 }: ButtonProps) => {
   const btnOutlined = outlined ? 'outline-' : '';
-  const btnVariant = `btn-${btnOutlined}${variant}`;
+  const btnVariant = `btn-${btnOutlined}${variant}-new`;
   const btnSize = `btn-${size}`;
 
   return (
     <button
       type="button"
       {...props}
-      className={`btn ${btnVariant} ${btnSize} ${className}`}
+      className={`btn-base ${btnVariant} ${btnSize}-new ${className}`}
     />
   );
 };
