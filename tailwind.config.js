@@ -3,7 +3,21 @@ const buttons = require('./src/styles/plugins/buttons');
 
 module.exports = {
   mode: 'jit',
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    safelist: [
+      'btn-primary',
+      'btn-secondary',
+      'btn-success',
+      'btn-warning',
+      'btn-error',
+      'btn-info',
+      'btn-xs',
+      'btn-sm',
+      'btn-md',
+      'btn-lg',
+    ],
+  },
   darkMode: 'class', // or 'media' or 'class'
   plugins: [buttons()],
   theme: {
