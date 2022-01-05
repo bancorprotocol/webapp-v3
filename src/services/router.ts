@@ -21,7 +21,7 @@ export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
 export const portfolioRewardsStakeByID = (id: string) =>
   `${rewardsBase}stake/${id}`;
 export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
-  `${rewardsBase}${id}?posGroupId=${pos}`;
+  `${rewardsBase}stake/${id}?posGroupId=${pos}`;
 export const swapByfrom = (from?: string) =>
   `${swap}${from ? `?from=${from}` : ''}`;
 
