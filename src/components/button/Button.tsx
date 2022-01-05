@@ -1,7 +1,22 @@
 import { ButtonHTMLAttributes } from 'react';
 
-type ButtonVariant = 'primary' | 'success' | 'info' | 'warning' | 'error';
-type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+export enum ButtonVariant {
+  PRIMARY = 'primary',
+  // SECONDARY = 'secondary',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  WARNING = 'warning',
+  INFO = 'info',
+  // LIGHT = 'light',
+  // DARK = 'dark',
+}
+
+export enum ButtonSize {
+  LARGE = 'lg',
+  MEDIUM = 'md',
+  SMALL = 'sm',
+  EXTRASMALL = 'xs',
+}
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -11,8 +26,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = ({
-  variant = 'primary',
-  size = 'md',
+  variant = ButtonVariant.PRIMARY,
+  size = ButtonSize.MEDIUM,
   className = '',
   outlined = false,
   ...props
