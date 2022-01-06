@@ -12,7 +12,7 @@ interface InsightCardProps {
 
 export const InsightCard = ({ data }: { data: InsightCardProps | null }) => {
   return (
-    <div className="col-span-1 flex flex-col justify-between rounded-15 p-8 border-2 border-primary dark:border-black-low">
+    <div className="col-span-1 flex flex-col justify-between rounded-15 p-8 border-2 border-fog dark:border-black-low">
       <span className={`text-12 font-medium ${!data ? 'opacity-30' : ''}`}>
         {data ? data.label : 'No available insights'}
         <div className="inline text-grey ml-5 align-middle h-[10px]">
