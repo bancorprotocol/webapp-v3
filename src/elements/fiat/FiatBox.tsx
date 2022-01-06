@@ -50,7 +50,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
           </div>
         )}
         {fiatOut && (
-          <div className="text-10 text-white font-semibold bg-primary-light rounded-10 px-15 py-2 ml-10">
+          <div className="text-10 text-white font-semibold bg-approve rounded-10 px-15 py-2 ml-10">
             Fiat Out
           </div>
         )}
