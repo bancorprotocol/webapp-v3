@@ -160,15 +160,25 @@ export const removeLiquidity = async (
       poolToken.poolDecimals
     );
 
-    const tx = await contract.removeLiquidity(
-      expandToken(poolToken.amount, poolToken.poolDecimals),
-      [poolToken.bnt.token.address, poolToken.tkn.token.address],
-      [minBntReturn, minTknReturn]
-    );
-    onHash(tx.hash);
+    if (poolToken.version < 28) {
+      const tx = await contract.liquidate(
+        expandToken(poolToken.amount, poolToken.poolDecimals)
+      );
+      onHash(tx.hash);
 
-    await tx.wait();
-    onCompleted();
+      await tx.wait();
+      onCompleted();
+    } else {
+      const tx = await contract.removeLiquidity(
+        expandToken(poolToken.amount, poolToken.poolDecimals),
+        [poolToken.bnt.token.address, poolToken.tkn.token.address],
+        [minBntReturn, minTknReturn]
+      );
+      onHash(tx.hash);
+
+      await tx.wait();
+      onCompleted();
+    }
   } catch (e: any) {
     console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
