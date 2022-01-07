@@ -111,6 +111,7 @@ export interface PoolToken {
   poolDecimals: number;
   converter: string;
   poolName: string;
+  version: number;
 }
 
 export const listOfLists = [
@@ -458,6 +459,7 @@ export const poolTokens$ = combineLatest([
           poolDecimals: pool.decimals,
           converter: poolToken.converter,
           poolName: pool.name,
+          version: pool.version,
         };
       })
     );
