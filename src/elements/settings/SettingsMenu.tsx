@@ -11,6 +11,7 @@ import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
+import { privacyPolicy, tos } from 'services/router';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -87,14 +88,13 @@ export const SettingsMenu = () => {
       </div>
 
       <hr className="border-grey-3 mt-15 mb-10" />
-
       {isMobile ? (
         <>
           <div>
             <NavLink
               exact
               strict
-              to="/privacy-policy"
+              to={privacyPolicy}
               className="hover:underline"
             >
               Privacy Policy
@@ -102,12 +102,7 @@ export const SettingsMenu = () => {
           </div>
           <hr className="border-grey-3 mt-15 mb-10" />
           <div>
-            <NavLink
-              exact
-              strict
-              to="/terms-of-use"
-              className="hover:underline"
-            >
+            <NavLink exact strict to={tos} className="hover:underline">
               Terms of Use
             </NavLink>
             <hr className="border-grey-3 mt-15 mb-10" />
@@ -115,16 +110,11 @@ export const SettingsMenu = () => {
         </>
       ) : (
         <div className="text-center">
-          <NavLink exact strict to="/terms-of-use" className="hover:underline">
+          <NavLink exact strict to={tos} className="hover:underline">
             Terms of Use
           </NavLink>
           <span className="mx-10">|</span>
-          <NavLink
-            exact
-            strict
-            to="/privacy-policy"
-            className="hover:underline"
-          >
+          <NavLink exact strict to={privacyPolicy} className="hover:underline">
             Privacy Policy
           </NavLink>
         </div>

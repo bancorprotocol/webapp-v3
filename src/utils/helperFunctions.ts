@@ -45,10 +45,20 @@ export const formatDuration = (duration: plugin.Duration): string => {
   return sentence;
 };
 
-export const formatTime = (ms: number, withDays: boolean = false): string =>
-  dayjs
-    .duration(ms)
-    .format(`${withDays ? 'M [Months] D [Days] ' : ''}HH[:]mm[:]ss`);
+export const formatTime = (ms: number): string => {
+  const countdown = dayjs.duration(ms).format('HH mm ss');
+  let [hours, minutes, seconds] = countdown.split(' ').map((x) => parseInt(x));
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  if (!days && !hours && !minutes) {
+    return `${seconds}s`;
+  } else if (!days && !hours) {
+    return `${minutes}m ${seconds}s`;
+  } else if (!days) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  } else {
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+};
 
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {

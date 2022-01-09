@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Pool, Token } from 'services/observables/tokens';
@@ -14,8 +14,6 @@ import {
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { liquidityProtection$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { useWeb3React } from '@web3-react/core';
@@ -30,6 +28,8 @@ import {
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
+import { wait } from '../../../../utils/pureFunctions';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -50,7 +50,6 @@ export const WithdrawLiquidityWidget = ({
   const [amount, setAmount] = useState('');
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
-  const approveContract = useRef('');
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
@@ -71,31 +70,27 @@ export const WithdrawLiquidityWidget = ({
   const tokenInsufficent = Number(amount) > Number(tknAmount);
   const withdrawDisabled = emtpyAmount || tokenInsufficent;
 
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted())
-      approveContract.current = await liquidityProtection$
-        .pipe(take(1))
-        .toPromise();
-  }, []);
-
-  const showVBNTWarning = () => {
+  const showVBNTWarning = useCallback(() => {
     if (token && token.address !== bnt) {
       return false;
     }
     if (!amount) {
       return false;
     }
-    const isBalanceSufficient = new BigNumber(
-      govToken ? govToken.balance ?? 0 : 0
-    ).gte(amount);
-    if (isBalanceSufficient) {
-      return false;
-    }
-
-    return new BigNumber(govToken ? govToken.balance ?? 0 : 0).lt(
-      protectedPosition.initialStake.tknAmount
-    );
-  };
+    const govTokenBalance = govToken ? govToken.balance ?? 0 : 0;
+    const initalStake = protectedPosition.initialStake.tknAmount;
+    return new BigNumber(amount)
+      .div(tknAmount)
+      .times(initalStake)
+      .gt(govTokenBalance);
+  }, [
+    amount,
+    bnt,
+    govToken,
+    protectedPosition.initialStake.tknAmount,
+    tknAmount,
+    token,
+  ]);
 
   useAsyncEffect(
     async (isMounted) => {
@@ -126,7 +121,7 @@ export const WithdrawLiquidityWidget = ({
     [amountDebounce]
   );
 
-  const withdraw = async () => {
+  const withdraw = useCallback(async () => {
     if (token)
       await withdrawProtection(
         positionId,
@@ -144,20 +139,30 @@ export const WithdrawLiquidityWidget = ({
         () => withdrawProtectedPositionFailed(dispatch, token, amount)
       );
     setIsModalOpen(false);
-  };
+  }, [
+    account,
+    amount,
+    dispatch,
+    pools,
+    positionId,
+    setIsModalOpen,
+    tknAmount,
+    token,
+  ]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount: amount, token: govToken! }],
     withdraw,
-    approveContract.current
+    ApprovalContract.LiquidityProtection
   );
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = useCallback(async () => {
     if (withdrawingBNT) {
       setIsModalOpen(false);
+      await wait(1000);
       onStart();
     } else withdraw();
-  };
+  }, [onStart, setIsModalOpen, withdraw, withdrawingBNT]);
 
   return (
     <>
@@ -224,11 +229,11 @@ export const WithdrawLiquidityWidget = ({
           )}
           {showVBNTWarning() && (
             <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-              Insufficient VBNT balance.
+              Insufficient vBNT balance.
             </div>
           )}
           <button
-            onClick={() => handleWithdraw()}
+            onClick={handleWithdraw}
             disabled={withdrawDisabled}
             className={`btn-primary rounded w-full mt-20`}
           >

@@ -6,11 +6,12 @@ import { useAppSelector } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
 import { getTokenById } from 'redux/bancor/bancor';
 import { getProtectedPools } from 'redux/bancor/pool';
-import { useHistory } from 'react-router-dom';
+
 import BigNumber from 'bignumber.js';
 import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'redux/liquidity/liquidity';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool?: Pool;
@@ -22,7 +23,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const [bntAmount, setBntAmount] = useState('');
   const [bntAmountUsd, setBntAmountUsd] = useState('');
   const pools = useAppSelector<Pool[]>(getProtectedPools);
-  const history = useHistory();
+  const { pushRewardsStakeByID, pushRewardsStakeByIDnPos } = useNavigation();
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
@@ -46,13 +47,8 @@ export const useRewardsClaim = ({ pool }: Props) => {
   };
 
   const onSelect = (pool: Pool) => {
-    if (posGroupId) {
-      history.push(
-        `/portfolio/rewards/stake/${pool.pool_dlt_id}?posGroupId=${posGroupId}`
-      );
-    } else {
-      history.push(`/portfolio/rewards/stake/${pool.pool_dlt_id}`);
-    }
+    if (posGroupId) pushRewardsStakeByIDnPos(pool.pool_dlt_id, posGroupId);
+    else pushRewardsStakeByID(pool.pool_dlt_id);
   };
 
   useInterval(

@@ -4,7 +4,10 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { setNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  setNetworkContractApproval,
+} from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
@@ -23,7 +26,7 @@ interface ModalApproveProps {
   fromToken?: Token;
   handleApproved: Function;
   waitForApproval?: boolean;
-  contract?: string;
+  contract: ApprovalContract;
 }
 
 export const ModalApprove = ({
@@ -51,8 +54,8 @@ export const ModalApprove = ({
       });
       const txHash = await setNetworkContractApproval(
         fromToken,
-        amount,
-        contract
+        contract,
+        amount
       );
       dispatch(
         addNotification({

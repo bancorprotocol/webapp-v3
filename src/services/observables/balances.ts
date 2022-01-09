@@ -46,7 +46,7 @@ export const fetchTokenBalances = async (
 
       return balances;
     }
-  } catch (e) {
+  } catch (e: any) {
     console.error('Failed fetching balances: ', e);
   }
 

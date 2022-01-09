@@ -5,8 +5,7 @@ import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
 import { useAppSelector } from 'redux/index';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
-import { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useCallback, useState } from 'react';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
@@ -14,14 +13,13 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
 import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
-import { useAsyncEffect } from 'use-async-effect';
-import { take } from 'rxjs/operators';
-import { liquidityProtection$ } from 'services/observables/contracts';
 import {
   addLiquiditySingleFailedNotification,
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
+import { useNavigation } from 'services/router';
+import { ApprovalContract } from 'services/web3/approval';
 
 interface Props {
   pool: Pool;
@@ -32,14 +30,25 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const tkn = useAppSelector<Token | undefined>(
     getTokenById(pool.reserves[0].address)
   );
-  const history = useHistory();
-  const approveContract = useRef('');
-  const [selectedToken, setSelectedToken] = useState<Token>(tkn!);
+  const bnt = useAppSelector<Token | undefined>(
+    getTokenById(pool.reserves[1].address)
+  );
+  const { pushPortfolio, pushLiquidityError } = useNavigation();
+  const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
+
+  const selectedToken = isBNTSelected ? bnt! : tkn!;
+  const setSelectedToken = useCallback(
+    (token: Token) => {
+      const isBNT = token.address === bnt!.address;
+      setIsBNTSelected(isBNT);
+    },
+    [bnt]
+  );
 
   const handleAmountChange = (amount: string, tkn?: Token) => {
     setAmount(amount);
@@ -65,7 +74,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          pushPortfolio();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -78,29 +87,13 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     );
   };
 
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted())
-      approveContract.current = await liquidityProtection$
-        .pipe(take(1))
-        .toPromise();
-  }, []);
-
-  useEffect(() => {
-    setSelectedToken(tkn!);
-  }, [tkn]);
-
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addProtection,
-    approveContract.current
+    ApprovalContract.LiquidityProtection
   );
 
-  if (!tkn) {
-    history.push('/pools/add-liquidity/error');
-    return <></>;
-  }
-
-  const handleError = () => {
+  const handleError = useCallback(() => {
     if (errorMsg) return errorMsg;
     if (!spaceAvailableBnt || !spaceAvailableTkn) {
       return '';
@@ -124,7 +117,17 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         return 'Not enough space available';
       }
     }
-  };
+  }, [
+    amount,
+    errorMsg,
+    selectedToken.symbol,
+    spaceAvailableBnt,
+    spaceAvailableTkn,
+  ]);
+  if (!tkn) {
+    pushLiquidityError();
+    return <></>;
+  }
 
   return (
     <Widget title="Add Liquidity" subtitle="Single-Sided">
@@ -138,7 +141,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           amountUsd={amountUsd}
           setAmountUsd={setAmountUsd}
           token={selectedToken}
-          setToken={(token: Token) => setSelectedToken(token)}
+          setToken={setSelectedToken}
           errorMsg={errorMsg}
           setErrorMsg={setErrorMsg}
         />

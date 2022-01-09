@@ -1,6 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
+  ApprovalContract,
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
@@ -22,7 +23,7 @@ interface Tokens {
 export const useApproveModal = (
   tokens: Tokens[],
   onComplete: Function,
-  contract?: string
+  contract: ApprovalContract | string = ApprovalContract.BancorNetwork
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -35,7 +36,7 @@ export const useApproveModal = (
       try {
         const receipt = await web3.provider.getTransactionReceipt(txHash);
         receipts.push(receipt);
-      } catch (e) {
+      } catch (e: any) {
         console.error('failed to getTransactionReceipt for approve token tx');
         return;
       }
@@ -68,8 +69,8 @@ export const useApproveModal = (
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
-      amount,
-      contract
+      contract,
+      amount
     );
 
     if (!isApprovalRequired) {
@@ -85,8 +86,8 @@ export const useApproveModal = (
       setIsLoading(true);
       const txHash = await setNetworkContractApproval(
         token,
-        amount,
         contract,
+        amount,
         true
       );
 
@@ -111,7 +112,7 @@ export const useApproveModal = (
       setIsLoading(false);
 
       await checkNextToken();
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === ErrorCode.DeniedTx) {
         dispatch(
           addNotification({
