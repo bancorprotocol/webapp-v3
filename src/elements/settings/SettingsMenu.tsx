@@ -4,13 +4,19 @@ import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
 import { useDispatch } from 'react-redux';
-import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
+import {
+  setCurrency,
+  setDarkMode,
+  setSlippageTolerance,
+} from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
 import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { privacyPolicy, tos } from 'services/router';
+import { Dropdown } from 'components/dropdown/Dropdown';
+import { Currency, getCurrencyName } from 'utils/currencies';
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -20,7 +26,7 @@ export const SettingsMenu = () => {
   const currentSlippage = useAppSelector<number>(
     (state) => state.user.slippageTolerance
   );
-
+  const currency = useAppSelector<number>((state) => state.user.currency);
   const slippages = [0.001, 0.005, 0.01];
 
   const content = (
@@ -38,6 +44,23 @@ export const SettingsMenu = () => {
             </button>
           </div>
         </div>
+        <div className="flex justify-between">
+          <div>Currencies</div>
+          <Dropdown
+            selected={currency}
+            setSelected={(currency: Currency) =>
+              dispatch(setCurrency(currency))
+            }
+            title={getCurrencyName(currency)}
+            items={(Object.keys(Currency) as Array<keyof typeof Currency>).map(
+              (currency) => ({
+                id: currency,
+                title: currency,
+              })
+            )}
+          />
+        </div>
+
         <hr className="border-grey-3 mt-15 mb-10" />
 
         <div>

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Currency } from 'utils/currencies';
 import {
   getShowBannerLS,
   setDarkModeLS,
@@ -15,6 +16,7 @@ export interface UserState {
   locale: string;
   loadingBalances: boolean;
   showBanner: boolean;
+  currency: Currency;
 }
 
 export const initialState: UserState = {
@@ -25,6 +27,7 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   showBanner: getShowBannerLS() !== false,
+  currency: Currency.usd,
 };
 
 const userSlice = createSlice({
@@ -61,6 +64,9 @@ const userSlice = createSlice({
       setShowBannerLS(action.payload);
       state.showBanner = action.payload;
     },
+    setCurrency: (state, action) => {
+      state.currency = action.payload;
+    },
   },
 });
 
@@ -72,6 +78,7 @@ export const {
   setUsdToggle,
   setLoadingBalances,
   setShowBanner,
+  setCurrency,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;
