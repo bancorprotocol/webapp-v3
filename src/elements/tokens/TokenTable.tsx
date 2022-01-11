@@ -41,7 +41,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="bg-silver rounded-full h-30 w-30 mr-10 ml-20"
+          className="bg-fog rounded-full h-30 w-30 mr-10 ml-20"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>

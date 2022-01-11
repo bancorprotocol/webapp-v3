@@ -70,7 +70,7 @@ module.exports = function () {
     button[`.btn-outline-secondary`] = {
       ...base,
       '@apply text-charcoal bg-white': '',
-      '@apply dark:text-silver dark:bg-grey': '',
+      '@apply dark:text-silver dark:bg-black': '',
       '@apply focus:ring-grey focus:ring-opacity-50': '',
       '@apply border border-graphite': '',
       '&:disabled': {
