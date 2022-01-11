@@ -68,7 +68,7 @@ export const Modal = ({
                   large ? 'max-w-[485px]' : 'max-w-[380px]'
                 } overflow-hidden align-middle transition-all transform rounded-20 bg-white dark:bg-charcoal text-left`}
               >
-                <Dialog.Title className="flex justify-between items-center px-20 text-20 font-semibold h-[60px]">
+                <Dialog.Title className="flex justify-between items-center px-20 text-20 h-[60px]">
                   {showBackButton && (
                     <button
                       onClick={() => onBackClick && onBackClick()}

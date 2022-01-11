@@ -127,14 +127,14 @@ export const TokenInputField = ({
   };
 
   const inputFieldStyles = `token-input-field ${classNameGenerator({
-    'border-primary dark:border-black-low': border,
+    'border-silver dark:border-grey': border,
     '!border-error': errorMsg,
   })}`;
 
   return (
     <div>
       <div className="flex justify-between pr-10 mb-4">
-        <span className="font-medium">{label}</span>
+        <span>{label}</span>
         {loadingBalances && token ? (
           <div className="loading-skeleton h-[20px] w-[140px]"></div>
         ) : (

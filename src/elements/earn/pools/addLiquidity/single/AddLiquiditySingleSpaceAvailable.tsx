@@ -99,7 +99,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
           available. Please try again in a few minutes.
         </div>
       ) : (
-        <div className="p-20 rounded bg-primary dark:bg-black-disabled my-20">
+        <div className="p-20 rounded bg-fog dark:bg-black-disabled my-20">
           <div className="flex justify-between dark:text-white">
             <span className="font-medium">Space Available</span>{' '}
             <div className="text-right">
