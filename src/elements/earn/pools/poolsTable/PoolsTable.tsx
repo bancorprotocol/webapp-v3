@@ -117,7 +117,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="max-w-[160px] rounded-10 h-[35px]"
+              className="max-w-[160px] rounded-20 h-[35px]"
             />
           </div>
           <div className="hidden md:block">

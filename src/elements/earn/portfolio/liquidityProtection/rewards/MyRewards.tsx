@@ -13,7 +13,7 @@ export const MyRewards = () => {
   );
 
   return (
-    <section className="content-section py-20 border-l-[10px] border-primary-light">
+    <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex justify-between items-center">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex mr-[20px] md:mr-[44px] space-x-8">

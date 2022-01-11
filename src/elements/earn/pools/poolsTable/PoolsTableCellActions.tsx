@@ -17,7 +17,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
     <div className="flex">
       <NavLink
         to={addLiquidityByID(pool.pool_dlt_id)}
-        className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
+        className="btn-primary btn-sm text-white rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
       >
         <Tooltip
           content="Stake & Earn"

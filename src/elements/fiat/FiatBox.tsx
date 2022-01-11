@@ -88,7 +88,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         >
           {fiat.depositMethods.map((method) => (
             <div key={method} className="flex items-center">
-              <IconCheck className="w-15 h-15 p-2 bg-primary rounded-full mr-8 dark:bg-black-low" />
+              <IconCheck className="w-15 h-15 rounded-full mr-8 dark:bg-black-low" />
               {method}
             </div>
           ))}
