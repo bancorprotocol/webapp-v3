@@ -16,7 +16,7 @@ export const PoolsTableCellName = (pool: Pool) => {
           alt="Token Logo"
           className="bg-grey-1 rounded-full w-30 h-30 z-20"
         />
-        {!pool.isWhitelisted && (
+        {!pool.isProtected && (
           <Image
             src={pool.reserves[1].logoURI.replace('thumb', 'small')}
             alt="Token Logo"
@@ -25,7 +25,7 @@ export const PoolsTableCellName = (pool: Pool) => {
         )}
       </div>
       <h3 className="text-14 ml-10">
-        {pool.isWhitelisted ? pool.name.replace('/BNT', '') : pool.name}
+        {pool.isProtected ? pool.name.replace('/BNT', '') : pool.name}
       </h3>
     </div>
   );
