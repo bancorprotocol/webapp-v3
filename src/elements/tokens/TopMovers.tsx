@@ -2,15 +2,14 @@ import { Ticker } from 'components/ticker/Ticker';
 import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { orderBy } from 'lodash';
+import { getTopMovers } from '../../redux/bancor/bancor';
 
 interface Props {
   setSearch: Function;
 }
 
 export const TopMovers = ({ setSearch }: Props) => {
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
-  const topTokens = orderBy(tokens, 'price_change_24', 'desc').slice(0, 20);
+  const tokens = useAppSelector(getTopMovers);
   const handleClick = (token: Token) => {
     setSearch(token.symbol);
   };
@@ -22,7 +21,7 @@ export const TopMovers = ({ setSearch }: Props) => {
       <Ticker id="top-tokens">
         <div className="flex space-x-16 mt-10">
           {tokens.length
-            ? topTokens.map((token) => {
+            ? tokens.map((token) => {
                 const changePositive = Number(token.price_change_24) > 0;
                 return (
                   <button

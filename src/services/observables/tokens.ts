@@ -19,6 +19,7 @@ import {
   ropstenImage,
   ethToken,
   wethToken,
+  bntToken,
 } from 'services/web3/config';
 import {
   get7DaysAgo,
@@ -65,7 +66,7 @@ export interface Token {
   price_change_24: number;
   price_history_7d: { time: UTCTimestamp; value: number }[];
   usd_volume_24: string | null;
-  isWhitelisted?: boolean;
+  isProtected: boolean;
 }
 
 export interface Reserve {
@@ -91,7 +92,6 @@ export interface Pool {
   version: number;
   supply: number;
   decimals: number;
-  isWhitelisted: boolean;
   apr: number;
   reward?: APIReward;
   isProtected: boolean;
@@ -187,13 +187,29 @@ export const tokenListMerged$ = combineLatest([
   shareReplay()
 );
 
+export const minNetworkTokenLiquidityForMinting$ = combineLatest([
+  settingsContractAddress$,
+]).pipe(
+  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
+    const contract = LiquidityProtectionSettings__factory.connect(
+      liquidityProtectionSettingsContract,
+      web3.provider
+    );
+    const res = await contract.minNetworkTokenLiquidityForMinting();
+    return shrinkToken(res.toString(), 18);
+  }),
+  distinctUntilChanged<string>(isEqual),
+  shareReplay(1)
+);
+
 export const tokensNoBalance$ = combineLatest([
   tokenListMerged$,
   apiTokens$,
   correctedPools$,
   currentNetwork$,
+  minNetworkTokenLiquidityForMinting$,
 ]).pipe(
-  map(([tokenList, apiTokens, pools, currentNetwork]) => {
+  map(([tokenList, apiTokens, pools, currentNetwork, minMintingBalance]) => {
     const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
       const usdPrice = x.rate.usd;
       const price_24h = x.rate_24h_ago.usd;
@@ -205,7 +221,15 @@ export const tokensNoBalance$ = combineLatest([
         p.reserves.find((r) => r.address === x.dlt_id)
       );
       const usdVolume24 = pool ? pool.volume_24h.usd : null;
+
+      const bntReserve = pool
+        ? pool.reserves.find((r) => r.address === bntToken(currentNetwork))
+        : 0;
+      const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+        bntReserve ? bntReserve.balance : 0
+      );
       const isWhitelisted = pool ? pool.isWhitelisted : false;
+      const isProtected = sufficientMintingBalance && isWhitelisted;
 
       const seven_days_ago = get7DaysAgo().getUTCSeconds();
       return {
@@ -223,7 +247,7 @@ export const tokensNoBalance$ = combineLatest([
             time: (seven_days_ago + i * 360) as UTCTimestamp,
           })),
         usd_volume_24: usdVolume24,
-        isWhitelisted,
+        isProtected,
       };
     });
 
@@ -290,21 +314,6 @@ export const getTokenLogoURI = (token: Token) =>
 
 const getLogoByURI = (uri: string | undefined) =>
   uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
-
-export const minNetworkTokenLiquidityForMinting$ = combineLatest([
-  settingsContractAddress$,
-]).pipe(
-  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
-    const contract = LiquidityProtectionSettings__factory.connect(
-      liquidityProtectionSettingsContract,
-      web3.provider
-    );
-    const res = await contract.minNetworkTokenLiquidityForMinting();
-    return shrinkToken(res.toString(), 18);
-  }),
-  distinctUntilChanged<string>(isEqual),
-  shareReplay(1)
-);
 
 export const pools$ = combineLatest([
   correctedPools$,

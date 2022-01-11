@@ -2,6 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { TokenList, Token } from 'services/observables/tokens';
 import { RootState } from 'redux/index';
+import { orderBy } from 'lodash';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -66,5 +67,15 @@ export const getTokenById = (id: string) =>
       return tokens.find((t) => t.address === id);
     }
   );
+
+export const getTopMovers = createSelector(
+  (state: RootState) => state.bancor.tokens,
+  (tokens: Token[]) => {
+    const filtered = tokens.filter(
+      (t) => t.isProtected && Number(t.liquidity ?? 0) > 100000
+    );
+    return orderBy(filtered, 'price_change_24', 'desc').slice(0, 20);
+  }
+);
 
 export const bancor = bancorSlice.reducer;
