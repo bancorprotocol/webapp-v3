@@ -28,11 +28,11 @@ export const TopMovers = ({ setSearch }: Props) => {
                   <button
                     onClick={() => handleClick(token)}
                     key={token.address}
-                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-primary dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-white dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
                     <div
                       key={token.address}
-                      className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-primary dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                      className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-white dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                     >
                       <img
                         src={token.logoURI.replace('thumb', 'small')}
