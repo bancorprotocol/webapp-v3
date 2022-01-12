@@ -11,7 +11,12 @@ import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { ConversionEvents, sendConversionEvent } from './googleTagManager';
+import {
+  ConversionEvents,
+  sendConversionEvent,
+  sendConversionFailEvent,
+  sendConversionSuccessEvent,
+} from './googleTagManager';
 import { utils } from 'ethers';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
@@ -92,10 +97,7 @@ export const swapLimit = async (
         user,
         duration.asSeconds()
       );
-      sendConversionEvent(ConversionEvents.success, {
-        conversion_market_token_rate: fromToken.usdPrice,
-        transaction_category: 'Conversion',
-      });
+      sendConversionSuccessEvent(fromToken.usdPrice);
 
       return {
         type: NotificationType.success,
@@ -104,9 +106,7 @@ export const swapLimit = async (
       };
     }
   } catch (e: any) {
-    sendConversionEvent(ConversionEvents.fail, {
-      error: e.message,
-    });
+    sendConversionFailEvent(e.message);
 
     if (e.code === ErrorCode.DeniedTx)
       return {

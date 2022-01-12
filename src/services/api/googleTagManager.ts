@@ -126,10 +126,53 @@ export const setCurrentConversion = (
   };
 };
 
-export const sendConversionEvent = (
-  event: ConversionEvents,
-  additionalProperties?: Object
-) => {
+export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
+  const gtmData = {
+    event: 'CE ' + conversionTxt(ConversionEvents.approved),
+    user_properties: undefined,
+    event_properties: {
+      ...currentConversion,
+      conversion_unlimited: isUnlimited ? 'Unlimited' : 'Limited',
+    },
+    ga_event: {
+      category: 'Conversion',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
+  const gtmData = {
+    event: 'CE ' + conversionTxt(ConversionEvents.success),
+    user_properties: undefined,
+    event_properties: {
+      ...currentConversion,
+      conversion_market_token_rate: fromTokenPrice,
+      transaction_category: 'Conversion',
+    },
+    ga_event: {
+      category: 'Conversion',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendConversionFailEvent = (errorMsg: string) => {
+  const gtmData = {
+    event: 'CE ' + conversionTxt(ConversionEvents.fail),
+    user_properties: undefined,
+    event_properties: {
+      conversion: currentConversion,
+      error: errorMsg,
+    },
+    ga_event: {
+      category: 'Conversion',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendConversionEvent = (event: ConversionEvents) => {
   const gtmData = {
     event: 'CE ' + conversionTxt(event),
     user_properties: undefined,
@@ -138,34 +181,7 @@ export const sendConversionEvent = (
       category: 'Conversion',
     },
   };
-  switch (event) {
-    case ConversionEvents.click:
-      return sendGTM(gtmData);
-    case ConversionEvents.approvePop:
-      return sendGTM(gtmData);
-    case ConversionEvents.approved:
-      return sendGTM({
-        ...gtmData,
-        event_properties: { ...currentConversion, ...additionalProperties },
-      });
-    case ConversionEvents.wallet_req:
-      return sendGTM(gtmData);
-    case ConversionEvents.wallet_confirm:
-      return sendGTM(gtmData);
-    case ConversionEvents.fail:
-      return sendGTM({
-        ...gtmData,
-        event_properties: {
-          conversion: currentConversion,
-          ...additionalProperties,
-        },
-      });
-    case ConversionEvents.success:
-      return sendGTM({
-        ...gtmData,
-        event_properties: { ...currentConversion, ...additionalProperties },
-      });
-  }
+  sendGTM(gtmData);
 };
 
 export enum WalletEvents {

@@ -25,6 +25,8 @@ import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
   ConversionEvents,
   sendConversionEvent,
+  sendConversionFailEvent,
+  sendConversionSuccessEvent,
   setCurrentConversion,
 } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
@@ -232,17 +234,12 @@ export const SwapMarket = ({
           txHash
         ),
       () => {
-        sendConversionEvent(ConversionEvents.success, {
-          conversion_market_token_rate: fromToken.usdPrice,
-          transaction_category: 'Conversion',
-        });
+        sendConversionSuccessEvent(fromToken.usdPrice);
         onConfirmation();
       },
       () => rejectNotification(dispatch),
       (error: string) => {
-        sendConversionEvent(ConversionEvents.fail, {
-          error,
-        });
+        sendConversionFailEvent(error);
         swapFailedNotification(
           dispatch,
           fromToken,
