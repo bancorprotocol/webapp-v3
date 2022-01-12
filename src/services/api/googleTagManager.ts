@@ -124,7 +124,7 @@ export const setCurrentConversion = (
   currentConversion.conversion_settings = settings;
 };
 
-export const sendConversionEvent2 = (
+export const sendConversionEvent = (
   event: ConversionEvents,
   additionalProperties?: Object
 ) => {

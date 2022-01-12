@@ -27,7 +27,7 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   ConversionEvents,
-  sendConversionEvent2,
+  sendConversionEvent,
   setCurrentConversion,
 } from 'services/api/googleTagManager';
 import { updateTokens } from 'redux/bancor/bancor';
@@ -225,7 +225,7 @@ export const SwapLimit = ({
         fromAmount
       );
       if (isApprovalReq) {
-        sendConversionEvent2(ConversionEvents.approvePop);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
     } catch (e: any) {
@@ -356,7 +356,7 @@ export const SwapLimit = ({
       percentage,
       duration.asSeconds().toString()
     );
-    sendConversionEvent2(ConversionEvents.click);
+    sendConversionEvent(ConversionEvents.click);
     handleSwap(false, false, fromToken.address === ethToken);
   };
 

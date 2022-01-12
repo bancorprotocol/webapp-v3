@@ -14,7 +14,7 @@ import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import {
   ConversionEvents,
-  sendConversionEvent2,
+  sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { ErrorCode } from 'services/web3/types';
 
@@ -46,7 +46,7 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       setIsOpen(false);
-      sendConversionEvent2(ConversionEvents.approved, {
+      sendConversionEvent(ConversionEvents.approved, {
         conversion_unlimited: amount ? 'Limited' : 'Unlimited',
       });
       const txHash = await setNetworkContractApproval(

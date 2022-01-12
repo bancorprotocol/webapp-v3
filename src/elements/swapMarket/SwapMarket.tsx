@@ -24,7 +24,7 @@ import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
   ConversionEvents,
-  sendConversionEvent2,
+  sendConversionEvent,
   setCurrentConversion,
 } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
@@ -179,7 +179,7 @@ export const SwapMarket = ({
         fromAmount
       );
       if (isApprovalReq) {
-        sendConversionEvent2(ConversionEvents.approvePop);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowModal(true);
       } else await handleSwap(true);
     } catch (e: any) {
@@ -232,7 +232,7 @@ export const SwapMarket = ({
           txHash
         ),
       () => {
-        sendConversionEvent2(ConversionEvents.success, {
+        sendConversionEvent(ConversionEvents.success, {
           conversion_market_token_rate: fromToken.usdPrice,
           transaction_category: 'Conversion',
         });
@@ -240,7 +240,7 @@ export const SwapMarket = ({
       },
       () => rejectNotification(dispatch),
       (error: string) => {
-        sendConversionEvent2(ConversionEvents.fail, {
+        sendConversionEvent(ConversionEvents.fail, {
           error,
         });
         swapFailedNotification(
@@ -329,7 +329,7 @@ export const SwapMarket = ({
       undefined,
       conversionSettings
     );
-    sendConversionEvent2(ConversionEvents.click);
+    sendConversionEvent(ConversionEvents.click);
     handleSwap();
   };
 
