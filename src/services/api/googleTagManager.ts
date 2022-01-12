@@ -107,21 +107,23 @@ export const setCurrentConversion = (
   expiration?: string,
   settings?: 'Regular' | 'Advanced'
 ) => {
-  currentConversion.conversion_type = type;
-  currentConversion.conversion_blockchain_network =
-    network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet';
-  currentConversion.conversion_token_pair = tokenPair;
-  currentConversion.conversion_from_token = fromToken;
-  currentConversion.conversion_to_token = toToken;
-  currentConversion.conversion_from_amount = fromAmount;
-  currentConversion.conversion_from_amount_usd = fromAmountUsd;
-  currentConversion.conversion_to_amount = toAmount;
-  currentConversion.conversion_to_amount_usd = toAmountUsd;
-  currentConversion.conversion_input_type = usdToggle ? 'Fiat' : 'Token';
-  currentConversion.conversion_rate = rate;
-  currentConversion.conversion_rate_percentage = ratePercentage;
-  currentConversion.conversion_experation = expiration;
-  currentConversion.conversion_settings = settings;
+  currentConversion = {
+    conversion_type: type,
+    conversion_blockchain_network:
+      network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+    conversion_token_pair: tokenPair,
+    conversion_from_token: fromToken,
+    conversion_to_token: toToken,
+    conversion_from_amount: fromAmount,
+    conversion_from_amount_usd: fromAmountUsd,
+    conversion_to_amount: toAmount,
+    conversion_to_amount_usd: toAmountUsd,
+    conversion_input_type: usdToggle ? 'Fiat' : 'Token',
+    conversion_rate: rate,
+    conversion_rate_percentage: ratePercentage,
+    conversion_experation: expiration,
+    conversion_settings: settings,
+  };
 };
 
 export const sendConversionEvent = (
