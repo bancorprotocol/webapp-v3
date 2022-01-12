@@ -11,9 +11,8 @@ import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { sendConversionEvent, ConversionEvents } from './googleTagManager';
+import { ConversionEvents, sendConversionEvent2 } from './googleTagManager';
 import { utils } from 'ethers';
-import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
@@ -52,7 +51,6 @@ export const swapLimit = async (
   checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
-  const conversion = getConversionLS();
   try {
     if (fromIsEth) {
       try {
@@ -85,7 +83,7 @@ export const swapLimit = async (
         };
       }
     } else {
-      sendConversionEvent(ConversionEvents.wallet_req, conversion);
+      sendConversionEvent2(ConversionEvents.wallet_req);
       await createOrder(
         fromToken,
         toToken,
@@ -94,8 +92,7 @@ export const swapLimit = async (
         user,
         duration.asSeconds()
       );
-      sendConversionEvent(ConversionEvents.success, {
-        ...conversion,
+      sendConversionEvent2(ConversionEvents.success, {
         conversion_market_token_rate: fromToken.usdPrice,
         transaction_category: 'Conversion',
       });
@@ -107,8 +104,7 @@ export const swapLimit = async (
       };
     }
   } catch (e: any) {
-    sendConversionEvent(ConversionEvents.fail, {
-      conversion,
+    sendConversionEvent2(ConversionEvents.fail, {
       error: e.message,
     });
 

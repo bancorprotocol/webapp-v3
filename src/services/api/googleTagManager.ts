@@ -1,4 +1,5 @@
 import { swap } from 'services/router';
+import { EthNetworks } from '../web3/types';
 
 declare global {
   interface Window {
@@ -72,18 +73,97 @@ const conversionTxt = (event: ConversionEvents): string => {
   }
 };
 
-export const sendConversionEvent = (
-  event: ConversionEvents,
-  event_properties: {} | undefined = undefined
+interface CurrentConversion {
+  conversion_type: 'Limit' | 'Market';
+  conversion_blockchain_network: 'Ropsten' | 'MainNet';
+  conversion_token_pair: string;
+  conversion_from_token: string;
+  conversion_to_token: string;
+  conversion_from_amount: string;
+  conversion_from_amount_usd: string;
+  conversion_to_amount: string;
+  conversion_to_amount_usd: string;
+  conversion_input_type: 'Fiat' | 'Token';
+  conversion_rate: string;
+  conversion_rate_percentage?: string;
+  conversion_experation?: string;
+  conversion_settings?: 'Regular' | 'Advanced';
+}
+
+let currentConversion: CurrentConversion;
+export const setCurrentConversion = (
+  type: 'Limit' | 'Market',
+  network: EthNetworks = EthNetworks.Mainnet,
+  tokenPair: string,
+  fromToken: string,
+  toToken: string = '',
+  fromAmount: string,
+  fromAmountUsd: string,
+  toAmount: string,
+  toAmountUsd: string,
+  usdToggle: boolean,
+  rate: string,
+  ratePercentage?: string,
+  expiration?: string,
+  settings?: 'Regular' | 'Advanced'
 ) => {
-  sendGTM({
+  currentConversion.conversion_type = type;
+  currentConversion.conversion_blockchain_network =
+    network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet';
+  currentConversion.conversion_token_pair = tokenPair;
+  currentConversion.conversion_from_token = fromToken;
+  currentConversion.conversion_to_token = toToken;
+  currentConversion.conversion_from_amount = fromAmount;
+  currentConversion.conversion_from_amount_usd = fromAmountUsd;
+  currentConversion.conversion_to_amount = toAmount;
+  currentConversion.conversion_to_amount_usd = toAmountUsd;
+  currentConversion.conversion_input_type = usdToggle ? 'Fiat' : 'Token';
+  currentConversion.conversion_rate = rate;
+  currentConversion.conversion_rate_percentage = ratePercentage;
+  currentConversion.conversion_experation = expiration;
+  currentConversion.conversion_settings = settings;
+};
+
+export const sendConversionEvent2 = (
+  event: ConversionEvents,
+  additionalProperties?: Object
+) => {
+  const gtmData = {
     event: 'CE ' + conversionTxt(event),
-    event_properties: event_properties,
     user_properties: undefined,
+    event_properties: currentConversion,
     ga_event: {
       category: 'Conversion',
     },
-  });
+  };
+  switch (event) {
+    case ConversionEvents.click:
+      return sendGTM(gtmData);
+    case ConversionEvents.approvePop:
+      return sendGTM(gtmData);
+    case ConversionEvents.approved:
+      return sendGTM({
+        ...gtmData,
+        event_properties: { ...currentConversion, ...additionalProperties },
+      });
+    case ConversionEvents.wallet_req:
+      return sendGTM(gtmData);
+    case ConversionEvents.wallet_confirm:
+      return sendGTM(gtmData);
+    case ConversionEvents.fail:
+      return sendGTM({
+        ...gtmData,
+        event_properties: {
+          conversion: currentConversion,
+          ...additionalProperties,
+        },
+      });
+    case ConversionEvents.success:
+      return sendGTM({
+        ...gtmData,
+        event_properties: { ...currentConversion, ...additionalProperties },
+      });
+  }
 };
 
 export enum WalletEvents {
