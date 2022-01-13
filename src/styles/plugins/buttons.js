@@ -21,7 +21,7 @@ module.exports = function () {
       button[`.btn-${key}`] = {
         ...base,
         backgroundColor: theme(`colors.${key}.500`),
-        color: theme('colors.white'),
+        color: theme('colors.white.DEFAULT'),
         [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
         '&:hover': {
           backgroundColor: theme(`colors.${key}.700`),
@@ -31,6 +31,7 @@ module.exports = function () {
         },
         '&:disabled': {
           ...baseDisabled,
+          backgroundColor: theme(`colors.${key}.500`),
         },
       };
     });
@@ -46,11 +47,11 @@ module.exports = function () {
         [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
         '&:hover': {
           backgroundColor: theme(`colors.${key}.500`),
-          color: theme(`colors.white`),
+          color: theme(`colors.white.DEFAULT`),
         },
         '&:active': {
           backgroundColor: theme(`colors.${key}.400`),
-          color: theme(`colors.white`),
+          color: theme(`colors.white.DEFAULT`),
           borderColor: theme(`colors.${key}.400`),
         },
         '&:disabled': {
@@ -81,12 +82,21 @@ module.exports = function () {
     };
 
     const sizes = {
+      xs: {
+        '@apply text-14 w-[94px] h-[33px] px-10 focus:ring-2 rounded-[14px]':
+          '',
+      },
       sm: {
-        '@apply text-12 h-28 px-20 focus:ring-2': '',
+        '@apply text-14 w-[142px] h-[39px] px-10 focus:ring-2 rounded-[14px]':
+          '',
+      },
+      md: {
+        '@apply text-14 w-[266px] h-[47px] px-10 focus:ring-2 rounded-[18px]':
+          '',
       },
       lg: {
-        fontSize: theme('fontSize.18'),
-        height: '44px',
+        '@apply text-14 w-[428px] h-[53px] px-10 focus:ring-2 rounded-[18px]':
+          '',
       },
       xl: {
         fontSize: theme('fontSize.20'),
