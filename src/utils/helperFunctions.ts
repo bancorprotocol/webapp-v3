@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
-import dayjs from 'dayjs';
 import { shrinkToken } from './formulas';
 import { APIPool } from '../services/api/bancor';
 import { Pool } from '../services/observables/tokens';
+import dayjs from './dayjs';
 
 const oneMillion = new BigNumber(1000000);
 

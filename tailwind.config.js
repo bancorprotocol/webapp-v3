@@ -1,49 +1,34 @@
-const colors = require('tailwindcss/colors');
+const colors = require('./src/styles/plugins/colors');
 const buttons = require('./src/styles/plugins/buttons');
+const buttonsNew = require('./src/styles/plugins/buttons.new');
 
 module.exports = {
   mode: 'jit',
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+  purge: {
+    content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
+    safelist: [
+      'btn-primary-new',
+      'btn-secondary-new',
+      'btn-success-new',
+      'btn-warning-new',
+      'btn-error-new',
+      'btn-info-new',
+      'btn-primary-hover',
+      'btn-secondary-hover',
+      'btn-success-hover',
+      'btn-warning-hover',
+      'btn-error-hover',
+      'btn-info-hover',
+      'btn-xs-new',
+      'btn-sm-new',
+      'btn-md-new',
+      'btn-lg-new',
+    ],
+  },
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [buttons()],
+  plugins: [buttons(), buttonsNew()],
+  colors,
   theme: {
-    colors: {
-      ...colors,
-      primary: {
-        DEFAULT: '#10BBD5',
-        light: '#DBF5F9',
-        dark: '#08A2C3',
-      },
-      success: {
-        DEFAULT: '#67D79F',
-      },
-      warning: {
-        DEFAULT: '#FF8A00',
-      },
-      error: {
-        DEFAULT: '#E27D8A',
-        hover: '#D86371',
-      },
-      fog: '#F4F4F4',
-      graphite: '#BFBFC3',
-      silver: '#E4E4E6',
-      charcoal: '#18181A',
-      grey: '#303034',
-      approve: '#4EC987',
-      black: {
-        DEFAULT: '#000000',
-        medium: '#CC18181A', //80% Opacity
-        low: '#8018181A', //50% Opacity
-        disabled: '#3318181A', //20% Opacity
-      },
-      white: {
-        DEFAULT: '#FFFFFF', //100% Opacity
-        medium: '#CCFFFFFF', //80% Opacity
-        low: '#80FFFFFF', //50% Opacity
-        disabled: '#33FFFFFF', //20% Opacity
-      },
-    },
-
     screens: {
       sm: '640px',
       md: '768px',
