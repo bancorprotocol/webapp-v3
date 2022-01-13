@@ -53,6 +53,10 @@ export const mapIgnoreThrown = async <T, V>(
   return res.filter((res) => res !== IGNORE_TOKEN) as V[];
 };
 
+export const enumValues = <T>(enumType: T) => {
+  return Object.values(enumType).filter((key) => !isNaN(Number(key)));
+};
+
 export const wait = async (ms: number = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import dayjs from 'utils/dayjs';
-import { Dropdown } from 'components/dropdown/Dropdown';
+import { Dropdown, DropdownItem } from 'components/dropdown/Dropdown';
 import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
@@ -26,27 +26,27 @@ export const ModalDuration = ({
   const [hours, setHours] = useState(duration.hours());
   const [minutes, setMinutes] = useState(duration.minutes());
 
-  const daysItems: DurationItem[] = Array.from(
+  const daysItems: DropdownItem[] = Array.from(
     { length: 31 },
     (_, index: number) => ({
       id: index.toString(),
-      title: index,
+      title: index.toString(),
     })
   );
 
-  const hoursItems: DurationItem[] = Array.from(
+  const hoursItems: DropdownItem[] = Array.from(
     { length: 24 },
     (_, index: number) => ({
       id: index.toString(),
-      title: index,
+      title: index.toString(),
     })
   );
 
-  const minutesItems: DurationItem[] = Array.from(
+  const minutesItems: DropdownItem[] = Array.from(
     { length: 60 },
     (_, index: number) => ({
       id: index.toString(),
-      title: index,
+      title: index.toString(),
     })
   );
 

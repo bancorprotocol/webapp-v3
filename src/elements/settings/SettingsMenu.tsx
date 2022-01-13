@@ -17,6 +17,13 @@ import { NavLink } from 'react-router-dom';
 import { privacyPolicy, tos } from 'services/router';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { Currency, getCurrencyName } from 'utils/currencies';
+import { enumValues } from 'utils/pureFunctions';
+
+const currencies = enumValues(Currency).map((currency: Currency) => ({
+  id: currency.toString(),
+  title: getCurrencyName(currency),
+  value: currency,
+}));
 
 export const SettingsMenu = () => {
   const [showSettings, setShowSettings] = useState(false);
@@ -44,21 +51,18 @@ export const SettingsMenu = () => {
             </button>
           </div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <div>Currencies</div>
-          <Dropdown
-            selected={currency}
-            setSelected={(currency: Currency) =>
-              dispatch(setCurrency(currency))
-            }
-            title={getCurrencyName(currency)}
-            items={(Object.keys(Currency) as Array<keyof typeof Currency>).map(
-              (currency) => ({
-                id: currency,
-                title: currency,
-              })
-            )}
-          />
+          <div className=" w-[150px]">
+            <Dropdown
+              selected={currency}
+              setSelected={(currency: any) => {
+                dispatch(setCurrency(currency.value));
+              }}
+              title={getCurrencyName(currency)}
+              items={currencies}
+            />
+          </div>
         </div>
 
         <hr className="border-grey-3 mt-15 mb-10" />

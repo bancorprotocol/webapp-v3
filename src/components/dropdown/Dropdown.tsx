@@ -5,9 +5,15 @@ import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg'
 import 'components/dropdown/Dropdown.css';
 import { classNameGenerator } from 'utils/pureFunctions';
 
+export interface DropdownItem {
+  id: string;
+  title: string;
+  value?: any;
+  disabled?: boolean;
+}
 interface DropdownProps {
   title: string;
-  items: { id: string; title: any; disabled?: boolean }[];
+  items: DropdownItem[];
   selected: any;
   setSelected: Function;
   openUp?: boolean;
