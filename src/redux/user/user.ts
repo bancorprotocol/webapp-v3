@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Currency } from 'utils/currencies';
 import {
   getShowBannerLS,
+  setCurrencyLS,
   setDarkModeLS,
   setShowBannerLS,
   setSlippageToleranceLS,
@@ -65,6 +66,7 @@ const userSlice = createSlice({
       state.showBanner = action.payload;
     },
     setCurrency: (state, action) => {
+      setCurrencyLS(action.payload);
       state.currency = action.payload;
     },
   },

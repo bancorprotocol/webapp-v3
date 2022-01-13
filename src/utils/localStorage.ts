@@ -1,11 +1,13 @@
 import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
+import { Currency } from './currencies';
 
 const selected_lists = 'userTokenLists';
 const conversion = 'conversion';
 const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
+const currency = 'currency';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
 const showBanner = 'showBanner';
@@ -44,6 +46,17 @@ export const getDarkModeLS = (): boolean => {
 
 export const setDarkModeLS = (flag: boolean) => {
   localStorage.setItem(darkMode, JSON.stringify(flag));
+};
+
+export const getCurrencyLS = (): Currency => {
+  const curr = localStorage.getItem(currency);
+  if (curr) return JSON.parse(curr);
+
+  return UserState.currency;
+};
+
+export const setCurrencyLS = (flag: Currency) => {
+  localStorage.setItem(currency, JSON.stringify(flag));
 };
 
 export const getSlippageToleranceLS = (): number => {

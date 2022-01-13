@@ -11,6 +11,7 @@ import { Sidebar } from 'elements/sidebar/Sidebar';
 import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
 import {
+  setCurrency,
   setDarkMode,
   setSlippageTolerance,
   setUsdToggle,
@@ -23,6 +24,7 @@ import { useAppSelector } from 'redux/index';
 import { googleTagManager } from 'services/api/googleTagManager';
 import { EthNetworks } from 'services/web3/types';
 import {
+  getCurrencyLS,
   getDarkModeLS,
   getNotificationsLS,
   getSlippageToleranceLS,
@@ -55,6 +57,9 @@ export const App = () => {
 
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
+
+    const currency = getCurrencyLS();
+    if (currency) dispatch(setCurrency(currency));
 
     subscribeToObservables(dispatch);
     keepWSOpen();
