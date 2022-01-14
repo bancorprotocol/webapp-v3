@@ -24,7 +24,7 @@ export const PoolsTableCellActions = (pool: Pool) => {
         </Tooltip>
       </NavLink>
       <NavLink to={swapByfrom(tknAddress)}>
-        <Tooltip content="Stake & Earn">
+        <Tooltip content="Trade">
           <ButtonIcon secondary animate>
             <IconSync />
           </ButtonIcon>
