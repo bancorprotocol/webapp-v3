@@ -50,7 +50,9 @@ export const Dropdown = ({
                 key={item.id}
                 value={item}
                 disabled={item.disabled}
-                className={({ active }) => `${active && 'bg-blue-500'} py-10`}
+                className={({ active }) =>
+                  `${active && 'bg-black-disabled00'} py-10`
+                }
               >
                 {({ selected }) => (
                   <div className="flex">

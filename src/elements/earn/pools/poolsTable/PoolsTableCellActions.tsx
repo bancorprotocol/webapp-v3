@@ -7,6 +7,7 @@ import { bntToken } from 'services/web3/config';
 import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
 import { addLiquidityByID, swapByfrom } from 'services/router';
+import { ButtonIcon } from 'components/button/ButtonIcon';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();
@@ -14,32 +15,20 @@ export const PoolsTableCellActions = (pool: Pool) => {
   const tknAddress = pool.reserves.find((x) => x.address !== bnt)?.address;
 
   return (
-    <div className="flex">
-      <NavLink
-        to={addLiquidityByID(pool.pool_dlt_id)}
-        className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
-      >
-        <Tooltip
-          content="Stake & Earn"
-          button={
-            <IconPlus
-              className={`w-20 hover:rotate-180 transition-transform duration-300`}
-            />
-          }
-        />
+    <div className="flex space-x-10">
+      <NavLink to={addLiquidityByID(pool.pool_dlt_id)}>
+        <Tooltip content="Stake & Earn">
+          <ButtonIcon animate>
+            <IconPlus />
+          </ButtonIcon>
+        </Tooltip>
       </NavLink>
-      <NavLink
-        to={swapByfrom(tknAddress)}
-        className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
-      >
-        <Tooltip
-          content="Trade"
-          button={
-            <IconSync
-              className={`w-20 hover:rotate-180 transition-transform duration-300`}
-            />
-          }
-        />
+      <NavLink to={swapByfrom(tknAddress)}>
+        <Tooltip content="Trade">
+          <ButtonIcon secondary animate>
+            <IconSync />
+          </ButtonIcon>
+        </Tooltip>
       </NavLink>
     </div>
   );

@@ -112,7 +112,7 @@ export const ModalCreatePool = () => {
           </div>
 
           <div className="flex justify-between items-center ml-15">
-            <div className="text-grey-4">Fee</div>
+            <div className="text-grey">Fee</div>
             <div className="max-w-[200px] my-20">
               <InputField
                 input={fee}

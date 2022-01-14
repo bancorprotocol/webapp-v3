@@ -201,7 +201,7 @@ export const WithdrawLiquidityWidget = ({
                 <LinePercentage
                   percentages={[
                     {
-                      color: 'blue-4',
+                      color: 'charcoal',
                       decPercent: breakdown.tkn,
                       label: token?.symbol,
                     },

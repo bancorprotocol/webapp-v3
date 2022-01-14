@@ -95,14 +95,14 @@ export const AddLiquidityEmptyStep2 = ({
     <div>
       <div className="flex items-center mb-20">
         <div
-          className={`flex justify-center items-center w-[34px] h-[34px] border-2 border-blue-0 dark:border-blue-1 rounded-full bg-white dark:bg-blue-4 text-16 ${
-            tknUsdPrice ? 'text-primary' : 'text-grey-3'
+          className={`flex justify-center items-center w-[34px] h-[34px] border-2 border-primary dark:border-black-low rounded-full bg-white dark:bg-charcoal text-16 ${
+            tknUsdPrice ? 'text-primary' : 'text-graphite'
           }`}
         >
           2
         </div>
         <div
-          className={`ml-10 font-medium ${!tknUsdPrice ? 'text-grey-3' : ''}`}
+          className={`ml-10 font-medium ${!tknUsdPrice ? 'text-graphite' : ''}`}
         >
           Enter stake amount
         </div>

@@ -8,10 +8,10 @@ interface Props {
   goBack?: Function;
   children: JSX.Element | JSX.Element[];
 }
-export const Widget = ({ title, subtitle, children }: Props) => {
+export const Widget = ({ title, subtitle, children, goBack }: Props) => {
   const { pushPools } = useNavigation();
 
-  const goBack = () => {
+  const handleBackClick = () => {
     goBack ? goBack() : pushPools();
   };
 
@@ -24,7 +24,7 @@ export const Widget = ({ title, subtitle, children }: Props) => {
           {subtitle && <h2 className="font-normal">{subtitle}</h2>}
         </div>
         <div className="flex justify-end w-[60px]">
-          <button onClick={() => goBack()}>
+          <button onClick={() => handleBackClick()}>
             <IconTimes className="w-15" />
           </button>
         </div>

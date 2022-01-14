@@ -64,8 +64,7 @@ export const SettingsMenu = () => {
             />
           </div>
         </div>
-
-        <hr className="border-grey-3 mt-15 mb-10" />
+        <hr className="border-graphite mt-15 mb-10" />
 
         <div>
           <div className="mb-15">Slippage Tolerance</div>
@@ -74,7 +73,7 @@ export const SettingsMenu = () => {
               <button
                 key={slippage}
                 onClick={() => dispatch(setSlippageTolerance(slippage))}
-                className={`w-full font-medium border border-grey-3 rounded-[12px] text-12 p-8 ${
+                className={`w-full font-medium border border-graphite rounded-[12px] text-12 p-8 ${
                   currentSlippage === slippage
                     ? 'bg-primary !border-primary text-white'
                     : ''
@@ -85,7 +84,7 @@ export const SettingsMenu = () => {
             ))}
             <input
               type="text"
-              className={`w-[69px] dark:bg-blue-2 outline-none border border-grey-3 text-center text-12 rounded-[12px] ${
+              className={`w-[69px] dark:bg-grey outline-none border border-graphite text-center text-12 rounded-[12px] ${
                 currentSlippage === Number(customSlippage) / 100
                   ? 'bg-primary text-white placeholder-white'
                   : ''
@@ -109,7 +108,7 @@ export const SettingsMenu = () => {
         </div>
       </div>
 
-      <hr className="border-grey-3 mt-15 mb-10" />
+      <hr className="border-graphite mt-15 mb-10" />
 
       <div className="text-center">
         <NavLink exact strict to={tos} className="hover:underline">

@@ -3,8 +3,8 @@
 @layer base {
   body,
   #root {
-    @apply bg-grey-1 text-blue-4 text-14 font-inter font-normal;
-    @apply dark:bg-blue-3 dark:text-grey-1;
+    @apply bg-fog text-charcoal text-14 font-inter font-normal;
+    @apply dark:bg-black dark:text-fog;
   }
 
   button,

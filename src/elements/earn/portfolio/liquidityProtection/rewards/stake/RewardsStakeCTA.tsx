@@ -22,6 +22,7 @@ import {
 } from 'redux/liquidity/liquidity';
 import { useAppSelector } from 'redux/index';
 import { useNavigation } from 'services/router';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   pool: Pool;
@@ -96,26 +97,34 @@ export const RewardsStakeCTA = ({
 
   const btnOptions = () => {
     if (!account) {
-      return { label: 'Login', disabled: false, variant: 'btn-primary' };
+      return {
+        label: 'Login',
+        disabled: false,
+        variant: ButtonVariant.PRIMARY,
+      };
     } else if (isBusy) {
       return {
         label: 'Please wait ...',
         disabled: true,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     } else if (errorBalance) {
-      return { label: errorBalance, disabled: true, variant: 'btn-error' };
+      return {
+        label: errorBalance,
+        disabled: true,
+        variant: ButtonVariant.ERROR,
+      };
     } else if (!bntAmount) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     }
   };
@@ -123,12 +132,13 @@ export const RewardsStakeCTA = ({
   const btn = btnOptions();
 
   return (
-    <button
+    <Button
       onClick={() => handleClick()}
       disabled={btn.disabled}
-      className={`${btn.variant} rounded w-full mt-10`}
+      variant={btn.variant}
+      className={`w-full mt-10`}
     >
       {btn.label}
-    </button>
+    </Button>
   );
 };

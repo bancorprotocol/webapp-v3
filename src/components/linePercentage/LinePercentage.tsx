@@ -61,7 +61,7 @@ export const LinePercentage = ({
           {showEmpty && (
             <div
               style={{ width: '100%' }}
-              className="h-[4px] absolute rounded-full bg-grey-3"
+              className="h-[4px] absolute rounded-full bg-graphite"
             ></div>
           )}
         </div>

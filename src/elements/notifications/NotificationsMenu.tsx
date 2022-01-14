@@ -70,7 +70,7 @@ export const NotificationsMenu = () => {
           onRemove={(id: string) => dispatch(removeNotification(id))}
         />
         {notifications.length > index + 1 && (
-          <hr className="my-10 border-grey-3 border-opacity-50" />
+          <hr className="my-10 border-graphite border-opacity-50" />
         )}
       </div>
     );

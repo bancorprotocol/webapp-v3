@@ -40,17 +40,17 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
   const fiatOut = fiat.operations.includes(Operations.fiatOut);
 
   return (
-    <div className="flex flex-col items-between bg-white dark:bg-blue-4 [h-360px] p-30 shadow hover:shadow-lg rounded-20 text-grey-4 dark:text-grey-0">
+    <div className="flex flex-col items-between bg-white dark:bg-charcoal [h-360px] p-30 shadow hover:shadow-lg rounded-20 text-grey dark:text-white">
       <fiat.logo className="h-40 w-140 self-start text-black dark:text-white" />
       <div className="flex items-center my-20 font-medium">
         Available Operations
         {fiatIn && (
-          <div className="text-10 text-white font-semibold bg-success-500 rounded-10 px-15 py-2 ml-10">
+          <div className="text-10 text-white font-semibold bg-success rounded-10 px-15 py-2 ml-10">
             Fiat in
           </div>
         )}
         {fiatOut && (
-          <div className="text-10 text-white font-semibold bg-primary-light rounded-10 px-15 py-2 ml-10">
+          <div className="text-10 text-white font-semibold bg-approve rounded-10 px-15 py-2 ml-10">
             Fiat Out
           </div>
         )}
@@ -59,7 +59,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
       <div className="flex justify-between items-center my-20 max-w-[280px]">
         {fiatIn && (
           <a
-            className="btn-primary rounded w-[135px] h-[40px]"
+            className="btn btn-primary btn-sm w-[135px]"
             href={fiat.buyUrl}
             rel="noreferrer"
             target="_blank"
@@ -69,7 +69,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         )}
         {fiatOut && (
           <a
-            className="btn-primary rounded w-[135px] h-[40px]"
+            className="btn btn-primary btn-sm w-[135px]"
             href={fiat.sellUrl}
             rel="noreferrer"
             target="_blank"
@@ -88,7 +88,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         >
           {fiat.depositMethods.map((method) => (
             <div key={method} className="flex items-center">
-              <IconCheck className="w-15 h-15 p-2 bg-blue-0 rounded-full mr-8 dark:bg-blue-1" />
+              <IconCheck className="w-15 h-15 rounded-full mr-8 dark:bg-black-low" />
               {method}
             </div>
           ))}
