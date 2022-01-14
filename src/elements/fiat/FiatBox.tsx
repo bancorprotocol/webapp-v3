@@ -59,7 +59,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
       <div className="flex justify-between items-center my-20 max-w-[280px]">
         {fiatIn && (
           <a
-            className="btn-primary rounded w-[135px] h-[40px]"
+            className="btn btn-primary btn-sm w-[135px]"
             href={fiat.buyUrl}
             rel="noreferrer"
             target="_blank"
@@ -69,7 +69,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
         )}
         {fiatOut && (
           <a
-            className="btn-primary rounded w-[135px] h-[40px]"
+            className="btn btn-primary btn-sm w-[135px]"
             href={fiat.sellUrl}
             rel="noreferrer"
             target="_blank"
