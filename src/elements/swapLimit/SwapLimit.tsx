@@ -6,7 +6,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { classNameGenerator } from 'utils/pureFunctions';
+import { classNameGenerator, wait } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
@@ -32,9 +32,9 @@ import {
 } from 'services/api/googleTagManager';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import { wait } from 'utils/pureFunctions';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
+import { Button, ButtonVariant } from '../../components/button/Button';
 
 enum Field {
   from,
@@ -541,13 +541,14 @@ export const SwapLimit = ({
           isOpen={showEthModal}
           onConfirm={() => handleSwap(true)}
         />
-        <button
-          className="btn-primary rounded w-full"
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          className="w-full"
           onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}
         >
           {swapButtonText()}
-        </button>
+        </Button>
       </div>
     </div>
   );
