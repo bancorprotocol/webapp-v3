@@ -18,6 +18,11 @@ import {
   rejectNotification,
   setFeeNotification,
 } from 'services/notifications/notifications';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+} from '../../components/button/Button';
 
 export const ModalCreatePool = () => {
   const { chainId, account } = useWeb3React();
@@ -81,12 +86,14 @@ export const ModalCreatePool = () => {
 
   return (
     <>
-      <button
-        className="btn-outline-secondary rounded-[12px] h-[35px]"
+      <Button
+        variant={ButtonVariant.SECONDARY}
+        size={ButtonSize.EXTRASMALL}
+        className="h-[35px]"
         onClick={() => setIsOpen(true)}
       >
         Create Pool
-      </button>
+      </Button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Create Pool">
         <div className="p-14">
           <div className="mx-10 mb-30">
