@@ -1,18 +1,9 @@
 module.exports = {
   primary: {
-    DEFAULT: '#3A86FF',
-    light: '#80B0FF',
-    dark: '#0053D8',
-    50: '#f5f9ff',
-    100: '#ebf3ff',
-    200: '#cee1ff',
-    300: '#b0cfff',
-    400: '#75aaff',
-    500: '#3A86FF',
-    600: '#3479e6',
-    700: '#2c65bf',
-    800: '#235099',
-    900: '#1c427d',
+    DEFAULT: '#10BBD5',
+    light: '#DBF5F9',
+    dark: '#08A2C3',
+    hover: '#08A2C3',
   },
 
   info: {
@@ -30,31 +21,13 @@ module.exports = {
   },
 
   success: {
-    DEFAULT: '#0FC7A6',
-    50: '#f3fdfb',
-    100: '#e7fbf7',
-    200: '#c3f4eb',
-    300: '#9feddf',
-    400: '#56e0c8',
-    500: '#0FC7A6',
-    600: '#0dbe9e',
-    700: '#0b9e84',
-    800: '#087f6a',
-    900: '#076756',
+    DEFAULT: '#67D79F',
+    hover: '#30b674',
   },
 
   warning: {
     DEFAULT: '#FF8A00',
-    50: '#fff9f2',
-    100: '#fff3e6',
-    200: '#ffe2bf',
-    300: '#ffd099',
-    400: '#ffad4d',
-    500: '#FF8A00',
-    600: '#e67c00',
-    700: '#bf6800',
-    800: '#995300',
-    900: '#7d4400',
+    hover: '#c97307',
   },
 
   error: {
