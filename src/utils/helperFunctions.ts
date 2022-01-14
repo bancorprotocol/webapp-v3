@@ -5,6 +5,8 @@ import { shrinkToken } from './formulas';
 import { APIPool } from '../services/api/bancor';
 import { Pool } from '../services/observables/tokens';
 import dayjs from './dayjs';
+import { getCurrencyLS } from './localStorage';
+import { getConversionRate, getCurrencySymbol } from './currencies';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -16,14 +18,22 @@ export const decToPpm = (dec: number | string | BigNumber): string =>
 
 export const prettifyNumber = (
   num: number | string | BigNumber,
-  usd = false
+  fiat = false
 ): string => {
   const bigNum = new BigNumber(num);
-  if (usd) {
-    if (bigNum.lte(0)) return '$0.00';
-    else if (bigNum.lt(0.01)) return '< $0.01';
-    else if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    else return numeral(bigNum).format('$0,0.00', Math.floor);
+  if (fiat) {
+    const currency = getCurrencyLS();
+    const symbol = getCurrencySymbol(currency);
+    const fiatNum = bigNum.times(getConversionRate(currency));
+
+    if (fiatNum.lte(0)) return '$0.00';
+    else if (fiatNum.lt(0.01)) return '< $0.01';
+    else if (fiatNum.gt(100))
+      return numeral(fiatNum).format('$0,0', Math.floor).replace('$', symbol);
+    else
+      return numeral(fiatNum)
+        .format('$0,0.00', Math.floor)
+        .replace('$', symbol);
   } else {
     if (bigNum.lte(0)) return '0';
     else if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);

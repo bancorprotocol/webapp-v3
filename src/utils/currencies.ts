@@ -4,6 +4,11 @@ export enum Currency {
   gbp,
 }
 
+export const getConversionRate = (currency: Currency) => {
+  if (currency === Currency.usd) return 1;
+  return 0.5;
+};
+
 export const getCurrencySymbol = (currency: Currency) => {
   switch (currency) {
     case Currency.usd:
