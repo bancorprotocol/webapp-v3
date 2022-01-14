@@ -16,6 +16,7 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { openNewTab } from 'utils/pureFunctions';
+import { Button, ButtonSize, ButtonVariant } from '../components/button/Button';
 
 interface VoteCardProps {
   title: string;
@@ -40,12 +41,9 @@ const VoteCard = ({
         {title}
       </div>
       <div className="text-14 text-grey dark:text-white mb-auto">{content}</div>
-      <button
-        className="btn-primary rounded w-[220px] h-[37px] mt-20 text-14"
-        onClick={() => onClick()}
-      >
+      <Button className="w-[220px] mt-20" onClick={() => onClick()}>
         {button}
-      </button>
+      </Button>
       <hr className="widget-separator mb-15 mt-50" />
       <div className="min-h-[48px]">{footer}</div>
     </div>
@@ -175,15 +173,17 @@ export const Vote = () => {
               them first.
             </div>
             <div className="md:flex items-center w-full">
-              <button
-                className={`text-12 font-medium btn-sm rounded-10 w-full mt-20 md:mt-0 md:max-w-[190px]  ${
+              <Button
+                variant={
                   (!!unstakeTime ||
                     !stakeAmount ||
                     Number(stakeAmount) === 0) &&
                   !isUnlocked
-                    ? 'btn-outline-secondary text-graphite dark:bg-black dark:text-graphite dark:border-graphite'
-                    : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-black dark:hover:text-primary-light'
-                }`}
+                    ? ButtonVariant.SECONDARY
+                    : ButtonVariant.PRIMARY
+                }
+                size={ButtonSize.SMALL}
+                className={`w-full mt-20 md:mt-0 md:max-w-[190px]`}
                 disabled={
                   (!!unstakeTime ||
                     !stakeAmount ||
@@ -196,7 +196,7 @@ export const Vote = () => {
                 }}
               >
                 Unstake Tokens
-              </button>
+              </Button>
               {unstakeTime && !isUnlocked && (
                 <div className="flex text-12 text-graphite md:ml-10 justify-center md:justify-start mt-10 md:mt-0 md:text-left w-full">
                   <span className="mr-4">Unstake available in</span>
