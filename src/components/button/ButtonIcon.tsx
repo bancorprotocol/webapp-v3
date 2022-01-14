@@ -1,5 +1,5 @@
-import { ButtonHTMLAttributes } from 'react';
-import { classNameGenerator } from '../../utils/pureFunctions';
+import { ButtonHTMLAttributes, ForwardedRef, forwardRef } from 'react';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   secondary?: boolean;
@@ -7,26 +7,32 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   onClick?: () => void;
 }
 
-export const ButtonIcon = ({
-  className = '',
-  secondary = false,
-  animate = false,
-  ...props
-}: ButtonProps) => {
-  const variant = secondary ? 'btn-secondary' : 'btn-primary';
-  return (
-    <button
-      type="button"
-      {...props}
-      className={`btn ${variant} p-0 h-[35px] w-[35px] rounded-[12px] ${className}`}
-    >
-      <div
-        className={`p-[7px] ${classNameGenerator({
-          'hover:rotate-180 transition-transform duration-300': animate,
-        })}`}
+export const ButtonIcon = forwardRef(
+  (
+    {
+      className = '',
+      secondary = false,
+      animate = false,
+      ...props
+    }: ButtonProps,
+    ref: ForwardedRef<HTMLButtonElement | null>
+  ) => {
+    const variant = secondary ? 'btn-secondary' : 'btn-primary';
+    return (
+      <button
+        type="button"
+        ref={ref}
+        {...props}
+        className={`btn ${variant} p-0 h-[35px] w-[35px] rounded-[12px] ${className}`}
       >
-        {props.children}
-      </div>
-    </button>
-  );
-};
+        <div
+          className={`p-[7px] ${classNameGenerator({
+            'hover:rotate-180 transition-transform duration-300': animate,
+          })}`}
+        >
+          {props.children}
+        </div>
+      </button>
+    );
+  }
+);
