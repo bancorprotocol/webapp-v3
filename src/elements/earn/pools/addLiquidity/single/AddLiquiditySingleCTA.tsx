@@ -1,6 +1,7 @@
 import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useDispatch } from 'react-redux';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   onStart: Function;
@@ -14,18 +15,24 @@ export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: 'btn-error' };
+      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
     }
     if (!amount) {
-      return { label: 'Enter amount', disabled: true, variant: 'btn-primary' };
+      return {
+        label: 'Enter amount',
+        disabled: true,
+        variant: ButtonVariant.PRIMARY,
+      };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     }
   };
+
+  const btn = button();
 
   const onClick = () => {
     if (!account) {
@@ -36,12 +43,13 @@ export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   };
 
   return (
-    <button
+    <Button
+      variant={btn.variant}
       onClick={() => onClick()}
-      disabled={button().disabled}
-      className={`${button().variant} rounded w-full`}
+      disabled={btn.disabled}
+      className={`w-full`}
     >
-      {button().label}
-    </button>
+      {btn.label}
+    </Button>
   );
 };

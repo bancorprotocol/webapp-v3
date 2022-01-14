@@ -12,6 +12,7 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   pool: Pool;
@@ -81,18 +82,24 @@ export const AddLiquidityEmptyCTA = ({
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: 'btn-error' };
+      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
     }
     if (!amountBnt || !amountTkn) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     } else {
-      return { label: 'Supply', disabled: false, variant: 'btn-primary' };
+      return {
+        label: 'Supply',
+        disabled: false,
+        variant: ButtonVariant.PRIMARY,
+      };
     }
   };
+
+  const btn = button();
 
   const onClick = () => {
     if (!account) {
@@ -104,13 +111,14 @@ export const AddLiquidityEmptyCTA = ({
 
   return (
     <>
-      <button
+      <Button
         onClick={() => onClick()}
-        disabled={button().disabled}
-        className={`${button().variant} rounded w-full mt-20`}
+        variant={btn.variant}
+        disabled={btn.disabled}
+        className={`w-full mt-20`}
       >
-        {button().label}
-      </button>
+        {btn.label}
+      </Button>
       {ModalApprove}
     </>
   );
