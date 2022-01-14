@@ -1,4 +1,4 @@
-import { MouseEventHandler, useRef } from 'react';
+import { cloneElement, MouseEventHandler, useRef } from 'react';
 import { TooltipPanel } from './TooltipPanel';
 import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 import type * as PopperJS from '@popperjs/core';
@@ -8,6 +8,7 @@ interface TooltipProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   placement?: PopperJS.Placement;
   content: string | JSX.Element | JSX.Element[];
+  children?: JSX.Element;
 }
 
 export const Tooltip = ({
@@ -15,13 +16,19 @@ export const Tooltip = ({
   button = <IconInfo className="w-[10px] h-[10px] text-grey dark:text-white" />,
   onClick,
   placement,
+  children,
 }: TooltipProps) => {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   return (
     <>
-      <button ref={buttonRef} onClick={onClick}>
-        {button}
-      </button>
+      {children ? (
+        cloneElement(children, { ref: buttonRef })
+      ) : (
+        <button ref={buttonRef} onClick={onClick}>
+          {button}
+        </button>
+      )}
+
       <TooltipPanel placement={placement} targetRef={buttonRef}>
         {typeof content === 'string' ? (
           <div className="text-12">{content}</div>
