@@ -1,5 +1,4 @@
 const colors = require('./src/styles/plugins/colors');
-const buttons = require('./src/styles/plugins/buttons');
 const buttonsNew = require('./src/styles/plugins/buttons.new');
 
 module.exports = {
@@ -26,9 +25,9 @@ module.exports = {
     ],
   },
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [buttons(), buttonsNew()],
-  colors,
+  plugins: [buttonsNew()],
   theme: {
+    colors,
     screens: {
       sm: '640px',
       md: '768px',

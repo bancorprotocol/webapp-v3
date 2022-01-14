@@ -14,12 +14,12 @@ module.exports = {
     DEFAULT: '#E27D8A',
     hover: '#D86371',
   },
-  fog: '#F4F4F4',
-  graphite: '#BFBFC3',
-  silver: '#E4E4E6',
-  charcoal: '#18181A',
-  grey: '#303034',
-  approve: '#4EC987',
+  fog: { DEFAULT: '#F4F4F4' },
+  graphite: { DEFAULT: '#BFBFC3' },
+  silver: { DEFAULT: '#E4E4E6' },
+  charcoal: { DEFAULT: '#18181A' },
+  grey: { DEFAULT: '#303034' },
+  approve: { DEFAULT: '#4EC987' },
   black: {
     DEFAULT: '#000000',
     medium: '#CC18181A', //80% Opacity
