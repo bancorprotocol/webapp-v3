@@ -14,11 +14,10 @@ import { apiData$ } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
-import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
@@ -143,8 +142,7 @@ export const swap = async (
     const expectedToWei = expandToken(toAmount, toToken.decimals);
     const path = await findPath(fromToken.address, toToken.address);
 
-    const conversion = getConversionLS();
-    sendConversionEvent(ConversionEvents.wallet_req, conversion);
+    sendConversionEvent(ConversionEvents.wallet_req);
 
     const estimate = await contract.estimateGas.convertByPath(
       path,
@@ -167,7 +165,7 @@ export const swap = async (
       { value: fromIsEth ? fromWei : undefined, gasLimit }
     );
 
-    sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
+    sendConversionEvent(ConversionEvents.wallet_confirm);
 
     onHash(tx.hash);
     await tx.wait();

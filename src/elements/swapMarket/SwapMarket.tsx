@@ -23,15 +23,16 @@ import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
+  sendConversionFailEvent,
+  sendConversionSuccessEvent,
+  setCurrentConversion,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
-import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
 import {
   rejectNotification,
@@ -180,8 +181,7 @@ export const SwapMarket = ({
         fromAmount
       );
       if (isApprovalReq) {
-        const conversion = getConversionLS();
-        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowModal(true);
       } else await handleSwap(true);
     } catch (e: any) {
@@ -218,7 +218,6 @@ export const SwapMarket = ({
       return;
     }
 
-    const conversion = getConversionLS();
     await swap(
       slippageTolerance,
       fromToken,
@@ -235,19 +234,12 @@ export const SwapMarket = ({
           txHash
         ),
       () => {
-        sendConversionEvent(ConversionEvents.success, {
-          ...conversion,
-          conversion_market_token_rate: fromToken.usdPrice,
-          transaction_category: 'Conversion',
-        });
+        sendConversionSuccessEvent(fromToken.usdPrice);
         onConfirmation();
       },
       () => rejectNotification(dispatch),
       (error: string) => {
-        sendConversionEvent(ConversionEvents.fail, {
-          conversion,
-          error,
-        });
+        sendConversionFailEvent(error);
         swapFailedNotification(
           dispatch,
           fromToken,
@@ -312,6 +304,30 @@ export const SwapMarket = ({
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
     if (isHighSlippage) return 'btn-error';
     return 'btn-primary';
+  };
+
+  const handleSwapClick = () => {
+    const conversionSettings =
+      slippageTolerance === 0.005 ? 'Regular' : 'Advanced';
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Market',
+      chainId,
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      undefined,
+      undefined,
+      conversionSettings
+    );
+    sendConversionEvent(ConversionEvents.click);
+    handleSwap();
   };
 
   return (
@@ -404,27 +420,7 @@ export const SwapMarket = ({
           </div>
 
           <button
-            onClick={() => {
-              const conversion = {
-                conversion_type: 'Market',
-                conversion_blockchain_network:
-                  chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
-                conversion_settings:
-                  slippageTolerance === 0.005 ? 'Regular' : 'Advanced',
-                conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
-                conversion_from_token: fromToken.symbol,
-                conversion_to_token: toToken?.symbol,
-                conversion_from_amount: fromAmount,
-                conversion_from_amount_usd: fromAmountUsd,
-                conversion_to_amount: toAmount,
-                conversion_to_amount_usd: toAmountUsd,
-                conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
-                conversion_rate: rate,
-              };
-              setConversionLS(conversion);
-              sendConversionEvent(ConversionEvents.click, conversion);
-              handleSwap();
-            }}
+            onClick={() => handleSwapClick()}
             className={`${buttonVariant()} rounded w-full`}
             disabled={isSwapDisabled()}
           >

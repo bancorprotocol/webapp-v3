@@ -26,14 +26,13 @@ import {
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
+  setCurrentConversion,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
-import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 
@@ -226,8 +225,7 @@ export const SwapLimit = ({
         fromAmount
       );
       if (isApprovalReq) {
-        const conversion = getConversionLS();
-        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
     } catch (e: any) {
@@ -339,6 +337,27 @@ export const SwapLimit = ({
       return `${toToken.symbol} token is not supported`;
 
     return 'Trade';
+  };
+
+  const handleSwapClick = () => {
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Limit',
+      chainId,
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      percentage,
+      duration.asSeconds().toString()
+    );
+    sendConversionEvent(ConversionEvents.click);
+    handleSwap(false, false, fromToken.address === ethToken);
   };
 
   return (
@@ -524,30 +543,7 @@ export const SwapLimit = ({
         />
         <button
           className="btn-primary rounded w-full"
-          onClick={() => {
-            const conversion = {
-              conversion_type: 'Limit',
-              conversion_blockchain_network:
-                chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
-              conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
-              conversion_from_token: fromToken.symbol,
-              conversion_to_token: toToken?.symbol,
-              conversion_from_amount: fromAmount,
-              conversion_from_amount_usd: fromAmountUsd,
-              conversion_to_amount: toAmount,
-              conversion_to_amount_usd: toAmountUsd,
-              conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
-              conversion_rate: rate,
-              conversion_rate_percentage:
-                selPercentage === -1
-                  ? percentage
-                  : percentages[selPercentage].toFixed(0),
-              conversion_experation: duration.asSeconds().toString(),
-            };
-            setConversionLS(conversion);
-            sendConversionEvent(ConversionEvents.click, conversion);
-            handleSwap(false, false, fromToken.address === ethToken);
-          }}
+          onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}
         >
           {swapButtonText()}
