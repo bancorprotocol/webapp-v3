@@ -11,17 +11,17 @@ module.exports = function () {
       '@apply disabled:opacity-70 disabled:cursor-not-allowed': '',
     };
 
-    const variants = ['primary', 'success', 'error', 'warning', 'info'];
+    const variants = ['primary', 'success', 'error', 'warning'];
     variants.forEach((variant) => {
-      const hover = `bg-${variant}-700`;
+      // const hover = `bg-${variant}-700`;
       buttons[`.btn-${variant}-new`] = {
         [`@apply bg-${variant}`]: '',
-        [`@apply hover:${hover}`]: '',
+        // [`@apply hover:${hover}`]: '',
         [`@apply active:transform active:scale-95`]: '',
         [`@apply disabled:bg-${variant}`]: '',
       };
       buttons[`.btn-${variant}-hover`] = {
-        [`@apply ${hover}`]: '',
+        // [`@apply ${hover}`]: '',
       };
     });
 

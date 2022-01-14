@@ -1,6 +1,5 @@
 const colors = require('./src/styles/plugins/colors');
 const buttonsNew = require('./src/styles/plugins/buttons.new');
-const buttons = require('./src/styles/plugins/buttons');
 
 module.exports = {
   mode: 'jit',
@@ -26,7 +25,7 @@ module.exports = {
     ],
   },
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [buttons(), buttonsNew()],
+  plugins: [buttonsNew()],
   theme: {
     colors: {
       ...colors,
