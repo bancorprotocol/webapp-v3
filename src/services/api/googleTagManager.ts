@@ -266,3 +266,111 @@ export const sendGTMPath = (
     ga_event: undefined,
   });
 };
+
+const liquidityTxt = (event: ConversionEvents): string => {
+  switch (event) {
+    case ConversionEvents.click:
+      return 'Liquidity Swap Click';
+    case ConversionEvents.approvePop:
+      return 'Liquidity Unlimited Popup';
+    case ConversionEvents.approved:
+      return 'Liquidity Unlimited Popup Select';
+    case ConversionEvents.wallet_req:
+      return 'Liquidity Wallet Confirmation Request';
+    case ConversionEvents.wallet_confirm:
+      return 'Liquidity Wallet Confirmed';
+    case ConversionEvents.fail:
+      return 'Liquidity Failed';
+    case ConversionEvents.success:
+      return 'Liquidity Success';
+  }
+};
+
+interface CurrentLiquidity {
+  liquidity_type: 'Add Dual' | 'Remove Dual' | 'Add Single' | 'Remove Single';
+  liquidity_blockchain_network: 'Ropsten' | 'MainNet';
+  liquidity_pool: string;
+  liquidity_token_symbol: string;
+  liquidity_token_amount: string;
+  liquidity_token_amount_usd: string;
+  liquidity_input_type: 'Fiat' | 'Token';
+}
+
+let currentLiquidity: CurrentLiquidity;
+export const setCurrentLiquidity = (
+  type: 'Add Dual' | 'Remove Dual' | 'Add Single' | 'Remove Single',
+  network: EthNetworks = EthNetworks.Mainnet,
+  pool: string,
+  tokenSymbol: string,
+  tokenAmount: string,
+  tokenAmountUsd: string,
+  usdToggle: boolean
+) => {
+  currentLiquidity = {
+    liquidity_type: type,
+    liquidity_blockchain_network:
+      network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+    liquidity_pool: pool,
+    liquidity_token_symbol: tokenSymbol,
+    liquidity_token_amount: tokenAmount,
+    liquidity_token_amount_usd: tokenAmountUsd,
+    liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
+  };
+};
+
+export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
+  const gtmData = {
+    event: 'CE ' + liquidityTxt(ConversionEvents.approved),
+    user_properties: undefined,
+    event_properties: {
+      ...currentLiquidity,
+      liquidity_unlimited: isUnlimited ? 'Unlimited' : 'Limited',
+    },
+    ga_event: {
+      category: 'Liquidity',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendLiquiditySuccessEvent = () => {
+  const gtmData = {
+    event: 'CE ' + liquidityTxt(ConversionEvents.success),
+    user_properties: undefined,
+    event_properties: {
+      ...currentLiquidity,
+      transaction_category: 'Liquidity',
+    },
+    ga_event: {
+      category: 'Liquidity',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendLiquidityFailEvent = (errorMsg: string) => {
+  const gtmData = {
+    event: 'CE ' + liquidityTxt(ConversionEvents.fail),
+    user_properties: undefined,
+    event_properties: {
+      liquidity: currentLiquidity,
+      error: errorMsg,
+    },
+    ga_event: {
+      category: 'Liquidity',
+    },
+  };
+  sendGTM(gtmData);
+};
+
+export const sendLiquidityEvent = (event: ConversionEvents) => {
+  const gtmData = {
+    event: 'CE ' + liquidityTxt(event),
+    user_properties: undefined,
+    event_properties: currentLiquidity,
+    ga_event: {
+      category: 'Liquidity',
+    },
+  };
+  sendGTM(gtmData);
+};
