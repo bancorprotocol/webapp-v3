@@ -49,7 +49,7 @@ export const ProtectedPositionTableCellActions = (
       {canStakeRewards && (
         <StakeRewardsBtn
           buttonLabel="Stake Rewards"
-          buttonClass="btn btn-primary btn-sm rounded-[12px] !h-[35px] mr-10"
+          buttonClass="btn btn-primary btn-sm !h-[35px] mr-10"
           posGroupId={position.groupId}
         />
       )}
