@@ -31,9 +31,9 @@ module.exports = function () {
       [`@apply border border-silver dark:border-charcoal`]: '',
       [`@apply hover:btn-secondary-hover`]: '',
       [`@apply active:transform active:scale-95`]: '',
-      [`@apply disabled:bg-white disabled:text-charcoal disabled:border-charcoal`]:
+      [`@apply disabled:bg-white disabled:text-charcoal disabled:text-opacity-50 disabled:border-charcoal disabled:border-opacity-50`]:
         '',
-      [`@apply dark:disabled:bg-charcoal dark:disabled:text-grey disabled:border-grey`]:
+      [`@apply dark:disabled:bg-charcoal dark:disabled:text-grey dark:disabled:border-grey`]:
         '',
     };
     buttons[`.btn-secondary-hover`] = {
