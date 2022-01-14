@@ -9,6 +9,7 @@ import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidi
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { StakeRewardsBtn } from '../rewards/StakeRewardsBtn';
 import BigNumber from 'bignumber.js';
+import { ButtonIcon } from '../../../../../components/button/ButtonIcon';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -31,12 +32,13 @@ export const ProtectedPositionTableCellActions = (
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-        <button
+        <ButtonIcon
           onClick={() => setIsModalOpen(true)}
-          className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header"
+          secondary
+          className="shadow-header"
         >
           <IconWithdraw className="w-14" />
-        </button>
+        </ButtonIcon>
       </>
     ),
     [isModalOpen, position]
@@ -47,7 +49,7 @@ export const ProtectedPositionTableCellActions = (
       {canStakeRewards && (
         <StakeRewardsBtn
           buttonLabel="Stake Rewards"
-          buttonClass="btn-primary btn-sm rounded-[12px] !h-[35px] mr-10"
+          buttonClass="btn btn-primary btn-sm rounded-[12px] !h-[35px] mr-10"
           posGroupId={position.groupId}
         />
       )}
