@@ -6,7 +6,8 @@ import {
 import { Token } from 'services/observables/tokens';
 import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Image } from '../../../../../components/image/Image';
+import { Image } from 'components/image/Image';
+import { Button, ButtonSize } from '../../../../../components/button/Button';
 
 interface ClaimAvailableProps {
   bnt?: Token;
@@ -21,6 +22,17 @@ export const ClaimAvailable = ({
 }: ClaimAvailableProps) => {
   const dispatch = useDispatch();
   const noBntToClaim = availableBNT === 0;
+
+  const handleButtonClick = () => {
+    claimBnt(
+      (txHash) => {
+        claimBntNotification(dispatch, txHash, prettifyNumber(availableBNT));
+      },
+      () => {},
+      () => rejectNotification(dispatch),
+      () => {}
+    );
+  };
 
   return (
     <section className="content-section py-20">
@@ -52,26 +64,13 @@ export const ClaimAvailable = ({
                 </>
               )}
             </div>
-            <button
-              className="btn-primary btn-sm rounded-[12px]"
-              onClick={() =>
-                claimBnt(
-                  (txHash) => {
-                    claimBntNotification(
-                      dispatch,
-                      txHash,
-                      prettifyNumber(availableBNT)
-                    );
-                  },
-                  () => {},
-                  () => rejectNotification(dispatch),
-                  () => {}
-                )
-              }
+            <Button
+              size={ButtonSize.EXTRASMALL}
+              onClick={() => handleButtonClick()}
               disabled={noBntToClaim}
             >
               Claim BNT
-            </button>
+            </Button>
           </div>
         </div>
       )}

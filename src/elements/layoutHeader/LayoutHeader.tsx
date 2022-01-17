@@ -1,17 +1,15 @@
-import { useWeb3React } from '@web3-react/core';
-import { EthNetworks } from 'services/web3/types';
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
 import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
-import { getNetworkName } from 'utils/helperFunctions';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
+import { NetworkIndicator } from './NetworkIndicator';
 
 interface LayoutHeaderProps {
   isMinimized: boolean;
@@ -22,7 +20,6 @@ export const LayoutHeader = ({
   isMinimized,
   setIsSidebarOpen,
 }: LayoutHeaderProps) => {
-  const { chainId } = useWeb3React();
   const wallet = useWalletConnect();
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
@@ -36,24 +33,13 @@ export const LayoutHeader = ({
         >
           <div className="layout-header-content">
             <div className="flex items-center">
-              <button className="btn-secondary btn-sm">
-                <div
-                  className={`${
-                    !chainId || chainId === EthNetworks.Mainnet
-                      ? 'bg-success'
-                      : chainId === EthNetworks.Ropsten
-                      ? 'bg-error'
-                      : 'bg-warning'
-                  } w-6 h-6 rounded-full mr-10`}
-                />
-                {getNetworkName(chainId ? chainId : EthNetworks.Mainnet)}
-              </button>
+              <NetworkIndicator />
             </div>
 
             <div className="flex items-center">
               <WalletConnectButton {...wallet} />
               <NotificationsMenu />
-              <span className="text-grey-3 text-20 mx-16">|</span>
+              <span className="text-graphite text-20 mx-16">|</span>
               <SettingsMenu />
             </div>
           </div>
@@ -68,7 +54,7 @@ export const LayoutHeader = ({
         </div>
         <div className="flex items-center justify-end">
           <NotificationsMenu />
-          <div className="bg-grey-4 w-[1px] h-30 mx-10" />
+          <div className="bg-grey w-[1px] h-30 mx-10" />
           <WalletConnectButton {...wallet} />
         </div>
       </LayoutHeaderMobile>

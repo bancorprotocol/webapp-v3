@@ -1,35 +1,31 @@
 const colors = require('./src/styles/plugins/colors');
 const buttons = require('./src/styles/plugins/buttons');
-const buttonsNew = require('./src/styles/plugins/buttons.new');
 
 module.exports = {
   mode: 'jit',
   purge: {
     content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
     safelist: [
-      'btn-primary-new',
-      'btn-secondary-new',
-      'btn-success-new',
-      'btn-warning-new',
-      'btn-error-new',
-      'btn-info-new',
+      'btn-primary',
+      'btn-secondary',
+      'btn-success',
+      'btn-warning',
+      'btn-error',
       'btn-primary-hover',
       'btn-secondary-hover',
       'btn-success-hover',
       'btn-warning-hover',
       'btn-error-hover',
-      'btn-info-hover',
-      'btn-xs-new',
-      'btn-sm-new',
-      'btn-md-new',
-      'btn-lg-new',
+      'btn-xs',
+      'btn-sm',
+      'btn-md',
+      'btn-lg',
     ],
   },
   darkMode: 'class', // or 'media' or 'class'
-  plugins: [buttons(), buttonsNew()],
+  plugins: [buttons()],
   theme: {
     colors,
-
     screens: {
       sm: '640px',
       md: '768px',

@@ -28,12 +28,12 @@ export const SuggestedTokens = ({
         {suggestedTokenList.map((token) => (
           <button
             onClick={() => onClick(token!)}
-            className="bg-blue-0 dark:bg-blue-5 dark:hover:bg-blue-1 pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
+            className="bg-fog dark:bg-grey border dark:border-grey dark:hover:border-black-disabled pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
           >
             <Image
               src={token!.logoURI}
               alt={`${token!.symbol} Token`}
-              className="bg-grey-2 rounded-full h-28 w-28 mb-5"
+              className="bg-silver rounded-full h-28 w-28 mb-5"
             />
             <span className="text-12">{token!.symbol}</span>
           </button>

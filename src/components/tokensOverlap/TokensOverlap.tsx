@@ -11,7 +11,7 @@ export const TokensOverlap = ({ tokens }: { tokens: Token[] | Reserve[] }) => {
           alt="Token"
           className={`${
             index === 1 && '-ml-12 z-0'
-          } z-10 shadow bg-grey-2 rounded-full h-28 w-28`}
+          } z-10 shadow bg-silver rounded-full h-28 w-28`}
         />
       ))}
     </div>

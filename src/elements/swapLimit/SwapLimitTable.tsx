@@ -91,7 +91,7 @@ export const SwapLimitTable = () => {
               <Image
                 src={payToken.logoURI}
                 alt="Token"
-                className="bg-grey-2 rounded-full h-28 w-28 mr-5"
+                className="bg-silver rounded-full h-28 w-28 mr-5"
               />
               {`${payToken.symbol} ${payAmount.value}`}
             </div>
@@ -111,7 +111,7 @@ export const SwapLimitTable = () => {
               <Image
                 src={getToken.logoURI}
                 alt="Token"
-                className="bg-grey-2 rounded-full h-28 w-28 mr-5"
+                className="bg-silver rounded-full h-28 w-28 mr-5"
               />
               {`${getToken.symbol} ${getAmount.value}`}
             </div>

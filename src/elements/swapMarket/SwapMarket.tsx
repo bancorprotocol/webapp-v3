@@ -39,6 +39,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
+import { Button, ButtonVariant } from '../../components/button/Button';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -310,8 +311,8 @@ export const SwapMarket = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return 'btn-error';
-    return 'btn-primary';
+    if (isHighSlippage) return ButtonVariant.ERROR;
+    return ButtonVariant.PRIMARY;
   };
 
   return (
@@ -403,7 +404,7 @@ export const SwapMarket = ({
             )}
           </div>
 
-          <button
+          <Button
             onClick={() => {
               const conversion = {
                 conversion_type: 'Market',
@@ -425,11 +426,12 @@ export const SwapMarket = ({
               sendConversionEvent(ConversionEvents.click, conversion);
               handleSwap();
             }}
-            className={`${buttonVariant()} rounded w-full`}
+            variant={buttonVariant()}
+            className={'w-full'}
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}
-          </button>
+          </Button>
         </div>
       </div>
       <ModalApprove

@@ -20,10 +20,13 @@ export const SwapHeader = ({ isLimit, setIsLimit }: SwapHeaderProps) => {
     <div>
       <div className="swap-header">
         <div>
-          <button className={marketActive} onClick={() => setIsLimit(false)}>
+          <button
+            className={`${marketActive}`}
+            onClick={() => setIsLimit(false)}
+          >
             Market
           </button>
-          <span className="mx-12">|</span>
+          <span className="border-r b-silver mx-12" />
           <button className={limitActive} onClick={() => setIsLimit(true)}>
             Limit
           </button>

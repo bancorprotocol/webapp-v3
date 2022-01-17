@@ -54,7 +54,7 @@ export const ModalDuration = ({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center bg-white dark:bg-blue-4 rounded-10 px-40 py-8"
+        className="flex items-center bg-white dark:bg-charcoal rounded-10 px-40 py-8"
       >
         {formatDuration(duration)}
         <IconChevronDown className="w-10 ml-10" />
@@ -63,7 +63,7 @@ export const ModalDuration = ({
         <div className="flex flex-col items-center w-full px-20 pb-20">
           <IconClock className="w-[52px] h-[52px] text-primary dark:text-primary-dark mb-14" />
           <div className="font-semibold text-20 mb-10">Custom Time</div>
-          <div className="text-12 text-grey-4 mb-10">
+          <div className="text-12 text-grey mb-10">
             Set up your custom time peroid
           </div>
           <div className="w-[160px] text-14 font-medium">

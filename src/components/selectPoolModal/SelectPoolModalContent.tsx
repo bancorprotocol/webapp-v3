@@ -25,7 +25,7 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
         />
       </div>
       <div className="h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20 px-20 space-y-20">
-        <div className="flex justify-between text-blue-4 mt-10">
+        <div className="flex justify-between text-charcoal mt-10">
           <span>Pools</span>
           <span>APR</span>
         </div>
@@ -39,12 +39,12 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
               <Image
                 src={pool.reserves[0].logoURI.replace('thumb', 'small')}
                 alt="Token Logo"
-                className="bg-grey-1 rounded-full w-24 h-24 z-20"
+                className="bg-fog rounded-full w-24 h-24 z-20"
               />
               <Image
                 src={pool.reserves[1].logoURI.replace('thumb', 'small')}
                 alt="Token Logo"
-                className="-ml-10 bg-grey-1 rounded-full w-24 h-24 z-10"
+                className="-ml-10 bg-fog rounded-full w-24 h-24 z-10"
               />
               <span className="ml-10">{pool.name}</span>
             </span>

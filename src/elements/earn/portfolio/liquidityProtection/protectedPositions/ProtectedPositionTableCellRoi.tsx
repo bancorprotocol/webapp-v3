@@ -15,7 +15,7 @@ export const ProtectedPositionTableCellRoi = (
       </div>
       {hasRewards && !isSubRow && (
         <div className="flex justify-center">
-          <div className="text-12 text-primary mt-4 bg-blue-0 rounded-10 px-5 py-2">
+          <div className="text-12 text-primary mt-4 bg-primary-light rounded-10 px-5 py-2">
             + {(Number(position.roi.reserveRewards) * 100).toFixed(2)} %
           </div>
         </div>

@@ -2,13 +2,10 @@ import { ButtonHTMLAttributes } from 'react';
 
 export enum ButtonVariant {
   PRIMARY = 'primary',
-  // SECONDARY = 'secondary',
+  SECONDARY = 'secondary',
   SUCCESS = 'success',
   ERROR = 'error',
   WARNING = 'warning',
-  INFO = 'info',
-  // LIGHT = 'light',
-  // DARK = 'dark',
 }
 
 export enum ButtonSize {
@@ -33,14 +30,14 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const btnOutlined = outlined ? 'outline-' : '';
-  const btnVariant = `btn-${btnOutlined}${variant}-new`;
+  const btnVariant = `btn-${btnOutlined}${variant}`;
   const btnSize = `btn-${size}`;
 
   return (
     <button
       type="button"
       {...props}
-      className={`btn-base ${btnVariant} ${btnSize}-new ${className}`}
+      className={`btn ${btnVariant} ${btnSize} ${className}`}
     />
   );
 };

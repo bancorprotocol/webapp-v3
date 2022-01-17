@@ -41,7 +41,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="bg-grey-2 rounded-full h-30 w-30 mr-10 ml-20"
+          className="bg-fog rounded-full h-30 w-30 mr-10 ml-20"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>
@@ -133,7 +133,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
           return (
             <NavLink
               to={swapByfrom(cellData.row.original.address)}
-              className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
+              className="btn btn-primary btn-xs"
             >
               Trade
             </NavLink>
