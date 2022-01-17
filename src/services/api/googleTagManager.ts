@@ -54,24 +54,15 @@ export enum ConversionEvents {
   success,
 }
 
-const conversionTxt = (event: ConversionEvents): string => {
-  switch (event) {
-    case ConversionEvents.click:
-      return 'Conversion Swap Click';
-    case ConversionEvents.approvePop:
-      return 'Conversion Unlimited Popup';
-    case ConversionEvents.approved:
-      return 'Conversion Unlimited Popup Select';
-    case ConversionEvents.wallet_req:
-      return 'Conversion Wallet Confirmation Request';
-    case ConversionEvents.wallet_confirm:
-      return 'Conversion Wallet Confirmed';
-    case ConversionEvents.fail:
-      return 'Conversion Failed';
-    case ConversionEvents.success:
-      return 'Conversion Success';
-  }
-};
+const eventTxtMap = new Map([
+  [ConversionEvents.click, 'Swap Click'],
+  [ConversionEvents.approvePop, 'Unlimited Popup'],
+  [ConversionEvents.approved, 'Unlimited Popup Select'],
+  [ConversionEvents.wallet_req, 'Wallet Confirmation Request'],
+  [ConversionEvents.wallet_confirm, 'Wallet Confirmed'],
+  [ConversionEvents.fail, 'Failed'],
+  [ConversionEvents.success, 'Success'],
+]);
 
 interface CurrentConversion {
   conversion_type: 'Limit' | 'Market';
@@ -128,7 +119,7 @@ export const setCurrentConversion = (
 
 export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
-    event: 'CE ' + conversionTxt(ConversionEvents.approved),
+    event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.approved),
     user_properties: undefined,
     event_properties: {
       ...currentConversion,
@@ -143,7 +134,7 @@ export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
 
 export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
   const gtmData = {
-    event: 'CE ' + conversionTxt(ConversionEvents.success),
+    event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.success),
     user_properties: undefined,
     event_properties: {
       ...currentConversion,
@@ -159,7 +150,7 @@ export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
 
 export const sendConversionFailEvent = (errorMsg: string) => {
   const gtmData = {
-    event: 'CE ' + conversionTxt(ConversionEvents.fail),
+    event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.fail),
     user_properties: undefined,
     event_properties: {
       conversion: currentConversion,
@@ -174,7 +165,7 @@ export const sendConversionFailEvent = (errorMsg: string) => {
 
 export const sendConversionEvent = (event: ConversionEvents) => {
   const gtmData = {
-    event: 'CE ' + conversionTxt(event),
+    event: 'CE Conversion ' + eventTxtMap.get(event),
     user_properties: undefined,
     event_properties: currentConversion,
     ga_event: {
@@ -189,16 +180,11 @@ export enum WalletEvents {
   click,
   connect,
 }
-const walletTxt = (event: WalletEvents): string => {
-  switch (event) {
-    case WalletEvents.popup:
-      return 'Wallet Connect Select Wallet Popup';
-    case WalletEvents.click:
-      return 'Wallet Connect Wallet Icon Click';
-    case WalletEvents.connect:
-      return 'Wallet Connect';
-  }
-};
+const walletTxtMap = new Map([
+  [WalletEvents.popup, 'Wallet Connect Select Wallet Popup'],
+  [WalletEvents.click, 'Wallet Connect Wallet Icon Click'],
+  [WalletEvents.connect, 'Wallet Connect'],
+]);
 
 export const sendWalletEvent = (
   walletEvent: WalletEvents,
@@ -207,7 +193,7 @@ export const sendWalletEvent = (
   name: string = ''
 ) => {
   const wallet = 'Wallet';
-  const event = walletTxt(walletEvent);
+  const event = walletTxtMap.get(walletEvent);
   if (id && name)
     sendGTM({
       event: 'CE ' + event,
@@ -267,25 +253,6 @@ export const sendGTMPath = (
   });
 };
 
-const liquidityTxt = (event: ConversionEvents): string => {
-  switch (event) {
-    case ConversionEvents.click:
-      return 'Liquidity Swap Click';
-    case ConversionEvents.approvePop:
-      return 'Liquidity Unlimited Popup';
-    case ConversionEvents.approved:
-      return 'Liquidity Unlimited Popup Select';
-    case ConversionEvents.wallet_req:
-      return 'Liquidity Wallet Confirmation Request';
-    case ConversionEvents.wallet_confirm:
-      return 'Liquidity Wallet Confirmed';
-    case ConversionEvents.fail:
-      return 'Liquidity Failed';
-    case ConversionEvents.success:
-      return 'Liquidity Success';
-  }
-};
-
 interface CurrentLiquidity {
   liquidity_type: 'Add Dual' | 'Remove Dual' | 'Add Single' | 'Remove Single';
   liquidity_blockchain_network: 'Ropsten' | 'MainNet';
@@ -329,7 +296,7 @@ export const setCurrentLiquidity = (
 
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
-    event: 'CE ' + liquidityTxt(ConversionEvents.approved),
+    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.approved),
     user_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -344,7 +311,7 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
 
 export const sendLiquiditySuccessEvent = (txHash: string) => {
   const gtmData = {
-    event: 'CE ' + liquidityTxt(ConversionEvents.success),
+    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.success),
     user_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -360,7 +327,7 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
 
 export const sendLiquidityFailEvent = (errorMsg: string) => {
   const gtmData = {
-    event: 'CE ' + liquidityTxt(ConversionEvents.fail),
+    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.fail),
     user_properties: undefined,
     event_properties: {
       liquidity: currentLiquidity,
@@ -375,7 +342,7 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
 
 export const sendLiquidityEvent = (event: ConversionEvents) => {
   const gtmData = {
-    event: 'CE ' + liquidityTxt(event),
+    event: 'CE Liquidity ' + eventTxtMap.get(event),
     user_properties: undefined,
     event_properties: currentLiquidity,
     ga_event: {
