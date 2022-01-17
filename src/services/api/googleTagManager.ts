@@ -292,11 +292,11 @@ interface CurrentLiquidity {
   liquidity_pool: string;
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
-  liquidity_token_amount_usd: number | string;
+  liquidity_token_amount_usd?: number | string;
   liquidity_bnt_symbol?: string;
   liquidity_bnt_amount?: string;
   liquidity_bnt_amount_usd?: number;
-  liquidity_input_type: 'Fiat' | 'Token';
+  liquidity_input_type?: 'Fiat' | 'Token';
 }
 
 let currentLiquidity: CurrentLiquidity;
@@ -306,11 +306,11 @@ export const setCurrentLiquidity = (
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
-  tokenAmountUsd: number | string,
+  tokenAmountUsd: number | string | undefined,
   bntSymbol: string | undefined,
   bntAmount: string | undefined,
   bntAmountUsd: number | undefined,
-  usdToggle: boolean
+  usdToggle: boolean | undefined
 ) => {
   currentLiquidity = {
     liquidity_type: type,
