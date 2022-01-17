@@ -12,6 +12,12 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
+import {
+  ConversionEvents,
+  sendLiquidityEvent,
+  setCurrentLiquidity,
+} from '../../../../../services/api/googleTagManager';
+import { useAppSelector } from '../../../../../redux';
 
 interface Props {
   pool: Pool;
@@ -31,8 +37,9 @@ export const AddLiquidityEmptyCTA = ({
   errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const { pushPortfolio } = useNavigation();
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
@@ -98,6 +105,21 @@ export const AddLiquidityEmptyCTA = ({
     if (!account) {
       dispatch(openWalletModal(true));
     } else {
+      const tknAmountUsd = Number(amountTkn) * Number(tkn.usdPrice ?? 0);
+      const bntAmountUsd = Number(amountBnt) * Number(bnt.usdPrice ?? 0);
+      setCurrentLiquidity(
+        'Add Dual',
+        chainId,
+        pool.name,
+        tkn.symbol,
+        amountTkn,
+        tknAmountUsd,
+        bnt.symbol,
+        amountBnt,
+        bntAmountUsd,
+        fiatToggle
+      );
+      sendLiquidityEvent(ConversionEvents.click);
       onStart();
     }
   };

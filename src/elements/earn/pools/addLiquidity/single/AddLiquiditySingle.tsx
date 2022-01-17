@@ -70,20 +70,23 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const addProtection = async () => {
     const cleanAmount = prettifyNumber(amount);
+    let transactionId: string;
     await addLiquiditySingle(
       pool,
       selectedToken,
       amount,
-      (txHash: string) =>
+      (txHash: string) => {
+        transactionId = txHash;
         addLiquiditySingleNotification(
           dispatch,
           txHash,
           cleanAmount,
           selectedToken.symbol,
           pool.name
-        ),
+        );
+      },
       () => {
-        sendLiquiditySuccessEvent();
+        sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
@@ -149,6 +152,9 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       selectedToken.symbol,
       amount,
       amountUsd,
+      undefined,
+      undefined,
+      undefined,
       fiatToggle
     );
     sendLiquidityEvent(ConversionEvents.click);

@@ -292,7 +292,10 @@ interface CurrentLiquidity {
   liquidity_pool: string;
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
-  liquidity_token_amount_usd: string;
+  liquidity_token_amount_usd: number | string;
+  liquidity_bnt_symbol?: string;
+  liquidity_bnt_amount?: string;
+  liquidity_bnt_amount_usd?: number;
   liquidity_input_type: 'Fiat' | 'Token';
 }
 
@@ -303,7 +306,10 @@ export const setCurrentLiquidity = (
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
-  tokenAmountUsd: string,
+  tokenAmountUsd: number | string,
+  bntSymbol: string | undefined,
+  bntAmount: string | undefined,
+  bntAmountUsd: number | undefined,
   usdToggle: boolean
 ) => {
   currentLiquidity = {
@@ -314,6 +320,9 @@ export const setCurrentLiquidity = (
     liquidity_token_symbol: tokenSymbol,
     liquidity_token_amount: tokenAmount,
     liquidity_token_amount_usd: tokenAmountUsd,
+    liquidity_bnt_symbol: bntSymbol,
+    liquidity_bnt_amount: bntAmount,
+    liquidity_bnt_amount_usd: bntAmountUsd,
     liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
   };
 };
@@ -333,12 +342,13 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
   sendGTM(gtmData);
 };
 
-export const sendLiquiditySuccessEvent = () => {
+export const sendLiquiditySuccessEvent = (txHash: string) => {
   const gtmData = {
     event: 'CE ' + liquidityTxt(ConversionEvents.success),
     user_properties: undefined,
     event_properties: {
       ...currentLiquidity,
+      transaction_id: txHash,
       transaction_category: 'Liquidity',
     },
     ga_event: {
