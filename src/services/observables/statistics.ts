@@ -14,7 +14,7 @@ export const statistics$ = combineLatest([apiData$]).pipe(
   map(([apiData]) => {
     const averageFormat = {
       average: true,
-      mantissa: 3,
+      mantissa: 2,
       optionalMantissa: true,
       spaceSeparated: true,
       lowPrecision: false,
