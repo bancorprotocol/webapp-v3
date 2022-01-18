@@ -1,16 +1,18 @@
 import { Pool, Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SortingRule, Row } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'redux/index';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
-import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
+//import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { Button, ButtonVariant } from 'components/button/Button';
+//import { Dropdown } from 'components/dropdown/Dropdown';
 
 interface Props {
   search: string;
@@ -19,6 +21,7 @@ interface Props {
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const [v3Selected, setV3Selected] = useState(true);
 
   const data = useMemo<Pool[]>(() => {
     return pools.filter(
@@ -104,13 +107,30 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     []
   );
 
+  const switchV3Selected = () => setV3Selected(!v3Selected);
+  const buttonVariant = (v3: boolean) =>
+    (v3Selected && v3) || (!v3 && !v3Selected)
+      ? ButtonVariant.PRIMARY
+      : ButtonVariant.SECONDARY;
+
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
-        <h2>Pools</h2>
-        <div className="flex align-center">
+        <div className="flex align-center gap-x-10">
+          <Button
+            variant={buttonVariant(true)}
+            onClick={() => switchV3Selected()}
+          >
+            V3
+          </Button>
+          <Button
+            variant={buttonVariant(false)}
+            onClick={() => switchV3Selected()}
+          >
+            V2
+          </Button>
           <div className="mr-16">
             <SearchInput
               value={search}
@@ -118,10 +138,11 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
               className="max-w-[160px] rounded-20 h-[35px]"
             />
           </div>
-          <div className="hidden md:block">
-            <ModalCreatePool />
-          </div>
         </div>
+        {/* <Dropdown /> */}
+        {/* <div className="hidden md:block">
+          <ModalCreatePool />
+        </div> */}
       </div>
 
       <DataTable<Pool>
