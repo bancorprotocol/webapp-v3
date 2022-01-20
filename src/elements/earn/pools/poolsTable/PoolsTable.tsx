@@ -11,6 +11,7 @@ import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCell
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
+import { Popularity } from 'components/popularity/popularity';
 //import { Dropdown } from 'components/dropdown/Dropdown';
 
 interface Props {
@@ -43,7 +44,11 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         Header: 'Protected',
         accessor: 'isProtected',
         Cell: (cellData) =>
-          cellData.value ? <IconProtected className="w-18 mr-20" /> : <div />,
+          cellData.value ? (
+            <IconProtected className="w-18 h-20 text-primary" />
+          ) : (
+            <div />
+          ),
         tooltip: 'Protected',
         minWidth: 130,
         sortDescFirst: true,
@@ -52,7 +57,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'popularity',
         Header: 'Popularity',
         accessor: 'isProtected',
-        Cell: (cellData) => cellData.value,
+        Cell: (cellData) => cellData.value && <Popularity stars={5} />,
         tooltip: 'Popularity',
         minWidth: 130,
         sortDescFirst: true,

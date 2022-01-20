@@ -34,7 +34,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
       <div className={'flex items-center'}>
         <div className="w-18">
           {token.isWhitelisted && (
-            <IconProtected className={`w-18 h-20 text-primary`} />
+            <IconProtected className="w-18 h-20 text-primary" />
           )}
         </div>
 
