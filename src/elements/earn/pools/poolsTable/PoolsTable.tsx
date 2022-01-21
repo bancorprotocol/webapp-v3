@@ -59,7 +59,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'popularity',
         Header: 'Popularity',
         accessor: 'isProtected',
-        Cell: (cellData) => cellData.value && <Popularity stars={5} />,
+        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
         tooltip: 'Popularity',
         minWidth: 130,
         sortDescFirst: true,
