@@ -42,6 +42,7 @@ module.exports = {
     700: '#bf2f41',
     800: '#992634',
     900: '#7d1f2a',
+    hover: '#D86371',
   },
   fog: { DEFAULT: '#F4F4F4' },
   graphite: { DEFAULT: '#BFBFC3' },
@@ -57,5 +58,10 @@ module.exports = {
   },
 
   secondary: { DEFAULT: '#F2F5F9' },
-  white: { DEFAULT: '#fff' },
+  white: {
+    DEFAULT: '#FFFFFF', //100% Opacity
+    medium: '#CCFFFFFF', //80% Opacity
+    low: '#80FFFFFF', //50% Opacity
+    disabled: '#33FFFFFF', //20% Opacity
+  },
 };

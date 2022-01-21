@@ -5,7 +5,7 @@ import { useNavigation } from 'services/router';
 interface Props {
   title: string;
   subtitle?: string;
-  goBack: Function;
+  goBack?: Function;
   children: JSX.Element | JSX.Element[];
 }
 export const Widget = ({ title, subtitle, children, goBack }: Props) => {
