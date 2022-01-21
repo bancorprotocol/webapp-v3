@@ -24,9 +24,11 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   const [v3Selected, setV3Selected] = useState(true);
 
   const v2data = useMemo<Pool[]>(() => {
-    return v2pools.filter(
-      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
-    );
+    return v2pools
+      .filter((p) => p.version >= 28)
+      .filter(
+        (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+      );
   }, [v2pools, search]);
 
   const v2columns = useMemo<TableColumn<Pool>[]>(

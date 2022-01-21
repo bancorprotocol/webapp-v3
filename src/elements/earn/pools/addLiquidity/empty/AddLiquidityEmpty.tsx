@@ -32,7 +32,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const { pushLiquidityError } = useNavigation();
+  const { pushLiquidityError, pushPools } = useNavigation();
   if (!tkn || !bnt) {
     pushLiquidityError();
     return <></>;
@@ -42,7 +42,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     return new BigNumber(bnt.usdPrice!).div(tknUsdPrice).toString();
   };
   return (
-    <Widget title="Add Liquidity">
+    <Widget title="Add Liquidity" goBack={pushPools}>
       <AddLiquidityEmptyStep1
         tkn={tkn}
         bnt={bnt}
