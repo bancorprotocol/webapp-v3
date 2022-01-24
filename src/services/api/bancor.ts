@@ -23,6 +23,8 @@ export interface WelcomeData {
   };
   total_volume_24h: USDPrice;
   total_volume_24h_ago: USDPrice;
+  total_fees_24h: USDPrice;
+  total_fees_24h_ago: USDPrice;
   bnt_price_24h_ago: USDPrice;
   bnt_price: USDPrice;
   bnt_supply: string;

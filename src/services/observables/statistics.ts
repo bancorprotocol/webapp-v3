@@ -14,7 +14,7 @@ export const statistics$ = combineLatest([apiData$]).pipe(
   map(([apiData]) => {
     const averageFormat = {
       average: true,
-      mantissa: 3,
+      mantissa: 2,
       optionalMantissa: true,
       spaceSeparated: true,
       lowPrecision: false,
@@ -32,8 +32,8 @@ export const statistics$ = combineLatest([apiData$]).pipe(
       .minus(100)
       .toNumber();
 
-    const volume24hChange = new BigNumber(apiData.total_volume_24h.usd!)
-      .div(apiData.total_volume_24h_ago.usd!)
+    const fees24hChange = new BigNumber(apiData.total_fees_24h.usd!)
+      .div(apiData.total_fees_24h_ago.usd!)
       .times(100)
       .minus(100)
       .toNumber();
@@ -63,9 +63,9 @@ export const statistics$ = combineLatest([apiData$]).pipe(
         change24h: liquidity24hChange,
       },
       {
-        label: 'Volume (24h)',
-        value: '$' + numbro(apiData.total_volume_24h.usd).format(averageFormat),
-        change24h: volume24hChange,
+        label: 'Fees (24h)',
+        value: '$' + numbro(apiData.total_fees_24h.usd).format(averageFormat),
+        change24h: fees24hChange,
       },
       {
         label: 'Total BNT Staked',
