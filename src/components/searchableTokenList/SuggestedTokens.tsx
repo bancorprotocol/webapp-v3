@@ -28,6 +28,7 @@ export const SuggestedTokens = ({
         {suggestedTokenList.map((token) => (
           <button
             onClick={() => onClick(token!)}
+            key={token?.address}
             className="bg-blue-0 dark:bg-blue-5 dark:hover:bg-blue-1 pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
           >
             <Image
