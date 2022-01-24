@@ -21,7 +21,7 @@ interface Tokens {
 }
 
 export const useApproveModal = (
-  tokens: Tokens[],
+  tokens: Tokens[] = [],
   onComplete: Function,
   contract: ApprovalContract | string = ApprovalContract.BancorNetwork
 ) => {
@@ -53,6 +53,16 @@ export const useApproveModal = (
   }, [onComplete]);
 
   const dispatch = useDispatch();
+
+  const onStart = async () => {
+    if (tokens.length === 0) {
+      console.error('No tokens provided for approval!');
+      return;
+    }
+    await checkApprovalRequired();
+  };
+
+  if (tokens.length === 0) return [onStart, <></>] as [Function, JSX.Element];
 
   const checkNextToken = async (index = tokenIndex): Promise<any> => {
     const nextIndex = index + 1;
@@ -134,14 +144,6 @@ export const useApproveModal = (
       setIsOpen(false);
       setIsLoading(false);
     }
-  };
-
-  const onStart = async () => {
-    if (tokens.length === 0) {
-      console.error('No tokens provided for approval!');
-      return;
-    }
-    await checkApprovalRequired();
   };
 
   const ModalApprove = ModalApproveNew({
