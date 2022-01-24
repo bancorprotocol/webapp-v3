@@ -55,7 +55,7 @@ export enum ConversionEvents {
 }
 
 const eventTxtMap = new Map([
-  [ConversionEvents.click, 'Swap Click'],
+  [ConversionEvents.click, 'Click'],
   [ConversionEvents.approvePop, 'Unlimited Popup'],
   [ConversionEvents.approved, 'Unlimited Popup Select'],
   [ConversionEvents.wallet_req, 'Wallet Confirmation Request'],
@@ -254,13 +254,16 @@ export const sendGTMPath = (
 };
 
 interface CurrentLiquidity {
-  liquidity_type: 'Add Dual' | 'Remove Dual' | 'Add Single' | 'Remove Single';
+  liquidity_type:
+    | 'Deposit Dual'
+    | 'Withdraw Dual'
+    | 'Deposit Single'
+    | 'Withdraw Single';
   liquidity_blockchain_network: 'Ropsten' | 'MainNet';
   liquidity_pool: string;
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
   liquidity_token_amount_usd?: number | string;
-  liquidity_bnt_symbol?: string;
   liquidity_bnt_amount?: string;
   liquidity_bnt_amount_usd?: number;
   liquidity_input_type?: 'Fiat' | 'Token';
@@ -268,13 +271,12 @@ interface CurrentLiquidity {
 
 let currentLiquidity: CurrentLiquidity;
 export const setCurrentLiquidity = (
-  type: 'Add Dual' | 'Remove Dual' | 'Add Single' | 'Remove Single',
+  type: 'Deposit Dual' | 'Withdraw Dual' | 'Deposit Single' | 'Withdraw Single',
   network: EthNetworks = EthNetworks.Mainnet,
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
   tokenAmountUsd: number | string | undefined,
-  bntSymbol: string | undefined,
   bntAmount: string | undefined,
   bntAmountUsd: number | undefined,
   usdToggle: boolean | undefined
@@ -287,7 +289,6 @@ export const setCurrentLiquidity = (
     liquidity_token_symbol: tokenSymbol,
     liquidity_token_amount: tokenAmount,
     liquidity_token_amount_usd: tokenAmountUsd,
-    liquidity_bnt_symbol: bntSymbol,
     liquidity_bnt_amount: bntAmount,
     liquidity_bnt_amount_usd: bntAmountUsd,
     liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
@@ -296,7 +297,9 @@ export const setCurrentLiquidity = (
 
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
-    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.approved),
+    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
+      ConversionEvents.approved
+    )}`,
     user_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -311,7 +314,9 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
 
 export const sendLiquiditySuccessEvent = (txHash: string) => {
   const gtmData = {
-    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.success),
+    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
+      ConversionEvents.success
+    )}`,
     user_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -327,10 +332,12 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
 
 export const sendLiquidityFailEvent = (errorMsg: string) => {
   const gtmData = {
-    event: 'CE Liquidity ' + eventTxtMap.get(ConversionEvents.fail),
+    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
+      ConversionEvents.fail
+    )}`,
     user_properties: undefined,
     event_properties: {
-      liquidity: currentLiquidity,
+      ...currentLiquidity,
       error: errorMsg,
     },
     ga_event: {
@@ -342,7 +349,9 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
 
 export const sendLiquidityEvent = (event: ConversionEvents) => {
   const gtmData = {
-    event: 'CE Liquidity ' + eventTxtMap.get(event),
+    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
+      event
+    )}`,
     user_properties: undefined,
     event_properties: currentLiquidity,
     ga_event: {

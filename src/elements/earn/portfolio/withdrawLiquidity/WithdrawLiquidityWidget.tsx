@@ -32,6 +32,7 @@ import { wait } from '../../../../utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
 import {
   ConversionEvents,
+  sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
@@ -171,19 +172,20 @@ export const WithdrawLiquidityWidget = ({
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount: amount, token: govToken! }],
     withdraw,
-    ApprovalContract.LiquidityProtection
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const handleWithdraw = useCallback(async () => {
     const amountUsd = Number(amount) * Number(token ? token.usdPrice : 0);
     setCurrentLiquidity(
-      'Remove Single',
+      'Withdraw Single',
       chainId,
       pool.name,
       token!.symbol,
       amount,
       amountUsd,
-      undefined,
       undefined,
       undefined,
       fiatToggle

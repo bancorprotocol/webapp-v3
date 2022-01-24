@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
 import {
   ConversionEvents,
+  sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   setCurrentLiquidity,
 } from '../../../../../services/api/googleTagManager';
@@ -83,7 +84,9 @@ export const AddLiquidityEmptyCTA = ({
       { amount: amountTkn, token: tkn },
     ],
     handleAddLiquidity,
-    pool.converter_dlt_id
+    pool.converter_dlt_id,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const button = () => {
@@ -108,13 +111,12 @@ export const AddLiquidityEmptyCTA = ({
       const tknAmountUsd = Number(amountTkn) * Number(tkn.usdPrice ?? 0);
       const bntAmountUsd = Number(amountBnt) * Number(bnt.usdPrice ?? 0);
       setCurrentLiquidity(
-        'Add Dual',
+        'Deposit Dual',
         chainId,
         pool.name,
         tkn.symbol,
         amountTkn,
         tknAmountUsd,
-        bnt.symbol,
         amountBnt,
         bntAmountUsd,
         fiatToggle

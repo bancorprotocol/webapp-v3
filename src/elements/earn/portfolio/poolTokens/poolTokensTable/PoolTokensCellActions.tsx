@@ -21,12 +21,11 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
 
   const handleClick = () => {
     setCurrentLiquidity(
-      'Remove Dual',
+      'Withdraw Dual',
       chainId,
       poolToken.poolName,
       poolToken.poolName,
       poolToken.amount,
-      undefined,
       undefined,
       undefined,
       undefined,

@@ -22,6 +22,7 @@ import { useNavigation } from 'services/router';
 import { ApprovalContract } from 'services/web3/approval';
 import {
   ConversionEvents,
+  sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
@@ -109,7 +110,9 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addProtection,
-    ApprovalContract.LiquidityProtection
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const handleError = useCallback(() => {
@@ -146,13 +149,12 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const handleCTAClick = useCallback(() => {
     setCurrentLiquidity(
-      'Add Single',
+      'Deposit Single',
       chainId,
       pool.name,
       selectedToken.symbol,
       amount,
       amountUsd,
-      undefined,
       undefined,
       undefined,
       fiatToggle
