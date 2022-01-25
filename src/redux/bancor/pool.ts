@@ -7,11 +7,13 @@ import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 interface PoolState {
   pools: Pool[];
+  allPools: Pool[];
   statistics: Statistic[];
 }
 
 const initialState: PoolState = {
   pools: [],
+  allPools: [],
   statistics: [],
 };
 
@@ -21,6 +23,9 @@ const poolSlice = createSlice({
   reducers: {
     setPools: (state, action) => {
       state.pools = action.payload;
+    },
+    setAllPools: (state, action) => {
+      state.allPools = action.payload;
     },
     setStats: (state, action) => {
       state.statistics = action.payload;
@@ -107,6 +112,6 @@ export const getPoolById = (id: string) =>
     }
   );
 
-export const { setPools, setStats } = poolSlice.actions;
+export const { setPools, setAllPools, setStats } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;

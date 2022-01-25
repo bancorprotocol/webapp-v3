@@ -41,7 +41,7 @@ export const RewardsStakeCTA = ({
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
   const { pushPortfolio } = useNavigation();
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const pools = useAppSelector<Pool[]>((state) => state.pool.allPools);
 
   const onCompleted = useCallback(async () => {
     dispatch(setLoadingPositions(true));

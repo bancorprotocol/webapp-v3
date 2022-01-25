@@ -53,7 +53,7 @@ export const WithdrawLiquidityWidget = ({
   const token = useAppSelector<Token | undefined>(
     getTokenById(reserveToken.address)
   );
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const pools = useAppSelector<Pool[]>((state) => state.pool.allPools);
   const [breakdown, setBreakdown] = useState<
     { tkn: number; bnt: number } | undefined
   >();

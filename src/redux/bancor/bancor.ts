@@ -3,12 +3,15 @@ import { KeeprDaoToken } from 'services/api/keeperDao';
 import { TokenList, Token } from 'services/observables/tokens';
 import { RootState } from 'redux/index';
 import { orderBy } from 'lodash';
+import { APIToken } from 'services/api/bancor';
+import { getTokenWithoutImage } from 'services/web3/config';
 
 interface BancorState {
   tokenLists: TokenList[];
   tokens: Token[];
   keeperDaoTokens: KeeprDaoToken[];
   allTokens: Token[];
+  apiTokens: APIToken[];
   bntPrice: string | null;
 }
 
@@ -16,6 +19,7 @@ export const initialState: BancorState = {
   tokenLists: [],
   tokens: [],
   keeperDaoTokens: [],
+  apiTokens: [],
   allTokens: [],
   bntPrice: null,
 };
@@ -32,6 +36,9 @@ const bancorSlice = createSlice({
     },
     setAllTokens: (state, action) => {
       state.allTokens = action.payload;
+    },
+    setApiTokens: (state, action) => {
+      state.apiTokens = action.payload;
     },
     updateTokens: (state, action) => {
       const tokenToUpdate = action.payload as Token[];
@@ -55,6 +62,7 @@ export const {
   setTokenLists,
   setTokenList,
   setAllTokens,
+  setApiTokens,
   setKeeperDaoTokens,
   updateTokens,
   setBntPrice,
@@ -62,9 +70,16 @@ export const {
 
 export const getTokenById = (id: string) =>
   createSelector(
-    (state: RootState) => state.bancor.tokens,
-    (tokens: Token[]) => {
-      return tokens.find((t) => t.address === id);
+    (state: RootState) => state.bancor,
+    (bancor: BancorState) => {
+      const tokens = bancor.tokens;
+      const apiTokens = bancor.apiTokens;
+
+      const token = tokens.find((t) => t.address === id);
+      if (token) return token;
+
+      const apiToken = apiTokens.find((t) => t.dlt_id === id);
+      if (apiToken) return getTokenWithoutImage(apiToken);
     }
   );
 

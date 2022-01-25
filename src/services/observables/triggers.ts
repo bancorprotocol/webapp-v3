@@ -8,9 +8,12 @@ import {
   tokensNoBalance$,
   tokenListMerged$,
   poolTokens$,
+  allPools$,
+  apiTokens$,
 } from 'services/observables/tokens';
 import {
   setAllTokens,
+  setApiTokens,
   setBntPrice,
   setKeeperDaoTokens,
   setTokenList,
@@ -26,7 +29,7 @@ import {
 } from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
-import { setPools, setStats } from 'redux/bancor/pool';
+import { setAllPools, setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
 import {
   setLoadingLockedBnt,
@@ -72,12 +75,20 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setAllTokens(tokenList));
   });
 
+  apiTokens$.subscribe((tokens) => {
+    dispatch(setApiTokens(tokens));
+  });
+
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {
     dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
   pools$.subscribe((pools) => {
     dispatch(setPools(pools));
+  });
+
+  allPools$.subscribe((pools) => {
+    dispatch(setAllPools(pools));
   });
 
   statistics$.subscribe((stats) => {

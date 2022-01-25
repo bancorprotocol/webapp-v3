@@ -20,6 +20,7 @@ import {
   ethToken,
   wethToken,
   bntToken,
+  getTokenWithoutImage,
 } from 'services/web3/config';
 import {
   get7DaysAgo,
@@ -358,6 +359,98 @@ export const pools$ = combineLatest([
           {
             ...pool.reserves[1],
             rewardApr: Number(pool.reserves[1].apr) / 10000,
+            symbol: reserveTokenTwo.symbol,
+            logoURI:
+              currentNetwork === EthNetworks.Mainnet
+                ? getTokenLogoURI(reserveTokenTwo)
+                : ropstenImage,
+            decimals: reserveTokenTwo.decimals,
+            usdPrice: reserveTokenTwo.usdPrice,
+          },
+        ];
+
+        const bntReserve = reserves.find((r) => r.symbol === 'BNT');
+        const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+          bntReserve ? bntReserve.balance : 0
+        );
+        const isProtected = sufficientMintingBalance && pool.isWhitelisted;
+
+        return {
+          ...pool,
+          reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
+          liquidity,
+          volume_24h: Number(pool.volume_24h.usd ?? 0),
+          fees_24h,
+          fee: Number(pool.fee) / 10000,
+          supply: Number(pool.supply),
+          apr,
+          isProtected,
+        };
+      });
+
+      return newPools.filter((x) => !!x) as Pool[];
+    }
+  ),
+  shareReplay(1)
+);
+
+export const allPools$ = combineLatest([
+  correctedPools$,
+  tokens$,
+  apiTokens$,
+  minNetworkTokenLiquidityForMinting$,
+  currentNetwork$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([pools, tokens, apiTokens, minMintingBalance, currentNetwork]) => {
+      const tokensMap = new Map(tokens.map((t) => [t.address, t]));
+
+      const newPools: (Pool | null)[] = pools.map((pool) => {
+        const apiTokensMap = new Map(
+          apiTokens.map((t) => [t.dlt_id, getTokenWithoutImage(t)])
+        );
+
+        let apr = 0;
+        const liquidity = Number(pool.liquidity.usd ?? 0);
+        const fees_24h = Number(pool.fees_24h.usd ?? 0);
+        if (liquidity && fees_24h) {
+          apr = new BigNumber(fees_24h)
+            .times(365)
+            .div(liquidity)
+            .times(100)
+            .toNumber();
+        }
+
+        const reserveOne = pool.reserves[0];
+        const reserveTwo = pool.reserves[1];
+
+        const reserveTokenOne =
+          tokensMap.get(reserveOne.address) ??
+          apiTokensMap.get(reserveOne.address);
+
+        if (!reserveTokenOne) return null;
+
+        const reserveTokenTwo =
+          tokensMap.get(reserveTwo.address) ??
+          apiTokensMap.get(reserveTwo.address);
+
+        if (!reserveTokenTwo) return null;
+
+        const reserves: Reserve[] = [
+          {
+            ...reserveOne,
+            rewardApr: Number(reserveOne.apr) / 10000,
+            symbol: reserveTokenOne.symbol,
+            logoURI:
+              currentNetwork === EthNetworks.Mainnet
+                ? getTokenLogoURI(reserveTokenOne)
+                : ropstenImage,
+            decimals: reserveTokenOne.decimals,
+            usdPrice: reserveTokenOne.usdPrice,
+          },
+          {
+            ...reserveTwo,
+            rewardApr: Number(reserveTwo.apr) / 10000,
             symbol: reserveTokenTwo.symbol,
             logoURI:
               currentNetwork === EthNetworks.Mainnet
