@@ -3,20 +3,29 @@ import BigNumber from 'bignumber.js';
 import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
-  label: string;
+  symbol: string;
   amount: string;
   usdPrice: string;
   imgUrl: string;
+  inverted?: boolean;
 }
-export const TokenBalance = ({ label, amount, usdPrice, imgUrl }: Props) => {
+export const TokenBalance = ({
+  symbol,
+  amount,
+  usdPrice,
+  imgUrl,
+  inverted,
+}: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
+  const label = inverted
+    ? `${symbol} ${prettifyNumber(amount)}`
+    : `${prettifyNumber(amount)} ${symbol}`;
+
   return (
-    <div className="flex">
-      <Image alt={`${label} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
-      <div>
-        <div>
-          {label} {prettifyNumber(amount)}
-        </div>
+    <div className="flex w-full">
+      <Image alt={`${symbol} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
+      <div className={`text-16 w-full ${inverted ? 'text-right' : ''}`}>
+        <div>{label}</div>
         <span className="text-graphite">{prettifyNumber(usdAmount, true)}</span>
       </div>
     </div>
