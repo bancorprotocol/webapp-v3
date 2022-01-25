@@ -1,6 +1,10 @@
 @import 'tailwindcss/utilities';
 
 @layer utilities {
+    .content-block {
+        @apply bg-white rounded-10;
+    }
+
     .loading-skeleton {
         @apply bg-primary bg-opacity-30 animate-pulse rounded-full;
     }
