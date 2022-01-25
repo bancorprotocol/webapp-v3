@@ -4,11 +4,10 @@ import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useAppSelector } from 'redux/index';
 import { PoolToken } from 'services/observables/tokens';
+import { V3Portfolio } from 'elements/earn/portfolio/v3/V3Portfolio';
 
 export const Portfolio = () => {
-  const [selectedTab, setSelectedTab] = useState<'protection' | 'pooltokens'>(
-    'protection'
-  );
+  const [selectedTab, setSelectedTab] = useState<'v3' | 'v2' | 'v1'>('v3');
   const poolTokens = useAppSelector<PoolToken[]>(
     (state) => state.liquidity.poolTokens
   );
@@ -20,31 +19,38 @@ export const Portfolio = () => {
       </h1>
       <div className="text-16 my-20 pl-10 md:pl-0">
         <button
-          onClick={() => setSelectedTab('protection')}
+          onClick={() => setSelectedTab('v3')}
           className={`pb-4 w-[170px] text-left ${classNameGenerator({
-            'font-semibold border-b-2 border-primary':
-              selectedTab === 'protection',
-            'font-light border-b border-graphite': selectedTab !== 'protection',
+            'font-semibold border-b-2 border-primary': selectedTab === 'v3',
+            'font-light border-b border-graphite': selectedTab !== 'v3',
+          })}`}
+        >
+          Liquidity Protection
+        </button>
+        <button
+          onClick={() => setSelectedTab('v2')}
+          className={`pb-4 w-[170px] text-left ${classNameGenerator({
+            'font-semibold border-b-2 border-primary': selectedTab === 'v2',
+            'font-light border-b border-graphite': selectedTab !== 'v2',
           })}`}
         >
           Liquidity Protection
         </button>
         {!!poolTokens.length && (
           <button
-            onClick={() => setSelectedTab('pooltokens')}
+            onClick={() => setSelectedTab('v1')}
             className={`pb-4 w-[110px] text-right ${classNameGenerator({
-              'font-semibold border-b-2 border-primary':
-                selectedTab === 'pooltokens',
-              'font-light border-b border-graphite':
-                selectedTab !== 'pooltokens',
+              'font-semibold border-b-2 border-primary': selectedTab === 'v1',
+              'font-light border-b border-graphite': selectedTab !== 'v1',
             })}`}
           >
             Pool Tokens
           </button>
         )}
       </div>
-      {selectedTab === 'protection' && <LiquidityProtection />}
-      {selectedTab === 'pooltokens' && <PoolTokens />}
+      {selectedTab === 'v3' && <V3Portfolio />}
+      {selectedTab === 'v2' && <LiquidityProtection />}
+      {selectedTab === 'v1' && <PoolTokens />}
     </div>
   );
 };
