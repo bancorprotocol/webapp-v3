@@ -14,40 +14,41 @@ export const Portfolio = () => {
 
   return (
     <div className="max-w-[1140px] mx-auto bg-fog dark:bg-black">
-      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0">
-        Portfolio
-      </h1>
-      <div className="text-16 my-20 pl-10 md:pl-0">
-        <button
-          onClick={() => setSelectedTab('v3')}
-          className={`pb-4 w-[170px] text-left ${classNameGenerator({
-            'font-semibold border-b-2 border-primary': selectedTab === 'v3',
-            'font-light border-b border-graphite': selectedTab !== 'v3',
-          })}`}
-        >
-          Liquidity Protection
-        </button>
-        <button
-          onClick={() => setSelectedTab('v2')}
-          className={`pb-4 w-[170px] text-left ${classNameGenerator({
-            'font-semibold border-b-2 border-primary': selectedTab === 'v2',
-            'font-light border-b border-graphite': selectedTab !== 'v2',
-          })}`}
-        >
-          Liquidity Protection
-        </button>
-        {!!poolTokens.length && (
+      <div className="flex items-center my-20">
+        <h1 className="text-[30px] font-semibold pl-10 md:pl-0">Portfolio</h1>
+        <div className="text-16 ml-20 space-x-20">
           <button
-            onClick={() => setSelectedTab('v1')}
-            className={`pb-4 w-[110px] text-right ${classNameGenerator({
-              'font-semibold border-b-2 border-primary': selectedTab === 'v1',
-              'font-light border-b border-graphite': selectedTab !== 'v1',
+            onClick={() => setSelectedTab('v3')}
+            className={`px-10 py-5 ${classNameGenerator({
+              'font-semibold rounded-10 bg-white': selectedTab === 'v3',
+              'font-light': selectedTab !== 'v3',
             })}`}
           >
-            Pool Tokens
+            V3
           </button>
-        )}
+          <button
+            onClick={() => setSelectedTab('v2')}
+            className={`pb-4 w-[170px] text-left ${classNameGenerator({
+              'font-semibold rounded-10 bg-white': selectedTab === 'v2',
+              'font-light': selectedTab !== 'v2',
+            })}`}
+          >
+            V2
+          </button>
+          {!!poolTokens.length && (
+            <button
+              onClick={() => setSelectedTab('v1')}
+              className={`pb-4 w-[110px] text-right ${classNameGenerator({
+                'font-semibold rounded-10 bg-white': selectedTab === 'v1',
+                'font-light': selectedTab !== 'v1',
+              })}`}
+            >
+              V1
+            </button>
+          )}
+        </div>
       </div>
+
       {selectedTab === 'v3' && <V3Portfolio />}
       {selectedTab === 'v2' && <LiquidityProtection />}
       {selectedTab === 'v1' && <PoolTokens />}
