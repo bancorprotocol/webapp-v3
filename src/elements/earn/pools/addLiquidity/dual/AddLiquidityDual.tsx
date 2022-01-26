@@ -17,11 +17,11 @@ interface Props {
 
 export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
-  const tkn = useAppSelector<Token | undefined>(
-    getTokenById(tknReserve.address)
+  const tkn = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, tknReserve.address)
   );
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(bntReserve.address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, bntReserve.address)
   );
   const { pushLiquidityError, pushPools } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');

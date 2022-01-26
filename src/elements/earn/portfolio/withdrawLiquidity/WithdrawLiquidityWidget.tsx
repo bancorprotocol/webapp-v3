@@ -50,8 +50,8 @@ export const WithdrawLiquidityWidget = ({
   const [amount, setAmount] = useState('');
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
-  const token = useAppSelector<Token | undefined>(
-    getTokenById(reserveToken.address)
+  const token = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, reserveToken.address)
   );
   const pools = useAppSelector<Pool[]>((state) => state.pool.allPools);
   const [breakdown, setBreakdown] = useState<
@@ -60,7 +60,9 @@ export const WithdrawLiquidityWidget = ({
   const gov = getNetworkVariables(
     chainId ? chainId : EthNetworks.Mainnet
   ).govToken;
-  const govToken = useAppSelector<Token | undefined>(getTokenById(gov));
+  const govToken = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, gov)
+  );
   const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
   const withdrawingBNT = reserveToken.address === bnt;

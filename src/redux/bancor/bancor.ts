@@ -68,20 +68,21 @@ export const {
   setBntPrice,
 } = bancorSlice.actions;
 
-export const getTokenById = (id: string) =>
-  createSelector(
-    (state: RootState) => state.bancor,
-    (bancor: BancorState) => {
-      const tokens = bancor.tokens;
-      const apiTokens = bancor.apiTokens;
+const tokens = (state: BancorState) => state.tokens;
+const apiTokens = (state: BancorState) => state.apiTokens;
 
-      const token = tokens.find((t) => t.address === id);
-      if (token) return token;
+export const getTokenById = createSelector(
+  tokens,
+  apiTokens,
+  (_: any, id: string) => id,
+  (tokens, apiTokens, id) => {
+    const token = tokens.find((t) => t.address === id);
+    if (token) return token;
 
-      const apiToken = apiTokens.find((t) => t.dlt_id === id);
-      if (apiToken) return getTokenWithoutImage(apiToken);
-    }
-  );
+    const apiToken = apiTokens.find((t) => t.dlt_id === id);
+    if (apiToken) return getTokenWithoutImage(apiToken);
+  }
+);
 
 export const getTopMovers = createSelector(
   (state: RootState) => state.bancor.tokens,
