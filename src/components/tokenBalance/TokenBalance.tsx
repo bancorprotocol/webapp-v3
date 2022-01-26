@@ -18,15 +18,17 @@ export const TokenBalance = ({
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
   const label = inverted
-    ? `${symbol} ${prettifyNumber(amount)}`
-    : `${prettifyNumber(amount)} ${symbol}`;
+    ? `${prettifyNumber(amount)} ${symbol}`
+    : `${symbol} ${prettifyNumber(amount)}`;
 
   return (
     <div className={`flex w-full ${inverted ? '' : 'items-center'}`}>
       <Image alt={`${symbol} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
-      <div className={`text-16 w-full ${inverted ? 'text-right' : ''}`}>
-        <div>{label}</div>
-        <span className="text-graphite">{prettifyNumber(usdAmount, true)}</span>
+      <div className={`w-full ${inverted ? 'text-right' : ''}`}>
+        <div className="text-16">{label}</div>
+        <span className="text-graphite text-14">
+          {prettifyNumber(usdAmount, true)}
+        </span>
       </div>
     </div>
   );
