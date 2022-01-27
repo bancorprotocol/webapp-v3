@@ -1779,6 +1779,11 @@
     "@ethersproject/properties" "^5.5.0"
     "@ethersproject/strings" "^5.5.0"
 
+"@faker-js/faker@^6.0.0-alpha.5":
+  version "6.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-6.0.0-alpha.5.tgz#2c1ab022b3aed76d563b1510ba2b797ce141d25e"
+  integrity sha512-8Is/xFxNgricqmhQR/AJ4Vi0cKzSR7FcpE0ImG9dWciuSxUkyCiK+B5/hTQP8jrVbtgTjpFC1AaTCnALJOBDmw==
+
 "@figspec/components@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@figspec/components/-/components-1.0.0.tgz#b1ddf0593173157cb5e79e50073ca1491bb7c6dc"
@@ -6015,6 +6020,11 @@ character-reference-invalid@^1.0.0:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/character-reference-invalid/-/character-reference-invalid-1.1.4.tgz#083329cda0eae272ab3dbbf37e9a382c13af1560"
   integrity sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==
+
+chart.js@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-3.7.0.tgz#7a19c93035341df801d613993c2170a1fcf1d882"
+  integrity sha512-31gVuqqKp3lDIFmzpKIrBeum4OpZsQjSIAqlOpgjosHDJZlULtvwLEZKtEhIAZc7JMPaHlYMys40Qy9Mf+1AAg==
 
 check-more-types@^2.24.0:
   version "2.24.0"
@@ -14496,6 +14506,11 @@ react-app-polyfill@^2.0.0:
     raf "^3.4.1"
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
+
+react-chartjs-2@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-4.0.1.tgz#38ed1d5b6e2f789408450c981e9e8e1d78b2e015"
+  integrity sha512-q8bgWzKoFvBvD7YcjT/hXG8jt55TaMAuJ1dmI3tKFJ7CijUWYz4pIfOhkTI6PBTwqu/pmeWsClBRd/7HiWzN1g==
 
 react-colorful@^5.1.2:
   version "5.5.1"

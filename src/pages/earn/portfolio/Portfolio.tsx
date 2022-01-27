@@ -22,8 +22,10 @@ export const Portfolio = () => {
   return (
     <div className="max-w-[1140px] mx-auto bg-fog dark:bg-black">
       <Tab.Group>
-        <div className="flex items-center my-30">
-          <h1 className="text-[30px] font-semibold pl-10 md:pl-0">Portfolio</h1>
+        <div className="flex items-center mb-30 pt-30">
+          <h1 className="md:text-[30px] font-semibold pl-10 md:pl-0">
+            Portfolio
+          </h1>
           <Tab.List className="space-x-10 ml-20">
             <Tab className={({ selected }) => getTabBtnClasses(selected)}>
               V3
