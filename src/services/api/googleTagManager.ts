@@ -8,18 +8,11 @@ declare global {
   }
 }
 
-export const googleTagManager = (id: string, name: string | null) => {
+export const googleTagManager = () => {
   if (window.dataLayer) return;
 
   window.dataLayer = [
     {
-      wallet:
-        id && name
-          ? {
-              id: id,
-              name: name,
-            }
-          : {},
       page: { class: 'App' },
     },
   ];
