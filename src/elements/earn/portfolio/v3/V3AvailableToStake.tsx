@@ -8,7 +8,7 @@ import { useAppSelector } from 'redux/index';
 import { getAvailableToStakeTokens } from 'redux/bancor/token';
 import { Pool, Token } from 'services/observables/tokens';
 
-const ContentBlock = ({
+const AvailableItem = ({
   token,
   tknApr,
 }: {
@@ -40,14 +40,15 @@ const ContentBlock = ({
   );
 };
 
+const navOptions: NavigationOptions = {
+  nextEl: '.swiper-next-btn',
+  prevEl: '.swiper-prev-btn',
+  disabledClass:
+    'cursor-not-allowed text-graphite disabled:hover:text-graphite',
+};
+
 export const V3AvailableToStake = () => {
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
-  const navOptions: NavigationOptions = {
-    nextEl: '.swiper-next-btn',
-    prevEl: '.swiper-prev-btn',
-    disabledClass:
-      'cursor-not-allowed text-graphite disabled:hover:text-graphite',
-  };
 
   return (
     <section className="">
@@ -71,14 +72,24 @@ export const V3AvailableToStake = () => {
       <Swiper
         modules={[Navigation]}
         spaceBetween={20}
-        slidesPerView={3}
+        slidesPerView={1}
         grabCursor
-        slidesPerGroup={3}
+        slidesPerGroup={1}
         navigation={navOptions}
+        breakpoints={{
+          440: {
+            slidesPerView: 2,
+            slidesPerGroup: 2,
+          },
+          1280: {
+            slidesPerView: 3,
+            slidesPerGroup: 3,
+          },
+        }}
       >
         {availabelToStake.map((item, i) => (
           <SwiperSlide key={i}>
-            <ContentBlock {...item} />
+            <AvailableItem {...item} />
           </SwiperSlide>
         ))}
       </Swiper>
