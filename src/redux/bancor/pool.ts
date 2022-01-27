@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { Pool } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
 import { isEqual, orderBy } from 'lodash';
@@ -7,13 +7,11 @@ import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 interface PoolState {
   pools: Pool[];
-  allPools: Pool[];
   statistics: Statistic[];
 }
 
 const initialState: PoolState = {
   pools: [],
-  allPools: [],
   statistics: [],
 };
 
@@ -23,9 +21,6 @@ const poolSlice = createSlice({
   reducers: {
     setPools: (state, action) => {
       state.pools = action.payload;
-    },
-    setAllPools: (state, action) => {
-      state.allPools = action.payload;
     },
     setStats: (state, action) => {
       state.statistics = action.payload;
@@ -42,8 +37,16 @@ export interface TopPool {
 
 export const getPools = createSelector(
   (state: RootState) => state.pool.pools,
-  (pools: Pool[]) => {
-    return orderBy(pools, 'liquidity', 'desc');
+  (state: RootState) => state.bancor.tokens,
+  (pools: Pool[], tokens: Token[]) => {
+    const pools_token_list = pools.filter((pool) => {
+      return (
+        tokens.findIndex(
+          (token) => pool.reserves[0].address === token.address
+        ) !== -1
+      );
+    });
+    return orderBy(pools_token_list, 'liquidity', 'desc');
   }
 );
 
@@ -112,6 +115,6 @@ export const getPoolById = (id: string) =>
     }
   );
 
-export const { setPools, setAllPools, setStats } = poolSlice.actions;
+export const { setPools, setStats } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;

@@ -68,14 +68,14 @@ export const {
   setBntPrice,
 } = bancorSlice.actions;
 
-const tokens = (state: BancorState) => state.tokens;
-const apiTokens = (state: BancorState) => state.apiTokens;
+const tokens = (state: RootState) => state.bancor.tokens;
+const apiTokens = (state: RootState) => state.bancor.apiTokens;
 
 export const getTokenById = createSelector(
   tokens,
   apiTokens,
   (_: any, id: string) => id,
-  (tokens, apiTokens, id) => {
+  (tokens: Token[], apiTokens: APIToken[], id) => {
     const token = tokens.find((t) => t.address === id);
     if (token) return token;
 

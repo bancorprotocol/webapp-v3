@@ -8,7 +8,6 @@ import {
   tokensNoBalance$,
   tokenListMerged$,
   poolTokens$,
-  allPools$,
   apiTokens$,
 } from 'services/observables/tokens';
 import {
@@ -29,7 +28,7 @@ import {
 } from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
-import { setAllPools, setPools, setStats } from 'redux/bancor/pool';
+import { setPools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
 import {
   setLoadingLockedBnt,
@@ -85,10 +84,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   pools$.subscribe((pools) => {
     dispatch(setPools(pools));
-  });
-
-  allPools$.subscribe((pools) => {
-    dispatch(setAllPools(pools));
   });
 
   statistics$.subscribe((stats) => {

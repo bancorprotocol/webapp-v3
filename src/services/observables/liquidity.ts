@@ -9,7 +9,7 @@ import {
 } from 'services/web3/protection/rewards';
 import { switchMapIgnoreThrow } from './customOperators';
 import { fifteenSeconds$ } from './timers';
-import { allPools$ } from './tokens';
+import { pools$ } from './tokens';
 import {
   setLoadingPositions,
   setLoadingRewards,
@@ -17,7 +17,7 @@ import {
   user$,
 } from './user';
 
-export const protectedPositions$ = combineLatest([allPools$, user$]).pipe(
+export const protectedPositions$ = combineLatest([pools$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
     if (user) {
       const positions = await fetchProtectedPositions(pools, user);
