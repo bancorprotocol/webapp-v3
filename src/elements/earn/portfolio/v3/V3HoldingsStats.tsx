@@ -1,6 +1,6 @@
 export const V3HoldingsStats = () => {
   return (
-    <section className="content-block px-20 pt-20 pb-14 grid grid-cols-3">
+    <section className="content-block px-20 pt-20 pb-14 grid grid-cols-2 md:grid-cols-3">
       <div className="space-y-5">
         <div className="text-[22px]">$10,200</div>
         <div className="text-graphite">Earned</div>

@@ -7,18 +7,16 @@ import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStak
 
 export const V3Portfolio = () => {
   return (
-    <div>
-      <div className="grid grid-cols-12 gap-x-[36px]">
-        <div className="col-span-8 space-y-20">
-          <V3TotalHoldings />
-          <V3HoldingsStats />
-          <V3EarningTable />
-          <V3AvailableToStake />
-        </div>
-        <div className="col-span-4 space-y-20">
-          <V3Withdraw />
-          <V3ExternalHoldings />
-        </div>
+    <div className="grid grid-cols-12 lg:gap-x-[36px]">
+      <div className="col-span-12 lg:col-span-12 xl:col-span-8 space-y-20">
+        <V3TotalHoldings />
+        <V3HoldingsStats />
+        <V3EarningTable />
+        <V3AvailableToStake />
+      </div>
+      <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-20">
+        <V3Withdraw />
+        <V3ExternalHoldings />
       </div>
     </div>
   );
