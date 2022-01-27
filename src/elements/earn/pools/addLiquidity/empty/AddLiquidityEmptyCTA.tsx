@@ -116,7 +116,7 @@ export const AddLiquidityEmptyCTA = ({
         pool.name,
         tkn.symbol,
         amountTkn,
-        tknAmountUsd,
+        tknAmountUsd.toString(),
         amountBnt,
         bntAmountUsd,
         fiatToggle

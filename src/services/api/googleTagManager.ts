@@ -265,7 +265,7 @@ export const setCurrentLiquidity = (
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
-  tokenAmountUsd: number | string | undefined,
+  tokenAmountUsd: string | undefined,
   bntAmount: string | undefined,
   bntAmountUsd: number | undefined,
   usdToggle: boolean | undefined

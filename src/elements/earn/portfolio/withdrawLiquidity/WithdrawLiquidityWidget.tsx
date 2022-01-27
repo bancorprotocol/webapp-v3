@@ -185,7 +185,7 @@ export const WithdrawLiquidityWidget = ({
       pool.name,
       token!.symbol,
       amount,
-      amountUsd,
+      amountUsd.toString(),
       undefined,
       undefined,
       fiatToggle
