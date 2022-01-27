@@ -120,7 +120,7 @@ export const setCurrentConversion = (
 export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.approved),
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
       conversion_unlimited: isUnlimited ? 'Unlimited' : 'Limited',
@@ -135,7 +135,7 @@ export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
 export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.success),
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
       conversion_market_token_rate: fromTokenPrice,
@@ -151,7 +151,7 @@ export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
 export const sendConversionFailEvent = (errorMsg: string) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.fail),
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       conversion: currentConversion,
       error: errorMsg,
@@ -166,7 +166,7 @@ export const sendConversionFailEvent = (errorMsg: string) => {
 export const sendConversionEvent = (event: ConversionEvents) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(event),
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: currentConversion,
     ga_event: {
       category: 'Conversion',
@@ -200,20 +200,16 @@ export const sendWalletEvent = (
       ga_event: {
         category: wallet,
       },
-      user_properties: {
+      wallet_properties: {
         wallet_id: id,
         wallet_name: name,
-      },
-      wallet: {
-        id,
-        name,
       },
     });
   else
     sendGTM({
       event: 'CE ' + event,
       event_properties: event_properties,
-      user_properties: undefined,
+      wallet_properties: undefined,
       ga_event: {
         category: wallet,
       },
@@ -224,7 +220,7 @@ export const sendInsight = (open: boolean) => {
   sendGTM({
     event: `CE Conversion Insights ${open ? 'Open' : 'Closed'}`,
     event_properties: undefined,
-    user_properties: undefined,
+    wallet_properties: undefined,
     ga_event: {
       category: 'Conversion',
     },
@@ -248,7 +244,7 @@ export const sendGTMPath = (
       currency: 'USD',
       swap_insights: to === swap ? (open ? 'Open' : 'Closed') : undefined,
     },
-    user_properties: undefined,
+    wallet_properties: undefined,
     ga_event: undefined,
   });
 };
@@ -300,7 +296,7 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
     event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
       ConversionEvents.approved
     )}`,
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
       liquidity_unlimited: isUnlimited ? 'Unlimited' : 'Limited',
@@ -317,7 +313,7 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
     event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
       ConversionEvents.success
     )}`,
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
       transaction_id: txHash,
@@ -335,7 +331,7 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
     event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
       ConversionEvents.fail
     )}`,
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
       error: errorMsg,
@@ -352,7 +348,7 @@ export const sendLiquidityEvent = (event: ConversionEvents) => {
     event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
       event
     )}`,
-    user_properties: undefined,
+    wallet_properties: undefined,
     event_properties: currentLiquidity,
     ga_event: {
       category: 'Liquidity',
