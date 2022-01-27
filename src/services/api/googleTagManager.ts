@@ -284,11 +284,16 @@ export const setCurrentLiquidity = (
   };
 };
 
+const getLiquidityEventLabel = (event: ConversionEvents) => {
+  const type = currentLiquidity.liquidity_type
+    .replace('Dual', '')
+    .replace('Single', '');
+  return `CE Liquidity ${type} ${eventTxtMap.get(event)}`;
+};
+
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
-    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
-      ConversionEvents.approved
-    )}`,
+    event: getLiquidityEventLabel(ConversionEvents.approved),
     wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -303,9 +308,7 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
 
 export const sendLiquiditySuccessEvent = (txHash: string) => {
   const gtmData = {
-    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
-      ConversionEvents.success
-    )}`,
+    event: getLiquidityEventLabel(ConversionEvents.success),
     wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -321,9 +324,7 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
 
 export const sendLiquidityFailEvent = (errorMsg: string) => {
   const gtmData = {
-    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
-      ConversionEvents.fail
-    )}`,
+    event: getLiquidityEventLabel(ConversionEvents.fail),
     wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
@@ -337,10 +338,9 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
 };
 
 export const sendLiquidityEvent = (event: ConversionEvents) => {
+  console.log('sendLiquidityEvent', event);
   const gtmData = {
-    event: `CE Liquidity ${currentLiquidity.liquidity_type} ${eventTxtMap.get(
-      event
-    )}`,
+    event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
     event_properties: currentLiquidity,
     ga_event: {
