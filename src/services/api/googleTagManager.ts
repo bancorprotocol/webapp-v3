@@ -340,16 +340,26 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
   sendGTM(gtmData);
 };
 
-export const sendLiquidityPoolClickEvent = (event: ConversionEvents) => {
-  console.log(getLiquidityEventLabel(event));
+export const sendLiquidityPoolClickEvent = (
+  pool: string,
+  tokenSymbol: string,
+  network: EthNetworks = EthNetworks.Mainnet
+) => {
   const gtmData = {
-    event: getLiquidityEventLabel(event),
+    event: `CE Liquidity Withdraw Pool Click`,
     wallet_properties: undefined,
-    event_properties: currentLiquidity,
+    event_properties: {
+      liquidity_type: 'Withdraw Single',
+      liquidity_blockchain_network:
+        network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+      liquidity_pool: pool,
+      liquidity_token_symbol: tokenSymbol,
+    },
     ga_event: {
       category: 'Liquidity',
     },
   };
+  console.log(gtmData);
   sendGTM(gtmData);
 };
 
