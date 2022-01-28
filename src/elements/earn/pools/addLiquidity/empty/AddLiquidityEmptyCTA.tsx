@@ -16,6 +16,7 @@ import {
   ConversionEvents,
   sendLiquidityApprovedEvent,
   sendLiquidityEvent,
+  sendLiquiditySuccessEvent,
   setCurrentLiquidity,
 } from '../../../../../services/api/googleTagManager';
 import { useAppSelector } from '../../../../../redux';
@@ -45,13 +46,15 @@ export const AddLiquidityEmptyCTA = ({
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
     const cleanBnt = prettifyNumber(amountBnt);
+    let transactionId: string;
     await addLiquidity(
       amountBnt,
       bnt,
       amountTkn,
       tkn,
       pool.converter_dlt_id,
-      (txHash: string) =>
+      (txHash: string) => {
+        transactionId = txHash;
         addLiquidityNotification(
           dispatch,
           txHash,
@@ -60,8 +63,10 @@ export const AddLiquidityEmptyCTA = ({
           cleanBnt,
           bnt.symbol,
           pool.name
-        ),
+        );
+      },
       () => {
+        sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
