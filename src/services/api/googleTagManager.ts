@@ -286,8 +286,8 @@ export const setCurrentLiquidity = (
 
 const getLiquidityEventLabel = (event: ConversionEvents) => {
   const type = currentLiquidity.liquidity_type
-    .replace('Dual', '')
-    .replace('Single', '');
+    .replace('Dual ', '')
+    .replace('Single ', '');
   return `CE Liquidity ${type} ${eventTxtMap.get(event)}`;
 };
 
