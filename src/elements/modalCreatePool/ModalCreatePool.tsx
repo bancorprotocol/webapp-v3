@@ -33,7 +33,7 @@ export const ModalCreatePool = () => {
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
   const [fee, setFee] = useState<string>('0.2');
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const dispatch = useDispatch();
 
   const confirm = async () => {

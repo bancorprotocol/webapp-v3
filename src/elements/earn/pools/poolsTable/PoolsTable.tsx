@@ -20,18 +20,25 @@ interface Props {
 }
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
-  const v2pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const v3Pools = useAppSelector<Pool[]>((state) => state.pool.v3Pools);
   const [v3Selected, setV3Selected] = useState(true);
 
-  const v2data = useMemo<Pool[]>(() => {
-    return v2pools
+  const v2Data = useMemo<Pool[]>(() => {
+    return v2Pools
       .filter((p) => p.version >= 28)
       .filter(
         (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
       );
-  }, [v2pools, search]);
+  }, [v2Pools, search]);
 
-  const v2columns = useMemo<TableColumn<Pool>[]>(
+  const v3Data = useMemo<Pool[]>(() => {
+    return v3Pools.filter(
+      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [v3Pools, search]);
+
+  const v2Columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
         id: 'name',
@@ -103,6 +110,52 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     []
   );
 
+  const v3Columns = useMemo<TableColumn<Pool>[]>(
+    () => [
+      {
+        id: 'name',
+        Header: 'Name',
+        accessor: 'name',
+        Cell: (cellData) => PoolsTableCellName(cellData.row.original),
+        minWidth: 100,
+        sortDescFirst: true,
+      },
+      {
+        id: 'isProtected',
+        Header: 'Earn',
+        accessor: 'isProtected',
+        Cell: (cellData) =>
+          cellData.value ? (
+            <IconProtected className="w-18 h-20 text-primary" />
+          ) : (
+            <div />
+          ),
+        tooltip: 'Protected',
+        minWidth: 130,
+        sortDescFirst: true,
+      },
+      {
+        id: 'popularity',
+        Header: 'Popularity',
+        accessor: 'isProtected',
+        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
+        tooltip: 'Popularity',
+        minWidth: 130,
+        sortDescFirst: true,
+      },
+      {
+        id: 'actions',
+        Header: '',
+        accessor: 'pool_dlt_id',
+        Cell: (cellData) => PoolsTableCellActions(cellData.value),
+        width: 50,
+        minWidth: 50,
+        disableSortBy: true,
+      },
+    ],
+    []
+  );
+
   const switchV3Selected = () => setV3Selected(!v3Selected);
   const buttonVariant = (v3: boolean) =>
     (v3Selected && v3) || (!v3 && !v3Selected)
@@ -137,15 +190,15 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         </div>
         {/* <Dropdown /> */}
         {/* <div className="hidden md:block">
-          <ModalCreatePool />
+          <ModalCreatePool /> 
         </div> */}
       </div>
 
       <DataTable<Pool>
-        data={v2data}
-        columns={v3Selected ? v2columns : v2columns}
+        data={v3Selected ? v3Data : v2Data}
+        columns={v3Selected ? v3Columns : v2Columns}
         defaultSort={defaultSort}
-        isLoading={!v2pools.length}
+        isLoading={!v2Pools.length}
         search={search}
       />
     </section>

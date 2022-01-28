@@ -26,7 +26,7 @@ import {
 } from './user';
 import { setLoadingBalances } from 'redux/user/user';
 import { statistics$ } from 'services/observables/statistics';
-import { setPools, setStats } from 'redux/bancor/pool';
+import { setv2Pools, setStats } from 'redux/bancor/pool';
 import { bntPrice$ } from 'services/observables/bancor';
 import {
   setLoadingLockedBnt,
@@ -77,7 +77,7 @@ export const subscribeToObservables = (dispatch: any) => {
   });
 
   pools$.subscribe((pools) => {
-    dispatch(setPools(pools));
+    dispatch(setv2Pools(pools));
   });
 
   statistics$.subscribe((stats) => {

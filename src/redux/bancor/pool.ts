@@ -6,12 +6,14 @@ import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 
 interface PoolState {
-  pools: Pool[];
+  v2Pools: Pool[];
+  v3Pools: Pool[];
   statistics: Statistic[];
 }
 
 const initialState: PoolState = {
-  pools: [],
+  v2Pools: [],
+  v3Pools: [],
   statistics: [],
 };
 
@@ -19,8 +21,11 @@ const poolSlice = createSlice({
   name: 'pool',
   initialState,
   reducers: {
-    setPools: (state, action) => {
-      state.pools = action.payload;
+    setv2Pools: (state, action) => {
+      state.v2Pools = action.payload;
+    },
+    setv3Pools: (state, action) => {
+      state.v3Pools = action.payload;
     },
     setStats: (state, action) => {
       state.statistics = action.payload;
@@ -36,14 +41,14 @@ export interface TopPool {
 }
 
 export const getPools = createSelector(
-  (state: RootState) => state.pool.pools,
+  (state: RootState) => state.pool.v2Pools,
   (pools: Pool[]) => {
     return orderBy(pools, 'liquidity', 'desc');
   }
 );
 
 export const getProtectedPools = createSelector(
-  (state: RootState) => state.pool.pools,
+  (state: RootState) => state.pool.v2Pools,
   (pools: Pool[]) => {
     const protectedPools = pools.filter((p) => p.isProtected);
     return orderBy(protectedPools, 'liquidity', 'desc');
@@ -51,7 +56,7 @@ export const getProtectedPools = createSelector(
 );
 
 export const getTopPools = createSelector(
-  (state: RootState) => state.pool.pools,
+  (state: RootState) => state.pool.v2Pools,
   (pools: Pool[]) => {
     const filteredPools = pools
       .filter((p) => p.isProtected && p.liquidity > 100000)
@@ -96,7 +101,7 @@ const createDeepEqualSelector = createSelectorCreator(defaultMemoize, isEqual);
 
 export const getPoolById = (id: string) =>
   createDeepEqualSelector(
-    (state: RootState) => state.pool.pools,
+    (state: RootState) => state.pool.v2Pools,
     (pools: Pool[]) => {
       if (pools.length === 0) {
         return { status: 'loading' } as SelectedPool;
@@ -107,6 +112,6 @@ export const getPoolById = (id: string) =>
     }
   );
 
-export const { setPools, setStats } = poolSlice.actions;
+export const { setv2Pools, setStats } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;
