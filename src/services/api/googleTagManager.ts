@@ -254,7 +254,7 @@ interface CurrentLiquidity {
   liquidity_token_amount: string;
   liquidity_token_amount_usd?: number | string;
   liquidity_bnt_amount?: string;
-  liquidity_bnt_amount_usd?: number;
+  liquidity_bnt_amount_usd?: string;
   liquidity_input_type?: 'Fiat' | 'Token';
 }
 
@@ -267,7 +267,7 @@ export const setCurrentLiquidity = (
   tokenAmount: string,
   tokenAmountUsd: string | undefined,
   bntAmount: string | undefined,
-  bntAmountUsd: number | undefined,
+  bntAmountUsd: string | undefined,
   usdToggle: boolean | undefined
 ) => {
   currentLiquidity = {
@@ -286,8 +286,8 @@ export const setCurrentLiquidity = (
 
 const getLiquidityEventLabel = (event: ConversionEvents) => {
   const type = currentLiquidity.liquidity_type
-    .replace('Dual ', '')
-    .replace('Single ', '');
+    .replace(' Dual', '')
+    .replace(' Single', '');
   return `CE Liquidity ${type} ${eventTxtMap.get(event)}`;
 };
 

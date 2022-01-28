@@ -129,7 +129,7 @@ export const AddLiquidityEmptyCTA = ({
         amountTkn,
         tknAmountUsd.toString(),
         amountBnt,
-        bntAmountUsd,
+        bntAmountUsd.toString(),
         fiatToggle
       );
       sendLiquidityEvent(ConversionEvents.click);
