@@ -6,13 +6,12 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'redux/index';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
-//import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
-import { Popularity } from 'components/popularity/popularity';
-//import { Dropdown } from 'components/dropdown/Dropdown';
+import { Popularity } from 'components/popularity/Popularity';
+import { Dropdown } from 'components/dropdown/Dropdown';
 
 interface Props {
   search: string;
@@ -188,10 +187,16 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
             />
           </div>
         </div>
-        {/* <Dropdown /> */}
-        {/* <div className="hidden md:block">
-          <ModalCreatePool /> 
-        </div> */}
+        <Dropdown
+          title="Sort and Filter"
+          items={[
+            { id: '1', title: 'Relavence' },
+            { id: '2', title: 'Highest earning' },
+            { id: '3', title: 'Most popular' },
+          ]}
+          selected={null}
+          setSelected={() => {}}
+        />
       </div>
 
       <DataTable<Pool>
