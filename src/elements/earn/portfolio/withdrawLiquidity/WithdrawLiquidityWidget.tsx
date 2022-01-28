@@ -178,14 +178,16 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const handleWithdraw = useCallback(async () => {
-    const amountUsd = Number(amount) * Number(token ? token.usdPrice : 0);
+    const amountUsd = new BigNumber(amount)
+      .times(token ? token.usdPrice ?? 0 : 0)
+      .toString();
     setCurrentLiquidity(
       'Withdraw Single',
       chainId,
       pool.name,
       token!.symbol,
       amount,
-      amountUsd.toString(),
+      amountUsd,
       undefined,
       undefined,
       fiatToggle

@@ -21,6 +21,7 @@ import {
   setCurrentLiquidity,
 } from '../../../../../services/api/googleTagManager';
 import { useAppSelector } from '../../../../../redux';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   pool: Pool;
@@ -119,17 +120,21 @@ export const AddLiquidityEmptyCTA = ({
     if (!account) {
       dispatch(openWalletModal(true));
     } else {
-      const tknAmountUsd = Number(amountTkn) * Number(tkn.usdPrice ?? 0);
-      const bntAmountUsd = Number(amountBnt) * Number(bnt.usdPrice ?? 0);
+      const tknAmountUsd = new BigNumber(amountTkn)
+        .times(tkn.usdPrice ?? 0)
+        .toString();
+      const bntAmountUsd = new BigNumber(amountBnt)
+        .times(bnt.usdPrice ?? 0)
+        .toString();
       setCurrentLiquidity(
         'Deposit Dual',
         chainId,
         pool.name,
         tkn.symbol,
         amountTkn,
-        tknAmountUsd.toString(),
+        tknAmountUsd,
         amountBnt,
-        bntAmountUsd.toString(),
+        bntAmountUsd,
         fiatToggle
       );
       sendLiquidityEvent(ConversionEvents.click);
