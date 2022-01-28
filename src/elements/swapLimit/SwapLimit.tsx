@@ -58,7 +58,10 @@ export const SwapLimit = ({
   switchTokens,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { account, chainId } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');

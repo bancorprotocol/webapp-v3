@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
@@ -12,7 +11,7 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
-
+import { useAppSelector } from 'redux/index';
 interface Props {
   pool: Pool;
   bnt: Token;
@@ -31,7 +30,9 @@ export const AddLiquidityEmptyCTA = ({
   errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const { pushPortfolio } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {

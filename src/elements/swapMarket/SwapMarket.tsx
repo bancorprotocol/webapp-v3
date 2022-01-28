@@ -56,7 +56,10 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');

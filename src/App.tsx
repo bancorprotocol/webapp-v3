@@ -73,9 +73,9 @@ export const App = () => {
   }, [chainId]);
 
   useEffect(() => {
-    setUser(account);
+    setUser(account, dispatch);
     googleTagManager('', '');
-  }, [account]);
+  }, [account, dispatch]);
 
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 

@@ -20,7 +20,10 @@ import {
 } from 'services/notifications/notifications';
 
 export const ModalCreatePool = () => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
