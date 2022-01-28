@@ -146,7 +146,7 @@ export const sendConversionFailEvent = (errorMsg: string) => {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.fail),
     wallet_properties: undefined,
     event_properties: {
-      conversion: currentConversion,
+      ...currentConversion,
       error: errorMsg,
     },
     ga_event: {
