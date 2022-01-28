@@ -181,8 +181,11 @@ export const removeLiquidity = async (
         );
       }
     };
+    sendLiquidityEvent(ConversionEvents.wallet_req);
 
     const tx = await liquidateFn();
+    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+
     onHash(tx.hash);
     await tx.wait();
     onCompleted();

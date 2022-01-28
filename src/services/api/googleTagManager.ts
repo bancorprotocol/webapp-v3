@@ -292,6 +292,7 @@ const getLiquidityEventLabel = (event: ConversionEvents) => {
 };
 
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
+  console.log(getLiquidityEventLabel(ConversionEvents.approved));
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.approved),
     wallet_properties: undefined,
@@ -307,6 +308,7 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
 };
 
 export const sendLiquiditySuccessEvent = (txHash: string) => {
+  console.log(getLiquidityEventLabel(ConversionEvents.success));
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.success),
     wallet_properties: undefined,
@@ -323,6 +325,7 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
 };
 
 export const sendLiquidityFailEvent = (errorMsg: string) => {
+  console.log(getLiquidityEventLabel(ConversionEvents.fail));
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.fail),
     wallet_properties: undefined,
@@ -337,8 +340,21 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
   sendGTM(gtmData);
 };
 
+export const sendLiquidityPoolClickEvent = (event: ConversionEvents) => {
+  console.log(getLiquidityEventLabel(event));
+  const gtmData = {
+    event: getLiquidityEventLabel(event),
+    wallet_properties: undefined,
+    event_properties: currentLiquidity,
+    ga_event: {
+      category: 'Liquidity',
+    },
+  };
+  sendGTM(gtmData);
+};
+
 export const sendLiquidityEvent = (event: ConversionEvents) => {
-  console.log('sendLiquidityEvent', event);
+  console.log(getLiquidityEventLabel(event));
   const gtmData = {
     event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
