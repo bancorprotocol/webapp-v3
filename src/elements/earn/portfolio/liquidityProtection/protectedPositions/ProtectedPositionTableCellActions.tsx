@@ -37,6 +37,7 @@ export const ProtectedPositionTableCellActions = (
         <button
           onClick={() => {
             sendLiquidityPoolClickEvent(
+              'Withdraw',
               position.pool.name,
               position.reserveToken.symbol,
               chainId

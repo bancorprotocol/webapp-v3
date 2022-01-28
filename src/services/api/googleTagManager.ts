@@ -341,12 +341,13 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
 };
 
 export const sendLiquidityPoolClickEvent = (
+  type: 'Withdraw' | 'Deposit',
   pool: string,
-  tokenSymbol: string,
+  tokenSymbol: string | undefined,
   network: EthNetworks = EthNetworks.Mainnet
 ) => {
   const gtmData = {
-    event: `CE Liquidity Withdraw Pool Click`,
+    event: `CE Liquidity ${type} Pool Click`,
     wallet_properties: undefined,
     event_properties: {
       liquidity_type: 'Withdraw Single',
