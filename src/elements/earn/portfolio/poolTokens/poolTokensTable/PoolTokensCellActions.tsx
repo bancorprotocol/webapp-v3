@@ -49,7 +49,6 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
       },
       () => {
         sendLiquidityFailEvent('User rejected transaction');
-        console.log(123123);
         rejectNotification(dispatch);
       },
       (errorMsg) => {

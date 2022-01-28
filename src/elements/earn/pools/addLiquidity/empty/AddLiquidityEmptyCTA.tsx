@@ -16,6 +16,7 @@ import {
   ConversionEvents,
   sendLiquidityApprovedEvent,
   sendLiquidityEvent,
+  sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
 } from '../../../../../services/api/googleTagManager';
@@ -70,8 +71,12 @@ export const AddLiquidityEmptyCTA = ({
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
-      () => rejectNotification(dispatch),
-      () =>
+      () => {
+        sendLiquidityFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (errorMsg) => {
+        sendLiquidityFailEvent(errorMsg);
         addLiquidityFailedNotification(
           dispatch,
           cleanTkn,
@@ -79,7 +84,8 @@ export const AddLiquidityEmptyCTA = ({
           cleanBnt,
           bnt.symbol,
           pool.name
-        )
+        );
+      }
     );
   }, [amountTkn, tkn, amountBnt, bnt, pool, pushPortfolio, dispatch]);
 
