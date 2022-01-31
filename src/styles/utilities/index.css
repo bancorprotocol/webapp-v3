@@ -2,7 +2,7 @@
 
 @layer utilities {
     .content-block {
-        @apply bg-white rounded-10;
+        @apply bg-white rounded-10 dark:bg-charcoal;
     }
 
     .loading-skeleton {

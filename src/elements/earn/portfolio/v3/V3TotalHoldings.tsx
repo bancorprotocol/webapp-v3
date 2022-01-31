@@ -16,7 +16,7 @@ export const V3TotalHoldings = () => {
             <button
               key={i}
               className={`h-[26px] px-10 rounded-full ${
-                i === 3 ? 'bg-fog' : 'text-graphite'
+                i === 3 ? 'bg-fog dark:bg-grey' : 'text-graphite'
               }`}
             >
               {period}

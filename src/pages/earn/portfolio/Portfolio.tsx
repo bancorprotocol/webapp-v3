@@ -15,7 +15,7 @@ export const Portfolio = () => {
   const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
     classNameGenerator({
       'px-10 py-5 rounded-10': true,
-      'bg-white': selected,
+      'bg-white dark:bg-charcoal': selected,
       hidden: hidden,
     });
 
