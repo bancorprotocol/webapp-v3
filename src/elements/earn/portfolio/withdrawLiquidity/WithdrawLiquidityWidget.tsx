@@ -30,6 +30,14 @@ import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from '../../../../utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
+import {
+  ConversionEvents,
+  sendLiquidityApprovedEvent,
+  sendLiquidityEvent,
+  sendLiquidityFailEvent,
+  sendLiquiditySuccessEvent,
+  setCurrentLiquidity,
+} from '../../../../services/api/googleTagManager';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -69,6 +77,7 @@ export const WithdrawLiquidityWidget = ({
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
   const tokenInsufficent = Number(amount) > Number(tknAmount);
   const withdrawDisabled = emtpyAmount || tokenInsufficent;
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const showVBNTWarning = useCallback(() => {
     if (token && token.address !== bnt) {
@@ -122,22 +131,32 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const withdraw = useCallback(async () => {
-    if (token)
+    if (token) {
+      let transactionId: string;
       await withdrawProtection(
         positionId,
         amount,
         tknAmount,
         (txHash: string) => {
+          transactionId = txHash;
           withdrawProtectedPosition(dispatch, token, amount, txHash);
           setIsModalOpen(false);
         },
         async () => {
+          sendLiquiditySuccessEvent(transactionId);
           const positions = await fetchProtectedPositions(pools, account!);
           dispatch(setProtectedPositions(positions));
         },
-        () => rejectNotification(dispatch),
-        () => withdrawProtectedPositionFailed(dispatch, token, amount)
+        () => {
+          sendLiquidityFailEvent('User rejected transaction');
+          rejectNotification(dispatch);
+        },
+        (errorMsg) => {
+          sendLiquidityFailEvent(errorMsg);
+          withdrawProtectedPositionFailed(dispatch, token, amount);
+        }
       );
+    }
     setIsModalOpen(false);
   }, [
     account,
@@ -153,16 +172,43 @@ export const WithdrawLiquidityWidget = ({
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount: amount, token: govToken! }],
     withdraw,
-    ApprovalContract.LiquidityProtection
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const handleWithdraw = useCallback(async () => {
+    const amountUsd = new BigNumber(amount)
+      .times(token ? token.usdPrice ?? 0 : 0)
+      .toString();
+    setCurrentLiquidity(
+      'Withdraw Single',
+      chainId,
+      pool.name,
+      token!.symbol,
+      amount,
+      amountUsd,
+      undefined,
+      undefined,
+      fiatToggle
+    );
+    sendLiquidityEvent(ConversionEvents.click);
     if (withdrawingBNT) {
       setIsModalOpen(false);
       await wait(1000);
       onStart();
     } else withdraw();
-  }, [onStart, setIsModalOpen, withdraw, withdrawingBNT]);
+  }, [
+    amount,
+    chainId,
+    fiatToggle,
+    onStart,
+    pool.name,
+    setIsModalOpen,
+    token,
+    withdraw,
+    withdrawingBNT,
+  ]);
 
   return (
     <>

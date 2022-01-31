@@ -7,6 +7,7 @@ import { bntToken } from 'services/web3/config';
 import { useWeb3React } from '@web3-react/core';
 import { EthNetworks } from 'services/web3/types';
 import { addLiquidityByID, swapByfrom } from 'services/router';
+import { sendLiquidityPoolClickEvent } from '../../../../services/api/googleTagManager';
 
 export const PoolsTableCellActions = (pool: Pool) => {
   const { chainId } = useWeb3React();
@@ -17,6 +18,9 @@ export const PoolsTableCellActions = (pool: Pool) => {
     <div className="flex">
       <NavLink
         to={addLiquidityByID(pool.pool_dlt_id)}
+        onClick={() =>
+          sendLiquidityPoolClickEvent('Deposit', pool.name, undefined, chainId)
+        }
         className="btn-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 shadow-header mr-10"
       >
         <Tooltip

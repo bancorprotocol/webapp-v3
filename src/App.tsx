@@ -74,7 +74,7 @@ export const App = () => {
 
   useEffect(() => {
     setUser(account);
-    googleTagManager('', '');
+    googleTagManager();
   }, [account]);
 
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
