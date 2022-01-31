@@ -240,7 +240,10 @@ export const SwapMarket = ({
         sendConversionSuccessEvent(fromToken.usdPrice);
         onConfirmation();
       },
-      () => rejectNotification(dispatch),
+      () => {
+        sendConversionFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
       (error: string) => {
         sendConversionFailEvent(error);
         swapFailedNotification(
