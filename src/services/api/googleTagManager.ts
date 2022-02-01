@@ -157,8 +157,9 @@ export const sendConversionFailEvent = (errorMsg: string) => {
 };
 
 export const sendConversionEvent = (event: ConversionEvents) => {
+  const eventClickPrefix = event === ConversionEvents.click ? 'Swap ' : '';
   const gtmData = {
-    event: 'CE Conversion ' + eventTxtMap.get(event),
+    event: `CE Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
     wallet_properties: undefined,
     event_properties: currentConversion,
     ga_event: {
