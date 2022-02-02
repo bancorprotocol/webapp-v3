@@ -1,12 +1,6 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  pluck,
-  share,
-  shareReplay,
-} from 'rxjs/operators';
+import { distinctUntilChanged, map, pluck, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
 import { apiData$, correctedPools$, partialPoolTokens$ } from './pools';
@@ -44,7 +38,7 @@ import { findPoolByConverter } from '../../utils/helperFunctions';
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
-  share()
+  shareReplay(1)
 );
 
 export interface TokenList {
@@ -185,7 +179,7 @@ export const tokenListMerged$ = combineLatest([
       address: utils.getAddress(token.address),
     }))
   ),
-  shareReplay()
+  shareReplay(1)
 );
 
 export const minNetworkTokenLiquidityForMinting$ = combineLatest([

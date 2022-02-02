@@ -5,7 +5,6 @@ import {
   distinctUntilChanged,
   map,
   pluck,
-  share,
   shareReplay,
   startWith,
 } from 'rxjs/operators';
@@ -30,7 +29,7 @@ export const apiData$ = combineLatest([currentNetwork$, fifteenSeconds$]).pipe(
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
-  share()
+  shareReplay(1)
 );
 
 const trueAnchors$ = bancorConverterRegistry$.pipe(
