@@ -6,15 +6,12 @@ import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
 import { useDispatch } from 'react-redux';
 import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
-import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
-import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { privacyPolicy, tos } from 'services/router';
 
 export const SettingsMenu = () => {
-  const [showSettings, setShowSettings] = useState(false);
   const [customSlippage, setCustomSlippage] = useState('');
 
   const dispatch = useDispatch();
@@ -138,24 +135,6 @@ export const SettingsMenu = () => {
           </Popover.Panel>
         </DropdownTransition>
       </Popover>
-
-      <div className="md:hidden">
-        <button onClick={() => setShowSettings(true)} className="w-full">
-          <MenuSecondaryItem
-            label="Settings"
-            icon={<IconCog className="w-20" />}
-            subMenu={[]}
-          />
-        </button>
-        <ModalFullscreen
-          title="Settings"
-          setIsOpen={setShowSettings}
-          isOpen={showSettings}
-          showHeader
-        >
-          {content}
-        </ModalFullscreen>
-      </div>
     </>
   );
 };

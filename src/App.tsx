@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
@@ -7,8 +7,6 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
-import { Sidebar } from 'elements/sidebar/Sidebar';
-import { Slideover } from 'components/slideover/Slideover';
 import { useDispatch } from 'react-redux';
 import {
   setDarkMode,
@@ -40,8 +38,6 @@ export const App = () => {
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
@@ -81,37 +77,12 @@ export const App = () => {
 
   return (
     <BrowserRouter>
-      <nav className={'hidden md:block'}>
-        <Sidebar
-          isMinimized={isSidebarMinimized}
-          setIsMinimized={setIsSidebarMinimized}
-        />
-      </nav>
-      <nav className={'md:hidden'}>
-        <Slideover isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen}>
-          <div className="w-full w-[200px]">
-            <Sidebar
-              isMinimized={isSidebarMinimized}
-              setIsMinimized={setIsSidebarMinimized}
-              setIsSidebarOpen={setIsSidebarOpen}
-            />
-          </div>
-        </Slideover>
-      </nav>
-
-      <LayoutHeader
-        isMinimized={isSidebarMinimized}
-        setIsSidebarOpen={setIsSidebarOpen}
-      />
+      <LayoutHeader />
 
       {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <div
-          className={`md:mr-[30px] pt-[75px] transition-all duration-500 ${
-            isSidebarMinimized ? 'md:ml-[96px] ' : 'md:ml-[230px] '
-          }`}
-        >
+        <div className="pt-[75px] transition-all duration-500">
           {showBanner && <MarketingBanner />}
           <main
             className={`max-w-[1400px] mx-auto mb-30 ${
