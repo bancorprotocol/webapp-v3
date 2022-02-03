@@ -7,7 +7,6 @@ import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
-import { DarkMode } from 'elements/settings/DarkMode';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, vote } from 'services/router';
 
@@ -38,10 +37,9 @@ export const LayoutHeader = () => {
           </div>
 
           <div className="flex items-center gap-20">
-            <WalletConnectButton {...wallet} />
-            <DarkMode />
             <NotificationsMenu />
             <SettingsMenu />
+            <WalletConnectButton {...wallet} />
           </div>
         </div>
       </header>

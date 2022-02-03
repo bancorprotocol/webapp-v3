@@ -1,6 +1,6 @@
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
-import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
+import { ReactComponent as IconMenu } from 'assets/icons/menu.svg';
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
 import { useDispatch } from 'react-redux';
@@ -123,7 +123,7 @@ export const SettingsMenu = () => {
     <>
       <Popover className="hidden md:block relative">
         <Popover.Button className="flex items-center">
-          <IconCog className="w-[20px]" />
+          <IconMenu className="w-[20px]" />
         </Popover.Button>
 
         <DropdownTransition>
