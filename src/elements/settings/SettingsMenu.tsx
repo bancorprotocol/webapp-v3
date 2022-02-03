@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { privacyPolicy, tos } from 'services/router';
+import { DarkMode } from './DarkMode';
 
 export const SettingsMenu = () => {
   const [customSlippage, setCustomSlippage] = useState('');
@@ -42,16 +43,16 @@ export const SettingsMenu = () => {
           </>
         )}
 
-        <div>
-          <div className="mb-15">Slippage Tolerance</div>
+        <div className="text-black-low">Slippage Tolerance</div>
+        <div className="flex flex-col gap-[25px]">
           <div className="flex justify-between space-x-6">
             {slippages.map((slippage) => (
               <button
                 key={slippage}
                 onClick={() => dispatch(setSlippageTolerance(slippage))}
-                className={`w-full font-medium border border-grey-3 rounded-[12px] text-12 p-8 ${
+                className={`w-full border border-silver rounded-[12px] text-12 p-8 ${
                   currentSlippage === slippage
-                    ? 'bg-primary !border-primary text-white'
+                    ? 'bg-primary !border-primary text-black'
                     : ''
                 }`}
               >
@@ -60,10 +61,10 @@ export const SettingsMenu = () => {
             ))}
             <input
               type="text"
-              className={`w-[69px] dark:bg-blue-2 outline-none border border-grey-3 text-center text-12 rounded-[12px] ${
+              className={`w-[69px] dark:bg-blue-2 outline-none text-center text-12 rounded-[12px] ${
                 currentSlippage === Number(customSlippage) / 100
-                  ? 'bg-primary text-white placeholder-white'
-                  : ''
+                  ? 'bg-primary text-black placeholder-black'
+                  : 'bg-fog'
               }`}
               onFocus={() => {
                 if (!Number.isNaN(customSlippage)) {
@@ -81,6 +82,7 @@ export const SettingsMenu = () => {
               placeholder="Custom"
             />
           </div>
+          <DarkMode />
         </div>
       </div>
 
@@ -128,9 +130,6 @@ export const SettingsMenu = () => {
 
         <DropdownTransition>
           <Popover.Panel className="dropdown-menu w-[324px]">
-            <div className="dropdown-bubble" />
-            <div className="dropdown-header">Settings</div>
-
             {content}
           </Popover.Panel>
         </DropdownTransition>

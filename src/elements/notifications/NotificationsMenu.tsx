@@ -99,8 +99,6 @@ export const NotificationsMenu = () => {
 
         <DropdownTransition>
           <Popover.Panel static className="dropdown-menu">
-            <div className="dropdown-bubble" />
-
             <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
               <div className="dropdown-header flex justify-between text-16 font-semibold">
                 {title}

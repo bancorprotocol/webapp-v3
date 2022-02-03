@@ -7,11 +7,6 @@
     @apply shadow-header dark:shadow-none;
   }
 
-  .dropdown-bubble {
-    @apply absolute h-14 w-14 transform rotate-45 mt-[-26px] right-32;
-    @apply bg-white dark:bg-grey;
-  }
-
   .dropdown-header {
     @apply border-b border-graphite pb-15 mb-15 text-16 font-semibold;
   }
