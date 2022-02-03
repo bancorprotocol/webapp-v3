@@ -12,11 +12,7 @@ import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
-import {
-  ConversionEvents,
-  sendConversionEvent,
-} from 'services/api/googleTagManager';
-import { getConversionLS } from 'utils/localStorage';
+import { sendConversionApprovedEvent } from 'services/api/googleTagManager';
 import { ErrorCode } from 'services/web3/types';
 
 interface ModalApproveProps {
@@ -47,11 +43,8 @@ export const ModalApprove = ({
   const approve = async (amount?: string) => {
     try {
       setIsOpen(false);
-      const conversion = getConversionLS();
-      sendConversionEvent(ConversionEvents.approved, {
-        ...conversion,
-        conversion_unlimited: amount ? 'Limited' : 'Unlimited',
-      });
+      const isUnlimited = amount === undefined;
+      sendConversionApprovedEvent(isUnlimited);
       const txHash = await setNetworkContractApproval(
         fromToken,
         contract,
@@ -109,7 +102,7 @@ export const ModalApprove = ({
             <IconLock className="w-[22px] text-white" />
           </div>
           <h2 className="text-20 mb-8">Approve {fromToken.symbol}</h2>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-graphite">
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.
           </p>
@@ -119,7 +112,7 @@ export const ModalApprove = ({
           >
             Approve
           </button>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-graphite">
             Want to approve before each transaction?
           </p>
           <button onClick={() => approve(amount)} className="underline">

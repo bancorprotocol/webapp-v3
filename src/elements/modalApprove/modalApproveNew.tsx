@@ -27,7 +27,7 @@ export const ModalApproveNew = ({
             <IconLock className="w-[22px] text-white" />
           </div>
           <h2 className="text-20 mb-8">Approve {token.symbol}</h2>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-graphite">
             Before you can proceed, you need to approve {token.symbol} spending.
           </p>
           <button
@@ -37,7 +37,7 @@ export const ModalApproveNew = ({
           >
             {isLoading ? 'waiting for confirmation' : 'Approve'}
           </button>
-          <p className="text-center text-grey-5">
+          <p className="text-center text-graphite">
             Want to approve before each transaction?
           </p>
           <button

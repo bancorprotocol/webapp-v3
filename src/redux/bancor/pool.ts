@@ -54,7 +54,7 @@ export const getTopPools = createSelector(
   (state: RootState) => state.pool.pools,
   (pools: Pool[]) => {
     const filteredPools = pools
-      .filter((p) => p.isWhitelisted && p.liquidity > 100000)
+      .filter((p) => p.isProtected && p.liquidity > 100000)
       .map((p) => {
         return {
           tknSymbol: p.reserves[0].symbol,

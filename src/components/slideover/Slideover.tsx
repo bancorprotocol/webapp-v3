@@ -27,7 +27,7 @@ export const Slideover = ({ children, setIsOpen, isOpen }: SlideoverProps) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="absolute inset-0 bg-grey-4 bg-opacity-50 transition-opacity" />
+            <Dialog.Overlay className="absolute inset-0 bg-grey bg-opacity-50 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-y-0 pr-10 max-w-full flex">

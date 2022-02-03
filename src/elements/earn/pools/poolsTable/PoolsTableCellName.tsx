@@ -14,15 +14,19 @@ export const PoolsTableCellName = (pool: Pool) => {
         <Image
           src={pool.reserves[0].logoURI.replace('thumb', 'small')}
           alt="Token Logo"
-          className="bg-grey-1 rounded-full w-30 h-30 z-20"
+          className="bg-fog rounded-full w-30 h-30 z-20"
         />
-        <Image
-          src={pool.reserves[1].logoURI.replace('thumb', 'small')}
-          alt="Token Logo"
-          className="-ml-12 bg-grey-1 rounded-full w-30 h-30 z-10"
-        />
+        {!pool.isProtected && (
+          <Image
+            src={pool.reserves[1].logoURI.replace('thumb', 'small')}
+            alt="Token Logo"
+            className="-ml-12 bg-fog rounded-full w-30 h-30 z-10"
+          />
+        )}
       </div>
-      <h3 className="text-14 ml-10">{pool.name}</h3>
+      <h3 className="text-14 ml-10">
+        {pool.isProtected ? pool.name.replace('/BNT', '') : pool.name}
+      </h3>
     </div>
   );
 };

@@ -21,12 +21,12 @@ export const TablePagination = ({
 }: TablePaginationProps) => {
   const showResults = [10, 20, 30, 40, 50];
   return (
-    <div className="flex justify-center md:justify-between items-center p-20 text-grey-3 text-12">
+    <div className="flex justify-center md:justify-between items-center p-20 text-graphite text-12">
       <div className="hidden md:flex justify-between items-center  space-x-10">
         <span>Show</span>
-        <div className="px-10 py-5 border border-grey-2 dark:border-grey-3 rounded-[14px]">
+        <div className="px-10 py-5 border border-silver dark:border-graphite rounded-[14px]">
           <select
-            className="outline-none dark:bg-blue-4"
+            className="outline-none dark:bg-charcoal"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
@@ -54,9 +54,9 @@ export const TablePagination = ({
             className={`w-10 h-6 transition-transform duration-500 rotate-90`}
           />
         </button>
-        <div className="px-10 py-5 border border-grey-2 dark:border-grey-3 rounded-[14px]">
+        <div className="px-10 py-5 border border-silver dark:border-graphite rounded-[14px]">
           <input
-            className="dark:bg-blue-4"
+            className="dark:bg-charcoal"
             type="text"
             value={pageIndex + 1}
             onChange={(e) => {

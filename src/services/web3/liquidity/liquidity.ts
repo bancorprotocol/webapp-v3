@@ -160,13 +160,22 @@ export const removeLiquidity = async (
       poolToken.poolDecimals
     );
 
-    const tx = await contract.removeLiquidity(
-      expandToken(poolToken.amount, poolToken.poolDecimals),
-      [poolToken.bnt.token.address, poolToken.tkn.token.address],
-      [minBntReturn, minTknReturn]
-    );
-    onHash(tx.hash);
+    const liquidateFn = async () => {
+      if (poolToken.version < 28) {
+        return await contract.liquidate(
+          expandToken(poolToken.amount, poolToken.poolDecimals)
+        );
+      } else {
+        return await contract.removeLiquidity(
+          expandToken(poolToken.amount, poolToken.poolDecimals),
+          [poolToken.bnt.token.address, poolToken.tkn.token.address],
+          [minBntReturn, minTknReturn]
+        );
+      }
+    };
 
+    const tx = await liquidateFn();
+    onHash(tx.hash);
     await tx.wait();
     onCompleted();
   } catch (e: any) {

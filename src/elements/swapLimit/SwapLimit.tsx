@@ -6,7 +6,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { classNameGenerator } from 'utils/pureFunctions';
+import { classNameGenerator, wait } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
@@ -26,16 +26,15 @@ import {
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
+  setCurrentConversion,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
-import { wait } from 'utils/pureFunctions';
-import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
+import { Button, ButtonVariant } from '../../components/button/Button';
 
 enum Field {
   from,
@@ -226,8 +225,7 @@ export const SwapLimit = ({
         fromAmount
       );
       if (isApprovalReq) {
-        const conversion = getConversionLS();
-        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
     } catch (e: any) {
@@ -341,6 +339,27 @@ export const SwapLimit = ({
     return 'Trade';
   };
 
+  const handleSwapClick = () => {
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Limit',
+      chainId,
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      percentage,
+      duration.asSeconds().toString()
+    );
+    sendConversionEvent(ConversionEvents.click);
+    handleSwap(false, false, fromToken.address === ethToken);
+  };
+
   return (
     <div>
       <div className="px-20">
@@ -426,7 +445,7 @@ export const SwapLimit = ({
                 <div className="whitespace-nowrap text-20 min-w-[135px]">{`1 ${fromToken?.symbol} =`}</div>
                 <div className="relative w-full">
                   {isLoadingRate && (
-                    <div className="absolute flex justify-end bottom-[17px] bg-white dark:bg-blue-4 h-[21px] w-full pr-15">
+                    <div className="absolute flex justify-end bottom-[17px] bg-white dark:bg-charcoal h-[21px] w-full pr-15">
                       <div className="loading-skeleton h-[24px] w-4/5"></div>
                     </div>
                   )}
@@ -489,7 +508,7 @@ export const SwapLimit = ({
                     }}
                     format
                     placeholder="Custom"
-                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-grey-3 p-6"
+                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-graphite p-6"
                   />
                 </div>
               </div>
@@ -522,36 +541,14 @@ export const SwapLimit = ({
           isOpen={showEthModal}
           onConfirm={() => handleSwap(true)}
         />
-        <button
-          className="btn-primary rounded w-full"
-          onClick={() => {
-            const conversion = {
-              conversion_type: 'Limit',
-              conversion_blockchain_network:
-                chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
-              conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
-              conversion_from_token: fromToken.symbol,
-              conversion_to_token: toToken?.symbol,
-              conversion_from_amount: fromAmount,
-              conversion_from_amount_usd: fromAmountUsd,
-              conversion_to_amount: toAmount,
-              conversion_to_amount_usd: toAmountUsd,
-              conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
-              conversion_rate: rate,
-              conversion_rate_percentage:
-                selPercentage === -1
-                  ? percentage
-                  : percentages[selPercentage].toFixed(0),
-              conversion_experation: duration.asSeconds().toString(),
-            };
-            setConversionLS(conversion);
-            sendConversionEvent(ConversionEvents.click, conversion);
-            handleSwap(false, false, fromToken.address === ethToken);
-          }}
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          className="w-full"
+          onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}
         >
           {swapButtonText()}
-        </button>
+        </Button>
       </div>
     </div>
   );

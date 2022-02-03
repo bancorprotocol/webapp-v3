@@ -6,7 +6,7 @@ export const Tokens = () => {
   const [searchInput, setSearchInput] = useState('');
 
   return (
-    <div className="space-y-30 max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">
+    <div className="space-y-30 max-w-[1140px] mx-auto bg-fog dark:bg-black">
       <TopMovers setSearch={setSearchInput} />
       <TokenTable searchInput={searchInput} setSearchInput={setSearchInput} />
     </div>

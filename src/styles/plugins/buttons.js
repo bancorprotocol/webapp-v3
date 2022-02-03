@@ -1,103 +1,65 @@
 module.exports = function () {
-  return function ({ addComponents, theme }) {
-    const button = {};
-    const base = {
-      '@apply flex items-center justify-center px-30 rounded-full': '',
-      '@apply outline-none focus:outline-none focus:ring-4': '',
+  return function ({ addComponents }) {
+    const buttons = {};
+
+    buttons[`.btn`] = {
+      '@apply flex items-center justify-center': '',
+      '@apply px-20': '',
+      '@apply text-white text-14 font-normal': '',
+      '@apply outline-none focus:outline-none': '',
       '@apply transition-all duration-300': '',
-      fontWeight: theme('fontWeight.500'),
-      height: '54px',
-      fontSize: theme('fontSize.base'),
-    };
-    const baseDisabled = {
-      '&:disabled': {
-        opacity: 0.7,
-        cursor: 'not-allowed',
-      },
+      '@apply disabled:cursor-not-allowed': '',
     };
 
-    Object.keys(theme('colors')).forEach((key) => {
-      if (!theme(`colors.${key}.500`)) return;
-      button[`.btn-${key}`] = {
-        ...base,
-        backgroundColor: theme(`colors.${key}.500`),
-        color: theme('colors.white'),
-        [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
-        '&:hover': {
-          backgroundColor: theme(`colors.${key}.700`),
-        },
-        '&:active': {
-          backgroundColor: theme(`colors.${key}.400`),
-        },
-        '&:disabled': {
-          ...baseDisabled,
-        },
+    const variants = ['primary', 'success', 'error', 'warning'];
+    variants.forEach((variant) => {
+      const hover = `bg-${variant}-hover`;
+      buttons[`.btn-${variant}`] = {
+        [`@apply bg-${variant}`]: '',
+        [`@apply hover:${hover}`]: '',
+        [`@apply active:transform active:scale-95`]: '',
+        [`@apply disabled:bg-graphite`]: '',
+      };
+      buttons[`.btn-${variant}-hover`] = {
+        [`@apply ${hover}`]: '',
       };
     });
 
-    Object.keys(theme('colors')).forEach((key) => {
-      if (!theme(`colors.${key}.500`)) return;
-      button[`.btn-outline-${key}`] = {
-        ...base,
-        backgroundColor: theme(`colors.transparent`),
-        border: '2px solid',
-        borderColor: theme(`colors.${key}.500`),
-        color: theme(`colors.${key}.500`),
-        [`@apply focus:ring-${key}-500 focus:ring-opacity-50`]: '',
-        '&:hover': {
-          backgroundColor: theme(`colors.${key}.500`),
-          color: theme(`colors.white`),
-        },
-        '&:active': {
-          backgroundColor: theme(`colors.${key}.400`),
-          color: theme(`colors.white`),
-          borderColor: theme(`colors.${key}.400`),
-        },
-        '&:disabled': {
-          ...baseDisabled,
-        },
-      };
-    });
-
-    button[`.btn-secondary`] = {
-      ...base,
-      '@apply text-grey-4 bg-secondary': '',
-      '@apply dark:text-grey-3 dark:bg-blue-2': '',
-      '@apply focus:ring-grey-4 focus:ring-opacity-50': '',
-      '&:disabled': {
-        ...baseDisabled,
-      },
+    buttons[`.btn-secondary`] = {
+      [`@apply text-black dark:text-white`]: '',
+      [`@apply bg-white dark:bg-charcoal`]: '',
+      [`@apply border border-silver dark:border-charcoal`]: '',
+      [`@apply hover:btn-secondary-hover`]: '',
+      [`@apply active:transform active:scale-95`]: '',
+      [`@apply disabled:bg-white disabled:text-charcoal disabled:text-opacity-50 disabled:border-charcoal disabled:border-opacity-50`]:
+        '',
+      [`@apply dark:disabled:bg-charcoal dark:disabled:text-grey dark:disabled:border-grey`]:
+        '',
     };
-
-    button[`.btn-outline-secondary`] = {
-      ...base,
-      '@apply text-blue-4 bg-white': '',
-      '@apply dark:text-grey-2 dark:bg-blue-2': '',
-      '@apply focus:ring-grey-4 focus:ring-opacity-50': '',
-      '@apply border border-grey-3': '',
-      '&:disabled': {
-        ...baseDisabled,
-      },
+    buttons[`.btn-secondary-hover`] = {
+      [`@apply text-primary border-primary dark:text-primary dark:border-primary`]:
+        '',
     };
 
     const sizes = {
+      xs: {
+        '@apply py-[5px] rounded-full': '',
+      },
       sm: {
-        '@apply text-12 h-28 px-20 focus:ring-2': '',
+        '@apply py-[9px] rounded-full': '',
+      },
+      md: {
+        '@apply py-[13px] rounded-full': '',
       },
       lg: {
-        fontSize: theme('fontSize.18'),
-        height: '44px',
-      },
-      xl: {
-        fontSize: theme('fontSize.20'),
-        height: '60px',
+        '@apply py-[16px] rounded-full': '',
       },
     };
 
-    Object.keys(sizes).forEach((key) => {
-      button[`.btn-${key}`] = sizes[key];
+    Object.keys(sizes).forEach((size) => {
+      buttons[`.btn-${size}`] = sizes[size];
     });
 
-    addComponents(button);
+    addComponents(buttons);
   };
 };

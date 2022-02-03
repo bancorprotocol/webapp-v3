@@ -83,7 +83,7 @@ export const SwapWidget = ({
   );
 
   return (
-    <div className="bg-white dark:bg-blue-4 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
+    <div className="bg-white dark:bg-charcoal h-screen w-screen md:h-auto md:w-auto md:bg-fog md:dark:bg-black">
       <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
         <div>
           <div className="widget ">
@@ -117,7 +117,7 @@ export const SwapWidget = ({
             )}
           </div>
           {isLimit ? (
-            <div className="text-center text-10 text-grey-4 mt-18">
+            <div className="text-center text-10 text-grey mt-18">
               Limit orders are powered by KeeperDAO
             </div>
           ) : (

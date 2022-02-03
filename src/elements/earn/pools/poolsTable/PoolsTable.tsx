@@ -21,9 +21,11 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
 
   const data = useMemo<Pool[]>(() => {
-    return pools.filter(
-      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
-    );
+    return pools
+      .filter((p) => p.version >= 28)
+      .filter(
+        (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+      );
   }, [pools, search]);
 
   const columns = useMemo<TableColumn<Pool>[]>(
@@ -115,7 +117,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="max-w-[160px] rounded-10 h-[35px]"
+              className="max-w-[160px] rounded-20 h-[35px]"
             />
           </div>
           <div className="hidden md:block">

@@ -59,7 +59,6 @@ export const getEthToken = (
       p.reserves.find((r) => r.address === eth.dlt_id)
     );
     const usdVolume24 = pool ? pool.volume_24h.usd : null;
-    const isWhitelisted = pool ? pool.isWhitelisted : false;
     const seven_days_ago = get7DaysAgo().getUTCSeconds();
 
     return {
@@ -81,7 +80,7 @@ export const getEthToken = (
           time: (seven_days_ago + i * 360) as UTCTimestamp,
         })),
       usd_volume_24: usdVolume24,
-      isWhitelisted,
+      isProtected: true,
     };
   }
 
@@ -131,7 +130,7 @@ const ropstenTokenEmptyProps = {
   price_change_24: 0,
   price_history_7d: [{ time: 1630000000 as UTCTimestamp, value: 0 }],
   usd_volume_24: '0',
-  isWhitelisted: false,
+  isProtected: false,
 };
 
 //Used to test create pool
