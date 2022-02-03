@@ -43,16 +43,16 @@ module.exports = function () {
 
     const sizes = {
       xs: {
-        '@apply h-[33px] rounded-full': '',
+        '@apply py-[5px] rounded-full': '',
       },
       sm: {
-        '@apply h-[39px] rounded-full': '',
+        '@apply py-[9px] rounded-full': '',
       },
       md: {
-        '@apply h-[47px] rounded-full': '',
+        '@apply py-[13px] rounded-full': '',
       },
       lg: {
-        '@apply h-[53px] rounded-full': '',
+        '@apply py-[16px] rounded-full': '',
       },
     };
 
