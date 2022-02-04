@@ -3,13 +3,14 @@ import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { ReactComponent as IconMenu } from 'assets/icons/menu.svg';
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
+import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
 import { useDispatch } from 'react-redux';
 import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
-import { privacyPolicy, tos } from 'services/router';
+import { fiat, privacyPolicy, tos } from 'services/router';
 import { DarkMode } from './DarkMode';
 
 export const SettingsMenu = () => {
@@ -39,7 +40,7 @@ export const SettingsMenu = () => {
                 </button>
               </div>
             </div>
-            <hr className="border-grey-3 mt-15 mb-10" />
+            <hr className="border-fog mt-15 mb-10" />
           </>
         )}
 
@@ -83,10 +84,17 @@ export const SettingsMenu = () => {
             />
           </div>
           <DarkMode />
+          <NavLink exact strict to={fiat}>
+            <div className="flex items-center gap-10">
+              <IconFiat className="w-20" />
+              Buy crypto with fiat
+            </div>
+          </NavLink>
+          <hr className="border-fog mt-15 mb-10" />
         </div>
       </div>
 
-      <hr className="border-grey-3 mt-15 mb-10" />
+      <hr className="border-fog mt-15 mb-10" />
       {isMobile ? (
         <>
           <div>
@@ -99,12 +107,12 @@ export const SettingsMenu = () => {
               Privacy Policy
             </NavLink>
           </div>
-          <hr className="border-grey-3 mt-15 mb-10" />
+          <hr className="border-fog mt-15 mb-10" />
           <div>
             <NavLink exact strict to={tos} className="hover:underline">
               Terms of Use
             </NavLink>
-            <hr className="border-grey-3 mt-15 mb-10" />
+            <hr className="border-fog mt-15 mb-10" />
           </div>
         </>
       ) : (

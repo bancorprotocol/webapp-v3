@@ -8,7 +8,9 @@ import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
 import { NavLink } from 'react-router-dom';
-import { pools, portfolio, swap, vote } from 'services/router';
+import { pools, portfolio, swap, tokens, vote } from 'services/router';
+import { Popover } from '@headlessui/react';
+import { DropdownTransition } from 'components/transitions/DropdownTransition';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -22,22 +24,33 @@ export const LayoutHeader = () => {
             <NavLink to={pools}>
               <IconBancor className="w-[18px]" />
             </NavLink>
-            <NavLink to={swap} exact strict>
-              Trade
-            </NavLink>
+
+            <TopMenuDropdown
+              items={[
+                { title: 'Trade', link: swap },
+                { title: 'Tokens', link: tokens },
+              ]}
+              className="w-[115px]"
+            />
+
             <NavLink to={pools} exact strict>
               Earn
             </NavLink>
-            <NavLink to={vote} exact strict>
-              Vote
-            </NavLink>
+            <TopMenuDropdown
+              items={[
+                { title: 'Vote', link: vote },
+                { title: 'DAO Forum', link: 'https://gov.bancor.network' },
+              ]}
+              className="w-[125px]"
+            />
+
             <NavLink to={portfolio} exact strict>
               Portfolio
             </NavLink>
           </div>
 
           <div className="flex items-center gap-20">
-            <NotificationsMenu />
+            {wallet.account && <NotificationsMenu />}
             <SettingsMenu />
             <WalletConnectButton {...wallet} />
           </div>
@@ -46,5 +59,51 @@ export const LayoutHeader = () => {
       {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
+  );
+};
+
+interface TopMenu {
+  title: string;
+  link: string;
+}
+
+const TopMenuDropdown = ({
+  items,
+  className,
+}: {
+  items: TopMenu[];
+  className: string;
+}) => {
+  return (
+    <Popover className="block relative">
+      <Popover.Button>
+        <TopMenuDropdownItem item={items[0]} />
+      </Popover.Button>
+
+      <DropdownTransition>
+        <Popover.Panel
+          className={`dropdown-menu flex flex-col gap-20 ${className}`}
+        >
+          {items.map((item) => (
+            <TopMenuDropdownItem key={item.title} item={item} />
+          ))}
+        </Popover.Panel>
+      </DropdownTransition>
+    </Popover>
+  );
+};
+
+const TopMenuDropdownItem = ({ item }: { item: TopMenu }) => {
+  const href = item.link.startsWith('http');
+  return (
+    <NavLink
+      exact
+      strict
+      to={{ pathname: item.link }}
+      target={href ? '_blank' : undefined}
+      rel={href ? 'noopener' : undefined}
+    >
+      {item.title}
+    </NavLink>
   );
 };
