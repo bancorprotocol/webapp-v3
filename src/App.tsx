@@ -78,11 +78,10 @@ export const App = () => {
   return (
     <BrowserRouter>
       <LayoutHeader />
-
       {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <div className="pt-[75px] transition-all duration-500">
+        <div className="md:pt-[75px] transition-all duration-500">
           {showBanner && <MarketingBanner />}
           <main
             className={`max-w-[1400px] mx-auto mb-30 ${
