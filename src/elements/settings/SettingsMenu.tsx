@@ -12,10 +12,10 @@ import { useDispatch } from 'react-redux';
 import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import { fiat, privacyPolicy, tos } from 'services/router';
 import { DarkMode } from './DarkMode';
+import { Navigate } from 'components/navigate/Navigate';
 
 export const SettingsMenu = () => {
   const [customSlippage, setCustomSlippage] = useState('');
@@ -88,44 +88,34 @@ export const SettingsMenu = () => {
             />
           </div>
           <DarkMode />
-          <NavLink exact strict to={fiat}>
+          <Navigate to={fiat}>
             <div className="flex items-center gap-10 text-black">
               <IconFiat className="w-20" />
               Buy crypto with fiat
             </div>
-          </NavLink>
+          </Navigate>
           <hr className="border-fog" />
-          <NavLink exact strict to={fiat}>
-            Help Center
-          </NavLink>
-          <NavLink exact strict to={fiat}>
-            FAQ
-          </NavLink>
-          <NavLink exact strict to={fiat}>
+          <Navigate to={fiat}>Help Center</Navigate>
+          <Navigate to={fiat}>FAQ</Navigate>
+          <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
             Analytics
-          </NavLink>
-          <NavLink exact strict to={fiat}>
-            Developers
-          </NavLink>
-          <NavLink exact strict to={tos}>
-            Terms Of Use
-          </NavLink>
-          <NavLink exact strict to={privacyPolicy}>
-            Privacy Policy
-          </NavLink>
+          </Navigate>
+          <Navigate to="https://docs.bancor.network/">Developers</Navigate>
+          <Navigate to={tos}>Terms Of Use</Navigate>
+          <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
           <div className="flex justify-between text-graphite">
-            <NavLink to="https://twitter.com/Bancor">
+            <Navigate to="https://twitter.com/Bancor">
               <IconTwitter className="h-20" />
-            </NavLink>
-            <NavLink to="https://t.me/bancor">
+            </Navigate>
+            <Navigate to="https://t.me/bancor">
               <IconTelegram className="h-20" />
-            </NavLink>
-            <NavLink to="https://discord.gg/CAm3Ncyrxk">
+            </Navigate>
+            <Navigate to="https://discord.gg/CAm3Ncyrxk">
               <IconDiscord className="h-20" />
-            </NavLink>
-            <NavLink to="https://www.reddit.com/r/Bancor/">
+            </Navigate>
+            <Navigate to="https://www.reddit.com/r/Bancor/">
               <IconReddit className="h-20" />
-            </NavLink>
+            </Navigate>
           </div>
         </div>
       </div>
