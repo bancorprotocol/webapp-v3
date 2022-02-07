@@ -4,6 +4,10 @@ import { ReactComponent as IconMenu } from 'assets/icons/menu.svg';
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
 import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
+import { ReactComponent as IconTwitter } from 'assets/icons/twitter.svg';
+import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
+import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';
+import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { useDispatch } from 'react-redux';
 import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
@@ -45,7 +49,7 @@ export const SettingsMenu = () => {
         )}
 
         <div className="text-black-low">Slippage Tolerance</div>
-        <div className="flex flex-col gap-[25px]">
+        <div className="flex flex-col gap-[25px] text-black-low">
           <div className="flex justify-between space-x-6">
             {slippages.map((slippage) => (
               <button
@@ -85,47 +89,46 @@ export const SettingsMenu = () => {
           </div>
           <DarkMode />
           <NavLink exact strict to={fiat}>
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-10 text-black">
               <IconFiat className="w-20" />
               Buy crypto with fiat
             </div>
           </NavLink>
-          <hr className="border-fog mt-15 mb-10" />
-        </div>
-      </div>
-
-      <hr className="border-fog mt-15 mb-10" />
-      {isMobile ? (
-        <>
-          <div>
-            <NavLink
-              exact
-              strict
-              to={privacyPolicy}
-              className="hover:underline"
-            >
-              Privacy Policy
-            </NavLink>
-          </div>
-          <hr className="border-fog mt-15 mb-10" />
-          <div>
-            <NavLink exact strict to={tos} className="hover:underline">
-              Terms of Use
-            </NavLink>
-            <hr className="border-fog mt-15 mb-10" />
-          </div>
-        </>
-      ) : (
-        <div className="text-center">
-          <NavLink exact strict to={tos} className="hover:underline">
-            Terms of Use
+          <hr className="border-fog" />
+          <NavLink exact strict to={fiat}>
+            Help Center
           </NavLink>
-          <span className="mx-10">|</span>
-          <NavLink exact strict to={privacyPolicy} className="hover:underline">
+          <NavLink exact strict to={fiat}>
+            FAQ
+          </NavLink>
+          <NavLink exact strict to={fiat}>
+            Analytics
+          </NavLink>
+          <NavLink exact strict to={fiat}>
+            Developers
+          </NavLink>
+          <NavLink exact strict to={tos}>
+            Terms Of Use
+          </NavLink>
+          <NavLink exact strict to={privacyPolicy}>
             Privacy Policy
           </NavLink>
+          <div className="flex justify-between text-graphite">
+            <NavLink to="https://twitter.com/Bancor">
+              <IconTwitter className="h-20" />
+            </NavLink>
+            <NavLink to="https://t.me/bancor">
+              <IconTelegram className="h-20" />
+            </NavLink>
+            <NavLink to="https://discord.gg/CAm3Ncyrxk">
+              <IconDiscord className="h-20" />
+            </NavLink>
+            <NavLink to="https://www.reddit.com/r/Bancor/">
+              <IconReddit className="h-20" />
+            </NavLink>
+          </div>
         </div>
-      )}
+      </div>
     </>
   );
 
