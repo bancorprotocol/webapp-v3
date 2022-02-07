@@ -3,8 +3,9 @@
 @layer components {
   .dropdown-menu {
     @apply absolute w-[306px] mt-40 py-20 px-24 -right-30 rounded z-10;
-    @apply bg-white dark:bg-grey;
+    @apply bg-white dark:bg-black;
     @apply shadow-header dark:shadow-none;
+    @apply dark:border dark:border-grey;
   }
 
   .dropdown-header {

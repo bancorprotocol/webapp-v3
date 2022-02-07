@@ -48,8 +48,8 @@ export const SettingsMenu = () => {
           </>
         )}
 
-        <div className="text-black-low">Slippage Tolerance</div>
-        <div className="flex flex-col gap-[25px] text-black-low">
+        <div>Slippage Tolerance</div>
+        <div className="flex flex-col gap-[25px] text-black-low dark:text-white">
           <div className="flex justify-between space-x-6">
             {slippages.map((slippage) => (
               <button
@@ -89,7 +89,7 @@ export const SettingsMenu = () => {
           </div>
           <DarkMode />
           <Navigate to={fiat}>
-            <div className="flex items-center gap-10 text-black">
+            <div className="flex items-center gap-10 text-black dark:text-white">
               <IconFiat className="w-20" />
               Buy crypto with fiat
             </div>

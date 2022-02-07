@@ -13,7 +13,7 @@ export const WalletConnectButton = ({
 
   return (
     <Button
-      className="flex items-center bg-white h-40 text-black dark:text-white"
+      className="flex items-center bg-white h-40 text-black dark:text-white dark:bg-grey"
       onClick={() => handleWalletButtonClick()}
     >
       {selectedWallet && account ? (

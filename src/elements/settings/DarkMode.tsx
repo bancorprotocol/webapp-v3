@@ -9,21 +9,24 @@ export const DarkMode = () => {
   const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
 
   return (
-    <button
-      onClick={() => dispatch(setDarkMode(!darkMode))}
-      className="flex items-center gap-10 text-black dark:text-white"
-    >
+    <>
       {darkMode ? (
-        <>
-          <IconSun className="w-20" />
+        <button
+          onClick={() => dispatch(setDarkMode(false))}
+          className="flex items-center gap-10 text-white"
+        >
+          <IconSun className="w-20 text-white" />
           <div>Switch to light mode</div>
-        </>
+        </button>
       ) : (
-        <>
+        <button
+          onClick={() => dispatch(setDarkMode(true))}
+          className="flex items-center gap-10 text-black"
+        >
           <IconMoon className="w-20" />
           <div>Switch to dark mode</div>
-        </>
+        </button>
       )}
-    </button>
+    </>
   );
 };
