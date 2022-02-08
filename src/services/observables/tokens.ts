@@ -157,7 +157,7 @@ export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 
 export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
-    const res = await axios.get<TokenList>(list.uri);
+    const res = await axios.get<TokenList>(list.uri, { timeout: 10000 });
     return {
       ...res.data,
       logoURI: getLogoByURI(res.data.logoURI),
