@@ -73,24 +73,18 @@ export const App = () => {
     googleTagManager('', '');
   }, [account]);
 
-  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
-
   return (
     <BrowserRouter>
       <LayoutHeader />
       {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <div className="md:pt-[75px] transition-all duration-500">
-          {showBanner && <MarketingBanner />}
-          <main
-            className={`max-w-[1400px] mx-auto mb-30 ${
-              showBanner ? 'pt-40 md:pt-20' : 'pt-20'
-            }`}
-          >
+        <>
+          <MarketingBanner />
+          <main className="max-w-[1400px] mx-auto mb-30 md:pt-[75px] pt-60">
             <Router />
           </main>
-        </div>
+        </>
       )}
       <NotificationAlerts />
     </BrowserRouter>

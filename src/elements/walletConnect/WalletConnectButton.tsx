@@ -21,7 +21,7 @@ export const WalletConnectButton = ({
       ) : (
         <IconWallet className="w-20" />
       )}
-      <span className="hidden md:block md:mx-10">{buttonText}</span>
+      <span className="mx-10">{buttonText}</span>
     </Button>
   );
 };

@@ -34,7 +34,7 @@ export const SettingsMenu = () => {
           <Popover.Panel className="dropdown-menu w-[324px]">
             <div className="space-y-15">
               <div>Slippage Tolerance</div>
-              <div className="flex flex-col gap-[25px] text-black-low dark:text-white">
+              <div className="flex flex-col gap-[25px] text-black-low dark:text-white-low">
                 <div className="flex justify-between space-x-6">
                   {slippages.map((slippage) => (
                     <button
@@ -82,17 +82,17 @@ export const SettingsMenu = () => {
                   </div>
                 </Navigate>
                 <hr className="border-fog" />
-                <Navigate to={fiat}>Help Center</Navigate>
+                <Navigate to="https://support.bancor.network">
+                  Help Center
+                </Navigate>
                 <Navigate to={fiat}>FAQ</Navigate>
                 <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
                   Analytics
                 </Navigate>
-                <Navigate to="https://docs.bancor.network/">
-                  Developers
-                </Navigate>
+                <Navigate to="https://docs.bancor.network">Developers</Navigate>
                 <Navigate to={tos}>Terms Of Use</Navigate>
                 <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
-                <div className="flex justify-between text-graphite">
+                <div className="flex justify-between text- dark:black-disabled">
                   <Navigate to="https://twitter.com/Bancor">
                     <IconTwitter className="h-20" />
                   </Navigate>
@@ -102,7 +102,7 @@ export const SettingsMenu = () => {
                   <Navigate to="https://discord.gg/CAm3Ncyrxk">
                     <IconDiscord className="h-20" />
                   </Navigate>
-                  <Navigate to="https://www.reddit.com/r/Bancor/">
+                  <Navigate to="https://www.reddit.com/r/Bancor">
                     <IconReddit className="h-20" />
                   </Navigate>
                 </div>

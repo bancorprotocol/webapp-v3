@@ -87,7 +87,7 @@ export const Vote = () => {
   }, [refresh]);
 
   return (
-    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
+    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20 md:pt-30 pt-10">
       <div className="font-bold text-3xl text-charcoal dark:text-white mb-18">
         Vote
       </div>
