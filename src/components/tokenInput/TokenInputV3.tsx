@@ -27,7 +27,7 @@ const TokenInputV3 = ({
       onClick={() => {
         inputRef.current && inputRef.current.focus();
       }}
-      className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] ${
+      className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] bg-white ${
         isFocused ? 'border-primary' : 'border-graphite'
       }`}
     >
