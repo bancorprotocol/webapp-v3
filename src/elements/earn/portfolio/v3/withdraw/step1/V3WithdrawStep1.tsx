@@ -7,10 +7,10 @@ import { calcFiatValue } from 'utils/helperFunctions';
 
 interface Props {
   token: Token;
-  input: string;
-  setInput: (amount: string) => void;
-  inputOpposite: string;
-  setInputOpposite: (amount: string) => void;
+  inputTkn: string;
+  setInputTkn: (amount: string) => void;
+  inputFiat: string;
+  setInputFiat: (amount: string) => void;
   setStep: (step: number) => void;
   availableBalance: string;
   isFiat: boolean;
@@ -19,10 +19,10 @@ interface Props {
 const V3WithdrawStep1 = ({
   token,
   setStep,
-  input,
-  setInput,
-  inputOpposite,
-  setInputOpposite,
+  inputTkn,
+  setInputTkn,
+  inputFiat,
+  setInputFiat,
   isFiat,
   availableBalance,
 }: Props) => {
@@ -31,8 +31,8 @@ const V3WithdrawStep1 = ({
       .times(percentage / 100)
       .toString();
     const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
-    setInput(isFiat ? valueFiat : valueTkn);
-    setInputOpposite(!isFiat ? valueFiat : valueTkn);
+    setInputTkn(valueTkn);
+    setInputFiat(valueFiat);
   };
 
   return (
@@ -50,10 +50,10 @@ const V3WithdrawStep1 = ({
 
       <TokenInputV3
         token={token}
-        input={input}
-        setInput={setInput}
-        inputOpposite={inputOpposite}
-        setInputOpposite={setInputOpposite}
+        inputTkn={inputTkn}
+        setInputTkn={setInputTkn}
+        inputFiat={inputFiat}
+        setInputFiat={setInputFiat}
         isFiat={isFiat}
       />
 
@@ -68,7 +68,7 @@ const V3WithdrawStep1 = ({
         <Button
           className="px-50 my-40"
           onClick={() => setStep(2)}
-          disabled={!input}
+          disabled={!inputTkn}
         >
           Next {'->'}
         </Button>

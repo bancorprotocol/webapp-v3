@@ -7,29 +7,32 @@ import { Token } from 'services/observables/tokens';
 
 interface TokenInputV3Props {
   token: Token;
-  input: string;
-  setInput: (amount: string) => void;
-  inputOpposite: string;
-  setInputOpposite: (amount: string) => void;
+  inputTkn: string;
+  setInputTkn: (amount: string) => void;
+  inputFiat: string;
+  setInputFiat: (amount: string) => void;
   isFiat: boolean;
 }
 
 const TokenInputV3 = ({
   token,
-  input,
-  setInput,
-  inputOpposite,
-  setInputOpposite,
+  inputTkn,
+  setInputTkn,
+  inputFiat,
+  setInputFiat,
   isFiat,
 }: TokenInputV3Props) => {
   const { handleChange, inputUnit, oppositeUnit, isFocused, setIsFocused } =
     useTokenInputV3({
       token,
-      setInput,
-      setInputOpposite,
+      setInputTkn,
+      setInputFiat,
       isFiat,
     });
-  const { inputRef, helperRef } = useResizeTokenInput({ isFiat, input });
+  const { inputRef, helperRef } = useResizeTokenInput({
+    isFiat,
+    inputTkn,
+  });
 
   return (
     <div
@@ -54,16 +57,16 @@ const TokenInputV3 = ({
         type="text"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        value={input}
+        value={isFiat ? inputFiat : inputTkn}
         placeholder="0.00"
         onChange={handleChange}
         className={`${
-          input === '' ? 'min-w-[80px]' : 'min-w-[10px]'
+          inputTkn === '' ? 'min-w-[80px]' : 'min-w-[10px]'
         } max-w-[400px] ml-[80px] outline-none h-[75px] rounded-20 font-inherit`}
       />
       <span className="text-16 ml-5">{inputUnit}</span>
       <span className="absolute text-12 right-[10px]">
-        ~{prettifyNumber(inputOpposite, !isFiat)} {oppositeUnit}
+        ~{prettifyNumber(isFiat ? inputTkn : inputFiat, !isFiat)} {oppositeUnit}
       </span>
     </div>
   );
