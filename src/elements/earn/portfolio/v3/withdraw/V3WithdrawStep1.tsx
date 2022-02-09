@@ -1,5 +1,5 @@
-import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
+import { TokenInputV3 } from 'components/tokenInput/TokenInputV3';
 
 interface Props {
   amount: string;
@@ -15,19 +15,7 @@ export const V3WithdrawStep1 = ({ setStep, amount, setAmount }: Props) => {
       </h1>
       <h2 className="font-normal opacity-50">Available 0.123456 ETH</h2>
 
-      <div className="relative flex items-center my-10">
-        <Image
-          src={''}
-          alt={'Token Logo'}
-          className="absolute w-[40px] h-[40px] ml-20"
-        />
-        <input
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="w-full pl-[80px] border-2 border-graphite outline-none focus:border-primary rounded-20 h-[75px] text-[36px]"
-          placeholder="Enter amount ..."
-        />
-      </div>
+      <TokenInputV3 amount={amount} setAmount={setAmount} />
 
       <div className="space-x-10 opacity-50">
         <button>25%</button>
