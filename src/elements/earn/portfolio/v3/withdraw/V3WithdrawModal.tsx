@@ -33,13 +33,10 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
     setInputTkn('');
   };
 
-  const amount: AmountTknFiat = useMemo(() => {
-    if (isFiat) {
-      return { tkn: inputFiat, fiat: inputTkn };
-    } else {
-      return { tkn: inputTkn, fiat: inputFiat };
-    }
-  }, [inputTkn, inputFiat, isFiat]);
+  const amount: AmountTknFiat = useMemo(
+    () => ({ tkn: inputTkn, fiat: inputFiat }),
+    [inputTkn, inputFiat]
+  );
 
   return (
     <ModalFullscreenV3
