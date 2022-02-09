@@ -54,7 +54,7 @@ const TokenInputV3 = ({
         type="text"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        value={isFiat ? input : inputOpposite}
+        value={input}
         placeholder="0.00"
         onChange={handleChange}
         className={`${
@@ -63,8 +63,7 @@ const TokenInputV3 = ({
       />
       <span className="text-16 ml-5">{inputUnit}</span>
       <span className="absolute text-12 right-[10px]">
-        ~{prettifyNumber(isFiat ? inputOpposite : input, !isFiat)}{' '}
-        {oppositeUnit}
+        ~{prettifyNumber(inputOpposite, !isFiat)} {oppositeUnit}
       </span>
     </div>
   );
