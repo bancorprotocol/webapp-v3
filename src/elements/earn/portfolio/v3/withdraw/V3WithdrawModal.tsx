@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { wait } from 'utils/pureFunctions';
 import { useAppSelector } from 'redux/index';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
@@ -32,11 +32,6 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
     setStep(1);
     setInput('');
   };
-
-  useEffect(() => {
-    setInput(inputOpposite);
-    setInputOpposite(input);
-  }, [isFiat]);
 
   const amount: AmountTknFiat = useMemo(() => {
     if (isFiat) {
