@@ -6,6 +6,8 @@ import V3WithdrawStep1 from 'elements/earn/portfolio/v3/withdraw/step1/V3Withdra
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/withdraw/step3/V3WithdrawStep3';
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/withdraw/step4/V3WithdrawStep4';
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/withdraw/step2/V3WithdrawStep2';
+import { mockToken } from 'utils/mocked';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 
 interface Props {
   isOpen: boolean;
@@ -16,6 +18,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
+  const availableBalance = '0.123456';
 
   const onClose = async (state: boolean) => {
     setIsOpen(state);
@@ -29,13 +32,16 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
       title="Begin 7 day cooldown"
       isOpen={isOpen}
       setIsOpen={onClose}
+      titleElement={<SwapSwitch />}
     >
       {step === 1 && (
         <V3WithdrawStep1
+          token={mockToken}
           setStep={setStep}
           amount={amount}
           setAmount={setAmount}
           isFiat={isFiat}
+          availableBalance={availableBalance}
         />
       )}
       {step === 2 && <V3WithdrawStep2 setStep={setStep} amount={amount} />}

@@ -1,5 +1,6 @@
 import { Button } from 'components/button/Button';
 import { memo } from 'react';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   amount: string;
@@ -12,7 +13,7 @@ const V3WithdrawStep3 = ({ setStep, amount }: Props) => {
     <div className="text-center">
       <h1 className="text-[36px] font-normal my-50">
         Start {cooldownPeriod} day cooldown of{' '}
-        <span className="text-primary">{amount} ETH</span>
+        <span className="text-primary">{prettifyNumber(amount)} ETH</span>
       </h1>
       <div className="flex justify-center">
         <Button className="px-50" onClick={() => setStep(4)}>

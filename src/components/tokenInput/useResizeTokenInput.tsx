@@ -38,10 +38,17 @@ export const useResizeTokenInput = ({
 
   useEffect(() => {
     resize();
-    if (inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.addEventListener('input', resize);
+    const inputRefCurrent = inputRef.current;
+    if (inputRefCurrent) {
+      inputRefCurrent.focus();
+      inputRefCurrent.addEventListener('input', resize);
     }
+
+    return () => {
+      if (inputRefCurrent) {
+        inputRefCurrent.removeEventListener('input', resize);
+      }
+    };
   }, [isFiat, inputValue]);
 
   return { inputRef, helperRef };
