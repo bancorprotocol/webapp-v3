@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import { TokenInputV3Props } from 'components/tokenInput/TokenInputV3';
 
 const calcOppositeValue = (value: string, usdPrice: string, toUsd: boolean) => {
@@ -21,9 +21,9 @@ export const useTokenInputV3 = ({
   setAmount,
   symbol,
 }: TokenInputV3Props) => {
-  const [amountUsd, setAmountUsd] = useState(
-    calcOppositeValue(amount, usdPrice, true)
-  );
+  const amountUsd = useMemo(() => {
+    return calcOppositeValue(amount, usdPrice, true);
+  }, [amount, usdPrice]);
   const inputValue = isFiat ? amountUsd : amount;
   const inputUnit = isFiat ? 'USD' : symbol;
 
@@ -34,15 +34,12 @@ export const useTokenInputV3 = ({
     (value: string) => {
       console.log('triggered');
       setAmount(value);
-      const oppositeValue = calcOppositeValue(value, usdPrice, true);
-      setAmountUsd(oppositeValue);
     },
-    [setAmount, usdPrice]
+    [setAmount]
   );
 
   const handleFiatChange = useCallback(
     (value: string) => {
-      setAmountUsd(value);
       const oppositeValue = calcOppositeValue(value, usdPrice, false);
       setAmount(oppositeValue);
     },
