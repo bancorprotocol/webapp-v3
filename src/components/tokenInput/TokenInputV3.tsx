@@ -1,30 +1,35 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { Image } from 'components/image/Image';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useResizeTokenInput } from 'components/tokenInput/useResizeTokenInput';
 import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
+import { Token } from 'services/observables/tokens';
 
-export interface TokenInputV3Props {
-  symbol: string;
-  amount: string;
-  setAmount: (amount: string) => void;
-  usdPrice: string;
+interface TokenInputV3Props {
+  token: Token;
+  input: string;
+  setInput: (amount: string) => void;
+  inputOpposite: string;
+  setInputOpposite: (amount: string) => void;
   isFiat: boolean;
-  logoURI?: string;
 }
 
 const TokenInputV3 = ({
-  symbol,
-  amount,
-  setAmount,
-  usdPrice,
+  token,
+  input,
+  setInput,
+  inputOpposite,
+  setInputOpposite,
   isFiat,
-  logoURI,
 }: TokenInputV3Props) => {
-  const { handleChange, inputValue, inputUnit, oppositeValue, oppositeUnit } =
-    useTokenInputV3({ amount, usdPrice, isFiat, setAmount, symbol });
-  const { inputRef, helperRef } = useResizeTokenInput({ isFiat, inputValue });
-  const [isFocused, setIsFocused] = useState(false);
+  const { handleChange, inputUnit, oppositeUnit, isFocused, setIsFocused } =
+    useTokenInputV3({
+      token,
+      setInput,
+      setInputOpposite,
+      isFiat,
+    });
+  const { inputRef, helperRef } = useResizeTokenInput({ isFiat, input });
 
   return (
     <div
@@ -36,7 +41,7 @@ const TokenInputV3 = ({
       }`}
     >
       <Image
-        src={logoURI}
+        src={token.logoURI}
         alt={'Token Logo'}
         className="absolute w-[40px] h-[40px] ml-20"
       />
@@ -49,16 +54,16 @@ const TokenInputV3 = ({
         type="text"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        value={inputValue}
+        value={input}
         placeholder="0.00"
         onChange={handleChange}
         className={`${
-          inputValue === '' ? 'min-w-[80px]' : 'min-w-[10px]'
+          input === '' ? 'min-w-[80px]' : 'min-w-[10px]'
         } max-w-[400px] ml-[80px] outline-none h-[75px] rounded-20 font-inherit`}
       />
       <span className="text-16 ml-5">{inputUnit}</span>
       <span className="absolute text-12 right-[10px]">
-        ~{prettifyNumber(oppositeValue, !isFiat)} {oppositeUnit}
+        ~{prettifyNumber(inputOpposite, !isFiat)} {oppositeUnit}
       </span>
     </div>
   );

@@ -3,12 +3,12 @@ import { sanitizeNumberInput } from 'utils/pureFunctions';
 
 interface UseResizeTokenInputProps {
   isFiat: boolean;
-  inputValue: string;
+  input: string;
 }
 
 export const useResizeTokenInput = ({
   isFiat,
-  inputValue,
+  input,
 }: UseResizeTokenInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const helperRef = useRef<HTMLElement>(null);
@@ -49,7 +49,7 @@ export const useResizeTokenInput = ({
         inputRefCurrent.removeEventListener('input', resize);
       }
     };
-  }, [isFiat, inputValue]);
+  }, [isFiat, input]);
 
   return { inputRef, helperRef };
 };

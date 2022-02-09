@@ -2,11 +2,15 @@ import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { memo } from 'react';
 import { Token } from 'services/observables/tokens';
+import BigNumber from 'bignumber.js';
+import { calcFiatValue } from 'utils/helperFunctions';
 
 interface Props {
   token: Token;
-  amount: string;
-  setAmount: (amount: string) => void;
+  input: string;
+  setInput: (amount: string) => void;
+  inputOpposite: string;
+  setInputOpposite: (amount: string) => void;
   setStep: (step: number) => void;
   availableBalance: string;
   isFiat: boolean;
@@ -15,11 +19,22 @@ interface Props {
 const V3WithdrawStep1 = ({
   token,
   setStep,
-  amount,
-  setAmount,
+  input,
+  setInput,
+  inputOpposite,
+  setInputOpposite,
   isFiat,
   availableBalance,
 }: Props) => {
+  const setBalance = (percentage: 25 | 50 | 75 | 100) => {
+    const valueTkn = new BigNumber(availableBalance)
+      .times(percentage / 100)
+      .toString();
+    const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
+    setInput(isFiat ? valueFiat : valueTkn);
+    setInputOpposite(!isFiat ? valueFiat : valueTkn);
+  };
+
   return (
     <div className="text-center">
       <h1 className="text-[36px] font-normal mb-50">
@@ -27,33 +42,33 @@ const V3WithdrawStep1 = ({
       </h1>
 
       <button
-        onClick={() => setAmount(availableBalance)}
+        onClick={() => setBalance(100)}
         className="font-normal opacity-50"
       >
         Available {availableBalance} ETH
       </button>
 
       <TokenInputV3
-        symbol={token.symbol}
-        amount={amount}
-        setAmount={setAmount}
-        usdPrice={token.usdPrice ? token.usdPrice : '1'}
+        token={token}
+        input={input}
+        setInput={setInput}
+        inputOpposite={inputOpposite}
+        setInputOpposite={setInputOpposite}
         isFiat={isFiat}
-        logoURI={token.logoURI}
       />
 
       <div className="space-x-10 opacity-50">
-        <button>25%</button>
-        <button>50%</button>
-        <button>75%</button>
-        <button>100%</button>
+        <button onClick={() => setBalance(25)}>25%</button>
+        <button onClick={() => setBalance(50)}>50%</button>
+        <button onClick={() => setBalance(75)}>75%</button>
+        <button onClick={() => setBalance(100)}>100%</button>
       </div>
 
       <div className="flex justify-center">
         <Button
           className="px-50 my-40"
           onClick={() => setStep(2)}
-          disabled={!amount}
+          disabled={!input}
         >
           Next {'->'}
         </Button>

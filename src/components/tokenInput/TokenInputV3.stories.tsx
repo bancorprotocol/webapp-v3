@@ -12,13 +12,12 @@ export default {
 export const TokenInput: ComponentStory<typeof TokenInputV3> = (args) => {
   const [amount, setAmount] = useState('');
 
-  return <TokenInputV3 {...args} amount={amount} setAmount={setAmount} />;
+  return <TokenInputV3 {...args} input={amount} setInput={setAmount} />;
 };
 
 TokenInput.args = {
   isFiat: false,
-  amount: '',
-  usdPrice: '2',
+  input: '',
 };
 
 TokenInput.parameters = {

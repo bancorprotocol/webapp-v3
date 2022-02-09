@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { wait } from 'utils/pureFunctions';
 import { useAppSelector } from 'redux/index';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
@@ -14,18 +14,37 @@ interface Props {
   setIsOpen: (isOpen: boolean) => void;
 }
 
+export interface AmountTknFiat {
+  tkn: string;
+  fiat: string;
+}
+
 const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState('');
+  const [input, setInput] = useState('');
+  const [inputOpposite, setInputOpposite] = useState('');
   const availableBalance = '0.123456';
 
   const onClose = async (state: boolean) => {
     setIsOpen(state);
     await wait(500);
     setStep(1);
-    setAmount('');
+    setInput('');
   };
+
+  useEffect(() => {
+    setInput(inputOpposite);
+    setInputOpposite(input);
+  }, [isFiat]);
+
+  const amount: AmountTknFiat = useMemo(() => {
+    if (isFiat) {
+      return { tkn: inputOpposite, fiat: input };
+    } else {
+      return { tkn: input, fiat: inputOpposite };
+    }
+  }, [input, inputOpposite, isFiat]);
 
   return (
     <ModalFullscreenV3
@@ -38,8 +57,10 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
         <V3WithdrawStep1
           token={mockToken}
           setStep={setStep}
-          amount={amount}
-          setAmount={setAmount}
+          input={input}
+          setInput={setInput}
+          inputOpposite={inputOpposite}
+          setInputOpposite={setInputOpposite}
           isFiat={isFiat}
           availableBalance={availableBalance}
         />

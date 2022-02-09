@@ -1,62 +1,50 @@
-import BigNumber from 'bignumber.js';
-import { ChangeEvent, useCallback, useMemo } from 'react';
-import { TokenInputV3Props } from 'components/tokenInput/TokenInputV3';
+import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { calcFiatValue, calcTknValue } from 'utils/helperFunctions';
+import { Token } from 'services/observables/tokens';
 
-const calcOppositeValue = (value: string, usdPrice: string, toUsd: boolean) => {
-  if (!value) {
-    return value;
-  }
-
-  if (toUsd) {
-    return new BigNumber(value).times(usdPrice).toString();
+const calcOppositeValue = (
+  isFiat: boolean,
+  amount: string,
+  usdPrice: string | null,
+  decimals: number
+) => {
+  if (isFiat) {
+    return calcTknValue(amount, usdPrice, decimals);
   } else {
-    return new BigNumber(value).div(usdPrice).toString();
+    return calcFiatValue(amount, usdPrice);
   }
 };
 
+interface useTokenInputV3Props {
+  token: Token;
+  setInput: (amount: string) => void;
+  setInputOpposite: (amount: string) => void;
+  isFiat: boolean;
+}
+
 export const useTokenInputV3 = ({
-  amount,
-  usdPrice,
+  token,
+  setInput,
+  setInputOpposite,
   isFiat,
-  setAmount,
-  symbol,
-}: TokenInputV3Props) => {
-  const amountUsd = useMemo(() => {
-    return calcOppositeValue(amount, usdPrice, true);
-  }, [amount, usdPrice]);
-  const inputValue = isFiat ? amountUsd : amount;
+}: useTokenInputV3Props) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const { symbol, usdPrice, decimals } = useMemo(() => token, [token]);
   const inputUnit = isFiat ? 'USD' : symbol;
 
-  const oppositeValue = isFiat ? amount : amountUsd;
   const oppositeUnit = isFiat ? symbol : 'USD';
-
-  const handleTknChange = useCallback(
-    (value: string) => {
-      console.log('triggered');
-      setAmount(value);
-    },
-    [setAmount]
-  );
-
-  const handleFiatChange = useCallback(
-    (value: string) => {
-      const oppositeValue = calcOppositeValue(value, usdPrice, false);
-      setAmount(oppositeValue);
-    },
-    [setAmount, usdPrice]
-  );
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      if (isFiat) {
-        handleFiatChange(value);
-      } else {
-        handleTknChange(value);
-      }
+      setInput(value);
+      const oppositeValue = value
+        ? calcOppositeValue(isFiat, value, usdPrice, decimals)
+        : '';
+      setInputOpposite(oppositeValue);
     },
-    [handleFiatChange, handleTknChange, isFiat]
+    [decimals, isFiat, setInput, setInputOpposite, usdPrice]
   );
 
-  return { handleChange, inputValue, inputUnit, oppositeValue, oppositeUnit };
+  return { handleChange, inputUnit, oppositeUnit, isFocused, setIsFocused };
 };
