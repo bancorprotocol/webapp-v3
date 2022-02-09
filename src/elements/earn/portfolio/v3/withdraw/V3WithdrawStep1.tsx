@@ -1,21 +1,29 @@
 import { Button } from 'components/button/Button';
-import { TokenInputV3 } from 'components/tokenInput/TokenInputV3';
+import TokenInputV3 from 'components/tokenInput/TokenInputV3';
+import { memo } from 'react';
 
 interface Props {
   amount: string;
   setAmount: (amount: string) => void;
   setStep: (step: number) => void;
+  isFiat: boolean;
 }
 
-export const V3WithdrawStep1 = ({ setStep, amount, setAmount }: Props) => {
+const V3WithdrawStep1 = ({ setStep, amount, setAmount, isFiat }: Props) => {
   return (
     <div className="text-center">
       <h1 className="text-[36px] font-normal mb-50">
         How much ETH do you want to withdraw?
       </h1>
+
       <h2 className="font-normal opacity-50">Available 0.123456 ETH</h2>
 
-      <TokenInputV3 amount={amount} setAmount={setAmount} />
+      <TokenInputV3
+        amount={amount}
+        setAmount={setAmount}
+        usdPrice={'2'}
+        isFiat={isFiat}
+      />
 
       <div className="space-x-10 opacity-50">
         <button>25%</button>
@@ -41,3 +49,5 @@ export const V3WithdrawStep1 = ({ setStep, amount, setAmount }: Props) => {
     </div>
   );
 };
+
+export default memo(V3WithdrawStep1);

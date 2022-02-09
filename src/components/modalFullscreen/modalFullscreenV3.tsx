@@ -1,7 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, memo, ReactNode } from 'react';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 
 interface Props {
   isOpen: boolean;
@@ -10,12 +11,7 @@ interface Props {
   title: string;
 }
 
-export const ModalFullscreenV3 = ({
-  isOpen,
-  setIsOpen,
-  children,
-  title,
-}: Props) => {
+const ModalFullscreenV3 = ({ isOpen, setIsOpen, children, title }: Props) => {
   return (
     <>
       <Transition
@@ -40,9 +36,12 @@ export const ModalFullscreenV3 = ({
                 <IconBancor className="w-20 mr-20" />
                 {title}
               </h3>
-              <button onClick={() => setIsOpen(false)}>
-                <IconTimes className="w-20" />
-              </button>
+              <div className="flex items-center space-x-20">
+                <SwapSwitch />
+                <button onClick={() => setIsOpen(false)}>
+                  <IconTimes className="w-20" />
+                </button>
+              </div>
             </header>
 
             <main className="min-h-[calc(100vh-70px)] space-y-10 flex items-center justify-center">
@@ -54,3 +53,5 @@ export const ModalFullscreenV3 = ({
     </>
   );
 };
+
+export default memo(ModalFullscreenV3);

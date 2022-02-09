@@ -1,11 +1,12 @@
 import { Button } from 'components/button/Button';
+import { memo } from 'react';
 
 interface Props {
   amount: string;
   setStep: (step: number) => void;
 }
 
-export const V3WithdrawStep2 = ({ setStep, amount }: Props) => {
+const V3WithdrawStep2 = ({ setStep, amount }: Props) => {
   return (
     <div className="text-center">
       <button onClick={() => setStep(1)}>{'<-'} Change amount</button>
@@ -21,3 +22,5 @@ export const V3WithdrawStep2 = ({ setStep, amount }: Props) => {
     </div>
   );
 };
+
+export default memo(V3WithdrawStep2);

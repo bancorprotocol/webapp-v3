@@ -1,17 +1,19 @@
-import { ModalFullscreenV3 } from 'components/modalFullscreen/modalFullscreenV3';
-import { V3WithdrawStep1 } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep1';
-import { useState } from 'react';
-import { V3WithdrawStep2 } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep2';
-import { V3WithdrawStep3 } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep3';
-import { V3WithdrawStep4 } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep4';
+import { memo, useState } from 'react';
 import { wait } from 'utils/pureFunctions';
+import { useAppSelector } from 'redux/index';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
+import V3WithdrawStep1 from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep1';
+import V3WithdrawStep3 from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep3';
+import V3WithdrawStep4 from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep4';
+import V3WithdrawStep2 from 'elements/earn/portfolio/v3/withdraw/V3WithdrawStep2';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
+const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
+  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
 
@@ -33,6 +35,7 @@ export const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
           setStep={setStep}
           amount={amount}
           setAmount={setAmount}
+          isFiat={isFiat}
         />
       )}
       {step === 2 && <V3WithdrawStep2 setStep={setStep} amount={amount} />}
@@ -41,3 +44,5 @@ export const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
     </ModalFullscreenV3>
   );
 };
+
+export default memo(V3WithdrawModal);

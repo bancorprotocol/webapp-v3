@@ -1,11 +1,12 @@
 import { Button } from 'components/button/Button';
+import { memo } from 'react';
 
 interface Props {
   amount: string;
   setStep: (step: number) => void;
 }
 
-export const V3WithdrawStep3 = ({ setStep, amount }: Props) => {
+const V3WithdrawStep3 = ({ setStep, amount }: Props) => {
   const cooldownPeriod = 7;
   return (
     <div className="text-center">
@@ -21,3 +22,5 @@ export const V3WithdrawStep3 = ({ setStep, amount }: Props) => {
     </div>
   );
 };
+
+export default memo(V3WithdrawStep3);

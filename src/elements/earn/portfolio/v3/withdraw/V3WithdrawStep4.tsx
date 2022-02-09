@@ -1,11 +1,12 @@
 import { Button, ButtonVariant } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
+import { memo } from 'react';
 
 interface Props {
   onClose: (state: boolean) => void;
 }
 
-export const V3WithdrawStep4 = ({ onClose }: Props) => {
+const V3WithdrawStep4 = ({ onClose }: Props) => {
   const cooldownPeriod = 7;
   return (
     <div className="text-center">
@@ -27,3 +28,5 @@ export const V3WithdrawStep4 = ({ onClose }: Props) => {
     </div>
   );
 };
+
+export default memo(V3WithdrawStep4);
