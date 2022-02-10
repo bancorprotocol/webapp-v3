@@ -18,17 +18,16 @@ export const useResizeTokenInput = ({
       const length = inputRef.current.value.length;
       let fontSize: string;
 
-      if (length < 9) {
+      if (length < 12) {
         fontSize = '36px';
-      } else if (length < 15) {
+      } else if (length < 18) {
         fontSize = '30px';
       } else {
-        fontSize = '24px';
+        fontSize = '16px';
       }
 
       inputRef.current.style.fontSize = fontSize;
       helperRef.current.style.fontSize = fontSize;
-
       helperRef.current.textContent = sanitizeNumberInput(
         inputRef.current.value
       );

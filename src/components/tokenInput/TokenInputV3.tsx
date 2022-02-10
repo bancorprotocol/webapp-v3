@@ -1,9 +1,10 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Image } from 'components/image/Image';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useResizeTokenInput } from 'components/tokenInput/useResizeTokenInput';
 import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
 import { Token } from 'services/observables/tokens';
+import useDimensions from 'hooks/useDimensions';
 
 interface TokenInputV3Props {
   token: Token;
@@ -29,13 +30,21 @@ const TokenInputV3 = ({
       setInputFiat,
       isFiat,
     });
+
+  const { observe: containerRef, width: containerWidth } = useDimensions();
+  const { observe: oppositeRef, width: oppositeWidth } = useDimensions();
+  const { observe: symbolRef, width: symbolWidth } = useDimensions();
+  const maxInputWidth = useMemo(
+    () => containerWidth - symbolWidth - oppositeWidth - 120,
+    [oppositeWidth, symbolWidth, containerWidth]
+  );
   const { inputRef, helperRef } = useResizeTokenInput({
     isFiat,
     inputTkn,
   });
-
   return (
     <div
+      ref={containerRef}
       onClick={() => {
         inputRef.current && inputRef.current.focus();
       }}
@@ -62,10 +71,15 @@ const TokenInputV3 = ({
         onChange={handleChange}
         className={`${
           inputTkn === '' ? 'min-w-[80px]' : 'min-w-[10px]'
-        } max-w-[400px] ml-[80px] outline-none h-[75px] rounded-20 font-inherit`}
+        } ml-[80px] outline-none h-[75px] rounded-20 font-inherit`}
+        style={{
+          maxWidth: maxInputWidth,
+        }}
       />
-      <span className="text-16 ml-5">{inputUnit}</span>
-      <span className="absolute text-12 right-[10px]">
+      <span ref={symbolRef} className="text-16 ml-5">
+        {inputUnit}
+      </span>
+      <span ref={oppositeRef} className="absolute text-12 right-[10px]">
         ~{prettifyNumber(isFiat ? inputTkn : inputFiat, !isFiat)} {oppositeUnit}
       </span>
     </div>
