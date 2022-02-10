@@ -32,6 +32,7 @@ import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
 import { Router } from 'pages/Router';
+import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -81,11 +82,12 @@ export const App = () => {
       ) : (
         <>
           <MarketingBanner />
-          <main className="max-w-[1400px] mx-auto mb-30 md:pt-[75px] pt-60">
+          <main className="max-w-[1400px] mx-auto md:py-[75px] py-60">
             <Router />
           </main>
         </>
       )}
+      <MobileBottomNav />
       <NotificationAlerts />
     </BrowserRouter>
   );

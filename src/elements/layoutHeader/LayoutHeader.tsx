@@ -18,7 +18,7 @@ export const LayoutHeader = () => {
 
   return (
     <>
-      <header className="flex items-center justify-center fixed w-full h-60 z-10 bg-fog dark:bg-black shadow-header dark:shadow-none">
+      <header className="flex items-center justify-center fixed w-full h-60 z-30 bg-fog dark:bg-black shadow-header dark:shadow-none">
         <div className="flex items-center justify-between w-[1140px] mx-20 md:mx-0">
           <div className="hidden md:flex items-center gap-30">
             <NavLink to={pools}>
