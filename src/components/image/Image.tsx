@@ -1,8 +1,18 @@
-import { SyntheticEvent, useState } from 'react';
+import {
+  DetailedHTMLProps,
+  ImgHTMLAttributes,
+  SyntheticEvent,
+  useState,
+} from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { ropstenImage } from 'services/web3/config';
 
-interface ImageProps {
+type ImgAttributes = DetailedHTMLProps<
+  ImgHTMLAttributes<HTMLImageElement>,
+  HTMLImageElement
+>;
+
+interface ImageProps extends ImgAttributes {
   src?: string;
   alt: string;
   className: string;
@@ -16,11 +26,18 @@ const imageOnErrorHandler = (
   event.currentTarget.onerror = null;
 };
 
-export const Image = ({ src, alt, className, lazy = true }: ImageProps) => {
+export const Image = ({
+  src,
+  alt,
+  className,
+  lazy = true,
+  ...props
+}: ImageProps) => {
   const [loaded, setLoaded] = useState(false);
 
   return (
     <img
+      {...props}
       src={src ? src : ropstenImage}
       alt={loaded ? alt : ''}
       className={`${className} ${classNameGenerator({

@@ -5,6 +5,7 @@ import {
   mockedUniPositions,
 } from 'elements/earn/portfolio/v3/externalHoldings/mockedData';
 import axios from 'axios';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export interface ApyVisionUniPosition {
   nft_id: number;
@@ -132,7 +133,7 @@ const REKT_STATUS_THRESHOLD = -50;
 const getRektStatus = (usdValue: number, hodlValue: number): string => {
   const rektUsdValue = new BigNumber(usdValue).minus(hodlValue);
   const rektAtRisk = new BigNumber(rektUsdValue).lt(REKT_STATUS_THRESHOLD);
-  return rektAtRisk ? rektUsdValue.toString() : 'At risk';
+  return rektAtRisk ? prettifyNumber(rektUsdValue.times(-1), true) : 'At risk';
 };
 
 const fetchApyVisionUniswap = async (
