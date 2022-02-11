@@ -27,6 +27,7 @@ export const SuggestedTokens = ({
       <div className="flex w-full space-x-8">
         {suggestedTokenList.map((token) => (
           <button
+            key={token?.address}
             onClick={() => onClick(token!)}
             className="bg-blue-0 dark:bg-blue-5 dark:hover:bg-blue-1 pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
           >

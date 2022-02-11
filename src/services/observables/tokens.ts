@@ -179,10 +179,15 @@ export const tokenListMerged$ = combineLatest([
     }
   ),
   map((tokens) =>
-    tokens.map((token) => ({
-      ...token,
-      address: utils.getAddress(token.address),
-    }))
+    tokens.map((token) => {
+      if (token.address)
+        return {
+          ...token,
+          address: utils.getAddress(token.address),
+        };
+
+      return null;
+    })
   ),
   shareReplay()
 );
@@ -258,7 +263,7 @@ export const tokensNoBalance$ = combineLatest([
     newApiTokens.forEach((apiToken) => {
       if (currentNetwork === EthNetworks.Mainnet) {
         const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
+          (userToken) => userToken && userToken.address === apiToken.address
         );
         if (found) {
           overlappingTokens.push({
