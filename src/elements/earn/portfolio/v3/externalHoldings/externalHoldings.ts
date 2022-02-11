@@ -4,6 +4,7 @@ import {
   mockedNonUniPositions,
   mockedUniPositions,
 } from 'elements/earn/portfolio/v3/externalHoldings/mockedData';
+import axios from 'axios';
 
 export interface ApyVisionUniPosition {
   nft_id: number;
@@ -58,7 +59,41 @@ export interface ApyVisionUniPosition {
   };
 }
 
-export interface ApyVisionPosition {
+export interface ApyVisionNonUniPosition {
+  poolProviderKey: string;
+  networkId: number;
+  lastSyncBlock: number;
+  name: string;
+  address: string;
+  totalLpTokens: number;
+  ownedLpTokensPct: number;
+  mintBurntLedgerLpTokens: number;
+  currentOwnedLpTokens: number;
+  lpTokenUsdPrice: number;
+  totalValueUsdViaLpTokens: number;
+  totalValueUsd: number;
+  impLossPct: number;
+  initialCapitalValueUsd: number;
+  totalFeeUsd: number;
+  hasPartialSessions: boolean;
+  tokens: {
+    tokenAddress: string;
+    tokenName: string;
+    tokenStartingBalance: number;
+    tokenCurrentBalance: number;
+    tokenCurrentPrice: number;
+    tokenUsdGain: number;
+    weight: number;
+    averageWeightedExecutedPrice: number;
+  }[];
+  netGainUsd: number;
+  netGainPct: number;
+}
+
+interface ApyVisionUniResponse {
+  result: ApyVisionUniPosition[];
+}
+interface ApyVisionNonUniResponse {
   address: string;
   totalFeeUsd: 247.39293077295486;
   totalValueUsd: 23391878726.035645;
@@ -67,36 +102,7 @@ export interface ApyVisionPosition {
   chainId: 1;
   searchCountMonthly: 0;
   isProMember: false;
-  userPools: {
-    poolProviderKey: string;
-    networkId: number;
-    lastSyncBlock: number;
-    name: string;
-    address: string;
-    totalLpTokens: number;
-    ownedLpTokensPct: number;
-    mintBurntLedgerLpTokens: number;
-    currentOwnedLpTokens: number;
-    lpTokenUsdPrice: number;
-    totalValueUsdViaLpTokens: number;
-    totalValueUsd: number;
-    impLossPct: number;
-    initialCapitalValueUsd: number;
-    totalFeeUsd: number;
-    hasPartialSessions: boolean;
-    tokens: {
-      tokenAddress: string;
-      tokenName: string;
-      tokenStartingBalance: number;
-      tokenCurrentBalance: number;
-      tokenCurrentPrice: number;
-      tokenUsdGain: number;
-      weight: number;
-      averageWeightedExecutedPrice: number;
-    }[];
-    netGainUsd: number;
-    netGainPct: number;
-  }[];
+  userPools: ApyVisionNonUniPosition[];
   showUpgrade: boolean;
   priceLastUpdated: number;
   nextUpdateAt: number;
@@ -109,11 +115,16 @@ export interface ApyVisionPosition {
   totalCurrentPools: number;
 }
 
-export interface ExternalHoldingPosition {
+export interface ExternalHolding {
   ammName: string;
   tokens: Token[];
   usdValue: number;
   rektStatus: string;
+}
+
+export interface ApyVisionData {
+  positionsUni: ApyVisionUniPosition[];
+  positionsNonUni: ApyVisionNonUniPosition[];
 }
 
 const REKT_STATUS_THRESHOLD = -50;
@@ -124,10 +135,47 @@ const getRektStatus = (usdValue: number, hodlValue: number): string => {
   return rektAtRisk ? rektUsdValue.toString() : 'At risk';
 };
 
+const fetchApyVisionUniswap = async (
+  user: string
+): Promise<ApyVisionUniPosition[]> => {
+  const url = `https://stats.apy.vision/api/v1/uniswapv3/user_positions/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}`;
+  try {
+    const { data } = await axios.get<ApyVisionUniResponse>(url);
+    return data.result;
+  } catch (e: any) {
+    console.error('Returning mocked data for APY Vision Uniswap');
+    console.error(e.message);
+    return mockedUniPositions;
+  }
+};
+
+const fetchApyVisionNonUniswap = async (
+  user: string
+): Promise<ApyVisionNonUniPosition[]> => {
+  const url = `https://api.apy.vision/portfolio/1/core/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}`;
+  try {
+    const { data } = await axios.get<ApyVisionNonUniResponse>(url);
+    return data.userPools;
+  } catch (e: any) {
+    console.error('Returning mocked data for APY Vision NON Uniswap');
+    console.error(e.message);
+    return mockedNonUniPositions;
+  }
+};
+
+export const fetchExternalHoldings = async (
+  user: string
+): Promise<ApyVisionData> => {
+  const positionsUni = await fetchApyVisionUniswap(user);
+  const positionsNonUni = await fetchApyVisionNonUniswap(user);
+  return { positionsUni, positionsNonUni };
+};
+
 export const getExternalHoldingsUni = (
+  positions: ApyVisionUniPosition[],
   tokensMap: Map<string, Token>
-): ExternalHoldingPosition[] => {
-  return mockedUniPositions
+): ExternalHolding[] => {
+  return positions
     .map((pos) => {
       const token0 = tokensMap.get(pos.token0_name);
       const token1 = tokensMap.get(pos.token1_name);
@@ -141,21 +189,21 @@ export const getExternalHoldingsUni = (
         pos.current_day_data.hodl_value
       );
       const ammName = 'Uniswap';
-      const newPos: ExternalHoldingPosition = {
+      return {
         ammName,
         tokens,
         rektStatus,
         usdValue,
       };
-      return newPos;
     })
-    .filter((pos) => !!pos) as ExternalHoldingPosition[];
+    .filter((pos) => !!pos) as ExternalHolding[];
 };
 
 export const getExternalHoldingsNonUni = (
+  positions: ApyVisionNonUniPosition[],
   tokensMap: Map<string, Token>
-): ExternalHoldingPosition[] => {
-  return mockedNonUniPositions.userPools
+): ExternalHolding[] => {
+  return positions
     .map((pos) => {
       const tokens = pos.tokens
         .map((token) => tokensMap.get(token.tokenName))
@@ -168,7 +216,7 @@ export const getExternalHoldingsNonUni = (
       const usdValue = pos.totalValueUsd;
       const rektStatus = getRektStatus(usdValue, pos.initialCapitalValueUsd);
       const ammName = 'Non-Uniswap';
-      const newPos: ExternalHoldingPosition = {
+      const newPos: ExternalHolding = {
         ammName,
         tokens,
         rektStatus,
@@ -176,5 +224,5 @@ export const getExternalHoldingsNonUni = (
       };
       return newPos;
     })
-    .filter((pos) => !!pos) as ExternalHoldingPosition[];
+    .filter((pos) => !!pos) as ExternalHolding[];
 };
