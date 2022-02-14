@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import V3ExternalHoldingsItem from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldingsItem';
 import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
@@ -13,6 +13,7 @@ const navOptions: NavigationOptions = {
 };
 
 const V3ExternalHoldings = () => {
+  const [activeIndex, setActiveIndex] = useState(1);
   const { positions } = useExternalHoldings();
 
   return positions.length ? (
@@ -26,6 +27,9 @@ const V3ExternalHoldings = () => {
         spaceBetween={20}
         slidesPerView={1}
         grabCursor
+        onActiveIndexChange={({ activeIndex }) =>
+          setActiveIndex(activeIndex + 1)
+        }
         navigation={navOptions}
       >
         {positions.map((pos, i) => (
@@ -42,7 +46,9 @@ const V3ExternalHoldings = () => {
         <button className="external-holding-swiper-next-btn hover:text-primary">
           {'-->'}
         </button>
-        <div>1 of {positions.length}</div>
+        <div>
+          {activeIndex} of {positions.length}
+        </div>
       </div>
     </section>
   ) : (
