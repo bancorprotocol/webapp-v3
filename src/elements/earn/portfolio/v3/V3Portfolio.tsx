@@ -1,5 +1,5 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/V3Withdraw';
-import { V3ExternalHoldings } from 'elements/earn/portfolio/v3/V3ExternalHoldings';
+import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
 import { V3HoldingsStats } from 'elements/earn/portfolio/v3/V3HoldingsStats';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/V3EarningTable';
@@ -9,8 +9,9 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { useDispatch } from 'react-redux';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { openWalletModal } from 'redux/user/user';
+import { memo } from 'react';
 
-export const V3Portfolio = () => {
+const V3Portfolio = () => {
   const { account } = useWeb3React();
   const dispatch = useDispatch();
 
@@ -45,3 +46,5 @@ export const V3Portfolio = () => {
     </div>
   );
 };
+
+export default memo(V3Portfolio);
