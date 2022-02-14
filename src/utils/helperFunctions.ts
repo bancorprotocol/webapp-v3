@@ -2,8 +2,8 @@ import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
 import { shrinkToken } from './formulas';
-import { APIPool } from '../services/api/bancor';
-import { Pool } from '../services/observables/tokens';
+import { APIPool } from 'services/api/bancor';
+import { Pool } from 'services/observables/tokens';
 import dayjs from './dayjs';
 
 const oneMillion = new BigNumber(1000000);
@@ -166,3 +166,22 @@ export const findPoolByConverter = (
     return apiPools.find((x) => x.converter_dlt_id === converter);
   }
 };
+
+export const calcFiatValue = (
+  amount: number | string | BigNumber,
+  price: string | number | BigNumber | null
+) =>
+  new BigNumber(amount)
+    .times(price ?? 0)
+    .toFixed(2)
+    .toString();
+
+export const calcTknValue = (
+  amount: number | string,
+  price: string | number | BigNumber | null,
+  decimals: number
+) =>
+  new BigNumber(amount)
+    .div(price ?? 0)
+    .toFixed(decimals)
+    .toString();
