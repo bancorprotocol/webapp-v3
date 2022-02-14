@@ -8,7 +8,7 @@ import {
   getExternalHoldingsUni,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { Token } from 'services/observables/tokens';
-import { useAppSelector } from 'redux';
+import { useAppSelector } from 'redux/index';
 import { useAsyncEffect } from 'use-async-effect';
 
 export const useExternalHoldings = () => {
