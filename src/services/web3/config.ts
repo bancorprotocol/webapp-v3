@@ -87,6 +87,38 @@ export const getEthToken = (
   return null;
 };
 
+export const getTokenWithoutImage = (token: APIToken): Token => {
+  const usdPrice = token.rate.usd;
+  const usd_24h_ago = token.rate_24h_ago.usd;
+  const price_change_24 =
+    usdPrice && usd_24h_ago && Number(usd_24h_ago) !== 0
+      ? calculatePercentageChange(Number(usdPrice), Number(usd_24h_ago))
+      : 0;
+  const seven_days_ago = get7DaysAgo().getUTCSeconds();
+
+  return {
+    address: token.dlt_id,
+    logoURI: ropstenImage,
+    name: token.symbol,
+    chainId: 1,
+    balance: null,
+    symbol: token.symbol,
+    decimals: token.decimals,
+    usdPrice,
+    liquidity: token.liquidity.usd,
+    usd_24h_ago,
+    price_change_24,
+    price_history_7d: token.rates_7d
+      .filter((x) => !!x)
+      .map((x, i) => ({
+        value: Number(x),
+        time: (seven_days_ago + i * 360) as UTCTimestamp,
+      })),
+    usd_volume_24: '0',
+    isProtected: true,
+  };
+};
+
 export const getNetworkVariables = (
   ethNetwork: EthNetworks
 ): EthNetworkVariables => {

@@ -26,8 +26,8 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(pool ? pool.reserves[1].address : '')
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool ? pool.reserves[1].address : '')
   );
 
   const position = useAppSelector<ProtectedPositionGrouped | undefined>(

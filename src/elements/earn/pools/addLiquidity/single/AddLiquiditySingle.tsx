@@ -37,11 +37,11 @@ interface Props {
 export const AddLiquiditySingle = ({ pool }: Props) => {
   const { chainId } = useWeb3React();
   const dispatch = useDispatch();
-  const tkn = useAppSelector<Token | undefined>(
-    getTokenById(pool.reserves[0].address)
+  const tkn = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool.reserves[0].address)
   );
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(pool.reserves[1].address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool.reserves[1].address)
   );
   const { pushPortfolio, pushPools, pushLiquidityError } = useNavigation();
   const [isBNTSelected, setIsBNTSelected] = useState(false);
