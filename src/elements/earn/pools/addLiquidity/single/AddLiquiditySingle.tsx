@@ -20,12 +20,22 @@ import {
 } from 'services/notifications/notifications';
 import { useNavigation } from 'services/router';
 import { ApprovalContract } from 'services/web3/approval';
+import {
+  ConversionEvents,
+  sendLiquidityApprovedEvent,
+  sendLiquidityEvent,
+  sendLiquidityFailEvent,
+  sendLiquiditySuccessEvent,
+  setCurrentLiquidity,
+} from '../../../../../services/api/googleTagManager';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingle = ({ pool }: Props) => {
+  const { chainId } = useWeb3React();
   const dispatch = useDispatch();
   const tkn = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, pool.reserves[0].address)
@@ -40,6 +50,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const selectedToken = isBNTSelected ? bnt! : tkn!;
   const setSelectedToken = useCallback(
@@ -60,37 +71,48 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const addProtection = async () => {
     const cleanAmount = prettifyNumber(amount);
+    let transactionId: string;
     await addLiquiditySingle(
       pool,
       selectedToken,
       amount,
-      (txHash: string) =>
+      (txHash: string) => {
+        transactionId = txHash;
         addLiquiditySingleNotification(
           dispatch,
           txHash,
           cleanAmount,
           selectedToken.symbol,
           pool.name
-        ),
+        );
+      },
       () => {
+        sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
-      () => rejectNotification(dispatch),
-      () =>
+      () => {
+        sendLiquidityFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (errorMsg) => {
+        sendLiquidityFailEvent(errorMsg);
         addLiquiditySingleFailedNotification(
           dispatch,
           cleanAmount,
           selectedToken.symbol,
           pool.name
-        )
+        );
+      }
     );
   };
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addProtection,
-    ApprovalContract.LiquidityProtection
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const handleError = useCallback(() => {
@@ -124,6 +146,31 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     spaceAvailableBnt,
     spaceAvailableTkn,
   ]);
+
+  const handleCTAClick = useCallback(() => {
+    setCurrentLiquidity(
+      'Deposit Single',
+      chainId,
+      pool.name,
+      selectedToken.symbol,
+      amount,
+      amountUsd,
+      undefined,
+      undefined,
+      fiatToggle
+    );
+    sendLiquidityEvent(ConversionEvents.click);
+    onStart();
+  }, [
+    amount,
+    amountUsd,
+    chainId,
+    fiatToggle,
+    onStart,
+    pool.name,
+    selectedToken.symbol,
+  ]);
+
   if (!tkn) {
     pushLiquidityError();
     return <></>;
@@ -158,7 +205,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         setSpaceAvailableTkn={setSpaceAvailableTkn}
       />
       <AddLiquiditySingleCTA
-        onStart={onStart}
+        onStart={handleCTAClick}
         amount={amount}
         errorMsg={handleError()}
       />

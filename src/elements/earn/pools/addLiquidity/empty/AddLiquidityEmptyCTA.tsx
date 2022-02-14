@@ -12,6 +12,16 @@ import {
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
+import {
+  ConversionEvents,
+  sendLiquidityApprovedEvent,
+  sendLiquidityEvent,
+  sendLiquidityFailEvent,
+  sendLiquiditySuccessEvent,
+  setCurrentLiquidity,
+} from '../../../../../services/api/googleTagManager';
+import { useAppSelector } from '../../../../../redux';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   pool: Pool;
@@ -31,19 +41,22 @@ export const AddLiquidityEmptyCTA = ({
   errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const { account, chainId } = useWeb3React();
   const { pushPortfolio } = useNavigation();
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
     const cleanBnt = prettifyNumber(amountBnt);
+    let transactionId: string;
     await addLiquidity(
       amountBnt,
       bnt,
       amountTkn,
       tkn,
       pool.converter_dlt_id,
-      (txHash: string) =>
+      (txHash: string) => {
+        transactionId = txHash;
         addLiquidityNotification(
           dispatch,
           txHash,
@@ -52,13 +65,19 @@ export const AddLiquidityEmptyCTA = ({
           cleanBnt,
           bnt.symbol,
           pool.name
-        ),
+        );
+      },
       () => {
+        sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
-      () => rejectNotification(dispatch),
-      () =>
+      () => {
+        sendLiquidityFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (errorMsg) => {
+        sendLiquidityFailEvent(errorMsg);
         addLiquidityFailedNotification(
           dispatch,
           cleanTkn,
@@ -66,7 +85,8 @@ export const AddLiquidityEmptyCTA = ({
           cleanBnt,
           bnt.symbol,
           pool.name
-        )
+        );
+      }
     );
   }, [amountTkn, tkn, amountBnt, bnt, pool, pushPortfolio, dispatch]);
 
@@ -76,7 +96,9 @@ export const AddLiquidityEmptyCTA = ({
       { amount: amountTkn, token: tkn },
     ],
     handleAddLiquidity,
-    pool.converter_dlt_id
+    pool.converter_dlt_id,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const button = () => {
@@ -98,6 +120,24 @@ export const AddLiquidityEmptyCTA = ({
     if (!account) {
       dispatch(openWalletModal(true));
     } else {
+      const tknAmountUsd = new BigNumber(amountTkn)
+        .times(tkn.usdPrice ?? 0)
+        .toString();
+      const bntAmountUsd = new BigNumber(amountBnt)
+        .times(bnt.usdPrice ?? 0)
+        .toString();
+      setCurrentLiquidity(
+        'Deposit Dual',
+        chainId,
+        pool.name,
+        tkn.symbol,
+        amountTkn,
+        tknAmountUsd,
+        amountBnt,
+        bntAmountUsd,
+        fiatToggle
+      );
+      sendLiquidityEvent(ConversionEvents.click);
       onStart();
     }
   };

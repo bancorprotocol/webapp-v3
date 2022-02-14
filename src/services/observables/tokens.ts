@@ -152,7 +152,7 @@ export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 
 export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
-    const res = await axios.get<TokenList>(list.uri);
+    const res = await axios.get<TokenList>(list.uri, { timeout: 10000 });
     return {
       ...res.data,
       logoURI: getLogoByURI(res.data.logoURI),
@@ -174,10 +174,15 @@ export const tokenListMerged$ = combineLatest([
     }
   ),
   map((tokens) =>
-    tokens.map((token) => ({
-      ...token,
-      address: utils.getAddress(token.address),
-    }))
+    tokens.map((token) => {
+      if (token.address)
+        return {
+          ...token,
+          address: utils.getAddress(token.address),
+        };
+
+      return null;
+    })
   ),
   shareReplay(1)
 );
@@ -253,7 +258,7 @@ export const tokensNoBalance$ = combineLatest([
     newApiTokens.forEach((apiToken) => {
       if (currentNetwork === EthNetworks.Mainnet) {
         const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
+          (userToken) => userToken && userToken.address === apiToken.address
         );
         if (found) {
           overlappingTokens.push({
