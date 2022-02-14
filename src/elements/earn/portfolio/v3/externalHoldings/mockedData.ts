@@ -1,7 +1,7 @@
 import {
   ApyVisionNonUniPosition,
   ApyVisionUniPosition,
-} from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
+} from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 
 export const mockedUniPositions: ApyVisionUniPosition[] = [
   {

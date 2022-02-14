@@ -1,8 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { useMemo, useState } from 'react';
 import {
-  ApyVisionData,
-  ExternalHolding,
   fetchExternalHoldings,
   getExternalHoldingsNonUni,
   getExternalHoldingsUni,
@@ -10,6 +8,10 @@ import {
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'redux/index';
 import { useAsyncEffect } from 'use-async-effect';
+import {
+  ApyVisionData,
+  ExternalHolding,
+} from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 
 export const useExternalHoldings = () => {
   const { account } = useWeb3React();

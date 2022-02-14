@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { Image } from 'components/image/Image';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 
 interface Props {
   position: ExternalHolding;
