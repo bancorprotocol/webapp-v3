@@ -51,7 +51,10 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const dispatch = useDispatch();
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;

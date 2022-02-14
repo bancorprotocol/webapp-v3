@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'redux/index';
@@ -35,7 +34,9 @@ export const useRewardsClaim = ({ pool }: Props) => {
     getPositionById(posGroupId ?? '')
   );
 
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
 
   const fetchClaimableRewards = async (account: string) => {
     if (posGroupId && position) {

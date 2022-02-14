@@ -55,7 +55,10 @@ const VoteCard = ({
 };
 
 export const Vote = () => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();

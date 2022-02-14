@@ -8,6 +8,7 @@ import {
 } from 'utils/localStorage';
 
 export interface UserState {
+  account: string | null | undefined;
   darkMode: boolean;
   walletModal: boolean;
   slippageTolerance: number;
@@ -18,6 +19,7 @@ export interface UserState {
 }
 
 export const initialState: UserState = {
+  account: undefined,
   darkMode: false,
   walletModal: false,
   slippageTolerance: 0.005,
@@ -31,6 +33,9 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    setAccount: (state, action) => {
+      state.account = action.payload;
+    },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.darkMode = action.payload;
 
@@ -65,6 +70,7 @@ const userSlice = createSlice({
 });
 
 export const {
+  setAccount,
   setDarkMode,
   setSlippageTolerance,
   setLocale,

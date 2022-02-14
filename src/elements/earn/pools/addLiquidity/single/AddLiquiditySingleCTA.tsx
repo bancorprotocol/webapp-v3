@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'redux/index';
 
 interface Props {
   onStart: Function;
@@ -10,7 +10,9 @@ interface Props {
 
 export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
 
   const button = () => {
     if (errorMsg) {

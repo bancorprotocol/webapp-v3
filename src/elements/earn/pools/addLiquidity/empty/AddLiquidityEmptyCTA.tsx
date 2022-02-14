@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
@@ -22,6 +21,7 @@ import {
 } from '../../../../../services/api/googleTagManager';
 import { useAppSelector } from '../../../../../redux';
 import BigNumber from 'bignumber.js';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   pool: Pool;
@@ -41,7 +41,10 @@ export const AddLiquidityEmptyCTA = ({
   errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
-  const { account, chainId } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const { pushPortfolio } = useNavigation();
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
