@@ -1,10 +1,12 @@
 import { Pool } from 'services/observables/tokens';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
+import { V3EarningTableCellAction } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTableCellAction';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
 
 export const V3EarningTable = () => {
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const data: any = [1, 2, 3, 4];
 
   const columns = useMemo<TableColumn<Pool>[]>(
@@ -44,9 +46,9 @@ export const V3EarningTable = () => {
         id: 'actions',
         Header: '',
         Cell: () => (
-          <button>
-            <IconMenuDots className="w-20" />
-          </button>
+          <V3EarningTableCellAction
+            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+          />
         ),
         width: 50,
         minWidth: 50,
@@ -62,6 +64,11 @@ export const V3EarningTable = () => {
       </div>
 
       <DataTable<any> data={data} columns={columns} stickyColumn />
+
+      <V3WithdrawModal
+        isOpen={isWithdrawModalOpen}
+        setIsOpen={setIsWithdrawModalOpen}
+      />
     </section>
   );
 };

@@ -2,7 +2,7 @@ import { V3Withdraw } from 'elements/earn/portfolio/v3/V3Withdraw';
 import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
 import { V3HoldingsStats } from 'elements/earn/portfolio/v3/V3HoldingsStats';
-import { V3EarningTable } from 'elements/earn/portfolio/v3/V3EarningTable';
+import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { useWeb3React } from '@web3-react/core';
 import { Button, ButtonSize } from 'components/button/Button';
