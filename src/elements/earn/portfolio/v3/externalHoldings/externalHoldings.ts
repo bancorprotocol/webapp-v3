@@ -128,14 +128,6 @@ export interface ApyVisionData {
   positionsNonUni: ApyVisionNonUniPosition[];
 }
 
-const REKT_STATUS_THRESHOLD = -50;
-
-const getRektStatus = (usdValue: number, hodlValue: number): string => {
-  const rektUsdValue = new BigNumber(usdValue).minus(hodlValue);
-  const rektAtRisk = new BigNumber(rektUsdValue).lt(REKT_STATUS_THRESHOLD);
-  return rektAtRisk ? prettifyNumber(rektUsdValue.times(-1), true) : 'At risk';
-};
-
 const fetchApyVisionUniswap = async (
   user: string
 ): Promise<ApyVisionUniPosition[]> => {
@@ -172,6 +164,34 @@ export const fetchExternalHoldings = async (
   return { positionsUni, positionsNonUni };
 };
 
+const REKT_STATUS_THRESHOLD = -50;
+const getRektStatus = (usdValue: number, hodlValue: number): string => {
+  const rektUsdValue = new BigNumber(usdValue).minus(hodlValue);
+  const rektAtRisk = new BigNumber(rektUsdValue).lt(REKT_STATUS_THRESHOLD);
+  return rektAtRisk ? prettifyNumber(rektUsdValue.times(-1), true) : 'At risk';
+};
+
+const getProviderName = (key: string) => {
+  switch (key) {
+    case 'balancerv2_eth':
+      return 'Balancer V2';
+    case 'oneinch_eth':
+      return '1inch';
+    case 'balancer_eth':
+      return 'Balancer V2';
+    case 'sushiswap_eth':
+      return 'Sushiswap';
+    case 'uniswap_eth':
+      return 'Uniswap';
+    case 'kyber_eth':
+      return 'Kyber';
+    case 'curve_eth':
+      return 'Curve';
+    default:
+      return key;
+  }
+};
+
 export const getExternalHoldingsUni = (
   positions: ApyVisionUniPosition[],
   tokensMap: Map<string, Token>
@@ -189,7 +209,7 @@ export const getExternalHoldingsUni = (
         usdValue,
         pos.current_day_data.hodl_value
       );
-      const ammName = 'Uniswap';
+      const ammName = 'Uniswap V3';
       return {
         ammName,
         tokens,
@@ -216,7 +236,7 @@ export const getExternalHoldingsNonUni = (
 
       const usdValue = pos.totalValueUsd;
       const rektStatus = getRektStatus(usdValue, pos.initialCapitalValueUsd);
-      const ammName = 'Non-Uniswap';
+      const ammName = getProviderName(pos.poolProviderKey);
       const newPos: ExternalHolding = {
         ammName,
         tokens,

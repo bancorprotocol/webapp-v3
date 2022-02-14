@@ -15,7 +15,7 @@ const navOptions: NavigationOptions = {
 const V3ExternalHoldings = () => {
   const { positions } = useExternalHoldings();
 
-  return (
+  return positions.length ? (
     <section className="content-block p-20">
       <h2>External Holdings at risk</h2>
       <p className="mb-10 text-graphite">
@@ -45,6 +45,8 @@ const V3ExternalHoldings = () => {
         <div>1 of {positions.length}</div>
       </div>
     </section>
+  ) : (
+    <div className="hidden" />
   );
 };
 
