@@ -179,15 +179,12 @@ export const tokenListMerged$ = combineLatest([
     }
   ),
   map((tokens) =>
-    tokens.map((token) => {
-      if (token.address)
-        return {
-          ...token,
-          address: utils.getAddress(token.address),
-        };
-
-      return null;
-    })
+    tokens
+      .filter((token) => !!token.address)
+      .map((token) => ({
+        ...token,
+        address: utils.getAddress(token.address),
+      }))
   ),
   shareReplay()
 );
