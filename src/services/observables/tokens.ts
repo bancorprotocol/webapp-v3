@@ -326,11 +326,11 @@ export const pools$ = combineLatest([
     async ([pools, tokens, apiTokens, minMintingBalance, currentNetwork]) => {
       const tokensMap = new Map(tokens.map((t) => [t.address, t]));
 
-      const newPools: (Pool | null)[] = pools.map((pool) => {
-        const apiTokensMap = new Map(
-          apiTokens.map((t) => [t.dlt_id, getTokenWithoutImage(t)])
-        );
+      const apiTokensMap = new Map(
+        apiTokens.map((t) => [t.dlt_id, getTokenWithoutImage(t)])
+      );
 
+      const newPools: (Pool | null)[] = pools.map((pool) => {
         let apr = 0;
         const liquidity = Number(pool.liquidity.usd ?? 0);
         const fees_24h = Number(pool.fees_24h.usd ?? 0);
