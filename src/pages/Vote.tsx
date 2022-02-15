@@ -51,7 +51,10 @@ const VoteCard = ({
 };
 
 export const Vote = () => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
@@ -87,7 +90,7 @@ export const Vote = () => {
   }, [refresh]);
 
   return (
-    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
+    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20 md:pt-30 pt-10">
       <div className="font-bold text-3xl text-charcoal dark:text-white mb-18">
         Vote
       </div>

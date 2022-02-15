@@ -4,15 +4,17 @@ import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
 import { V3HoldingsStats } from 'elements/earn/portfolio/v3/V3HoldingsStats';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
-import { useWeb3React } from '@web3-react/core';
 import { Button, ButtonSize } from 'components/button/Button';
 import { useDispatch } from 'react-redux';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { openWalletModal } from 'redux/user/user';
 import { memo } from 'react';
+import { useAppSelector } from 'redux/index';
 
 const V3Portfolio = () => {
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const dispatch = useDispatch();
 
   const handleLoginClick = () => {

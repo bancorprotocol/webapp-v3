@@ -23,18 +23,28 @@ import {
 } from 'services/notifications/notifications';
 import { useNavigation } from 'services/router';
 import { ApprovalContract } from 'services/web3/approval';
+import {
+  ConversionEvents,
+  sendLiquidityApprovedEvent,
+  sendLiquidityEvent,
+  sendLiquidityFailEvent,
+  sendLiquiditySuccessEvent,
+  setCurrentLiquidity,
+} from '../../../../../services/api/googleTagManager';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingle = ({ pool }: Props) => {
+  const { chainId } = useWeb3React();
   const dispatch = useDispatch();
-  const tkn = useAppSelector<Token | undefined>(
-    getTokenById(pool.reserves[0].address)
+  const tkn = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool.reserves[0].address)
   );
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(pool.reserves[1].address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool.reserves[1].address)
   );
   const { pushPortfolio, pushPools, pushLiquidityError } = useNavigation();
   const [isBNTSelected, setIsBNTSelected] = useState(false);
@@ -43,6 +53,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const selectedToken = isBNTSelected ? bnt! : tkn!;
   const setSelectedToken = useCallback(
@@ -60,42 +71,54 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       .toString();
     setAmountUsd(usdAmount);
   };
+
   const addV3Protection = async () => {
     await addLiquidityV3Single();
   };
   const addV2Protection = async () => {
     const cleanAmount = prettifyNumber(amount);
+    let transactionId: string;
     await addLiquidityV2Single(
       pool,
       selectedToken,
       amount,
-      (txHash: string) =>
+      (txHash: string) => {
+        transactionId = txHash;
         addLiquiditySingleNotification(
           dispatch,
           txHash,
           cleanAmount,
           selectedToken.symbol,
           pool.name
-        ),
+        );
+      },
       () => {
+        sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
           pushPortfolio();
       },
-      () => rejectNotification(dispatch),
-      () =>
+      () => {
+        sendLiquidityFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (errorMsg) => {
+        sendLiquidityFailEvent(errorMsg);
         addLiquiditySingleFailedNotification(
           dispatch,
           cleanAmount,
           selectedToken.symbol,
           pool.name
-        )
+        );
+      }
     );
   };
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
     addV2Protection,
-    ApprovalContract.LiquidityProtection
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
   const handleError = useCallback(() => {
@@ -129,6 +152,32 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     spaceAvailableBnt,
     spaceAvailableTkn,
   ]);
+
+  const handleCTAClick = useCallback(() => {
+    setCurrentLiquidity(
+      'Deposit Single',
+      chainId,
+      pool.name,
+      selectedToken.symbol,
+      amount,
+      amountUsd,
+      undefined,
+      undefined,
+      fiatToggle
+    );
+    sendLiquidityEvent(ConversionEvents.click);
+    pool.isV3 ? addV3Protection() : onStart();
+  }, [
+    amount,
+    amountUsd,
+    chainId,
+    fiatToggle,
+    onStart,
+    pool.name,
+    pool.isV3,
+    selectedToken.symbol,
+  ]);
+
   if (!tkn) {
     pushLiquidityError();
     return <></>;
@@ -163,7 +212,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         setSpaceAvailableTkn={setSpaceAvailableTkn}
       />
       <AddLiquiditySingleCTA
-        onStart={pool.isV3 ? addV3Protection : onStart}
+        onStart={handleCTAClick}
         amount={amount}
         errorMsg={handleError()}
       />

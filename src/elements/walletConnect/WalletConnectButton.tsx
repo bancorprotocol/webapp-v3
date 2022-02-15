@@ -2,29 +2,26 @@ import { UseWalletConnect } from './useWalletConnect';
 import { shortenString } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
+import { Button } from 'components/button/Button';
 
 export const WalletConnectButton = ({
   handleWalletButtonClick,
   account,
   selectedWallet,
 }: UseWalletConnect) => {
-  const buttonText = account ? shortenString(account) : 'Connect Wallet';
+  const buttonText = account ? shortenString(account) : 'Connect';
 
   return (
-    <button
-      className="flex items-center text-12 border border-silver rounded-full md:px-20 hover:bg-silver transition-all duration-300 dark:bg-charcoal dark:border-charcoal h-[35px] md:mr-40"
+    <Button
+      className="flex items-center bg-white h-40 text-black dark:text-white dark:bg-grey"
       onClick={() => handleWalletButtonClick()}
     >
       {selectedWallet && account ? (
-        <Image
-          src={selectedWallet.icon}
-          alt="Wallet Logo"
-          className="w-[22px]"
-        />
+        <Image src={selectedWallet.icon} alt="Wallet Logo" className="w-20" />
       ) : (
-        <IconWallet className="text-primary dark:text-primary-light w-[22px]" />
+        <IconWallet className="w-20" />
       )}
-      <span className="hidden md:block md:mx-10">{buttonText}</span>
-    </button>
+      <span className="mx-10">{buttonText}</span>
+    </Button>
   );
 };

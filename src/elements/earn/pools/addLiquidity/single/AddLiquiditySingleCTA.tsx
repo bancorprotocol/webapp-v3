@@ -1,7 +1,6 @@
-import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useDispatch } from 'react-redux';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { useAppSelector } from 'redux/index';
 
 interface Props {
   onStart: Function;
@@ -11,28 +10,24 @@ interface Props {
 
 export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
+      return { label: errorMsg, disabled: true, variant: 'btn-error' };
     }
     if (!amount) {
-      return {
-        label: 'Enter amount',
-        disabled: true,
-        variant: ButtonVariant.PRIMARY,
-      };
+      return { label: 'Enter amount', disabled: true, variant: 'btn-primary' };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: 'btn-primary',
       };
     }
   };
-
-  const btn = button();
 
   const onClick = () => {
     if (!account) {
@@ -43,13 +38,12 @@ export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   };
 
   return (
-    <Button
-      variant={btn.variant}
+    <button
       onClick={() => onClick()}
-      disabled={btn.disabled}
-      className={`w-full`}
+      disabled={button().disabled}
+      className={`${button().variant} rounded w-full`}
     >
-      {btn.label}
-    </Button>
+      {button().label}
+    </button>
   );
 };

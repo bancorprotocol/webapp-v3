@@ -27,6 +27,10 @@ import {
 import { MultiCall } from 'services/web3/multicall/multicall';
 import { bntToken, changeGas, ethToken, zeroAddress } from '../config';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
+import {
+  ConversionEvents,
+  sendLiquidityEvent,
+} from '../../api/googleTagManager';
 
 export const createPool = async (
   token: Token,
@@ -111,6 +115,8 @@ export const addLiquidity = async (
 
     const value = tkn.address === ethToken ? tknWei : undefined;
 
+    sendLiquidityEvent(ConversionEvents.wallet_req);
+
     const estimate = await contract.estimateGas.addLiquidity(
       [bnt.address, tkn.address],
       [bntWei, tknWei],
@@ -125,6 +131,8 @@ export const addLiquidity = async (
       '1',
       { value, gasLimit }
     );
+
+    sendLiquidityEvent(ConversionEvents.wallet_confirm);
 
     onHash(tx.hash);
 
@@ -173,8 +181,11 @@ export const removeLiquidity = async (
         );
       }
     };
+    sendLiquidityEvent(ConversionEvents.wallet_req);
 
     const tx = await liquidateFn();
+    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
@@ -205,6 +216,8 @@ export const addLiquidityV2Single = async (
     );
     const fromIsEth = ethToken === token.address;
 
+    sendLiquidityEvent(ConversionEvents.wallet_req);
+
     const estimate = await contract.estimateGas.addLiquidity(
       pool.pool_dlt_id,
       token.address,
@@ -220,6 +233,7 @@ export const addLiquidityV2Single = async (
       { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
     );
     onHash(tx.hash);
+    sendLiquidityEvent(ConversionEvents.wallet_confirm);
 
     await tx.wait();
 

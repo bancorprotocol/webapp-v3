@@ -3,13 +3,9 @@
 @layer components {
   .dropdown-menu {
     @apply absolute w-[306px] mt-40 py-20 px-24 -right-30 rounded z-10;
-    @apply bg-white dark:bg-grey;
+    @apply bg-white dark:bg-black;
     @apply shadow-header dark:shadow-none;
-  }
-
-  .dropdown-bubble {
-    @apply absolute h-14 w-14 transform rotate-45 mt-[-26px] right-32;
-    @apply bg-white dark:bg-grey;
+    @apply dark:border dark:border-grey;
   }
 
   .dropdown-header {
