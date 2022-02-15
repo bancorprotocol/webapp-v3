@@ -12,7 +12,10 @@ import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
-import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
+import {
+  addLiquidityV2Single,
+  addLiquidityV3Single,
+} from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,
   addLiquiditySingleNotification,
@@ -57,10 +60,12 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       .toString();
     setAmountUsd(usdAmount);
   };
-
-  const addProtection = async () => {
+  const addV3Protection = async () => {
+    await addLiquidityV3Single();
+  };
+  const addV2Protection = async () => {
     const cleanAmount = prettifyNumber(amount);
-    await addLiquiditySingle(
+    await addLiquidityV2Single(
       pool,
       selectedToken,
       amount,
@@ -89,7 +94,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
-    addProtection,
+    addV2Protection,
     ApprovalContract.LiquidityProtection
   );
 
@@ -158,7 +163,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         setSpaceAvailableTkn={setSpaceAvailableTkn}
       />
       <AddLiquiditySingleCTA
-        onStart={onStart}
+        onStart={pool.isV3 ? addV3Protection : onStart}
         amount={amount}
         errorMsg={handleError()}
       />
