@@ -74,12 +74,16 @@ export const swapLimit = async (
           },
         };
       } catch (e: any) {
-        if (e.code === ErrorCode.DeniedTx)
+        if (e.code === ErrorCode.DeniedTx) {
+          sendConversionFailEvent('User rejected transaction');
           return {
             type: NotificationType.error,
             title: 'Transaction Rejected',
             msg: 'You rejected the transaction. To complete the order you need to click approve.',
           };
+        }
+
+        sendConversionFailEvent(e.message);
 
         return {
           type: NotificationType.error,
@@ -106,14 +110,16 @@ export const swapLimit = async (
       };
     }
   } catch (e: any) {
-    sendConversionFailEvent(e.message);
-
-    if (e.code === ErrorCode.DeniedTx)
+    if (e.code === ErrorCode.DeniedTx) {
+      sendConversionFailEvent('User rejected transaction');
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',
         msg: 'You rejected the transaction. If this was by mistake, please try again.',
       };
+    }
+
+    sendConversionFailEvent(e.message);
 
     return {
       type: NotificationType.error,

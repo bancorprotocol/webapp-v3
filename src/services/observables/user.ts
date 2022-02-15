@@ -1,3 +1,4 @@
+import { setAccount } from 'redux/user/user';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 const userReceiver$ = new BehaviorSubject<string>('');
@@ -8,7 +9,11 @@ const lockedBntReceiver$ = new BehaviorSubject<boolean>(false);
 
 export const user$ = userReceiver$.pipe(distinctUntilChanged(), shareReplay(1));
 
-export const setUser = (userAddress: string | undefined | null) => {
+export const setUser = (
+  userAddress: string | undefined | null,
+  dispatch: any
+) => {
+  dispatch(setAccount(userAddress));
   if (typeof userAddress === 'string') userReceiver$.next(userAddress);
   else userReceiver$.next('');
 };

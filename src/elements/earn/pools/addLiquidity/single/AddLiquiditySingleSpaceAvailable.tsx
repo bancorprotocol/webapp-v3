@@ -36,8 +36,8 @@ export const AddLiquiditySingleSpaceAvailable = ({
   spaceAvailableTkn,
   setSpaceAvailableTkn,
 }: Props) => {
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(pool.reserves[1].address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool.reserves[1].address)
   );
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =
     useState(false);

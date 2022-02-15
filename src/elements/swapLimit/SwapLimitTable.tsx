@@ -1,6 +1,5 @@
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { withdrawWeth } from 'services/web3/swap/limit';
-import { useWeb3React } from '@web3-react/core';
 import { useInterval } from 'hooks/useInterval';
 import { cancelOrders, getOrders, LimitOrder } from 'services/api/keeperDao';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +16,9 @@ import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
 
 export const SwapLimitTable = () => {
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [orders, setOrders] = useState<LimitOrder[]>([]);
   const [weth, setWeth] = useState<Token>();
   const [search, setSearch] = useState('');
