@@ -10,7 +10,7 @@ import { useAppSelector } from 'redux/index';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
-import { DropdownTransition } from 'components/transitions/DropdownTransition';
+import { useState } from 'react';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -70,6 +70,9 @@ interface TopMenu {
   link: string;
 }
 
+let timeout: NodeJS.Timeout;
+let prevPopFunc: Function = () => {};
+
 const TopMenuDropdown = ({
   items,
   className,
@@ -77,21 +80,39 @@ const TopMenuDropdown = ({
   items: TopMenu[];
   className: string;
 }) => {
+  const [open, setOpen] = useState(false);
+
+  const openPopover = () => {
+    prevPopFunc();
+    clearInterval(timeout);
+    setOpen(true);
+  };
+
+  const closePopover = (delay: number) => {
+    prevPopFunc = () => setOpen(false);
+    timeout = setTimeout(() => setOpen(false), delay);
+  };
   return (
     <Popover className="block relative">
-      <Popover.Button>
+      <Popover.Button
+        onMouseEnter={() => openPopover()}
+        onMouseLeave={() => closePopover(600)}
+      >
         <TopMenuDropdownItem item={items[0]} />
       </Popover.Button>
 
-      <DropdownTransition>
+      {open && (
         <Popover.Panel
+          static
+          onMouseEnter={() => openPopover()}
+          onMouseLeave={() => closePopover(200)}
           className={`dropdown-menu flex flex-col gap-20 ${className}`}
         >
           {items.map((item) => (
             <TopMenuDropdownItem key={item.title} item={item} />
           ))}
         </Popover.Panel>
-      </DropdownTransition>
+      )}
     </Popover>
   );
 };
