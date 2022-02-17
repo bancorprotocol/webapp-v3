@@ -1,15 +1,23 @@
 import { Transition, Dialog } from '@headlessui/react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { ReactComponent as IconLeft } from 'assets/icons/left.svg';
+import { DarkMode } from 'elements/settings/DarkMode';
 import { Fragment } from 'react';
 
 export const MobileSidebar = ({
   children,
   setShow,
   show,
+  action,
+  title,
+  showDarkMode = false,
 }: {
   children: JSX.Element;
   setShow: Function;
   show: boolean;
+  action?: JSX.Element;
+  title?: string;
+  showDarkMode?: boolean;
 }) => {
   return (
     <Transition.Root show={show} as={Fragment}>
@@ -43,21 +51,33 @@ export const MobileSidebar = ({
               leaveFrom="translate-x-0"
               leaveTo="translate-x-full"
             >
-              <div className="fixed right-0 h-full w-[85%]">
-                <div className="h-full bg-white dark:bg-black">
-                  <div className="flex flex-col justify-between h-full">
-                    <div className="overflow-hidden overflow-y-auto">
-                      <div className="flex justify-end mx-20 h-[70px]">
-                        <button
-                          onClick={() => setShow(false)}
-                          className="justify-self-right"
-                        >
-                          <IconTimes className="w-20 align-right" />
-                        </button>
-                      </div>
-                      {children}
-                    </div>
+              <div className="fixed right-0 flex flex-col h-full w-[85%] px-20 bg-white dark:bg-black">
+                <div className="overflow-hidden overflow-y-auto">
+                  <div
+                    className={`flex items-center ${
+                      showDarkMode ? 'justify-between' : 'justify-end'
+                    } h-[70px]`}
+                  >
+                    {showDarkMode && <DarkMode />}
+                    <button onClick={() => setShow(false)}>
+                      <IconTimes className="w-20 align-right" />
+                    </button>
                   </div>
+                  {title && (
+                    <div className="flex items-center justify-between text-20 mb-40">
+                      <div>
+                        <button
+                          className="mr-10"
+                          onClick={() => setShow(false)}
+                        >
+                          <IconLeft className="w-20" />
+                        </button>
+                        {title}
+                      </div>
+                      {action && action}
+                    </div>
+                  )}
+                  {children}
                 </div>
               </div>
             </Transition.Child>

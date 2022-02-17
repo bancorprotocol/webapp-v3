@@ -4,7 +4,7 @@ import { setDarkMode } from 'redux/user/user';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'redux/index';
 
-export const DarkMode = () => {
+export const DarkMode = ({ showText = false }: { showText?: boolean }) => {
   const dispatch = useDispatch();
   const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
 
@@ -16,7 +16,7 @@ export const DarkMode = () => {
           className="flex items-center gap-10 text-white"
         >
           <IconSun className="w-20 text-white" />
-          <div>Switch to light mode</div>
+          {showText && <div>Switch to light mode</div>}
         </button>
       ) : (
         <button
@@ -24,7 +24,7 @@ export const DarkMode = () => {
           className="flex items-center gap-10 text-black"
         >
           <IconMoon className="w-20" />
-          <div>Switch to dark mode</div>
+          {showText && <div>Switch to dark mode</div>}
         </button>
       )}
     </>

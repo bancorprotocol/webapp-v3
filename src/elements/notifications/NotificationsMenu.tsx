@@ -50,16 +50,13 @@ export const NotificationsMenu = () => {
       .forEach((n) => checkStatus(n));
   }, 2000);
 
-  const title = (
-    <>
-      <span>Notifications</span>
-      <button
-        onClick={() => dispatch(setNotifications([]))}
-        className="text-12 underline"
-      >
-        clear
-      </button>
-    </>
+  const clearAll = (
+    <button
+      onClick={() => dispatch(setNotifications([]))}
+      className="text-12 underline"
+    >
+      Clear all
+    </button>
   );
 
   const history = notifications.map((notification, index) => {
@@ -101,9 +98,9 @@ export const NotificationsMenu = () => {
           <Popover.Panel static className="dropdown-menu">
             <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
               <div className="dropdown-header flex justify-between text-16 font-semibold">
-                {title}
+                <span>Notifications</span>
+                {clearAll}
               </div>
-
               {history}
             </div>
           </Popover.Panel>
@@ -115,7 +112,12 @@ export const NotificationsMenu = () => {
           <IconBell className="w-[22px]" />
         </button>
 
-        <MobileSidebar show={show} setShow={setShow}>
+        <MobileSidebar
+          show={show}
+          setShow={setShow}
+          title="Notifications"
+          action={clearAll}
+        >
           <>{history}</>
         </MobileSidebar>
       </div>

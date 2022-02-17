@@ -74,7 +74,7 @@ export const SettingsMenu = () => {
                     placeholder="Custom"
                   />
                 </div>
-                <DarkMode />
+                <DarkMode showText />
                 <Navigate to={fiat}>
                   <div className="flex items-center gap-10 text-black dark:text-white">
                     <IconFiat className="w-20" />
