@@ -1,10 +1,9 @@
-import { Popover, Transition } from '@headlessui/react';
+import { Popover, Transition, Portal } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
 import { Fragment, useRef, useState } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { usePopper } from 'react-popper';
-import { Portal } from 'react-portal';
 
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
