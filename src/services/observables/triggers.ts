@@ -8,9 +8,11 @@ import {
   tokensNoBalance$,
   tokenListMerged$,
   poolTokens$,
+  apiTokens$,
 } from 'services/observables/tokens';
 import {
   setAllTokens,
+  setApiTokens,
   setBntPrice,
   setKeeperDaoTokens,
   setTokenList,
@@ -70,6 +72,10 @@ export const subscribeToObservables = (dispatch: any) => {
 
   tokenListMerged$.subscribe((tokenList) => {
     dispatch(setAllTokens(tokenList));
+  });
+
+  apiTokens$.subscribe((tokens) => {
+    dispatch(setApiTokens(tokens));
   });
 
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {

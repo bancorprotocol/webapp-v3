@@ -12,13 +12,13 @@ import {
 import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useInterval } from 'hooks/useInterval';
 import { web3 } from 'services/web3';
+import { MobileSidebar } from 'elements/layoutHeader/MobileSidebar';
 
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();
-  const [showModal, setShowModal] = useState(false);
+  const [show, setShow] = useState(false);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
@@ -50,16 +50,13 @@ export const NotificationsMenu = () => {
       .forEach((n) => checkStatus(n));
   }, 2000);
 
-  const title = (
-    <>
-      <span>Notifications</span>
-      <button
-        onClick={() => dispatch(setNotifications([]))}
-        className="text-12 underline"
-      >
-        clear
-      </button>
-    </>
+  const clearAll = (
+    <button
+      onClick={() => dispatch(setNotifications([]))}
+      className="text-12 underline"
+    >
+      Clear all
+    </button>
   );
 
   const history = notifications.map((notification, index) => {
@@ -99,13 +96,11 @@ export const NotificationsMenu = () => {
 
         <DropdownTransition>
           <Popover.Panel static className="dropdown-menu">
-            <div className="dropdown-bubble" />
-
             <div className="-mr-18 pr-18 max-h-[400px] overflow-auto">
               <div className="dropdown-header flex justify-between text-16 font-semibold">
-                {title}
+                <span>Notifications</span>
+                {clearAll}
               </div>
-
               {history}
             </div>
           </Popover.Panel>
@@ -113,21 +108,18 @@ export const NotificationsMenu = () => {
       </Popover>
 
       <div className="md:hidden">
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center"
-        >
+        <button onClick={() => setShow(true)} className="flex items-center">
           <IconBell className="w-[22px]" />
         </button>
 
-        <ModalFullscreen
-          title={title}
-          setIsOpen={setShowModal}
-          isOpen={showModal}
-          showHeader
+        <MobileSidebar
+          show={show}
+          setShow={setShow}
+          title="Notifications"
+          action={clearAll}
         >
-          {history}
-        </ModalFullscreen>
+          <>{history}</>
+        </MobileSidebar>
       </div>
     </>
   );
