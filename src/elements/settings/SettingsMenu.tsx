@@ -6,24 +6,16 @@ import { ReactComponent as IconTwitter } from 'assets/icons/twitter.svg';
 import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
 import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';
 import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
+import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
 import { useDispatch } from 'react-redux';
 import { setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
 import { useState } from 'react';
-import { fiat, privacyPolicy, tos } from 'services/router';
+import { fiat, privacyPolicy, tos, vote } from 'services/router';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
 
 export const SettingsMenu = () => {
-  const [customSlippage, setCustomSlippage] = useState('');
-
-  const dispatch = useDispatch();
-  const currentSlippage = useAppSelector<number>(
-    (state) => state.user.slippageTolerance
-  );
-
-  const slippages = [0.001, 0.005, 0.01];
-
   return (
     <>
       <Popover className="hidden md:block relative">
@@ -32,85 +24,104 @@ export const SettingsMenu = () => {
         </Popover.Button>
         <DropdownTransition>
           <Popover.Panel className="dropdown-menu w-[324px]">
-            <div className="space-y-15">
-              <div>Slippage Tolerance</div>
-              <div className="flex flex-col gap-[25px] text-black-low dark:text-white-low">
-                <div className="flex justify-between space-x-6">
-                  {slippages.map((slippage) => (
-                    <button
-                      key={slippage}
-                      onClick={() => dispatch(setSlippageTolerance(slippage))}
-                      className={`w-full border border-silver rounded-[12px] text-12 p-8 ${
-                        currentSlippage === slippage
-                          ? 'bg-primary !border-primary text-black'
-                          : ''
-                      }`}
-                    >
-                      +{slippage * 100}%
-                    </button>
-                  ))}
-                  <input
-                    type="text"
-                    className={`w-[69px] dark:bg-blue-2 outline-none text-center text-12 rounded-[12px] ${
-                      currentSlippage === Number(customSlippage) / 100
-                        ? 'bg-primary text-black placeholder-black'
-                        : 'bg-fog'
-                    }`}
-                    onFocus={() => {
-                      if (!Number.isNaN(customSlippage)) {
-                        dispatch(
-                          setSlippageTolerance(Number(customSlippage) / 100)
-                        );
-                      }
-                    }}
-                    value={customSlippage}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      if (!Number.isNaN(value)) {
-                        dispatch(setSlippageTolerance(Number(value) / 100));
-                      }
-                      setCustomSlippage(value);
-                    }}
-                    placeholder="Custom"
-                  />
-                </div>
-                <DarkMode showText />
-                <Navigate to={fiat}>
-                  <div className="flex items-center gap-10 text-black dark:text-white">
-                    <IconFiat className="w-20" />
-                    Buy crypto with fiat
-                  </div>
-                </Navigate>
-                <hr className="border-fog" />
-                <Navigate to="https://support.bancor.network">
-                  Help Center
-                </Navigate>
-                <Navigate to={fiat}>FAQ</Navigate>
-                <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
-                  Analytics
-                </Navigate>
-                <Navigate to="https://docs.bancor.network">Developers</Navigate>
-                <Navigate to={tos}>Terms Of Use</Navigate>
-                <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
-                <div className="flex justify-between text- dark:black-disabled">
-                  <Navigate to="https://twitter.com/Bancor">
-                    <IconTwitter className="h-20" />
-                  </Navigate>
-                  <Navigate to="https://t.me/bancor">
-                    <IconTelegram className="h-20" />
-                  </Navigate>
-                  <Navigate to="https://discord.gg/CAm3Ncyrxk">
-                    <IconDiscord className="h-20" />
-                  </Navigate>
-                  <Navigate to="https://www.reddit.com/r/Bancor">
-                    <IconReddit className="h-20" />
-                  </Navigate>
-                </div>
-              </div>
-            </div>
+            <SettingsMenuContent />
           </Popover.Panel>
         </DropdownTransition>
       </Popover>
     </>
+  );
+};
+
+export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
+  const [customSlippage, setCustomSlippage] = useState('');
+
+  const dispatch = useDispatch();
+  const currentSlippage = useAppSelector<number>(
+    (state) => state.user.slippageTolerance
+  );
+
+  const slippages = [0.001, 0.005, 0.01];
+  return (
+    <div className="space-y-15 text-black-low dark:text-white-low">
+      <div>Slippage Tolerance</div>
+      <div className="flex flex-col gap-[25px]">
+        <div className="flex justify-between space-x-6">
+          {slippages.map((slippage) => (
+            <button
+              key={slippage}
+              onClick={() => dispatch(setSlippageTolerance(slippage))}
+              className={`w-full border border-silver rounded-[12px] text-12 p-8 ${
+                currentSlippage === slippage
+                  ? 'bg-primary !border-primary text-black'
+                  : ''
+              }`}
+            >
+              +{slippage * 100}%
+            </button>
+          ))}
+          <input
+            type="text"
+            className={`w-[69px] dark:bg-blue-2 outline-none text-center text-12 rounded-[12px] ${
+              currentSlippage === Number(customSlippage) / 100
+                ? 'bg-primary text-black placeholder-black'
+                : 'bg-fog'
+            }`}
+            onFocus={() => {
+              if (!Number.isNaN(customSlippage)) {
+                dispatch(setSlippageTolerance(Number(customSlippage) / 100));
+              }
+            }}
+            value={customSlippage}
+            onChange={(event) => {
+              const { value } = event.target;
+              if (!Number.isNaN(value)) {
+                dispatch(setSlippageTolerance(Number(value) / 100));
+              }
+              setCustomSlippage(value);
+            }}
+            placeholder="Custom"
+          />
+        </div>
+        {mobile ? (
+          <Navigate to={vote}>
+            <div className="flex items-center gap-10 text-black dark:text-white">
+              <IconVote className="text-black dark:text-white w-20" />
+              Vote
+            </div>
+          </Navigate>
+        ) : (
+          <DarkMode showText />
+        )}
+        <Navigate to={fiat}>
+          <div className="flex items-center gap-10 text-black dark:text-white">
+            <IconFiat className="w-20" />
+            Buy crypto with fiat
+          </div>
+        </Navigate>
+        <hr className="border-fog" />
+        <Navigate to="https://support.bancor.network">Help Center</Navigate>
+        <Navigate to={fiat}>FAQ</Navigate>
+        <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
+          Analytics
+        </Navigate>
+        <Navigate to="https://docs.bancor.network">Developers</Navigate>
+        <Navigate to={tos}>Terms Of Use</Navigate>
+        <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
+        <div className="flex justify-between text- dark:black-disabled">
+          <Navigate to="https://twitter.com/Bancor">
+            <IconTwitter className="h-20" />
+          </Navigate>
+          <Navigate to="https://t.me/bancor">
+            <IconTelegram className="h-20" />
+          </Navigate>
+          <Navigate to="https://discord.gg/CAm3Ncyrxk">
+            <IconDiscord className="h-20" />
+          </Navigate>
+          <Navigate to="https://www.reddit.com/r/Bancor">
+            <IconReddit className="h-20" />
+          </Navigate>
+        </div>
+      </div>
+    </div>
   );
 };
