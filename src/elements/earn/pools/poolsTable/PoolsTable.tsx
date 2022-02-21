@@ -8,7 +8,7 @@ import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCel
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
 import { Dropdown } from 'components/dropdown/Dropdown';
@@ -155,30 +155,17 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     []
   );
 
-  const switchV3Selected = () => setV3Selected(!v3Selected);
-  const buttonVariant = (v3: boolean) =>
-    (v3Selected && v3) || (!v3 && !v3Selected)
-      ? ButtonVariant.PRIMARY
-      : ButtonVariant.SECONDARY;
-
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <div className="flex items-center gap-x-10">
-          <Button
-            variant={buttonVariant(true)}
-            onClick={() => switchV3Selected()}
-          >
-            V3
-          </Button>
-          <Button
-            variant={buttonVariant(false)}
-            onClick={() => switchV3Selected()}
-          >
-            V2
-          </Button>
+          <ButtonToggle
+            labels={[<>V3</>, <>V2</>]}
+            toggle={v3Selected}
+            setToggle={() => setV3Selected(!v3Selected)}
+          />
           <div className="mr-16">
             <SearchInput
               value={search}

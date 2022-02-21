@@ -41,3 +41,30 @@ export const Button = ({
     />
   );
 };
+
+export const ButtonToggle = ({
+  labels,
+  toggle,
+  setToggle,
+}: {
+  labels: JSX.Element[];
+  toggle: boolean;
+  setToggle: Function;
+}) => {
+  return (
+    <div className="bg-fog p-5 rounded-10">
+      <button
+        className={`rounded-10 px-10 ${toggle ? 'bg-white' : 'bg-fog'}`}
+        onClick={() => setToggle()}
+      >
+        {labels[0]}
+      </button>
+      <button
+        className={`rounded-10 px-10 ${toggle ? 'bg-fog' : 'bg-white'}`}
+        onClick={() => setToggle()}
+      >
+        {labels[1]}
+      </button>
+    </div>
+  );
+};
