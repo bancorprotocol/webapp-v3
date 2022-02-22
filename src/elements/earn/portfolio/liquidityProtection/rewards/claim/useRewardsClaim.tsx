@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'redux/index';
@@ -27,15 +26,17 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(pool ? pool.reserves[1].address : '')
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, pool ? pool.reserves[1].address : '')
   );
 
   const position = useAppSelector<ProtectedPositionGrouped | undefined>(
     getPositionById(posGroupId ?? '')
   );
 
-  const { account } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
 
   const fetchClaimableRewards = async (account: string) => {
     if (posGroupId && position) {

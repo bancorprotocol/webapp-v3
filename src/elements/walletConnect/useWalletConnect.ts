@@ -29,7 +29,10 @@ export interface UseWalletConnect {
 }
 
 export const useWalletConnect = (): UseWalletConnect => {
-  const { activate, deactivate, account, connector } = useWeb3React();
+  const { activate, deactivate, connector } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo>();

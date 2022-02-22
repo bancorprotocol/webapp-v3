@@ -11,6 +11,7 @@ import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTable
 import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { getPools } from 'redux/bancor/pool';
 
 interface Props {
   search: string;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const pools = useAppSelector<Pool[]>(getPools);
 
   const data = useMemo<Pool[]>(() => {
     return pools

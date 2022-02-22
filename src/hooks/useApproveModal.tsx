@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
 import { web3 } from 'services/web3';
+import { ConversionEvents } from '../services/api/googleTagManager';
 
 interface Tokens {
   token: Token;
@@ -21,9 +22,11 @@ interface Tokens {
 }
 
 export const useApproveModal = (
-  tokens: Tokens[],
+  tokens: Tokens[] = [],
   onComplete: Function,
-  contract: ApprovalContract | string = ApprovalContract.BancorNetwork
+  contract: ApprovalContract | string = ApprovalContract.BancorNetwork,
+  gtmPopupEvent?: (event: ConversionEvents) => void,
+  gtmSelectEvent?: (isUnlimited: boolean) => void
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -54,6 +57,16 @@ export const useApproveModal = (
 
   const dispatch = useDispatch();
 
+  const onStart = async () => {
+    if (tokens.length === 0) {
+      console.error('No tokens provided for approval!');
+      return;
+    }
+    await checkApprovalRequired();
+  };
+
+  if (tokens.length === 0) return [onStart, <></>] as [Function, JSX.Element];
+
   const checkNextToken = async (index = tokenIndex): Promise<any> => {
     const nextIndex = index + 1;
     const count = tokens.length;
@@ -77,10 +90,16 @@ export const useApproveModal = (
       return checkNextToken(tokenIndex);
     }
 
+    gtmPopupEvent && gtmPopupEvent(ConversionEvents.approvePop);
+
     setIsOpen(true);
   };
 
   const setApproval = async (amount?: string) => {
+    if (gtmSelectEvent) {
+      const isUnlimited = amount === undefined;
+      gtmSelectEvent(isUnlimited);
+    }
     const { token } = tokens[tokenIndex];
     try {
       setIsLoading(true);
@@ -134,14 +153,6 @@ export const useApproveModal = (
       setIsOpen(false);
       setIsLoading(false);
     }
-  };
-
-  const onStart = async () => {
-    if (tokens.length === 0) {
-      console.error('No tokens provided for approval!');
-      return;
-    }
-    await checkApprovalRequired();
   };
 
   const ModalApprove = ModalApproveNew({

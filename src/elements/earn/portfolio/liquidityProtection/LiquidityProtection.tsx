@@ -13,8 +13,8 @@ import { EthNetworks } from 'services/web3/types';
 
 export const LiquidityProtection = () => {
   const { chainId } = useWeb3React();
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(bntToken(chainId ?? EthNetworks.Mainnet))
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, bntToken(chainId ?? EthNetworks.Mainnet))
   );
   const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
     (state) => state.liquidity.lockedAvailableBNT

@@ -1,12 +1,6 @@
 import axios from 'axios';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import {
-  distinctUntilChanged,
-  map,
-  pluck,
-  share,
-  shareReplay,
-} from 'rxjs/operators';
+import { distinctUntilChanged, map, pluck, shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
 import { apiData$, correctedPools$, partialPoolTokens$ } from './pools';
@@ -20,6 +14,7 @@ import {
   ethToken,
   wethToken,
   bntToken,
+  getTokenWithoutImage,
 } from 'services/web3/config';
 import {
   get7DaysAgo,
@@ -43,7 +38,7 @@ import { findPoolByConverter } from '../../utils/helperFunctions';
 export const apiTokens$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
-  share()
+  shareReplay(1)
 );
 
 export interface TokenList {
@@ -157,7 +152,7 @@ export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 
 export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
-    const res = await axios.get<TokenList>(list.uri);
+    const res = await axios.get<TokenList>(list.uri, { timeout: 10000 });
     return {
       ...res.data,
       logoURI: getLogoByURI(res.data.logoURI),
@@ -179,12 +174,14 @@ export const tokenListMerged$ = combineLatest([
     }
   ),
   map((tokens) =>
-    tokens.map((token) => ({
-      ...token,
-      address: utils.getAddress(token.address),
-    }))
+    tokens
+      .filter((token) => !!token.address)
+      .map((token) => ({
+        ...token,
+        address: utils.getAddress(token.address),
+      }))
   ),
-  shareReplay()
+  shareReplay(1)
 );
 
 export const minNetworkTokenLiquidityForMinting$ = combineLatest([
@@ -258,7 +255,7 @@ export const tokensNoBalance$ = combineLatest([
     newApiTokens.forEach((apiToken) => {
       if (currentNetwork === EthNetworks.Mainnet) {
         const found = tokenList.find(
-          (userToken) => userToken.address === apiToken.address
+          (userToken) => userToken && userToken.address === apiToken.address
         );
         if (found) {
           overlappingTokens.push({
@@ -318,12 +315,18 @@ const getLogoByURI = (uri: string | undefined) =>
 export const pools$ = combineLatest([
   correctedPools$,
   tokens$,
+  apiTokens$,
   minNetworkTokenLiquidityForMinting$,
   currentNetwork$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([pools, tokens, minMintingBalance, currentNetwork]) => {
+    async ([pools, tokens, apiTokens, minMintingBalance, currentNetwork]) => {
       const tokensMap = new Map(tokens.map((t) => [t.address, t]));
+
+      const apiTokensMap = new Map(
+        apiTokens.map((t) => [t.dlt_id, getTokenWithoutImage(t)])
+      );
+
       const newPools: (Pool | null)[] = pools.map((pool) => {
         let apr = 0;
         const liquidity = Number(pool.liquidity.usd ?? 0);
@@ -335,18 +338,26 @@ export const pools$ = combineLatest([
             .times(100)
             .toNumber();
         }
-        const reserveTokenOne = tokensMap.get(pool.reserves[0].address);
+
+        const reserveOne = pool.reserves[0];
+        const reserveTwo = pool.reserves[1];
+
+        const reserveTokenOne =
+          tokensMap.get(reserveOne.address) ??
+          apiTokensMap.get(reserveOne.address);
 
         if (!reserveTokenOne) return null;
 
-        const reserveTokenTwo = tokensMap.get(pool.reserves[1].address);
+        const reserveTokenTwo =
+          tokensMap.get(reserveTwo.address) ??
+          apiTokensMap.get(reserveTwo.address);
 
         if (!reserveTokenTwo) return null;
 
         const reserves: Reserve[] = [
           {
-            ...pool.reserves[0],
-            rewardApr: Number(pool.reserves[0].apr) / 10000,
+            ...reserveOne,
+            rewardApr: Number(reserveOne.apr) / 10000,
             symbol: reserveTokenOne.symbol,
             logoURI:
               currentNetwork === EthNetworks.Mainnet
@@ -356,8 +367,8 @@ export const pools$ = combineLatest([
             usdPrice: reserveTokenOne.usdPrice,
           },
           {
-            ...pool.reserves[1],
-            rewardApr: Number(pool.reserves[1].apr) / 10000,
+            ...reserveTwo,
+            rewardApr: Number(reserveTwo.apr) / 10000,
             symbol: reserveTokenTwo.symbol,
             logoURI:
               currentNetwork === EthNetworks.Mainnet

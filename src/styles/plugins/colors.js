@@ -25,14 +25,14 @@ module.exports = {
   approve: { DEFAULT: '#4EC987' },
   black: {
     DEFAULT: '#000000',
-    medium: '#CC18181A', //80% Opacity
-    low: '#8018181A', //50% Opacity
-    disabled: '#3318181A', //20% Opacity
+    medium: '#18181ACC', //80% Opacity
+    low: '#18181A80', //50% Opacity
+    disabled: '#18181A33', //20% Opacity
   },
   white: {
     DEFAULT: '#FFFFFF', //100% Opacity
-    medium: '#CCFFFFFF', //80% Opacity
-    low: '#80FFFFFF', //50% Opacity
-    disabled: '#33FFFFFF', //20% Opacity
+    medium: '#FFFFFFCC', //80% Opacity
+    low: '#FFFFFF80', //50% Opacity
+    disabled: '#FFFFFF33', //20% Opacity
   },
 };

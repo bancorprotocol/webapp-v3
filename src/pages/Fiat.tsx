@@ -74,7 +74,7 @@ const fiats = [
   },
   {
     name: 'Mercuryo',
-    text: 'Mercuryo is a cross-boarder payment network providing global access to fast and cheap money transfers. Working together with industry leaders, Mercuryo offers a multi-currency widget that allows purchasing and selling crypto securely with the lowest fees.',
+    text: 'Mercuryo is a cross-border payment network providing global access to fast and cheap money transfers. Working together with industry leaders, Mercuryo offers a multi-currency widget that allows purchasing and selling crypto securely with the lowest fees.',
     logo: mercuryoLogo,
     operations: [Operations.fiatIn, Operations.fiatOut],
     depositMethods: [
