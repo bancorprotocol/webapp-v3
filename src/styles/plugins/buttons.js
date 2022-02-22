@@ -27,8 +27,7 @@ module.exports = function () {
 
     buttons[`.btn-secondary`] = {
       [`@apply text-black dark:text-white`]: '',
-      [`@apply bg-white dark:bg-charcoal`]: '',
-      [`@apply border border-silver dark:border-charcoal`]: '',
+      [`@apply bg-fog dark:bg-grey`]: '',
       [`@apply hover:btn-secondary-hover`]: '',
       [`@apply active:transform active:scale-95`]: '',
       [`@apply disabled:bg-white disabled:text-charcoal disabled:text-opacity-50 disabled:border-charcoal disabled:border-opacity-50`]:
@@ -37,8 +36,7 @@ module.exports = function () {
         '',
     };
     buttons[`.btn-secondary-hover`] = {
-      [`@apply text-primary border-primary dark:text-primary dark:border-primary`]:
-        '',
+      [`@apply text-primary`]: '',
     };
 
     const sizes = {

@@ -54,7 +54,7 @@ export const V3EarningTableCellAction = ({ setIsWithdrawModalOpen }: Props) => {
                 afterLeave={() => setPopperElement(null)}
               >
                 <Popover.Panel className="w-screen max-w-[375px]">
-                  <div className="overflow-hidden rounded shadow-lg bg-white p-20">
+                  <div className="overflow-hidden rounded bg-white p-20 border border-silver">
                     <div className="space-y-20">
                       <div className="flex space-x-10">
                         <Button
@@ -62,6 +62,7 @@ export const V3EarningTableCellAction = ({ setIsWithdrawModalOpen }: Props) => {
                           size={ButtonSize.SMALL}
                           onClick={() => setIsWithdrawModalOpen(true)}
                           className="w-full"
+                          textBadge="86%"
                         >
                           Deposit
                         </Button>

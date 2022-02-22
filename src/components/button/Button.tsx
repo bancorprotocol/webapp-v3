@@ -20,6 +20,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
   outlined?: boolean;
   onClick?: () => void;
+  textBadge?: string;
 }
 
 export const Button = ({
@@ -27,6 +28,7 @@ export const Button = ({
   size = ButtonSize.LARGE,
   className = '',
   outlined = false,
+  textBadge,
   ...props
 }: ButtonProps) => {
   const btnOutlined = outlined ? 'outline-' : '';
@@ -37,7 +39,14 @@ export const Button = ({
     <button
       type="button"
       {...props}
-      className={`btn ${btnVariant} ${btnSize} ${className}`}
-    />
+      className={`btn ${btnVariant} ${btnSize} ${className} relative`}
+    >
+      {props.children}
+      {textBadge && (
+        <span className="absolute -top-8 right-0 bg-primary text-white text-10 rounded-full px-6">
+          {textBadge}
+        </span>
+      )}
+    </button>
   );
 };
