@@ -69,10 +69,11 @@ export const getRateAndPriceImapct = async (
       priceImpact: isNaN(priceImpactNum.toNumber())
         ? '0.0000'
         : priceImpactNum.toFixed(4),
+      isV3: false,
     };
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
-    return { rate: '0', priceImpact: '0.0000' };
+    return { rate: '0', priceImpact: '0.0000', isV3: false };
   }
 };
 
@@ -117,6 +118,7 @@ const calculateMinimumReturn = (
 };
 
 export const swap = async (
+  isV3: boolean,
   slippageTolerance: number,
   fromToken: Token,
   toToken: Token,
@@ -285,25 +287,3 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
 
   throw new Error('No pool found');
 };
-
-//V3
-
-export const getRateAndPriceImapctV3 = async (
-  fromToken: Token,
-  toToken: Token,
-  amount: string
-) => {
-  return { rate: '0', priceImpact: '0.0000' };
-};
-
-export const swapV3 = async (
-  slippageTolerance: number,
-  fromToken: Token,
-  toToken: Token,
-  fromAmount: string,
-  toAmount: string,
-  onHash: (txHash: string) => void,
-  onCompleted: Function,
-  rejected: Function,
-  failed: (error: string) => void
-) => {};

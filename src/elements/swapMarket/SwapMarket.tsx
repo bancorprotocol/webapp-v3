@@ -3,12 +3,7 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
-import {
-  getRateAndPriceImapct,
-  getRateAndPriceImapctV3,
-  swap,
-  swapV3,
-} from 'services/web3/swap/market';
+import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { useDispatch } from 'react-redux';
 import {
@@ -95,11 +90,10 @@ export const SwapMarket = ({
   ) => {
     if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
-    const v3Res = await getRateAndPriceImapctV3(fromToken, toToken, amount);
-    const isV3 = Number(v3Res.rate) > Number(res.rate);
-    setIsSwapV3(isV3);
+
+    setIsSwapV3(res.isV3);
     if (showAnimation) setIsLoadingRate(false);
-    return isV3 ? v3Res : res;
+    return res;
   };
 
   useInterval(() => {
@@ -232,6 +226,7 @@ export const SwapMarket = ({
     }
 
     await swap(
+      isSwapV3,
       slippageTolerance,
       fromToken,
       toToken,
@@ -394,9 +389,9 @@ export const SwapMarket = ({
             {toToken && (
               <>
                 <div className="flex justify-between items-center mt-15">
-                  <div className="flex">
+                  <div className="flex items-center">
                     Best Rate
-                    <div className="ml-5 px-5 rounded bg-blue-0 dark:bg-blue-5 text-primary-dark dark:text-primary-light">
+                    <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
                       {isSwapV3 ? 'V3' : 'V2'}
                     </div>
                   </div>
