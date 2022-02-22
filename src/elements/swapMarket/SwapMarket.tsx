@@ -16,7 +16,10 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { useWeb3React } from '@web3-react/core';
-import { getNetworkContractApproval } from 'services/web3/approval';
+import {
+  ApprovalContract,
+  getNetworkContractApproval,
+} from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'redux/index';
@@ -25,15 +28,16 @@ import { openWalletModal } from 'redux/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
+  sendConversionFailEvent,
+  sendConversionSuccessEvent,
+  setCurrentConversion,
 } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
-import { getConversionLS, setConversionLS } from 'utils/localStorage';
 import { useInterval } from 'hooks/useInterval';
 import {
   rejectNotification,
@@ -41,6 +45,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
+import { Button, ButtonVariant } from '../../components/button/Button';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -57,7 +62,10 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');
@@ -182,14 +190,14 @@ export const SwapMarket = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
+        ApprovalContract.BancorNetwork,
         fromAmount
       );
       if (isApprovalReq) {
-        const conversion = getConversionLS();
-        sendConversionEvent(ConversionEvents.approvePop, conversion);
+        sendConversionEvent(ConversionEvents.approvePop);
         setShowModal(true);
       } else await handleSwap(true);
-    } catch (e) {
+    } catch (e: any) {
       dispatch(
         addNotification({
           type: NotificationType.error,
@@ -223,76 +231,40 @@ export const SwapMarket = ({
       return;
     }
 
-    const conversion = getConversionLS();
-    if (isSwapV3)
-      swapV3(
-        slippageTolerance,
-        fromToken,
-        toToken,
-        fromAmount,
-        toAmount,
-        (txHash: string) =>
-          swapNotification(
-            dispatch,
-            fromToken,
-            toToken,
-            fromAmount,
-            toAmount,
-            txHash
-          ),
-        () => {
-          onConfirmation();
-        },
-        () => rejectNotification(dispatch),
-        () => {
-          swapFailedNotification(
-            dispatch,
-            fromToken,
-            toToken,
-            fromAmount,
-            toAmount
-          );
-        }
-      );
-    else
-      await swap(
-        slippageTolerance,
-        fromToken,
-        toToken,
-        fromAmount,
-        toAmount,
-        (txHash: string) =>
-          swapNotification(
-            dispatch,
-            fromToken,
-            toToken,
-            fromAmount,
-            toAmount,
-            txHash
-          ),
-        () => {
-          sendConversionEvent(ConversionEvents.success, {
-            ...conversion,
-            conversion_market_token_rate: fromToken.usdPrice,
-            transaction_category: 'Conversion',
-          });
-          onConfirmation();
-        },
-        () => rejectNotification(dispatch),
-        (error: string) => {
-          sendConversionEvent(ConversionEvents.fail, {
-            conversion,
-            error,
-          });
-          swapFailedNotification(
-            dispatch,
-            fromToken,
-            toToken,
-            fromAmount,
-            toAmount
-          );
-        }
-      );
+    await swap(
+      slippageTolerance,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount,
+      (txHash: string) =>
+        swapNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount,
+          txHash
+        ),
+      () => {
+        sendConversionSuccessEvent(fromToken.usdPrice);
+        onConfirmation();
+      },
+      () => {
+        sendConversionFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (error: string) => {
+        sendConversionFailEvent(error);
+        swapFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
+      }
+    );
 
     setShowModal(false);
   };
@@ -346,8 +318,32 @@ export const SwapMarket = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return 'btn-error';
-    return 'btn-primary';
+    if (isHighSlippage) return ButtonVariant.ERROR;
+    return ButtonVariant.PRIMARY;
+  };
+
+  const handleSwapClick = () => {
+    const conversionSettings =
+      slippageTolerance === 0.005 ? 'Regular' : 'Advanced';
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Market',
+      chainId,
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      undefined,
+      undefined,
+      conversionSettings
+    );
+    sendConversionEvent(ConversionEvents.click);
+    handleSwap();
   };
 
   return (
@@ -444,33 +440,14 @@ export const SwapMarket = ({
             )}
           </div>
 
-          <button
-            onClick={() => {
-              const conversion = {
-                conversion_type: 'Market',
-                conversion_blockchain_network:
-                  chainId === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
-                conversion_settings:
-                  slippageTolerance === 0.005 ? 'Regular' : 'Advanced',
-                conversion_token_pair: fromToken.symbol + '/' + toToken?.symbol,
-                conversion_from_token: fromToken.symbol,
-                conversion_to_token: toToken?.symbol,
-                conversion_from_amount: fromAmount,
-                conversion_from_amount_usd: fromAmountUsd,
-                conversion_to_amount: toAmount,
-                conversion_to_amount_usd: toAmountUsd,
-                conversion_input_type: fiatToggle ? 'Fiat' : 'Token',
-                conversion_rate: rate,
-              };
-              setConversionLS(conversion);
-              sendConversionEvent(ConversionEvents.click, conversion);
-              handleSwap();
-            }}
-            className={`${buttonVariant()} rounded w-full`}
+          <Button
+            onClick={() => handleSwapClick()}
+            variant={buttonVariant()}
+            className={'w-full'}
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}
-          </button>
+          </Button>
         </div>
       </div>
       <ModalApprove
@@ -480,6 +457,7 @@ export const SwapMarket = ({
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
         waitForApproval={true}
+        contract={ApprovalContract.BancorNetwork}
       />
     </>
   );

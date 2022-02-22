@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
-import dayjs from 'dayjs';
 import { shrinkToken } from './formulas';
-import { APIPool } from '../services/api/bancor';
-import { Pool } from '../services/observables/tokens';
+import { APIPool } from 'services/api/bancor';
+import { Pool } from 'services/observables/tokens';
+import dayjs from './dayjs';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -45,10 +45,20 @@ export const formatDuration = (duration: plugin.Duration): string => {
   return sentence;
 };
 
-export const formatTime = (ms: number, withDays: boolean = false): string =>
-  dayjs
-    .duration(ms)
-    .format(`${withDays ? 'M [Months] D [Days] ' : ''}HH[:]mm[:]ss`);
+export const formatTime = (ms: number): string => {
+  const countdown = dayjs.duration(ms).format('HH mm ss');
+  let [hours, minutes, seconds] = countdown.split(' ').map((x) => parseInt(x));
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  if (!days && !hours && !minutes) {
+    return `${seconds}s`;
+  } else if (!days && !hours) {
+    return `${minutes}m ${seconds}s`;
+  } else if (!days) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  } else {
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+};
 
 export const getNetworkName = (network: EthNetworks): string => {
   switch (network) {
@@ -156,3 +166,22 @@ export const findPoolByConverter = (
     return apiPools.find((x) => x.converter_dlt_id === converter);
   }
 };
+
+export const calcFiatValue = (
+  amount: number | string | BigNumber,
+  price: string | number | BigNumber | null
+) =>
+  new BigNumber(amount)
+    .times(price ?? 0)
+    .toFixed(2)
+    .toString();
+
+export const calcTknValue = (
+  amount: number | string,
+  price: string | number | BigNumber | null,
+  decimals: number
+) =>
+  new BigNumber(amount)
+    .div(price ?? 0)
+    .toFixed(decimals)
+    .toString();

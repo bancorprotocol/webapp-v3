@@ -93,7 +93,7 @@ const content = [
 
 export const TermsOfUse = () => {
   return (
-    <div className="max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">
+    <div className="max-w-[1140px] mx-auto bg-fog dark:bg-black">
       <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0 my-20">
         Terms of Use
       </h1>
@@ -130,11 +130,11 @@ export const TermsOfUse = () => {
         Terms and our Privacy Policy, a current version of which is available at
         <a
           target="_blank"
-          href="https://www.bancor.network/privacy-policy"
+          href="https://app.bancor.network/privacy-policy"
           rel="noopener noreferrer nofollow"
           data-radium="true"
         >
-          https://www.bancor.network/privacy-policy
+          https://app.bancor.network/privacy-policy
         </a>
         , which is incorporated herein by reference and which may be modified
         from time to time at our sole discretion and without prior notice.

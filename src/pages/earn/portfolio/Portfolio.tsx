@@ -1,49 +1,74 @@
 import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection/LiquidityProtection';
-import { useState } from 'react';
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
-import { classNameGenerator } from 'utils/pureFunctions';
 import { useAppSelector } from 'redux/index';
 import { PoolToken } from 'services/observables/tokens';
+import V3Portfolio from 'elements/earn/portfolio/v3/V3Portfolio';
+import { Tab } from '@headlessui/react';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 export const Portfolio = () => {
-  const [selectedTab, setSelectedTab] = useState<'protection' | 'pooltokens'>(
-    'protection'
+  const v2 = useAppSelector<PoolToken[]>(
+    (state) => state.liquidity.protectedPositions
   );
-  const poolTokens = useAppSelector<PoolToken[]>(
-    (state) => state.liquidity.poolTokens
-  );
+  const v1 = useAppSelector<PoolToken[]>((state) => state.liquidity.poolTokens);
+
+  const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
+    classNameGenerator({
+      'px-10 py-5 rounded-10': true,
+      'bg-white dark:bg-charcoal': selected,
+      hidden: hidden,
+    });
 
   return (
-    <div className="max-w-[1140px] mx-auto bg-grey-1 dark:bg-blue-3">
-      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0">
-        Portfolio
-      </h1>
-      <div className="text-16 my-20 pl-10 md:pl-0">
-        <button
-          onClick={() => setSelectedTab('protection')}
-          className={`pb-4 w-[170px] text-left ${classNameGenerator({
-            'font-semibold border-b-2 border-primary':
-              selectedTab === 'protection',
-            'font-light border-b border-grey-3': selectedTab !== 'protection',
-          })}`}
-        >
-          Liquidity Protection
-        </button>
-        {!!poolTokens.length && (
-          <button
-            onClick={() => setSelectedTab('pooltokens')}
-            className={`pb-4 w-[110px] text-right ${classNameGenerator({
-              'font-semibold border-b-2 border-primary':
-                selectedTab === 'pooltokens',
-              'font-light border-b border-grey-3': selectedTab !== 'pooltokens',
-            })}`}
-          >
-            Pool Tokens
-          </button>
-        )}
-      </div>
-      {selectedTab === 'protection' && <LiquidityProtection />}
-      {selectedTab === 'pooltokens' && <PoolTokens />}
+    <div className="max-w-[1140px] mx-auto md:bg-fog md:dark:bg-black">
+      <Tab.Group>
+        <div className="flex items-center mb-30 pt-30">
+          <h1 className="md:text-[30px] font-semibold pl-10 md:pl-0">
+            Portfolio
+          </h1>
+          <Tab.List className="space-x-10 ml-20">
+            <Tab className={({ selected }) => getTabBtnClasses(selected)}>
+              V3
+            </Tab>
+
+            <Tab
+              className={({ selected }) =>
+                getTabBtnClasses(selected, !v2.length)
+              }
+            >
+              <div className="flex space-x-5">
+                <div>V2</div>
+                <div className="bg-primary rounded-full w-6 h-6" />
+              </div>
+            </Tab>
+
+            <Tab
+              className={({ selected }) =>
+                getTabBtnClasses(selected, !v1.length)
+              }
+            >
+              <div className="flex space-x-5">
+                <div>V1</div>
+                <div className="bg-primary rounded-full w-6 h-6" />
+              </div>
+            </Tab>
+          </Tab.List>
+        </div>
+
+        <Tab.Panels>
+          <Tab.Panel>
+            <V3Portfolio />
+          </Tab.Panel>
+
+          <Tab.Panel>
+            <LiquidityProtection />
+          </Tab.Panel>
+
+          <Tab.Panel>
+            <PoolTokens />
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
     </div>
   );
 };

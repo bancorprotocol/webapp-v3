@@ -12,12 +12,12 @@ export const WithdrawLiquidityInfo = ({
   return (
     <>
       {(protectionNotReached || multiplierWillReset) && (
-        <div className="border border-warning rounded bg-warning bg-opacity-[5%] dark:bg-blue-2 dark:bg-opacity-100 p-20 text-12">
+        <div className="border border-warning rounded bg-warning bg-opacity-[5%] dark:bg-grey dark:bg-opacity-100 p-20 text-12">
           <div className="text-warning flex items-center">
             <IconInfo className="w-10 mr-10" />
             <span className="font-semibold">Important!</span>
           </div>
-          <div className="text-grey-4 dark:text-grey-3 ml-20 mt-5">
+          <div className="text-grey dark:text-graphite ml-20 mt-5">
             {protectionNotReached && (
               <p>
                 You still haven’t reached full protection. There is a risk for

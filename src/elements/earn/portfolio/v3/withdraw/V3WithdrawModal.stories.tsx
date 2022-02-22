@@ -1,0 +1,33 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { withDesign } from 'storybook-addon-designs';
+import { useState } from 'react';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import { store } from 'redux/index';
+import { Provider } from 'react-redux';
+
+export default {
+  title: 'Features/Portfolio/V3/WithdrawModal',
+  component: V3WithdrawModal,
+  decorators: [withDesign],
+} as ComponentMeta<typeof V3WithdrawModal>;
+
+export const WithdrawModal: ComponentStory<typeof V3WithdrawModal> = (args) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <Provider store={store}>
+      <V3WithdrawModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
+    </Provider>
+  );
+};
+
+WithdrawModal.args = {
+  isOpen: true,
+};
+
+WithdrawModal.parameters = {
+  design: {
+    type: 'figma',
+    url: 'https://www.figma.com/file/37rEn9Up8BK377t7KFQZ91/Bancor-Design-System?node-id=338%3A32981',
+  },
+};

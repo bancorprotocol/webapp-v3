@@ -16,6 +16,7 @@ import {
 import { EthNetworks } from 'services/web3/types';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { openNewTab } from 'utils/pureFunctions';
+import { Button, ButtonSize, ButtonVariant } from '../components/button/Button';
 
 interface VoteCardProps {
   title: string;
@@ -34,20 +35,15 @@ const VoteCard = ({
   footer,
 }: VoteCardProps) => {
   return (
-    <div className="flex flex-col bg-white dark:bg-blue-4 max-w-[535px] min-h-[325px] px-30 pt-30 pb-[22px] shadow hover:shadow-lg dark:shadow-none rounded-20">
+    <div className="flex flex-col bg-white dark:bg-charcoal max-w-[535px] min-h-[325px] px-30 pt-30 pb-[22px] shadow hover:shadow-lg dark:shadow-none rounded-20">
       <div className="flex text-20 font-semibold mb-18">
         <div className="text-primary dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
       </div>
-      <div className="text-14 text-grey-4 dark:text-grey-0 mb-auto">
-        {content}
-      </div>
-      <button
-        className="btn-primary rounded w-[220px] h-[37px] mt-20 text-14"
-        onClick={() => onClick()}
-      >
+      <div className="text-14 text-grey dark:text-white mb-auto">{content}</div>
+      <Button className="w-[220px] mt-20" onClick={() => onClick()}>
         {button}
-      </button>
+      </Button>
       <hr className="widget-separator mb-15 mt-50" />
       <div className="min-h-[48px]">{footer}</div>
     </div>
@@ -55,11 +51,15 @@ const VoteCard = ({
 };
 
 export const Vote = () => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();
   const [unstakeTime, setUnstakeTime] = useState<number | undefined>();
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
   const dispatch = useDispatch();
@@ -90,11 +90,11 @@ export const Vote = () => {
   }, [refresh]);
 
   return (
-    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20">
-      <div className="font-bold text-3xl text-blue-4 dark:text-grey-0 mb-18">
+    <div className="flex flex-col text-14 max-w-[1140px] md:mx-auto mx-20 md:pt-30 pt-10">
+      <div className="font-bold text-3xl text-charcoal dark:text-white mb-18">
         Vote
       </div>
-      <div className="text-blue-4 dark:text-grey-0 mb-44">
+      <div className="text-charcoal dark:text-white mb-44">
         Bancor is a DAO managed by vBNT stakers who determine the future of the
         protocol with their proposals.
       </div>
@@ -115,10 +115,10 @@ export const Vote = () => {
             setStakeModal(true);
           }}
           footer={
-            <div className="grid grid-cols-2 text-grey-4 dark:text-grey-0">
+            <div className="grid grid-cols-2 text-grey dark:text-white">
               <div>
                 {!account || (govToken && govToken.balance) ? (
-                  <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                  <div className="text-charcoal font-semibold text-20 dark:text-white mb-4">
                     {govToken && govToken.balance
                       ? `${prettifyNumber(govToken.balance)} ${govToken.symbol}`
                       : '--'}
@@ -130,7 +130,7 @@ export const Vote = () => {
               </div>
               <div>
                 {!account || stakeAmount ? (
-                  <div className="text-blue-4 font-semibold text-20 dark:text-grey-0 mb-4">
+                  <div className="text-charcoal font-semibold text-20 dark:text-white mb-4">
                     {stakeAmount && govToken
                       ? `${prettifyNumber(stakeAmount)} ${govToken.symbol}`
                       : '--'}
@@ -165,46 +165,59 @@ export const Vote = () => {
           }
         />
 
-        <div className="flex flex-col md:flex-row md:col-span-2 md:items-center bg-white dark:bg-blue-4 shadow hover:shadow-lg dark:shadow-none rounded-20 mb-20">
+        <div className="flex flex-col md:flex-row md:col-span-2 md:items-center bg-white dark:bg-charcoal shadow hover:shadow-lg dark:shadow-none rounded-20 mb-20">
           <div className="flex flex-col max-w-[520px] min-h-[170px] p-24">
-            <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
+            <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
               Unstake from Governance
             </div>
 
-            <div className="text-12 text-grey-4 dark:text-grey-0 mb-auto">
+            <div className="text-12 text-grey dark:text-white mb-auto">
               In order to remove vBNT from governance you would need to unstake
               them first.
             </div>
-
-            <button
-              className={`text-12 font-medium btn-sm rounded-10 max-w-[190px]  ${
-                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
-                  ? 'btn-outline-secondary text-grey-3 dark:bg-blue-3 dark:text-grey-3 dark:border-grey-3'
-                  : 'btn-outline-primary border border-primary hover:border-primary-dark hover:bg-white hover:text-primary-dark dark:border-primary-light dark:hover:border-primary-light dark:hover:bg-blue-3 dark:hover:text-primary-light'
-              }`}
-              disabled={
-                !!unstakeTime || !stakeAmount || Number(stakeAmount) === 0
-              }
-              onClick={() => {
-                setIsStake(false);
-                setStakeModal(true);
-              }}
-            >
-              {unstakeTime && (
-                <span className="mr-[3px]">
-                  <CountdownTimer date={unstakeTime} />
-                </span>
+            <div className="md:flex items-center w-full">
+              <Button
+                variant={
+                  (!!unstakeTime ||
+                    !stakeAmount ||
+                    Number(stakeAmount) === 0) &&
+                  !isUnlocked
+                    ? ButtonVariant.SECONDARY
+                    : ButtonVariant.PRIMARY
+                }
+                size={ButtonSize.SMALL}
+                className={`w-full mt-20 md:mt-0 md:max-w-[190px]`}
+                disabled={
+                  (!!unstakeTime ||
+                    !stakeAmount ||
+                    Number(stakeAmount) === 0) &&
+                  !isUnlocked
+                }
+                onClick={() => {
+                  setIsStake(false);
+                  setStakeModal(true);
+                }}
+              >
+                Unstake Tokens
+              </Button>
+              {unstakeTime && !isUnlocked && (
+                <div className="flex text-12 text-graphite md:ml-10 justify-center md:justify-start mt-10 md:mt-0 md:text-left w-full">
+                  <span className="mr-4">Unstake available in</span>
+                  <CountdownTimer
+                    date={unstakeTime}
+                    onEnded={() => setIsUnlocked(true)}
+                  />
+                </div>
               )}
-              Unstake Tokens
-            </button>
+            </div>
           </div>
           <hr className="widget-separator md:transform md:rotate-90 md:w-[120px] my-0 ml-2" />
           <div className="flex flex-col max-w-[525px] min-h-[170px] py-24 pl-24 md:pl-8">
-            <div className="text-16 text-blue-4 dark:text-grey-0 mb-18 font-medium">
+            <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
               Legacy onchain contract
             </div>
 
-            <div className="text-12 text-grey-4 dark:text-grey-0 mb-auto">
+            <div className="text-12 text-grey dark:text-white mb-auto">
               View previous votes and decisions made onchain.
             </div>
 

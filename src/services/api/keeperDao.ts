@@ -6,18 +6,22 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
-import { exchangeProxy$ } from 'services/observables/contracts';
 import { Token, tokens$ } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { sendConversionEvent, ConversionEvents } from './googleTagManager';
+import {
+  ConversionEvents,
+  sendConversionEvent,
+  sendConversionFailEvent,
+  sendConversionSuccessEvent,
+} from './googleTagManager';
 import { utils } from 'ethers';
-import { getConversionLS } from 'utils/localStorage';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
+import { exchangeProxy$ } from 'services/observables/contracts';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -52,7 +56,6 @@ export const swapLimit = async (
   checkApproval: Function
 ): Promise<BaseNotification | undefined> => {
   const fromIsEth = ethToken === fromToken.address;
-  const conversion = getConversionLS();
   try {
     if (fromIsEth) {
       try {
@@ -71,12 +74,16 @@ export const swapLimit = async (
           },
         };
       } catch (e: any) {
-        if (e.code === ErrorCode.DeniedTx)
+        if (e.code === ErrorCode.DeniedTx) {
+          sendConversionFailEvent('User rejected transaction');
           return {
             type: NotificationType.error,
             title: 'Transaction Rejected',
             msg: 'You rejected the transaction. To complete the order you need to click approve.',
           };
+        }
+
+        sendConversionFailEvent(e.message);
 
         return {
           type: NotificationType.error,
@@ -85,7 +92,7 @@ export const swapLimit = async (
         };
       }
     } else {
-      sendConversionEvent(ConversionEvents.wallet_req, conversion);
+      sendConversionEvent(ConversionEvents.wallet_req);
       await createOrder(
         fromToken,
         toToken,
@@ -94,11 +101,7 @@ export const swapLimit = async (
         user,
         duration.asSeconds()
       );
-      sendConversionEvent(ConversionEvents.success, {
-        ...conversion,
-        conversion_market_token_rate: fromToken.usdPrice,
-        transaction_category: 'Conversion',
-      });
+      sendConversionSuccessEvent(fromToken.usdPrice);
 
       return {
         type: NotificationType.success,
@@ -107,17 +110,16 @@ export const swapLimit = async (
       };
     }
   } catch (e: any) {
-    sendConversionEvent(ConversionEvents.fail, {
-      conversion,
-      error: e.message,
-    });
-
-    if (e.code === ErrorCode.DeniedTx)
+    if (e.code === ErrorCode.DeniedTx) {
+      sendConversionFailEvent('User rejected transaction');
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',
         msg: 'You rejected the transaction. If this was by mistake, please try again.',
       };
+    }
+
+    sendConversionFailEvent(e.message);
 
     return {
       type: NotificationType.error,
@@ -127,14 +129,19 @@ export const swapLimit = async (
   }
 };
 
-export const getTxOrigin = async (): Promise<string> => {
-  const res = await getInfo();
-  return res.txOrigin;
-};
-const getInfo = async () => {
+export const getOrderDetails = async (): Promise<OrderDetails> => {
   const res = await axios.get(`${baseUrl}/info`);
   return res.data.result.orderDetails;
 };
+
+type OrderDetails = {
+  verifyingContract: string;
+  chainId: number;
+  txOrigin: string;
+  taker: string;
+  pool: string;
+};
+
 export interface KeeprDaoToken {
   address: string;
   chainId: number;
@@ -305,10 +312,10 @@ export interface RfqOrderJson {
   txOrigin: string;
   pool: string;
   expiry: number;
-  salt: string;
+  salt: number;
   chainId: number; // Ethereum Chain Id where the transaction is submitted.
   verifyingContract: string; // Address of the contract where the transaction should be sent.
-  signature: string;
+  signature: Signature;
 }
 
 interface Signature {

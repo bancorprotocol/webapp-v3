@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { Pool } from 'services/observables/tokens';
+import { Pool, Token } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
 import { isEqual, orderBy } from 'lodash';
@@ -37,55 +37,57 @@ export interface TopPool {
 
 export const getPools = createSelector(
   (state: RootState) => state.pool.pools,
-  (pools: Pool[]) => {
-    return orderBy(pools, 'liquidity', 'desc');
+  (state: RootState) => state.bancor.tokens,
+  (pools: Pool[], tokens: Token[]) => {
+    const pools_token_list = pools.filter((pool) => {
+      return (
+        tokens.findIndex(
+          (token) => pool.reserves[0].address === token.address
+        ) !== -1
+      );
+    });
+    return orderBy(pools_token_list, 'liquidity', 'desc');
   }
 );
 
-export const getProtectedPools = createSelector(
-  (state: RootState) => state.pool.pools,
-  (pools: Pool[]) => {
-    const protectedPools = pools.filter((p) => p.isProtected);
-    return orderBy(protectedPools, 'liquidity', 'desc');
-  }
+export const getProtectedPools: any = createSelector(
+  getPools,
+  (pools: Pool[]) => pools.filter((p) => p.isProtected)
 );
 
-export const getTopPools = createSelector(
-  (state: RootState) => state.pool.pools,
-  (pools: Pool[]) => {
-    const filteredPools = pools
-      .filter((p) => p.isWhitelisted && p.liquidity > 100000)
-      .map((p) => {
-        return {
-          tknSymbol: p.reserves[0].symbol,
-          tknLogoURI: p.reserves[0].logoURI,
-          tknApr: p.apr + (p.reserves[0].rewardApr || 0),
-          bntSymbol: p.reserves[1].symbol,
-          bntLogoURI: p.reserves[1].logoURI,
-          bntApr: p.apr + (p.reserves[1].rewardApr || 0),
-          poolName: p.name,
-        };
-      });
-    const winningBntPool = orderBy(filteredPools, 'bntApr', 'desc').slice(0, 1);
-    const topPools: TopPool[] = filteredPools.map((p) => {
+export const getTopPools: any = createSelector(getPools, (pools: Pool[]) => {
+  const filteredPools = pools
+    .filter((p) => p.isProtected && p.liquidity > 100000)
+    .map((p) => {
       return {
-        tknSymbol: p.tknSymbol,
-        tknLogoURI: p.tknLogoURI,
-        poolName: p.poolName,
-        apr: p.tknApr,
+        tknSymbol: p.reserves[0].symbol,
+        tknLogoURI: p.reserves[0].logoURI,
+        tknApr: p.apr + (p.reserves[0].rewardApr || 0),
+        bntSymbol: p.reserves[1].symbol,
+        bntLogoURI: p.reserves[1].logoURI,
+        bntApr: p.apr + (p.reserves[1].rewardApr || 0),
+        poolName: p.name,
       };
     });
-    if (winningBntPool.length === 1) {
-      topPools.push({
-        tknSymbol: winningBntPool[0].bntSymbol,
-        tknLogoURI: winningBntPool[0].bntLogoURI,
-        apr: winningBntPool[0].bntApr,
-        poolName: winningBntPool[0].poolName,
-      });
-    }
-    return orderBy(topPools, 'apr', 'desc').slice(0, 20);
+  const winningBntPool = orderBy(filteredPools, 'bntApr', 'desc').slice(0, 1);
+  const topPools: TopPool[] = filteredPools.map((p) => {
+    return {
+      tknSymbol: p.tknSymbol,
+      tknLogoURI: p.tknLogoURI,
+      poolName: p.poolName,
+      apr: p.tknApr,
+    };
+  });
+  if (winningBntPool.length === 1) {
+    topPools.push({
+      tknSymbol: winningBntPool[0].bntSymbol,
+      tknLogoURI: winningBntPool[0].bntLogoURI,
+      apr: winningBntPool[0].bntApr,
+      poolName: winningBntPool[0].poolName,
+    });
   }
-);
+  return orderBy(topPools, 'apr', 'desc').slice(0, 20);
+});
 
 export interface SelectedPool {
   status: 'loading' | 'ready';

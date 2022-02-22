@@ -30,16 +30,16 @@ export const TopPools = ({ setSearch }: Props) => {
                   <button
                     onClick={() => handleClick(pool)}
                     key={`pool-table-key-${index}`}
-                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-blue-0 dark:bg-blue-2 shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
+                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-graphite dark:border-grey transition-all duration-300"
                   >
                     <div className="flex">
                       <Image
                         src={pool.tknLogoURI.replace('thumb', 'small')}
                         alt="Token Logo"
-                        className="bg-grey-1 rounded-full w-50 h-50"
+                        className="bg-fog rounded-full w-50 h-50"
                       />
                     </div>
-                    <div className="ml-10 text-12 dark:text-grey-3 text-left">
+                    <div className="ml-10 text-12 dark:text-graphite text-left">
                       <div className="font-medium">{pool.tknSymbol}</div>
                       <div className="text-16">
                         <span className="text-primary text-20 font-semibold">

@@ -11,6 +11,7 @@ import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTable
 import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { getPools } from 'redux/bancor/pool';
 
 interface Props {
   search: string;
@@ -18,12 +19,14 @@ interface Props {
 }
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
-  const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
+  const pools = useAppSelector<Pool[]>(getPools);
 
   const data = useMemo<Pool[]>(() => {
-    return pools.filter(
-      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
-    );
+    return pools
+      .filter((p) => p.version >= 28)
+      .filter(
+        (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+      );
   }, [pools, search]);
 
   const columns = useMemo<TableColumn<Pool>[]>(
@@ -115,7 +118,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="max-w-[160px] rounded-10 h-[35px]"
+              className="max-w-[160px] rounded-20 h-[35px]"
             />
           </div>
           <div className="hidden md:block">

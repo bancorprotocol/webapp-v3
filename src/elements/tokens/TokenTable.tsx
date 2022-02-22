@@ -10,6 +10,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { NavLink } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { swapByfrom } from 'services/router';
 
 interface Props {
   searchInput: string;
@@ -32,7 +33,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
     return (
       <div className={'flex items-center'}>
         <div className="w-18">
-          {token.isWhitelisted && (
+          {token.isProtected && (
             <IconProtected className={`w-18 h-20 text-primary`} />
           )}
         </div>
@@ -40,7 +41,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="bg-grey-2 rounded-full h-30 w-30 mr-10 ml-20"
+          className="bg-fog rounded-full h-30 w-30 mr-10 ml-20"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>
@@ -131,8 +132,8 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         Cell: (cellData) => {
           return (
             <NavLink
-              to={`/?from=${cellData.row.original.address}`}
-              className="btn-primary btn-sm rounded-[12px] w-[94px] h-[29px]"
+              to={swapByfrom(cellData.row.original.address)}
+              className="btn btn-primary btn-xs"
             >
               Trade
             </NavLink>

@@ -2,7 +2,6 @@ import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
 
 const selected_lists = 'userTokenLists';
-const conversion = 'conversion';
 const autoLogin = 'loginAuto';
 const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
@@ -17,15 +16,6 @@ export const getTokenListLS = (): string[] => {
 
 export const setTokenListLS = (userListIds: string[]) => {
   localStorage.setItem(selected_lists, JSON.stringify(userListIds));
-};
-
-export const getConversionLS = () => {
-  const conv = localStorage.getItem(conversion);
-  if (conv) return JSON.parse(conv);
-};
-
-export const setConversionLS = (conv: any) => {
-  localStorage.setItem(conversion, JSON.stringify(conv));
 };
 
 export const getAutoLoginLS = (): boolean => {

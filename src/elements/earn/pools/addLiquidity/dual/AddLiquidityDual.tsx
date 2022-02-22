@@ -4,10 +4,11 @@ import { AddLiquidityDualStakeAmount } from 'elements/earn/pools/addLiquidity/du
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -16,12 +17,13 @@ interface Props {
 
 export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
-  const tkn = useAppSelector<Token | undefined>(
-    getTokenById(tknReserve.address)
+  const tkn = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, tknReserve.address)
   );
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(bntReserve.address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, bntReserve.address)
   );
+  const { pushLiquidityError, pushPools } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
@@ -44,14 +46,13 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
     return tknWithUsd as Token;
   };
 
-  const history = useHistory();
   if (!tkn || !bnt) {
-    history.push('/pools/add-liquidity/error');
+    pushLiquidityError();
     return <></>;
   }
 
   return (
-    <Widget title="Add Liquidity">
+    <Widget title="Add Liquidity" goBack={pushPools}>
       <AddLiquidityDualStakeAmount
         tkn={tknWithUsd()}
         bnt={bnt}
@@ -65,7 +66,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
         errorBalanceTkn={errorBalanceTkn}
         setErrorBalanceTkn={setErrorBalanceTkn}
       />
-      <div className="p-10 rounded bg-blue-0 dark:bg-blue-5 mt-20">
+      <div className="p-10 rounded bg-primary dark:bg-black-disabled mt-20">
         <AddLiquidityDualTokenPrices
           bnt={bnt}
           tkn={tknWithUsd()}

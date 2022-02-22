@@ -16,6 +16,7 @@ import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
+import { SuggestedTokens } from './SuggestedTokens';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -70,6 +71,8 @@ const SearchableTokenListLayout = ({
     </Modal>
   );
 };
+
+const suggestedTokens = ['BNT', 'ETH', 'WBTC', 'USDC', 'USDT'];
 
 export const SearchableTokenList = ({
   onClick,
@@ -130,7 +133,7 @@ export const SearchableTokenList = ({
               );
               return (
                 <div
-                  className={`flex justify-between items-center border-2 border-grey-2 dark:border-grey-4 rounded px-15 py-6 ${
+                  className={`flex justify-between items-center border-2 border-silver dark:border-grey rounded px-15 py-6 ${
                     isSelected ? 'border-primary dark:border-primary-light' : ''
                   }`}
                   key={tokenList.name}
@@ -139,11 +142,11 @@ export const SearchableTokenList = ({
                     <Image
                       alt="TokenList"
                       src={tokenList.logoURI}
-                      className="bg-grey-2 rounded-full h-28 w-28"
+                      className="bg-silver rounded-full h-28 w-28"
                     />
                     <div className={'ml-15'}>
                       <div className={'text-16'}>{tokenList.name}</div>
-                      <div className={'text-12 text-grey-3'}>
+                      <div className={'text-12 text-graphite'}>
                         {tokenList.tokens.length} Tokens
                       </div>
                     </div>
@@ -155,7 +158,7 @@ export const SearchableTokenList = ({
                       className={`${
                         isSelected
                           ? 'bg-primary border-primary'
-                          : 'bg-grey-3 border-grey-3'
+                          : 'bg-graphite border-graphite'
                       } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
                     >
                       <span
@@ -192,6 +195,18 @@ export const SearchableTokenList = ({
             data-cy="searchableTokensList"
             className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
           >
+            <div className="pb-12">
+              <SuggestedTokens
+                allTokens={tokens}
+                suggestedTokens={suggestedTokens}
+                onClick={(token) => {
+                  onClick(token);
+                  onClose();
+                }}
+              />
+            </div>
+            <hr className="border-silver dark:border-black-low" />
+
             {tokens
               .filter(
                 (token) =>
@@ -216,11 +231,11 @@ export const SearchableTokenList = ({
                       <Image
                         src={token.logoURI}
                         alt={`${token.symbol} Token`}
-                        className="bg-grey-2 rounded-full h-28 w-28"
+                        className="bg-silver rounded-full h-28 w-28"
                       />
                       <div className="grid justify-items-start ml-15">
                         <div className="text-16">{token.symbol}</div>
-                        <div className="text-12 text-grey-3">
+                        <div className="text-12 text-graphite">
                           {tokenName(token.name)}
                         </div>
                       </div>
@@ -230,7 +245,7 @@ export const SearchableTokenList = ({
                 );
               })}
           </div>
-          <hr className="border-grey-2 dark:border-blue-1" />
+          <hr className="border-silver dark:border-black-low" />
           <div className="flex justify-center items-center h-[59px] my-5">
             <button
               onClick={() => {
@@ -243,7 +258,7 @@ export const SearchableTokenList = ({
                 <IconEdit className="w-[18px] h-[18px] mr-4" />
                 Manage Token Lists
               </span>
-              <span className="text-grey-3 text-12 font-medium">
+              <span className="text-graphite text-12 font-medium">
                 Only supported tokens will be displayed
               </span>
             </button>

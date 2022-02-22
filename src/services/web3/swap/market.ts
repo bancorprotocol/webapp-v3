@@ -3,6 +3,7 @@ import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntToken,
+  changeGas,
   ethToken,
   wethToken,
   zeroAddress,
@@ -13,11 +14,10 @@ import { apiData$ } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancor';
 import { currentNetwork$ } from 'services/observables/network';
 import {
-  sendConversionEvent,
   ConversionEvents,
+  sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
-import { getConversionLS } from 'utils/localStorage';
 import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
@@ -142,10 +142,9 @@ export const swap = async (
     const expectedToWei = expandToken(toAmount, toToken.decimals);
     const path = await findPath(fromToken.address, toToken.address);
 
-    const conversion = getConversionLS();
-    sendConversionEvent(ConversionEvents.wallet_req, conversion);
+    sendConversionEvent(ConversionEvents.wallet_req);
 
-    const tx = await contract.convertByPath(
+    const estimate = await contract.estimateGas.convertByPath(
       path,
       fromWei,
       calculateMinimumReturn(expectedToWei, slippageTolerance),
@@ -154,8 +153,19 @@ export const swap = async (
       0,
       { value: fromIsEth ? fromWei : undefined }
     );
+    const gasLimit = changeGas(estimate.toString());
 
-    sendConversionEvent(ConversionEvents.wallet_confirm, conversion);
+    const tx = await contract.convertByPath(
+      path,
+      fromWei,
+      calculateMinimumReturn(expectedToWei, slippageTolerance),
+      zeroAddress,
+      zeroAddress,
+      0,
+      { value: fromIsEth ? fromWei : undefined, gasLimit }
+    );
+
+    sendConversionEvent(ConversionEvents.wallet_confirm);
 
     onHash(tx.hash);
     await tx.wait();

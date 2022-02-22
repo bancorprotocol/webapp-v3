@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import { Pool, Token } from 'services/observables/tokens';
@@ -14,8 +14,6 @@ import {
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { liquidityProtection$ } from 'services/observables/contracts';
-import { take } from 'rxjs/operators';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { EthNetworks } from 'services/web3/types';
 import { useWeb3React } from '@web3-react/core';
@@ -30,6 +28,16 @@ import {
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
+import { wait } from '../../../../utils/pureFunctions';
+import { ApprovalContract } from 'services/web3/approval';
+import {
+  ConversionEvents,
+  sendLiquidityApprovedEvent,
+  sendLiquidityEvent,
+  sendLiquidityFailEvent,
+  sendLiquiditySuccessEvent,
+  setCurrentLiquidity,
+} from '../../../../services/api/googleTagManager';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -43,16 +51,18 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const dispatch = useDispatch();
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
-  const approveContract = useRef('');
-  const token = useAppSelector<Token | undefined>(
-    getTokenById(reserveToken.address)
+  const token = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, reserveToken.address)
   );
   const pools = useAppSelector<Pool[]>((state) => state.pool.pools);
   const [breakdown, setBreakdown] = useState<
@@ -61,7 +71,9 @@ export const WithdrawLiquidityWidget = ({
   const gov = getNetworkVariables(
     chainId ? chainId : EthNetworks.Mainnet
   ).govToken;
-  const govToken = useAppSelector<Token | undefined>(getTokenById(gov));
+  const govToken = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, gov)
+  );
   const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
   const withdrawingBNT = reserveToken.address === bnt;
@@ -70,32 +82,29 @@ export const WithdrawLiquidityWidget = ({
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
   const tokenInsufficent = Number(amount) > Number(tknAmount);
   const withdrawDisabled = emtpyAmount || tokenInsufficent;
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
-  useAsyncEffect(async (isMounted) => {
-    if (isMounted())
-      approveContract.current = await liquidityProtection$
-        .pipe(take(1))
-        .toPromise();
-  }, []);
-
-  const showVBNTWarning = () => {
+  const showVBNTWarning = useCallback(() => {
     if (token && token.address !== bnt) {
       return false;
     }
     if (!amount) {
       return false;
     }
-    const isBalanceSufficient = new BigNumber(
-      govToken ? govToken.balance ?? 0 : 0
-    ).gte(amount);
-    if (isBalanceSufficient) {
-      return false;
-    }
-
-    return new BigNumber(govToken ? govToken.balance ?? 0 : 0).lt(
-      protectedPosition.initialStake.tknAmount
-    );
-  };
+    const govTokenBalance = govToken ? govToken.balance ?? 0 : 0;
+    const initalStake = protectedPosition.initialStake.tknAmount;
+    return new BigNumber(amount)
+      .div(tknAmount)
+      .times(initalStake)
+      .gt(govTokenBalance);
+  }, [
+    amount,
+    bnt,
+    govToken,
+    protectedPosition.initialStake.tknAmount,
+    tknAmount,
+    token,
+  ]);
 
   useAsyncEffect(
     async (isMounted) => {
@@ -126,38 +135,85 @@ export const WithdrawLiquidityWidget = ({
     [amountDebounce]
   );
 
-  const withdraw = async () => {
-    if (token)
+  const withdraw = useCallback(async () => {
+    if (token) {
+      let transactionId: string;
       await withdrawProtection(
         positionId,
         amount,
         tknAmount,
         (txHash: string) => {
+          transactionId = txHash;
           withdrawProtectedPosition(dispatch, token, amount, txHash);
           setIsModalOpen(false);
         },
         async () => {
+          sendLiquiditySuccessEvent(transactionId);
           const positions = await fetchProtectedPositions(pools, account!);
           dispatch(setProtectedPositions(positions));
         },
-        () => rejectNotification(dispatch),
-        () => withdrawProtectedPositionFailed(dispatch, token, amount)
+        () => {
+          sendLiquidityFailEvent('User rejected transaction');
+          rejectNotification(dispatch);
+        },
+        (errorMsg) => {
+          sendLiquidityFailEvent(errorMsg);
+          withdrawProtectedPositionFailed(dispatch, token, amount);
+        }
       );
+    }
     setIsModalOpen(false);
-  };
+  }, [
+    account,
+    amount,
+    dispatch,
+    pools,
+    positionId,
+    setIsModalOpen,
+    tknAmount,
+    token,
+  ]);
 
   const [onStart, ModalApprove] = useApproveModal(
-    [{ amount: amount, token: govToken! }],
+    govToken ? [{ amount: amount, token: govToken }] : [],
     withdraw,
-    approveContract.current
+    ApprovalContract.LiquidityProtection,
+    sendLiquidityEvent,
+    sendLiquidityApprovedEvent
   );
 
-  const handleWithdraw = async () => {
+  const handleWithdraw = useCallback(async () => {
+    const amountUsd = new BigNumber(amount)
+      .times(token ? token.usdPrice ?? 0 : 0)
+      .toString();
+    setCurrentLiquidity(
+      'Withdraw Single',
+      chainId,
+      pool.name,
+      token!.symbol,
+      amount,
+      amountUsd,
+      undefined,
+      undefined,
+      fiatToggle
+    );
+    sendLiquidityEvent(ConversionEvents.click);
     if (withdrawingBNT) {
       setIsModalOpen(false);
+      await wait(1000);
       onStart();
     } else withdraw();
-  };
+  }, [
+    amount,
+    chainId,
+    fiatToggle,
+    onStart,
+    pool.name,
+    setIsModalOpen,
+    token,
+    withdraw,
+    withdrawingBNT,
+  ]);
 
   return (
     <>
@@ -196,7 +252,7 @@ export const WithdrawLiquidityWidget = ({
                 <LinePercentage
                   percentages={[
                     {
-                      color: 'blue-4',
+                      color: 'charcoal',
                       decPercent: breakdown.tkn,
                       label: token?.symbol,
                     },
@@ -224,11 +280,11 @@ export const WithdrawLiquidityWidget = ({
           )}
           {showVBNTWarning() && (
             <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-              Insufficient VBNT balance.
+              Insufficient vBNT balance.
             </div>
           )}
           <button
-            onClick={() => handleWithdraw()}
+            onClick={handleWithdraw}
             disabled={withdrawDisabled}
             className={`btn-primary rounded w-full mt-20`}
           >

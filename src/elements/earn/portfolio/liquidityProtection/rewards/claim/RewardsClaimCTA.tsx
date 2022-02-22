@@ -5,7 +5,11 @@ import {
   claimRewardsNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useNavigation } from 'services/router';
+import {
+  Button,
+  ButtonVariant,
+} from '../../../../../../components/button/Button';
 
 interface Props {
   claimableRewards: string | null;
@@ -14,15 +18,15 @@ interface Props {
 
 export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const { pushPortfolio } = useNavigation();
 
   const handleClaim = async () => {
     if (account && claimableRewards) {
       try {
         const txHash = await claimRewards();
         claimRewardsNotification(dispatch, txHash, claimableRewards);
-        history.push('/portfolio');
-      } catch (e) {
+        pushPortfolio();
+      } catch (e: any) {
         console.error('Claiming Rewards failed with msg: ', e.message);
         claimRewardsFailedNotification(dispatch);
       }
@@ -33,15 +37,16 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
     <>
       <StakeRewardsBtn
         buttonLabel="Stake my Rewards"
-        buttonClass="btn-primary rounded w-full mt-20"
+        buttonClass="btn btn-primary btn-lg w-full mt-20"
       />
-      <button
+      <Button
+        variant={ButtonVariant.SECONDARY}
         onClick={() => handleClaim()}
-        className="btn-outline-primary rounded w-full mt-10"
+        className="w-full mt-10"
         disabled={!account}
       >
         Withdraw Rewards
-      </button>
+      </Button>
     </>
   );
 };

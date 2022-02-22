@@ -8,13 +8,7 @@ import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
-import { useHistory } from 'react-router-dom';
-import {
-  replaceFrom,
-  replaceLimit,
-  replaceTo,
-  switchTokens,
-} from 'utils/router';
+import { useNavigation } from 'services/router';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -32,6 +26,8 @@ export const SwapWidget = ({
   limit,
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const { replaceLimit, replaceFrom, replaceTo, switchTokens } =
+    useNavigation();
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
@@ -43,7 +39,6 @@ export const SwapWidget = ({
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
-  const history = useHistory();
 
   useEffect(() => {
     if (tokens) {
@@ -88,14 +83,14 @@ export const SwapWidget = ({
   );
 
   return (
-    <div className="bg-white dark:bg-blue-4 h-screen w-screen md:h-auto md:w-auto md:bg-grey-1 md:dark:bg-blue-3">
+    <div className="bg-white dark:bg-charcoal h-screen w-screen md:h-auto md:w-auto md:bg-fog md:dark:bg-black">
       <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
         <div>
           <div className="widget ">
             <SwapHeader
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
-                replaceLimit(fromToken, tokens, limit, history, toToken)
+                replaceLimit(fromToken, tokens, limit, toToken)
               }
             />
             <hr className="widget-separator" />
@@ -103,34 +98,26 @@ export const SwapWidget = ({
               <SwapLimit
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, true, history, toToken)
+                  replaceFrom(from, tokens, true, toToken)
                 }
                 toToken={toToken}
-                setToToken={(to: Token) =>
-                  replaceTo(fromToken, true, history, to)
-                }
-                switchTokens={() =>
-                  switchTokens(fromToken, true, history, toToken)
-                }
+                setToToken={(to: Token) => replaceTo(fromToken, true, to)}
+                switchTokens={() => switchTokens(fromToken, true, toToken)}
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, false, history, toToken)
+                  replaceFrom(from, tokens, false, toToken)
                 }
                 toToken={toToken}
-                setToToken={(to: Token) =>
-                  replaceTo(fromToken, false, history, to)
-                }
-                switchTokens={() =>
-                  switchTokens(fromToken, false, history, toToken)
-                }
+                setToToken={(to: Token) => replaceTo(fromToken, false, to)}
+                switchTokens={() => switchTokens(fromToken, false, toToken)}
               />
             )}
           </div>
           {isLimit ? (
-            <div className="text-center text-10 text-grey-4 mt-18">
+            <div className="text-center text-10 text-grey mt-18">
               Limit orders are powered by KeeperDAO
             </div>
           ) : (

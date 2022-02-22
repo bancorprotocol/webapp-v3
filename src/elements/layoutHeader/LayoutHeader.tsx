@@ -1,79 +1,133 @@
-import { useWeb3React } from '@web3-react/core';
-import { EthNetworks } from 'services/web3/types';
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
-import { LayoutHeaderMobile } from 'elements/layoutHeader/LayoutHeaderMobile';
-import { ReactComponent as IconHamburger } from 'assets/icons/hamburger.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import 'elements/layoutHeader/LayoutHeader.css';
-import { getNetworkName } from 'utils/helperFunctions';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
+import { NavLink } from 'react-router-dom';
+import { pools, portfolio, swap, tokens, vote } from 'services/router';
+import { Popover } from '@headlessui/react';
+import { useState } from 'react';
 
-interface LayoutHeaderProps {
-  isMinimized: boolean;
-  setIsSidebarOpen: Function;
-}
-
-export const LayoutHeader = ({
-  isMinimized,
-  setIsSidebarOpen,
-}: LayoutHeaderProps) => {
-  const { chainId } = useWeb3React();
+export const LayoutHeader = () => {
   const wallet = useWalletConnect();
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
   return (
     <>
-      <header className="layout-header">
-        <div
-          className={`transition-all duration-500 ${
-            isMinimized ? 'ml-[96px]' : 'ml-[230px]'
-          } mr-30 w-full`}
-        >
-          <div className="layout-header-content">
-            <div className="flex items-center">
-              <button className="btn-secondary btn-sm">
-                <div
-                  className={`${
-                    !chainId || chainId === EthNetworks.Mainnet
-                      ? 'bg-success'
-                      : chainId === EthNetworks.Ropsten
-                      ? 'bg-error'
-                      : 'bg-warning'
-                  } w-6 h-6 rounded-full mr-10`}
-                />
-                {getNetworkName(chainId ? chainId : EthNetworks.Mainnet)}
-              </button>
-            </div>
+      <header className="flex items-center justify-center fixed w-full h-60 z-30 bg-fog dark:bg-black shadow-header dark:shadow-none">
+        <div className="flex items-center justify-between w-[1140px] mx-20 md:mx-0">
+          <div className="hidden md:flex items-center gap-30">
+            <NavLink to={pools}>
+              <IconBancor className="w-[18px]" />
+            </NavLink>
+            <TopMenuDropdown
+              items={[
+                { title: 'Trade', link: swap },
+                { title: 'Tokens', link: tokens },
+              ]}
+              className="w-[115px]"
+            />
 
-            <div className="flex items-center">
-              <WalletConnectButton {...wallet} />
-              <NotificationsMenu />
-              <span className="text-grey-3 text-20 mx-16">|</span>
-              <SettingsMenu />
-            </div>
+            <NavLink to={pools} exact strict>
+              Earn
+            </NavLink>
+            <TopMenuDropdown
+              items={[
+                { title: 'Vote', link: vote },
+                { title: 'DAO Forum', link: 'https://gov.bancor.network' },
+              ]}
+              className="w-[125px]"
+            />
+
+            <NavLink to={portfolio} exact strict>
+              Portfolio
+            </NavLink>
+          </div>
+          <div className="md:hidden">
+            <NavLink to={pools}>
+              <IconBancor className="w-[18px]" />
+            </NavLink>
+          </div>
+          <div className="flex items-center gap-20">
+            {wallet.account && <NotificationsMenu />}
+            <SettingsMenu />
+            <WalletConnectButton {...wallet} />
           </div>
         </div>
       </header>
-      <LayoutHeaderMobile>
-        <button onClick={() => setIsSidebarOpen(true)}>
-          <IconHamburger className="w-[27px]" />
-        </button>
-        <div className="flex justify-center">
-          <IconBancor className="w-[23px]" />
-        </div>
-        <div className="flex items-center justify-end">
-          <NotificationsMenu />
-          <div className="bg-grey-4 w-[1px] h-30 mx-10" />
-          <WalletConnectButton {...wallet} />
-        </div>
-      </LayoutHeaderMobile>
       {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
+  );
+};
+
+interface TopMenu {
+  title: string;
+  link: string;
+}
+
+let timeout: NodeJS.Timeout;
+let prevPopFunc: Function = () => {};
+
+const TopMenuDropdown = ({
+  items,
+  className,
+}: {
+  items: TopMenu[];
+  className: string;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const openPopover = () => {
+    prevPopFunc();
+    clearInterval(timeout);
+    setOpen(true);
+  };
+
+  const closePopover = (delay: number) => {
+    prevPopFunc = () => setOpen(false);
+    timeout = setTimeout(() => setOpen(false), delay);
+  };
+  return (
+    <Popover className="block relative">
+      <Popover.Button
+        onMouseEnter={() => openPopover()}
+        onMouseLeave={() => closePopover(600)}
+      >
+        <TopMenuDropdownItem item={items[0]} />
+      </Popover.Button>
+
+      {open && (
+        <Popover.Panel
+          static
+          onMouseEnter={() => openPopover()}
+          onMouseLeave={() => closePopover(200)}
+          className={`dropdown-menu flex flex-col gap-20 ${className}`}
+        >
+          {items.map((item) => (
+            <TopMenuDropdownItem key={item.title} item={item} />
+          ))}
+        </Popover.Panel>
+      )}
+    </Popover>
+  );
+};
+
+const TopMenuDropdownItem = ({ item }: { item: TopMenu }) => {
+  const href = item.link.startsWith('http');
+  return (
+    <NavLink
+      exact
+      strict
+      to={{ pathname: item.link }}
+      target={href ? '_blank' : undefined}
+      rel={href ? 'noopener' : undefined}
+    >
+      {item.title}
+    </NavLink>
   );
 };

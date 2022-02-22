@@ -1,20 +1,32 @@
 import { Token } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
-import { bancorNetwork$ } from 'services/observables/contracts';
+import {
+  bancorNetwork$,
+  exchangeProxy$,
+  liquidityProtection$,
+} from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { user$ } from 'services/observables/user';
 import {
   NULL_APPROVAL_CONTRACTS,
   UNLIMITED_WEI,
 } from 'services/web3/approval/constants';
-import { ethToken } from 'services/web3/config';
+import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
 import { Token__factory } from '../abis/types';
+import { currentNetwork$ } from 'services/observables/network';
 
 interface GetApprovalReturn {
   allowanceWei: string;
   isApprovalRequired: boolean;
+}
+
+export enum ApprovalContract {
+  BancorNetwork,
+  ExchangeProxy,
+  LiquidityProtection,
+  Governance,
 }
 
 const getApproval = async (
@@ -88,16 +100,15 @@ const setApproval = async (
 
 export const getNetworkContractApproval = async (
   token: Token,
-  amount: string,
-  contract?: string
+  contract: ApprovalContract | string,
+  amount: string
 ): Promise<boolean> => {
-  const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-  const USER = await user$.pipe(take(1)).toPromise();
+  const user = await user$.pipe(take(1)).toPromise();
   const amountWei = expandToken(amount, token.decimals);
   const { isApprovalRequired } = await getApproval(
     token.address,
-    USER,
-    contract ? contract : BANCOR_NETWORK,
+    user,
+    await getApprovalAddress(contract),
     amountWei
   );
   return isApprovalRequired;
@@ -105,18 +116,35 @@ export const getNetworkContractApproval = async (
 
 export const setNetworkContractApproval = async (
   token: Token,
+  contract: ApprovalContract | string,
   amount?: string,
-  contract?: string,
   resolveImmediately?: boolean
 ) => {
-  const BANCOR_NETWORK = await bancorNetwork$.pipe(take(1)).toPromise();
-  const USER = await user$.pipe(take(1)).toPromise();
+  const user = await user$.pipe(take(1)).toPromise();
   const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
   return await setApproval(
     token.address,
-    USER,
-    contract ? contract : BANCOR_NETWORK,
+    user,
+    await getApprovalAddress(contract),
     amountWei,
     resolveImmediately
   );
+};
+
+const getApprovalAddress = async (
+  contract: ApprovalContract | string
+): Promise<string> => {
+  if (typeof contract === 'string') return contract;
+
+  switch (contract) {
+    case ApprovalContract.BancorNetwork:
+      return await bancorNetwork$.pipe(take(1)).toPromise();
+    case ApprovalContract.ExchangeProxy:
+      return await exchangeProxy$.pipe(take(1)).toPromise();
+    case ApprovalContract.LiquidityProtection:
+      return await liquidityProtection$.pipe(take(1)).toPromise();
+    case ApprovalContract.Governance:
+      const network = await currentNetwork$.pipe(take(1)).toPromise();
+      return getNetworkVariables(network).governanceContractAddress;
+  }
 };

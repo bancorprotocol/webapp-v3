@@ -1,18 +1,38 @@
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
-import { ReactComponent as IconCog } from 'assets/icons/cog.svg';
-import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
-import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
+import { ReactComponent as IconMenu } from 'assets/icons/menu.svg';
+import { ReactComponent as IconFiat } from 'assets/icons/fiat.svg';
+import { ReactComponent as IconTwitter } from 'assets/icons/twitter.svg';
+import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
+import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';
+import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
+import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
 import { useDispatch } from 'react-redux';
-import { setDarkMode, setSlippageTolerance } from 'redux/user/user';
+import { setSlippageTolerance } from 'redux/user/user';
 import { useAppSelector } from 'redux/index';
-import { MenuSecondaryItem } from 'elements/sidebar/menuSecondary/MenuSecondaryItem';
-import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { fiat, privacyPolicy, tos, vote } from 'services/router';
+import { DarkMode } from './DarkMode';
+import { Navigate } from 'components/navigate/Navigate';
 
 export const SettingsMenu = () => {
-  const [showSettings, setShowSettings] = useState(false);
+  return (
+    <>
+      <Popover className="hidden md:block relative">
+        <Popover.Button className="flex items-center">
+          <IconMenu className="w-[20px]" />
+        </Popover.Button>
+        <DropdownTransition>
+          <Popover.Panel className="dropdown-menu w-[324px]">
+            <SettingsMenuContent />
+          </Popover.Panel>
+        </DropdownTransition>
+      </Popover>
+    </>
+  );
+};
+
+export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
   const [customSlippage, setCustomSlippage] = useState('');
 
   const dispatch = useDispatch();
@@ -21,114 +41,87 @@ export const SettingsMenu = () => {
   );
 
   const slippages = [0.001, 0.005, 0.01];
-
-  const content = (
-    <>
-      <div className="space-y-15">
-        <div className="flex justify-between">
-          <div>Color Mode</div>
-          <div className="flex items-center">
-            <button onClick={() => dispatch(setDarkMode(false))}>
-              <IconSun className="w-20" />
-            </button>
-            <span className="mx-10">|</span>
-            <button onClick={() => dispatch(setDarkMode(true))}>
-              <IconMoon className="w-15" />
-            </button>
-          </div>
-        </div>
-        <hr className="border-grey-3 mt-15 mb-10" />
-
-        <div>
-          <div className="mb-15">Slippage Tolerance</div>
-          <div className="flex justify-between space-x-6">
-            {slippages.map((slippage) => (
-              <button
-                key={slippage}
-                onClick={() => dispatch(setSlippageTolerance(slippage))}
-                className={`w-full font-medium border border-grey-3 rounded-[12px] text-12 p-8 ${
-                  currentSlippage === slippage
-                    ? 'bg-primary !border-primary text-white'
-                    : ''
-                }`}
-              >
-                +{slippage * 100}%
-              </button>
-            ))}
-            <input
-              type="text"
-              className={`w-[69px] dark:bg-blue-2 outline-none border border-grey-3 text-center text-12 rounded-[12px] ${
-                currentSlippage === Number(customSlippage) / 100
-                  ? 'bg-primary text-white placeholder-white'
+  return (
+    <div className="space-y-15 text-black-low dark:text-white-low">
+      <div>Slippage Tolerance</div>
+      <div className="flex flex-col gap-[25px]">
+        <div className="flex justify-between space-x-6">
+          {slippages.map((slippage) => (
+            <button
+              key={slippage}
+              onClick={() => dispatch(setSlippageTolerance(slippage))}
+              className={`w-full border border-silver rounded-[12px] text-12 p-8 ${
+                currentSlippage === slippage
+                  ? 'bg-primary !border-primary text-black'
                   : ''
               }`}
-              onFocus={() => {
-                if (!Number.isNaN(customSlippage)) {
-                  dispatch(setSlippageTolerance(Number(customSlippage) / 100));
-                }
-              }}
-              value={customSlippage}
-              onChange={(event) => {
-                const { value } = event.target;
-                if (!Number.isNaN(value)) {
-                  dispatch(setSlippageTolerance(Number(value) / 100));
-                }
-                setCustomSlippage(value);
-              }}
-              placeholder="Custom"
-            />
+            >
+              +{slippage * 100}%
+            </button>
+          ))}
+          <input
+            type="text"
+            className={`w-[69px] dark:bg-blue-2 outline-none text-center text-12 rounded-[12px] ${
+              currentSlippage === Number(customSlippage) / 100
+                ? 'bg-primary text-black placeholder-black'
+                : 'bg-fog'
+            }`}
+            onFocus={() => {
+              if (!Number.isNaN(customSlippage)) {
+                dispatch(setSlippageTolerance(Number(customSlippage) / 100));
+              }
+            }}
+            value={customSlippage}
+            onChange={(event) => {
+              const { value } = event.target;
+              if (!Number.isNaN(value)) {
+                dispatch(setSlippageTolerance(Number(value) / 100));
+              }
+              setCustomSlippage(value);
+            }}
+            placeholder="Custom"
+          />
+        </div>
+        {mobile ? (
+          <Navigate to={vote}>
+            <div className="flex items-center gap-10 text-black dark:text-white">
+              <IconVote className="text-black dark:text-white w-20" />
+              Vote
+            </div>
+          </Navigate>
+        ) : (
+          <DarkMode showText />
+        )}
+        <Navigate to={fiat}>
+          <div className="flex items-center gap-10 text-black dark:text-white">
+            <IconFiat className="w-20" />
+            Buy crypto with fiat
           </div>
+        </Navigate>
+        <hr className="border-fog" />
+        <Navigate to="https://support.bancor.network">Help Center</Navigate>
+        <Navigate to={fiat}>FAQ</Navigate>
+        <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
+          Analytics
+        </Navigate>
+        <Navigate to="https://docs.bancor.network">Developers</Navigate>
+        <Navigate to={tos}>Terms Of Use</Navigate>
+        <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
+        <div className="flex justify-between text- dark:black-disabled">
+          <Navigate to="https://twitter.com/Bancor">
+            <IconTwitter className="h-20" />
+          </Navigate>
+          <Navigate to="https://t.me/bancor">
+            <IconTelegram className="h-20" />
+          </Navigate>
+          <Navigate to="https://discord.gg/CAm3Ncyrxk">
+            <IconDiscord className="h-20" />
+          </Navigate>
+          <Navigate to="https://www.reddit.com/r/Bancor">
+            <IconReddit className="h-20" />
+          </Navigate>
         </div>
       </div>
-
-      <hr className="border-grey-3 mt-15 mb-10" />
-
-      <div className="text-center">
-        <NavLink exact strict to="/terms-of-use" className="hover:underline">
-          Terms of Use
-        </NavLink>
-        <span className="mx-10">|</span>
-        <NavLink exact strict to="/privacy-policy" className="hover:underline">
-          Privacy Policy
-        </NavLink>
-      </div>
-    </>
-  );
-
-  return (
-    <>
-      <Popover className="hidden md:block relative">
-        <Popover.Button className="flex items-center">
-          <IconCog className="w-[20px]" />
-        </Popover.Button>
-
-        <DropdownTransition>
-          <Popover.Panel className="dropdown-menu w-[324px]">
-            <div className="dropdown-bubble" />
-            <div className="dropdown-header">Settings</div>
-
-            {content}
-          </Popover.Panel>
-        </DropdownTransition>
-      </Popover>
-
-      <div className="md:hidden">
-        <button onClick={() => setShowSettings(true)} className="w-full">
-          <MenuSecondaryItem
-            label="Settings"
-            icon={<IconCog className="w-20" />}
-            subMenu={[]}
-          />
-        </button>
-        <ModalFullscreen
-          title="Settings"
-          setIsOpen={setShowSettings}
-          isOpen={showSettings}
-          showHeader
-        >
-          {content}
-        </ModalFullscreen>
-      </div>
-    </>
+    </div>
   );
 };

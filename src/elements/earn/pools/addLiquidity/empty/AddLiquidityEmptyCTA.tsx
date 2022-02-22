@@ -1,10 +1,8 @@
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Pool, Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
-import { useHistory } from 'react-router-dom';
 import {
   addLiquidityFailedNotification,
   addLiquidityNotification,
@@ -12,6 +10,9 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
+import { useNavigation } from 'services/router';
+import { Button, ButtonVariant } from 'components/button/Button';
+import { useAppSelector } from 'redux/index';
 
 interface Props {
   pool: Pool;
@@ -31,8 +32,10 @@ export const AddLiquidityEmptyCTA = ({
   errorMsg,
 }: Props) => {
   const dispatch = useDispatch();
-  const { account } = useWeb3React();
-  const history = useHistory();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
+  const { pushPortfolio } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
@@ -55,7 +58,7 @@ export const AddLiquidityEmptyCTA = ({
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          history.push('/portfolio');
+          pushPortfolio();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -68,7 +71,7 @@ export const AddLiquidityEmptyCTA = ({
           pool.name
         )
     );
-  }, [amountTkn, tkn, amountBnt, bnt, pool, dispatch, history]);
+  }, [amountTkn, tkn, amountBnt, bnt, pool, pushPortfolio, dispatch]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [
@@ -81,18 +84,24 @@ export const AddLiquidityEmptyCTA = ({
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: 'btn-error' };
+      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
     }
     if (!amountBnt || !amountTkn) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: 'btn-primary',
+        variant: ButtonVariant.PRIMARY,
       };
     } else {
-      return { label: 'Supply', disabled: false, variant: 'btn-primary' };
+      return {
+        label: 'Supply',
+        disabled: false,
+        variant: ButtonVariant.PRIMARY,
+      };
     }
   };
+
+  const btn = button();
 
   const onClick = () => {
     if (!account) {
@@ -104,13 +113,14 @@ export const AddLiquidityEmptyCTA = ({
 
   return (
     <>
-      <button
+      <Button
         onClick={() => onClick()}
-        disabled={button().disabled}
-        className={`${button().variant} rounded w-full mt-20`}
+        variant={btn.variant}
+        disabled={btn.disabled}
+        className={`w-full mt-20`}
       >
-        {button().label}
-      </button>
+        {btn.label}
+      </Button>
       {ModalApprove}
     </>
   );

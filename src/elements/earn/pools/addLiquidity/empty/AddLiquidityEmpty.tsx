@@ -6,8 +6,9 @@ import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/A
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
 import BigNumber from 'bignumber.js';
-import { useHistory } from 'react-router-dom';
+
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
+import { useNavigation } from 'services/router';
 
 interface Props {
   pool: Pool;
@@ -15,26 +16,25 @@ interface Props {
 
 export const AddLiquidityEmpty = ({ pool }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
-  const tkn = useAppSelector<Token | undefined>(
-    getTokenById(tknReserve.address)
+  const tkn = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, tknReserve.address)
   );
-  const bnt = useAppSelector<Token | undefined>(
-    getTokenById(bntReserve.address)
+  const bnt = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, bntReserve.address)
   );
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
   const [errorBalanceTkn, setErrorBalanceTkn] = useState('');
   const [tknUsdPrice, setTknUsdPrice] = useState('');
-
   useEffect(() => {
     setBntAmount('');
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const history = useHistory();
+  const { pushLiquidityError, pushPools } = useNavigation();
   if (!tkn || !bnt) {
-    history.push('/pools/add-liquidity/error');
+    pushLiquidityError();
     return <></>;
   }
 
@@ -42,7 +42,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     return new BigNumber(bnt.usdPrice!).div(tknUsdPrice).toString();
   };
   return (
-    <Widget title="Add Liquidity">
+    <Widget title="Add Liquidity" goBack={pushPools}>
       <AddLiquidityEmptyStep1
         tkn={tkn}
         bnt={bnt}
@@ -50,7 +50,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
         setTknUsdPrice={setTknUsdPrice}
         bntTknRate={bntTknRate()}
       />
-      <div className="p-10 rounded bg-blue-0 dark:bg-blue-5 mt-20">
+      <div className="p-10 rounded bg-primary dark:bg-black-disabled mt-20">
         <AddLiquidityEmptyStep2
           tkn={tkn}
           bnt={bnt}

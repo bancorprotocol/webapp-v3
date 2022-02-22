@@ -7,6 +7,12 @@ import { notification } from 'redux/notification/notification';
 import { liquidity } from './liquidity/liquidity';
 
 export const store = configureStore({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['bancor.tokens', 'bancor.tokenLists'],
+      },
+    }),
   reducer: {
     user,
     notification,

@@ -1,6 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
+  ApprovalContract,
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
@@ -13,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
 import { web3 } from 'services/web3';
+import { ConversionEvents } from '../services/api/googleTagManager';
 
 interface Tokens {
   token: Token;
@@ -20,9 +22,11 @@ interface Tokens {
 }
 
 export const useApproveModal = (
-  tokens: Tokens[],
+  tokens: Tokens[] = [],
   onComplete: Function,
-  contract?: string
+  contract: ApprovalContract | string = ApprovalContract.BancorNetwork,
+  gtmPopupEvent?: (event: ConversionEvents) => void,
+  gtmSelectEvent?: (isUnlimited: boolean) => void
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -35,7 +39,7 @@ export const useApproveModal = (
       try {
         const receipt = await web3.provider.getTransactionReceipt(txHash);
         receipts.push(receipt);
-      } catch (e) {
+      } catch (e: any) {
         console.error('failed to getTransactionReceipt for approve token tx');
         return;
       }
@@ -53,6 +57,16 @@ export const useApproveModal = (
 
   const dispatch = useDispatch();
 
+  const onStart = async () => {
+    if (tokens.length === 0) {
+      console.error('No tokens provided for approval!');
+      return;
+    }
+    await checkApprovalRequired();
+  };
+
+  if (tokens.length === 0) return [onStart, <></>] as [Function, JSX.Element];
+
   const checkNextToken = async (index = tokenIndex): Promise<any> => {
     const nextIndex = index + 1;
     const count = tokens.length;
@@ -68,25 +82,31 @@ export const useApproveModal = (
     const { token, amount } = tokens[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
-      amount,
-      contract
+      contract,
+      amount
     );
 
     if (!isApprovalRequired) {
       return checkNextToken(tokenIndex);
     }
 
+    gtmPopupEvent && gtmPopupEvent(ConversionEvents.approvePop);
+
     setIsOpen(true);
   };
 
   const setApproval = async (amount?: string) => {
+    if (gtmSelectEvent) {
+      const isUnlimited = amount === undefined;
+      gtmSelectEvent(isUnlimited);
+    }
     const { token } = tokens[tokenIndex];
     try {
       setIsLoading(true);
       const txHash = await setNetworkContractApproval(
         token,
-        amount,
         contract,
+        amount,
         true
       );
 
@@ -111,7 +131,7 @@ export const useApproveModal = (
       setIsLoading(false);
 
       await checkNextToken();
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === ErrorCode.DeniedTx) {
         dispatch(
           addNotification({
@@ -133,14 +153,6 @@ export const useApproveModal = (
       setIsOpen(false);
       setIsLoading(false);
     }
-  };
-
-  const onStart = async () => {
-    if (tokens.length === 0) {
-      console.error('No tokens provided for approval!');
-      return;
-    }
-    await checkApprovalRequired();
   };
 
   const ModalApprove = ModalApproveNew({

@@ -18,9 +18,17 @@ import {
   rejectNotification,
   setFeeNotification,
 } from 'services/notifications/notifications';
+import {
+  Button,
+  ButtonSize,
+  ButtonVariant,
+} from '../../components/button/Button';
 
 export const ModalCreatePool = () => {
-  const { chainId, account } = useWeb3React();
+  const { chainId } = useWeb3React();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
@@ -81,12 +89,14 @@ export const ModalCreatePool = () => {
 
   return (
     <>
-      <button
-        className="btn-outline-secondary rounded-[12px] h-[35px]"
+      <Button
+        variant={ButtonVariant.SECONDARY}
+        size={ButtonSize.EXTRASMALL}
+        className="h-[35px]"
         onClick={() => setIsOpen(true)}
       >
         Create Pool
-      </button>
+      </Button>
       <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Create Pool">
         <div className="p-14">
           <div className="mx-10 mb-30">
@@ -112,7 +122,7 @@ export const ModalCreatePool = () => {
           </div>
 
           <div className="flex justify-between items-center ml-15">
-            <div className="text-grey-4">Fee</div>
+            <div className="text-grey">Fee</div>
             <div className="max-w-[200px] my-20">
               <InputField
                 input={fee}

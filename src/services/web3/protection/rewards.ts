@@ -43,7 +43,7 @@ export const stakeRewards = async ({
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
@@ -85,7 +85,7 @@ export const stakePoolLevelRewards = async ({
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
-  } catch (e) {
+  } catch (e: any) {
     console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);

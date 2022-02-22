@@ -31,6 +31,10 @@ import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 import { ErrorCode } from '../types';
 import { Result } from '@ethersproject/abi';
 import { changeGas } from '../config';
+import {
+  ConversionEvents,
+  sendLiquidityEvent,
+} from '../../api/googleTagManager';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -321,6 +325,7 @@ export const withdrawProtection = async (
     );
 
     const percentage = new BigNumber(amount).div(tknAmount);
+    sendLiquidityEvent(ConversionEvents.wallet_req);
 
     const estimate =
       await liquidityProtectionContract.estimateGas.removeLiquidity(
@@ -334,6 +339,8 @@ export const withdrawProtection = async (
       decToPpm(percentage),
       { gasLimit }
     );
+    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+
     onHash(tx.hash);
 
     await tx.wait();

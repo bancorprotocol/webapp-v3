@@ -10,7 +10,7 @@ export const MarketingBannerMobile = () => {
     dispatch(setShowBanner(false));
   }, [dispatch]);
   return (
-    <div className="md:hidden flex items-center justify-center fixed top-[75px] w-full h-40 bg-blue-4 text-white border-t z-30">
+    <div className="md:hidden flex items-center justify-center fixed top-[75px] w-full h-40 bg-charcoal text-white border-t z-30">
       <button className="absolute right-20 p-10" onClick={handleCloseBanner}>
         <IconTimes className="w-12" />
       </button>
