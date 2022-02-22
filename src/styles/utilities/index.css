@@ -5,6 +5,11 @@
         @apply bg-white rounded-10 dark:bg-charcoal;
     }
 
+    .text-secondary {
+        @apply text-charcoal text-opacity-50;
+    }
+
+
     .loading-skeleton {
         @apply bg-primary bg-opacity-30 animate-pulse rounded-full;
     }
