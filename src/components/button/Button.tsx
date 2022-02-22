@@ -52,23 +52,20 @@ export const ButtonToggle = ({
   setToggle: Function;
 }) => {
   return (
-    <div className="bg-fog p-5 rounded-10 flex items-center">
-      <button
-        className={`rounded-10 px-12 ${
-          toggle ? 'bg-white' : 'bg-fog text-black-low'
-        }`}
-        onClick={() => setToggle()}
-      >
-        {labels[0]}
-      </button>
-      <button
-        className={`rounded-10 px-12 ${
-          toggle ? 'bg-fog text-black-low' : 'bg-white'
-        }`}
-        onClick={() => setToggle()}
-      >
-        {labels[1]}
-      </button>
+    <div className="bg-fog p-5 rounded-10 flex items-center dark:bg-black">
+      {labels.map((label, index) => (
+        <button
+          key={label.key}
+          className={`rounded-10 px-12 ${
+            (toggle && index === 0) || (!toggle && index !== 0)
+              ? 'bg-white dark:bg-charcoal'
+              : 'bg-fog dark:bg-black dark:text-white-low text-black-low'
+          }`}
+          onClick={() => setToggle()}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 };

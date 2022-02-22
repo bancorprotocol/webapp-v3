@@ -166,11 +166,16 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         <div className="flex items-center gap-x-10">
           <ButtonToggle
             labels={[
-              <div className="flex items-center gap-x-[4px] text-16 w-[40px]">
+              <div
+                key="v3"
+                className="flex items-center gap-x-[4px] text-16 w-[40px]"
+              >
                 <IconProtected className="w-15" />
                 V3
               </div>,
-              <div className="text-16 w-[25px]">V2</div>,
+              <div key="v2" className="text-16 w-[25px]">
+                V2
+              </div>,
             ]}
             toggle={v3Selected}
             setToggle={() => setV3Selected(!v3Selected)}
