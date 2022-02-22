@@ -52,15 +52,19 @@ export const ButtonToggle = ({
   setToggle: Function;
 }) => {
   return (
-    <div className="bg-fog p-5 rounded-10">
+    <div className="bg-fog p-5 rounded-10 flex items-center">
       <button
-        className={`rounded-10 px-10 ${toggle ? 'bg-white' : 'bg-fog'}`}
+        className={`rounded-10 px-12 ${
+          toggle ? 'bg-white' : 'bg-fog text-black-low'
+        }`}
         onClick={() => setToggle()}
       >
         {labels[0]}
       </button>
       <button
-        className={`rounded-10 px-10 ${toggle ? 'bg-fog' : 'bg-white'}`}
+        className={`rounded-10 px-12 ${
+          toggle ? 'bg-fog text-black-low' : 'bg-white'
+        }`}
         onClick={() => setToggle()}
       >
         {labels[1]}

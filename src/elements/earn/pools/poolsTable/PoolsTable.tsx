@@ -44,21 +44,25 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => PoolsTableCellName(cellData.row.original),
-        minWidth: 100,
+        minWidth: 150,
+        width: 180,
         sortDescFirst: true,
       },
       {
         id: 'isProtected',
         Header: 'Protected',
         accessor: 'isProtected',
+        headerClassName: 'justify-center',
         Cell: (cellData) =>
           cellData.value ? (
-            <IconProtected className="w-18 h-20 text-primary" />
+            <div className="flex justify-center">
+              <IconProtected className="w-18 h-20 text-primary" />
+            </div>
           ) : (
             <div />
           ),
         tooltip: 'Protected',
-        minWidth: 130,
+        minWidth: 160,
         sortDescFirst: true,
       },
       {
@@ -89,9 +93,8 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'apr',
         Header: 'APR',
         accessor: 'apr',
-        headerClassName: 'justify-center',
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
-        minWidth: 250,
+        minWidth: 180,
         disableSortBy: true,
         tooltip:
           'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
@@ -162,7 +165,13 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <div className="flex items-center gap-x-10">
           <ButtonToggle
-            labels={[<>V3</>, <>V2</>]}
+            labels={[
+              <div className="flex items-center gap-x-[4px] text-16 w-[40px]">
+                <IconProtected className="w-15" />
+                V3
+              </div>,
+              <div className="text-16 w-[25px]">V2</div>,
+            ]}
             toggle={v3Selected}
             setToggle={() => setV3Selected(!v3Selected)}
           />
