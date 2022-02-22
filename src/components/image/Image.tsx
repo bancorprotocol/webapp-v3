@@ -1,33 +1,40 @@
-import { SyntheticEvent, useState } from 'react';
+import { DetailedHTMLProps, ImgHTMLAttributes, useState } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { ropstenImage } from 'services/web3/config';
+import { useFallbackImage } from 'components/image/useFallbackImage';
 
-interface ImageProps {
+type ImgAttributes = DetailedHTMLProps<
+  ImgHTMLAttributes<HTMLImageElement>,
+  HTMLImageElement
+>;
+
+interface ImageProps extends ImgAttributes {
   src?: string;
   alt: string;
   className: string;
   lazy?: boolean;
 }
 
-const imageOnErrorHandler = (
-  event: SyntheticEvent<HTMLImageElement, Event>
-) => {
-  event.currentTarget.src = ropstenImage;
-  event.currentTarget.onerror = null;
-};
-
-export const Image = ({ src, alt, className, lazy = true }: ImageProps) => {
+export const Image = ({
+  src,
+  alt,
+  className,
+  lazy = true,
+  ...props
+}: ImageProps) => {
   const [loaded, setLoaded] = useState(false);
+  const { source, onError } = useFallbackImage(src, ropstenImage);
 
   return (
     <img
-      src={src ? src : ropstenImage}
+      {...props}
+      src={source}
       alt={loaded ? alt : ''}
       className={`${className} ${classNameGenerator({
         'animate-pulse': !loaded,
       })}`}
       onLoad={() => setLoaded(true)}
-      onError={imageOnErrorHandler}
+      onError={onError}
       loading={lazy ? 'lazy' : 'eager'}
     />
   );
