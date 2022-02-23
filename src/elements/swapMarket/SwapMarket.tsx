@@ -72,6 +72,7 @@ export const SwapMarket = ({
   const [showModal, setShowModal] = useState(false);
   const [rateToggle, setRateToggle] = useState(false);
   const [isLoadingRate, setIsLoadingRate] = useState(false);
+  const [isSwapV3, setIsSwapV3] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const dispatch = useDispatch();
@@ -89,6 +90,8 @@ export const SwapMarket = ({
   ) => {
     if (showAnimation) setIsLoadingRate(true);
     const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+
+    setIsSwapV3(res.isV3);
     if (showAnimation) setIsLoadingRate(false);
     return res;
   };
@@ -223,6 +226,7 @@ export const SwapMarket = ({
     }
 
     await swap(
+      isSwapV3,
       slippageTolerance,
       fromToken,
       toToken,
@@ -385,7 +389,12 @@ export const SwapMarket = ({
             {toToken && (
               <>
                 <div className="flex justify-between items-center mt-15">
-                  <span>Rate</span>
+                  <div className="flex items-center">
+                    Best Rate
+                    <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
+                      {isSwapV3 ? 'V3' : 'V2'}
+                    </div>
+                  </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[140px]"></div>
                   ) : (

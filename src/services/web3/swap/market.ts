@@ -69,10 +69,11 @@ export const getRateAndPriceImapct = async (
       priceImpact: isNaN(priceImpactNum.toNumber())
         ? '0.0000'
         : priceImpactNum.toFixed(4),
+      isV3: false,
     };
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
-    return { rate: '0', priceImpact: '0.0000' };
+    return { rate: '0', priceImpact: '0.0000', isV3: false };
   }
 };
 
@@ -117,6 +118,7 @@ const calculateMinimumReturn = (
 };
 
 export const swap = async (
+  isV3: boolean,
   slippageTolerance: number,
   fromToken: Token,
   toToken: Token,
