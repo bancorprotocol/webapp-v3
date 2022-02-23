@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTableCellAction';
+import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
+import { V3EarningsTableSubMenuWrapper } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableSubMenuWrapper';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -7,14 +8,9 @@ interface Props {
 
 export const V3EarningTableMenuBonus = memo(({ setCurrentMenu }: Props) => {
   return (
-    <div className="flex flex-col justify-between h-full">
-      <div>
-        <button onClick={() => setCurrentMenu('main')} className="text-20">
-          {'<-'}
-        </button>
-      </div>
+    <V3EarningsTableSubMenuWrapper setCurrentMenu={setCurrentMenu}>
       <div>Bonus menu ...</div>
       <div>placeholder content</div>
-    </div>
+    </V3EarningsTableSubMenuWrapper>
   );
 });

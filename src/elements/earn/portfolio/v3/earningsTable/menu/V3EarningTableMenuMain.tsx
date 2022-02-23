@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
-import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTableCellAction';
+import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;

@@ -1,13 +1,16 @@
 import { Popover, Transition, Portal } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
-import { Fragment, memo, ReactNode, useRef, useState } from 'react';
+import { Fragment, memo, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
+import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
+
+export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
 interface Props {
-  children: ReactNode;
+  setIsWithdrawModalOpen: (isOpen: boolean) => void;
 }
 
-export const V3EarningTableMenu = memo(({ children }: Props) => {
+export const V3EarningTableMenu = memo(({ setIsWithdrawModalOpen }: Props) => {
   const popperElRef = useRef(null);
   const [targetElement, setTargetElement] = useState(null);
   const [popperElement, setPopperElement] = useState(null);
@@ -53,7 +56,9 @@ export const V3EarningTableMenu = memo(({ children }: Props) => {
               >
                 <Popover.Panel className="w-screen max-w-[300px]">
                   <div className="overflow-hidden rounded bg-white p-20 border border-silver h-[280px]">
-                    {children}
+                    <V3EarningsTableMenuContent
+                      isWithdrawModalOpen={setIsWithdrawModalOpen}
+                    />
                   </div>
                 </Popover.Panel>
               </Transition>
