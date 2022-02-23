@@ -1,7 +1,10 @@
 import axios from 'axios';
 
 const baseUrl = 'https://api.intotheblock.com';
-const apiKey = 'i5Ns7HzXr9hIbPMfChi24ydoqQCdLBK2Rix0JwMg';
+const apiKey = process.env.REACT_APP_INTOTHEBLOCK_KEY || '';
+const axiosConfig = {
+  headers: { 'x-api-key': apiKey },
+};
 
 interface SignalsRes {
   summary: Summary;
@@ -46,10 +49,6 @@ export interface IntoTheBlock {
   symbol: string;
 }
 
-axios.defaults.headers.common = {
-  'x-api-key': apiKey,
-};
-
 const calculateTimeHeld = (timeHeld: ByTimeHeldComposition) => {
   const sumTimeHeld = timeHeld.hodler + timeHeld.cruiser + timeHeld.trader;
   return {
@@ -73,8 +72,8 @@ export const intoTheBlockByToken = async (
 ): Promise<IntoTheBlock | undefined> => {
   try {
     const [signal, overview] = await Promise.all([
-      axios.get<SignalsRes>(`${baseUrl}/${symbol}/signals`),
-      axios.get<OverviewRes>(`${baseUrl}/${symbol}/overview`),
+      axios.get<SignalsRes>(`${baseUrl}/${symbol}/signals`, axiosConfig),
+      axios.get<OverviewRes>(`${baseUrl}/${symbol}/overview`, axiosConfig),
     ]);
     const inOut = overview.data.inOutOfTheMoney;
     const timeHeld = overview.data.byTimeHeldComposition;
