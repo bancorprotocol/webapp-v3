@@ -217,10 +217,10 @@ export const SearchableTokenList = ({
                     token.name.toLowerCase().includes(search.toLowerCase()))
               )
               .slice(0, limit ? 300 : tokens.length)
-              .map((token) => {
+              .map((token, i) => {
                 return (
                   <button
-                    key={token.address}
+                    key={i}
                     onClick={() => {
                       onClick(token);
                       onClose();
