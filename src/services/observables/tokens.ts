@@ -169,17 +169,15 @@ export const tokenListMerged$ = combineLatest([
       const filteredTokenLists = tokenLists.filter((list) =>
         userPreferredListIds.some((id) => id === list.name)
       );
-      const merged = filteredTokenLists.flatMap((list) => list.tokens);
+      const merged = filteredTokenLists
+        .flatMap((list) => list.tokens)
+        .filter((token) => !!token.address)
+        .map((token) => ({
+          ...token,
+          address: utils.getAddress(token.address),
+        }));
       return uniqBy(merged, (x) => x.address);
     }
-  ),
-  map((tokens) =>
-    tokens
-      .filter((token) => !!token.address)
-      .map((token) => ({
-        ...token,
-        address: utils.getAddress(token.address),
-      }))
   ),
   shareReplay(1)
 );
