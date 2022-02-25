@@ -5,11 +5,11 @@ import { V3EarningTableMenuRate } from 'elements/earn/portfolio/v3/earningsTable
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 
 interface Props {
-  isWithdrawModalOpen: (isOpen: boolean) => void;
+  setIsWithdrawModalOpen: (isOpen: boolean) => void;
 }
 
 export const V3EarningsTableMenuContent = memo(
-  ({ isWithdrawModalOpen }: Props) => {
+  ({ setIsWithdrawModalOpen }: Props) => {
     const [currentMenu, setCurrentMenu] =
       useState<EarningTableMenuState>('main');
 
@@ -18,7 +18,7 @@ export const V3EarningsTableMenuContent = memo(
         {currentMenu === 'main' && (
           <V3EarningTableMenuMain
             setCurrentMenu={setCurrentMenu}
-            setIsWithdrawModalOpen={isWithdrawModalOpen}
+            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
           />
         )}
         {currentMenu === 'bonus' && (

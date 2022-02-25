@@ -15,7 +15,7 @@ export const V3EarningsTableSubMenuWrapper = memo(
             {'<-'}
           </button>
         </div>
-        {children}
+        <div>{children}</div>
       </div>
     );
   }
