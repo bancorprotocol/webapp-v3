@@ -6,6 +6,8 @@ export enum ButtonVariant {
   SUCCESS = 'success',
   ERROR = 'error',
   WARNING = 'warning',
+  BLACK = 'black',
+  WHITE = 'white',
 }
 
 export enum ButtonSize {
