@@ -23,6 +23,16 @@ module.exports = {
   charcoal: { DEFAULT: '#18181A' },
   grey: { DEFAULT: '#303034' },
   approve: { DEFAULT: '#4EC987' },
+  dark: {
+    DEFAULT: '#000000',
+    hover: '#444444',
+    disabled: '#18181A33', //20% Opacity
+  },
+  light: {
+    DEFAULT: '#FFFFFF', //100% Opacity
+    hover: '#efefef',
+    disabled: '#FFFFFF33', //20% Opacity
+  },
   black: {
     DEFAULT: '#000000',
     hover: '#444444',

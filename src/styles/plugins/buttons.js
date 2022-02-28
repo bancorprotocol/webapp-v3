@@ -17,11 +17,11 @@ module.exports = function () {
       'success',
       'error',
       'warning',
-      'black',
-      'white',
+      'dark',
+      'light',
     ];
     variants.forEach((variant) => {
-      const textColor = variant === 'white' ? 'black' : 'white';
+      const textColor = variant === 'light' ? 'black' : 'white';
       const hover = `bg-${variant}-hover`;
       buttons[`.btn-${variant}`] = {
         [`@apply text-${textColor}`]: '',

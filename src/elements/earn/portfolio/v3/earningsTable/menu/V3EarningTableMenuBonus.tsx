@@ -16,7 +16,7 @@ export const V3EarningTableMenuBonus = memo(({ setCurrentMenu }: Props) => {
       <div className="mt-10 mb-40">{prettifyNumber(123, true)}</div>
       <div className="grid grid-cols-2 gap-10">
         <Button
-          variant={ButtonVariant.BLACK}
+          variant={ButtonVariant.DARK}
           size={ButtonSize.SMALL}
           textBadge={'86%'}
         >
