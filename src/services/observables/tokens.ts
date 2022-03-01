@@ -90,6 +90,7 @@ export interface Pool {
   apr: number;
   reward?: APIReward;
   isProtected: boolean;
+  isV3: boolean;
 }
 
 export interface PoolToken {
@@ -395,6 +396,7 @@ export const pools$ = combineLatest([
           supply: Number(pool.supply),
           apr,
           isProtected,
+          isV3: false,
         };
       });
 

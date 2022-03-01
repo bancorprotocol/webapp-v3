@@ -12,7 +12,10 @@ import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
-import { addLiquiditySingle } from 'services/web3/liquidity/liquidity';
+import {
+  addLiquidityV2Single,
+  addLiquidityV3Single,
+} from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,
   addLiquiditySingleNotification,
@@ -69,10 +72,13 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     setAmountUsd(usdAmount);
   };
 
-  const addProtection = async () => {
+  const addV3Protection = async () => {
+    await addLiquidityV3Single();
+  };
+  const addV2Protection = async () => {
     const cleanAmount = prettifyNumber(amount);
     let transactionId: string;
-    await addLiquiditySingle(
+    await addLiquidityV2Single(
       pool,
       selectedToken,
       amount,
@@ -109,7 +115,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
 
   const [onStart, ModalApprove] = useApproveModal(
     [{ amount, token: selectedToken }],
-    addProtection,
+    addV2Protection,
     ApprovalContract.LiquidityProtection,
     sendLiquidityEvent,
     sendLiquidityApprovedEvent
@@ -160,7 +166,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       fiatToggle
     );
     sendLiquidityEvent(ConversionEvents.click);
-    onStart();
+    pool.isV3 ? addV3Protection() : onStart();
   }, [
     amount,
     amountUsd,
@@ -168,6 +174,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     fiatToggle,
     onStart,
     pool.name,
+    pool.isV3,
     selectedToken.symbol,
   ]);
 

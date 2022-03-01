@@ -196,7 +196,7 @@ export const removeLiquidity = async (
   }
 };
 
-export const addLiquiditySingle = async (
+export const addLiquidityV2Single = async (
   pool: Pool,
   token: Token,
   amount: string,
@@ -244,6 +244,8 @@ export const addLiquiditySingle = async (
     else failed(e.message);
   }
 };
+
+export const addLiquidityV3Single = async () => {};
 
 export const checkPriceDeviationTooHigh = async (
   pool: Pool,
