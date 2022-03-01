@@ -22,7 +22,7 @@ export const useExternalHoldings = () => {
 
   const allTokens: Token[] = useAppSelector((state) => state.bancor.tokens);
   const tokensMap = useMemo(
-    () => new Map(allTokens.map((token) => [token.symbol, token])),
+    () => new Map(allTokens.map((token) => [token.address, token])),
     [allTokens]
   );
 

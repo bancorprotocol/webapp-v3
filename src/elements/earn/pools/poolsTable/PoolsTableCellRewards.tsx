@@ -15,7 +15,7 @@ export const PoolsTableCellRewards = (pool: Pool) => {
             Rewards end in <CountdownTimer date={ends_at} />
           </span>
         }
-        button={<IconClock className="w-10" />}
+        button={<IconClock className="w-18 h-20" />}
       />
       <span className="ml-5">Active</span>
     </div>

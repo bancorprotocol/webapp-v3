@@ -14,6 +14,7 @@ import {
   ApyVisionUniResponse,
   ExternalHolding,
 } from './externalHoldings.types';
+import { utils } from 'ethers';
 
 const fetchApyVisionUniswap = async (
   user: string
@@ -85,8 +86,8 @@ export const getExternalHoldingsUni = (
 ): ExternalHolding[] => {
   return positions
     .map((pos) => {
-      const token0 = tokensMap.get(pos.token0_name);
-      const token1 = tokensMap.get(pos.token1_name);
+      const token0 = tokensMap.get(utils.getAddress(pos.token0_id));
+      const token1 = tokensMap.get(utils.getAddress(pos.token1_id));
       if (!token0 && !token1) {
         return undefined;
       }
@@ -114,7 +115,7 @@ export const getExternalHoldingsNonUni = (
   return positions
     .map((pos) => {
       const tokens = pos.tokens
-        .map((token) => tokensMap.get(token.tokenName))
+        .map((token) => tokensMap.get(utils.getAddress(token.tokenAddress)))
         .filter((t) => !!t) as Token[];
 
       if (tokens.length === 0) {

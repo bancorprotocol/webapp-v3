@@ -21,7 +21,7 @@ export const ProtectedPositionTableCellClaimable = (
         {!row.canExpand && (
           <Tooltip
             content={`Current protection is ${currentCoveragePercent}%`}
-            button={<IconClock className="w-14 mr-6" />}
+            button={<IconClock className="w-18 h-20 mr-6" />}
           />
         )}
         {`${prettifyNumber(tknAmount)} ${symbol}`}

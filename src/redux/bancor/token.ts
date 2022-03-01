@@ -24,21 +24,22 @@ export const getAvailableToStakeTokens = createSelector(
           bntApr,
         };
       })
-      .filter((t) => !!t);
-    const poolWithHighestBntApr = orderBy(poolsWithApr, 'bntApr', 'desc').slice(
-      0,
-      1
-    );
+      .filter((p) => !!p && !!p.token);
+    const [poolWithHighestBntApr] = orderBy(
+      poolsWithApr,
+      'bntApr',
+      'desc'
+    ).slice(0, 1);
     const filteredByTokenBalance = poolsWithApr.filter(
-      (t) => !!Number(t.token.balance)
+      (p) => !!Number(p.token.balance)
     );
-    if (poolWithHighestBntApr.length === 1) {
+    if (poolWithHighestBntApr) {
       const bntToken = tokens.find((t) => t.symbol === 'BNT');
       if (bntToken && !!Number(bntToken.balance)) {
         filteredByTokenBalance.push({
-          ...poolWithHighestBntApr[0],
+          ...poolWithHighestBntApr,
           token: bntToken,
-          tknApr: poolWithHighestBntApr[0].bntApr,
+          tknApr: poolWithHighestBntApr.bntApr,
         });
       }
     }
