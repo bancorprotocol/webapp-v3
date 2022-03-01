@@ -1,17 +1,17 @@
 import { Pool, Token } from 'services/observables/tokens';
-import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { SortingRule, Row } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'redux/index';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
-import { PoolsTableCellActions } from 'elements/earn/pools/poolsTable/PoolsTableCellActions';
-import { ModalCreatePool } from 'elements/modalCreatePool/ModalCreatePool';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
-import { getPools } from 'redux/bancor/pool';
+import { ButtonToggle } from 'components/button/Button';
+import { PoolsTableCellActions } from './PoolsTableCellActions';
+import { Popularity } from 'components/popularity/Popularity';
+import { PoolsTableSort } from './PoolsTableSort';
 
 interface Props {
   search: string;
@@ -19,53 +19,59 @@ interface Props {
 }
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
-  const pools = useAppSelector<Pool[]>(getPools);
+  const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const v3Pools = useAppSelector<Pool[]>((state) => state.pool.v3Pools);
+  const [v3Selected, setV3Selected] = useState(true);
 
-  const data = useMemo<Pool[]>(() => {
-    return pools
+  const v2Data = useMemo<Pool[]>(() => {
+    return v2Pools
       .filter((p) => p.version >= 28)
       .filter(
         (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
       );
-  }, [pools, search]);
+  }, [v2Pools, search]);
 
-  const columns = useMemo<TableColumn<Pool>[]>(
+  const v3Data = useMemo<Pool[]>(() => {
+    return v3Pools.filter(
+      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [v3Pools, search]);
+
+  const v2Columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
         id: 'name',
-        Header: () => (
-          <span className="align-middle inline-flex items-center">
-            <IconProtected className="w-18 mr-20" /> <span>Name</span>
-          </span>
-        ),
+        Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => PoolsTableCellName(cellData.row.original),
-        minWidth: 225,
+        minWidth: 150,
+        width: 180,
         sortDescFirst: true,
       },
       {
-        id: 'liquidity',
-        Header: 'Liquidity',
-        accessor: 'liquidity',
-        Cell: (cellData) => prettifyNumber(cellData.value, true),
-        tooltip: 'The value of tokens staked in the pool.',
+        id: 'isProtected',
+        Header: 'Protected',
+        accessor: 'isProtected',
+        headerClassName: 'justify-center',
+        Cell: (cellData) =>
+          cellData.value ? (
+            <div className="flex justify-center">
+              <IconProtected className="w-18 h-20 text-primary" />
+            </div>
+          ) : (
+            <div />
+          ),
+        tooltip: 'Protected',
+        minWidth: 160,
+        sortDescFirst: true,
+      },
+      {
+        id: 'popularity',
+        Header: 'Popularity',
+        accessor: 'isProtected',
+        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
+        tooltip: 'Popularity',
         minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
-        id: 'v24h',
-        Header: '24h Volume',
-        accessor: 'volume_24h',
-        Cell: (cellData) => prettifyNumber(cellData.value, true),
-        minWidth: 120,
-        sortDescFirst: true,
-      },
-      {
-        id: 'f24h',
-        Header: '24h Fees',
-        accessor: 'fees_24h',
-        Cell: (cellData) => prettifyNumber(cellData.value, true),
-        minWidth: 90,
         sortDescFirst: true,
       },
       {
@@ -87,9 +93,8 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'apr',
         Header: 'APR',
         accessor: 'apr',
-        headerClassName: 'justify-center',
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
-        minWidth: 250,
+        minWidth: 180,
         disableSortBy: true,
         tooltip:
           'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
@@ -97,8 +102,54 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       {
         id: 'actions',
         Header: '',
+        accessor: 'pool_dlt_id',
+        Cell: (cellData) => PoolsTableCellActions(cellData.value),
+        width: 50,
+        minWidth: 50,
+        disableSortBy: true,
+      },
+    ],
+    []
+  );
+
+  const v3Columns = useMemo<TableColumn<Pool>[]>(
+    () => [
+      {
+        id: 'name',
+        Header: 'Name',
+        accessor: 'name',
+        Cell: (cellData) => PoolsTableCellName(cellData.row.original),
+        minWidth: 100,
+        sortDescFirst: true,
+      },
+      {
+        id: 'isProtected',
+        Header: 'Earn',
         accessor: 'isProtected',
-        Cell: (cellData) => PoolsTableCellActions(cellData.row.original),
+        Cell: (cellData) =>
+          cellData.value ? (
+            <IconProtected className="w-18 h-20 text-primary" />
+          ) : (
+            <div />
+          ),
+        tooltip: 'Protected',
+        minWidth: 130,
+        sortDescFirst: true,
+      },
+      {
+        id: 'popularity',
+        Header: 'Popularity',
+        accessor: 'isProtected',
+        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
+        tooltip: 'Popularity',
+        minWidth: 130,
+        sortDescFirst: true,
+      },
+      {
+        id: 'actions',
+        Header: '',
+        accessor: 'pool_dlt_id',
+        Cell: (cellData) => PoolsTableCellActions(cellData.value),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
@@ -112,27 +163,39 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   return (
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
-        <h2>Pools</h2>
-        <div className="flex align-center">
+        <div className="flex items-center gap-x-10">
+          <ButtonToggle
+            labels={[
+              <div
+                key="v3"
+                className="flex items-center gap-x-[4px] text-16 w-[40px]"
+              >
+                <IconProtected className="w-15" />
+                V3
+              </div>,
+              <div key="v2" className="text-16 w-[25px]">
+                V2
+              </div>,
+            ]}
+            toggle={v3Selected}
+            setToggle={() => setV3Selected(!v3Selected)}
+          />
           <div className="mr-16">
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="max-w-[160px] rounded-20 h-[35px]"
+              className="max-w-[300px] rounded-20 h-[35px]"
             />
           </div>
-          <div className="hidden md:block">
-            <ModalCreatePool />
-          </div>
         </div>
+        <PoolsTableSort />
       </div>
 
       <DataTable<Pool>
-        data={data}
-        columns={columns}
+        data={v3Selected ? v3Data : v2Data}
+        columns={v3Selected ? v3Columns : v2Columns}
         defaultSort={defaultSort}
-        isLoading={!pools.length}
-        stickyColumn
+        isLoading={!v2Pools.length}
         search={search}
       />
     </section>
