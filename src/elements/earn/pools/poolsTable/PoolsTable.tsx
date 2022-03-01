@@ -11,7 +11,7 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
-import { Dropdown } from 'components/dropdown/Dropdown';
+import { PoolsTableSort } from './PoolsTableSort';
 
 interface Props {
   search: string;
@@ -188,16 +188,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
             />
           </div>
         </div>
-        <Dropdown
-          title="Sort and Filter"
-          items={[
-            { id: '1', title: 'Relavence' },
-            { id: '2', title: 'Highest earning' },
-            { id: '3', title: 'Most popular' },
-          ]}
-          selected={null}
-          setSelected={() => {}}
-        />
+        <PoolsTableSort />
       </div>
 
       <DataTable<Pool>
