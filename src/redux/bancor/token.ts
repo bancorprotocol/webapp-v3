@@ -6,7 +6,7 @@ import { orderBy } from 'lodash';
 // TODO Filter for V3 Only pools
 export const getAvailableToStakeTokens = createSelector(
   [
-    (state: RootState) => state.pool.pools,
+    (state: RootState) => state.pool.v2Pools,
     (state: RootState) => state.bancor.tokens,
   ],
   (pools: Pool[], tokens: Token[]) => {
