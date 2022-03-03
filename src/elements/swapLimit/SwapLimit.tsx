@@ -48,6 +48,7 @@ interface SwapLimitProps {
   toToken?: Token;
   setToToken: Function;
   switchTokens: Function;
+  refreshLimit: Function;
 }
 
 export const SwapLimit = ({
@@ -56,6 +57,7 @@ export const SwapLimit = ({
   toToken,
   setToToken,
   switchTokens,
+  refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
   const { chainId } = useWeb3React();
@@ -279,6 +281,7 @@ export const SwapLimit = ({
 
     if (notification) dispatch(addNotification(notification));
     if (fromToken.address === ethToken) updateETHandWETH();
+    refreshLimit();
   };
 
   const isSwapDisabled = () => {

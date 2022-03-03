@@ -16,6 +16,7 @@ interface SwapWidgetProps {
   from: string | null;
   to: string | null;
   limit: string | null;
+  refreshLimit: Function;
 }
 
 export const SwapWidget = ({
@@ -24,6 +25,7 @@ export const SwapWidget = ({
   from,
   to,
   limit,
+  refreshLimit,
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const { replaceLimit, replaceFrom, replaceTo, switchTokens } =
@@ -103,6 +105,7 @@ export const SwapWidget = ({
                 toToken={toToken}
                 setToToken={(to: Token) => replaceTo(fromToken, true, to)}
                 switchTokens={() => switchTokens(fromToken, true, toToken)}
+                refreshLimit={refreshLimit}
               />
             ) : (
               <SwapMarket
