@@ -1,4 +1,3 @@
-import { useWeb3React } from '@web3-react/core';
 import { useMemo, useState } from 'react';
 import {
   fetchExternalHoldings,
@@ -13,12 +12,17 @@ import {
   ExternalHolding,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 
+const initialApyVisionData: ApyVisionData = {
+  positionsUni: [],
+  positionsNonUni: [],
+};
+
 export const useExternalHoldings = () => {
-  const { account } = useWeb3React();
-  const [apyVisionData, setApyVisionData] = useState<ApyVisionData>({
-    positionsUni: [],
-    positionsNonUni: [],
-  });
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
+  const [apyVisionData, setApyVisionData] =
+    useState<ApyVisionData>(initialApyVisionData);
 
   const allTokens: Token[] = useAppSelector((state) => state.bancor.tokens);
   const tokensMap = useMemo(
@@ -43,6 +47,7 @@ export const useExternalHoldings = () => {
 
   useAsyncEffect(async () => {
     if (!account) {
+      setApyVisionData(initialApyVisionData);
       return;
     }
     const apyVisionData = await fetchExternalHoldings(account);
