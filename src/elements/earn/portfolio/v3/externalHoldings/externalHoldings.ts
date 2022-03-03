@@ -1,9 +1,5 @@
 import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
-import {
-  mockedNonUniPositions,
-  mockedUniPositions,
-} from 'elements/earn/portfolio/v3/externalHoldings/mockedData';
 import axios from 'axios';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
@@ -24,9 +20,8 @@ const fetchApyVisionUniswap = async (
     const { data } = await axios.get<ApyVisionUniResponse>(url);
     return data.result;
   } catch (e: any) {
-    console.error('Returning mocked data for APY Vision Uniswap');
-    console.error(e.message);
-    return mockedUniPositions;
+    console.error('fetchApyVisionUniswap failed: ', e.message);
+    return [];
   }
 };
 
@@ -38,9 +33,8 @@ const fetchApyVisionNonUniswap = async (
     const { data } = await axios.get<ApyVisionNonUniResponse>(url);
     return data.userPools;
   } catch (e: any) {
-    console.error('Returning mocked data for APY Vision NON Uniswap');
-    console.error(e.message);
-    return mockedNonUniPositions;
+    console.error('fetchApyVisionNonUniswap failed: ', e.message);
+    return [];
   }
 };
 

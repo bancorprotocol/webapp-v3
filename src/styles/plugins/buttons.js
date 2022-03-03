@@ -5,16 +5,26 @@ module.exports = function () {
     buttons[`.btn`] = {
       '@apply flex items-center justify-center': '',
       '@apply px-20': '',
-      '@apply text-white text-14 font-normal': '',
+      '@apply rounded-full': '',
+      '@apply text-14 font-normal': '',
       '@apply outline-none focus:outline-none': '',
       '@apply transition-all duration-300': '',
       '@apply disabled:cursor-not-allowed': '',
     };
 
-    const variants = ['primary', 'success', 'error', 'warning'];
+    const variants = [
+      'primary',
+      'success',
+      'error',
+      'warning',
+      'dark',
+      'light',
+    ];
     variants.forEach((variant) => {
+      const textColor = variant === 'light' ? 'black' : 'white';
       const hover = `bg-${variant}-hover`;
       buttons[`.btn-${variant}`] = {
+        [`@apply text-${textColor}`]: '',
         [`@apply bg-${variant}`]: '',
         [`@apply hover:${hover}`]: '',
         [`@apply active:transform active:scale-95`]: '',
@@ -27,8 +37,7 @@ module.exports = function () {
 
     buttons[`.btn-secondary`] = {
       [`@apply text-black dark:text-white`]: '',
-      [`@apply bg-white dark:bg-charcoal`]: '',
-      [`@apply border border-silver dark:border-charcoal`]: '',
+      [`@apply bg-fog dark:bg-grey`]: '',
       [`@apply hover:btn-secondary-hover`]: '',
       [`@apply active:transform active:scale-95`]: '',
       [`@apply disabled:bg-white disabled:text-charcoal disabled:text-opacity-50 disabled:border-charcoal disabled:border-opacity-50`]:
@@ -37,13 +46,12 @@ module.exports = function () {
         '',
     };
     buttons[`.btn-secondary-hover`] = {
-      [`@apply text-primary border-primary dark:text-primary dark:border-primary`]:
-        '',
+      [`@apply text-primary`]: '',
     };
 
     const sizes = {
       xs: {
-        '@apply py-[5px] rounded-full': '',
+        '@apply py-[5px]': '',
       },
       sm: {
         '@apply py-[9px] rounded-full': '',

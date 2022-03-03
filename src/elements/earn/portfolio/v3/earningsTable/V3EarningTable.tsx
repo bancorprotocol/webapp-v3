@@ -2,8 +2,8 @@ import { Pool } from 'services/observables/tokens';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { V3EarningTableCellAction } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTableCellAction';
 import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -46,9 +46,7 @@ export const V3EarningTable = () => {
         id: 'actions',
         Header: '',
         Cell: () => (
-          <V3EarningTableCellAction
-            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-          />
+          <V3EarningTableMenu setIsWithdrawModalOpen={setIsWithdrawModalOpen} />
         ),
         width: 50,
         minWidth: 50,

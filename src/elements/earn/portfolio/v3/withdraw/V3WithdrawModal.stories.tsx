@@ -6,7 +6,7 @@ import { store } from 'redux/index';
 import { Provider } from 'react-redux';
 
 export default {
-  title: 'Features/Portfolio/V3/WithdrawModal',
+  title: 'Elements/V3/Portfolio/EarningsTable',
   component: V3WithdrawModal,
   decorators: [withDesign],
 } as ComponentMeta<typeof V3WithdrawModal>;
