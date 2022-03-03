@@ -7,7 +7,6 @@ import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { useInterval } from 'hooks/useInterval';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
@@ -35,6 +34,7 @@ import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
+import useAsyncEffect from 'use-async-effect';
 
 enum Field {
   from,
@@ -88,16 +88,14 @@ export const SwapLimit = ({
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
   const percentages = useMemo(() => [1, 3, 5], []);
 
-  useInterval(() => {
-    fetchMarketRate(false);
-  }, 15000);
-
   const calculatePercentageByRate = useCallback(
     (marketRate: number, rate: string) => {
       const percentage = calculatePercentageChange(Number(rate), marketRate);
       const index = percentages.indexOf(percentage);
-      if (index === -1) setPercentage(percentage.toFixed(2));
-      else {
+      if (index === -1) {
+        setPercentage(percentage.toFixed(2));
+        setSelPercentage(-1);
+      } else {
         setPercentage('');
         setSelPercentage(index);
       }
@@ -183,41 +181,40 @@ export const SwapLimit = ({
     [calcRate, calcTo, calcFrom, marketRate]
   );
 
-  const calculateRateByMarket = useCallback(
-    (marketRate: number, selPercentage: number, percentage: string) => {
-      const perc =
-        selPercentage === -1
-          ? Number(percentage) / 100
-          : percentages[selPercentage] / 100;
-      const rate = (marketRate * (1 + perc)).toFixed(6);
-      handleFieldChanged(Field.rate, fromAmount, toAmount, rate);
-      setRate(rate);
-    },
-    [percentages, fromAmount, toAmount, handleFieldChanged]
-  );
+  const calculateRateByMarket = (
+    marketRate: number,
+    selPercentage: number,
+    percentage: string
+  ) => {
+    const perc =
+      selPercentage === -1
+        ? Number(percentage) / 100
+        : percentages[selPercentage] / 100;
+    const rate = (marketRate * (1 + perc)).toFixed(6);
+    handleFieldChanged(Field.rate, fromAmount, toAmount, rate);
+    setRate(rate);
+  };
 
-  const fetchMarketRate = useCallback(
-    async (setLoading = true) => {
+  useAsyncEffect(
+    async (isMounted) => {
       if (!fromToken || !toToken) return;
       if (toToken.address === ethToken && fromToken.address === wethToken)
         return;
 
-      setIsLoadingRate(setLoading);
-      const rate = await getRate(fromToken, toToken, '1');
-      setMarketRate(Number(rate));
-      setIsLoadingRate(false);
+      if (isMounted()) {
+        setIsLoadingRate(true);
+        const rate = Number(await getRate(fromToken, toToken, '1'));
+        setMarketRate(rate);
+        calculateRateByMarket(rate, 1, '');
+        setIsLoadingRate(false);
+        setRateWarning({
+          type: '',
+          msg: '',
+        });
+      }
     },
-    [fromToken, toToken]
+    [toToken?.address, fromToken?.address]
   );
-
-  useEffect(() => {
-    calculateRateByMarket(marketRate, selPercentage, percentage);
-    // eslint-disable-next-line
-  }, [calculateRateByMarket, fromToken, toToken]);
-
-  useEffect(() => {
-    fetchMarketRate();
-  }, [fetchMarketRate, fromToken, toToken]);
 
   //Check if approval is required
   const checkApproval = async (token: Token) => {
