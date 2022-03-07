@@ -9,6 +9,8 @@ interface Props {
   percentage: number;
   starCount?: number;
   className?: string;
+  classStar?: string;
+  classEmpty?: string;
   showEmpty?: boolean;
   fillEmpty?: boolean;
   strokeWidth?: number;
@@ -17,7 +19,9 @@ interface Props {
 export const Rating = ({
   percentage,
   starCount = 5,
-  className = 'text-warning',
+  className = '',
+  classStar = 'text-warning',
+  classEmpty = 'text-grey',
   showEmpty = true,
   fillEmpty = false,
   strokeWidth = 0.5,
@@ -30,7 +34,7 @@ export const Rating = ({
       {showEmpty && (
         <svg
           {...getAttr(100, starSize, starCount)}
-          className={`absolute text-grey stroke-current ${
+          className={`absolute text-grey stroke-current ${classEmpty} ${
             fillEmpty ? 'fill-current' : ''
           }`}
           fill={'none'}
@@ -44,7 +48,7 @@ export const Rating = ({
 
       <svg
         {...getAttr(percentage, starSize, starCount)}
-        className="fill-current stroke-current"
+        className={`fill-current stroke-current ${classStar}`}
         strokeWidth={strokeWidth}
       >
         {stars.map((size) => (

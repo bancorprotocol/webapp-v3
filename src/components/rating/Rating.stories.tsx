@@ -23,7 +23,9 @@ StarRating.args = {
   showEmpty: true,
   fillEmpty: false,
   strokeWidth: 0.5,
-  className: 'text-warning',
+  classStar: 'text-warning',
+  classEmpty: 'text-grey',
+  className: '',
 };
 
 StarRating.parameters = {
