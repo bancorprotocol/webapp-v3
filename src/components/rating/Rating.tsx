@@ -57,8 +57,8 @@ export const Rating = ({
           fill={'none'}
           strokeWidth={strokeWidth}
         >
-          {[...Array(starCount)].map((size, i) => (
-            <use key={size} x={i * STAR_SIZE_PX} y="0" xlinkHref="#star-svg" />
+          {[...Array(starCount)].map((_, i) => (
+            <use key={i} x={i * STAR_SIZE_PX} y="0" xlinkHref="#star-svg" />
           ))}
         </svg>
       )}
