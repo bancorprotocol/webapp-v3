@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 
 export function useFallbackImage(src: string | undefined, fallbackSrc: string) {
-  const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
   const source = useMemo(
@@ -15,8 +14,6 @@ export function useFallbackImage(src: string | undefined, fallbackSrc: string) {
   );
 
   return {
-    loaded,
-    setLoaded,
     source,
     onError,
   };

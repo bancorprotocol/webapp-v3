@@ -1,7 +1,7 @@
-import { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
+import { DetailedHTMLProps, ImgHTMLAttributes, useState } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { useFallbackImage } from 'components/image/useFallbackImage';
 import { ropstenImage } from 'services/web3/config';
+import { useFallbackImage } from 'components/image/useFallbackImage';
 
 type ImgAttributes = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
@@ -22,10 +22,8 @@ export const Image = ({
   lazy = true,
   ...props
 }: ImageProps) => {
-  const { source, onError, loaded, setLoaded } = useFallbackImage(
-    src,
-    ropstenImage
-  );
+  const [loaded, setLoaded] = useState(false);
+  const { source, onError } = useFallbackImage(src, ropstenImage);
 
   return (
     <img
