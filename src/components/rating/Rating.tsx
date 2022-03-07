@@ -1,27 +1,58 @@
+const getAttr = (percentage: number, starSize: number, starCount: number) => ({
+  viewBox: `0 0 ${starSize * starCount} ${starSize}`,
+  style: {
+    clipPath: `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`,
+  },
+});
+
 interface Props {
   percentage: number;
   starCount?: number;
+  className?: string;
+  showEmpty?: boolean;
+  fillEmpty?: boolean;
+  strokeWidth?: number;
 }
 
-export const Rating = ({ percentage, starCount = 5 }: Props) => {
+export const Rating = ({
+  percentage,
+  starCount = 5,
+  className = 'text-warning',
+  showEmpty = true,
+  fillEmpty = false,
+  strokeWidth = 0.5,
+}: Props) => {
   const starSize = 20;
-  const starAttr = {
-    viewBox: `0 0 ${starSize * starCount} ${starSize}`,
-    style: {
-      clipPath: `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`,
-    },
-  };
   const stars = [...Array(starCount)].map((_, i) => i * starSize);
 
   return (
-    <>
-      <svg {...starAttr} className="text-warning fill-current">
+    <div className={`relative ${className}`}>
+      {showEmpty && (
+        <svg
+          {...getAttr(100, starSize, starCount)}
+          className={`absolute text-grey stroke-current ${
+            fillEmpty ? 'fill-current' : ''
+          }`}
+          fill={'none'}
+          strokeWidth={strokeWidth}
+        >
+          {[...Array(starCount)].map((size, i) => (
+            <use key={size} x={i * starSize} y="0" xlinkHref="#star-svg" />
+          ))}
+        </svg>
+      )}
+
+      <svg
+        {...getAttr(percentage, starSize, starCount)}
+        className="fill-current stroke-current"
+        strokeWidth={strokeWidth}
+      >
         {stars.map((size) => (
           <use key={size} x={size} y="0" xlinkHref="#star-svg" />
         ))}
       </svg>
       <StarSVG />
-    </>
+    </div>
   );
 };
 

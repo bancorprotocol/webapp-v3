@@ -19,6 +19,11 @@ export const StarRating: ComponentStory<typeof Rating> = (args) => (
 
 StarRating.args = {
   percentage: 50,
+  starCount: 5,
+  showEmpty: true,
+  fillEmpty: false,
+  strokeWidth: 0.5,
+  className: 'text-warning',
 };
 
 StarRating.parameters = {
