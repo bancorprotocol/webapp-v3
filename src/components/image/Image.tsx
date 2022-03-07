@@ -1,6 +1,5 @@
-import { DetailedHTMLProps, ImgHTMLAttributes, useState } from 'react';
+import { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { ropstenImage } from 'services/web3/config';
 import { useFallbackImage } from 'components/image/useFallbackImage';
 
 type ImgAttributes = DetailedHTMLProps<
@@ -22,14 +21,13 @@ export const Image = ({
   lazy = true,
   ...props
 }: ImageProps) => {
-  const [loaded, setLoaded] = useState(false);
-  const { source, onError } = useFallbackImage(src, ropstenImage);
+  const { source, onError, loaded, setLoaded } = useFallbackImage(src);
 
   return (
     <img
       {...props}
       src={source}
-      alt={loaded ? alt : ''}
+      alt={alt}
       className={`${className} ${classNameGenerator({
         'animate-pulse': !loaded,
       })}`}
