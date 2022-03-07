@@ -6,7 +6,7 @@ export function useFallbackImage(src: string | undefined, fallbackSrc: string) {
 
   const source = useMemo(
     () => (src && !failed ? src : fallbackSrc),
-    [failed, src]
+    [failed, fallbackSrc, src]
   );
 
   const onError = useMemo(
