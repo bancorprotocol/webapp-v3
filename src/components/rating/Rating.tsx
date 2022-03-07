@@ -1,9 +1,27 @@
-const getAttr = (percentage: number, starSize: number, starCount: number) => ({
-  viewBox: `0 0 ${starSize * starCount} ${starSize}`,
+const STAR_SIZE_PX = 20;
+
+const getAttr = (percentage: number, starCount: number) => ({
+  viewBox: `0 0 ${STAR_SIZE_PX * starCount} ${STAR_SIZE_PX}`,
   style: {
     clipPath: `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`,
   },
 });
+
+const StarSVG = () => (
+  <svg className="display-none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="star-svg">
+        <path
+          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462
+              c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292
+              c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034
+              c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72
+              c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+        />
+      </symbol>
+    </defs>
+  </svg>
+);
 
 interface Props {
   percentage: number;
@@ -26,14 +44,13 @@ export const Rating = ({
   fillEmpty = false,
   strokeWidth = 0.5,
 }: Props) => {
-  const starSize = 20;
-  const stars = [...Array(starCount)].map((_, i) => i * starSize);
+  const stars = [...Array(starCount)].map((_, i) => i * STAR_SIZE_PX);
 
   return (
     <div className={`relative ${className}`}>
       {showEmpty && (
         <svg
-          {...getAttr(100, starSize, starCount)}
+          {...getAttr(100, starCount)}
           className={`absolute text-grey stroke-current ${classEmpty} ${
             fillEmpty ? 'fill-current' : ''
           }`}
@@ -41,13 +58,13 @@ export const Rating = ({
           strokeWidth={strokeWidth}
         >
           {[...Array(starCount)].map((size, i) => (
-            <use key={size} x={i * starSize} y="0" xlinkHref="#star-svg" />
+            <use key={size} x={i * STAR_SIZE_PX} y="0" xlinkHref="#star-svg" />
           ))}
         </svg>
       )}
 
       <svg
-        {...getAttr(percentage, starSize, starCount)}
+        {...getAttr(percentage, starCount)}
         className={`fill-current stroke-current ${classStar}`}
         strokeWidth={strokeWidth}
       >
@@ -59,19 +76,3 @@ export const Rating = ({
     </div>
   );
 };
-
-const StarSVG = () => (
-  <svg className="display-none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <symbol id="star-svg">
-        <path
-          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462
-              c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292
-              c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034
-              c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72
-              c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-        />
-      </symbol>
-    </defs>
-  </svg>
-);
