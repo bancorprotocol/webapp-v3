@@ -11,6 +11,7 @@ export const getAvailableToStakeTokens = createSelector(
   ],
   (pools: Pool[], tokens: Token[]) => {
     const tokenMap = new Map(tokens.map((t) => [t.address, t]));
+    console.log('debug info Pools: ', pools);
     const poolsWithApr = pools
       .map((pool) => {
         const token = tokenMap.get(pool.reserves[0].address);
