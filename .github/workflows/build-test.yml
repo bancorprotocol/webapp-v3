@@ -25,7 +25,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: git config --global url."https://${{ secrets.REPO_SCOPED_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
       - name: Install Dependencies
-        run: rm yarn.lock && yarn
+        run: npm install
       - name: Build
         env:
           CI: false
@@ -33,4 +33,4 @@ jobs:
           ALCHEMY_ROPSTEN: ${{ secrets.ALCHEMY_ROPSTEN }}
           PORTIS_DAPP_ID: ${{ secrets.PORTIS_DAPP_ID }}
           FORTMATIC_API_KEY: ${{ secrets.FORTMATIC_API_KEY }}
-        run: yarn build
+        run: npm run build
