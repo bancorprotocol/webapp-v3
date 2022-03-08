@@ -15,7 +15,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
 
-export const useSwapLimitTable = () => {
+export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
@@ -165,7 +165,7 @@ export const useSwapLimitTable = () => {
     [dispatch]
   );
 
-  if (!account || orders.length === 0) return [];
+  if (!account || orders.length === 0) return [null, refreshOrders];
 
   return [
     <section className="content-section pt-20 pb-10 mt-20">
@@ -204,5 +204,5 @@ export const useSwapLimitTable = () => {
       />
     </section>,
     refreshOrders,
-  ] as [JSX.Element, Function];
+  ];
 };
