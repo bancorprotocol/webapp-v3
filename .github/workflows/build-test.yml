@@ -25,7 +25,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: git config --global url."https://${{ secrets.REPO_SCOPED_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
       - name: Install Dependencies
-        run: yarn
+        run: rm yarn.lock && yarn
       - name: Build
         env:
           CI: false
