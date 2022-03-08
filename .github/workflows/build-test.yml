@@ -21,10 +21,9 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
       - name: Install Dependencies
         run: yarn
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}
       - name: Build
         env:
           CI: false
