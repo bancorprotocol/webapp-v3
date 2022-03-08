@@ -11,7 +11,6 @@ export interface UserState {
   account: string | null | undefined;
   darkMode: boolean;
   walletModal: boolean;
-  bonusesModal: boolean;
   slippageTolerance: number;
   usdToggle: boolean;
   locale: string;
@@ -23,7 +22,6 @@ export const initialState: UserState = {
   account: undefined,
   darkMode: false,
   walletModal: false,
-  bonusesModal: false,
   slippageTolerance: 0.005,
   usdToggle: false,
   locale: 'en',

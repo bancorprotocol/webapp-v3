@@ -6,10 +6,6 @@ import { prettifyNumber } from 'utils/helperFunctions';
 export const V3ClaimBonuses = () => {
   const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
 
-  const onClickHandler = () => {
-    setBonusModalOpen(true);
-  };
-
   return (
     <>
       <section className="content-block p-14 space-y-20">
@@ -21,7 +17,7 @@ export const V3ClaimBonuses = () => {
           <Button
             variant={ButtonVariant.SECONDARY}
             size={ButtonSize.EXTRASMALL}
-            onClick={onClickHandler}
+            onClick={() => setBonusModalOpen(true)}
             className="px-40"
           >
             Claim
