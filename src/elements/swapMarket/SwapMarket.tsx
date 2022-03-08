@@ -33,7 +33,7 @@ import { withdrawWeth } from 'services/web3/swap/limit';
 import { updateTokens } from 'redux/bancor/bancor';
 import { fetchTokenBalances } from 'services/observables/balances';
 import { wait } from 'utils/pureFunctions';
-import { useInterval } from 'hooks/useInterval';
+import { useIntervalSafe } from 'hooks/useIntervalSafe';
 import {
   rejectNotification,
   swapFailedNotification,
@@ -92,8 +92,8 @@ export const SwapMarket = ({
     return res;
   };
 
-  useInterval(() => {
-    if (toToken && fromToken.address !== wethToken) {
+  useIntervalSafe((isMounted) => {
+    if (isMounted() && toToken && fromToken.address !== wethToken) {
       loadRateAndPriceImapct(
         fromToken,
         toToken,
