@@ -22,9 +22,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
+        run: yarn
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-        run: yarn
       - name: Build
         env:
           CI: false
