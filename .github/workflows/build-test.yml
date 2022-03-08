@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
         run: yarn
       - name: Build
         env:
