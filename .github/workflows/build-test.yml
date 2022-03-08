@@ -24,7 +24,7 @@ jobs:
       - name: Install Dependencies
         run: yarn
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.REPO_SCOPED_TOKEN }}
       - name: Build
         env:
           CI: false
