@@ -17,11 +17,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      - run: git config --global url."https://${{ secrets.REPO_SCOPED_TOKEN }}@github.com/".insteadOf ssh://git@github.com/
       - name: Install Dependencies
         run: yarn
       - name: Build
