@@ -3,6 +3,7 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
+import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -11,6 +12,16 @@ interface Props {
 
 export const V3EarningTableMenuMain = memo(
   ({ setCurrentMenu, setIsWithdrawModalOpen }: Props) => {
+    const { setBonusModalOpen } = useV3Bonuses();
+
+    const handleBonusClick = () => {
+      // TODO - add logic for what action to perform
+      if (true) {
+        setBonusModalOpen(true);
+      } else {
+        setCurrentMenu('bonus');
+      }
+    };
     return (
       <div className="flex flex-col justify-between h-full">
         <div className="space-y-20">
@@ -34,7 +45,7 @@ export const V3EarningTableMenuMain = memo(
             </Button>
           </div>
           <button
-            onClick={() => setCurrentMenu('bonus')}
+            onClick={handleBonusClick}
             className="flex justify-between w-full"
           >
             <span>Bonus gain</span>

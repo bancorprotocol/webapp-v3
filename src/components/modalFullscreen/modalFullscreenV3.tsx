@@ -50,8 +50,8 @@ const ModalFullscreenV3 = ({
               </div>
             </header>
 
-            <main className="min-h-[calc(100vh-70px)] space-y-10 flex items-center justify-center">
-              <div className="pt-[70px] px-20">{children}</div>
+            <main className="min-h-[calc(100vh-70px)] space-y-10 flex items-center pt-[70px] px-20 justify-center w-full">
+              {children}
             </main>
           </div>
         </Dialog>

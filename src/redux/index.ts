@@ -5,6 +5,7 @@ import { bancor } from 'redux/bancor/bancor';
 import { pool } from 'redux/bancor/pool';
 import { notification } from 'redux/notification/notification';
 import { liquidity } from './liquidity/liquidity';
+import { v3Portfolio } from 'redux/portfolio/v3Portfolio';
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -19,6 +20,7 @@ export const store = configureStore({
     bancor,
     pool,
     liquidity,
+    v3Portfolio,
   },
 });
 
