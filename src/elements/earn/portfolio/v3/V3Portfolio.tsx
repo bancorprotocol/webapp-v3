@@ -10,6 +10,7 @@ import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { openWalletModal } from 'redux/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'redux/index';
+import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
 
 const V3Portfolio = () => {
   const account = useAppSelector<string | undefined>(
@@ -30,6 +31,7 @@ const V3Portfolio = () => {
         <V3AvailableToStake />
       </div>
       <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-20">
+        <V3ClaimBonuses />
         <V3Withdraw />
         <V3ExternalHoldings />
       </div>
