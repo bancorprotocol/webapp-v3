@@ -14,19 +14,19 @@ export const useIntervalSafe = (
 
   useAsyncEffect<number | undefined>(
     async (isMounted) => {
-        function tick() {
-            const current = savedCallback.current;
-            current && current(isMounted);
-          }
-      
-          if (delay !== null) {
-            if (leading) tick();
-            return window.setInterval(tick, delay);
-          }
-          return undefined;
+      const tick = () => {
+        const current = savedCallback.current;
+        current && current(isMounted);
+      };
+
+      if (delay !== null) {
+        if (leading) tick();
+        return window.setInterval(tick, delay);
+      }
+      return undefined;
     },
     (id?: number) => {
-        if (id) clearInterval(id);
+      if (id) clearInterval(id);
     },
     [delay, leading]
   );
