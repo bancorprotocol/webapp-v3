@@ -1,4 +1,4 @@
-import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import {
