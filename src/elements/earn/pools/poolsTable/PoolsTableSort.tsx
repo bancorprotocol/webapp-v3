@@ -1,11 +1,16 @@
-import { Popover, Switch } from '@headlessui/react';
+import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { useState } from 'react';
+import { Switch } from 'components/switch/Switch';
 
 const options = ['Relavence', 'Highest earning', 'Most popular'];
 export const PoolsTableSort = () => {
   const [rewards, setRewards] = useState(false);
+  const [lowVolume, setLowVolume] = useState(false);
+  const [lowPopularity, setLowPopularity] = useState(false);
+  const [lowEarnRate, setLowEarnRate] = useState(false);
+  const [bootstrap, setBootstrap] = useState(false);
   const [option, setOption] = useState(0);
 
   return (
@@ -35,11 +40,42 @@ export const PoolsTableSort = () => {
             <div className="text-12 text-black-low dark:text-white-low">
               Visibility
             </div>
-            <div className="flex items-center justify-between">
-              Rewards only
-              <Switch checked={rewards} onChange={() => setRewards(!rewards)}>
-                <span>Toggle USD Switch</span>
-              </Switch>
+            <div className="space-y-24">
+              <div className="flex items-center justify-between">
+                Rewards only
+                <Switch
+                  selected={rewards}
+                  onChange={() => setRewards(!rewards)}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                Show Low Volume
+                <Switch
+                  selected={lowVolume}
+                  onChange={() => setLowVolume(!lowVolume)}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                Show Low Popularity
+                <Switch
+                  selected={lowPopularity}
+                  onChange={() => setLowPopularity(!lowPopularity)}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                Low Earn Rate
+                <Switch
+                  selected={lowEarnRate}
+                  onChange={() => setLowEarnRate(!lowEarnRate)}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                Bootstrap Only
+                <Switch
+                  selected={bootstrap}
+                  onChange={() => setBootstrap(!bootstrap)}
+                />
+              </div>
             </div>
           </div>
         </Popover.Panel>
