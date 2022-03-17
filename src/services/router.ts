@@ -47,27 +47,27 @@ export const useNavigation = () => {
 
   const pushAddLiquidityByID = (id: string) => push(addLiquidityByID(id));
 
-  const pushSwapParams = (from: string, to?: string, limit?: boolean) => {
-    const url = `${from ? '?from=' + from : ''}${to ? '&to=' + to : ''}${
+  const pushSwapParams = (from?: string, to?: string, limit?: boolean) => {
+    const url = `?${from ? 'from=' + from : ''}${to ? '&to=' + to : ''}${
       limit ? '&limit=true' : ''
     }`;
-    if (url.trim() !== '') push(url);
+    if (url.trim() !== '?') push(url);
   };
 
   const replaceLimit = (
-    fromToken: Token,
+    fromToken: Token | undefined,
     tokens: Token[],
     limit: boolean,
     toToken?: Token
   ) => {
     const toAddress =
-      !limit && fromToken.address === wethToken
+      !limit && fromToken && fromToken.address === wethToken
         ? tokens.find((x) => x.address === ethToken)?.address
         : toToken
         ? toToken.address
         : '';
 
-    pushSwapParams(fromToken.address, toAddress, limit);
+    pushSwapParams(fromToken?.address, toAddress, limit);
   };
 
   const replaceFrom = (

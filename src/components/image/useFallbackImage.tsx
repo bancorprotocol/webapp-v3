@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export function useFallbackImage(src: string | undefined, fallbackSrc: string) {
   const [failed, setFailed] = useState(false);
-  const imageOnErrorHandler = (
-    // @ts-ignore
-    event: SyntheticEvent<HTMLImageElement, Event>
-  ) => {
-    setFailed(true);
-  };
+
+  const source = useMemo(
+    () => (src && !failed ? src : fallbackSrc),
+    [failed, fallbackSrc, src]
+  );
+
+  const onError = useMemo(
+    () => (failed ? undefined : () => setFailed(true)),
+    [failed]
+  );
 
   return {
-    source: src && !failed ? src : fallbackSrc,
-    onError: failed ? undefined : imageOnErrorHandler,
+    source,
+    onError,
   };
 }

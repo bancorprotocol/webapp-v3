@@ -29,7 +29,7 @@ export const Image = ({
     <img
       {...props}
       src={source}
-      alt={loaded ? alt : ''}
+      alt={alt}
       className={`${className} ${classNameGenerator({
         'animate-pulse': !loaded,
       })}`}
