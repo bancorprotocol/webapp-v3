@@ -156,12 +156,16 @@ export const sendConversionFailEvent = (errorMsg: string) => {
   sendGTM(gtmData);
 };
 
-export const sendConversionEvent = (event: ConversionEvents) => {
+export const sendConversionEvent = (
+  event: ConversionEvents,
+  transaction_hash?: string
+) => {
   const eventClickPrefix = event === ConversionEvents.click ? 'Swap ' : '';
   const gtmData = {
     event: `CE Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
     wallet_properties: undefined,
     event_properties: currentConversion,
+    transaction_hash,
     ga_event: {
       category: 'Conversion',
     },
@@ -365,12 +369,16 @@ export const sendLiquidityPoolClickEvent = (
   sendGTM(gtmData);
 };
 
-export const sendLiquidityEvent = (event: ConversionEvents) => {
+export const sendLiquidityEvent = (
+  event: ConversionEvents,
+  transaction_hash?: string
+) => {
   console.log(getLiquidityEventLabel(event));
   const gtmData = {
     event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
     event_properties: currentLiquidity,
+    transaction_hash,
     ga_event: {
       category: 'Liquidity',
     },

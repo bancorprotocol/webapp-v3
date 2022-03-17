@@ -160,7 +160,7 @@ export const swap = async (
       toAmount
     );
 
-    sendConversionEvent(ConversionEvents.wallet_confirm);
+    sendConversionEvent(ConversionEvents.wallet_confirm, tx.hash);
 
     onHash(tx.hash);
     await tx.wait();
