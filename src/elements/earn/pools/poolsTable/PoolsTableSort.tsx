@@ -1,10 +1,19 @@
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { ReactComponent as IconRibbon } from 'assets/icons/ribbon.svg';
+import { ReactComponent as IconPercentage } from 'assets/icons/percentage.svg';
+import { ReactComponent as IconEmptyStar } from 'assets/icons/emptyStar.svg';
 import { useState } from 'react';
 import { Switch } from 'components/switch/Switch';
 
-const options = ['Relavence', 'Highest earning', 'Most popular'];
+const options = [
+  { icon: <IconRibbon className="w-12" />, text: 'Relavence', default: true },
+  { icon: <IconPercentage className="w-16" />, text: 'Highest earning' },
+  { icon: <IconEmptyStar className="w-16 h-16" />, text: 'Most popular' },
+];
+
 export const PoolsTableSort = () => {
   const [rewards, setRewards] = useState(false);
   const [lowVolume, setLowVolume] = useState(false);
@@ -17,6 +26,7 @@ export const PoolsTableSort = () => {
     <Popover className="hidden md:block relative">
       <Popover.Button className="flex items-center">
         Sort and Filter
+        <IconChevronDown className="w-12 ml-10" />
       </Popover.Button>
       <DropdownTransition>
         <Popover.Panel className="dropdown-menu w-[240px]">
@@ -27,11 +37,19 @@ export const PoolsTableSort = () => {
             {options.map((x, index) => {
               return (
                 <button
-                  key={x}
+                  key={x.text}
                   className="w-full flex justify-between items-center"
                   onClick={() => setOption(index)}
                 >
-                  {x}
+                  <div className="flex items-center gap-5">
+                    {x.icon}
+                    {x.text}
+                    {x.default && (
+                      <div className="text-charcoal dark:text-white opacity-50">
+                        (Default)
+                      </div>
+                    )}
+                  </div>
                   {index === option && <IconCheck className="h-16 w-16" />}
                 </button>
               );
