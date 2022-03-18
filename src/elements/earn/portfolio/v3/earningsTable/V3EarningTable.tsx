@@ -1,20 +1,24 @@
-import { Pool } from 'services/observables/tokens';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
+import { useAppSelector } from 'redux/index';
+import { getRewardsEarnings } from 'redux/portfolio/v3Portfolio';
+import { RewardsEarning } from 'redux/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const data: any = [1, 2, 3, 4];
+  const rewardsEarnings = useAppSelector(getRewardsEarnings);
 
-  const columns = useMemo<TableColumn<Pool>[]>(
+  const data = useMemo(() => rewardsEarnings, [rewardsEarnings]);
+
+  const columns = useMemo<TableColumn<RewardsEarning>[]>(
     () => [
       {
-        id: 'name',
+        id: 'programId',
         Header: '',
-        accessor: 'name',
+        accessor: 'programId',
         Cell: () => (
           <TokenBalance
             symbol="ETH"
@@ -61,7 +65,7 @@ export const V3EarningTable = () => {
         <h2 className="text-[22px]">Earnings</h2>
       </div>
 
-      <DataTable<any> data={data} columns={columns} stickyColumn />
+      <DataTable<RewardsEarning> data={data} columns={columns} stickyColumn />
 
       <V3WithdrawModal
         isOpen={isWithdrawModalOpen}

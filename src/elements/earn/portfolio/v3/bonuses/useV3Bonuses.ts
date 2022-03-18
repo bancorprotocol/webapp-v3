@@ -1,8 +1,9 @@
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
-import { Bonus, openBonusesModal } from 'redux/portfolio/v3Portfolio';
+import { openBonusesModal } from 'redux/portfolio/v3Portfolio';
 import { useCallback, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
+import { Bonus } from 'redux/portfolio/v3Portfolio.types';
 
 export const useV3Bonuses = () => {
   const dispatch = useDispatch();

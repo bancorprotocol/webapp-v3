@@ -44,6 +44,14 @@ import {
   protectedPositions$,
   rewards$,
 } from './liquidity';
+import {
+  allRewardsPrograms$,
+  providerProgramStakes$,
+} from 'services/observables/v3/rewardsProgram';
+import {
+  setAllRewardsPrograms,
+  setProviderProgramStakes,
+} from 'redux/portfolio/v3Portfolio';
 
 export const subscribeToObservables = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -119,4 +127,12 @@ export const subscribeToObservables = (dispatch: any) => {
   loadingLockedBnt$.subscribe((loadingLockedBnt) =>
     dispatch(setLoadingLockedBnt(loadingLockedBnt))
   );
+
+  allRewardsPrograms$.subscribe((allPrograms) => {
+    dispatch(setAllRewardsPrograms(allPrograms));
+  });
+
+  providerProgramStakes$.subscribe((providerStakes) => {
+    dispatch(setProviderProgramStakes(providerStakes));
+  });
 };
