@@ -1,6 +1,8 @@
 import { uniqueId } from 'lodash';
 import { mockToken } from 'utils/mocked';
 import { Token } from 'services/observables/tokens';
+import { BigNumber } from 'ethers';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV1';
 
 export const mockBonuses: Bonus[] = [
   {
@@ -32,27 +34,18 @@ export interface Bonus {
   token: Token;
   claimable: BonusClaimable[];
 }
-export interface RewardsProgram {
-  id: number;
-  pool: string;
-  poolToken: string;
-  rewardsToken: string;
-  isEnabled: boolean;
-  startTime: number;
-  endTime: number;
-  rewardRate: string;
-}
+
 export interface ProviderStake {
-  programId: number;
-  amount: string;
+  programId: BigNumber;
+  amount: BigNumber;
 }
 
 export interface RewardsEarning extends ProviderStake {
-  program: RewardsProgram;
+  program: ProgramDataStructOutput;
 }
 
 export interface V3PortfolioState {
-  allRewardsPrograms: RewardsProgram[];
+  allRewardsPrograms: ProgramDataStructOutput[];
   providerProgramStakes: ProviderStake[];
   bonusesModal: boolean;
   bonuses: Bonus[];

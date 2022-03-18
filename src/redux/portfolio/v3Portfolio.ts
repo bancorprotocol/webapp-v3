@@ -3,10 +3,10 @@ import {
   mockBonuses,
   ProviderStake,
   RewardsEarning,
-  RewardsProgram,
   V3PortfolioState,
 } from 'redux/portfolio/v3Portfolio.types';
 import { RootState } from 'redux/index';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV1';
 
 export const initialState: V3PortfolioState = {
   allRewardsPrograms: [],
@@ -19,7 +19,10 @@ const v3PortfolioSlice = createSlice({
   name: 'v3Portfolio',
   initialState,
   reducers: {
-    setAllRewardsPrograms: (state, action: PayloadAction<RewardsProgram[]>) => {
+    setAllRewardsPrograms: (
+      state,
+      action: PayloadAction<ProgramDataStructOutput[]>
+    ) => {
       state.allRewardsPrograms = action.payload;
     },
     setProviderProgramStakes: (
@@ -50,7 +53,7 @@ export const getRewardsEarnings = createSelector(
   allPrograms,
   providerStake,
   (
-    allPrograms: RewardsProgram[],
+    allPrograms: ProgramDataStructOutput[],
     providerStakes: ProviderStake[]
   ): RewardsEarning[] => {
     const allProgramsMap = new Map(
