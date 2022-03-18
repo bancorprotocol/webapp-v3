@@ -1,0 +1,1177 @@
+{
+  "address": "0xa923f378d58D10251C29d3a06cb8A6995816AD50",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "AccessDenied",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "DoesNotExist",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidExternalAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidFee",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotWhitelisted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ZeroValue",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "prevFeePPM",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "newFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "FlashLoanFeePPMUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract Token",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "prevLimit",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newLimit",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundingLimitUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "prevLiquidity",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newLiquidity",
+          "type": "uint256"
+        }
+      ],
+      "name": "MinLiquidityForTradingUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "prevFeePPM",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "newFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "NetworkFeePPMUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "previousAdminRole",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "newAdminRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract Token",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "TokenAddedToWhitelist",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract Token",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "TokenRemovedFromWhitelist",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "prevBurnRewardPPM",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "newBurnRewardPPM",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "prevBurnRewardMaxAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newBurnRewardMaxAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "VortexBurnRewardUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "prevFeePPM",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "newFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "WithdrawalFeePPMUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "DEFAULT_ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "addTokenToWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "flashLoanFeePPM",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRoleMember",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleMemberCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "isTokenWhitelisted",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "minLiquidityForTrading",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "networkFeePPM",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token",
+          "name": "pool",
+          "type": "address"
+        }
+      ],
+      "name": "poolFundingLimit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "protectedTokenWhitelist",
+      "outputs": [
+        {
+          "internalType": "contract Token[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "removeTokenFromWhitelist",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "renounceRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "roleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "newFlashLoanFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "setFlashLoanFeePPM",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setFundingLimit",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinLiquidityForTrading",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "newNetworkFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "setNetworkFeePPM",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "burnRewardPPM",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "burnRewardMaxAmount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct VortexRewards",
+          "name": "rewards",
+          "type": "tuple"
+        }
+      ],
+      "name": "setVortexRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "newWithdrawalFeePPM",
+          "type": "uint32"
+        }
+      ],
+      "name": "setWithdrawalFeePPM",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "version",
+      "outputs": [
+        {
+          "internalType": "uint16",
+          "name": "",
+          "type": "uint16"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "vortexRewards",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint32",
+              "name": "burnRewardPPM",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "burnRewardMaxAmount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct VortexRewards",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawalFeePPM",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xa45657fba9ddea3ef4d3f8e9ce7f8f88aae206781083a892d139d6f988e44d90",
+  "receipt": {
+    "to": null,
+    "from": "0xdfeE8DC240c6CadC2c7f7f9c257c259914dEa84E",
+    "contractAddress": "0xa923f378d58D10251C29d3a06cb8A6995816AD50",
+    "transactionIndex": 0,
+    "gasUsed": "1349188",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x7ce63e9f9251da7799edd333b10d12d8f5386df276bcd13aa073f752e7068e29",
+    "transactionHash": "0xa45657fba9ddea3ef4d3f8e9ce7f8f88aae206781083a892d139d6f988e44d90",
+    "logs": [],
+    "blockNumber": 14406045,
+    "cumulativeGasUsed": "1349188",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "dcea142469df7f75d330e08f80ea8523",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.12+commit.f00d7308\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"AccessDenied\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"AlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"DoesNotExist\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidExternalAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidFee\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotWhitelisted\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroValue\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"prevFeePPM\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newFeePPM\",\"type\":\"uint32\"}],\"name\":\"FlashLoanFeePPMUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"contract Token\",\"name\":\"pool\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"prevLimit\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newLimit\",\"type\":\"uint256\"}],\"name\":\"FundingLimitUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"prevLiquidity\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newLiquidity\",\"type\":\"uint256\"}],\"name\":\"MinLiquidityForTradingUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"prevFeePPM\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newFeePPM\",\"type\":\"uint32\"}],\"name\":\"NetworkFeePPMUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"contract Token\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"TokenAddedToWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"contract Token\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"TokenRemovedFromWhitelist\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"prevBurnRewardPPM\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newBurnRewardPPM\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"prevBurnRewardMaxAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newBurnRewardMaxAmount\",\"type\":\"uint256\"}],\"name\":\"VortexBurnRewardUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"prevFeePPM\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newFeePPM\",\"type\":\"uint32\"}],\"name\":\"WithdrawalFeePPMUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Token\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"addTokenToWhitelist\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"flashLoanFeePPM\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getRoleMember\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMemberCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Token\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"isTokenWhitelisted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minLiquidityForTrading\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"networkFeePPM\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Token\",\"name\":\"pool\",\"type\":\"address\"}],\"name\":\"poolFundingLimit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"protectedTokenWhitelist\",\"outputs\":[{\"internalType\":\"contract Token[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Token\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"removeTokenFromWhitelist\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"roleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"newFlashLoanFeePPM\",\"type\":\"uint32\"}],\"name\":\"setFlashLoanFeePPM\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Token\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setFundingLimit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"setMinLiquidityForTrading\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"newNetworkFeePPM\",\"type\":\"uint32\"}],\"name\":\"setNetworkFeePPM\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"burnRewardPPM\",\"type\":\"uint32\"},{\"internalType\":\"uint256\",\"name\":\"burnRewardMaxAmount\",\"type\":\"uint256\"}],\"internalType\":\"struct VortexRewards\",\"name\":\"rewards\",\"type\":\"tuple\"}],\"name\":\"setVortexRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"newWithdrawalFeePPM\",\"type\":\"uint32\"}],\"name\":\"setWithdrawalFeePPM\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"version\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"vortexRewards\",\"outputs\":[{\"components\":[{\"internalType\":\"uint32\",\"name\":\"burnRewardPPM\",\"type\":\"uint32\"},{\"internalType\":\"uint256\",\"name\":\"burnRewardMaxAmount\",\"type\":\"uint256\"}],\"internalType\":\"struct VortexRewards\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"withdrawalFeePPM\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Network Settings contract\",\"events\":{\"FlashLoanFeePPMUpdated(uint32,uint32)\":{\"details\":\"triggered when the flash-loan fee is updated\"},\"FundingLimitUpdated(address,uint256,uint256)\":{\"details\":\"triggered when a per-pool funding limit is updated\"},\"MinLiquidityForTradingUpdated(uint256,uint256)\":{\"details\":\"triggered when the minimum liquidity for trading is updated\"},\"NetworkFeePPMUpdated(uint32,uint32)\":{\"details\":\"triggered when the network fee is updated\"},\"TokenAddedToWhitelist(address)\":{\"details\":\"triggered when a token is added to the protection whitelist\"},\"TokenRemovedFromWhitelist(address)\":{\"details\":\"triggered when a token is removed from the protection whitelist\"},\"VortexBurnRewardUpdated(uint32,uint32,uint256,uint256)\":{\"details\":\"triggered when the settings of the Vortex are updated\"},\"WithdrawalFeePPMUpdated(uint32,uint32)\":{\"details\":\"triggered when the withdrawal fee is updated\"}},\"kind\":\"dev\",\"methods\":{\"addTokenToWhitelist(address)\":{\"details\":\"adds a token to the protected tokens whitelist requirements: - the caller must be the admin of the contract\"},\"flashLoanFeePPM()\":{\"details\":\"returns the flash-loan fee (in units of PPM)\"},\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"getRoleMember(bytes32,uint256)\":{\"details\":\"Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information.\"},\"getRoleMemberCount(bytes32)\":{\"details\":\"Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role.\"},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"initialize()\":{\"details\":\"fully initializes the contract and its parents\"},\"isTokenWhitelisted(address)\":{\"details\":\"checks whether a given token is whitelisted\"},\"minLiquidityForTrading()\":{\"details\":\"returns the minimum BNT trading liquidity required before the system enables trading in the relevant pool\"},\"networkFeePPM()\":{\"details\":\"returns the global network fee (in units of PPM) notes: - the network fee is a portion of the total fees from each pool\"},\"poolFundingLimit(address)\":{\"details\":\"returns the BNT funding limit for a given pool\"},\"protectedTokenWhitelist()\":{\"details\":\"returns the protected tokens whitelist\"},\"removeTokenFromWhitelist(address)\":{\"details\":\"removes a token from the protected tokens whitelist requirements: - the caller must be the admin of the contract\"},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.\"},\"roleAdmin()\":{\"details\":\"returns the admin role\"},\"setFlashLoanFeePPM(uint32)\":{\"details\":\"sets the flash-loan fee (in units of PPM) requirements: - the caller must be the admin of the contract\"},\"setFundingLimit(address,uint256)\":{\"details\":\"updates the amount of BNT that the protocol can fund a specific pool requirements: - the caller must be the admin of the contract - the token must have been whitelisted\"},\"setMinLiquidityForTrading(uint256)\":{\"details\":\"updates the minimum liquidity for trading amount requirements: - the caller must be the admin of the contract\"},\"setNetworkFeePPM(uint32)\":{\"details\":\"sets the network fee (in units of PPM) requirements: - the caller must be the admin of the contract\"},\"setVortexRewards((uint32,uint256))\":{\"details\":\"sets the settings of the Vortex requirements: s - the caller must be the admin of the contract\"},\"setWithdrawalFeePPM(uint32)\":{\"details\":\"sets the withdrawal fee (in units of PPM) requirements: - the caller must be the admin of the contract\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"},\"vortexRewards()\":{\"details\":\"returns the vortex settings\"},\"withdrawalFeePPM()\":{\"details\":\"returns the withdrawal fee (in units of PPM)\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/network/NetworkSettings.sol\":\"NetworkSettings\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControlEnumerable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"./IAccessControlEnumerableUpgradeable.sol\\\";\\nimport \\\"./AccessControlUpgradeable.sol\\\";\\nimport \\\"../utils/structs/EnumerableSetUpgradeable.sol\\\";\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Extension of {AccessControl} that allows enumerating the members of each role.\\n */\\nabstract contract AccessControlEnumerableUpgradeable is Initializable, IAccessControlEnumerableUpgradeable, AccessControlUpgradeable {\\n    function __AccessControlEnumerable_init() internal onlyInitializing {\\n    }\\n\\n    function __AccessControlEnumerable_init_unchained() internal onlyInitializing {\\n    }\\n    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;\\n\\n    mapping(bytes32 => EnumerableSetUpgradeable.AddressSet) private _roleMembers;\\n\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControlEnumerableUpgradeable).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev Returns one of the accounts that have `role`. `index` must be a\\n     * value between 0 and {getRoleMemberCount}, non-inclusive.\\n     *\\n     * Role bearers are not sorted in any particular way, and their ordering may\\n     * change at any point.\\n     *\\n     * WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure\\n     * you perform all queries on the same block. See the following\\n     * https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post]\\n     * for more information.\\n     */\\n    function getRoleMember(bytes32 role, uint256 index) public view virtual override returns (address) {\\n        return _roleMembers[role].at(index);\\n    }\\n\\n    /**\\n     * @dev Returns the number of accounts that have `role`. Can be used\\n     * together with {getRoleMember} to enumerate all bearers of a role.\\n     */\\n    function getRoleMemberCount(bytes32 role) public view virtual override returns (uint256) {\\n        return _roleMembers[role].length();\\n    }\\n\\n    /**\\n     * @dev Overload {_grantRole} to track enumerable memberships\\n     */\\n    function _grantRole(bytes32 role, address account) internal virtual override {\\n        super._grantRole(role, account);\\n        _roleMembers[role].add(account);\\n    }\\n\\n    /**\\n     * @dev Overload {_revokeRole} to track enumerable memberships\\n     */\\n    function _revokeRole(bytes32 role, address account) internal virtual override {\\n        super._revokeRole(role, account);\\n        _roleMembers[role].remove(account);\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[49] private __gap;\\n}\\n\",\"keccak256\":\"0xc2dfd6ba9449f61b6b03b262182faf302f093a8c05dd10792aeecb4ed1663c0c\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (access/AccessControl.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"./IAccessControlUpgradeable.sol\\\";\\nimport \\\"../utils/ContextUpgradeable.sol\\\";\\nimport \\\"../utils/StringsUpgradeable.sol\\\";\\nimport \\\"../utils/introspection/ERC165Upgradeable.sol\\\";\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module that allows children to implement role-based access\\n * control mechanisms. This is a lightweight version that doesn't allow enumerating role\\n * members except through off-chain means by accessing the contract event logs. Some\\n * applications may benefit from on-chain enumerability, for those cases see\\n * {AccessControlEnumerable}.\\n *\\n * Roles are referred to by their `bytes32` identifier. These should be exposed\\n * in the external API and be unique. The best way to achieve this is by\\n * using `public constant` hash digests:\\n *\\n * ```\\n * bytes32 public constant MY_ROLE = keccak256(\\\"MY_ROLE\\\");\\n * ```\\n *\\n * Roles can be used to represent a set of permissions. To restrict access to a\\n * function call, use {hasRole}:\\n *\\n * ```\\n * function foo() public {\\n *     require(hasRole(MY_ROLE, msg.sender));\\n *     ...\\n * }\\n * ```\\n *\\n * Roles can be granted and revoked dynamically via the {grantRole} and\\n * {revokeRole} functions. Each role has an associated admin role, and only\\n * accounts that have a role's admin role can call {grantRole} and {revokeRole}.\\n *\\n * By default, the admin role for all roles is `DEFAULT_ADMIN_ROLE`, which means\\n * that only accounts with this role will be able to grant or revoke other\\n * roles. More complex role relationships can be created by using\\n * {_setRoleAdmin}.\\n *\\n * WARNING: The `DEFAULT_ADMIN_ROLE` is also its own admin: it has permission to\\n * grant and revoke this role. Extra precautions should be taken to secure\\n * accounts that have been granted it.\\n */\\nabstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable, IAccessControlUpgradeable, ERC165Upgradeable {\\n    function __AccessControl_init() internal onlyInitializing {\\n    }\\n\\n    function __AccessControl_init_unchained() internal onlyInitializing {\\n    }\\n    struct RoleData {\\n        mapping(address => bool) members;\\n        bytes32 adminRole;\\n    }\\n\\n    mapping(bytes32 => RoleData) private _roles;\\n\\n    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;\\n\\n    /**\\n     * @dev Modifier that checks that an account has a specific role. Reverts\\n     * with a standardized message including the required role.\\n     *\\n     * The format of the revert reason is given by the following regular expression:\\n     *\\n     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/\\n     *\\n     * _Available since v4.1._\\n     */\\n    modifier onlyRole(bytes32 role) {\\n        _checkRole(role, _msgSender());\\n        _;\\n    }\\n\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControlUpgradeable).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) public view virtual override returns (bool) {\\n        return _roles[role].members[account];\\n    }\\n\\n    /**\\n     * @dev Revert with a standard message if `account` is missing `role`.\\n     *\\n     * The format of the revert reason is given by the following regular expression:\\n     *\\n     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/\\n     */\\n    function _checkRole(bytes32 role, address account) internal view virtual {\\n        if (!hasRole(role, account)) {\\n            revert(\\n                string(\\n                    abi.encodePacked(\\n                        \\\"AccessControl: account \\\",\\n                        StringsUpgradeable.toHexString(uint160(account), 20),\\n                        \\\" is missing role \\\",\\n                        StringsUpgradeable.toHexString(uint256(role), 32)\\n                    )\\n                )\\n            );\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) public view virtual override returns (bytes32) {\\n        return _roles[role].adminRole;\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) public virtual override onlyRole(getRoleAdmin(role)) {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) public virtual override onlyRole(getRoleAdmin(role)) {\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been revoked `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `account`.\\n     */\\n    function renounceRole(bytes32 role, address account) public virtual override {\\n        require(account == _msgSender(), \\\"AccessControl: can only renounce roles for self\\\");\\n\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event. Note that unlike {grantRole}, this function doesn't perform any\\n     * checks on the calling account.\\n     *\\n     * [WARNING]\\n     * ====\\n     * This function should only be called from the constructor when setting\\n     * up the initial roles for the system.\\n     *\\n     * Using this function in any other way is effectively circumventing the admin\\n     * system imposed by {AccessControl}.\\n     * ====\\n     *\\n     * NOTE: This function is deprecated in favor of {_grantRole}.\\n     */\\n    function _setupRole(bytes32 role, address account) internal virtual {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Sets `adminRole` as ``role``'s admin role.\\n     *\\n     * Emits a {RoleAdminChanged} event.\\n     */\\n    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {\\n        bytes32 previousAdminRole = getRoleAdmin(role);\\n        _roles[role].adminRole = adminRole;\\n        emit RoleAdminChanged(role, previousAdminRole, adminRole);\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _grantRole(bytes32 role, address account) internal virtual {\\n        if (!hasRole(role, account)) {\\n            _roles[role].members[account] = true;\\n            emit RoleGranted(role, account, _msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * Internal function without access restriction.\\n     */\\n    function _revokeRole(bytes32 role, address account) internal virtual {\\n        if (hasRole(role, account)) {\\n            _roles[role].members[account] = false;\\n            emit RoleRevoked(role, account, _msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[49] private __gap;\\n}\\n\",\"keccak256\":\"0x2ffe9655abbb3741fcb84ad10e2f628d5dbec46b3f84a69ceec4752e807e2757\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/access/IAccessControlEnumerableUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/IAccessControlEnumerable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"./IAccessControlUpgradeable.sol\\\";\\n\\n/**\\n * @dev External interface of AccessControlEnumerable declared to support ERC165 detection.\\n */\\ninterface IAccessControlEnumerableUpgradeable is IAccessControlUpgradeable {\\n    /**\\n     * @dev Returns one of the accounts that have `role`. `index` must be a\\n     * value between 0 and {getRoleMemberCount}, non-inclusive.\\n     *\\n     * Role bearers are not sorted in any particular way, and their ordering may\\n     * change at any point.\\n     *\\n     * WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure\\n     * you perform all queries on the same block. See the following\\n     * https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post]\\n     * for more information.\\n     */\\n    function getRoleMember(bytes32 role, uint256 index) external view returns (address);\\n\\n    /**\\n     * @dev Returns the number of accounts that have `role`. Can be used\\n     * together with {getRoleMember} to enumerate all bearers of a role.\\n     */\\n    function getRoleMemberCount(bytes32 role) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x7acbc538aad6eb4614e26612a8c5c0149bb8808db95e2638d245a8365f63e572\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (access/IAccessControl.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev External interface of AccessControl declared to support ERC165 detection.\\n */\\ninterface IAccessControlUpgradeable {\\n    /**\\n     * @dev Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole`\\n     *\\n     * `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite\\n     * {RoleAdminChanged} not being emitted signaling this.\\n     *\\n     * _Available since v3.1._\\n     */\\n    event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);\\n\\n    /**\\n     * @dev Emitted when `account` is granted `role`.\\n     *\\n     * `sender` is the account that originated the contract call, an admin role\\n     * bearer except when using {AccessControl-_setupRole}.\\n     */\\n    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Emitted when `account` is revoked `role`.\\n     *\\n     * `sender` is the account that originated the contract call:\\n     *   - if using `revokeRole`, it is the admin role bearer\\n     *   - if using `renounceRole`, it is the role bearer (i.e. `account`)\\n     */\\n    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) external view returns (bool);\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {AccessControl-_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) external view returns (bytes32);\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been granted `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `account`.\\n     */\\n    function renounceRole(bytes32 role, address account) external;\\n}\\n\",\"keccak256\":\"0xb8f5302f12138c5561362e88a78d061573e6298b7a1a5afe84a1e2c8d4d5aeaa\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../../utils/AddressUpgradeable.sol\\\";\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To initialize the implementation contract, you can either invoke the\\n * initializer manually, or you can include a constructor to automatically mark it as initialized when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() initializer {}\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Indicates that the contract has been initialized.\\n     */\\n    bool private _initialized;\\n\\n    /**\\n     * @dev Indicates that the contract is in the process of being initialized.\\n     */\\n    bool private _initializing;\\n\\n    /**\\n     * @dev Modifier to protect an initializer function from being invoked twice.\\n     */\\n    modifier initializer() {\\n        // If the contract is initializing we ignore whether _initialized is set in order to support multiple\\n        // inheritance patterns, but we only do this in the context of a constructor, because in other contexts the\\n        // contract may have been reentered.\\n        require(_initializing ? _isConstructor() : !_initialized, \\\"Initializable: contract is already initialized\\\");\\n\\n        bool isTopLevelCall = !_initializing;\\n        if (isTopLevelCall) {\\n            _initializing = true;\\n            _initialized = true;\\n        }\\n\\n        _;\\n\\n        if (isTopLevelCall) {\\n            _initializing = false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} modifier, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        require(_initializing, \\\"Initializable: contract is not initializing\\\");\\n        _;\\n    }\\n\\n    function _isConstructor() private view returns (bool) {\\n        return !AddressUpgradeable.isContract(address(this));\\n    }\\n}\\n\",\"keccak256\":\"0x372b0bc04e3b4c074559bbbfb1317afddb56de5504158ca25a7f9cd403980445\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.1;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary AddressUpgradeable {\\n    /**\\n     * @dev Returns true if `account` is a contract.\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * It is unsafe to assume that an address for which this function returns\\n     * false is an externally-owned account (EOA) and not a contract.\\n     *\\n     * Among others, `isContract` will return false for the following\\n     * types of addresses:\\n     *\\n     *  - an externally-owned account\\n     *  - a contract in construction\\n     *  - an address where a contract will be created\\n     *  - an address where a contract lived, but was destroyed\\n     * ====\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * You shouldn't rely on `isContract` to protect against flash loan attacks!\\n     *\\n     * Preventing calls from contracts is highly discouraged. It breaks composability, breaks support for smart wallets\\n     * like Gnosis Safe, and does not provide security since it can be circumvented by calling from a contract\\n     * constructor.\\n     * ====\\n     */\\n    function isContract(address account) internal view returns (bool) {\\n        // This method relies on extcodesize/address.code.length, which returns 0\\n        // for contracts in construction, since the code is only stored at the end\\n        // of the constructor execution.\\n\\n        return account.code.length > 0;\\n    }\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        require(address(this).balance >= amount, \\\"Address: insufficient balance\\\");\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        require(success, \\\"Address: unable to send value, recipient may have reverted\\\");\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason, it is bubbled up by this\\n     * function (like regular Solidity function calls).\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCall(target, data, \\\"Address: low-level call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with\\n     * `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, value, \\\"Address: low-level call with value failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but\\n     * with `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(address(this).balance >= value, \\\"Address: insufficient balance for call\\\");\\n        require(isContract(target), \\\"Address: call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        return functionStaticCall(target, data, \\\"Address: low-level static call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        require(isContract(target), \\\"Address: static call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Tool to verifies that a low level call was successful, and revert if it wasn't, either by bubbling the\\n     * revert reason using the provided one.\\n     *\\n     * _Available since v4.3._\\n     */\\n    function verifyCallResult(\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else {\\n            // Look for revert reason and bubble it up if present\\n            if (returndata.length > 0) {\\n                // The easiest way to bubble the revert reason is using memory via assembly\\n\\n                assembly {\\n                    let returndata_size := mload(returndata)\\n                    revert(add(32, returndata), returndata_size)\\n                }\\n            } else {\\n                revert(errorMessage);\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x55cf2bd9fc76704ddcdc19834cd288b7de00fc0f298a40ea16a954ae8991db2d\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Context.sol)\\n\\npragma solidity ^0.8.0;\\nimport \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract ContextUpgradeable is Initializable {\\n    function __Context_init() internal onlyInitializing {\\n    }\\n\\n    function __Context_init_unchained() internal onlyInitializing {\\n    }\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[50] private __gap;\\n}\\n\",\"keccak256\":\"0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/Strings.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev String operations.\\n */\\nlibrary StringsUpgradeable {\\n    bytes16 private constant _HEX_SYMBOLS = \\\"0123456789abcdef\\\";\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` decimal representation.\\n     */\\n    function toString(uint256 value) internal pure returns (string memory) {\\n        // Inspired by OraclizeAPI's implementation - MIT licence\\n        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol\\n\\n        if (value == 0) {\\n            return \\\"0\\\";\\n        }\\n        uint256 temp = value;\\n        uint256 digits;\\n        while (temp != 0) {\\n            digits++;\\n            temp /= 10;\\n        }\\n        bytes memory buffer = new bytes(digits);\\n        while (value != 0) {\\n            digits -= 1;\\n            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));\\n            value /= 10;\\n        }\\n        return string(buffer);\\n    }\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation.\\n     */\\n    function toHexString(uint256 value) internal pure returns (string memory) {\\n        if (value == 0) {\\n            return \\\"0x00\\\";\\n        }\\n        uint256 temp = value;\\n        uint256 length = 0;\\n        while (temp != 0) {\\n            length++;\\n            temp >>= 8;\\n        }\\n        return toHexString(value, length);\\n    }\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.\\n     */\\n    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {\\n        bytes memory buffer = new bytes(2 * length + 2);\\n        buffer[0] = \\\"0\\\";\\n        buffer[1] = \\\"x\\\";\\n        for (uint256 i = 2 * length + 1; i > 1; --i) {\\n            buffer[i] = _HEX_SYMBOLS[value & 0xf];\\n            value >>= 4;\\n        }\\n        require(value == 0, \\\"Strings: hex length insufficient\\\");\\n        return string(buffer);\\n    }\\n}\\n\",\"keccak256\":\"0x398d3323c1932a5986bf36be7c57593e121e69d5db5b6574b4ee0d031443de37\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"./IERC165Upgradeable.sol\\\";\\nimport \\\"../../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Implementation of the {IERC165} interface.\\n *\\n * Contracts that want to implement ERC165 should inherit from this contract and override {supportsInterface} to check\\n * for the additional interface id that will be supported. For example:\\n *\\n * ```solidity\\n * function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n *     return interfaceId == type(MyInterface).interfaceId || super.supportsInterface(interfaceId);\\n * }\\n * ```\\n *\\n * Alternatively, {ERC165Storage} provides an easier to use but more expensive implementation.\\n */\\nabstract contract ERC165Upgradeable is Initializable, IERC165Upgradeable {\\n    function __ERC165_init() internal onlyInitializing {\\n    }\\n\\n    function __ERC165_init_unchained() internal onlyInitializing {\\n    }\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IERC165Upgradeable).interfaceId;\\n    }\\n\\n    /**\\n     * @dev This empty reserved space is put in place to allow future versions to add new\\n     * variables without shifting down storage in the inheritance chain.\\n     * See https://docs.openzeppelin.com/contracts/4.x/upgradeable#storage_gaps\\n     */\\n    uint256[50] private __gap;\\n}\\n\",\"keccak256\":\"0x9a3b990bd56d139df3e454a9edf1c64668530b5a77fc32eb063bc206f958274a\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/introspection/IERC165.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[EIP].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165Upgradeable {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0xc6cef87559d0aeffdf0a99803de655938a7779ec0a3cd5d4383483ad85565a09\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts v4.4.1 (utils/structs/EnumerableSet.sol)\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Library for managing\\n * https://en.wikipedia.org/wiki/Set_(abstract_data_type)[sets] of primitive\\n * types.\\n *\\n * Sets have the following properties:\\n *\\n * - Elements are added, removed, and checked for existence in constant time\\n * (O(1)).\\n * - Elements are enumerated in O(n). No guarantees are made on the ordering.\\n *\\n * ```\\n * contract Example {\\n *     // Add the library methods\\n *     using EnumerableSet for EnumerableSet.AddressSet;\\n *\\n *     // Declare a set state variable\\n *     EnumerableSet.AddressSet private mySet;\\n * }\\n * ```\\n *\\n * As of v3.3.0, sets of type `bytes32` (`Bytes32Set`), `address` (`AddressSet`)\\n * and `uint256` (`UintSet`) are supported.\\n */\\nlibrary EnumerableSetUpgradeable {\\n    // To implement this library for multiple types with as little code\\n    // repetition as possible, we write it in terms of a generic Set type with\\n    // bytes32 values.\\n    // The Set implementation uses private functions, and user-facing\\n    // implementations (such as AddressSet) are just wrappers around the\\n    // underlying Set.\\n    // This means that we can only create new EnumerableSets for types that fit\\n    // in bytes32.\\n\\n    struct Set {\\n        // Storage of set values\\n        bytes32[] _values;\\n        // Position of the value in the `values` array, plus 1 because index 0\\n        // means a value is not in the set.\\n        mapping(bytes32 => uint256) _indexes;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function _add(Set storage set, bytes32 value) private returns (bool) {\\n        if (!_contains(set, value)) {\\n            set._values.push(value);\\n            // The value is stored at length-1, but we add 1 to all indexes\\n            // and use 0 as a sentinel value\\n            set._indexes[value] = set._values.length;\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function _remove(Set storage set, bytes32 value) private returns (bool) {\\n        // We read and store the value's index to prevent multiple reads from the same storage slot\\n        uint256 valueIndex = set._indexes[value];\\n\\n        if (valueIndex != 0) {\\n            // Equivalent to contains(set, value)\\n            // To delete an element from the _values array in O(1), we swap the element to delete with the last one in\\n            // the array, and then remove the last element (sometimes called as 'swap and pop').\\n            // This modifies the order of the array, as noted in {at}.\\n\\n            uint256 toDeleteIndex = valueIndex - 1;\\n            uint256 lastIndex = set._values.length - 1;\\n\\n            if (lastIndex != toDeleteIndex) {\\n                bytes32 lastvalue = set._values[lastIndex];\\n\\n                // Move the last value to the index where the value to delete is\\n                set._values[toDeleteIndex] = lastvalue;\\n                // Update the index for the moved value\\n                set._indexes[lastvalue] = valueIndex; // Replace lastvalue's index to valueIndex\\n            }\\n\\n            // Delete the slot where the moved value was stored\\n            set._values.pop();\\n\\n            // Delete the index for the deleted slot\\n            delete set._indexes[value];\\n\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function _contains(Set storage set, bytes32 value) private view returns (bool) {\\n        return set._indexes[value] != 0;\\n    }\\n\\n    /**\\n     * @dev Returns the number of values on the set. O(1).\\n     */\\n    function _length(Set storage set) private view returns (uint256) {\\n        return set._values.length;\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function _at(Set storage set, uint256 index) private view returns (bytes32) {\\n        return set._values[index];\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function _values(Set storage set) private view returns (bytes32[] memory) {\\n        return set._values;\\n    }\\n\\n    // Bytes32Set\\n\\n    struct Bytes32Set {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(Bytes32Set storage set, bytes32 value) internal returns (bool) {\\n        return _add(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(Bytes32Set storage set, bytes32 value) internal returns (bool) {\\n        return _remove(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(Bytes32Set storage set, bytes32 value) internal view returns (bool) {\\n        return _contains(set._inner, value);\\n    }\\n\\n    /**\\n     * @dev Returns the number of values in the set. O(1).\\n     */\\n    function length(Bytes32Set storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(Bytes32Set storage set, uint256 index) internal view returns (bytes32) {\\n        return _at(set._inner, index);\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(Bytes32Set storage set) internal view returns (bytes32[] memory) {\\n        return _values(set._inner);\\n    }\\n\\n    // AddressSet\\n\\n    struct AddressSet {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(AddressSet storage set, address value) internal returns (bool) {\\n        return _add(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(AddressSet storage set, address value) internal returns (bool) {\\n        return _remove(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(AddressSet storage set, address value) internal view returns (bool) {\\n        return _contains(set._inner, bytes32(uint256(uint160(value))));\\n    }\\n\\n    /**\\n     * @dev Returns the number of values in the set. O(1).\\n     */\\n    function length(AddressSet storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(AddressSet storage set, uint256 index) internal view returns (address) {\\n        return address(uint160(uint256(_at(set._inner, index))));\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(AddressSet storage set) internal view returns (address[] memory) {\\n        bytes32[] memory store = _values(set._inner);\\n        address[] memory result;\\n\\n        assembly {\\n            result := store\\n        }\\n\\n        return result;\\n    }\\n\\n    // UintSet\\n\\n    struct UintSet {\\n        Set _inner;\\n    }\\n\\n    /**\\n     * @dev Add a value to a set. O(1).\\n     *\\n     * Returns true if the value was added to the set, that is if it was not\\n     * already present.\\n     */\\n    function add(UintSet storage set, uint256 value) internal returns (bool) {\\n        return _add(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Removes a value from a set. O(1).\\n     *\\n     * Returns true if the value was removed from the set, that is if it was\\n     * present.\\n     */\\n    function remove(UintSet storage set, uint256 value) internal returns (bool) {\\n        return _remove(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Returns true if the value is in the set. O(1).\\n     */\\n    function contains(UintSet storage set, uint256 value) internal view returns (bool) {\\n        return _contains(set._inner, bytes32(value));\\n    }\\n\\n    /**\\n     * @dev Returns the number of values on the set. O(1).\\n     */\\n    function length(UintSet storage set) internal view returns (uint256) {\\n        return _length(set._inner);\\n    }\\n\\n    /**\\n     * @dev Returns the value stored at position `index` in the set. O(1).\\n     *\\n     * Note that there are no guarantees on the ordering of values inside the\\n     * array, and it may change when more values are added or removed.\\n     *\\n     * Requirements:\\n     *\\n     * - `index` must be strictly less than {length}.\\n     */\\n    function at(UintSet storage set, uint256 index) internal view returns (uint256) {\\n        return uint256(_at(set._inner, index));\\n    }\\n\\n    /**\\n     * @dev Return the entire set in an array\\n     *\\n     * WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed\\n     * to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that\\n     * this function has an unbounded cost, and using it as part of a state-changing function may render the function\\n     * uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block.\\n     */\\n    function values(UintSet storage set) internal view returns (uint256[] memory) {\\n        bytes32[] memory store = _values(set._inner);\\n        uint256[] memory result;\\n\\n        assembly {\\n            result := store\\n        }\\n\\n        return result;\\n    }\\n}\\n\",\"keccak256\":\"0x0004699ba89fa356eb0d58d815b42dcf52eccd2765e95256631b838bce2556bc\",\"license\":\"MIT\"},\"contracts/network/NetworkSettings.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nimport { EnumerableSetUpgradeable } from \\\"@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol\\\";\\n\\nimport { IVersioned } from \\\"../utility/interfaces/IVersioned.sol\\\";\\nimport { Upgradeable } from \\\"../utility/Upgradeable.sol\\\";\\nimport { Utils, AlreadyExists, DoesNotExist } from \\\"../utility/Utils.sol\\\";\\n\\nimport { Token } from \\\"../token/Token.sol\\\";\\n\\nimport { INetworkSettings, VortexRewards, NotWhitelisted } from \\\"./interfaces/INetworkSettings.sol\\\";\\n\\n/**\\n * @dev Network Settings contract\\n */\\ncontract NetworkSettings is INetworkSettings, Upgradeable, Utils {\\n    using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;\\n\\n    // a set of tokens which are eligible for protection\\n    EnumerableSetUpgradeable.AddressSet private _protectedTokenWhitelist;\\n\\n    // a mapping of BNT funding limits per pool\\n    mapping(Token => uint256) private _poolFundingLimits;\\n\\n    // below that amount, trading is disabled and co-investments use the initial rate\\n    uint256 private _minLiquidityForTrading;\\n\\n    // the fee (in units of PPM)\\n    uint32 private _networkFeePPM;\\n\\n    // the withdrawal fee (in units of PPM)\\n    uint32 private _withdrawalFeePPM;\\n\\n    // the flash-loan fee (in units of PPM)\\n    uint32 private _flashLoanFeePPM;\\n\\n    // the settings of the Vortex\\n    VortexRewards private _vortexRewards;\\n\\n    // upgrade forward-compatibility storage gap\\n    uint256[MAX_GAP - 7] private __gap;\\n\\n    /**\\n     * @dev triggered when a token is added to the protection whitelist\\n     */\\n    event TokenAddedToWhitelist(Token indexed token);\\n\\n    /**\\n     * @dev triggered when a token is removed from the protection whitelist\\n     */\\n    event TokenRemovedFromWhitelist(Token indexed token);\\n\\n    /**\\n     * @dev triggered when a per-pool funding limit is updated\\n     */\\n    event FundingLimitUpdated(Token indexed pool, uint256 prevLimit, uint256 newLimit);\\n\\n    /**\\n     * @dev triggered when the minimum liquidity for trading is updated\\n     */\\n    event MinLiquidityForTradingUpdated(uint256 prevLiquidity, uint256 newLiquidity);\\n\\n    /**\\n     * @dev triggered when the network fee is updated\\n     */\\n    event NetworkFeePPMUpdated(uint32 prevFeePPM, uint32 newFeePPM);\\n\\n    /**\\n     * @dev triggered when the withdrawal fee is updated\\n     */\\n    event WithdrawalFeePPMUpdated(uint32 prevFeePPM, uint32 newFeePPM);\\n\\n    /**\\n     * @dev triggered when the flash-loan fee is updated\\n     */\\n    event FlashLoanFeePPMUpdated(uint32 prevFeePPM, uint32 newFeePPM);\\n\\n    /**\\n     * @dev triggered when the settings of the Vortex are updated\\n     */\\n    event VortexBurnRewardUpdated(\\n        uint32 prevBurnRewardPPM,\\n        uint32 newBurnRewardPPM,\\n        uint256 prevBurnRewardMaxAmount,\\n        uint256 newBurnRewardMaxAmount\\n    );\\n\\n    /**\\n     * @dev fully initializes the contract and its parents\\n     */\\n    function initialize() external initializer {\\n        __NetworkSettings_init();\\n    }\\n\\n    // solhint-disable func-name-mixedcase\\n\\n    /**\\n     * @dev initializes the contract and its parents\\n     */\\n    function __NetworkSettings_init() internal onlyInitializing {\\n        __Upgradeable_init();\\n\\n        __NetworkSettings_init_unchained();\\n    }\\n\\n    /**\\n     * @dev performs contract-specific initialization\\n     */\\n    function __NetworkSettings_init_unchained() internal onlyInitializing {}\\n\\n    // solhint-enable func-name-mixedcase\\n\\n    /**\\n     * @inheritdoc IVersioned\\n     */\\n    function version() external pure returns (uint16) {\\n        return 1;\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function protectedTokenWhitelist() external view returns (Token[] memory) {\\n        uint256 length = _protectedTokenWhitelist.length();\\n        Token[] memory list = new Token[](length);\\n        for (uint256 i = 0; i < length; i++) {\\n            list[i] = Token(_protectedTokenWhitelist.at(i));\\n        }\\n        return list;\\n    }\\n\\n    /**\\n     * @dev adds a token to the protected tokens whitelist\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function addTokenToWhitelist(Token token) external onlyAdmin validExternalAddress(address(token)) {\\n        if (!_protectedTokenWhitelist.add(address(token))) {\\n            revert AlreadyExists();\\n        }\\n\\n        emit TokenAddedToWhitelist({ token: token });\\n    }\\n\\n    /**\\n     * @dev removes a token from the protected tokens whitelist\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function removeTokenFromWhitelist(Token token) external onlyAdmin {\\n        if (!_protectedTokenWhitelist.remove(address(token))) {\\n            revert DoesNotExist();\\n        }\\n\\n        emit TokenRemovedFromWhitelist({ token: token });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function isTokenWhitelisted(Token token) external view returns (bool) {\\n        return _isTokenWhitelisted(token);\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function poolFundingLimit(Token pool) external view returns (uint256) {\\n        return _poolFundingLimits[pool];\\n    }\\n\\n    /**\\n     * @dev updates the amount of BNT that the protocol can fund a specific pool\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     * - the token must have been whitelisted\\n     */\\n    function setFundingLimit(Token pool, uint256 amount) external onlyAdmin validAddress(address(pool)) {\\n        if (!_isTokenWhitelisted(pool)) {\\n            revert NotWhitelisted();\\n        }\\n\\n        uint256 prevPoolFundingLimit = _poolFundingLimits[pool];\\n        if (prevPoolFundingLimit == amount) {\\n            return;\\n        }\\n\\n        _poolFundingLimits[pool] = amount;\\n\\n        emit FundingLimitUpdated({ pool: pool, prevLimit: prevPoolFundingLimit, newLimit: amount });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function minLiquidityForTrading() external view returns (uint256) {\\n        return _minLiquidityForTrading;\\n    }\\n\\n    /**\\n     * @dev updates the minimum liquidity for trading amount\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function setMinLiquidityForTrading(uint256 amount) external onlyAdmin {\\n        uint256 prevMinLiquidityForTrading = _minLiquidityForTrading;\\n        if (_minLiquidityForTrading == amount) {\\n            return;\\n        }\\n\\n        _minLiquidityForTrading = amount;\\n\\n        emit MinLiquidityForTradingUpdated({ prevLiquidity: prevMinLiquidityForTrading, newLiquidity: amount });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function networkFeePPM() external view returns (uint32) {\\n        return _networkFeePPM;\\n    }\\n\\n    /**\\n     * @dev sets the network fee (in units of PPM)\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function setNetworkFeePPM(uint32 newNetworkFeePPM) external onlyAdmin validFee(newNetworkFeePPM) {\\n        uint32 prevNetworkFeePPM = _networkFeePPM;\\n        if (prevNetworkFeePPM == newNetworkFeePPM) {\\n            return;\\n        }\\n\\n        _networkFeePPM = newNetworkFeePPM;\\n\\n        emit NetworkFeePPMUpdated({ prevFeePPM: prevNetworkFeePPM, newFeePPM: newNetworkFeePPM });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function withdrawalFeePPM() external view returns (uint32) {\\n        return _withdrawalFeePPM;\\n    }\\n\\n    /**\\n     * @dev sets the withdrawal fee (in units of PPM)\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function setWithdrawalFeePPM(uint32 newWithdrawalFeePPM) external onlyAdmin validFee(newWithdrawalFeePPM) {\\n        uint32 prevWithdrawalFeePPM = _withdrawalFeePPM;\\n        if (prevWithdrawalFeePPM == newWithdrawalFeePPM) {\\n            return;\\n        }\\n\\n        _withdrawalFeePPM = newWithdrawalFeePPM;\\n\\n        emit WithdrawalFeePPMUpdated({ prevFeePPM: prevWithdrawalFeePPM, newFeePPM: newWithdrawalFeePPM });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function flashLoanFeePPM() external view returns (uint32) {\\n        return _flashLoanFeePPM;\\n    }\\n\\n    /**\\n     * @dev sets the flash-loan fee (in units of PPM)\\n     *\\n     * requirements:\\n     *\\n     * - the caller must be the admin of the contract\\n     */\\n    function setFlashLoanFeePPM(uint32 newFlashLoanFeePPM) external onlyAdmin validFee(newFlashLoanFeePPM) {\\n        uint32 prevFlashLoanFeePPM = _flashLoanFeePPM;\\n        if (prevFlashLoanFeePPM == newFlashLoanFeePPM) {\\n            return;\\n        }\\n\\n        _flashLoanFeePPM = newFlashLoanFeePPM;\\n\\n        emit FlashLoanFeePPMUpdated({ prevFeePPM: prevFlashLoanFeePPM, newFeePPM: newFlashLoanFeePPM });\\n    }\\n\\n    /**\\n     * @inheritdoc INetworkSettings\\n     */\\n    function vortexRewards() external view returns (VortexRewards memory) {\\n        return _vortexRewards;\\n    }\\n\\n    /**\\n     * @dev sets the settings of the Vortex\\n     *\\n     * requirements:\\n     *s\\n     * - the caller must be the admin of the contract\\n     */\\n    function setVortexRewards(VortexRewards calldata rewards)\\n        external\\n        onlyAdmin\\n        validFee(rewards.burnRewardPPM)\\n        greaterThanZero(rewards.burnRewardMaxAmount)\\n    {\\n        uint32 prevVortexBurnRewardPPM = _vortexRewards.burnRewardPPM;\\n        uint256 prevVortexBurnRewardMaxAmount = _vortexRewards.burnRewardMaxAmount;\\n\\n        if (\\n            prevVortexBurnRewardPPM == rewards.burnRewardPPM &&\\n            prevVortexBurnRewardMaxAmount == rewards.burnRewardMaxAmount\\n        ) {\\n            return;\\n        }\\n\\n        _vortexRewards = rewards;\\n\\n        emit VortexBurnRewardUpdated({\\n            prevBurnRewardPPM: prevVortexBurnRewardPPM,\\n            newBurnRewardPPM: rewards.burnRewardPPM,\\n            prevBurnRewardMaxAmount: prevVortexBurnRewardMaxAmount,\\n            newBurnRewardMaxAmount: rewards.burnRewardMaxAmount\\n        });\\n    }\\n\\n    /**\\n     * @dev checks whether a given token is whitelisted\\n     */\\n    function _isTokenWhitelisted(Token token) private view returns (bool) {\\n        return _protectedTokenWhitelist.contains(address(token));\\n    }\\n}\\n\",\"keccak256\":\"0x5892426f35748609bd112d809946213802cdd91b08561744cda180a35c46d096\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/network/interfaces/INetworkSettings.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nimport { IUpgradeable } from \\\"../../utility/interfaces/IUpgradeable.sol\\\";\\n\\nimport { Token } from \\\"../../token/Token.sol\\\";\\n\\nerror NotWhitelisted();\\n\\nstruct VortexRewards {\\n    // the percentage of converted BNT to be sent to the initiator of the burning event (in units of PPM)\\n    uint32 burnRewardPPM;\\n    // the maximum burn reward to be sent to the initiator of the burning event\\n    uint256 burnRewardMaxAmount;\\n}\\n\\n/**\\n * @dev Network Settings interface\\n */\\ninterface INetworkSettings is IUpgradeable {\\n    /**\\n     * @dev returns the protected tokens whitelist\\n     */\\n    function protectedTokenWhitelist() external view returns (Token[] memory);\\n\\n    /**\\n     * @dev checks whether a given token is whitelisted\\n     */\\n    function isTokenWhitelisted(Token pool) external view returns (bool);\\n\\n    /**\\n     * @dev returns the BNT funding limit for a given pool\\n     */\\n    function poolFundingLimit(Token pool) external view returns (uint256);\\n\\n    /**\\n     * @dev returns the minimum BNT trading liquidity required before the system enables trading in the relevant pool\\n     */\\n    function minLiquidityForTrading() external view returns (uint256);\\n\\n    /**\\n     * @dev returns the global network fee (in units of PPM)\\n     *\\n     * notes:\\n     *\\n     * - the network fee is a portion of the total fees from each pool\\n     */\\n    function networkFeePPM() external view returns (uint32);\\n\\n    /**\\n     * @dev returns the withdrawal fee (in units of PPM)\\n     */\\n    function withdrawalFeePPM() external view returns (uint32);\\n\\n    /**\\n     * @dev returns the flash-loan fee (in units of PPM)\\n     */\\n    function flashLoanFeePPM() external view returns (uint32);\\n\\n    /**\\n     * @dev returns the vortex settings\\n     */\\n    function vortexRewards() external view returns (VortexRewards memory);\\n}\\n\",\"keccak256\":\"0x0f8ba78e0bda7375f59540018ca132181c992a16f6e4237cbce47efd161931d5\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/token/Token.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\n/**\\n * @dev the main purpose of the Token interfaces is to ensure artificially that we won't use ERC20's standard functions,\\n * but only their safe versions, which are provided by SafeERC20 and SafeERC20Ex via the TokenLibrary contract\\n */\\ninterface Token {\\n\\n}\\n\",\"keccak256\":\"0x61848a718e24dd21e04a78ce0d1935e4f9b59413b01a30f14667f5455a57f8a4\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/utility/Constants.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nuint32 constant PPM_RESOLUTION = 1000000;\\n\",\"keccak256\":\"0x655a21079ece74dbfb5bdad2219a1dde7720a13764597e00939d7450db641256\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/utility/Upgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nimport { AccessControlEnumerableUpgradeable } from \\\"@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol\\\";\\n\\nimport { IUpgradeable } from \\\"./interfaces/IUpgradeable.sol\\\";\\n\\nimport { AccessDenied } from \\\"./Utils.sol\\\";\\n\\n/**\\n * @dev this contract provides common utilities for upgradeable contracts\\n */\\nabstract contract Upgradeable is IUpgradeable, AccessControlEnumerableUpgradeable {\\n    // the admin role is used to allow a non-proxy admin to perform additional initialization/setup during contract\\n    // upgrades\\n    bytes32 internal constant ROLE_ADMIN = keccak256(\\\"ROLE_ADMIN\\\");\\n\\n    uint32 internal constant MAX_GAP = 50;\\n\\n    // solhint-disable func-name-mixedcase\\n\\n    /**\\n     * @dev initializes the contract and its parents\\n     */\\n    function __Upgradeable_init() internal onlyInitializing {\\n        __AccessControl_init();\\n\\n        __Upgradeable_init_unchained();\\n    }\\n\\n    /**\\n     * @dev performs contract-specific initialization\\n     */\\n    function __Upgradeable_init_unchained() internal onlyInitializing {\\n        // set up administrative roles\\n        _setRoleAdmin(ROLE_ADMIN, ROLE_ADMIN);\\n\\n        // allow the deployer to initially be the admin of the contract\\n        _setupRole(ROLE_ADMIN, msg.sender);\\n    }\\n\\n    // solhint-enable func-name-mixedcase\\n\\n    modifier onlyAdmin() {\\n        _hasRole(ROLE_ADMIN, msg.sender);\\n\\n        _;\\n    }\\n\\n    modifier onlyRoleMember(bytes32 role) {\\n        _hasRole(role, msg.sender);\\n\\n        _;\\n    }\\n\\n    /**\\n     * @dev returns the admin role\\n     */\\n    function roleAdmin() external pure returns (bytes32) {\\n        return ROLE_ADMIN;\\n    }\\n\\n    function _hasRole(bytes32 role, address account) internal view {\\n        if (!hasRole(role, account)) {\\n            revert AccessDenied();\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x82f3243a037abaf9ae06a73bdd2959dc9c4b94e75c6c1074050ae4039432bd39\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/utility/Utils.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nimport { PPM_RESOLUTION } from \\\"./Constants.sol\\\";\\n\\nerror AccessDenied();\\nerror AlreadyExists();\\nerror DoesNotExist();\\nerror InvalidAddress();\\nerror InvalidExternalAddress();\\nerror InvalidFee();\\nerror InvalidPool();\\nerror InvalidPoolCollection();\\nerror InvalidPortion();\\nerror InvalidStakedBalance();\\nerror InvalidToken();\\nerror InvalidType();\\nerror NotEmpty();\\nerror NotPayable();\\nerror ZeroValue();\\n\\n/**\\n * @dev common utilities\\n */\\ncontract Utils {\\n    // allows execution by the caller only\\n    modifier only(address caller) {\\n        _only(caller);\\n\\n        _;\\n    }\\n\\n    function _only(address caller) internal view {\\n        if (msg.sender != caller) {\\n            revert AccessDenied();\\n        }\\n    }\\n\\n    // verifies that a value is greater than zero\\n    modifier greaterThanZero(uint256 value) {\\n        _greaterThanZero(value);\\n\\n        _;\\n    }\\n\\n    // error message binary size optimization\\n    function _greaterThanZero(uint256 value) internal pure {\\n        if (value == 0) {\\n            revert ZeroValue();\\n        }\\n    }\\n\\n    // validates an address - currently only checks that it isn't null\\n    modifier validAddress(address addr) {\\n        _validAddress(addr);\\n\\n        _;\\n    }\\n\\n    // error message binary size optimization\\n    function _validAddress(address addr) internal pure {\\n        if (addr == address(0)) {\\n            revert InvalidAddress();\\n        }\\n    }\\n\\n    // ensures that the portion is valid\\n    modifier validPortion(uint32 _portion) {\\n        _validPortion(_portion);\\n\\n        _;\\n    }\\n\\n    // error message binary size optimization\\n    function _validPortion(uint32 _portion) internal pure {\\n        if (_portion == 0 || _portion > PPM_RESOLUTION) {\\n            revert InvalidPortion();\\n        }\\n    }\\n\\n    // validates an external address - currently only checks that it isn't null or this\\n    modifier validExternalAddress(address addr) {\\n        _validExternalAddress(addr);\\n\\n        _;\\n    }\\n\\n    // error message binary size optimization\\n    function _validExternalAddress(address addr) internal view {\\n        if (addr == address(0) || addr == address(this)) {\\n            revert InvalidExternalAddress();\\n        }\\n    }\\n\\n    // ensures that the fee is valid\\n    modifier validFee(uint32 fee) {\\n        _validFee(fee);\\n\\n        _;\\n    }\\n\\n    // error message binary size optimization\\n    function _validFee(uint32 fee) internal pure {\\n        if (fee > PPM_RESOLUTION) {\\n            revert InvalidFee();\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xc0d70eb04c8187a3852b7ca51db7fbd5cc8ffca507abd2b70205d9dd8a2189fd\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/utility/interfaces/IUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\nimport { IVersioned } from \\\"./IVersioned.sol\\\";\\n\\nimport { IAccessControlEnumerableUpgradeable } from \\\"@openzeppelin/contracts-upgradeable/access/IAccessControlEnumerableUpgradeable.sol\\\";\\n\\n/**\\n * @dev this is the common interface for upgradeable contracts\\n */\\ninterface IUpgradeable is IAccessControlEnumerableUpgradeable, IVersioned {\\n\\n}\\n\",\"keccak256\":\"0x47c7fcbf7226ecb2e26f9eeb05ce66153bfca0cef4d624d6e7a3ff3b919288a4\",\"license\":\"SEE LICENSE IN LICENSE\"},\"contracts/utility/interfaces/IVersioned.sol\":{\"content\":\"// SPDX-License-Identifier: SEE LICENSE IN LICENSE\\npragma solidity 0.8.12;\\n\\n/**\\n * @dev an interface for a versioned contract\\n */\\ninterface IVersioned {\\n    function version() external view returns (uint16);\\n}\\n\",\"keccak256\":\"0x70f0e99e5ad11d5323430a9ee46d844b7cd59b1ace6d0c89dcb08a5c1e112674\",\"license\":\"SEE LICENSE IN LICENSE\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50611773806100206000396000f3fe608060405234801561001057600080fd5b50600436106101c45760003560e01c80638129fc1c116100f9578063b5af090f11610097578063cd9d26a511610071578063cd9d26a514610412578063d547741f14610427578063d84c1b381461043a578063fa617bf31461044d57600080fd5b8063b5af090f146103d9578063c6f50d21146103ec578063ca15c873146103ff57600080fd5b806391d14854116100d357806391d148541461039757806393867fb5146103aa578063a217fddf146103be578063a83e3f0c146103c657600080fd5b80638129fc1c1461035c57806387ba006a146103645780639010d07c1461036c57600080fd5b806336568abe1161016657806347b13e7c1161014057806347b13e7c146103175780634f712cff1461032c57806354fd4d501461033f5780636161b6261461034e57600080fd5b806336568abe146102c85780633a1ec78d146102db578063467e55df146102ee57600080fd5b80632aac012c116101a25780632aac012c146102665780632f2ff15d1461028d578063306275be146102a25780633376af51146102b557600080fd5b806301ffc9a7146101c957806305a4c0f7146101f1578063248a9ca314610235575b600080fd5b6101dc6101d7366004611397565b610460565b60405190151581526020015b60405180910390f35b60408051808201825260008082526020918201528151808301835260ce5463ffffffff1680825260cf549183019182528351908152905191810191909152016101e8565b6102586102433660046113c1565b60009081526065602052604090206001015490565b6040519081526020016101e8565b60cd54640100000000900463ffffffff165b60405163ffffffff90911681526020016101e8565b6102a061029b3660046113ef565b61048b565b005b6102a06102b036600461141f565b6104b6565b6102a06102c336600461144e565b61052d565b6102a06102d63660046113ef565b6105c5565b6102a06102e936600461146b565b610644565b6102586102fc36600461141f565b6001600160a01b0316600090815260cb602052604090205490565b60cd54600160401b900463ffffffff16610278565b6102a061033a36600461144e565b61073f565b604051600181526020016101e8565b60cd5463ffffffff16610278565b6102a06107e3565b60cc54610258565b61037f61037a366004611483565b6108a4565b6040516001600160a01b0390911681526020016101e8565b6101dc6103a53660046113ef565b6108c3565b600080516020611747833981519152610258565b610258600081565b6102a06103d43660046114a5565b6108ee565b6101dc6103e736600461141f565b6109b8565b6102a06103fa36600461144e565b6109c3565b61025861040d3660046113c1565b610a69565b61041a610a80565b6040516101e891906114d1565b6102a06104353660046113ef565b610b30565b6102a061044836600461141f565b610b56565b6102a061045b3660046113c1565b610bd8565b60006001600160e01b03198216635a05180f60e01b1480610485575061048582610c41565b92915050565b6000828152606560205260409020600101546104a78133610c76565b6104b18383610cda565b505050565b6104ce60008051602061174783398151915233610cfc565b6104d960c982610d23565b6104f65760405163b0ce759160e01b815260040160405180910390fd5b6040516001600160a01b038216907fdd2e6d9f52cbe8f695939d018b7d4a216dc613a669876163ac548b916489d91790600090a250565b61054560008051602061174783398151915233610cfc565b8061054f81610d38565b60cd5463ffffffff90811690831681141561056957505050565b60cd805463ffffffff191663ffffffff85811691821790925560408051928416835260208301919091527f1f1f36475e04b1709caf649fc7f00350aa38c7f7f110f653e81f79011db0867c91015b60405180910390a1505b5050565b6001600160a01b038116331461063a5760405162461bcd60e51b815260206004820152602f60248201527f416363657373436f6e74726f6c3a2063616e206f6e6c792072656e6f756e636560448201526e103937b632b9903337b91039b2b63360891b60648201526084015b60405180910390fd5b6105c18282610d62565b61065c60008051602061174783398151915233610cfc565b610669602082018261144e565b61067281610d38565b816020013561068081610d84565b60ce5460cf5463ffffffff9091169061069c602086018661144e565b63ffffffff168263ffffffff161480156106b95750846020013581145b156106c5575050505050565b8460ce6106d2828261151e565b507fc0c001b93aede4379dd063acffffdf190292a31ccf86bbbf5399ab3480f3ebb1905082610704602088018861144e565b6040805163ffffffff938416815292909116602083810191909152908201849052870135606082015260800160405180910390a15050505050565b61075760008051602061174783398151915233610cfc565b8061076181610d38565b60cd5463ffffffff640100000000909104811690831681141561078357505050565b60cd805467ffffffff00000000191664010000000063ffffffff8681169182029290921790925560408051918416825260208201929092527f5694fc3b551ce2e4a457649f95500c545f27fce9ef7c3818cfb3c52134223dcb91016105b7565b600054610100900460ff166107fe5760005460ff1615610802565b303b155b6108655760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b6064820152608401610631565b600054610100900460ff16158015610887576000805461ffff19166101011790555b61088f610da2565b80156108a1576000805461ff00191690555b50565b60008281526097602052604081206108bc9083610ddb565b9392505050565b60009182526065602090815260408084206001600160a01b0393909316845291905290205460ff1690565b61090660008051602061174783398151915233610cfc565b8161091081610de7565b61091983610e0e565b61093657604051630b094f2760e31b815260040160405180910390fd5b6001600160a01b038316600090815260cb60205260409020548281141561095d5750505050565b6001600160a01b038416600081815260cb602090815260409182902086905581518481529081018690527f1a06df86f888ab7df8687a48f67c1ae98d193e315d76c842736d851adac8dda5910160405180910390a250505050565b600061048582610e0e565b6109db60008051602061174783398151915233610cfc565b806109e581610d38565b60cd5463ffffffff600160401b9091048116908316811415610a0657505050565b60cd80546bffffffff00000000000000001916600160401b63ffffffff8681169182029290921790925560408051918416825260208201929092527f578235b16045b1d8823ef0e323bafebb9748a6215f84d9a22c4d69bc43d96e2791016105b7565b600081815260976020526040812061048590610e1b565b60606000610a8e60c9610e1b565b905060008167ffffffffffffffff811115610aab57610aab61154b565b604051908082528060200260200182016040528015610ad4578160200160208202803683370190505b50905060005b82811015610b2957610aed60c982610ddb565b828281518110610aff57610aff611561565b6001600160a01b039092166020928302919091019091015280610b218161158d565b915050610ada565b5092915050565b600082815260656020526040902060010154610b4c8133610c76565b6104b18383610d62565b610b6e60008051602061174783398151915233610cfc565b80610b7881610e25565b610b8360c983610e61565b610ba05760405163119b4fd360e11b815260040160405180910390fd5b6040516001600160a01b038316907fa718ddb71589521cab00fa313e3bd14e75ca7204d57a12ff3a5aa40796f3427690600090a25050565b610bf060008051602061174783398151915233610cfc565b60cc5481811415610bff575050565b60cc82905560408051828152602081018490527fa331479cec90af3eef92e0ee6f6cd19f7912d7bb73f8d9885083d6ffa98b0772910160405180910390a15050565b60006001600160e01b03198216637965db0b60e01b148061048557506301ffc9a760e01b6001600160e01b0319831614610485565b610c8082826108c3565b6105c157610c98816001600160a01b03166014610e76565b610ca3836020610e76565b604051602001610cb49291906115d8565b60408051601f198184030181529082905262461bcd60e51b82526106319160040161164d565b610ce48282611012565b60008281526097602052604090206104b19082610e61565b610d0682826108c3565b6105c157604051634ca8886760e01b815260040160405180910390fd5b60006108bc836001600160a01b038416611098565b620f424063ffffffff821611156108a1576040516358d620b360e01b815260040160405180910390fd5b610d6c828261118b565b60008281526097602052604090206104b19082610d23565b806108a157604051637c946ed760e01b815260040160405180910390fd5b600054610100900460ff16610dc95760405162461bcd60e51b815260040161063190611680565b610dd16111f2565b610dd9611229565b565b60006108bc8383611250565b6001600160a01b0381166108a15760405163e6c4247b60e01b815260040160405180910390fd5b600061048560c98361127a565b6000610485825490565b6001600160a01b0381161580610e4357506001600160a01b03811630145b156108a157604051638e052b6760e01b815260040160405180910390fd5b60006108bc836001600160a01b03841661129c565b60606000610e858360026116cb565b610e909060026116ea565b67ffffffffffffffff811115610ea857610ea861154b565b6040519080825280601f01601f191660200182016040528015610ed2576020820181803683370190505b509050600360fc1b81600081518110610eed57610eed611561565b60200101906001600160f81b031916908160001a905350600f60fb1b81600181518110610f1c57610f1c611561565b60200101906001600160f81b031916908160001a9053506000610f408460026116cb565b610f4b9060016116ea565b90505b6001811115610fc3576f181899199a1a9b1b9c1cb0b131b232b360811b85600f1660108110610f7f57610f7f611561565b1a60f81b828281518110610f9557610f95611561565b60200101906001600160f81b031916908160001a90535060049490941c93610fbc81611702565b9050610f4e565b5083156108bc5760405162461bcd60e51b815260206004820181905260248201527f537472696e67733a20686578206c656e67746820696e73756666696369656e746044820152606401610631565b61101c82826108c3565b6105c15760008281526065602090815260408083206001600160a01b03851684529091529020805460ff191660011790556110543390565b6001600160a01b0316816001600160a01b0316837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45050565b600081815260018301602052604081205480156111815760006110bc600183611719565b85549091506000906110d090600190611719565b90508181146111355760008660000182815481106110f0576110f0611561565b906000526020600020015490508087600001848154811061111357611113611561565b6000918252602080832090910192909255918252600188019052604090208390555b855486908061114657611146611730565b600190038181906000526020600020016000905590558560010160008681526020019081526020016000206000905560019350505050610485565b6000915050610485565b61119582826108c3565b156105c15760008281526065602090815260408083206001600160a01b0385168085529252808320805460ff1916905551339285917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45050565b600054610100900460ff166112195760405162461bcd60e51b815260040161063190611680565b611221611229565b610dd96112eb565b600054610100900460ff16610dd95760405162461bcd60e51b815260040161063190611680565b600082600001828154811061126757611267611561565b9060005260206000200154905092915050565b6001600160a01b038116600090815260018301602052604081205415156108bc565b60008181526001830160205260408120546112e357508154600181810184556000848152602080822090930184905584548482528286019093526040902091909155610485565b506000610485565b600054610100900460ff166113125760405162461bcd60e51b815260040161063190611680565b61132a60008051602061174783398151915280611342565b610dd96000805160206117478339815191523361138d565b600082815260656020526040808220600101805490849055905190918391839186917fbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff9190a4505050565b6105c18282610cda565b6000602082840312156113a957600080fd5b81356001600160e01b0319811681146108bc57600080fd5b6000602082840312156113d357600080fd5b5035919050565b6001600160a01b03811681146108a157600080fd5b6000806040838503121561140257600080fd5b823591506020830135611414816113da565b809150509250929050565b60006020828403121561143157600080fd5b81356108bc816113da565b63ffffffff811681146108a157600080fd5b60006020828403121561146057600080fd5b81356108bc8161143c565b60006040828403121561147d57600080fd5b50919050565b6000806040838503121561149657600080fd5b50508035926020909101359150565b600080604083850312156114b857600080fd5b82356114c3816113da565b946020939093013593505050565b6020808252825182820181905260009190848201906040850190845b818110156115125783516001600160a01b0316835292840192918401916001016114ed565b50909695505050505050565b81356115298161143c565b63ffffffff811663ffffffff1983541617825550602082013560018201555050565b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b60006000198214156115a1576115a1611577565b5060010190565b60005b838110156115c35781810151838201526020016115ab565b838111156115d2576000848401525b50505050565b7f416363657373436f6e74726f6c3a206163636f756e74200000000000000000008152600083516116108160178501602088016115a8565b7001034b99036b4b9b9b4b733903937b6329607d1b60179184019182015283516116418160288401602088016115a8565b01602801949350505050565b602081526000825180602084015261166c8160408501602087016115a8565b601f01601f19169190910160400192915050565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b606082015260800190565b60008160001904831182151516156116e5576116e5611577565b500290565b600082198211156116fd576116fd611577565b500190565b60008161171157611711611577565b506000190190565b60008282101561172b5761172b611577565b500390565b634e487b7160e01b600052603160045260246000fdfe2172861495e7b85edac73e3cd5fbb42dd675baadf627720e687bcfdaca025096a164736f6c634300080c000a",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101c45760003560e01c80638129fc1c116100f9578063b5af090f11610097578063cd9d26a511610071578063cd9d26a514610412578063d547741f14610427578063d84c1b381461043a578063fa617bf31461044d57600080fd5b8063b5af090f146103d9578063c6f50d21146103ec578063ca15c873146103ff57600080fd5b806391d14854116100d357806391d148541461039757806393867fb5146103aa578063a217fddf146103be578063a83e3f0c146103c657600080fd5b80638129fc1c1461035c57806387ba006a146103645780639010d07c1461036c57600080fd5b806336568abe1161016657806347b13e7c1161014057806347b13e7c146103175780634f712cff1461032c57806354fd4d501461033f5780636161b6261461034e57600080fd5b806336568abe146102c85780633a1ec78d146102db578063467e55df146102ee57600080fd5b80632aac012c116101a25780632aac012c146102665780632f2ff15d1461028d578063306275be146102a25780633376af51146102b557600080fd5b806301ffc9a7146101c957806305a4c0f7146101f1578063248a9ca314610235575b600080fd5b6101dc6101d7366004611397565b610460565b60405190151581526020015b60405180910390f35b60408051808201825260008082526020918201528151808301835260ce5463ffffffff1680825260cf549183019182528351908152905191810191909152016101e8565b6102586102433660046113c1565b60009081526065602052604090206001015490565b6040519081526020016101e8565b60cd54640100000000900463ffffffff165b60405163ffffffff90911681526020016101e8565b6102a061029b3660046113ef565b61048b565b005b6102a06102b036600461141f565b6104b6565b6102a06102c336600461144e565b61052d565b6102a06102d63660046113ef565b6105c5565b6102a06102e936600461146b565b610644565b6102586102fc36600461141f565b6001600160a01b0316600090815260cb602052604090205490565b60cd54600160401b900463ffffffff16610278565b6102a061033a36600461144e565b61073f565b604051600181526020016101e8565b60cd5463ffffffff16610278565b6102a06107e3565b60cc54610258565b61037f61037a366004611483565b6108a4565b6040516001600160a01b0390911681526020016101e8565b6101dc6103a53660046113ef565b6108c3565b600080516020611747833981519152610258565b610258600081565b6102a06103d43660046114a5565b6108ee565b6101dc6103e736600461141f565b6109b8565b6102a06103fa36600461144e565b6109c3565b61025861040d3660046113c1565b610a69565b61041a610a80565b6040516101e891906114d1565b6102a06104353660046113ef565b610b30565b6102a061044836600461141f565b610b56565b6102a061045b3660046113c1565b610bd8565b60006001600160e01b03198216635a05180f60e01b1480610485575061048582610c41565b92915050565b6000828152606560205260409020600101546104a78133610c76565b6104b18383610cda565b505050565b6104ce60008051602061174783398151915233610cfc565b6104d960c982610d23565b6104f65760405163b0ce759160e01b815260040160405180910390fd5b6040516001600160a01b038216907fdd2e6d9f52cbe8f695939d018b7d4a216dc613a669876163ac548b916489d91790600090a250565b61054560008051602061174783398151915233610cfc565b8061054f81610d38565b60cd5463ffffffff90811690831681141561056957505050565b60cd805463ffffffff191663ffffffff85811691821790925560408051928416835260208301919091527f1f1f36475e04b1709caf649fc7f00350aa38c7f7f110f653e81f79011db0867c91015b60405180910390a1505b5050565b6001600160a01b038116331461063a5760405162461bcd60e51b815260206004820152602f60248201527f416363657373436f6e74726f6c3a2063616e206f6e6c792072656e6f756e636560448201526e103937b632b9903337b91039b2b63360891b60648201526084015b60405180910390fd5b6105c18282610d62565b61065c60008051602061174783398151915233610cfc565b610669602082018261144e565b61067281610d38565b816020013561068081610d84565b60ce5460cf5463ffffffff9091169061069c602086018661144e565b63ffffffff168263ffffffff161480156106b95750846020013581145b156106c5575050505050565b8460ce6106d2828261151e565b507fc0c001b93aede4379dd063acffffdf190292a31ccf86bbbf5399ab3480f3ebb1905082610704602088018861144e565b6040805163ffffffff938416815292909116602083810191909152908201849052870135606082015260800160405180910390a15050505050565b61075760008051602061174783398151915233610cfc565b8061076181610d38565b60cd5463ffffffff640100000000909104811690831681141561078357505050565b60cd805467ffffffff00000000191664010000000063ffffffff8681169182029290921790925560408051918416825260208201929092527f5694fc3b551ce2e4a457649f95500c545f27fce9ef7c3818cfb3c52134223dcb91016105b7565b600054610100900460ff166107fe5760005460ff1615610802565b303b155b6108655760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b6064820152608401610631565b600054610100900460ff16158015610887576000805461ffff19166101011790555b61088f610da2565b80156108a1576000805461ff00191690555b50565b60008281526097602052604081206108bc9083610ddb565b9392505050565b60009182526065602090815260408084206001600160a01b0393909316845291905290205460ff1690565b61090660008051602061174783398151915233610cfc565b8161091081610de7565b61091983610e0e565b61093657604051630b094f2760e31b815260040160405180910390fd5b6001600160a01b038316600090815260cb60205260409020548281141561095d5750505050565b6001600160a01b038416600081815260cb602090815260409182902086905581518481529081018690527f1a06df86f888ab7df8687a48f67c1ae98d193e315d76c842736d851adac8dda5910160405180910390a250505050565b600061048582610e0e565b6109db60008051602061174783398151915233610cfc565b806109e581610d38565b60cd5463ffffffff600160401b9091048116908316811415610a0657505050565b60cd80546bffffffff00000000000000001916600160401b63ffffffff8681169182029290921790925560408051918416825260208201929092527f578235b16045b1d8823ef0e323bafebb9748a6215f84d9a22c4d69bc43d96e2791016105b7565b600081815260976020526040812061048590610e1b565b60606000610a8e60c9610e1b565b905060008167ffffffffffffffff811115610aab57610aab61154b565b604051908082528060200260200182016040528015610ad4578160200160208202803683370190505b50905060005b82811015610b2957610aed60c982610ddb565b828281518110610aff57610aff611561565b6001600160a01b039092166020928302919091019091015280610b218161158d565b915050610ada565b5092915050565b600082815260656020526040902060010154610b4c8133610c76565b6104b18383610d62565b610b6e60008051602061174783398151915233610cfc565b80610b7881610e25565b610b8360c983610e61565b610ba05760405163119b4fd360e11b815260040160405180910390fd5b6040516001600160a01b038316907fa718ddb71589521cab00fa313e3bd14e75ca7204d57a12ff3a5aa40796f3427690600090a25050565b610bf060008051602061174783398151915233610cfc565b60cc5481811415610bff575050565b60cc82905560408051828152602081018490527fa331479cec90af3eef92e0ee6f6cd19f7912d7bb73f8d9885083d6ffa98b0772910160405180910390a15050565b60006001600160e01b03198216637965db0b60e01b148061048557506301ffc9a760e01b6001600160e01b0319831614610485565b610c8082826108c3565b6105c157610c98816001600160a01b03166014610e76565b610ca3836020610e76565b604051602001610cb49291906115d8565b60408051601f198184030181529082905262461bcd60e51b82526106319160040161164d565b610ce48282611012565b60008281526097602052604090206104b19082610e61565b610d0682826108c3565b6105c157604051634ca8886760e01b815260040160405180910390fd5b60006108bc836001600160a01b038416611098565b620f424063ffffffff821611156108a1576040516358d620b360e01b815260040160405180910390fd5b610d6c828261118b565b60008281526097602052604090206104b19082610d23565b806108a157604051637c946ed760e01b815260040160405180910390fd5b600054610100900460ff16610dc95760405162461bcd60e51b815260040161063190611680565b610dd16111f2565b610dd9611229565b565b60006108bc8383611250565b6001600160a01b0381166108a15760405163e6c4247b60e01b815260040160405180910390fd5b600061048560c98361127a565b6000610485825490565b6001600160a01b0381161580610e4357506001600160a01b03811630145b156108a157604051638e052b6760e01b815260040160405180910390fd5b60006108bc836001600160a01b03841661129c565b60606000610e858360026116cb565b610e909060026116ea565b67ffffffffffffffff811115610ea857610ea861154b565b6040519080825280601f01601f191660200182016040528015610ed2576020820181803683370190505b509050600360fc1b81600081518110610eed57610eed611561565b60200101906001600160f81b031916908160001a905350600f60fb1b81600181518110610f1c57610f1c611561565b60200101906001600160f81b031916908160001a9053506000610f408460026116cb565b610f4b9060016116ea565b90505b6001811115610fc3576f181899199a1a9b1b9c1cb0b131b232b360811b85600f1660108110610f7f57610f7f611561565b1a60f81b828281518110610f9557610f95611561565b60200101906001600160f81b031916908160001a90535060049490941c93610fbc81611702565b9050610f4e565b5083156108bc5760405162461bcd60e51b815260206004820181905260248201527f537472696e67733a20686578206c656e67746820696e73756666696369656e746044820152606401610631565b61101c82826108c3565b6105c15760008281526065602090815260408083206001600160a01b03851684529091529020805460ff191660011790556110543390565b6001600160a01b0316816001600160a01b0316837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45050565b600081815260018301602052604081205480156111815760006110bc600183611719565b85549091506000906110d090600190611719565b90508181146111355760008660000182815481106110f0576110f0611561565b906000526020600020015490508087600001848154811061111357611113611561565b6000918252602080832090910192909255918252600188019052604090208390555b855486908061114657611146611730565b600190038181906000526020600020016000905590558560010160008681526020019081526020016000206000905560019350505050610485565b6000915050610485565b61119582826108c3565b156105c15760008281526065602090815260408083206001600160a01b0385168085529252808320805460ff1916905551339285917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45050565b600054610100900460ff166112195760405162461bcd60e51b815260040161063190611680565b611221611229565b610dd96112eb565b600054610100900460ff16610dd95760405162461bcd60e51b815260040161063190611680565b600082600001828154811061126757611267611561565b9060005260206000200154905092915050565b6001600160a01b038116600090815260018301602052604081205415156108bc565b60008181526001830160205260408120546112e357508154600181810184556000848152602080822090930184905584548482528286019093526040902091909155610485565b506000610485565b600054610100900460ff166113125760405162461bcd60e51b815260040161063190611680565b61132a60008051602061174783398151915280611342565b610dd96000805160206117478339815191523361138d565b600082815260656020526040808220600101805490849055905190918391839186917fbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff9190a4505050565b6105c18282610cda565b6000602082840312156113a957600080fd5b81356001600160e01b0319811681146108bc57600080fd5b6000602082840312156113d357600080fd5b5035919050565b6001600160a01b03811681146108a157600080fd5b6000806040838503121561140257600080fd5b823591506020830135611414816113da565b809150509250929050565b60006020828403121561143157600080fd5b81356108bc816113da565b63ffffffff811681146108a157600080fd5b60006020828403121561146057600080fd5b81356108bc8161143c565b60006040828403121561147d57600080fd5b50919050565b6000806040838503121561149657600080fd5b50508035926020909101359150565b600080604083850312156114b857600080fd5b82356114c3816113da565b946020939093013593505050565b6020808252825182820181905260009190848201906040850190845b818110156115125783516001600160a01b0316835292840192918401916001016114ed565b50909695505050505050565b81356115298161143c565b63ffffffff811663ffffffff1983541617825550602082013560018201555050565b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b60006000198214156115a1576115a1611577565b5060010190565b60005b838110156115c35781810151838201526020016115ab565b838111156115d2576000848401525b50505050565b7f416363657373436f6e74726f6c3a206163636f756e74200000000000000000008152600083516116108160178501602088016115a8565b7001034b99036b4b9b9b4b733903937b6329607d1b60179184019182015283516116418160288401602088016115a8565b01602801949350505050565b602081526000825180602084015261166c8160408501602087016115a8565b601f01601f19169190910160400192915050565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b606082015260800190565b60008160001904831182151516156116e5576116e5611577565b500290565b600082198211156116fd576116fd611577565b500190565b60008161171157611711611577565b506000190190565b60008282101561172b5761172b611577565b500390565b634e487b7160e01b600052603160045260246000fdfe2172861495e7b85edac73e3cd5fbb42dd675baadf627720e687bcfdaca025096a164736f6c634300080c000a",
+  "devdoc": {
+    "details": "Network Settings contract",
+    "events": {
+      "FlashLoanFeePPMUpdated(uint32,uint32)": {
+        "details": "triggered when the flash-loan fee is updated"
+      },
+      "FundingLimitUpdated(address,uint256,uint256)": {
+        "details": "triggered when a per-pool funding limit is updated"
+      },
+      "MinLiquidityForTradingUpdated(uint256,uint256)": {
+        "details": "triggered when the minimum liquidity for trading is updated"
+      },
+      "NetworkFeePPMUpdated(uint32,uint32)": {
+        "details": "triggered when the network fee is updated"
+      },
+      "TokenAddedToWhitelist(address)": {
+        "details": "triggered when a token is added to the protection whitelist"
+      },
+      "TokenRemovedFromWhitelist(address)": {
+        "details": "triggered when a token is removed from the protection whitelist"
+      },
+      "VortexBurnRewardUpdated(uint32,uint32,uint256,uint256)": {
+        "details": "triggered when the settings of the Vortex are updated"
+      },
+      "WithdrawalFeePPMUpdated(uint32,uint32)": {
+        "details": "triggered when the withdrawal fee is updated"
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "addTokenToWhitelist(address)": {
+        "details": "adds a token to the protected tokens whitelist requirements: - the caller must be the admin of the contract"
+      },
+      "flashLoanFeePPM()": {
+        "details": "returns the flash-loan fee (in units of PPM)"
+      },
+      "getRoleAdmin(bytes32)": {
+        "details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+      },
+      "getRoleMember(bytes32,uint256)": {
+        "details": "Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information."
+      },
+      "getRoleMemberCount(bytes32)": {
+        "details": "Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role."
+      },
+      "grantRole(bytes32,address)": {
+        "details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role."
+      },
+      "hasRole(bytes32,address)": {
+        "details": "Returns `true` if `account` has been granted `role`."
+      },
+      "initialize()": {
+        "details": "fully initializes the contract and its parents"
+      },
+      "isTokenWhitelisted(address)": {
+        "details": "checks whether a given token is whitelisted"
+      },
+      "minLiquidityForTrading()": {
+        "details": "returns the minimum BNT trading liquidity required before the system enables trading in the relevant pool"
+      },
+      "networkFeePPM()": {
+        "details": "returns the global network fee (in units of PPM) notes: - the network fee is a portion of the total fees from each pool"
+      },
+      "poolFundingLimit(address)": {
+        "details": "returns the BNT funding limit for a given pool"
+      },
+      "protectedTokenWhitelist()": {
+        "details": "returns the protected tokens whitelist"
+      },
+      "removeTokenFromWhitelist(address)": {
+        "details": "removes a token from the protected tokens whitelist requirements: - the caller must be the admin of the contract"
+      },
+      "renounceRole(bytes32,address)": {
+        "details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`."
+      },
+      "revokeRole(bytes32,address)": {
+        "details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role."
+      },
+      "roleAdmin()": {
+        "details": "returns the admin role"
+      },
+      "setFlashLoanFeePPM(uint32)": {
+        "details": "sets the flash-loan fee (in units of PPM) requirements: - the caller must be the admin of the contract"
+      },
+      "setFundingLimit(address,uint256)": {
+        "details": "updates the amount of BNT that the protocol can fund a specific pool requirements: - the caller must be the admin of the contract - the token must have been whitelisted"
+      },
+      "setMinLiquidityForTrading(uint256)": {
+        "details": "updates the minimum liquidity for trading amount requirements: - the caller must be the admin of the contract"
+      },
+      "setNetworkFeePPM(uint32)": {
+        "details": "sets the network fee (in units of PPM) requirements: - the caller must be the admin of the contract"
+      },
+      "setVortexRewards((uint32,uint256))": {
+        "details": "sets the settings of the Vortex requirements: s - the caller must be the admin of the contract"
+      },
+      "setWithdrawalFeePPM(uint32)": {
+        "details": "sets the withdrawal fee (in units of PPM) requirements: - the caller must be the admin of the contract"
+      },
+      "supportsInterface(bytes4)": {
+        "details": "See {IERC165-supportsInterface}."
+      },
+      "vortexRewards()": {
+        "details": "returns the vortex settings"
+      },
+      "withdrawalFeePPM()": {
+        "details": "returns the withdrawal fee (in units of PPM)"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 644,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_initialized",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 647,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_initializing",
+        "offset": 1,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 1165,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_uint256)50_storage"
+      },
+      {
+        "astId": 1412,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "51",
+        "type": "t_array(t_uint256)50_storage"
+      },
+      {
+        "astId": 250,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_roles",
+        "offset": 0,
+        "slot": "101",
+        "type": "t_mapping(t_bytes32,t_struct(RoleData)245_storage)"
+      },
+      {
+        "astId": 538,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "102",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 99,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_roleMembers",
+        "offset": 0,
+        "slot": "151",
+        "type": "t_mapping(t_bytes32,t_struct(AddressSet)1737_storage)"
+      },
+      {
+        "astId": 209,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "152",
+        "type": "t_array(t_uint256)49_storage"
+      },
+      {
+        "astId": 15429,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_protectedTokenWhitelist",
+        "offset": 0,
+        "slot": "201",
+        "type": "t_struct(AddressSet)1737_storage"
+      },
+      {
+        "astId": 15434,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_poolFundingLimits",
+        "offset": 0,
+        "slot": "203",
+        "type": "t_mapping(t_contract(Token)28365,t_uint256)"
+      },
+      {
+        "astId": 15436,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_minLiquidityForTrading",
+        "offset": 0,
+        "slot": "204",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 15438,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_networkFeePPM",
+        "offset": 0,
+        "slot": "205",
+        "type": "t_uint32"
+      },
+      {
+        "astId": 15440,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_withdrawalFeePPM",
+        "offset": 4,
+        "slot": "205",
+        "type": "t_uint32"
+      },
+      {
+        "astId": 15442,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_flashLoanFeePPM",
+        "offset": 8,
+        "slot": "205",
+        "type": "t_uint32"
+      },
+      {
+        "astId": 15445,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "_vortexRewards",
+        "offset": 0,
+        "slot": "206",
+        "type": "t_struct(VortexRewards)17295_storage"
+      },
+      {
+        "astId": 15451,
+        "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+        "label": "__gap",
+        "offset": 0,
+        "slot": "208",
+        "type": "t_array(t_uint256)43_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)43_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[43]",
+        "numberOfBytes": "1376"
+      },
+      "t_array(t_uint256)49_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[49]",
+        "numberOfBytes": "1568"
+      },
+      "t_array(t_uint256)50_storage": {
+        "base": "t_uint256",
+        "encoding": "inplace",
+        "label": "uint256[50]",
+        "numberOfBytes": "1600"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(Token)28365": {
+        "encoding": "inplace",
+        "label": "contract Token",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_struct(AddressSet)1737_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct EnumerableSetUpgradeable.AddressSet)",
+        "numberOfBytes": "32",
+        "value": "t_struct(AddressSet)1737_storage"
+      },
+      "t_mapping(t_bytes32,t_struct(RoleData)245_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+        "numberOfBytes": "32",
+        "value": "t_struct(RoleData)245_storage"
+      },
+      "t_mapping(t_bytes32,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_contract(Token)28365,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_contract(Token)28365",
+        "label": "mapping(contract Token => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(AddressSet)1737_storage": {
+        "encoding": "inplace",
+        "label": "struct EnumerableSetUpgradeable.AddressSet",
+        "members": [
+          {
+            "astId": 1736,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "_inner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(Set)1436_storage"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(RoleData)245_storage": {
+        "encoding": "inplace",
+        "label": "struct AccessControlUpgradeable.RoleData",
+        "members": [
+          {
+            "astId": 242,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "members",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_bool)"
+          },
+          {
+            "astId": 244,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "adminRole",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(Set)1436_storage": {
+        "encoding": "inplace",
+        "label": "struct EnumerableSetUpgradeable.Set",
+        "members": [
+          {
+            "astId": 1431,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "_values",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_array(t_bytes32)dyn_storage"
+          },
+          {
+            "astId": 1435,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "_indexes",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_mapping(t_bytes32,t_uint256)"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(VortexRewards)17295_storage": {
+        "encoding": "inplace",
+        "label": "struct VortexRewards",
+        "members": [
+          {
+            "astId": 17292,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "burnRewardPPM",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint32"
+          },
+          {
+            "astId": 17294,
+            "contract": "contracts/network/NetworkSettings.sol:NetworkSettings",
+            "label": "burnRewardMaxAmount",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint32": {
+        "encoding": "inplace",
+        "label": "uint32",
+        "numberOfBytes": "4"
+      }
+    }
+  }
+}
