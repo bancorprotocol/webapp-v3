@@ -1,31 +1,15 @@
-import {
-  BancorV3Contract,
-  CONTRACT_ADDRESSES_V3,
-} from 'services/web3/v3/config';
-import {
-  BancorNetworkV1,
-  BancorNetworkV1__factory,
-  NetworkSettingsV1,
-  NetworkSettingsV1__factory,
-  StandardStakingRewardsV1,
-  StandardStakingRewardsV1__factory,
-} from 'services/web3/abis/types';
+import { web3, writeWeb3 } from 'services/web3/index';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
-class ContractsApi {
-  BancorNetworkV1 = new BancorV3Contract<BancorNetworkV1>(
-    CONTRACT_ADDRESSES_V3.BancorNetworkV1,
-    BancorNetworkV1__factory
-  );
-
-  NetworkSettingsV1 = new BancorV3Contract<NetworkSettingsV1>(
-    CONTRACT_ADDRESSES_V3.NetworkSettingsV1,
-    NetworkSettingsV1__factory
-  );
-
-  StandardStakingRewardsV1 = new BancorV3Contract<StandardStakingRewardsV1>(
-    CONTRACT_ADDRESSES_V3.StandardStakingRewardsV1,
-    StandardStakingRewardsV1__factory
-  );
+export class BancorV3Contract<T> {
+  constructor(contractAddress: string, contractFactory: any) {
+    this.contractAddress = contractAddress;
+    this.read = contractFactory.connect(contractAddress, web3.provider);
+    this.write = contractFactory.connect(contractAddress, writeWeb3.signer);
+  }
+  public readonly contractAddress: string;
+  public readonly read: T;
+  public readonly write: T;
 }
 
 export const contractsApi = new ContractsApi();
