@@ -6,7 +6,7 @@ export const CONTRACT_ADDRESSES_V3 = {
   BancorNetworkV1: '0x093C761bd5B8f71d72cBC74A72cc9c6aEDC8EE49',
 };
 
-export class BancorV3ContractBase<T> {
+export class BancorV3Contract<T> {
   constructor(contractAddress: string, contractFactory: any) {
     this.contractAddress = contractAddress;
     this.read = contractFactory.connect(contractAddress, web3.provider);

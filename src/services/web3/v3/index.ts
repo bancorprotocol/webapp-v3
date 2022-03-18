@@ -1,5 +1,5 @@
 import {
-  BancorV3ContractBase,
+  BancorV3Contract,
   CONTRACT_ADDRESSES_V3,
 } from 'services/web3/v3/config';
 import {
@@ -12,17 +12,17 @@ import {
 } from 'services/web3/abis/types';
 
 class ContractsApi {
-  BancorNetworkV1 = new BancorV3ContractBase<BancorNetworkV1>(
+  BancorNetworkV1 = new BancorV3Contract<BancorNetworkV1>(
     CONTRACT_ADDRESSES_V3.BancorNetworkV1,
     BancorNetworkV1__factory
   );
 
-  NetworkSettingsV1 = new BancorV3ContractBase<NetworkSettingsV1>(
+  NetworkSettingsV1 = new BancorV3Contract<NetworkSettingsV1>(
     CONTRACT_ADDRESSES_V3.NetworkSettingsV1,
     NetworkSettingsV1__factory
   );
 
-  StandardStakingRewardsV1 = new BancorV3ContractBase<StandardStakingRewardsV1>(
+  StandardStakingRewardsV1 = new BancorV3Contract<StandardStakingRewardsV1>(
     CONTRACT_ADDRESSES_V3.StandardStakingRewardsV1,
     StandardStakingRewardsV1__factory
   );
