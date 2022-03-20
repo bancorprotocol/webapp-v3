@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useWeb3React } from '@web3-react/core';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
-import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
 import { useDispatch } from 'react-redux';
@@ -36,8 +33,7 @@ import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const { chainId, account } = useWeb3React();
-  useAutoConnect();
+  const chainId = EthNetworks.Mainnet;
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
@@ -70,9 +66,8 @@ export const App = () => {
   }, [chainId]);
 
   useEffect(() => {
-    setUser(account, dispatch);
     googleTagManager();
-  }, [account, dispatch]);
+  }, []);
 
   return (
     <BrowserRouter>
