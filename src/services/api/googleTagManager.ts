@@ -164,8 +164,10 @@ export const sendConversionEvent = (
   const gtmData = {
     event: `CE Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
     wallet_properties: undefined,
-    event_properties: currentConversion,
-    transaction_hash,
+    event_properties: {
+      ...currentConversion,
+      transaction_hash,
+    },
     ga_event: {
       category: 'Conversion',
     },
@@ -377,8 +379,10 @@ export const sendLiquidityEvent = (
   const gtmData = {
     event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
-    event_properties: currentLiquidity,
-    transaction_hash,
+    event_properties: {
+      ...currentConversion,
+      transaction_hash,
+    },
     ga_event: {
       category: 'Liquidity',
     },
