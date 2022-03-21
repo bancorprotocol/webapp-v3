@@ -2,7 +2,7 @@ import { uniqueId } from 'lodash';
 import { mockToken } from 'utils/mocked';
 import { Token } from 'services/observables/tokens';
 import { BigNumber } from 'ethers';
-import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV1';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV3';
 
 export const mockBonuses: Bonus[] = [
   {

@@ -1,23 +1,31 @@
 import { ProviderStake } from 'redux/portfolio/v3Portfolio.types';
-import { contractsApi } from 'services/web3/v3/index';
-import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV1';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV3';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const fetchAllRewardsPrograms = async (): Promise<
   ProgramDataStructOutput[]
 > => {
-  const ids = await contractsApi.StandardStakingRewardsV1.read.programsIds();
-  return await contractsApi.StandardStakingRewardsV1.read.programs(ids);
+  try {
+    console.log('fetchAllRewardsPrograms');
+    const ids = await ContractsApi.StandardStakingRewards.read.programsIds();
+    console.log('ids', ids);
+    return await ContractsApi.StandardStakingRewards.read.programs(ids);
+  } catch (e) {
+    console.error('failed to fetchAllRewardsPrograms', e);
+    throw e;
+  }
 };
 
 export const fetchProviderProgramStakes = async (
   user: string
 ): Promise<ProviderStake[]> => {
-  const ids =
-    await contractsApi.StandardStakingRewardsV1.read.providerProgramIds(user);
+  const ids = await ContractsApi.StandardStakingRewards.read.providerProgramIds(
+    user
+  );
   return await Promise.all(
     ids.map(async (programId) => {
       const amount =
-        await contractsApi.StandardStakingRewardsV1.read.providerStake(
+        await ContractsApi.StandardStakingRewards.read.providerStake(
           user,
           programId
         );

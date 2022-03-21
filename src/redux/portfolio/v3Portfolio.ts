@@ -6,7 +6,7 @@ import {
   V3PortfolioState,
 } from 'redux/portfolio/v3Portfolio.types';
 import { RootState } from 'redux/index';
-import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV1';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewardsV3';
 
 export const initialState: V3PortfolioState = {
   allRewardsPrograms: [],
