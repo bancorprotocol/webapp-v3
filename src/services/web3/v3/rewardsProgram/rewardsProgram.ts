@@ -15,8 +15,11 @@ export const fetchAllRewardsPrograms = async (): Promise<
 };
 
 export const fetchProviderProgramStakes = async (
-  user: string
+  user?: string
 ): Promise<ProviderStake[]> => {
+  if (!user) {
+    return [];
+  }
   try {
     const ids =
       await ContractsApi.StandardStakingRewards.read.providerProgramIds(user);
