@@ -7,11 +7,14 @@ import {
   NetworkSettingsV3__factory,
   StandardStakingRewardsV3,
   StandardStakingRewardsV3__factory,
-  AutoCompoundingStakingRewardsV3,
-  AutoCompoundingStakingRewardsV3__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
-import { ContractDict } from 'services/web3/v3/config';
+import {
+  bancorNetwork,
+  bancorNetworkInfo,
+  networkSettings,
+  standardStakingRewards,
+} from '../config';
 
 class BancorV3Contract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -26,29 +29,23 @@ class BancorV3Contract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorV3Contract<BancorNetworkV3>(
-    ContractDict.bancorV3.BancorNetwork,
+    bancorNetwork,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorV3Contract<BancorNetworkInfoV3>(
-    ContractDict.bancorV3.BancorNetworkInfo,
+    bancorNetworkInfo,
     BancorNetworkInfoV3__factory
   );
 
   static NetworkSettings = new BancorV3Contract<NetworkSettingsV3>(
-    ContractDict.bancorV3.NetworkSettings,
+    networkSettings,
     NetworkSettingsV3__factory
   );
 
   static StandardStakingRewards =
     new BancorV3Contract<StandardStakingRewardsV3>(
-      ContractDict.bancorV3.StandardStakingRewards,
+      standardStakingRewards,
       StandardStakingRewardsV3__factory
-    );
-
-  static AutoCompoundingStakingRewards =
-    new BancorV3Contract<AutoCompoundingStakingRewardsV3>(
-      ContractDict.bancorV3.AutoCompoundingStakingRewards,
-      AutoCompoundingStakingRewardsV3__factory
     );
 }
