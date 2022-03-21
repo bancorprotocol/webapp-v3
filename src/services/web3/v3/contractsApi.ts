@@ -9,6 +9,12 @@ import {
   StandardStakingRewardsV3__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
+import {
+  bancorNetwork,
+  bancorNetworkInfo,
+  networkSettings,
+  standardStakingRewards,
+} from '../config';
 
 class BancorV3Contract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -23,23 +29,23 @@ class BancorV3Contract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorV3Contract<BancorNetworkV3>(
-    process.env.REACT_APP_BANCOR_V3_CONTRACT_NETWORK_SETTINGS,
+    bancorNetwork,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorV3Contract<BancorNetworkInfoV3>(
-    process.env.REACT_APP_BANCOR_V3_CONTRACT_BANCOR_NETWORK_INFO,
+    bancorNetworkInfo,
     BancorNetworkInfoV3__factory
   );
 
   static NetworkSettings = new BancorV3Contract<NetworkSettingsV3>(
-    process.env.REACT_APP_BANCOR_V3_CONTRACT_NETWORK_SETTINGS,
+    networkSettings,
     NetworkSettingsV3__factory
   );
 
   static StandardStakingRewards =
     new BancorV3Contract<StandardStakingRewardsV3>(
-      process.env.REACT_APP_BANCOR_V3_CONTRACT_STANDARD_STAKING_REWARDS,
+      standardStakingRewards,
       StandardStakingRewardsV3__factory
     );
 }

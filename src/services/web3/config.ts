@@ -24,6 +24,12 @@ export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const ropstenImage: string = emptyTokenLogo;
 
+export const bancorNetwork = '0x093C761bd5B8f71d72cBC74A72cc9c6aEDC8EE49';
+export const bancorNetworkInfo = '0x6B0aF7Dc3cD9d4eAf6ecea4584F4177694eDC820';
+export const networkSettings = '0x302979c8f478279Ab3F46Ce3Dc96c98d9c28fb0c';
+export const standardStakingRewards =
+  '0xebFaFc802533F3D2835Af7464Fcd4492e8F82eB2';
+
 const gasBuffer = 1.05;
 
 export const changeGas = (gasEstimation: string) =>
