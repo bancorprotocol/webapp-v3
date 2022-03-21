@@ -6,9 +6,7 @@ export const fetchAllRewardsPrograms = async (): Promise<
   ProgramDataStructOutput[]
 > => {
   try {
-    console.log('fetchAllRewardsPrograms');
     const ids = await ContractsApi.StandardStakingRewards.read.programsIds();
-    console.log('ids', ids);
     return await ContractsApi.StandardStakingRewards.read.programs(ids);
   } catch (e) {
     console.error('failed to fetchAllRewardsPrograms', e);
@@ -19,17 +17,21 @@ export const fetchAllRewardsPrograms = async (): Promise<
 export const fetchProviderProgramStakes = async (
   user: string
 ): Promise<ProviderStake[]> => {
-  const ids = await ContractsApi.StandardStakingRewards.read.providerProgramIds(
-    user
-  );
-  return await Promise.all(
-    ids.map(async (programId) => {
-      const amount =
-        await ContractsApi.StandardStakingRewards.read.providerStake(
-          user,
-          programId
-        );
-      return { programId, amount };
-    })
-  );
+  try {
+    const ids =
+      await ContractsApi.StandardStakingRewards.read.providerProgramIds(user);
+    return await Promise.all(
+      ids.map(async (programId) => {
+        const amount =
+          await ContractsApi.StandardStakingRewards.read.providerStake(
+            user,
+            programId
+          );
+        return { programId, amount };
+      })
+    );
+  } catch (e) {
+    console.error('failed to fetchProviderProgramStakes', e);
+    throw e;
+  }
 };

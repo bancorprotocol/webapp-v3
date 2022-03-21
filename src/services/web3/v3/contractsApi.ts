@@ -21,32 +21,25 @@ class BancorV3Contract<T> {
   public readonly write: T;
 }
 
-const CONTRACT_ADDRESSES_V3 = {
-  NetworkSettings: '0x302979c8f478279Ab3F46Ce3Dc96c98d9c28fb0c',
-  StandardStakingRewards: '0x3c497b7086d91927a6EbaB57dDbE70dD54b30EA9',
-  BancorNetwork: '0x093C761bd5B8f71d72cBC74A72cc9c6aEDC8EE49',
-  BancorNetworkInfo: '0x6B0aF7Dc3cD9d4eAf6ecea4584F4177694eDC820',
-};
-
 export abstract class ContractsApi {
   static BancorNetwork = new BancorV3Contract<BancorNetworkV3>(
-    CONTRACT_ADDRESSES_V3.BancorNetwork,
+    process.env.REACT_APP_BANCOR_V3_CONTRACT_NETWORK_SETTINGS,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorV3Contract<BancorNetworkInfoV3>(
-    CONTRACT_ADDRESSES_V3.BancorNetworkInfo,
+    process.env.REACT_APP_BANCOR_V3_CONTRACT_BANCOR_NETWORK_INFO,
     BancorNetworkInfoV3__factory
   );
 
   static NetworkSettings = new BancorV3Contract<NetworkSettingsV3>(
-    CONTRACT_ADDRESSES_V3.NetworkSettings,
+    process.env.REACT_APP_BANCOR_V3_CONTRACT_NETWORK_SETTINGS,
     NetworkSettingsV3__factory
   );
 
   static StandardStakingRewards =
     new BancorV3Contract<StandardStakingRewardsV3>(
-      CONTRACT_ADDRESSES_V3.StandardStakingRewards,
+      process.env.REACT_APP_BANCOR_V3_CONTRACT_STANDARD_STAKING_REWARDS,
       StandardStakingRewardsV3__factory
     );
 }
