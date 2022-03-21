@@ -1,11 +1,11 @@
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
-import { BonusClaimable } from 'redux/portfolio/v3Portfolio';
 import { Image } from 'components/image/Image';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { BonusClaimable } from 'redux/portfolio/v3Portfolio.types';
 
 const BonusGroupHead = ({ token }: { token: Token }) => {
   return (
@@ -79,8 +79,8 @@ export const V3BonusesModal = () => {
           </div>
         </div>
         {bonuses.map((bonus) => (
-          <div>
-            <BonusGroupHead key={bonus.id} token={bonus.token} />
+          <div key={bonus.id}>
+            <BonusGroupHead token={bonus.token} />
             <BonusGroupItems items={bonus.claimable} />
           </div>
         ))}

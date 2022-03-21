@@ -22,6 +22,7 @@ import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -286,4 +287,13 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
   if (pool) return pool;
 
   throw new Error('No pool found');
+};
+
+const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
+  const rate =
+    await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+      fromToken.address,
+      toToken.address,
+      amount
+    );
 };
