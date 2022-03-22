@@ -7,12 +7,15 @@ import {
   NetworkSettingsV3__factory,
   StandardStakingRewardsV3,
   StandardStakingRewardsV3__factory,
+  PoolCollectionType1V3,
+  PoolCollectionType1V3__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import {
   bancorNetwork,
   bancorNetworkInfo,
   networkSettings,
+  poolCollectionType1,
   standardStakingRewards,
 } from '../config';
 
@@ -48,4 +51,9 @@ export abstract class ContractsApi {
       standardStakingRewards,
       StandardStakingRewardsV3__factory
     );
+
+  static PoolCollection = new BancorV3Contract<PoolCollectionType1V3>(
+    poolCollectionType1,
+    PoolCollectionType1V3__factory
+  );
 }

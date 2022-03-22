@@ -29,6 +29,7 @@ export const bancorNetworkInfo = '0x6B0aF7Dc3cD9d4eAf6ecea4584F4177694eDC820';
 export const networkSettings = '0x302979c8f478279Ab3F46Ce3Dc96c98d9c28fb0c';
 export const standardStakingRewards =
   '0xebFaFc802533F3D2835Af7464Fcd4492e8F82eB2';
+export const poolCollectionType1 = '0xf85830D31558553AfbE736682B06A20904aDf40a';
 
 const gasBuffer = 1.05;
 

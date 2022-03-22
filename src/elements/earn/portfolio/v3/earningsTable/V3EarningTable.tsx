@@ -4,27 +4,25 @@ import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'redux/index';
-import { getRewardsEarnings } from 'redux/portfolio/v3Portfolio';
-import { RewardsEarning } from 'redux/portfolio/v3Portfolio.types';
+import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const rewardsEarnings = useAppSelector(getRewardsEarnings);
+  const holdings = useAppSelector(getPortfolioHoldings);
 
-  const data = useMemo(() => rewardsEarnings, [rewardsEarnings]);
-
-  const columns = useMemo<TableColumn<RewardsEarning>[]>(
+  const columns = useMemo<TableColumn<Holding>[]>(
     () => [
       {
-        id: 'programId',
+        id: 'poolId',
         Header: '',
-        accessor: 'programId',
-        Cell: () => (
+        accessor: 'poolId',
+        Cell: ({ cell }) => (
           <TokenBalance
-            symbol="ETH"
-            amount={'123123'}
-            imgUrl={''}
-            usdPrice={'1.123'}
+            symbol={cell.row.original.token.symbol}
+            amount={cell.row.original.tokenBalance}
+            imgUrl={cell.row.original.token.logoURI}
+            usdPrice={cell.row.original.token.usdPrice ?? '0'}
           />
         ),
         minWidth: 225,
@@ -65,7 +63,7 @@ export const V3EarningTable = () => {
         <h2 className="text-[22px]">Earnings</h2>
       </div>
 
-      <DataTable<RewardsEarning> data={data} columns={columns} stickyColumn />
+      <DataTable<Holding> data={holdings} columns={columns} stickyColumn />
 
       <V3WithdrawModal
         isOpen={isWithdrawModalOpen}
