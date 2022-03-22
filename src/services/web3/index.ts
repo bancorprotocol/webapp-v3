@@ -8,8 +8,14 @@ import { take } from 'rxjs/operators';
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet
 ): providers.WebSocketProvider | providers.BaseProvider => {
-  if (process.env.REACT_APP_ALCHEMY_MAINNET)
+  if (process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL) {
+    return new providers.JsonRpcProvider(
+      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+    );
+  }
+  if (process.env.REACT_APP_ALCHEMY_MAINNET) {
     return new providers.WebSocketProvider(buildAlchemyUrl(network));
+  }
 
   return providers.getDefaultProvider(network);
 };
