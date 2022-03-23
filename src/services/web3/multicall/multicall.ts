@@ -37,7 +37,6 @@ export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
       );
     });
   } catch (error) {
-    console.log('muh');
     console.error(error);
   }
 };
