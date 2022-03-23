@@ -8,7 +8,6 @@ import {
 } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
-import { Switch } from '@headlessui/react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
@@ -17,6 +16,7 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
+import { Switch } from 'components/switch/Switch';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -153,21 +153,9 @@ export const SearchableTokenList = ({
                   </div>
                   <div>
                     <Switch
-                      checked={isSelected}
+                      selected={isSelected}
                       onChange={() => handleTokenlistClick(tokenList.name)}
-                      className={`${
-                        isSelected
-                          ? 'bg-primary border-primary'
-                          : 'bg-graphite border-graphite'
-                      } relative inline-flex flex-shrink-0 h-[20px] w-[40px] border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-300`}
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={`${
-                          isSelected ? 'translate-x-[20px]' : 'translate-x-0'
-                        } pointer-events-none inline-block h-[16px] w-[16px] rounded-full bg-white transform transition ease-in-out duration-300`}
-                      />
-                    </Switch>
+                    />
                   </div>
                 </div>
               );
