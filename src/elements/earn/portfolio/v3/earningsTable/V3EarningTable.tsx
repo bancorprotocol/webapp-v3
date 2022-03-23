@@ -14,7 +14,7 @@ export const V3EarningTable = () => {
   );
 
   const holdings = useAppSelector(getPortfolioHoldings);
-  const isLoadingHoldings = useAppSelector(
+  const isLoadingHoldings = useAppSelector<boolean>(
     (state) => state.v3Portfolio.isLoadingHoldings
   );
 
