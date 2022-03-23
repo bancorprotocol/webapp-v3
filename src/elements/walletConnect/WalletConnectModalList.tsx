@@ -71,6 +71,11 @@ export const ImposterWallet = ({
           if (account) {
             setSelectedWallet(wallet);
             setUser(account, dispatch);
+            setSigner(
+              new providers.JsonRpcProvider(
+                process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+              ).getUncheckedSigner(account)
+            );
           }
         }}
       >
