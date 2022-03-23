@@ -1,28 +1,51 @@
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { fetchTokenBalance } from 'services/web3/token/token';
+import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 import { HoldingRaw } from 'redux/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
-import { utils } from 'ethers';
-import { writeWeb3 } from 'services/web3/index';
+import { multicall } from 'services/web3/multicall/multicall';
 
-const fetchHoldingByPoolId = async (
-  user: string,
-  poolId: string
-): Promise<HoldingRaw> => {
-  const poolTokenId = await ContractsApi.PoolCollection.read.poolToken(poolId);
-  const poolTokenBalanceWei = await fetchTokenBalance(poolTokenId, user);
-  const tokenBalanceWei =
-    await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
-      poolId,
-      poolTokenBalanceWei
-    );
+const fetchPoolTokenIdsMulticall = async (
+  ids: string[]
+): Promise<Map<string, string>> => {
+  const calls = ids.map((id) => ({
+    contractAddress: ContractsApi.PoolCollection.read.address,
+    interface: ContractsApi.PoolCollection.read.interface,
+    methodName: 'poolToken',
+    methodParameters: [id],
+  }));
+  const res = await multicall(calls);
+  if (!res || !res.length) {
+    throw new Error('Multicall Error while fetching pool token ids');
+  }
+  return new Map(
+    res.map((id, idx) => {
+      const tokenId = ids[idx];
+      const poolTokenId = id && id.length ? id[0] : '';
+      return [tokenId, poolTokenId];
+    })
+  );
+};
 
-  return {
-    poolId,
-    poolTokenId,
-    poolTokenBalanceWei: poolTokenBalanceWei.toString(),
-    tokenBalanceWei: tokenBalanceWei.toString(),
-  };
+const fetchPoolTokenToUnderlyingMulticall = async (
+  data: { poolId: string; amount: string }[]
+): Promise<Map<string, string>> => {
+  const calls = data.map(({ poolId, amount }) => ({
+    contractAddress: ContractsApi.BancorNetworkInfo.read.address,
+    interface: ContractsApi.BancorNetworkInfo.read.interface,
+    methodName: 'poolTokenToUnderlying',
+    methodParameters: [poolId, amount],
+  }));
+  const res = await multicall(calls);
+  if (!res || !res.length) {
+    throw new Error('Multicall Error while fetching pool token to underlying');
+  }
+  return new Map(
+    res.map((bn, idx) => {
+      const tokenId = data[idx].poolId;
+      const amount = bn && bn.length ? bn[0].toString() : '0';
+      return [tokenId, amount];
+    })
+  );
 };
 
 export const fetchPortfolioV3Holdings = async (
@@ -32,24 +55,40 @@ export const fetchPortfolioV3Holdings = async (
   if (!user) {
     return [];
   }
-  const poolToken = '0xF3CEF3353516745958Bc241f56196E7E1dEc68EB';
   try {
-    const res2 = await writeWeb3.signer.sendTransaction({
-      from: '0x52bc44d5378309EE2abF1539BF71dE1b7d7bE3b5',
-      to: user,
-      value: utils.parseEther('3000'),
-      gasPrice: utils.parseUnits('10', 'gwei'),
+    const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
+    const poolTokenIds = Array.from(poolTokenIdsMap.values());
+    const poolTokenBalancesMap = await fetchTokenBalanceMulticall(
+      poolTokenIds,
+      user
+    );
+    const poolIdsWithPoolTokenBalance = poolIds.map((poolId) => {
+      const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
+      const amount = poolTokenBalancesMap.get(poolTokenId) ?? '0';
+      return {
+        poolId,
+        amount,
+      };
     });
-    console.log('res2', res2);
-    const res = await ContractsApi.BancorNetwork.write.initWithdrawal(
-      poolToken,
-      utils.parseUnits('10', 18)
+    const poolTokenToUnderlyingMap = await fetchPoolTokenToUnderlyingMulticall(
+      poolIdsWithPoolTokenBalance
     );
-    console.log('res', res);
-    const holdingsRaw = await Promise.all(
-      poolIds.map((poolId) => fetchHoldingByPoolId(user, poolId))
-    );
-    console.log('holdingsRaw', holdingsRaw);
+    const holdingsRaw: HoldingRaw[] = poolIds
+      .map((poolId) => {
+        const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
+        const poolTokenBalanceWei = poolTokenBalancesMap.get(poolTokenId);
+        const tokenBalanceWei = poolTokenToUnderlyingMap.get(poolId);
+        if (!poolTokenId || !poolTokenBalanceWei || !tokenBalanceWei) {
+          return undefined;
+        }
+        return {
+          poolId,
+          poolTokenId,
+          poolTokenBalanceWei,
+          tokenBalanceWei,
+        } as HoldingRaw;
+      })
+      .filter((holdingRaw) => !!holdingRaw) as HoldingRaw[];
     return holdingsRaw.filter((h) => new BigNumber(h.tokenBalanceWei).gt(0));
   } catch (e) {
     console.error('failed to fetchPortfolioV3Holdings', e);

@@ -9,12 +9,15 @@ import {
   StandardStakingRewardsV3__factory,
   PoolCollectionType1V3,
   PoolCollectionType1V3__factory,
+  PendingWithdrawalsV3,
+  PendingWithdrawalsV3__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import {
   bancorNetwork,
   bancorNetworkInfo,
   networkSettings,
+  pendingWithdrawals,
   poolCollectionType1,
   standardStakingRewards,
 } from '../config';
@@ -55,5 +58,10 @@ export abstract class ContractsApi {
   static PoolCollection = new BancorV3Contract<PoolCollectionType1V3>(
     poolCollectionType1,
     PoolCollectionType1V3__factory
+  );
+
+  static PendingWithdrawals = new BancorV3Contract<PendingWithdrawalsV3>(
+    pendingWithdrawals,
+    PendingWithdrawalsV3__factory
   );
 }

@@ -30,6 +30,7 @@ export const networkSettings = '0x302979c8f478279Ab3F46Ce3Dc96c98d9c28fb0c';
 export const standardStakingRewards =
   '0xebFaFc802533F3D2835Af7464Fcd4492e8F82eB2';
 export const poolCollectionType1 = '0xf85830D31558553AfbE736682B06A20904aDf40a';
+export const pendingWithdrawals = '0xA2D309bc5e093232537B5A016E9Ee339326F8Db1';
 
 const gasBuffer = 1.05;
 
