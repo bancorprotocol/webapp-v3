@@ -13,6 +13,7 @@ interface TokenInputV3Props {
   inputFiat: string;
   setInputFiat: (amount: string) => void;
   isFiat: boolean;
+  isError: boolean;
 }
 
 const TokenInputV3 = ({
@@ -22,6 +23,7 @@ const TokenInputV3 = ({
   inputFiat,
   setInputFiat,
   isFiat,
+  isError,
 }: TokenInputV3Props) => {
   const { handleChange, inputUnit, oppositeUnit, isFocused, setIsFocused } =
     useTokenInputV3({
@@ -50,7 +52,7 @@ const TokenInputV3 = ({
       }}
       className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] bg-white ${
         isFocused ? 'border-primary' : 'border-graphite'
-      }`}
+      } ${isError ? 'border-error text-error' : ''}`}
     >
       <Image
         src={token.logoURI}

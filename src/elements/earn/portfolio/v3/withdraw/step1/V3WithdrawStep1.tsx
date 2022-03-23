@@ -1,6 +1,6 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
@@ -30,6 +30,11 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
 }: Props) => {
+  const isInputError = useMemo(
+    () => new BigNumber(availableBalance).lt(inputTkn),
+    [availableBalance, inputTkn]
+  );
+
   const setBalance = (percentage: 25 | 50 | 75 | 100) => {
     const valueTkn = new BigNumber(availableBalance)
       .times(percentage / 100)
@@ -47,7 +52,7 @@ const V3WithdrawStep1 = ({
 
       <button
         onClick={() => setBalance(100)}
-        className="font-normal opacity-50"
+        className={`${isInputError ? 'text-error' : 'text-secondary'}`}
       >
         Available {availableBalance} ETH
       </button>
@@ -59,6 +64,7 @@ const V3WithdrawStep1 = ({
         inputFiat={inputFiat}
         setInputFiat={setInputFiat}
         isFiat={isFiat}
+        isError={isInputError}
       />
 
       <div className="space-x-10 opacity-50">
@@ -72,7 +78,7 @@ const V3WithdrawStep1 = ({
         <Button
           className="px-50 my-40"
           onClick={() => setStep(2)}
-          disabled={!inputTkn}
+          disabled={!inputTkn || isInputError}
         >
           Next {'->'}
         </Button>
