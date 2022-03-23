@@ -24,11 +24,11 @@ export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
         call.methodParameters
       ),
     }));
-
     const encodedRes = await multicallContract.tryAggregate(false, encoded, {
       blockTag: blockHeight,
     });
-    const res = encodedRes.map((call, i) => {
+
+    return encodedRes.map((call, i) => {
       if (!call.success) return [];
 
       return calls[i].interface.decodeFunctionResult(
@@ -36,8 +36,6 @@ export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
         call.returnData
       );
     });
-
-    return res;
   } catch (error) {
     console.error(error);
   }

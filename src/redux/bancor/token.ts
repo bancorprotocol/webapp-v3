@@ -3,6 +3,13 @@ import { RootState } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
 
+export const getAllTokensMap = createSelector(
+  [(state: RootState) => state.bancor.allTokens],
+  (allTokens: Token[]): Map<string, Token> => {
+    return new Map(allTokens.map((token) => [token.address, token]));
+  }
+);
+
 // TODO Filter for V3 Only pools
 export const getAvailableToStakeTokens = createSelector(
   [

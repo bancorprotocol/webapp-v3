@@ -1,5 +1,5 @@
 {
-  "address": "0x093C761bd5B8f71d72cBC74A72cc9c6aEDC8EE49",
+  "address": "0x6210cE7207537eE1ec219f4562e6d05bed208852",
   "abi": [
     {
       "inputs": [
@@ -174,6 +174,12 @@
           "indexed": false,
           "internalType": "uint256",
           "name": "availableAmount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "originalAmount",
           "type": "uint256"
         }
       ],
@@ -884,8 +890,8 @@
           "type": "address"
         },
         {
-          "internalType": "contract IPoolCollectionUpgrader",
-          "name": "initPoolCollectionUpgrader",
+          "internalType": "contract IPoolMigrator",
+          "name": "initPoolMigrator",
           "type": "address"
         }
       ],
@@ -989,6 +995,19 @@
       "name": "migrateLiquidity",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract Token[]",
+          "name": "pools",
+          "type": "address[]"
+        }
+      ],
+      "name": "migratePools",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -1347,19 +1366,6 @@
         }
       ],
       "name": "tradeByTargetAmountPermitted",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract Token[]",
-          "name": "pools",
-          "type": "address[]"
-        }
-      ],
-      "name": "upgradePools",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
