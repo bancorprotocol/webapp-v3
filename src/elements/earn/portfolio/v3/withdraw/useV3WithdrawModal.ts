@@ -5,6 +5,8 @@ import { wait } from 'utils/pureFunctions';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import { useDispatch } from 'react-redux';
 
 export interface AmountTknFiat {
   tkn: string;
@@ -17,6 +19,8 @@ interface Props {
 }
 
 export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
+  const dispatch = useDispatch();
+  const account = useAppSelector((state) => state.user.account);
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
@@ -56,8 +60,9 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
         holding.poolTokenId,
         utils.parseUnits(amount.tkn, holding.token.decimals)
       );
-      await res.wait(1);
+      await res.wait();
       setStep(4);
+      await updatePortfolioData(dispatch, account!);
     } catch (e) {
       console.error('initWithdraw failed', e);
     } finally {

@@ -5,16 +5,6 @@ import {
 } from 'redux/portfolio/v3Portfolio.types';
 import { ppmToDec } from 'utils/helperFunctions';
 
-export const initWithdrawalV3 = async (
-  poolTokenId: string,
-  poolTokenAmount: string
-) => {
-  const res = await ContractsApi.BancorNetwork.write.initWithdrawal(
-    poolTokenId,
-    poolTokenAmount
-  );
-};
-
 export const fetchPortfolioV3WithdrawalSettings =
   async (): Promise<WithdrawalSettings> => {
     const lockDuration =

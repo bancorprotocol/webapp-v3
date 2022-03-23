@@ -8,13 +8,25 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
+import { ErrorCode } from 'services/web3/types';
+import {
+  rejectNotification,
+  withdrawCancelNotification,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 const WithdrawAvailableItem = ({
   withdrawalRequest,
 }: {
   withdrawalRequest: WithdrawalRequest;
 }) => {
-  const { token, lockEndsAt } = withdrawalRequest;
+  const dispatch = useDispatch();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
+
+  const { token, lockEndsAt, reserveTokenAmount } = withdrawalRequest;
   const isLocked = useMemo(() => lockEndsAt - dayjs().unix() < 0, [lockEndsAt]);
 
   const withdraw = async () => {
@@ -25,9 +37,24 @@ const WithdrawAvailableItem = ({
   };
 
   const cancelWithdrawal = async () => {
-    const res = await ContractsApi.BancorNetwork.write.cancelWithdrawal(
-      withdrawalRequest.id
-    );
+    try {
+      const tx = await ContractsApi.BancorNetwork.write.cancelWithdrawal(
+        withdrawalRequest.id
+      );
+      withdrawCancelNotification(
+        dispatch,
+        tx.hash,
+        reserveTokenAmount,
+        token.symbol
+      );
+      await tx.wait();
+      await updatePortfolioData(dispatch, account!);
+    } catch (e: any) {
+      console.error('cancelWithdrawal failed: ', e);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      }
+    }
   };
 
   return (
