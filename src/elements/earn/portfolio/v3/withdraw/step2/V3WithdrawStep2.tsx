@@ -1,7 +1,7 @@
 import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { AmountTknFiat } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import { AmountTknFiat } from 'elements/earn/portfolio/v3/withdraw/useV3WithdrawModal';
 
 interface Props {
   amount: AmountTknFiat;

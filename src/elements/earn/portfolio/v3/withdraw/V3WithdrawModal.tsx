@@ -1,42 +1,36 @@
-import { memo, useMemo, useState } from 'react';
-import { wait } from 'utils/pureFunctions';
-import { useAppSelector } from 'redux/index';
+import { memo } from 'react';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 import V3WithdrawStep1 from 'elements/earn/portfolio/v3/withdraw/step1/V3WithdrawStep1';
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/withdraw/step3/V3WithdrawStep3';
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/withdraw/step4/V3WithdrawStep4';
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/withdraw/step2/V3WithdrawStep2';
-import { mockToken } from 'utils/mocked';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/withdraw/useV3WithdrawModal';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  holdingToWithdraw: Holding;
 }
 
-export interface AmountTknFiat {
-  tkn: string;
-  fiat: string;
-}
-
-const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
-  const [step, setStep] = useState(1);
-  const [inputTkn, setInputTkn] = useState('');
-  const [inputFiat, setInputFiat] = useState('');
-  const availableBalance = '0.123456';
-
-  const onClose = async (state: boolean) => {
-    setIsOpen(state);
-    await wait(500);
-    setStep(1);
-    setInputTkn('');
-  };
-
-  const amount: AmountTknFiat = useMemo(
-    () => ({ tkn: inputTkn, fiat: inputFiat }),
-    [inputTkn, inputFiat]
-  );
+const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdraw }: Props) => {
+  const {
+    step,
+    onClose,
+    setStep,
+    inputTkn,
+    setInputTkn,
+    inputFiat,
+    setInputFiat,
+    isFiat,
+    amount,
+    withdrawalFeeInTkn,
+    withdrawalFeeInPercent,
+    lockDurationInDays,
+    initWithdraw,
+    txBusy,
+  } = useV3WithdrawModal({ holding: holdingToWithdraw, setIsOpen });
 
   return (
     <ModalFullscreenV3
@@ -47,19 +41,33 @@ const V3WithdrawModal = ({ isOpen, setIsOpen }: Props) => {
     >
       {step === 1 && (
         <V3WithdrawStep1
-          token={mockToken}
+          token={holdingToWithdraw.token}
           setStep={setStep}
           inputTkn={inputTkn}
           setInputTkn={setInputTkn}
           inputFiat={inputFiat}
           setInputFiat={setInputFiat}
           isFiat={isFiat}
-          availableBalance={availableBalance}
+          availableBalance={holdingToWithdraw.tokenBalance}
+          withdrawalFeeInPercent={withdrawalFeeInPercent}
+          withdrawalFeeInTkn={withdrawalFeeInTkn}
         />
       )}
       {step === 2 && <V3WithdrawStep2 setStep={setStep} amount={amount} />}
-      {step === 3 && <V3WithdrawStep3 setStep={setStep} amount={amount} />}
-      {step === 4 && <V3WithdrawStep4 onClose={onClose} />}
+      {step === 3 && (
+        <V3WithdrawStep3
+          txBusy={txBusy}
+          amount={amount}
+          lockDurationInDays={lockDurationInDays}
+          initWithdraw={initWithdraw}
+        />
+      )}
+      {step === 4 && (
+        <V3WithdrawStep4
+          onClose={onClose}
+          lockDurationInDays={lockDurationInDays}
+        />
+      )}
     </ModalFullscreenV3>
   );
 };

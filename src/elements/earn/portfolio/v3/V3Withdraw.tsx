@@ -1,21 +1,60 @@
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
+import { useAppSelector } from 'redux/index';
+import { getPortfolioWithdrawalRequests } from 'redux/portfolio/v3Portfolio';
+import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { useMemo } from 'react';
+import dayjs from 'dayjs';
+import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 
-const WithdrawAvailableItem = () => {
+const WithdrawAvailableItem = ({
+  withdrawalRequest,
+}: {
+  withdrawalRequest: WithdrawalRequest;
+}) => {
+  const { token, lockEndsAt } = withdrawalRequest;
+  const isLocked = useMemo(() => lockEndsAt - dayjs().unix() < 0, [lockEndsAt]);
+
+  const withdraw = async () => {
+    const res = await ContractsApi.BancorNetwork.write.withdraw(
+      withdrawalRequest.id
+    );
+    console.log(res);
+  };
+
+  const cancelWithdrawal = async () => {
+    const res = await ContractsApi.BancorNetwork.write.cancelWithdrawal(
+      withdrawalRequest.id
+    );
+  };
+
   return (
     <div className="flex justify-between items-center">
       <TokenBalance
-        symbol={'ETH'}
-        amount={'123'}
-        usdPrice={'0.8'}
-        imgUrl={''}
+        symbol={token.symbol}
+        amount={withdrawalRequest.reserveTokenAmount}
+        usdPrice={token.usdPrice ?? '0'}
+        imgUrl={token.logoURI}
       />
       <div className="flex items-center space-x-14">
-        <Button size={ButtonSize.EXTRASMALL} variant={ButtonVariant.SECONDARY}>
-          Withdraw
-        </Button>
-        <button>
+        {isLocked && (
+          <Button
+            onClick={withdraw}
+            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.SECONDARY}
+          >
+            Withdraw
+          </Button>
+        )}
+        {!isLocked && (
+          <div className="text-secondary text-12 text-right">
+            Cooling down
+            <CountdownTimer date={lockEndsAt * 1000} />
+          </div>
+        )}
+        <button onClick={cancelWithdrawal} className="hover:text-error p-10">
           <IconTimes className="w-10" />
         </button>
       </div>
@@ -24,38 +63,33 @@ const WithdrawAvailableItem = () => {
 };
 
 export const V3Withdraw = () => {
+  const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
+  const isLoadingWithdrawalRequests = useAppSelector(
+    (state) => state.v3Portfolio.isLoadingWithdrawalRequests
+  );
+
   return (
-    <section className="content-block p-14 space-y-20">
-      <div>
-        <h2 className="text-12 text-graphite font-normal mb-10">
-          Available to withdraw
-        </h2>
-        <div className="space-y-10">
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
-        </div>
+    <section className="content-block p-14">
+      <h2 className="text-12 text-secondary font-normal mb-10">
+        Pending Withdrawals
+      </h2>
+      <div className="space-y-10">
+        {withdrawalRequests.map((withdrawalRequest) => (
+          <WithdrawAvailableItem
+            withdrawalRequest={withdrawalRequest}
+            key={withdrawalRequest.id}
+          />
+        ))}
+        {isLoadingWithdrawalRequests &&
+          [...Array(5)].map((_, index) => (
+            <div className="loading-skeleton w-full h-[30px]" />
+          ))}
       </div>
-      <hr className="opacity-20" />
-      <div>
-        <h2 className="text-12 text-graphite font-normal mb-10">
-          Cooling down
-        </h2>
-        <div className="space-y-10">
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
+      {withdrawalRequests.length === 0 && !isLoadingWithdrawalRequests && (
+        <div className="text-center text-primary text-12 py-20">
+          No pending withdrawals
         </div>
-      </div>
-      <hr className="opacity-20" />
-      <div>
-        <h2 className="text-12 text-graphite font-normal mb-10">Reset</h2>
-        <div className="space-y-10">
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
-          <WithdrawAvailableItem />
-        </div>
-      </div>
+      )}
     </section>
   );
 };

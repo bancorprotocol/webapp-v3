@@ -4,15 +4,29 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
+  setHoldingToWithdraw: (holding: Holding) => void;
+  holding: Holding;
 }
 
 export const V3EarningTableMenuMain = memo(
-  ({ setCurrentMenu, setIsWithdrawModalOpen }: Props) => {
+  ({
+    holding,
+    setHoldingToWithdraw,
+    setCurrentMenu,
+    setIsWithdrawModalOpen,
+  }: Props) => {
     const { setBonusModalOpen } = useV3Bonuses();
+
+    const handleWithdrawClick = () => {
+      setHoldingToWithdraw(holding);
+      console.log(holding);
+      setIsWithdrawModalOpen(true);
+    };
 
     const handleBonusClick = () => {
       // TODO - add logic for what action to perform
@@ -29,7 +43,6 @@ export const V3EarningTableMenuMain = memo(
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => setIsWithdrawModalOpen(true)}
               className="w-full"
               textBadge="86%"
             >
@@ -38,7 +51,7 @@ export const V3EarningTableMenuMain = memo(
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => setIsWithdrawModalOpen(true)}
+              onClick={handleWithdrawClick}
               className="w-full"
             >
               Withdraw

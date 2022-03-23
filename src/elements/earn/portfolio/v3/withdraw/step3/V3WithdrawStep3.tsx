@@ -1,24 +1,30 @@
 import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { AmountTknFiat } from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import { AmountTknFiat } from 'elements/earn/portfolio/v3/withdraw/useV3WithdrawModal';
 
 interface Props {
   amount: AmountTknFiat;
-  setStep: (step: number) => void;
+  lockDurationInDays: number;
+  initWithdraw: () => void;
+  txBusy: boolean;
 }
 
-const V3WithdrawStep3 = ({ setStep, amount }: Props) => {
-  const cooldownPeriod = 7;
+const V3WithdrawStep3 = ({
+  amount,
+  lockDurationInDays,
+  initWithdraw,
+  txBusy,
+}: Props) => {
   return (
     <div className="text-center">
       <h1 className="text-[36px] font-normal my-50">
-        Start {cooldownPeriod} day cooldown of{' '}
+        Start {lockDurationInDays} day cooldown of{' '}
         <span className="text-primary">{prettifyNumber(amount.tkn)} ETH</span>
       </h1>
       <div className="flex justify-center">
-        <Button className="px-50" onClick={() => setStep(4)}>
-          Start cooldown
+        <Button className="px-50" onClick={initWithdraw} disabled={txBusy}>
+          {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
         </Button>
       </div>
     </div>
