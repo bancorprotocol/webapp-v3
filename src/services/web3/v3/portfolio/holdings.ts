@@ -14,9 +14,11 @@ const fetchPoolTokenIdsMulticall = async (
     methodParameters: [id],
   }));
   const res = await multicall(calls);
+
   if (!res || !res.length) {
     throw new Error('Multicall Error while fetching pool token ids');
   }
+
   return new Map(
     res.map((id, idx) => {
       const tokenId = ids[idx];
@@ -36,9 +38,11 @@ const fetchPoolTokenToUnderlyingMulticall = async (
     methodParameters: [poolId, amount],
   }));
   const res = await multicall(calls);
+
   if (!res || !res.length) {
     throw new Error('Multicall Error while fetching pool token to underlying');
   }
+
   return new Map(
     res.map((bn, idx) => {
       const tokenId = data[idx].poolId;
@@ -55,13 +59,16 @@ export const fetchPortfolioV3Holdings = async (
   if (!user) {
     return [];
   }
+
   try {
     const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
     const poolTokenIds = Array.from(poolTokenIdsMap.values());
+
     const poolTokenBalancesMap = await fetchTokenBalanceMulticall(
       poolTokenIds,
       user
     );
+
     const poolIdsWithPoolTokenBalance = poolIds.map((poolId) => {
       const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
       const amount = poolTokenBalancesMap.get(poolTokenId) ?? '0';
@@ -70,17 +77,21 @@ export const fetchPortfolioV3Holdings = async (
         amount,
       };
     });
+
     const poolTokenToUnderlyingMap = await fetchPoolTokenToUnderlyingMulticall(
       poolIdsWithPoolTokenBalance
     );
+
     const holdingsRaw: HoldingRaw[] = poolIds
       .map((poolId) => {
         const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
         const poolTokenBalanceWei = poolTokenBalancesMap.get(poolTokenId);
         const tokenBalanceWei = poolTokenToUnderlyingMap.get(poolId);
+
         if (!poolTokenId || !poolTokenBalanceWei || !tokenBalanceWei) {
           return undefined;
         }
+
         return {
           poolId,
           poolTokenId,
@@ -89,6 +100,7 @@ export const fetchPortfolioV3Holdings = async (
         } as HoldingRaw;
       })
       .filter((holdingRaw) => !!holdingRaw) as HoldingRaw[];
+
     return holdingsRaw.filter((h) => new BigNumber(h.tokenBalanceWei).gt(0));
   } catch (e) {
     console.error('failed to fetchPortfolioV3Holdings', e);
