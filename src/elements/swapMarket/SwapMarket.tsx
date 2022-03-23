@@ -203,7 +203,7 @@ export const SwapMarket = ({
   };
 
   const onConfirmation = async () => {
-    if (!(chainId && toToken && account)) return;
+    if (!(toToken && account)) return;
 
     await wait(4000);
     const balances = await fetchTokenBalances([fromToken, toToken], account);
@@ -216,7 +216,7 @@ export const SwapMarket = ({
       return;
     }
 
-    if (!(chainId && toToken)) return;
+    if (!toToken) return;
 
     if (!approved) return checkApproval();
 
