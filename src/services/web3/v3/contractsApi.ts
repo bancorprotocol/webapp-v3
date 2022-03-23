@@ -1,16 +1,16 @@
 import {
-  BancorNetworkV3,
-  BancorNetworkV3__factory,
-  BancorNetworkInfoV3,
-  BancorNetworkInfoV3__factory,
-  NetworkSettingsV3,
-  NetworkSettingsV3__factory,
-  StandardStakingRewardsV3,
-  StandardStakingRewardsV3__factory,
-  PoolCollectionType1V3,
-  PoolCollectionType1V3__factory,
-  PendingWithdrawalsV3,
-  PendingWithdrawalsV3__factory,
+  BancorNetworkV1,
+  BancorNetworkV1__factory,
+  BancorNetworkInfoV1,
+  BancorNetworkInfoV1__factory,
+  NetworkSettingsV1,
+  NetworkSettingsV1__factory,
+  StandardStakingRewardsV1,
+  StandardStakingRewardsV1__factory,
+  PoolCollectionType1V1,
+  PoolCollectionType1V1__factory,
+  PendingWithdrawalsV1,
+  PendingWithdrawalsV1__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import {
@@ -22,7 +22,7 @@ import {
   standardStakingRewards,
 } from '../config';
 
-class BancorV3Contract<T> {
+class BancorV1Contract<T> {
   constructor(contractAddress: string, contractFactory: any) {
     this.contractAddress = contractAddress;
     this.read = contractFactory.connect(contractAddress, web3.provider);
@@ -34,34 +34,34 @@ class BancorV3Contract<T> {
 }
 
 export abstract class ContractsApi {
-  static BancorNetwork = new BancorV3Contract<BancorNetworkV3>(
+  static BancorNetwork = new BancorV1Contract<BancorNetworkV1>(
     bancorNetwork,
-    BancorNetworkV3__factory
+    BancorNetworkV1__factory
   );
 
-  static BancorNetworkInfo = new BancorV3Contract<BancorNetworkInfoV3>(
+  static BancorNetworkInfo = new BancorV1Contract<BancorNetworkInfoV1>(
     bancorNetworkInfo,
-    BancorNetworkInfoV3__factory
+    BancorNetworkInfoV1__factory
   );
 
-  static NetworkSettings = new BancorV3Contract<NetworkSettingsV3>(
+  static NetworkSettings = new BancorV1Contract<NetworkSettingsV1>(
     networkSettings,
-    NetworkSettingsV3__factory
+    NetworkSettingsV1__factory
   );
 
   static StandardStakingRewards =
-    new BancorV3Contract<StandardStakingRewardsV3>(
+    new BancorV1Contract<StandardStakingRewardsV1>(
       standardStakingRewards,
-      StandardStakingRewardsV3__factory
+      StandardStakingRewardsV1__factory
     );
 
-  static PoolCollection = new BancorV3Contract<PoolCollectionType1V3>(
+  static PoolCollection = new BancorV1Contract<PoolCollectionType1V1>(
     poolCollectionType1,
-    PoolCollectionType1V3__factory
+    PoolCollectionType1V1__factory
   );
 
-  static PendingWithdrawals = new BancorV3Contract<PendingWithdrawalsV3>(
+  static PendingWithdrawals = new BancorV1Contract<PendingWithdrawalsV1>(
     pendingWithdrawals,
-    PendingWithdrawalsV3__factory
+    PendingWithdrawalsV1__factory
   );
 }
