@@ -1,4 +1,4 @@
-import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 
 export enum Operations {
   fiatIn,

@@ -1,5 +1,5 @@
 import { Listbox, Transition } from '@headlessui/react';
-import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
 import 'components/dropdown/Dropdown.css';
