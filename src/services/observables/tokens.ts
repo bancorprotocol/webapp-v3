@@ -2,7 +2,6 @@ import { from } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import { EthNetworks } from 'services/web3/types';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
-import { APIReward } from 'services/api/bancor';
 import { UTCTimestamp } from 'lightweight-charts';
 
 export interface Token {

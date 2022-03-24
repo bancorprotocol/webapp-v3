@@ -1,4 +1,4 @@
-import {  Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
 import { SortingRule, Row } from 'react-table';

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'redux/index';
-import {  Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { getTokenById } from 'redux/bancor/bancor';
 import { getProtectedPools } from 'redux/bancor/pool';
 
