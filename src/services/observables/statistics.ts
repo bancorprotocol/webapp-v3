@@ -1,8 +1,8 @@
 import { combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { apiData$ } from 'services/observables/pools';
 import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
+import { apiData$ } from 'services/observables/v3/apiData';
 
 export interface Statistic {
   label: string;

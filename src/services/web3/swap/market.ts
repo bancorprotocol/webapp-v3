@@ -10,9 +10,7 @@ import {
 } from 'services/web3/config';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import { apiData$ } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancor';
-import { currentNetwork$ } from 'services/observables/network';
 import {
   ConversionEvents,
   sendConversionEvent,
@@ -22,7 +20,7 @@ import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { apiData$ } from 'services/observables/v3/apiData';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -182,17 +180,16 @@ export const swap = async (
 };
 
 const findPath = async (from: string, to: string) => {
-  const network = await currentNetwork$.pipe(take(1)).toPromise();
-  if (from === bntToken(network))
+  if (from === bntToken)
     return [from, (await findPoolByToken(to)).pool_dlt_id, to];
 
-  if (to === bntToken(network))
+  if (to === bntToken)
     return [from, (await findPoolByToken(from)).pool_dlt_id, to];
 
   return [
     from,
     (await findPoolByToken(from)).pool_dlt_id,
-    bntToken(network),
+    bntToken,
     (await findPoolByToken(to)).pool_dlt_id,
     to,
   ];
@@ -203,12 +200,9 @@ const calculateSpotPriceAndRate = async (
   to: Token,
   rateShape: MCInterface
 ) => {
-  const network = await currentNetwork$.pipe(take(1)).toPromise();
-
-  const bnt = bntToken(network);
   let pool;
-  if (from.address === bnt) pool = await findPoolByToken(to.address);
-  if (to.address === bnt) pool = await findPoolByToken(from.address);
+  if (from.address === bntToken) pool = await findPoolByToken(to.address);
+  if (to.address === bntToken) pool = await findPoolByToken(from.address);
 
   if (pool) {
     const fromShape = buildTokenPoolCall(pool.converter_dlt_id, from.address);
@@ -235,11 +229,11 @@ const calculateSpotPriceAndRate = async (
     fromPool.converter_dlt_id,
     from.address
   );
-  const bntShape1 = buildTokenPoolCall(fromPool.converter_dlt_id, bnt);
+  const bntShape1 = buildTokenPoolCall(fromPool.converter_dlt_id, bntToken);
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
-  const bntShape2 = buildTokenPoolCall(toPool.converter_dlt_id, bnt);
+  const bntShape2 = buildTokenPoolCall(toPool.converter_dlt_id, bntToken);
   const toShape2 = buildTokenPoolCall(toPool.converter_dlt_id, to.address);
 
   const mCall = [fromShape1, bntShape1, bntShape2, toShape2, rateShape];
@@ -287,13 +281,4 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
   if (pool) return pool;
 
   throw new Error('No pool found');
-};
-
-const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
-  const rate =
-    await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
-      fromToken.address,
-      toToken.address,
-      amount
-    );
 };

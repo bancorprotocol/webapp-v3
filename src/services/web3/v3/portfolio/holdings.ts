@@ -61,9 +61,10 @@ export const fetchPortfolioV3Holdings = async (
 
   try {
     const poolIds = await ContractsApi.BancorNetwork.read.liquidityPools();
+    console.log('poolIds', poolIds);
     const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
     const poolTokenIds = Array.from(poolTokenIdsMap.values());
-
+    console.log('poolTokenIds', poolTokenIds);
     const poolTokenBalancesMap = await fetchTokenBalanceMulticall(
       poolTokenIds,
       user

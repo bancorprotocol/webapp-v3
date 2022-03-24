@@ -15,7 +15,6 @@ import {
 import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
 import { Token__factory } from '../abis/types';
-import { currentNetwork$ } from 'services/observables/network';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -144,7 +143,6 @@ const getApprovalAddress = async (
     case ApprovalContract.LiquidityProtection:
       return await liquidityProtection$.pipe(take(1)).toPromise();
     case ApprovalContract.Governance:
-      const network = await currentNetwork$.pipe(take(1)).toPromise();
-      return getNetworkVariables(network).governanceContractAddress;
+      return getNetworkVariables(1).governanceContractAddress;
   }
 };

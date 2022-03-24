@@ -2,8 +2,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { EthNetworks } from 'services/web3//types';
 import { providers } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
-import { currentNetwork$ } from 'services/observables/network';
-import { take } from 'rxjs/operators';
 
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet
@@ -43,10 +41,7 @@ export const keepWSOpen = () => {
       }
       try {
         console.debug('Reconnecting websocket');
-        const network = await currentNetwork$.pipe(take(1)).toPromise();
-        web3.provider = new providers.WebSocketProvider(
-          buildAlchemyUrl(network)
-        );
+        web3.provider = new providers.WebSocketProvider(buildAlchemyUrl(1));
       } catch (error) {
         console.error('Failed init web3', error);
       }

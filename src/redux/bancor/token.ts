@@ -2,9 +2,10 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/index';
 import { Pool, Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
+import { bntToken } from 'services/web3/config';
 
 export const getAllTokensMap = createSelector(
-  [(state: RootState) => state.bancor.tokens],
+  [(state: RootState) => state.bancor.allTokens],
   (allTokens: Token[]): Map<string, Token> => {
     return new Map(allTokens.map((token) => [token.address, token]));
   }
@@ -14,13 +15,12 @@ export const getAllTokensMap = createSelector(
 export const getAvailableToStakeTokens = createSelector(
   [
     (state: RootState) => state.pool.v2Pools,
-    (state: RootState) => state.bancor.tokens,
+    (state: RootState) => getAllTokensMap(state),
   ],
-  (pools: Pool[], tokens: Token[]) => {
-    const tokenMap = new Map(tokens.map((t) => [t.address, t]));
+  (pools: Pool[], allTokensMap: Map<string, Token>) => {
     const poolsWithApr = pools
       .map((pool) => {
-        const token = tokenMap.get(pool.reserves[0].address);
+        const token = allTokensMap.get(pool.reserves[0].address);
         const tknApr = pool.apr + (pool.reserves[0].rewardApr || 0);
         const bntApr = pool.apr + (pool.reserves[1].rewardApr || 0);
 
@@ -41,11 +41,11 @@ export const getAvailableToStakeTokens = createSelector(
       (p) => !!Number(p.token.balance)
     );
     if (poolWithHighestBntApr) {
-      const bntToken = tokens.find((t) => t.symbol === 'BNT');
-      if (bntToken && !!Number(bntToken.balance)) {
+      const bnt = allTokensMap.get(bntToken);
+      if (bnt && !!Number(bnt.balance)) {
         filteredByTokenBalance.push({
           ...poolWithHighestBntApr,
-          token: bntToken,
+          token: bnt,
           tknApr: poolWithHighestBntApr.bntApr,
         });
       }

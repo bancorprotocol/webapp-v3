@@ -28,7 +28,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
-import { wait } from '../../../../utils/pureFunctions';
+import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
 import {
   ConversionEvents,
@@ -37,7 +37,7 @@ import {
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from '../../../../services/api/googleTagManager';
+} from 'services/api/googleTagManager';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -74,9 +74,8 @@ export const WithdrawLiquidityWidget = ({
   const govToken = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, gov)
   );
-  const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
-  const withdrawingBNT = reserveToken.address === bnt;
+  const withdrawingBNT = reserveToken.address === bntToken;
   const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
@@ -85,7 +84,7 @@ export const WithdrawLiquidityWidget = ({
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const showVBNTWarning = useCallback(() => {
-    if (token && token.address !== bnt) {
+    if (token && token.address !== bntToken) {
       return false;
     }
     if (!amount) {
@@ -99,7 +98,6 @@ export const WithdrawLiquidityWidget = ({
       .gt(govTokenBalance);
   }, [
     amount,
-    bnt,
     govToken,
     protectedPosition.initialStake.tknAmount,
     tknAmount,

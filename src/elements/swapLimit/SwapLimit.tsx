@@ -6,7 +6,7 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { classNameGenerator, wait } from 'utils/pureFunctions';
+import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
@@ -29,11 +29,9 @@ import {
   sendConversionEvent,
   setCurrentConversion,
 } from 'services/api/googleTagManager';
-import { updateTokens } from 'redux/bancor/bancor';
-import { fetchTokenBalances } from 'services/observables/balances';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
-import { Button, ButtonVariant } from '../../components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 
 enum Field {
@@ -83,7 +81,6 @@ export const SwapLimit = ({
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
@@ -244,13 +241,14 @@ export const SwapLimit = ({
   const updateETHandWETH = async () => {
     if (!(chainId && toToken && account)) return;
 
-    const weth = tokens.find((x) => x.address === wethToken);
-    await wait(4000);
-    const balances = await fetchTokenBalances(
-      weth ? [fromToken, weth] : [fromToken],
-      account
-    );
-    dispatch(updateTokens(balances));
+    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
+    //const weth = tokens.find((x) => x.address === wethToken);
+    // await wait(4000);
+    // const balances = await fetchTokenBalances(
+    //  weth ? [fromToken, weth] : [fromToken],
+    //  account
+    // );
+    // dispatch(updateTokens(balances));
   };
 
   const handleSwap = async (

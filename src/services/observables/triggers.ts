@@ -1,35 +1,15 @@
+import { keeperDaoTokens$ } from 'services/observables/tokens';
 import {
-  tokenLists$,
-  userPreferredListIds$,
-  keeperDaoTokens$,
-  listOfLists,
-  tokens$,
-  pools$,
-  tokensNoBalance$,
-  tokenListMerged$,
-  poolTokens$,
-  apiTokens$,
-} from 'services/observables/tokens';
-import {
+  setAllTokenListTokens,
   setAllTokens,
-  setApiTokens,
-  setBntPrice,
   setKeeperDaoTokens,
-  setTokenList,
   setTokenLists,
+  setTokens,
 } from 'redux/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
-import { take } from 'rxjs/operators';
-import {
-  loadingBalances$,
-  loadingLockedBnt$,
-  loadingPositions$,
-  loadingRewards$,
-} from './user';
-import { setLoadingBalances } from 'redux/user/user';
+import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
 import { statistics$ } from 'services/observables/statistics';
 import { setv2Pools, setStats } from 'redux/bancor/pool';
-import { bntPrice$ } from 'services/observables/bancor';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -54,20 +34,28 @@ import {
   portfolioWithdrawals$,
   portfolioWithdrawalSettings$,
 } from 'services/observables/v3/portfolio';
+import { allTokensNew$, tokensNew$ } from 'services/observables/v3/tokens';
+import {
+  listOfLists,
+  tokenListsNew$,
+  tokenListTokens$,
+  userPreferredListIds$,
+} from 'services/observables/v3/tokenLists';
+import { poolsNew$ } from 'services/observables/v3/pools';
+import { poolTokens$ } from 'services/observables/v3/poolTokensV1';
 
 export const subscribeToObservables = (dispatch: any) => {
-  tokenLists$.subscribe((tokenLists) => {
+  tokenListsNew$.subscribe((tokenLists) => {
     dispatch(setTokenLists(tokenLists));
   });
 
-  tokensNoBalance$
-    .pipe(take(1))
-    .toPromise()
-    .then((tokenList) => dispatch(setTokenList(tokenList)));
+  allTokensNew$.subscribe((tokens) => {
+    dispatch(setAllTokens(tokens));
+  });
 
-  loadingBalances$.subscribe((loading) =>
-    dispatch(setLoadingBalances(loading))
-  );
+  tokensNew$.subscribe((tokens) => {
+    dispatch(setTokens(tokens));
+  });
 
   const userListIds = getTokenListLS();
   if (userListIds.length === 0) {
@@ -76,32 +64,20 @@ export const subscribeToObservables = (dispatch: any) => {
     userPreferredListIds$.next(twoLists);
   } else userPreferredListIds$.next(userListIds);
 
-  tokens$.subscribe((tokenList) => {
-    dispatch(setTokenList(tokenList));
-  });
-
-  tokenListMerged$.subscribe((tokenList) => {
-    dispatch(setAllTokens(tokenList));
-  });
-
-  apiTokens$.subscribe((tokens) => {
-    dispatch(setApiTokens(tokens));
+  tokenListTokens$.subscribe(({ allTokenListTokens }) => {
+    dispatch(setAllTokenListTokens(allTokenListTokens));
   });
 
   keeperDaoTokens$.subscribe((keeperDaoTokens) => {
     dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
-  pools$.subscribe((pools) => {
+  poolsNew$.subscribe((pools) => {
     dispatch(setv2Pools(pools));
   });
 
   statistics$.subscribe((stats) => {
     dispatch(setStats(stats));
-  });
-
-  bntPrice$.subscribe((bntPrice) => {
-    dispatch(setBntPrice(bntPrice));
   });
 
   protectedPositions$.subscribe((protectedPositions) => {

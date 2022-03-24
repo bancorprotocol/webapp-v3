@@ -53,7 +53,7 @@ export const createPool = async (
       writeWeb3.signer
     );
 
-    const reserves = [bntToken(network), token.address];
+    const reserves = [bntToken, token.address];
     const weights = ['500000', '500000'];
 
     const poolAddress = await regContract.getLiquidityPoolByConfig(

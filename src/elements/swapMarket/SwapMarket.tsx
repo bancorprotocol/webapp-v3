@@ -30,9 +30,6 @@ import {
   setCurrentConversion,
 } from 'services/api/googleTagManager';
 import { withdrawWeth } from 'services/web3/swap/limit';
-import { updateTokens } from 'redux/bancor/bancor';
-import { fetchTokenBalances } from 'services/observables/balances';
-import { wait } from 'utils/pureFunctions';
 import { useInterval } from 'hooks/useInterval';
 import {
   rejectNotification,
@@ -40,7 +37,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
-import { Button, ButtonVariant } from '../../components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -205,9 +202,10 @@ export const SwapMarket = ({
   const onConfirmation = async () => {
     if (!(chainId && toToken && account)) return;
 
-    await wait(4000);
-    const balances = await fetchTokenBalances([fromToken, toToken], account);
-    dispatch(updateTokens(balances));
+    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
+    // await wait(4000);
+    // const balances = await fetchTokenBalances([fromToken, toToken], account);
+    // dispatch(updateTokens(balances));
   };
 
   const handleSwap = async (approved: boolean = false) => {

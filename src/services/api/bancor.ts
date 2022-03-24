@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { EthNetworks } from 'services/web3/types';
 import { utils } from 'ethers';
 import { UTCTimestamp } from 'lightweight-charts';
+import { getMockV3Tokens } from 'services/api/mockV3Welcome';
 
 interface TokenMeta {
   id: string;
@@ -85,25 +85,16 @@ export interface NewPool extends APIPool {
   decFee: number;
 }
 
-export interface WelcomeDataRes extends WelcomeData {
-  network: EthNetworks;
-}
-
-export const getWelcomeData = async (
-  network: EthNetworks = EthNetworks.Mainnet
-): Promise<WelcomeDataRes> => {
-  if (!(network === EthNetworks.Mainnet || network === EthNetworks.Ropsten)) {
-    throw new Error('API does not support this network');
-  }
+export const getWelcomeData = async (): Promise<WelcomeData> => {
   try {
     const { data } = await axios.get<WelcomeData>(
-      network === EthNetworks.Mainnet
-        ? 'https://api-v2.bancor.network/welcome'
-        : 'https://serve-ropsten-ptdczarhfq-nw.a.run.app/welcome'
+      'https://api-v2.bancor.network/welcome'
     );
+    // TODO remove MOCKED TEST TOKENS
+    data.tokens = [...data.tokens, ...getMockV3Tokens()];
+
     return {
       ...data,
-      network,
       pools: data.pools.map((pool) => ({
         ...pool,
         converter_dlt_id: utils.getAddress(pool.converter_dlt_id),

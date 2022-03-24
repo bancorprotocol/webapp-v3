@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'redux/index';
-import {
-  TokenList,
-  Token,
-  userPreferredListIds$,
-} from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -17,6 +13,8 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
+import { TokenList, TokenMinimal } from 'services/observables/v3/tokens';
+import { userPreferredListIds$ } from 'services/observables/v3/tokenLists';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -24,7 +22,7 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens: string[];
   includedTokens: string[];
-  tokens: Token[];
+  tokens: (Token | TokenMinimal)[];
   limit?: boolean;
 }
 
@@ -202,7 +200,8 @@ export const SearchableTokenList = ({
                     includedTokens.includes(token.address)) &&
                   !excludedTokens.includes(token.address) &&
                   (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
-                    token.name.toLowerCase().includes(search.toLowerCase()))
+                    (token.name &&
+                      token.name.toLowerCase().includes(search.toLowerCase())))
               )
               .slice(0, limit ? 300 : tokens.length)
               .map((token) => {
@@ -224,7 +223,7 @@ export const SearchableTokenList = ({
                       <div className="grid justify-items-start ml-15">
                         <div className="text-16">{token.symbol}</div>
                         <div className="text-12 text-graphite">
-                          {tokenName(token.name)}
+                          {tokenName(token.name ?? token.symbol)}
                         </div>
                       </div>
                     </div>

@@ -6,7 +6,6 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
-import { setNetwork } from 'services/observables/network';
 import { useDispatch } from 'react-redux';
 import {
   setDarkMode,
@@ -19,7 +18,6 @@ import {
 } from 'redux/notification/notification';
 import { useAppSelector } from 'redux/index';
 import { googleTagManager } from 'services/api/googleTagManager';
-import { EthNetworks } from 'services/web3/types';
 import {
   getDarkModeLS,
   getNotificationsLS,
@@ -29,7 +27,7 @@ import {
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
-import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
+import { MarketingBanner } from 'elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
 import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
@@ -63,11 +61,6 @@ export const App = () => {
   useEffect(() => {
     setNotificationsLS(notifications);
   }, [notifications]);
-
-  useEffect(() => {
-    if (chainId) setNetwork(chainId);
-    else setNetwork(EthNetworks.Mainnet);
-  }, [chainId]);
 
   useEffect(() => {
     setUser(account, dispatch);

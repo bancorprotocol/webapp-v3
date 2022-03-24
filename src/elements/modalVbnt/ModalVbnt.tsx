@@ -10,8 +10,6 @@ import {
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchTokenBalances } from 'services/observables/balances';
-import { updateTokens } from 'redux/bancor/bancor';
 import {
   rejectNotification,
   stakeFailedNotification,
@@ -98,8 +96,9 @@ export const ModalVbnt = ({
 
   const refreshBalances = async (token: Token, account: string) => {
     await wait(8000);
-    const balances = await fetchTokenBalances([token], account);
-    dispatch(updateTokens(balances));
+    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
+    // const balances = await fetchTokenBalances([token], account);
+    //dispatch(updateTokens(balances));
     if (onCompleted) onCompleted();
   };
 

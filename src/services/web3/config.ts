@@ -1,4 +1,4 @@
-import { APIToken, APIPool } from 'services/api/bancor';
+import { APIToken } from 'services/api/bancor';
 import { UTCTimestamp } from 'lightweight-charts';
 import { Token } from 'services/observables/tokens';
 import { calculatePercentageChange } from 'utils/formulas';
@@ -17,6 +17,7 @@ export interface EthNetworkVariables {
   govToken: string;
 }
 
+export const bntToken: string = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
@@ -49,50 +50,6 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
     decimals: eth ? eth.decimals : 18,
     rates_7d: eth ? eth.rates_7d : [],
   };
-};
-
-export const getEthToken = (
-  apiTokens: APIToken[],
-  pools: APIPool[]
-): Token | null => {
-  const eth = apiTokens.find((apiToken) => apiToken.dlt_id === ethToken);
-  if (eth) {
-    const price = eth.rate.usd;
-    const price_24h = eth.rate_24h_ago.usd;
-    const priceChanged =
-      price && price_24h && Number(price_24h) !== 0
-        ? calculatePercentageChange(Number(price), Number(price_24h))
-        : 0;
-    const pool = pools.find((p) =>
-      p.reserves.find((r) => r.address === eth.dlt_id)
-    );
-    const usdVolume24 = pool ? pool.volume_24h.usd : null;
-    const seven_days_ago = get7DaysAgo().getUTCSeconds();
-
-    return {
-      address: eth.dlt_id,
-      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
-      name: 'Ethereum',
-      chainId: 1,
-      balance: null,
-      symbol: eth.symbol,
-      decimals: eth.decimals,
-      usdPrice: price,
-      liquidity: eth.liquidity.usd,
-      usd_24h_ago: price_24h,
-      price_change_24: priceChanged,
-      price_history_7d: eth.rates_7d
-        .filter((x) => !!x)
-        .map((x, i) => ({
-          value: Number(x),
-          time: (seven_days_ago + i * 360) as UTCTimestamp,
-        })),
-      usd_volume_24: usdVolume24,
-      isProtected: true,
-    };
-  }
-
-  return null;
 };
 
 export const getTokenWithoutImage = (token: APIToken): Token => {
@@ -152,11 +109,6 @@ export const getNetworkVariables = (
         etherscanUrl: 'https://ropsten.etherscan.io',
       };
   }
-};
-
-export const bntToken = (network: EthNetworks): string => {
-  const vars = getNetworkVariables(network);
-  return vars.bntToken;
 };
 
 const ropstenTokenEmptyProps = {
