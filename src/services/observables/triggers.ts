@@ -44,8 +44,16 @@ import {
   protectedPositions$,
   rewards$,
 } from './liquidity';
-import { setHoldingsRaw } from 'redux/portfolio/v3Portfolio';
-import { portfolioHoldings$ } from 'services/observables/v3/portfolio/holdings';
+import {
+  setHoldingsRaw,
+  setWithdrawalRequestsRaw,
+  setWithdrawalSettings,
+} from 'redux/portfolio/v3Portfolio';
+import {
+  portfolioHoldings$,
+  portfolioWithdrawals$,
+  portfolioWithdrawalSettings$,
+} from 'services/observables/v3/portfolio';
 
 export const subscribeToObservables = (dispatch: any) => {
   tokenLists$.subscribe((tokenLists) => {
@@ -124,5 +132,13 @@ export const subscribeToObservables = (dispatch: any) => {
 
   portfolioHoldings$.subscribe((holdingsRaw) => {
     dispatch(setHoldingsRaw(holdingsRaw));
+  });
+
+  portfolioWithdrawals$.subscribe((withdrawalRequests) => {
+    dispatch(setWithdrawalRequestsRaw(withdrawalRequests));
+  });
+
+  portfolioWithdrawalSettings$.subscribe((withdrawalSettings) => {
+    dispatch(setWithdrawalSettings(withdrawalSettings));
   });
 };

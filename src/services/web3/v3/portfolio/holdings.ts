@@ -53,14 +53,14 @@ const fetchPoolTokenToUnderlyingMulticall = async (
 };
 
 export const fetchPortfolioV3Holdings = async (
-  poolIds: string[],
   user?: string
 ): Promise<HoldingRaw[]> => {
   if (!user) {
-    return [];
+    throw new Error('Please login to fetch portfolio holdings');
   }
 
   try {
+    const poolIds = await ContractsApi.BancorNetwork.read.liquidityPools();
     const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
     const poolTokenIds = Array.from(poolTokenIdsMap.values());
 

@@ -21,6 +21,42 @@ export const mockBonuses: Bonus[] = [
   },
 ];
 
+export interface V3PortfolioState {
+  holdingsRaw: HoldingRaw[];
+  isLoadingHoldings: boolean;
+  withdrawalRequestsRaw: WithdrawalRequestRaw[];
+  withdrawalSettings: WithdrawalSettings;
+  isLoadingWithdrawalRequests: boolean;
+  bonusesModal: boolean;
+  bonuses: Bonus[];
+}
+
+export interface WithdrawalRequestRaw {
+  id: number;
+  provider: string;
+  poolToken: string;
+  reserveToken: string;
+  createdAt: number;
+  poolTokenAmountWei: string;
+  reserveTokenAmountWei: string;
+}
+
+export interface WithdrawalRequest
+  extends Omit<
+    WithdrawalRequestRaw,
+    'poolTokenAmountWei' | 'reserveTokenAmountWei'
+  > {
+  lockEndsAt: number;
+  poolTokenAmount: string;
+  reserveTokenAmount: string;
+  token: Token;
+}
+
+export interface WithdrawalSettings {
+  lockDuration: number;
+  withdrawalFee: number;
+}
+
 export interface BonusClaimable {
   id: string;
   token: Token;
@@ -45,10 +81,4 @@ export interface Holding
   token: Token;
   poolTokenBalance: string;
   tokenBalance: string;
-}
-
-export interface V3PortfolioState {
-  holdingsRaw: HoldingRaw[];
-  bonusesModal: boolean;
-  bonuses: Bonus[];
 }

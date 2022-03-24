@@ -3,13 +3,16 @@ import { V3EarningTableMenuMain } from 'elements/earn/portfolio/v3/earningsTable
 import { V3EarningTableMenuBonus } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuBonus';
 import { V3EarningTableMenuRate } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuRate';
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
+  setHoldingToWithdraw: (holding: Holding) => void;
+  holding: Holding;
 }
 
 export const V3EarningsTableMenuContent = memo(
-  ({ setIsWithdrawModalOpen }: Props) => {
+  ({ holding, setIsWithdrawModalOpen, setHoldingToWithdraw }: Props) => {
     const [currentMenu, setCurrentMenu] =
       useState<EarningTableMenuState>('main');
 
@@ -17,6 +20,8 @@ export const V3EarningsTableMenuContent = memo(
       <>
         {currentMenu === 'main' && (
           <V3EarningTableMenuMain
+            holding={holding}
+            setHoldingToWithdraw={setHoldingToWithdraw}
             setCurrentMenu={setCurrentMenu}
             setIsWithdrawModalOpen={setIsWithdrawModalOpen}
           />

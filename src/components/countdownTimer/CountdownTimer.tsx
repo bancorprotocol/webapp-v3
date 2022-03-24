@@ -28,5 +28,9 @@ export const CountdownTimer = ({
     timerEnded ? null : interval
   );
 
-  return <div>{timerEnded ? msgEnded : formatTime(countdown)}</div>;
+  return (
+    <div className="whitespace-nowrap">
+      {timerEnded ? msgEnded : formatTime(countdown)}
+    </div>
+  );
 };

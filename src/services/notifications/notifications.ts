@@ -4,6 +4,7 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { Token } from 'services/observables/tokens';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 const showNotification = (notification: BaseNotification, dispatch: any) =>
   dispatch(addNotification(notification));
@@ -425,6 +426,34 @@ export const addLiquidityFailedNotification = (
       type: NotificationType.error,
       title: 'Transaction Failed',
       msg: `Adding ${amountTkn} ${tkn} and ${amountBnt} ${bnt} to pool ${pool} failed. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
+export const withdrawCancelNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Cancel Withdraw',
+      msg: `Cancellation for ${prettifyNumber(
+        amount
+      )} ${symbol} is Pending Confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `You cancelled your withdraw request for ${prettifyNumber(
+          amount
+        )} ${symbol}`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Cancellation request for ${prettifyNumber(
+          amount
+        )} ${symbol} failed. Please try again or contact support.`,
+      },
     },
     dispatch
   );

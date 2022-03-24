@@ -1,9 +1,9 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
-import { calcFiatValue } from 'utils/helperFunctions';
+import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   token: Token;
@@ -14,6 +14,8 @@ interface Props {
   setStep: (step: number) => void;
   availableBalance: string;
   isFiat: boolean;
+  withdrawalFeeInPercent: string;
+  withdrawalFeeInTkn: string;
 }
 
 const V3WithdrawStep1 = ({
@@ -25,7 +27,14 @@ const V3WithdrawStep1 = ({
   setInputFiat,
   isFiat,
   availableBalance,
+  withdrawalFeeInPercent,
+  withdrawalFeeInTkn,
 }: Props) => {
+  const isInputError = useMemo(
+    () => new BigNumber(availableBalance).lt(inputTkn),
+    [availableBalance, inputTkn]
+  );
+
   const setBalance = (percentage: 25 | 50 | 75 | 100) => {
     const valueTkn = new BigNumber(availableBalance)
       .times(percentage / 100)
@@ -38,14 +47,14 @@ const V3WithdrawStep1 = ({
   return (
     <div className="text-center">
       <h1 className="text-[36px] font-normal mb-50">
-        How much ETH do you want to withdraw?
+        How much {token.symbol} do you want to withdraw?
       </h1>
 
       <button
         onClick={() => setBalance(100)}
-        className="font-normal opacity-50"
+        className={`${isInputError ? 'text-error' : 'text-secondary'}`}
       >
-        Available {availableBalance} ETH
+        Available {availableBalance} {token.symbol}
       </button>
 
       <TokenInputV3
@@ -55,6 +64,7 @@ const V3WithdrawStep1 = ({
         inputFiat={inputFiat}
         setInputFiat={setInputFiat}
         isFiat={isFiat}
+        isError={isInputError}
       />
 
       <div className="space-x-10 opacity-50">
@@ -68,7 +78,7 @@ const V3WithdrawStep1 = ({
         <Button
           className="px-50 my-40"
           onClick={() => setStep(2)}
-          disabled={!inputTkn}
+          disabled={!inputTkn || isInputError}
         >
           Next {'->'}
         </Button>
@@ -76,7 +86,15 @@ const V3WithdrawStep1 = ({
 
       <div className="opacity-50 space-y-10">
         <p>USD value will likely change during the cooldown period</p>
-        <p>Coverage cost 0.25% - 0.0025 ETH</p>
+        <span>Coverage cost {withdrawalFeeInPercent}%</span>
+        {Number(withdrawalFeeInTkn) > 0 && (
+          <>
+            <span className="px-10">-</span>
+            <span>
+              {prettifyNumber(withdrawalFeeInTkn)} {token.symbol}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );

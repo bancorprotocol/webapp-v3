@@ -1,27 +1,41 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
+  setHoldingToWithdraw: (holding: Holding) => void;
+  holding: Holding;
 }
 
 export const V3EarningTableMenuMain = memo(
-  ({ setCurrentMenu, setIsWithdrawModalOpen }: Props) => {
+  ({
+    holding,
+    setHoldingToWithdraw,
+    setCurrentMenu,
+    setIsWithdrawModalOpen,
+  }: Props) => {
     const { setBonusModalOpen } = useV3Bonuses();
 
-    const handleBonusClick = () => {
+    const handleWithdrawClick = useCallback(() => {
+      setHoldingToWithdraw(holding);
+      setIsWithdrawModalOpen(true);
+    }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
+
+    const handleBonusClick = useCallback(() => {
       // TODO - add logic for what action to perform
       if (true) {
         setBonusModalOpen(true);
       } else {
         setCurrentMenu('bonus');
       }
-    };
+    }, [setBonusModalOpen, setCurrentMenu]);
+
     return (
       <div className="flex flex-col justify-between h-full">
         <div className="space-y-20">
@@ -29,7 +43,6 @@ export const V3EarningTableMenuMain = memo(
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => setIsWithdrawModalOpen(true)}
               className="w-full"
               textBadge="86%"
             >
@@ -38,7 +51,7 @@ export const V3EarningTableMenuMain = memo(
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => setIsWithdrawModalOpen(true)}
+              onClick={handleWithdrawClick}
               className="w-full"
             >
               Withdraw

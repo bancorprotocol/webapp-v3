@@ -4,16 +4,24 @@ import { Fragment, memo, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
+  holding: Holding;
+  setHoldingToWithdraw: (holding: Holding) => void;
   placement?: Placement;
 }
 
 export const V3EarningTableMenu = memo(
-  ({ setIsWithdrawModalOpen, placement = 'left-start' }: Props) => {
+  ({
+    holding,
+    setHoldingToWithdraw,
+    setIsWithdrawModalOpen,
+    placement = 'left-start',
+  }: Props) => {
     const popperElRef = useRef(null);
     const [targetElement, setTargetElement] = useState(null);
     const [popperElement, setPopperElement] = useState(null);
@@ -60,6 +68,8 @@ export const V3EarningTableMenu = memo(
                   <Popover.Panel className="w-screen max-w-[300px]">
                     <div className="overflow-hidden rounded bg-white p-20 border border-silver h-[280px]">
                       <V3EarningsTableMenuContent
+                        holding={holding}
+                        setHoldingToWithdraw={setHoldingToWithdraw}
                         setIsWithdrawModalOpen={setIsWithdrawModalOpen}
                       />
                     </div>

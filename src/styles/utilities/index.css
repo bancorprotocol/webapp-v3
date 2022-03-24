@@ -11,7 +11,7 @@
 
 
     .loading-skeleton {
-        @apply bg-primary bg-opacity-30 animate-pulse rounded-full;
+        @apply bg-silver bg-opacity-30 animate-pulse rounded-10;
     }
 
     /* Hide scrollbar for Chrome, Safari and Opera */

@@ -1,7 +1,7 @@
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'redux/index';
 import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
@@ -9,7 +9,14 @@ import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding | null>(
+    null
+  );
+
   const holdings = useAppSelector(getPortfolioHoldings);
+  const isLoadingHoldings = useAppSelector<boolean>(
+    (state) => state.v3Portfolio.isLoadingHoldings
+  );
 
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
@@ -47,8 +54,13 @@ export const V3EarningTable = () => {
       {
         id: 'actions',
         Header: '',
-        Cell: () => (
-          <V3EarningTableMenu setIsWithdrawModalOpen={setIsWithdrawModalOpen} />
+        accessor: 'poolId',
+        Cell: ({ cell }) => (
+          <V3EarningTableMenu
+            holding={cell.row.original}
+            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+            setHoldingToWithdraw={setHoldingToWithdraw}
+          />
         ),
         width: 50,
         minWidth: 50,
@@ -63,12 +75,20 @@ export const V3EarningTable = () => {
         <h2 className="text-[22px]">Earnings</h2>
       </div>
 
-      <DataTable<Holding> data={holdings} columns={columns} stickyColumn />
-
-      <V3WithdrawModal
-        isOpen={isWithdrawModalOpen}
-        setIsOpen={setIsWithdrawModalOpen}
+      <DataTable<Holding>
+        data={holdings}
+        columns={columns}
+        stickyColumn
+        isLoading={isLoadingHoldings}
       />
+
+      {holdingToWithdraw && (
+        <V3WithdrawModal
+          isOpen={isWithdrawModalOpen}
+          setIsOpen={setIsWithdrawModalOpen}
+          holdingToWithdraw={holdingToWithdraw}
+        />
+      )}
     </section>
   );
 };

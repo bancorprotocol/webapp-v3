@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 import { useState } from 'react';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { store } from 'redux/index';
 import { Provider } from 'react-redux';
 
