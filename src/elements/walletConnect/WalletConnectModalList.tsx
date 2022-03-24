@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { setUser } from 'services/observables/user';
 import { WalletInfo } from 'services/web3/wallet/utils';
 import { setSigner } from 'services/web3';
-import { providers } from 'ethers';
+import { providers, utils } from 'ethers';
 
 export const WalletConnectModalList = ({
   handleConnect,
@@ -68,7 +68,7 @@ export const ImposterWallet = ({
         style={{ background: 'red' }}
         className="rounded-10 text-white w-[135px] h-[30px]"
         onClick={() => {
-          if (account) {
+          if (account && utils.isAddress(account)) {
             setSelectedWallet(wallet);
             setUser(account, dispatch);
             setSigner(

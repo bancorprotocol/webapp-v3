@@ -30,10 +30,15 @@ import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
 import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
+import { useWeb3React } from '@web3-react/core';
+import { useAutoConnect } from 'services/web3/wallet/hooks';
+import { isMainNetFork } from 'services/web3/config';
+import { setUser } from 'services/observables/user';
 
 export const App = () => {
   const dispatch = useDispatch();
-  const chainId = EthNetworks.Mainnet;
+  const { chainId, account } = useWeb3React();
+  useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
@@ -61,13 +66,15 @@ export const App = () => {
   }, [notifications]);
 
   useEffect(() => {
-    if (chainId) setNetwork(chainId);
-    else setNetwork(EthNetworks.Mainnet);
+    if (!isMainNetFork)
+      if (chainId) setNetwork(chainId);
+      else setNetwork(EthNetworks.Mainnet);
   }, [chainId]);
 
   useEffect(() => {
+    setUser(account, dispatch);
     googleTagManager();
-  }, []);
+  }, [account, dispatch]);
 
   return (
     <BrowserRouter>
