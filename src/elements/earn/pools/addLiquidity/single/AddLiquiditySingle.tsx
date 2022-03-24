@@ -1,4 +1,4 @@
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquiditySingleInfoBox } from './AddLiquiditySingleInfoBox';
 import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
@@ -30,8 +30,9 @@ import {
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from '../../../../../services/api/googleTagManager';
+} from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   pool: Pool;
