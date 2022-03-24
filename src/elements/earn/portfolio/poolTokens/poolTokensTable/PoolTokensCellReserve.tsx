@@ -1,6 +1,6 @@
-import { PoolToken } from 'services/observables/tokens';
 import { Image } from 'components/image/Image';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { PoolToken } from 'services/observables/v3/pools';
 
 export const PoolTokensCellReserve = (poolToken: PoolToken) => {
   return (

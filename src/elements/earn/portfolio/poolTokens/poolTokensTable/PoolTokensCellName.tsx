@@ -1,5 +1,5 @@
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
-import { PoolToken } from 'services/observables/tokens';
+import { PoolToken } from 'services/observables/v3/pools';
 
 export const PoolTokensCellName = (poolToken: PoolToken) => {
   return (

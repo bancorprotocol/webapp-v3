@@ -10,7 +10,7 @@ export const getStakedAmount = async (
   user: string,
   govToken: Token
 ): Promise<string> => {
-  const networkVars = getNetworkVariables(1);
+  const networkVars = getNetworkVariables();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3.provider
@@ -30,7 +30,7 @@ export const stakeAmount = async (
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
 
-    const networkVars = getNetworkVariables(1);
+    const networkVars = getNetworkVariables();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3.signer
@@ -57,7 +57,7 @@ export const unstakeAmount = async (
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
 
-    const networkVars = getNetworkVariables(1);
+    const networkVars = getNetworkVariables();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3.signer
@@ -75,7 +75,7 @@ export const unstakeAmount = async (
 
 export const getUnstakeTimer = async (user: string) => {
   const now = dayjs().unix() * 1000;
-  const networkVars = getNetworkVariables(1);
+  const networkVars = getNetworkVariables();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3.provider

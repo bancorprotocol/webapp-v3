@@ -1,5 +1,5 @@
-import { APIPool } from 'services/api/bancor';
-import { Pool, Reserve, Token } from 'services/observables/tokens';
+import { APIPool, APIReward } from 'services/api/bancor';
+import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
@@ -11,6 +11,52 @@ import { shrinkToken } from 'utils/formulas';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiData$ } from 'services/observables/v3/apiData';
+
+export interface Reserve {
+  address: string;
+  weight: string;
+  balance: string;
+  symbol: string;
+  logoURI: string;
+  rewardApr?: number;
+  decimals: number;
+  usdPrice: number | string | null;
+}
+
+export interface Pool {
+  name: string;
+  pool_dlt_id: string;
+  converter_dlt_id: string;
+  reserves: Reserve[];
+  liquidity: number;
+  volume_24h: number;
+  fees_24h: number;
+  fee: number;
+  version: number;
+  supply: number;
+  decimals: number;
+  apr: number;
+  reward?: APIReward;
+  isProtected: boolean;
+  isV3?: boolean;
+}
+
+export interface PoolToken {
+  bnt: {
+    token: Reserve;
+    amount: string;
+  };
+  tkn: {
+    token: Reserve;
+    amount: string;
+  };
+  amount: string;
+  value: string;
+  poolDecimals: number;
+  converter: string;
+  poolName: string;
+  version: number;
+}
 
 export const buildPoolObject = (
   apiPool: APIPool,

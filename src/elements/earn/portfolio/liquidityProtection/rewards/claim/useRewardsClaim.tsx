@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'redux/index';
-import { Pool, Token } from 'services/observables/tokens';
+import {  Token } from 'services/observables/tokens';
 import { getTokenById } from 'redux/bancor/bancor';
 import { getProtectedPools } from 'redux/bancor/pool';
 
@@ -11,6 +11,7 @@ import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'redux/liquidity/liquidity';
 import { useNavigation } from 'services/router';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   pool?: Pool;

@@ -1,4 +1,4 @@
-import { Pool, Token } from 'services/observables/tokens';
+import {  Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
 import { SortingRule, Row } from 'react-table';
@@ -12,6 +12,7 @@ import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
 import { PoolsTableSort } from './PoolsTableSort';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   search: string;

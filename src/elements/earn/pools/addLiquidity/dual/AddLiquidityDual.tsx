@@ -1,4 +1,4 @@
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityDualStakeAmount } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualStakeAmount';
 import { useAppSelector } from 'redux/index';
@@ -9,6 +9,7 @@ import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/Add
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
 import { useNavigation } from 'services/router';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   pool: Pool;

@@ -1,5 +1,5 @@
 import { utils } from 'ethers';
-import { ethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
 import { uniqBy } from 'lodash';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
@@ -25,13 +25,22 @@ const buildTokenListTokens = (
       address: utils.getAddress(token.address),
     }));
 
-  tokenListTokensMerged.push({
-    symbol: 'ETH',
-    address: ethToken,
-    logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
-    decimals: 18,
-    name: 'Ethereum',
-  });
+  tokenListTokensMerged.push(
+    {
+      symbol: 'ETH',
+      address: ethToken,
+      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+      decimals: 18,
+      name: 'Ethereum',
+    },
+    {
+      symbol: 'WETH',
+      address: wethToken,
+      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+      decimals: 18,
+      name: 'Wrapped Ethereum',
+    }
+  );
 
   return uniqBy(tokenListTokensMerged, (x) => x.address);
 };

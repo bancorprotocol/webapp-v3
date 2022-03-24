@@ -7,7 +7,7 @@ import {
   settingsContractAddress$,
   systemStoreAddress$,
 } from 'services/observables/contracts';
-import { Pool, PoolToken, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
 import {
   calculateBntNeededToOpenSpace,
@@ -31,6 +31,7 @@ import {
   ConversionEvents,
   sendLiquidityEvent,
 } from '../../api/googleTagManager';
+import { Pool, PoolToken } from 'services/observables/v3/pools';
 
 export const createPool = async (
   token: Token,

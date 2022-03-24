@@ -143,6 +143,6 @@ const getApprovalAddress = async (
     case ApprovalContract.LiquidityProtection:
       return await liquidityProtection$.pipe(take(1)).toPromise();
     case ApprovalContract.Governance:
-      return getNetworkVariables(1).governanceContractAddress;
+      return getNetworkVariables().governanceContractAddress;
   }
 };

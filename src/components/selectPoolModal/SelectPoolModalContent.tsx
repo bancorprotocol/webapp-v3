@@ -1,7 +1,7 @@
-import { Pool } from 'services/observables/tokens';
 import { Image } from '../image/Image';
 import { InputField } from '../inputField/InputField';
 import { useState } from 'react';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   pools: Pool[];

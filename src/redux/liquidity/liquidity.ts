@@ -2,12 +2,12 @@ import { createSelector, createSlice, RootState } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
 import { Rewards } from 'services/observables/liquidity';
-import { PoolToken } from 'services/observables/tokens';
 import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
+import { PoolToken } from 'services/observables/v3/pools';
 
 interface LiquidityState {
   poolTokens: PoolToken[];

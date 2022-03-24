@@ -21,7 +21,6 @@ import {
   decToPpm,
 } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { Pool, Reserve } from 'services/observables/tokens';
 import {
   buildProtectionDelayCall,
   buildRemoveLiquidityReturnCall,
@@ -35,6 +34,7 @@ import {
   ConversionEvents,
   sendLiquidityEvent,
 } from '../../api/googleTagManager';
+import { Pool, Reserve } from 'services/observables/v3/pools';
 
 export interface ProtectedPosition {
   positionId: string;

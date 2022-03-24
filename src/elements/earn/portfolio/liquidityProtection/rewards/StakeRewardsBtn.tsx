@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/observables/tokens';
 import { getProtectedPools } from 'redux/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { useNavigation } from 'services/router';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   buttonLabel: string;

@@ -65,9 +65,7 @@ export const Vote = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const networkVars = getNetworkVariables(
-      chainId ? chainId : EthNetworks.Mainnet
-    );
+    const networkVars = getNetworkVariables();
     setGovToken(tokens.find((x) => x.address === networkVars.govToken));
   }, [tokens, chainId]);
 

@@ -1,4 +1,4 @@
-import { Pool } from 'services/observables/tokens';
+import { Pool } from 'services/observables/v3/pools';
 
 export const PoolsTableCellApr = (pool: Pool) => {
   const aprOne = pool.reserves[0].rewardApr || 0;

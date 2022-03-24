@@ -13,12 +13,11 @@ import {
 import { multicall } from 'services/web3/multicall/multicall';
 import { utils } from 'ethers';
 import { zip } from 'lodash';
-import { poolsNew$ } from 'services/observables/v3/pools';
+import { poolsNew$, PoolToken } from 'services/observables/v3/pools';
 import { findPoolByConverter } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
 import { ropstenImage } from 'services/web3/config';
-import { PoolToken } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { apiData$ } from 'services/observables/v3/apiData';
 

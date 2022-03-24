@@ -35,7 +35,7 @@ export const contractAddresses$ = user$.pipe(
   shareReplay(1)
 );
 const fetchContractAddresses = async (): Promise<RegisteredContracts> => {
-  const networkVariables = getNetworkVariables(1);
+  const networkVariables = getNetworkVariables();
   const contract = ContractRegistry__factory.connect(
     networkVariables.contractRegistry,
     web3.provider

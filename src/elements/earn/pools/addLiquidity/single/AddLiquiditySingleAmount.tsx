@@ -1,7 +1,8 @@
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useEffect } from 'react';
 import BigNumber from 'bignumber.js';
+import { Pool } from 'services/observables/v3/pools';
 
 interface Props {
   pool: Pool;
