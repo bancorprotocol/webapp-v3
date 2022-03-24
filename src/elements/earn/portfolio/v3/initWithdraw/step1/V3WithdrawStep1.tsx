@@ -47,14 +47,14 @@ const V3WithdrawStep1 = ({
   return (
     <div className="text-center">
       <h1 className="text-[36px] font-normal mb-50">
-        How much ETH do you want to withdraw?
+        How much {token.symbol} do you want to withdraw?
       </h1>
 
       <button
         onClick={() => setBalance(100)}
         className={`${isInputError ? 'text-error' : 'text-secondary'}`}
       >
-        Available {availableBalance} ETH
+        Available {availableBalance} {token.symbol}
       </button>
 
       <TokenInputV3

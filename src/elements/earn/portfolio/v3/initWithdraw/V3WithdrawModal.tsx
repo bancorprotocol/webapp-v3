@@ -53,13 +53,20 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdraw }: Props) => {
           withdrawalFeeInTkn={withdrawalFeeInTkn}
         />
       )}
-      {step === 2 && <V3WithdrawStep2 setStep={setStep} amount={amount} />}
+      {step === 2 && (
+        <V3WithdrawStep2
+          setStep={setStep}
+          amount={amount}
+          token={holdingToWithdraw.token}
+        />
+      )}
       {step === 3 && (
         <V3WithdrawStep3
           txBusy={txBusy}
           amount={amount}
           lockDurationInDays={lockDurationInDays}
           initWithdraw={initWithdraw}
+          holdingToWithdraw={holdingToWithdraw}
         />
       )}
       {step === 4 && (

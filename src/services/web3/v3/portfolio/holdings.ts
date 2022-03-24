@@ -56,7 +56,7 @@ export const fetchPortfolioV3Holdings = async (
   user?: string
 ): Promise<HoldingRaw[]> => {
   if (!user) {
-    return [];
+    throw new Error('Please login to fetch portfolio holdings');
   }
 
   try {

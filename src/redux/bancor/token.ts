@@ -4,7 +4,7 @@ import { Pool, Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
 
 export const getAllTokensMap = createSelector(
-  [(state: RootState) => state.bancor.allTokens],
+  [(state: RootState) => state.bancor.tokens],
   (allTokens: Token[]): Map<string, Token> => {
     return new Map(allTokens.map((token) => [token.address, token]));
   }
