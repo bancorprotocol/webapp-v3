@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, memo } from 'react';
 
 export enum ButtonVariant {
   PRIMARY = 'primary',
@@ -25,33 +25,35 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   textBadge?: string;
 }
 
-export const Button = ({
-  variant = ButtonVariant.PRIMARY,
-  size = ButtonSize.LARGE,
-  className = '',
-  outlined = false,
-  textBadge,
-  ...props
-}: ButtonProps) => {
-  const btnOutlined = outlined ? 'outline-' : '';
-  const btnVariant = `btn-${btnOutlined}${variant}`;
-  const btnSize = `btn-${size}`;
+export const Button = memo(
+  ({
+    variant = ButtonVariant.PRIMARY,
+    size = ButtonSize.LARGE,
+    className = '',
+    outlined = false,
+    textBadge,
+    ...props
+  }: ButtonProps) => {
+    const btnOutlined = outlined ? 'outline-' : '';
+    const btnVariant = `btn-${btnOutlined}${variant}`;
+    const btnSize = `btn-${size}`;
 
-  return (
-    <button
-      type="button"
-      {...props}
-      className={`btn ${btnVariant} ${btnSize} ${className} relative`}
-    >
-      {props.children}
-      {textBadge && (
-        <span className="absolute -top-8 right-0 bg-primary text-white text-10 rounded-full px-6">
-          {textBadge}
-        </span>
-      )}
-    </button>
-  );
-};
+    return (
+      <button
+        type="button"
+        {...props}
+        className={`btn ${btnVariant} ${btnSize} ${className} relative`}
+      >
+        {props.children}
+        {textBadge && (
+          <span className="absolute -top-8 right-0 bg-primary text-white text-10 rounded-full px-6">
+            {textBadge}
+          </span>
+        )}
+      </button>
+    );
+  }
+);
 
 export const ButtonToggle = ({
   labels,

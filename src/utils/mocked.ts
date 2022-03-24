@@ -1,12 +1,13 @@
 import { Token } from 'services/observables/tokens';
+import { ropstenImage } from 'services/web3/config';
 
 export const mockToken: Token = {
   address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-  logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+  logoURI: ropstenImage,
   name: 'Ethereum',
   chainId: 1,
   balance: '1.085561228177686039',
-  symbol: 'ETH',
+  symbol: 'TKN1',
   decimals: 18,
   usdPrice: '3138.970276',
   liquidity: '142917205.826758',

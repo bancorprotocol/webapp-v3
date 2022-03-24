@@ -1,4 +1,4 @@
-import { V3Withdraw } from 'elements/earn/portfolio/v3/withdraw/V3Withdraw';
+import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
 import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
 import { V3HoldingsStats } from 'elements/earn/portfolio/v3/V3HoldingsStats';

@@ -1,7 +1,7 @@
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/withdraw/V3WithdrawModal';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'redux/index';
 import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';

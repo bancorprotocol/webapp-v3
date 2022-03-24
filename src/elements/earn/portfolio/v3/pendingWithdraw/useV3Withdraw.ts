@@ -1,7 +1,7 @@
 import { useAppSelector } from 'redux/index';
 import { getPortfolioWithdrawalRequests } from 'redux/portfolio/v3Portfolio';
 import { useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import {
@@ -25,12 +25,12 @@ export const useV3Withdraw = () => {
   const [isModalCancelOpen, setIsModalCancelOpen] = useState(false);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
 
-  const openCancelModal = (req: WithdrawalRequest) => {
+  const openCancelModal = useCallback((req: WithdrawalRequest) => {
     setSelected(req);
     setIsModalCancelOpen(true);
-  };
+  }, []);
 
-  const cancelWithdrawal = async () => {
+  const cancelWithdrawal = useCallback(async () => {
     if (!selected) {
       return;
     }
@@ -55,17 +55,18 @@ export const useV3Withdraw = () => {
         rejectNotification(dispatch);
       }
     }
-  };
+  }, [account, dispatch, selected]);
 
-  const openConfirmModal = (req: WithdrawalRequest) => {
+  const openConfirmModal = useCallback((req: WithdrawalRequest) => {
     setSelected(req);
     setIsModalConfirmOpen(true);
-  };
+  }, []);
 
-  const withdraw = async () => {
+  const withdraw = useCallback(async () => {
+    // TODO: finish this flow
     const res = await ContractsApi.BancorNetwork.write.withdraw(selected!.id);
     console.log(res);
-  };
+  }, [selected]);
 
   return {
     withdrawalRequests,

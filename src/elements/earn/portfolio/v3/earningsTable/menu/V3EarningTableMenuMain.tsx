@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
@@ -22,20 +22,20 @@ export const V3EarningTableMenuMain = memo(
   }: Props) => {
     const { setBonusModalOpen } = useV3Bonuses();
 
-    const handleWithdrawClick = () => {
+    const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
-      console.log(holding);
       setIsWithdrawModalOpen(true);
-    };
+    }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
-    const handleBonusClick = () => {
+    const handleBonusClick = useCallback(() => {
       // TODO - add logic for what action to perform
       if (true) {
         setBonusModalOpen(true);
       } else {
         setCurrentMenu('bonus');
       }
-    };
+    }, [setBonusModalOpen, setCurrentMenu]);
+
     return (
       <div className="flex flex-col justify-between h-full">
         <div className="space-y-20">

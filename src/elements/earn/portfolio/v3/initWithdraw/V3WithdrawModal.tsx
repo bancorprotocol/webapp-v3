@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
-import V3WithdrawStep1 from 'elements/earn/portfolio/v3/withdraw/step1/V3WithdrawStep1';
-import V3WithdrawStep3 from 'elements/earn/portfolio/v3/withdraw/step3/V3WithdrawStep3';
-import V3WithdrawStep4 from 'elements/earn/portfolio/v3/withdraw/step4/V3WithdrawStep4';
-import V3WithdrawStep2 from 'elements/earn/portfolio/v3/withdraw/step2/V3WithdrawStep2';
+import V3WithdrawStep1 from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1';
+import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3WithdrawStep3';
+import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3WithdrawStep4';
+import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
-import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/withdraw/useV3WithdrawModal';
+import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 
 interface Props {
   isOpen: boolean;
