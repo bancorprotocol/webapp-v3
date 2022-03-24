@@ -7,9 +7,10 @@ import { take } from 'rxjs/operators';
 import { isMainNetFork } from './config';
 
 export const getProvider = (
-  network: EthNetworks = EthNetworks.Mainnet
+  network: EthNetworks = EthNetworks.Mainnet,
+  useFork: boolean = isMainNetFork
 ): providers.BaseProvider => {
-  if (isMainNetFork)
+  if (useFork)
     return new providers.JsonRpcProvider(
       process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
     );
