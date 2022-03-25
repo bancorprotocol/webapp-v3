@@ -1,6 +1,7 @@
 import { setAccount } from 'redux/user/user';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
+
 const userReceiver$ = new BehaviorSubject<string>('');
 const balancesReceiver$ = new BehaviorSubject<boolean>(false);
 const positionsReceiver$ = new BehaviorSubject<boolean>(false);

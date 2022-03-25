@@ -116,7 +116,7 @@ export const addLiquidity = async (
 
     const value = tkn.address === ethToken ? tknWei : undefined;
 
-    sendLiquidityEvent(ConversionEvents.wallet_req);
+    // sendLiquidityEvent(ConversionEvents.wallet_req);
 
     const estimate = await contract.estimateGas.addLiquidity(
       [bnt.address, tkn.address],
@@ -133,7 +133,7 @@ export const addLiquidity = async (
       { value, gasLimit }
     );
 
-    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    // sendLiquidityEvent(ConversionEvents.wallet_confirm);
 
     onHash(tx.hash);
 

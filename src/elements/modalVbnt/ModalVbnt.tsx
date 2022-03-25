@@ -1,7 +1,7 @@
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
-import { Token } from 'services/observables/tokens';
+import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
 import {
   stakeAmount,
@@ -73,7 +73,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => stakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(token, account),
+        () => refreshBalances(),
         () => rejectNotification(dispatch),
         () => stakeFailedNotification(dispatch, amount)
       );
@@ -82,7 +82,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => unstakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(token, account),
+        () => refreshBalances(),
         () => rejectNotification(dispatch),
         () => unstakeFailedNotification(dispatch, amount)
       );
@@ -94,11 +94,9 @@ export const ModalVbnt = ({
     ApprovalContract.Governance
   );
 
-  const refreshBalances = async (token: Token, account: string) => {
+  const refreshBalances = async () => {
     await wait(8000);
-    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
-    // const balances = await fetchTokenBalances([token], account);
-    //dispatch(updateTokens(balances));
+    await updateUserBalances();
     if (onCompleted) onCompleted();
   };
 

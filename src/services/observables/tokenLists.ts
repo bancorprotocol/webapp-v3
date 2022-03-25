@@ -113,5 +113,6 @@ export const tokenListTokens$ = combineLatest([
     );
 
     return { allTokenListTokens, userPreferredTokenListTokens };
-  })
+  }),
+  shareReplay(1)
 );

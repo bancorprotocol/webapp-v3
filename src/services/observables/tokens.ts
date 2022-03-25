@@ -1,5 +1,5 @@
 import { APIPool, APIToken } from 'services/api/bancor';
-import { combineLatest, from } from 'rxjs';
+import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { user$ } from 'services/observables/user';
 import {
@@ -15,7 +15,7 @@ import { apiPools$, apiTokens$ } from 'services/observables/apiData';
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
-import { isEqual } from 'lodash';
+import { isEqual, uniqueId } from 'lodash';
 
 export interface TokenMinimal {
   address: string;
@@ -100,7 +100,17 @@ export const buildTokenObject = (
   };
 };
 
-export const userBalancesInWei$ = combineLatest([apiTokens$, user$]).pipe(
+const userBalancesReceiver$ = new BehaviorSubject<string>(uniqueId());
+
+export const updateUserBalances = async () => {
+  await userBalancesReceiver$.next(uniqueId());
+};
+
+export const userBalancesInWei$ = combineLatest([
+  apiTokens$,
+  user$,
+  userBalancesReceiver$,
+]).pipe(
   switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
       return undefined;

@@ -1,7 +1,7 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
-import { Token } from 'services/observables/tokens';
+import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
 import { getRateAndPriceImapct, swap } from 'services/web3/swap/market';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
@@ -10,7 +10,6 @@ import {
   addNotification,
   NotificationType,
 } from 'redux/notification/notification';
-import { useWeb3React } from '@web3-react/core';
 import {
   ApprovalContract,
   getNetworkContractApproval,
@@ -54,7 +53,6 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
-  const { chainId } = useWeb3React();
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
@@ -200,12 +198,8 @@ export const SwapMarket = ({
   };
 
   const onConfirmation = async () => {
-    if (!(chainId && toToken && account)) return;
-
-    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
-    // await wait(4000);
-    // const balances = await fetchTokenBalances([fromToken, toToken], account);
-    // dispatch(updateTokens(balances));
+    if (!(toToken && account)) return;
+    await updateUserBalances();
   };
 
   const handleSwap = async (approved: boolean = false) => {
@@ -214,7 +208,7 @@ export const SwapMarket = ({
       return;
     }
 
-    if (!(chainId && toToken)) return;
+    if (!toToken) return;
 
     if (!approved) return checkApproval();
 
@@ -321,7 +315,7 @@ export const SwapMarket = ({
     const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
     setCurrentConversion(
       'Market',
-      chainId,
+      1,
       tokenPair,
       fromToken.symbol,
       toToken?.symbol,

@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
-import { Token } from 'services/observables/tokens';
+import { Token, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
@@ -241,14 +241,7 @@ export const SwapLimit = ({
   const updateETHandWETH = async () => {
     if (!(chainId && toToken && account)) return;
 
-    // TODO: OBSERVABLES BALANCES TRIGGER ADD HERE
-    //const weth = tokens.find((x) => x.address === wethToken);
-    // await wait(4000);
-    // const balances = await fetchTokenBalances(
-    //  weth ? [fromToken, weth] : [fromToken],
-    //  account
-    // );
-    // dispatch(updateTokens(balances));
+    await updateUserBalances();
   };
 
   const handleSwap = async (
