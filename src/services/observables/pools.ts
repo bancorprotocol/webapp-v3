@@ -3,14 +3,15 @@ import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
-import { allTokensNew$ } from 'services/observables/v3/tokens';
+import { allTokensNew$ } from 'services/observables/tokens';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
 import { shrinkToken } from 'utils/formulas';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
-import { apiData$ } from 'services/observables/v3/apiData';
+import { apiData$ } from 'services/observables/apiData';
+import { bntToken } from 'services/web3/config';
 
 export interface Reserve {
   address: string;
@@ -124,13 +125,13 @@ export const buildPoolArray = (
   apiPools: APIPool[],
   tokens: Token[]
 ): Pool[] => {
-  const bnt = tokens.find((t) => t.symbol === 'BNT');
+  const bnt = tokens.find((t) => t.address === bntToken);
   if (!bnt) {
     return [];
   }
   return tokens
     .map((tkn) => {
-      if (tkn.symbol === 'BNT') {
+      if (tkn.address === bntToken) {
         return undefined;
       }
       const apiPool = apiPools.find((pool) => {

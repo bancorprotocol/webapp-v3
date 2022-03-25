@@ -3,7 +3,7 @@ import { useAppSelector } from 'redux/index';
 import { getProtectedPools } from 'redux/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { useNavigation } from 'services/router';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   buttonLabel: string;

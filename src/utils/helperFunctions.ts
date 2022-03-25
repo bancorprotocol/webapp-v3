@@ -4,7 +4,7 @@ import { EthNetworks } from 'services/web3/types';
 import { shrinkToken } from './formulas';
 import { APIPool } from 'services/api/bancor';
 import dayjs from './dayjs';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 const oneMillion = new BigNumber(1000000);
 

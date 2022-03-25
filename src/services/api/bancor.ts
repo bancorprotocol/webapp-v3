@@ -3,15 +3,6 @@ import { utils } from 'ethers';
 import { UTCTimestamp } from 'lightweight-charts';
 import { getMockV3Tokens } from 'services/api/mockV3Welcome';
 
-interface TokenMeta {
-  id: string;
-  image: string;
-  contract: string;
-  symbol: string;
-  name: string;
-  precision?: number;
-}
-
 export interface WelcomeData {
   total_liquidity: {
     usd: string;
@@ -34,7 +25,7 @@ export interface WelcomeData {
 }
 
 export interface USDPrice {
-  usd: null | string;
+  usd: string;
 }
 
 export interface APIReserve {
@@ -75,16 +66,6 @@ export interface APIToken {
   rates_7d: string[];
 }
 
-export interface TokenMetaWithReserve extends TokenMeta {
-  reserveWeight: number;
-  decBalance: string;
-}
-
-export interface NewPool extends APIPool {
-  reserveTokens: TokenMetaWithReserve[];
-  decFee: number;
-}
-
 export const getWelcomeData = async (): Promise<WelcomeData> => {
   try {
     const { data } = await axios.get<WelcomeData>(
@@ -97,6 +78,10 @@ export const getWelcomeData = async (): Promise<WelcomeData> => {
       ...data,
       pools: data.pools.map((pool) => ({
         ...pool,
+        reserves: pool.reserves.map((reserve) => ({
+          ...reserve,
+          address: utils.getAddress(reserve.address),
+        })),
         converter_dlt_id: utils.getAddress(pool.converter_dlt_id),
         pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
       })),

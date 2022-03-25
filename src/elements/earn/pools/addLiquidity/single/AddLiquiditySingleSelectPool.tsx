@@ -2,7 +2,7 @@ import { useAppSelector } from 'redux/index';
 import { getPools } from 'redux/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { useNavigation } from 'services/router';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

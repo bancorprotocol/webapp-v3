@@ -13,7 +13,7 @@ import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'redux/index';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

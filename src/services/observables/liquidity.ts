@@ -15,7 +15,7 @@ import {
   setLoadingLockedBnt,
   user$,
 } from './user';
-import { poolsNew$ } from 'services/observables/v3/pools';
+import { poolsNew$ } from 'services/observables/pools';
 
 export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {

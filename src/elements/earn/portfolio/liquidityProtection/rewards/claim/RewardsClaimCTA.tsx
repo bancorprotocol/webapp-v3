@@ -12,7 +12,7 @@ import {
 } from '../../../../../../components/button/Button';
 
 interface Props {
-  claimableRewards: string | null;
+  claimableRewards?: string;
   account?: string | null;
 }
 

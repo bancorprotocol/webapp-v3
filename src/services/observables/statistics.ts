@@ -2,7 +2,7 @@ import { combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
-import { apiData$ } from 'services/observables/v3/apiData';
+import { apiData$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
 
 export interface Statistic {

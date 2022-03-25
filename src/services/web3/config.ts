@@ -1,8 +1,4 @@
 import { APIToken } from 'services/api/bancor';
-import { UTCTimestamp } from 'lightweight-charts';
-import { Token } from 'services/observables/tokens';
-import { calculatePercentageChange } from 'utils/formulas';
-import { get7DaysAgo } from 'utils/pureFunctions';
 import { EthNetworks } from './types';
 import { BigNumber } from 'bignumber.js';
 import emptyTokenLogo from 'assets/logos/empty-token.webp';
@@ -44,9 +40,9 @@ export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   return {
     symbol: 'WETH',
     dlt_id: wethToken,
-    liquidity: eth ? eth.liquidity : { usd: null },
-    rate: eth ? eth.rate : { usd: null },
-    rate_24h_ago: eth ? eth.rate_24h_ago : { usd: null },
+    liquidity: eth ? eth.liquidity : { usd: '0' },
+    rate: eth ? eth.rate : { usd: '0' },
+    rate_24h_ago: eth ? eth.rate_24h_ago : { usd: '0' },
     decimals: eth ? eth.decimals : 18,
     rates_7d: eth ? eth.rates_7d : [],
   };

@@ -9,7 +9,7 @@ import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/Add
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
 import { useNavigation } from 'services/router';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

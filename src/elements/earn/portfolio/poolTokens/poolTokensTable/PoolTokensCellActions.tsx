@@ -13,7 +13,7 @@ import {
   setCurrentLiquidity,
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
-import { PoolToken } from 'services/observables/v3/pools';
+import { PoolToken } from 'services/observables/pools';
 
 export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();

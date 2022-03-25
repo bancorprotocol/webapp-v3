@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Image } from '../image/Image';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface SelectPoolProps {
   pool: Pool;

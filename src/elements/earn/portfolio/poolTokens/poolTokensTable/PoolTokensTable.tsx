@@ -6,7 +6,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { PoolTokensCellActions } from './PoolTokensCellActions';
 import { PoolTokensCellName } from './PoolTokensCellName';
 import { PoolTokensCellReserve } from './PoolTokensCellReserve';
-import { PoolToken } from 'services/observables/v3/pools';
+import { PoolToken } from 'services/observables/pools';
 
 export const PoolTokensTable = () => {
   const [search, setSearch] = useState('');

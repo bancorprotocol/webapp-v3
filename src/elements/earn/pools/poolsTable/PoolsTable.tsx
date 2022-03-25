@@ -12,7 +12,7 @@ import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
 import { PoolsTableSort } from './PoolsTableSort';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   search: string;

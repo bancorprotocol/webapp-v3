@@ -33,16 +33,16 @@ import {
   portfolioHoldings$,
   portfolioWithdrawals$,
   portfolioWithdrawalSettings$,
-} from 'services/observables/v3/portfolio';
-import { allTokensNew$, tokensNew$ } from 'services/observables/v3/tokens';
+} from 'services/observables/portfolio';
+import { allTokensNew$, tokensNew$ } from 'services/observables/tokens';
 import {
   listOfLists,
   tokenListsNew$,
   tokenListTokens$,
   userPreferredListIds$,
-} from 'services/observables/v3/tokenLists';
-import { poolsNew$ } from 'services/observables/v3/pools';
-import { poolTokens$ } from 'services/observables/v3/poolTokensV1';
+} from 'services/observables/tokenLists';
+import { poolsNew$ } from 'services/observables/pools';
+import { poolTokens$ } from 'services/observables/poolTokensV1';
 
 export const subscribeToObservables = (dispatch: any) => {
   tokenListsNew$.subscribe((tokenLists) => {

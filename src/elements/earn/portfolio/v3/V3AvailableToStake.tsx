@@ -7,7 +7,7 @@ import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
 import { useAppSelector } from 'redux/index';
 import { getAvailableToStakeTokens } from 'redux/bancor/token';
 import { Token } from 'services/observables/tokens';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 const AvailableItem = ({
   token,

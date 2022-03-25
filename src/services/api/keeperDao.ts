@@ -22,7 +22,7 @@ import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
 import { exchangeProxy$ } from 'services/observables/contracts';
-import { tokensNew$ } from 'services/observables/v3/tokens';
+import { tokensNew$ } from 'services/observables/tokens';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 

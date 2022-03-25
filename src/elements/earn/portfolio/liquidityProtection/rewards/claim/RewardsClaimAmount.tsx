@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
 
 interface Props {
-  amount: string | null;
+  amount?: string;
 }
 
 export const RewardsClaimAmount = ({ amount }: Props) => {

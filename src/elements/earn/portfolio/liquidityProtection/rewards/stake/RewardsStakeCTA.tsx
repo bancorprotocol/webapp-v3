@@ -22,7 +22,7 @@ import {
 import { useAppSelector } from 'redux/index';
 import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

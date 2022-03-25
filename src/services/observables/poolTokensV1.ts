@@ -6,20 +6,20 @@ import { shareReplay, startWith } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 import { ConverterAndAnchor } from 'services/web3/types';
 import { user$ } from 'services/observables/user';
-import {
-  buildTokenBalanceCall,
-  buildTokenTotalSupplyCall,
-} from 'services/observables/balances';
 import { multicall } from 'services/web3/multicall/multicall';
 import { utils } from 'ethers';
 import { zip } from 'lodash';
-import { poolsNew$, PoolToken } from 'services/observables/v3/pools';
+import { poolsNew$, PoolToken } from 'services/observables/pools';
 import { findPoolByConverter } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
 import { ropstenImage } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
-import { apiData$ } from 'services/observables/v3/apiData';
+import { apiData$ } from 'services/observables/apiData';
+import {
+  buildTokenBalanceCall,
+  buildTokenTotalSupplyCall,
+} from 'services/web3/token/token';
 
 const trueAnchors$ = bancorConverterRegistry$.pipe(
   switchMapIgnoreThrow(async (converterRegistry) => {

@@ -6,7 +6,7 @@ import { mapIgnoreThrown } from 'utils/pureFunctions';
 import axios from 'axios';
 import { shareReplay } from 'rxjs/operators';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
-import { TokenList, TokenMinimal } from 'services/observables/v3/tokens';
+import { TokenList, TokenMinimal } from 'services/observables/tokens';
 
 const buildTokenListTokens = (
   tokenLists: TokenList[],

@@ -11,14 +11,14 @@ import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'redux/liquidity/liquidity';
 import { useNavigation } from 'services/router';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool?: Pool;
 }
 
 export const useRewardsClaim = ({ pool }: Props) => {
-  const [claimableRewards, setClaimableRewards] = useState<string | null>(null);
+  const [claimableRewards, setClaimableRewards] = useState<string>();
   const [errorBalance, setErrorBalance] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [bntAmountUsd, setBntAmountUsd] = useState('');
@@ -64,7 +64,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
 
   useEffect(() => {
     if (!account) {
-      setClaimableRewards(null);
+      setClaimableRewards(undefined);
     }
   }, [account]);
 

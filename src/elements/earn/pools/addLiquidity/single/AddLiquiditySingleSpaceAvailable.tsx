@@ -12,7 +12,7 @@ import {
   fetchBntNeededToOpenSpace,
   getSpaceAvailable,
 } from 'services/web3/liquidity/liquidity';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

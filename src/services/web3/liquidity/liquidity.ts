@@ -31,7 +31,7 @@ import {
   ConversionEvents,
   sendLiquidityEvent,
 } from '../../api/googleTagManager';
-import { Pool, PoolToken } from 'services/observables/v3/pools';
+import { Pool, PoolToken } from 'services/observables/pools';
 
 export const createPool = async (
   token: Token,

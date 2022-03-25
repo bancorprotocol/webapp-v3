@@ -1,6 +1,6 @@
 import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
-import { Reserve } from 'services/observables/v3/pools';
+import { Reserve } from 'services/observables/pools';
 
 export const TokensOverlap = ({ tokens }: { tokens: Token[] | Reserve[] }) => {
   return (

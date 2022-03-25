@@ -1,5 +1,5 @@
 import { Image } from 'components/image/Image';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 export const PoolsTableCellName = (pool: Pool) => {
   return (

@@ -20,7 +20,7 @@ import { ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
-import { apiData$ } from 'services/observables/v3/apiData';
+import { apiData$ } from 'services/observables/apiData';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,

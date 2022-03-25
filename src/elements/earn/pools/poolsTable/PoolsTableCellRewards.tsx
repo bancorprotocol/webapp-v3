@@ -1,7 +1,7 @@
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 export const PoolsTableCellRewards = (pool: Pool) => {
   const aprOne = pool.reserves[0].rewardApr;

@@ -3,7 +3,7 @@ import { RootState } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
 import { bntToken } from 'services/web3/config';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 export const getAllTokensMap = createSelector(
   [(state: RootState) => state.bancor.allTokens],

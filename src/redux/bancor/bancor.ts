@@ -3,7 +3,7 @@ import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token } from 'services/observables/tokens';
 import { RootState } from 'redux/index';
 import { orderBy } from 'lodash';
-import { TokenList, TokenMinimal } from 'services/observables/v3/tokens';
+import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap } from 'redux/bancor/token';
 import { utils } from 'ethers';
 

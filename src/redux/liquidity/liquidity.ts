@@ -7,7 +7,7 @@ import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
-import { PoolToken } from 'services/observables/v3/pools';
+import { PoolToken } from 'services/observables/pools';
 
 interface LiquidityState {
   poolTokens: PoolToken[];

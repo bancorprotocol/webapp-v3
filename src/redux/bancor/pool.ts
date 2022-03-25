@@ -4,7 +4,7 @@ import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'redux/index';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface PoolState {
   v2Pools: Pool[];

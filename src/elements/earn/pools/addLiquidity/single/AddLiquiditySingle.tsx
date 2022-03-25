@@ -32,7 +32,7 @@ import {
   setCurrentLiquidity,
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

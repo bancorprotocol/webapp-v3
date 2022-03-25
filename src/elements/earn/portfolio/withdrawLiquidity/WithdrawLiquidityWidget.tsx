@@ -36,7 +36,7 @@ import {
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
 } from 'services/api/googleTagManager';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   protectedPosition: ProtectedPosition;

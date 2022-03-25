@@ -13,8 +13,8 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
-import { TokenList, TokenMinimal } from 'services/observables/v3/tokens';
-import { userPreferredListIds$ } from 'services/observables/v3/tokenLists';
+import { TokenList, TokenMinimal } from 'services/observables/tokens';
+import { userPreferredListIds$ } from 'services/observables/tokenLists';
 
 interface SearchableTokenListProps {
   onClick: Function;

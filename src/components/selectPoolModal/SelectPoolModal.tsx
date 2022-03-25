@@ -2,7 +2,7 @@ import { isMobile } from 'react-device-detect';
 import { ModalFullscreen } from '../modalFullscreen/ModalFullscreen';
 import { Modal } from '../modal/Modal';
 import { SelectPoolModalContent } from './SelectPoolModalContent';
-import { Pool } from 'services/observables/v3/pools';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pools: Pool[];

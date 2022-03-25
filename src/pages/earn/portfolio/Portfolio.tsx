@@ -4,7 +4,7 @@ import { useAppSelector } from 'redux/index';
 import V3Portfolio from 'elements/earn/portfolio/v3/V3Portfolio';
 import { Tab } from '@headlessui/react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { PoolToken } from 'services/observables/v3/pools';
+import { PoolToken } from 'services/observables/pools';
 import { ProtectedPosition } from 'services/web3/protection/positions';
 
 export const Portfolio = () => {

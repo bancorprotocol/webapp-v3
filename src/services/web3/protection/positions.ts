@@ -34,7 +34,7 @@ import {
   ConversionEvents,
   sendLiquidityEvent,
 } from '../../api/googleTagManager';
-import { Pool, Reserve } from 'services/observables/v3/pools';
+import { Pool, Reserve } from 'services/observables/pools';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -256,7 +256,7 @@ export const fetchProtectedPositions = async (
     )
   );
 
-  const final = positions.map((position) => {
+  return positions.map((position) => {
     const pool = pools.find((x) => x.pool_dlt_id === position.poolToken);
     const { decimals, usdPrice } = position.reserveToken;
 
@@ -301,8 +301,6 @@ export const fetchProtectedPositions = async (
       currentCoveragePercent,
     };
   });
-
-  return final;
 };
 
 export const withdrawProtection = async (
