@@ -1,6 +1,5 @@
 import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { Modal } from 'components/modal/Modal';
 import { useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
@@ -9,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'redux/index';
 import { useApproveModal } from 'hooks/useApproveModal';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
 interface Props {
   pool: PoolV3;
@@ -38,32 +38,27 @@ export const DepositV3Modal = ({ pool }: Props) => {
     }
   };
 
-  const handleDepositClick = async () => {
-    setIsOpen(false);
-    await onStart();
-  };
-  const handleOnConfirm = async () => {
-    setIsOpen(true);
-    await deposit();
-  };
-
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: pool.reserveToken.balance || '0', token: pool.reserveToken }],
-    handleOnConfirm,
+    deposit,
     ContractsApi.BancorNetwork.contractAddress
   );
 
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>Deposit</Button>
-      <Modal setIsOpen={setIsOpen} isOpen={isOpen}>
+      <ModalFullscreenV3
+        title={'Deposit'}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+      >
         <div>
           <div>deposit {pool.name}</div>
           <div>{pool.reserveToken.balance}</div>
-          <Button onClick={handleDepositClick}>Deposit</Button>
+          <Button onClick={() => onStart()}>Deposit</Button>
+          {ApproveModal}
         </div>
-      </Modal>
-      {ApproveModal}
+      </ModalFullscreenV3>
     </>
   );
 };
