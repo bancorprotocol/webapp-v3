@@ -55,6 +55,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
         <div>
           <div>deposit {pool.name}</div>
           <div>{pool.reserveToken.balance}</div>
+          <div className="text-error py-20">TKN5 deposits are disabled!!!!</div>
           <Button onClick={() => onStart()}>Deposit</Button>
           {ApproveModal}
         </div>
