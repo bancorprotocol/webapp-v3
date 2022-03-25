@@ -11,10 +11,11 @@ import { calculatePercentageChange } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
 import { tokenListTokens$ } from 'services/observables/tokenLists';
-import { apiData$ } from 'services/observables/apiData';
+import { apiPools$, apiTokens$ } from 'services/observables/apiData';
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
-import { shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 
 export interface TokenMinimal {
   address: string;
@@ -99,69 +100,71 @@ export const buildTokenObject = (
   };
 };
 
-export const userBalancesInWei$ = combineLatest([apiData$, user$]).pipe(
-  switchMapIgnoreThrow(async ([apiData, user]) => {
+export const userBalancesInWei$ = combineLatest([apiTokens$, user$]).pipe(
+  switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
       return undefined;
     }
     // get balances for tokens other than ETH
     const balances = await fetchTokenBalanceMulticall(
-      apiData.tokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
+      apiTokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
       user
     );
     // get balance for ETH
     balances.set(ethToken, await fetchETH(user));
     return balances;
-  })
+  }),
+  distinctUntilChanged<Map<string, string> | undefined>(isEqual),
+  shareReplay(1)
 );
 
 export const tokensNew$ = combineLatest([
-  apiData$,
+  apiTokens$,
+  apiPools$,
   tokenListTokens$,
   userBalancesInWei$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([apiData, tokenListTokens, balances]) => {
-    const userPreferredTokenListTokensMap = new Map(
-      tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
-    );
-    return apiData.tokens
-      .map((apiToken) => {
-        const tokenListToken = userPreferredTokenListTokensMap.get(
-          apiToken.dlt_id
-        );
-        if (!tokenListToken) {
-          return undefined;
-        }
-        return buildTokenObject(
-          apiToken,
-          apiData.pools,
-          balances,
-          tokenListToken
-        );
-      })
-      .filter((token) => !!token) as Token[];
-  })
+  switchMapIgnoreThrow(
+    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+      const userPreferredTokenListTokensMap = new Map(
+        tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
+      );
+      return apiTokens
+        .map((apiToken) => {
+          const tokenListToken = userPreferredTokenListTokensMap.get(
+            apiToken.dlt_id
+          );
+          if (!tokenListToken) {
+            return undefined;
+          }
+          return buildTokenObject(apiToken, apiPools, balances, tokenListToken);
+        })
+        .filter((token) => !!token) as Token[];
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
+  shareReplay(1)
 );
 
 export const allTokensNew$ = combineLatest([
-  apiData$,
+  apiTokens$,
+  apiPools$,
   tokenListTokens$,
   userBalancesInWei$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([apiData, tokenListTokens, balances]) => {
-    const allTokenListTokensMap = new Map(
-      tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
-    );
-    return apiData.tokens.map((apiToken) => {
-      const tokenListToken = allTokenListTokensMap.get(apiToken.dlt_id);
-      return buildTokenObject(
-        apiToken,
-        apiData.pools,
-        balances,
-        tokenListToken
+  switchMapIgnoreThrow(
+    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+      const allTokenListTokensMap = new Map(
+        tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
       );
-    });
-  })
+      return apiTokens.map((apiToken) => {
+        const tokenListToken = allTokenListTokensMap.get(apiToken.dlt_id);
+        return buildTokenObject(apiToken, apiPools, balances, tokenListToken);
+      });
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
+  shareReplay(1)
 );
 
 export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(

@@ -1,8 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 import { combineLatest } from 'rxjs';
-import { shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { fetchLockedAvailableBalances } from 'services/web3/lockedbnt/lockedbnt';
-import { fetchProtectedPositions } from 'services/web3/protection/positions';
+import {
+  fetchProtectedPositions,
+  ProtectedPosition,
+} from 'services/web3/protection/positions';
 import {
   fetchPendingRewards,
   fetchTotalClaimedRewards,
@@ -16,6 +19,7 @@ import {
   user$,
 } from './user';
 import { poolsNew$ } from 'services/observables/pools';
+import { isEqual } from 'lodash';
 
 export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
@@ -29,6 +33,7 @@ export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
 
     return [];
   }),
+  distinctUntilChanged<ProtectedPosition[]>(isEqual),
   shareReplay(1)
 );
 
@@ -54,9 +59,9 @@ export const rewards$ = combineLatest([user$, fifteenSeconds$]).pipe(
         totalRewards,
       };
     }
-
     setLoadingRewards(false);
   }),
+  distinctUntilChanged<Rewards | undefined>(isEqual),
   shareReplay(1)
 );
 

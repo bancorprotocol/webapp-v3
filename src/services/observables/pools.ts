@@ -10,7 +10,7 @@ import { web3 } from 'services/web3';
 import { shrinkToken } from 'utils/formulas';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
-import { apiData$ } from 'services/observables/apiData';
+import { apiPools$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
 
 export interface Reserve {
@@ -163,8 +163,9 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const poolsNew$ = combineLatest([apiData$, allTokensNew$]).pipe(
-  switchMapIgnoreThrow(async ([apiData, allTokens]) => {
-    return buildPoolArray(apiData.pools, allTokens);
-  })
+export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
+    return buildPoolArray(apiPools, allTokens);
+  }),
+  distinctUntilChanged<Pool[]>(isEqual)
 );

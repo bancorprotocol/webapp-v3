@@ -15,7 +15,7 @@ import { shrinkToken } from 'utils/formulas';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
 import { ropstenImage } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
-import { apiData$ } from 'services/observables/apiData';
+import { apiPools$ } from 'services/observables/apiData';
 import {
   buildTokenBalanceCall,
   buildTokenTotalSupplyCall,
@@ -108,16 +108,12 @@ const zipAnchorAndConverters = (
 export const poolTokens$ = combineLatest([
   poolsNew$,
   partialPoolTokens$,
-  apiData$,
+  apiPools$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([pools, partialPoolTokens, apiData]) => {
+  switchMapIgnoreThrow(async ([pools, partialPoolTokens, apiPools]) => {
     const res = await Promise.all<PoolToken | null>(
       partialPoolTokens.map(async (poolToken) => {
-        const pool = findPoolByConverter(
-          poolToken.converter,
-          pools,
-          apiData.pools
-        );
+        const pool = findPoolByConverter(poolToken.converter, pools, apiPools);
         if (!pool) {
           return null;
         }
