@@ -14,6 +14,7 @@ import { Popularity } from 'components/popularity/Popularity';
 import { PoolsTableSort } from './PoolsTableSort';
 import { Pool, PoolV3 } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 interface Props {
   search: string;
@@ -146,7 +147,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         id: 'actions',
         Header: '',
         accessor: 'pool_dlt_id',
-        Cell: (cellData) => PoolsTableCellActions(cellData.value),
+        Cell: (cellData) => DepositV3Modal({ pool: cellData.row.original }),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
