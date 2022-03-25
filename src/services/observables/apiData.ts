@@ -22,3 +22,9 @@ export const apiPools$ = apiData$.pipe(
   distinctUntilChanged<WelcomeData['pools']>(isEqual),
   shareReplay(1)
 );
+
+export const apiPoolsV3$ = apiData$.pipe(
+  pluck('poolsV3'),
+  distinctUntilChanged<WelcomeData['poolsV3']>(isEqual),
+  shareReplay(1)
+);

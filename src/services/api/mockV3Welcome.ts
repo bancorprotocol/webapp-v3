@@ -1,4 +1,4 @@
-import { APIPool, APIToken } from 'services/api/bancor';
+import { APIPoolV3, APIToken } from 'services/api/bancor';
 
 const allTestTokens = [
   {
@@ -44,20 +44,30 @@ const buildAPIPoolV3 = (
   address: string,
   symbol: string,
   poolTokenAddress: string
-): any => {
+): APIPoolV3 => {
   return {
-    symbol,
-    dlt_id: address,
+    pool_dlt_id: address,
+    poolToken_dlt_id: poolTokenAddress,
+    name: `${symbol}/BNT`,
     liquidity: { usd: '123' },
-    rate: { usd: '123' },
-    rate_24h_ago: { usd: '123' },
+    volume_24h: { usd: '123' },
+    fees_24h: { usd: '123' },
+    fee: '123',
+    version: 99,
+    supply: '1123',
     decimals: 18,
-    rates_7d: [],
+    isWhitelisted: true,
   };
 };
 
 export const getMockV3Tokens = (): APIToken[] => {
   return allTestTokens.map((token) =>
     buildAPIToken(token.address, token.symbol)
+  );
+};
+
+export const getMockV3Pools = (): APIPoolV3[] => {
+  return allTestTokens.map((token) =>
+    buildAPIPoolV3(token.address, token.symbol, token.poolTokenAddress)
   );
 };

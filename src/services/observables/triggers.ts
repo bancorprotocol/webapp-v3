@@ -9,7 +9,7 @@ import {
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
 import { statistics$ } from 'services/observables/statistics';
-import { setv2Pools, setStats } from 'redux/bancor/pool';
+import { setv2Pools, setStats, setv3Pools } from 'redux/bancor/pool';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -41,7 +41,7 @@ import {
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
-import { poolsNew$ } from 'services/observables/pools';
+import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 
 export const subscribeToObservables = (dispatch: any) => {
@@ -74,6 +74,10 @@ export const subscribeToObservables = (dispatch: any) => {
 
   poolsNew$.subscribe((pools) => {
     dispatch(setv2Pools(pools));
+  });
+
+  poolsV3$.subscribe((pools) => {
+    dispatch(setv3Pools(pools));
   });
 
   statistics$.subscribe((stats) => {

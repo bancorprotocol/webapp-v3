@@ -1,4 +1,4 @@
-import { APIPool, APIReward } from 'services/api/bancor';
+import { APIPool, APIPoolV3, APIReward } from 'services/api/bancor';
 import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
@@ -10,7 +10,7 @@ import { web3 } from 'services/web3';
 import { shrinkToken } from 'utils/formulas';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
-import { apiPools$ } from 'services/observables/apiData';
+import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
 
 export interface Reserve {
@@ -39,7 +39,10 @@ export interface Pool {
   apr: number;
   reward?: APIReward;
   isProtected: boolean;
-  isV3?: boolean;
+}
+
+export interface PoolV3 extends APIPoolV3 {
+  reserveToken: Token;
 }
 
 export interface PoolToken {
@@ -121,32 +124,6 @@ export const buildPoolObject = (
   };
 };
 
-export const buildPoolArray = (
-  apiPools: APIPool[],
-  tokens: Token[]
-): Pool[] => {
-  const bnt = tokens.find((t) => t.address === bntToken);
-  if (!bnt) {
-    return [];
-  }
-  return tokens
-    .map((tkn) => {
-      if (tkn.address === bntToken) {
-        return undefined;
-      }
-      const apiPool = apiPools.find((pool) => {
-        return pool.reserves.find((reserve) => {
-          return reserve.address === tkn.address;
-        });
-      });
-      if (!apiPool) {
-        return undefined;
-      }
-      return buildPoolObject(apiPool, tkn, bnt);
-    })
-    .filter((pool) => !!pool) as Pool[];
-};
-
 // TODO - add to pools!!!
 export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   settingsContractAddress$,
@@ -165,7 +142,50 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
 
 export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
-    return buildPoolArray(apiPools, allTokens);
+    const bnt = allTokens.find((t) => t.address === bntToken);
+    if (!bnt) {
+      return [];
+    }
+    return allTokens
+      .map((tkn) => {
+        if (tkn.address === bntToken) {
+          return undefined;
+        }
+        const apiPool = apiPools.find((pool) => {
+          return pool.reserves.find((reserve) => {
+            return reserve.address === tkn.address;
+          });
+        });
+        if (!apiPool) {
+          return undefined;
+        }
+        return buildPoolObject(apiPool, tkn, bnt);
+      })
+      .filter((pool) => !!pool) as Pool[];
   }),
-  distinctUntilChanged<Pool[]>(isEqual)
+  distinctUntilChanged<Pool[]>(isEqual),
+  shareReplay(1)
+);
+
+export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
+  switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
+    const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.pool_dlt_id, p]));
+    const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    return allTokens
+      .map((tkn) => {
+        const apiPool = apiPoolsMap.get(tkn.address);
+        const reserveToken = allTokensMap.get(tkn.address);
+        if (!apiPool || !reserveToken) {
+          return undefined;
+        }
+        const pool: PoolV3 = {
+          ...apiPool,
+          reserveToken,
+        };
+        return pool;
+      })
+      .filter((pool) => !!pool) as PoolV3[];
+  }),
+  distinctUntilChanged<PoolV3[]>(isEqual),
+  shareReplay(1)
 );

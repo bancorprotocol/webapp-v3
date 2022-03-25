@@ -12,10 +12,7 @@ import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'redux/bancor/bancor';
-import {
-  addLiquidityV2Single,
-  addLiquidityV3Single,
-} from 'services/web3/liquidity/liquidity';
+import { addLiquidityV2Single } from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,
   addLiquiditySingleNotification,
@@ -73,9 +70,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     setAmountUsd(usdAmount);
   };
 
-  const addV3Protection = async () => {
-    await addLiquidityV3Single();
-  };
   const addV2Protection = async () => {
     const cleanAmount = prettifyNumber(amount);
     let transactionId: string;
@@ -167,7 +161,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       fiatToggle
     );
     sendLiquidityEvent(ConversionEvents.click);
-    pool.isV3 ? addV3Protection() : onStart();
+    onStart();
   }, [
     amount,
     amountUsd,
@@ -175,7 +169,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     fiatToggle,
     onStart,
     pool.name,
-    pool.isV3,
     selectedToken.symbol,
   ]);
 

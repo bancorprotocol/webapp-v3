@@ -12,7 +12,8 @@ import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
 import { PoolsTableSort } from './PoolsTableSort';
-import { Pool } from 'services/observables/pools';
+import { Pool, PoolV3 } from 'services/observables/pools';
+import { Image } from 'components/image/Image';
 
 interface Props {
   search: string;
@@ -21,7 +22,7 @@ interface Props {
 
 export const PoolsTable = ({ search, setSearch }: Props) => {
   const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
-  const v3Pools = useAppSelector<Pool[]>((state) => state.pool.v3Pools);
+  const v3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
   const [v3Selected, setV3Selected] = useState(true);
 
   const v2Data = useMemo<Pool[]>(() => {
@@ -32,7 +33,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
       );
   }, [v2Pools, search]);
 
-  const v3Data = useMemo<Pool[]>(() => {
+  const v3Data = useMemo<PoolV3[]>(() => {
     return v3Pools.filter(
       (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -113,34 +114,29 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     []
   );
 
-  const v3Columns = useMemo<TableColumn<Pool>[]>(
+  const v3Columns = useMemo<TableColumn<PoolV3>[]>(
     () => [
       {
         id: 'name',
         Header: 'Name',
         accessor: 'name',
-        Cell: (cellData) => PoolsTableCellName(cellData.row.original),
+        Cell: (cellData) => (
+          <div className="flex items-center">
+            <Image
+              src={cellData.row.original.reserveToken.logoURI}
+              alt="Pool Logo"
+              className="w-40 h-40 rounded-full mr-10"
+            />
+            <span>{cellData.value}</span>
+          </div>
+        ),
         minWidth: 100,
-        sortDescFirst: true,
-      },
-      {
-        id: 'isProtected',
-        Header: 'Earn',
-        accessor: 'isProtected',
-        Cell: (cellData) =>
-          cellData.value ? (
-            <IconProtected className="w-18 h-20 text-primary" />
-          ) : (
-            <div />
-          ),
-        tooltip: 'Protected',
-        minWidth: 130,
         sortDescFirst: true,
       },
       {
         id: 'popularity',
         Header: 'Popularity',
-        accessor: 'isProtected',
+        accessor: 'pool_dlt_id',
         Cell: (cellData) => cellData.value && <Popularity stars={4} />,
         tooltip: 'Popularity',
         minWidth: 130,
@@ -191,14 +187,23 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
         </div>
         <PoolsTableSort />
       </div>
-
-      <DataTable<Pool>
-        data={v3Selected ? v3Data : v2Data}
-        columns={v3Selected ? v3Columns : v2Columns}
-        defaultSort={defaultSort}
-        isLoading={!v2Pools.length}
-        search={search}
-      />
+      {v3Selected ? (
+        <DataTable<PoolV3>
+          data={v3Data}
+          columns={v3Columns}
+          defaultSort={defaultSort}
+          isLoading={!v3Pools.length}
+          search={search}
+        />
+      ) : (
+        <DataTable<Pool>
+          data={v2Data}
+          columns={v2Columns}
+          defaultSort={defaultSort}
+          isLoading={!v2Pools.length}
+          search={search}
+        />
+      )}
     </section>
   );
 };

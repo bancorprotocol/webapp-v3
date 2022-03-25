@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { utils } from 'ethers';
 import { UTCTimestamp } from 'lightweight-charts';
-import { getMockV3Tokens } from 'services/api/mockV3Welcome';
+import { getMockV3Pools, getMockV3Tokens } from 'services/api/mockV3Welcome';
 
 export interface WelcomeData {
   total_liquidity: {
@@ -21,6 +21,7 @@ export interface WelcomeData {
   bnt_supply: string;
   bnt_supply_24h_ago: string;
   pools: APIPool[];
+  poolsV3: APIPoolV3[];
   tokens: APIToken[];
 }
 
@@ -56,6 +57,20 @@ export interface APIPool {
   reward?: APIReward;
 }
 
+export interface APIPoolV3 {
+  pool_dlt_id: string;
+  poolToken_dlt_id: string;
+  name: string;
+  liquidity: USDPrice;
+  volume_24h: USDPrice;
+  fees_24h: USDPrice;
+  fee: string;
+  version: number;
+  supply: string;
+  decimals: number;
+  isWhitelisted: boolean;
+}
+
 export interface APIToken {
   symbol: string;
   dlt_id: string;
@@ -84,6 +99,11 @@ export const getWelcomeData = async (): Promise<WelcomeData> => {
         })),
         converter_dlt_id: utils.getAddress(pool.converter_dlt_id),
         pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
+      })),
+      poolsV3: getMockV3Pools().map((pool) => ({
+        ...pool,
+        pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
+        poolToken_dlt_id: utils.getAddress(pool.poolToken_dlt_id),
       })),
       tokens: data.tokens.map((token) => ({
         ...token,
