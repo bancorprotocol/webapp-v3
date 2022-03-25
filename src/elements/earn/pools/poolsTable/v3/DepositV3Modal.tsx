@@ -38,9 +38,18 @@ export const DepositV3Modal = ({ pool }: Props) => {
     }
   };
 
+  const handleDepositClick = async () => {
+    setIsOpen(false);
+    await onStart();
+  };
+  const handleOnConfirm = async () => {
+    setIsOpen(true);
+    await deposit();
+  };
+
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: pool.reserveToken.balance || '0', token: pool.reserveToken }],
-    deposit,
+    handleOnConfirm,
     ContractsApi.BancorNetwork.contractAddress
   );
 
@@ -51,7 +60,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
         <div>
           <div>deposit {pool.name}</div>
           <div>{pool.reserveToken.balance}</div>
-          <Button onClick={() => onStart()}>Deposit</Button>
+          <Button onClick={handleDepositClick}>Deposit</Button>
         </div>
       </Modal>
       {ApproveModal}
