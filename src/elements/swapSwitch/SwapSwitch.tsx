@@ -5,6 +5,7 @@ import 'elements/swapSwitch/SwapSwitch.css';
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
 import { setUsdToggle } from 'redux/user/user';
+import { ButtonToggle } from 'components/button/Button';
 
 export const SwapSwitch = () => {
   const dispatch = useDispatch();
@@ -13,38 +14,16 @@ export const SwapSwitch = () => {
     dispatch(setUsdToggle(state));
   };
 
-  const switchStyles = `swap-switch !min-w-[0px] ${
-    isEnabled
-      ? 'bg-primary border-primary dark:bg-primary-light dark:border-primary-light'
-      : 'bg-black-low border-black-low dark:bg-graphite dark:border-graphite'
-  }`;
-
-  const switchToggleStyles = `swap-switch-toggle ${
-    isEnabled ? 'md:translate-x-12 translate-x-20' : 'translate-x-0'
-  }`;
-
-  const coinIconStyles = isEnabled
-    ? 'text-grey'
-    : 'text-charcoal dark:text-graphite';
-
-  const dollarIconStyles = isEnabled
-    ? 'text-primary dark:text-primary-light'
-    : 'dark:text-grey';
-
   return (
-    <div className="flex items-center space-x-4 text-14">
-      <IconCoins className={`md:w-[13px] w-[20px] ${coinIconStyles}`} />
-      <Switch
-        checked={isEnabled}
-        onChange={() => setIsEnabled(!isEnabled)}
-        className={switchStyles}
-      >
-        <span className="sr-only">Toggle USD Switch</span>
-        <span aria-hidden="true" className={switchToggleStyles} />
-      </Switch>
-
-      <IconDollar
-        className={`md:w-[9px] w-[14px] h-[23px] ${dollarIconStyles}`}
+    <div className="w-[80px] h-[40px]">
+      <ButtonToggle
+        labels={[
+          <IconCoins key="coin" className="w-[20px] h-[17px] m-8" />,
+          <IconDollar key="dollar" className="w-[20px] h-[17px] m-8" />,
+        ]}
+        onClass="bg-white text-black dark:bg-charcoal dark:text-white"
+        toggle={isEnabled}
+        setToggle={() => setIsEnabled(!isEnabled)}
       />
     </div>
   );

@@ -59,20 +59,24 @@ export const ButtonToggle = ({
   labels,
   toggle,
   setToggle,
+  onClass = 'bg-white dark:bg-charcoal',
+  offClass = 'bg-fog dark:bg-black dark:text-white-low text-black-low',
 }: {
   labels: JSX.Element[];
   toggle: boolean;
   setToggle: Function;
+  onClass?: string;
+  offClass?: string;
 }) => {
   return (
-    <div className="bg-fog p-5 rounded-10 flex items-center dark:bg-black">
+    <div className="w-full h-full bg-fog p-5 rounded-[14px] flex items-center dark:bg-black">
       {labels.map((label, index) => (
         <button
           key={label.key}
-          className={`rounded-10 px-12 ${
+          className={`rounded-10 ${
             (toggle && index === 0) || (!toggle && index !== 0)
-              ? 'bg-white dark:bg-charcoal'
-              : 'bg-fog dark:bg-black dark:text-white-low text-black-low'
+              ? onClass
+              : offClass
           }`}
           onClick={() => setToggle()}
         >
