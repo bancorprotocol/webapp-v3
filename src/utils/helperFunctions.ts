@@ -60,15 +60,8 @@ export const formatTime = (ms: number): string => {
   }
 };
 
-export const getNetworkName = (network: EthNetworks): string => {
-  switch (network) {
-    case EthNetworks.Mainnet:
-      return 'Ethereum Mainnet';
-    case EthNetworks.Ropsten:
-      return 'Ropsten Test Network';
-    default:
-      return 'Unsupported network';
-  }
+export const getNetworkName = (isFork: boolean): string => {
+  return isFork ? 'Tenderly Fork' : 'Ethereum Mainnet';
 };
 
 export const isUnsupportedNetwork = (

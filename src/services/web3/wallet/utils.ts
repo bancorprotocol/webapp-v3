@@ -21,6 +21,8 @@ import trezorLogo from 'assets/logos/trezor.svg';
 import frameLogo from 'assets/logos/frame.png';
 import gnosisSafeLogo from 'assets/logos/gnosisSafe.svg';
 import torusLogo from 'assets/logos/torus.svg';
+import imposterLogo from 'assets/logos/imposter.svg';
+import { isMainNetFork } from '../config';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -50,6 +52,16 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     icon: metamaskLogo,
     mobile: true,
   },
+  ...(isMainNetFork
+    ? [
+        {
+          connector: injected,
+          name: 'Imposter',
+          icon: imposterLogo,
+          mobile: true,
+        },
+      ]
+    : []),
   {
     connector: walletconnect,
     name: 'WalletConnect',

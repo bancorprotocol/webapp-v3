@@ -41,12 +41,12 @@ export const ModalCreatePool = () => {
 
   const confirm = async () => {
     //isCreateDisabled() TS fails
-    if (!account || !chainId || !token) return;
+    if (!account || !token) return;
 
     await createPool(
       token,
       (Number(fee) / 100).toString(),
-      chainId,
+      chainId ? chainId : EthNetworks.Mainnet,
       () => poolExistNotification(dispatch),
       (txHash: string) => poolCreateNotification(dispatch, txHash),
       (txHash: string) => ownershipNotification(dispatch, txHash),
@@ -77,13 +77,7 @@ export const ModalCreatePool = () => {
   const isCreateDisabled = () => {
     const numFee = Number(fee);
     return (
-      !account ||
-      !chainId ||
-      !token ||
-      !fee ||
-      numFee > 3 ||
-      numFee < 0 ||
-      !!errorText()
+      !account || !token || !fee || numFee > 3 || numFee < 0 || !!errorText()
     );
   };
 

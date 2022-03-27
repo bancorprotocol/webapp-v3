@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { useWeb3React } from '@web3-react/core';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
-import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { setUser } from 'services/observables/user';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { setNetwork } from 'services/observables/network';
 import { useDispatch } from 'react-redux';
@@ -33,6 +30,10 @@ import { MarketingBanner } from './elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
 import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
+import { useWeb3React } from '@web3-react/core';
+import { useAutoConnect } from 'services/web3/wallet/hooks';
+import { isMainNetFork } from 'services/web3/config';
+import { setUser } from 'services/observables/user';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -65,8 +66,9 @@ export const App = () => {
   }, [notifications]);
 
   useEffect(() => {
-    if (chainId) setNetwork(chainId);
-    else setNetwork(EthNetworks.Mainnet);
+    if (!isMainNetFork)
+      if (chainId) setNetwork(chainId);
+      else setNetwork(EthNetworks.Mainnet);
   }, [chainId]);
 
   useEffect(() => {

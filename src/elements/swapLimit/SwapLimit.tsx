@@ -242,7 +242,7 @@ export const SwapLimit = ({
   };
 
   const updateETHandWETH = async () => {
-    if (!(chainId && toToken && account)) return;
+    if (!(toToken && account)) return;
 
     const weth = tokens.find((x) => x.address === wethToken);
     await wait(4000);

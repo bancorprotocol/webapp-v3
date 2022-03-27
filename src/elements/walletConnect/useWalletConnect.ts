@@ -12,10 +12,12 @@ import { openWalletModal } from '../../redux/user/user';
 import { useDispatch } from 'react-redux';
 import { openNewTab, wait } from 'utils/pureFunctions';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { setUser } from 'services/observables/user';
 
 export interface UseWalletConnect {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  setSelectedWallet: (wallet: WalletInfo) => void;
   handleConnect: (wallet: WalletInfo) => void;
   handleDisconnect: () => void;
   handleOpenModal: () => void;
@@ -100,12 +102,13 @@ export const useWalletConnect = (): UseWalletConnect => {
   );
 
   const handleDisconnect = useCallback(() => {
+    setUser(undefined, dispatch);
     setSelectedWallet(undefined);
     deactivate();
     setAutoLoginLS(false);
     setIsPending(false);
     setIsError(false);
-  }, [deactivate]);
+  }, [deactivate, dispatch]);
 
   const handleWalletButtonClick = useCallback(() => {
     if (account) {
@@ -156,6 +159,7 @@ export const useWalletConnect = (): UseWalletConnect => {
   return {
     isOpen,
     setIsOpen,
+    setSelectedWallet,
     handleConnect,
     handleDisconnect,
     handleOpenModal,
