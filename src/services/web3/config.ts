@@ -59,3 +59,5 @@ export const getNetworkVariables = (): EthNetworkVariables => {
     etherscanUrl: 'https://etherscan.io',
   };
 };
+
+export const isMainNetFork = !!process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;

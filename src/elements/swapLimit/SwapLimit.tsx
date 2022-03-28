@@ -239,7 +239,7 @@ export const SwapLimit = ({
   };
 
   const updateETHandWETH = async () => {
-    if (!(chainId && toToken && account)) return;
+    if (!(toToken && account)) return;
 
     await updateUserBalances();
   };

@@ -48,7 +48,7 @@ export const ModalVbnt = ({
   const [, setSelPercentage] = useState<number>(-1);
   const dispatch = useDispatch();
 
-  const stakeDisabled = !account || !chainId || !amount || Number(amount) === 0;
+  const stakeDisabled = !account || !amount || Number(amount) === 0;
 
   const fieldBlance = stake
     ? token.balance
@@ -66,7 +66,7 @@ export const ModalVbnt = ({
   }, [amount, token, percentages, fieldBlance]);
 
   const handleStakeUnstake = async () => {
-    if (stakeDisabled || !account || !chainId) return;
+    if (stakeDisabled || !account) return;
 
     if (stake)
       await stakeAmount(

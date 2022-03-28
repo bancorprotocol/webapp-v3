@@ -2,11 +2,13 @@ import { Web3Provider } from '@ethersproject/providers';
 import { EthNetworks } from 'services/web3//types';
 import { providers } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
+import { isMainNetFork } from './config';
 
 export const getProvider = (
-  network: EthNetworks = EthNetworks.Mainnet
-): providers.WebSocketProvider | providers.BaseProvider => {
-  if (process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL) {
+  network: EthNetworks = EthNetworks.Mainnet,
+  useFork: boolean = isMainNetFork
+): providers.BaseProvider => {
+  if (useFork) {
     return new providers.JsonRpcProvider(
       process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
     );
