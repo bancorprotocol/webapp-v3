@@ -34,6 +34,7 @@ const gasBuffer = 1.05;
 export const changeGas = (gasEstimation: string) =>
   new BigNumber(gasEstimation).times(gasBuffer).toFixed(0);
 
+// TODO - add weth token to observables
 export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
   const eth = apiTokens && apiTokens.find((x) => x.dlt_id === ethToken);
 

@@ -1,5 +1,5 @@
 import { APIPoolV3, APIToken } from 'services/api/bancor';
-import { ethToken } from 'services/web3/config';
+import { bntToken, ethToken } from 'services/web3/config';
 
 const allTestTokens = [
   {
@@ -76,6 +76,13 @@ export const getMockV3Pools = (): APIPoolV3[] => {
       ethToken,
       'ETH',
       '0xa9FdEf68d93357b9E059E51D3Bee4D351417B463'
+    )
+  );
+  pools.push(
+    buildAPIPoolV3(
+      bntToken,
+      'BNT',
+      '0x3e568EAd153A14D2f8834576aE569ce1DE82fe72'
     )
   );
   return pools;
