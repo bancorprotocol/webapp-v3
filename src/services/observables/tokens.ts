@@ -6,7 +6,7 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import { ethToken, ropstenImage } from 'services/web3/config';
+import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
 import { calculatePercentageChange } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -16,6 +16,8 @@ import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual, uniqueId } from 'lodash';
+import { minNetworkTokenLiquidityForMinting$ } from 'services/observables/pools';
+import BigNumber from 'bignumber.js';
 
 export interface TokenMinimal {
   address: string;
@@ -48,12 +50,13 @@ export interface TokenList {
 export const buildTokenObject = (
   apiToken: APIToken,
   apiPools: APIPool[],
+  minMintingBalance: string,
   balances?: Map<string, string>,
   tlToken?: TokenMinimal
 ): Token => {
   const pool = apiPools.find((p) =>
     p.reserves.find((r) => r.address === apiToken.dlt_id)
-  ); // TODO - add usd_volume_24 and isWhiteListed to token api welcome data to avoid this
+  );
 
   // Set balance; if user is NOT logged in set null
   const balance = balances
@@ -81,7 +84,14 @@ export const buildTokenObject = (
     }));
 
   const usd_volume_24 = pool ? pool.volume_24h.usd : null;
-  const isProtected = pool ? pool.isWhitelisted : false;
+  const bntReserve = pool
+    ? pool.reserves.find((r) => r.address === bntToken)
+    : 0;
+  const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+    bntReserve ? bntReserve.balance : 0
+  );
+  const isWhitelisted = pool ? pool.isWhitelisted : false;
+  const isProtected = sufficientMintingBalance && isWhitelisted;
 
   return {
     name,
@@ -96,7 +106,7 @@ export const buildTokenObject = (
     price_change_24,
     price_history_7d,
     usd_volume_24: usd_volume_24 ?? '0',
-    isProtected, // TODO currently based on isWhitelisted
+    isProtected,
   };
 };
 
@@ -133,9 +143,16 @@ export const tokensNew$ = combineLatest([
   apiPools$,
   tokenListTokens$,
   userBalancesInWei$,
+  minNetworkTokenLiquidityForMinting$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+    async ([
+      apiTokens,
+      apiPools,
+      tokenListTokens,
+      balances,
+      minMintingBalance,
+    ]) => {
       const userPreferredTokenListTokensMap = new Map(
         tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
@@ -147,7 +164,13 @@ export const tokensNew$ = combineLatest([
           if (!tokenListToken) {
             return undefined;
           }
-          return buildTokenObject(apiToken, apiPools, balances, tokenListToken);
+          return buildTokenObject(
+            apiToken,
+            apiPools,
+            minMintingBalance,
+            balances,
+            tokenListToken
+          );
         })
         .filter((token) => !!token) as Token[];
     }
@@ -161,15 +184,28 @@ export const allTokensNew$ = combineLatest([
   apiPools$,
   tokenListTokens$,
   userBalancesInWei$,
+  minNetworkTokenLiquidityForMinting$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+    async ([
+      apiTokens,
+      apiPools,
+      tokenListTokens,
+      balances,
+      minMintingBalance,
+    ]) => {
       const allTokenListTokensMap = new Map(
         tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
       );
       return apiTokens.map((apiToken) => {
         const tokenListToken = allTokenListTokensMap.get(apiToken.dlt_id);
-        return buildTokenObject(apiToken, apiPools, balances, tokenListToken);
+        return buildTokenObject(
+          apiToken,
+          apiPools,
+          minMintingBalance,
+          balances,
+          tokenListToken
+        );
       });
     }
   ),

@@ -65,7 +65,8 @@ export interface PoolToken {
 export const buildPoolObject = (
   apiPool: APIPool,
   tkn: Token,
-  bnt: Token
+  bnt: Token,
+  minMintingBalance: string
 ): Pool | undefined => {
   const liquidity = Number(apiPool.liquidity.usd ?? 0);
   const fees_24h = Number(apiPool.fees_24h.usd ?? 0);
@@ -106,6 +107,11 @@ export const buildPoolObject = (
     },
   ];
 
+  const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+    reserves[1] ? reserves[1].balance : 0
+  );
+  const isProtected = sufficientMintingBalance && apiPool.isWhitelisted;
+
   return {
     name: apiPool.name,
     pool_dlt_id: apiPool.pool_dlt_id,
@@ -120,7 +126,7 @@ export const buildPoolObject = (
     decimals: apiPool.decimals,
     apr,
     reward: apiPool.reward,
-    isProtected: apiPool.isWhitelisted, // TODO add isProtected by fetching minNetworkTokenLiquidityForMinting
+    isProtected,
   };
 };
 
@@ -140,8 +146,12 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
-  switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
+export const poolsNew$ = combineLatest([
+  apiPools$,
+  allTokensNew$,
+  minNetworkTokenLiquidityForMinting$,
+]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, allTokens, minMintingBalance]) => {
     const bnt = allTokens.find((t) => t.address === bntToken);
     if (!bnt) {
       return [];
@@ -159,7 +169,7 @@ export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
         if (!apiPool) {
           return undefined;
         }
-        return buildPoolObject(apiPool, tkn, bnt);
+        return buildPoolObject(apiPool, tkn, bnt, minMintingBalance);
       })
       .filter((pool) => !!pool) as Pool[];
   }),
