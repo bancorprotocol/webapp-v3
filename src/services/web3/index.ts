@@ -43,7 +43,9 @@ export const keepWSOpen = () => {
       }
       try {
         console.debug('Reconnecting websocket');
-        web3.provider = new providers.WebSocketProvider(buildAlchemyUrl(1));
+        web3.provider = new providers.WebSocketProvider(
+          buildAlchemyUrl(EthNetworks.Mainnet)
+        );
       } catch (error) {
         console.error('Failed init web3', error);
       }
