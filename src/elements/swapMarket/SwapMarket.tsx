@@ -227,6 +227,7 @@ export const SwapMarket = ({
 
     await swap(
       isSwapV3,
+      account,
       slippageTolerance,
       fromToken,
       toToken,

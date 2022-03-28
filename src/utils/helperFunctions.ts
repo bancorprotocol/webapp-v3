@@ -120,6 +120,9 @@ export const rewindBlocksByDays = (
   return currentBlock - blocksToRewind;
 };
 
+export const getFutureTime = (duration: plugin.Duration) =>
+  dayjs().add(duration).unix();
+
 export const calculateProgressLevel = (
   startTimeSeconds: number,
   endTimeSeconds: number

@@ -18,11 +18,13 @@ import {
   sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
-import { ppmToDec } from 'utils/helperFunctions';
+import { getFutureTime, ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { ContractTransaction, utils } from 'ethers';
+import dayjs from 'utils/dayjs';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -59,18 +61,20 @@ export const getRateAndPriceImapct = async (
     };
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
-    const rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const v3Rate = await getV3Rate(fromToken, toToken, amount);
+    const v2rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const isV3 = Number(v3Rate) > Number(v2rate);
 
     const priceImpactNum = new BigNumber(1)
-      .minus(new BigNumber(rate).div(amount).div(spotRate.spotPrice))
+      .minus(new BigNumber(v2rate).div(amount).div(spotRate.spotPrice))
       .times(100);
 
     return {
-      rate,
+      rate: isV3 ? v3Rate : v2rate,
       priceImpact: isNaN(priceImpactNum.toNumber())
         ? '0.0000'
         : priceImpactNum.toFixed(4),
-      isV3: false,
+      isV3,
     };
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
@@ -120,6 +124,7 @@ const calculateMinimumReturn = (
 
 export const swap = async (
   isV3: boolean,
+  user: string,
   slippageTolerance: number,
   fromToken: Token,
   toToken: Token,
@@ -147,26 +152,41 @@ export const swap = async (
 
     sendConversionEvent(ConversionEvents.wallet_req);
 
-    const estimate = await contract.estimateGas.convertByPath(
-      path,
-      fromWei,
-      calculateMinimumReturn(expectedToWei, slippageTolerance),
-      zeroAddress,
-      zeroAddress,
-      0,
-      { value: fromIsEth ? fromWei : undefined }
-    );
-    const gasLimit = changeGas(estimate.toString());
+    let tx: ContractTransaction;
+    if (isV3) {
+      tx = await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
+        fromToken.address,
+        toToken.address,
+        utils.parseUnits(fromAmount, fromToken.decimals),
+        calculateMinimumReturn(
+          utils.parseUnits(toAmount, toToken.decimals).toString(),
+          slippageTolerance
+        ),
+        getFutureTime(dayjs.duration({ days: 7 })),
+        user
+      );
+    } else {
+      const estimate = await contract.estimateGas.convertByPath(
+        path,
+        fromWei,
+        calculateMinimumReturn(expectedToWei, slippageTolerance),
+        zeroAddress,
+        zeroAddress,
+        0,
+        { value: fromIsEth ? fromWei : undefined }
+      );
+      const gasLimit = changeGas(estimate.toString());
 
-    const tx = await contract.convertByPath(
-      path,
-      fromWei,
-      calculateMinimumReturn(expectedToWei, slippageTolerance),
-      zeroAddress,
-      zeroAddress,
-      0,
-      { value: fromIsEth ? fromWei : undefined, gasLimit }
-    );
+      tx = await contract.convertByPath(
+        path,
+        fromWei,
+        calculateMinimumReturn(expectedToWei, slippageTolerance),
+        zeroAddress,
+        zeroAddress,
+        0,
+        { value: fromIsEth ? fromWei : undefined, gasLimit }
+      );
+    }
 
     sendConversionEvent(ConversionEvents.wallet_confirm);
 
@@ -290,10 +310,11 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
 };
 
 const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
-  const rate =
+  const res =
     await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
       fromToken.address,
       toToken.address,
-      amount
+      utils.parseEther(amount)
     );
+  return utils.formatUnits(res, fromToken.decimals);
 };
