@@ -4,10 +4,6 @@ import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { allTokensNew$ } from 'services/observables/tokens';
-import { settingsContractAddress$ } from 'services/observables/contracts';
-import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
-import { web3 } from 'services/web3';
-import { shrinkToken } from 'utils/formulas';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
@@ -65,8 +61,7 @@ export interface PoolToken {
 export const buildPoolObject = (
   apiPool: APIPool,
   tkn: Token,
-  bnt: Token,
-  minMintingBalance: string
+  bnt: Token
 ): Pool | undefined => {
   const liquidity = Number(apiPool.liquidity.usd ?? 0);
   const fees_24h = Number(apiPool.fees_24h.usd ?? 0);
@@ -107,10 +102,7 @@ export const buildPoolObject = (
     },
   ];
 
-  const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
-    reserves[1] ? reserves[1].balance : 0
-  );
-  const isProtected = sufficientMintingBalance && apiPool.isWhitelisted;
+  const isProtected = tkn.isProtected;
 
   return {
     name: apiPool.name,
@@ -130,28 +122,8 @@ export const buildPoolObject = (
   };
 };
 
-// TODO - add to pools!!!
-export const minNetworkTokenLiquidityForMinting$ = combineLatest([
-  settingsContractAddress$,
-]).pipe(
-  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
-    const contract = LiquidityProtectionSettings__factory.connect(
-      liquidityProtectionSettingsContract,
-      web3.provider
-    );
-    const res = await contract.minNetworkTokenLiquidityForMinting();
-    return shrinkToken(res.toString(), 18);
-  }),
-  distinctUntilChanged<string>(isEqual),
-  shareReplay(1)
-);
-
-export const poolsNew$ = combineLatest([
-  apiPools$,
-  allTokensNew$,
-  minNetworkTokenLiquidityForMinting$,
-]).pipe(
-  switchMapIgnoreThrow(async ([apiPools, allTokens, minMintingBalance]) => {
+export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
     const bnt = allTokens.find((t) => t.address === bntToken);
     if (!bnt) {
       return [];
@@ -169,7 +141,7 @@ export const poolsNew$ = combineLatest([
         if (!apiPool) {
           return undefined;
         }
-        return buildPoolObject(apiPool, tkn, bnt, minMintingBalance);
+        return buildPoolObject(apiPool, tkn, bnt);
       })
       .filter((pool) => !!pool) as Pool[];
   }),

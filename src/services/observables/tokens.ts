@@ -7,7 +7,7 @@ import {
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
 import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
-import { calculatePercentageChange } from 'utils/formulas';
+import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
 import { tokenListTokens$ } from 'services/observables/tokenLists';
@@ -16,8 +16,10 @@ import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual, uniqueId } from 'lodash';
-import { minNetworkTokenLiquidityForMinting$ } from 'services/observables/pools';
 import BigNumber from 'bignumber.js';
+import { settingsContractAddress$ } from 'services/observables/contracts';
+import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
+import { web3 } from 'services/web3';
 
 export interface TokenMinimal {
   address: string;
@@ -135,6 +137,21 @@ export const userBalancesInWei$ = combineLatest([
     return balances;
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),
+  shareReplay(1)
+);
+
+const minNetworkTokenLiquidityForMinting$ = combineLatest([
+  settingsContractAddress$,
+]).pipe(
+  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
+    const contract = LiquidityProtectionSettings__factory.connect(
+      liquidityProtectionSettingsContract,
+      web3.provider
+    );
+    const res = await contract.minNetworkTokenLiquidityForMinting();
+    return shrinkToken(res.toString(), 18);
+  }),
+  distinctUntilChanged<string>(isEqual),
   shareReplay(1)
 );
 
