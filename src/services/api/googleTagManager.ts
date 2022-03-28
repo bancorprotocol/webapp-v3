@@ -125,7 +125,10 @@ export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
   sendGTM(gtmData);
 };
 
-export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
+export const sendConversionSuccessEvent = (
+  fromTokenPrice: string | null,
+  transaction_hash?: string
+) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.success),
     wallet_properties: undefined,
@@ -133,6 +136,7 @@ export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
       ...currentConversion,
       conversion_market_token_rate: fromTokenPrice,
       transaction_category: 'Conversion',
+      transaction_hash,
     },
     ga_event: {
       category: 'Conversion',

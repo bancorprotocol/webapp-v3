@@ -143,7 +143,7 @@ export const swap = async (
   fromAmount: string,
   toAmount: string,
   onHash: (txHash: string) => void,
-  onCompleted: Function,
+  onCompleted: (txHash: string) => void,
   rejected: Function,
   failed: (error: string) => void
 ) => {
@@ -164,7 +164,7 @@ export const swap = async (
 
     onHash(tx.hash);
     await tx.wait();
-    onCompleted();
+    onCompleted(tx.hash);
   } catch (e: any) {
     console.error('Swap failed with error: ', e);
 
