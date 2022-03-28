@@ -179,6 +179,13 @@ export const WithdrawLiquidityWidget = ({
     const amountUsd = new BigNumber(amount)
       .times(token ? token.usdPrice ?? 0 : 0)
       .toString();
+
+    const percentage = new BigNumber(amount).div(tknAmount).toFixed(0);
+    const userSelectedPercentage =
+      percentage === '25' ||
+      percentage === '50' ||
+      percentage === '75' ||
+      percentage === '100';
     setCurrentLiquidity(
       'Withdraw Single',
       1,
@@ -188,7 +195,8 @@ export const WithdrawLiquidityWidget = ({
       amountUsd,
       undefined,
       undefined,
-      fiatToggle
+      fiatToggle,
+      userSelectedPercentage ? percentage : undefined
     );
     sendLiquidityEvent(ConversionEvents.click);
     if (withdrawingBNT) {

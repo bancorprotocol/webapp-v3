@@ -264,6 +264,7 @@ interface CurrentLiquidity {
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
   liquidity_token_amount_usd?: number | string;
+  liquidity_token_portion_percent: string;
   liquidity_bnt_amount?: string;
   liquidity_bnt_amount_usd?: string;
   liquidity_input_type?: 'Fiat' | 'Token';
@@ -276,10 +277,11 @@ export const setCurrentLiquidity = (
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
-  tokenAmountUsd: string | undefined,
-  bntAmount: string | undefined,
-  bntAmountUsd: string | undefined,
-  usdToggle: boolean | undefined
+  tokenAmountUsd?: string,
+  bntAmount?: string,
+  bntAmountUsd?: string,
+  usdToggle?: boolean,
+  withdrawl_percentage?: string
 ) => {
   currentLiquidity = {
     liquidity_type: type,
@@ -290,6 +292,9 @@ export const setCurrentLiquidity = (
     liquidity_token_amount: tokenAmount,
     liquidity_token_amount_usd: tokenAmountUsd,
     liquidity_bnt_amount: bntAmount,
+    liquidity_token_portion_percent: withdrawl_percentage
+      ? withdrawl_percentage
+      : 'N/A',
     liquidity_bnt_amount_usd: bntAmountUsd,
     liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
   };
@@ -379,7 +384,7 @@ export const sendLiquidityEvent = (
     event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
     event_properties: {
-      ...currentConversion,
+      ...currentLiquidity,
       transaction_hash,
     },
     ga_event: {
