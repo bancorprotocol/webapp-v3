@@ -7,6 +7,7 @@ import axios from 'axios';
 import { shareReplay } from 'rxjs/operators';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
+import { getTokenListMock } from 'services/api/mockV3Welcome';
 
 const buildTokenListTokens = (
   tokenLists: TokenList[],
@@ -42,7 +43,10 @@ const buildTokenListTokens = (
     }
   );
 
-  return uniqBy(tokenListTokensMerged, (x) => x.address);
+  // TODO - REMOVE MOCK DATA
+  const tokensWithMock = tokenListTokensMerged.concat(getTokenListMock());
+
+  return uniqBy(tokensWithMock, (x) => x.address);
 };
 
 export const getLogoByURI = (uri: string | undefined) =>

@@ -1,5 +1,7 @@
 import { APIPoolV3, APIToken } from 'services/api/bancor';
 import { bntToken, ethToken } from 'services/web3/config';
+import { TokenMinimal } from 'services/observables/tokens';
+import imposterLogo from 'assets/logos/imposter.svg';
 
 const allTestTokens = [
   {
@@ -86,4 +88,13 @@ export const getMockV3Pools = (): APIPoolV3[] => {
     )
   );
   return pools;
+};
+
+export const getTokenListMock = (): TokenMinimal[] => {
+  return allTestTokens.map(({ address, symbol }) => ({
+    symbol,
+    address,
+    decimals: 18,
+    logoURI: imposterLogo,
+  }));
 };
