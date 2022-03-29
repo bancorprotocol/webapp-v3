@@ -4,11 +4,11 @@ import { providers } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 import { currentNetwork$ } from 'services/observables/network';
 import { take } from 'rxjs/operators';
-import { isMainNetFork } from './config';
+import { isForkAvailable } from './config';
 
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet,
-  useFork: boolean = isMainNetFork
+  useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork)
     return new providers.JsonRpcProvider(

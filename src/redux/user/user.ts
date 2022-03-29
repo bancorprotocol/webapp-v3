@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isMainNetFork } from 'services/web3/config';
+import { isForkAvailable } from 'services/web3/config';
 import {
   getShowBannerLS,
   setDarkModeLS,
@@ -29,7 +29,7 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   showBanner: getShowBannerLS() !== false,
-  isFork: isMainNetFork,
+  isFork: isForkAvailable,
 };
 
 const userSlice = createSlice({

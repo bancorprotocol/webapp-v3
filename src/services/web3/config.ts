@@ -154,7 +154,7 @@ export const getNetworkVariables = (
   }
 };
 
-export const isMainNetFork = !!process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;
+export const isForkAvailable = !!process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;
 
 export const bntToken = (network: EthNetworks): string => {
   const vars = getNetworkVariables(network);
