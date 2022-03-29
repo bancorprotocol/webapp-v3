@@ -13,6 +13,7 @@ export const fiat = '/fiat';
 export const tos = '/terms-of-use';
 export const privacyPolicy = '/privacy-policy';
 export const portfolio = '/portfolio';
+export const portfolioWelcome = '/portfolio/welcome';
 export const addLiquidity = `${liquidityBase}:id`;
 export const addLiquidityError = `${liquidityBase}error`;
 export const portfolioRewardsClaim = `${rewardsBase}claim`;

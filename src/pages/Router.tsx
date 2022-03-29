@@ -8,6 +8,7 @@ import {
   portfolioRewardsClaim,
   portfolioRewardsStake,
   portfolioRewardsStakeByID,
+  portfolioWelcome,
   privacyPolicy,
   swap,
   tokens,
@@ -17,6 +18,7 @@ import {
 import { AddLiquidity } from './earn/pools/AddLiquidity';
 import { Pools } from './earn/pools/Pools';
 import { Portfolio } from './earn/portfolio/Portfolio';
+import { PortfolioWelcome } from './earn/portfolio/PortfolioWelcome';
 import { RewardsClaim } from './earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from './earn/portfolio/rewards/RewardsStake';
 import { Fiat } from './Fiat';
@@ -75,6 +77,12 @@ export const Router = () => {
       <Route exact path={legacyPortfolio}>
         <Redirect to={portfolio} />
       </Route>
+      <Route
+        exact
+        strict
+        path={portfolioWelcome}
+        component={PortfolioWelcome}
+      />
       <Route
         exact
         strict
