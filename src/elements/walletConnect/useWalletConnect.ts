@@ -137,7 +137,12 @@ export const useWalletConnect = (): UseWalletConnect => {
       }
 
       if (connector) {
-        setSigner(new Web3Provider(await connector.getProvider()).getSigner());
+        const account = await connector.getAccount();
+        if (isFork && account) setForkSinger(account);
+        else
+          setSigner(
+            new Web3Provider(await connector.getProvider()).getSigner()
+          );
         const wallet = SUPPORTED_WALLETS.find(
           (x) => typeof x.connector === typeof connector
         )!;
