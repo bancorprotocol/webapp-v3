@@ -1,86 +1,63 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { TokenList, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { RootState } from 'redux/index';
 import { orderBy } from 'lodash';
-import { APIToken } from 'services/api/bancor';
-import { getTokenWithoutImage } from 'services/web3/config';
+import { TokenList, TokenMinimal } from 'services/observables/tokens';
+import { getAllTokensMap } from 'redux/bancor/token';
+import { utils } from 'ethers';
 
 interface BancorState {
   tokenLists: TokenList[];
   tokens: Token[];
   keeperDaoTokens: KeeprDaoToken[];
+  allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
-  apiTokens: APIToken[];
-  bntPrice: string | null;
 }
 
 export const initialState: BancorState = {
   tokenLists: [],
   tokens: [],
-  keeperDaoTokens: [],
-  apiTokens: [],
   allTokens: [],
-  bntPrice: null,
+  keeperDaoTokens: [],
+  allTokenListTokens: [],
 };
 
 const bancorSlice = createSlice({
   name: 'bancor',
   initialState,
   reducers: {
-    setTokenLists: (state, action) => {
-      state.tokenLists = action.payload;
-    },
-    setTokenList: (state, action) => {
+    setTokens: (state, action) => {
       state.tokens = action.payload;
     },
     setAllTokens: (state, action) => {
       state.allTokens = action.payload;
     },
-    setApiTokens: (state, action) => {
-      state.apiTokens = action.payload;
+    setTokenLists: (state, action) => {
+      state.tokenLists = action.payload;
     },
-    updateTokens: (state, action) => {
-      const tokenToUpdate = action.payload as Token[];
-      state.tokens = state.tokens.map(
-        (token) =>
-          tokenToUpdate.find(
-            (updatedToken) => updatedToken.address === token.address
-          ) || token
-      );
+    setAllTokenListTokens: (state, action) => {
+      state.allTokenListTokens = action.payload;
     },
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
-    },
-    setBntPrice: (state, action) => {
-      state.bntPrice = action.payload;
     },
   },
 });
 
 export const {
-  setTokenLists,
-  setTokenList,
+  setTokens,
   setAllTokens,
-  setApiTokens,
+  setTokenLists,
+  setAllTokenListTokens,
   setKeeperDaoTokens,
-  updateTokens,
-  setBntPrice,
 } = bancorSlice.actions;
 
-const tokens = (state: RootState) => state.bancor.tokens;
-const apiTokens = (state: RootState) => state.bancor.apiTokens;
-
 export const getTokenById = createSelector(
-  tokens,
-  apiTokens,
+  (state: RootState) => getAllTokensMap(state),
   (_: any, id: string) => id,
-  (tokens: Token[], apiTokens: APIToken[], id) => {
-    const token = tokens.find((t) => t.address === id);
-    if (token) return token;
-
-    const apiToken = apiTokens.find((t) => t.dlt_id === id);
-    if (apiToken) return getTokenWithoutImage(apiToken);
+  (allTokensMap: Map<string, Token>, id: string) => {
+    return allTokensMap.get(utils.getAddress(id));
   }
 );
 

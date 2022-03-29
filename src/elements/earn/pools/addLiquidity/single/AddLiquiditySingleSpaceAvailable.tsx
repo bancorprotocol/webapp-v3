@@ -1,4 +1,4 @@
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { useCallback, useEffect, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
@@ -12,6 +12,7 @@ import {
   fetchBntNeededToOpenSpace,
   getSpaceAvailable,
 } from 'services/web3/liquidity/liquidity';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

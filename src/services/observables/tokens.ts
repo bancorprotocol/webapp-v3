@@ -1,189 +1,146 @@
-import axios from 'axios';
+import { APIPool, APIToken } from 'services/api/bancor';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
-import { distinctUntilChanged, map, pluck, shareReplay } from 'rxjs/operators';
-import { EthNetworks } from 'services/web3/types';
-import { utils } from 'ethers';
-import { apiData$, correctedPools$, partialPoolTokens$ } from './pools';
-import { setLoadingBalances, user$ } from './user';
-import { switchMapIgnoreThrow } from './customOperators';
-import { currentNetwork$ } from './network';
+import { switchMapIgnoreThrow } from 'services/observables/customOperators';
+import { user$ } from 'services/observables/user';
 import {
-  getEthToken,
-  buildWethToken,
-  ropstenImage,
-  ethToken,
-  wethToken,
-  bntToken,
-  getTokenWithoutImage,
-} from 'services/web3/config';
-import {
-  get7DaysAgo,
-  mapIgnoreThrown,
-  sortTokenBalanceAlphabetic,
-} from 'utils/pureFunctions';
-import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
-import { fetchTokenBalances } from './balances';
+  fetchETH,
+  fetchTokenBalanceMulticall,
+} from 'services/web3/token/token';
+import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
-import { isEqual, sortBy, uniqBy } from 'lodash';
-import { APIReward, WelcomeData } from 'services/api/bancor';
-import BigNumber from 'bignumber.js';
+import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
+import { tokenListTokens$ } from 'services/observables/tokenLists';
+import { apiPools$, apiTokens$ } from 'services/observables/apiData';
+import { utils } from 'ethers';
+import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
+import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
+import { isEqual, uniqueId } from 'lodash';
+import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
-import { multicall } from 'services/web3/multicall/multicall';
-import { buildTokenPoolCall } from 'services/web3/swap/market';
-import { findPoolByConverter } from '../../utils/helperFunctions';
 
-export const apiTokens$ = apiData$.pipe(
-  pluck('tokens'),
-  distinctUntilChanged<WelcomeData['tokens']>(isEqual),
-  shareReplay(1)
-);
-
-export interface TokenList {
-  name: string;
+export interface TokenMinimal {
+  address: string;
+  decimals: number;
   logoURI?: string;
-  tokens: Token[];
+  name?: string;
+  symbol: string;
+  balance?: string;
 }
 
-export interface Token {
-  address: string;
-  chainId: EthNetworks;
+export interface Token extends TokenMinimal {
   name: string;
-  symbol: string;
-  decimals: number;
   logoURI: string;
-  usdPrice: string | null;
-  balance: string | null;
-  liquidity: string | null;
-  usd_24h_ago: string | null;
+  usdPrice: string;
+  liquidity: string;
+  usd_24h_ago: string;
   price_change_24: number;
   price_history_7d: { time: UTCTimestamp; value: number }[];
-  usd_volume_24: string | null;
+  usd_volume_24: string;
   isProtected: boolean;
 }
 
-export interface Reserve {
-  address: string;
-  weight: string;
-  balance: string;
-  symbol: string;
-  logoURI: string;
-  rewardApr?: number;
-  decimals: number;
-  usdPrice: number | string | null;
-}
-
-export interface Pool {
+export interface TokenList {
+  id: string;
   name: string;
-  pool_dlt_id: string;
-  converter_dlt_id: string;
-  reserves: Reserve[];
-  liquidity: number;
-  volume_24h: number;
-  fees_24h: number;
-  fee: number;
-  version: number;
-  supply: number;
-  decimals: number;
-  apr: number;
-  reward?: APIReward;
-  isProtected: boolean;
-  isV3: boolean;
+  logoURI?: string;
+  tokens: TokenMinimal[];
 }
 
-export interface PoolToken {
-  bnt: {
-    token: Reserve;
-    amount: string;
+export const buildTokenObject = (
+  apiToken: APIToken,
+  apiPools: APIPool[],
+  minMintingBalance: string,
+  balances?: Map<string, string>,
+  tlToken?: TokenMinimal
+): Token => {
+  const pool = apiPools.find((p) =>
+    p.reserves.find((r) => r.address === apiToken.dlt_id)
+  );
+
+  // Set balance; if user is NOT logged in set null
+  const balance = balances
+    ? utils
+        .formatUnits(balances.get(apiToken.dlt_id) ?? '0', apiToken.decimals)
+        .toString()
+    : undefined;
+
+  // Get fallback token and set image and name
+  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const name = tlToken?.name ?? apiToken.symbol;
+
+  const price_change_24 =
+    calculatePercentageChange(
+      Number(apiToken.rate.usd),
+      Number(apiToken.rate_24h_ago.usd)
+    ) || 0;
+
+  const seven_days_ago = get7DaysAgo().getUTCSeconds();
+  const price_history_7d = apiToken.rates_7d
+    .filter((x) => !!x)
+    .map((x, i) => ({
+      value: Number(x),
+      time: (seven_days_ago + i * 360) as UTCTimestamp,
+    }));
+
+  const usd_volume_24 = pool ? pool.volume_24h.usd : null;
+  const bntReserve = pool
+    ? pool.reserves.find((r) => r.address === bntToken)
+    : 0;
+  const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
+    bntReserve ? bntReserve.balance : 0
+  );
+  const isWhitelisted = pool ? pool.isWhitelisted : false;
+  const isProtected = sufficientMintingBalance && isWhitelisted;
+
+  return {
+    name,
+    logoURI,
+    balance,
+    address: apiToken.dlt_id,
+    decimals: apiToken.decimals,
+    symbol: apiToken.symbol,
+    liquidity: apiToken.liquidity.usd ?? '0',
+    usdPrice: apiToken.rate.usd ?? '0',
+    usd_24h_ago: apiToken.rate_24h_ago.usd ?? '0',
+    price_change_24,
+    price_history_7d,
+    usd_volume_24: usd_volume_24 ?? '0',
+    isProtected,
   };
-  tkn: {
-    token: Reserve;
-    amount: string;
-  };
-  amount: string;
-  value: string;
-  poolDecimals: number;
-  converter: string;
-  poolName: string;
-  version: number;
-}
+};
 
-export const listOfLists = [
-  {
-    uri: 'https://tokens.1inch.eth.link',
-    name: '1inch',
-  },
-  {
-    uri: 'https://tokens.coingecko.com/ethereum/all.json',
-    name: 'CoinGecko',
-  },
-  {
-    uri: 'https://tokenlist.zerion.eth.link',
-    name: 'Zerion',
-  },
-  {
-    uri: 'https://zapper.fi/api/token-list',
-    name: 'Zapper Token List',
-  },
-  {
-    uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
-    name: 'Compound',
-  },
-  {
-    uri: 'https://yearn.science/static/tokenlist.json',
-    name: 'Yearn',
-  },
-  {
-    uri: 'https://uniswap.mycryptoapi.com',
-    name: 'MyCrypto Token List',
-  },
-  {
-    uri: 'https://tokenlist.aave.eth.link',
-    name: 'Aave Token List',
-  },
-  {
-    uri: 'https://defiprime.com/defiprime.tokenlist.json',
-    name: 'Defiprime',
-  },
-];
+const userBalancesReceiver$ = new BehaviorSubject<string>(uniqueId());
 
-export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
+export const updateUserBalances = async () => {
+  await userBalancesReceiver$.next(uniqueId());
+};
 
-export const tokenLists$ = from(
-  mapIgnoreThrown(listOfLists, async (list) => {
-    const res = await axios.get<TokenList>(list.uri, { timeout: 10000 });
-    return {
-      ...res.data,
-      logoURI: getLogoByURI(res.data.logoURI),
-    };
-  })
-).pipe(shareReplay(1));
-
-export const tokenListMerged$ = combineLatest([
-  userPreferredListIds$,
-  tokenLists$,
+export const userBalancesInWei$ = combineLatest([
+  apiTokens$,
+  user$,
+  userBalancesReceiver$,
 ]).pipe(
-  switchMapIgnoreThrow(
-    async ([userPreferredListIds, tokenLists]): Promise<Token[]> => {
-      const filteredTokenLists = tokenLists.filter((list) =>
-        userPreferredListIds.some((id) => id === list.name)
-      );
-      const merged = filteredTokenLists
-        .flatMap((list) => list.tokens)
-        .filter((token) => !!token.address)
-        .map((token) => ({
-          ...token,
-          address: utils.getAddress(token.address),
-        }));
-      return uniqBy(merged, (x) => x.address);
+  switchMapIgnoreThrow(async ([apiTokens, user]) => {
+    if (!user) {
+      return undefined;
     }
-  ),
+    // get balances for tokens other than ETH
+    const balances = await fetchTokenBalanceMulticall(
+      apiTokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
+      user
+    );
+    // get balance for ETH
+    balances.set(ethToken, await fetchETH(user));
+    return balances;
+  }),
+  distinctUntilChanged<Map<string, string> | undefined>(isEqual),
   shareReplay(1)
 );
 
-export const minNetworkTokenLiquidityForMinting$ = combineLatest([
+const minNetworkTokenLiquidityForMinting$ = combineLatest([
   settingsContractAddress$,
 ]).pipe(
   switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
@@ -198,291 +155,81 @@ export const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const tokensNoBalance$ = combineLatest([
-  tokenListMerged$,
+export const tokensNew$ = combineLatest([
   apiTokens$,
-  correctedPools$,
-  currentNetwork$,
+  apiPools$,
+  tokenListTokens$,
+  userBalancesInWei$,
   minNetworkTokenLiquidityForMinting$,
 ]).pipe(
-  map(([tokenList, apiTokens, pools, currentNetwork, minMintingBalance]) => {
-    const newApiTokens = [...apiTokens, buildWethToken(apiTokens)].map((x) => {
-      const usdPrice = x.rate.usd;
-      const price_24h = x.rate_24h_ago.usd;
-      const priceChanged =
-        usdPrice && price_24h && Number(price_24h) !== 0
-          ? calculatePercentageChange(Number(usdPrice), Number(price_24h))
-          : 0;
-      const pool = pools.find((p) =>
-        p.reserves.find((r) => r.address === x.dlt_id)
+  switchMapIgnoreThrow(
+    async ([
+      apiTokens,
+      apiPools,
+      tokenListTokens,
+      balances,
+      minMintingBalance,
+    ]) => {
+      const userPreferredTokenListTokensMap = new Map(
+        tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      const usdVolume24 = pool ? pool.volume_24h.usd : null;
-
-      const bntReserve = pool
-        ? pool.reserves.find((r) => r.address === bntToken(currentNetwork))
-        : 0;
-      const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
-        bntReserve ? bntReserve.balance : 0
-      );
-      const isWhitelisted = pool ? pool.isWhitelisted : false;
-      const isProtected = sufficientMintingBalance && isWhitelisted;
-
-      const seven_days_ago = get7DaysAgo().getUTCSeconds();
-      return {
-        address: x.dlt_id,
-        symbol: x.symbol,
-        decimals: x.decimals,
-        usdPrice,
-        liquidity: x.liquidity.usd,
-        usd_24h_ago: price_24h,
-        price_change_24: priceChanged,
-        price_history_7d: x.rates_7d
-          .filter((x) => !!x)
-          .map((x, i) => ({
-            value: Number(x),
-            time: (seven_days_ago + i * 360) as UTCTimestamp,
-          })),
-        usd_volume_24: usdVolume24,
-        isProtected,
-      };
-    });
-
-    let overlappingTokens: Token[] = [];
-    const eth = getEthToken(apiTokens, pools);
-    if (eth) overlappingTokens.push(eth);
-
-    newApiTokens.forEach((apiToken) => {
-      if (currentNetwork === EthNetworks.Mainnet) {
-        const found = tokenList.find(
-          (userToken) => userToken && userToken.address === apiToken.address
-        );
-        if (found) {
-          overlappingTokens.push({
-            ...found,
-            ...apiToken,
-            logoURI: getTokenLogoURI(found),
-          });
-        }
-      } else {
-        if (apiToken.address !== ethToken && apiToken.address !== wethToken)
-          overlappingTokens.push({
-            chainId: EthNetworks.Ropsten,
-            name: apiToken.symbol,
-            logoURI: ropstenImage,
-            balance: null,
-            ...apiToken,
-          });
-      }
-    });
-
-    return overlappingTokens;
-  }),
+      return apiTokens
+        .map((apiToken) => {
+          const tokenListToken = userPreferredTokenListTokensMap.get(
+            apiToken.dlt_id
+          );
+          if (!tokenListToken) {
+            return undefined;
+          }
+          return buildTokenObject(
+            apiToken,
+            apiPools,
+            minMintingBalance,
+            balances,
+            tokenListToken
+          );
+        })
+        .filter((token) => !!token) as Token[];
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
   shareReplay(1)
 );
 
-export const tokens$ = combineLatest([user$, tokensNoBalance$]).pipe(
-  switchMapIgnoreThrow(async ([user, tokensNoBalance]) => {
-    if (user && tokensNoBalance) {
-      setLoadingBalances(true);
-      const updatedTokens = await fetchTokenBalances(tokensNoBalance, user);
-      setLoadingBalances(false);
-      if (updatedTokens.length !== 0)
-        return updatedTokens.sort(sortTokenBalanceAlphabetic);
+export const allTokensNew$ = combineLatest([
+  apiTokens$,
+  apiPools$,
+  tokenListTokens$,
+  userBalancesInWei$,
+  minNetworkTokenLiquidityForMinting$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([
+      apiTokens,
+      apiPools,
+      tokenListTokens,
+      balances,
+      minMintingBalance,
+    ]) => {
+      const allTokenListTokensMap = new Map(
+        tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
+      );
+      return apiTokens.map((apiToken) => {
+        const tokenListToken = allTokenListTokensMap.get(apiToken.dlt_id);
+        return buildTokenObject(
+          apiToken,
+          apiPools,
+          minMintingBalance,
+          balances,
+          tokenListToken
+        );
+      });
     }
-
-    return tokensNoBalance;
-  }),
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
   shareReplay(1)
 );
 
 export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
   shareReplay(1)
-);
-
-const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
-
-export const getTokenLogoURI = (token: Token) =>
-  token.logoURI
-    ? token.logoURI.startsWith('ipfs')
-      ? buildIpfsUri(token.logoURI.split('//')[1])
-      : token.logoURI
-    : `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`;
-
-const getLogoByURI = (uri: string | undefined) =>
-  uri && uri.startsWith('ipfs') ? buildIpfsUri(uri.split('//')[1]) : uri;
-
-export const pools$ = combineLatest([
-  correctedPools$,
-  tokens$,
-  apiTokens$,
-  minNetworkTokenLiquidityForMinting$,
-  currentNetwork$,
-]).pipe(
-  switchMapIgnoreThrow(
-    async ([pools, tokens, apiTokens, minMintingBalance, currentNetwork]) => {
-      const tokensMap = new Map(tokens.map((t) => [t.address, t]));
-
-      const apiTokensMap = new Map(
-        apiTokens.map((t) => [t.dlt_id, getTokenWithoutImage(t)])
-      );
-
-      const newPools: (Pool | null)[] = pools.map((pool) => {
-        let apr = 0;
-        const liquidity = Number(pool.liquidity.usd ?? 0);
-        const fees_24h = Number(pool.fees_24h.usd ?? 0);
-        if (liquidity && fees_24h) {
-          apr = new BigNumber(fees_24h)
-            .times(365)
-            .div(liquidity)
-            .times(100)
-            .toNumber();
-        }
-
-        const reserveOne = pool.reserves[0];
-        const reserveTwo = pool.reserves[1];
-
-        const reserveTokenOne =
-          tokensMap.get(reserveOne.address) ??
-          apiTokensMap.get(reserveOne.address);
-
-        if (!reserveTokenOne) return null;
-
-        const reserveTokenTwo =
-          tokensMap.get(reserveTwo.address) ??
-          apiTokensMap.get(reserveTwo.address);
-
-        if (!reserveTokenTwo) return null;
-
-        const reserves: Reserve[] = [
-          {
-            ...reserveOne,
-            rewardApr: Number(reserveOne.apr) / 10000,
-            symbol: reserveTokenOne.symbol,
-            logoURI:
-              currentNetwork === EthNetworks.Mainnet
-                ? getTokenLogoURI(reserveTokenOne)
-                : ropstenImage,
-            decimals: reserveTokenOne.decimals,
-            usdPrice: reserveTokenOne.usdPrice,
-          },
-          {
-            ...reserveTwo,
-            rewardApr: Number(reserveTwo.apr) / 10000,
-            symbol: reserveTokenTwo.symbol,
-            logoURI:
-              currentNetwork === EthNetworks.Mainnet
-                ? getTokenLogoURI(reserveTokenTwo)
-                : ropstenImage,
-            decimals: reserveTokenTwo.decimals,
-            usdPrice: reserveTokenTwo.usdPrice,
-          },
-        ];
-
-        const bntReserve = reserves.find((r) => r.symbol === 'BNT');
-        const sufficientMintingBalance = new BigNumber(minMintingBalance).lt(
-          bntReserve ? bntReserve.balance : 0
-        );
-        const isProtected = sufficientMintingBalance && pool.isWhitelisted;
-
-        return {
-          ...pool,
-          reserves: sortBy(reserves, [(o) => o.symbol === 'BNT']),
-          liquidity,
-          volume_24h: Number(pool.volume_24h.usd ?? 0),
-          fees_24h,
-          fee: Number(pool.fee) / 10000,
-          supply: Number(pool.supply),
-          apr,
-          isProtected,
-          isV3: false,
-        };
-      });
-
-      return newPools.filter((x) => !!x) as Pool[];
-    }
-  ),
-  shareReplay(1)
-);
-
-export const poolTokens$ = combineLatest([
-  pools$,
-  partialPoolTokens$,
-  apiData$,
-]).pipe(
-  switchMapIgnoreThrow(async ([pools, partialPoolTokens, apiData]) => {
-    const res = await Promise.all<PoolToken | null>(
-      partialPoolTokens.map(async (poolToken) => {
-        const pool = findPoolByConverter(
-          poolToken.converter,
-          pools,
-          apiData.pools
-        );
-        if (!pool) {
-          return null;
-        }
-        const tkn = pool.reserves[0];
-        const bnt = pool.reserves[1];
-
-        const amount = shrinkToken(poolToken.balance, pool.decimals);
-        const percent = new BigNumber(amount).div(
-          shrinkToken(poolToken.totalSupply, pool.decimals)
-        );
-
-        const balances = await multicall(
-          pool.reserves.map((x) =>
-            buildTokenPoolCall(pool.converter_dlt_id, x.address)
-          )
-        );
-        if (!balances) {
-          return null;
-        }
-        const tknBalanceWei = new BigNumber(balances[0].toString());
-        const bntBalanceWei = new BigNumber(balances[1].toString());
-
-        const tknAmount = percent.times(
-          shrinkToken(tknBalanceWei, pool.decimals)
-        );
-        const bntAmount = percent.times(
-          shrinkToken(bntBalanceWei, pool.decimals)
-        );
-
-        const value = tknAmount
-          // @ts-ignore
-          .times(Number(tkn.usdPrice || 0))
-          // @ts-ignore
-          .plus(bntAmount.times(Number(bnt.usdPrice || 0)))
-          .toString();
-
-        return {
-          bnt: {
-            token: {
-              symbol: 'BNT',
-              logoURI: ropstenImage,
-              usdPrice: '0',
-              decimals: 0,
-              ...bnt,
-            },
-            amount: bntAmount.toString(),
-          },
-          tkn: {
-            token: {
-              symbol: pool.name.replace('/BNT', ''),
-              logoURI: ropstenImage,
-              usdPrice: '0',
-              decimals: 0,
-              ...tkn,
-            },
-            amount: tknAmount.toString(),
-          },
-          amount,
-          value: value,
-          poolDecimals: pool.decimals,
-          converter: poolToken.converter,
-          poolName: pool.name,
-          version: pool.version,
-        };
-      })
-    );
-    return res.filter((x) => !!x);
-  })
 );

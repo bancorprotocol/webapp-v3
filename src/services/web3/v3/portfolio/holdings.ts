@@ -3,13 +3,14 @@ import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 import { HoldingRaw } from 'redux/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
 import { multicall } from 'services/web3/multicall/multicall';
+import { bntToken } from 'services/web3/config';
 
 const fetchPoolTokenIdsMulticall = async (
   ids: string[]
 ): Promise<Map<string, string>> => {
   const calls = ids.map((id) => ({
-    contractAddress: ContractsApi.PoolCollection.read.address,
-    interface: ContractsApi.PoolCollection.read.interface,
+    contractAddress: ContractsApi.BancorNetworkInfo.read.address,
+    interface: ContractsApi.BancorNetworkInfo.read.interface,
     methodName: 'poolToken',
     methodParameters: [id],
   }));
@@ -60,10 +61,11 @@ export const fetchPortfolioV3Holdings = async (
   }
 
   try {
-    const poolIds = await ContractsApi.BancorNetwork.read.liquidityPools();
+    const liquidityPools =
+      await ContractsApi.BancorNetwork.read.liquidityPools();
+    const poolIds = [...liquidityPools, bntToken];
     const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
     const poolTokenIds = Array.from(poolTokenIdsMap.values());
-
     const poolTokenBalancesMap = await fetchTokenBalanceMulticall(
       poolTokenIds,
       user

@@ -5,6 +5,7 @@ import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3With
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { bntToken, getNetworkVariables } from 'services/web3/config';
 
 interface Props {
   amount: AmountTknFiat;
@@ -23,20 +24,33 @@ const V3WithdrawStep3 = ({
 }: Props) => {
   const { token, poolTokenId } = holdingToWithdraw;
 
-  const approveToken = useMemo(
-    () => ({
-      amount: amount.tkn,
-      token: {
-        ...token,
-        address: poolTokenId,
-        symbol: `bn${token.symbol}`,
+  const approveTokens = useMemo(() => {
+    const tokensToApprove = [
+      {
+        amount: amount.tkn,
+        token: {
+          ...token,
+          address: poolTokenId,
+          symbol: `bn${token.symbol}`,
+        },
       },
-    }),
-    [amount.tkn, poolTokenId, token]
-  );
+    ];
+    if (token.address === bntToken) {
+      tokensToApprove.push({
+        amount: amount.tkn,
+        token: {
+          ...token,
+          address: getNetworkVariables().govToken,
+          symbol: `vBNT`,
+        },
+      });
+    }
+
+    return tokensToApprove;
+  }, [amount.tkn, poolTokenId, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
-    [approveToken],
+    approveTokens,
     initWithdraw,
     ContractsApi.BancorNetwork.contractAddress
   );

@@ -1,11 +1,12 @@
 import { Token } from 'services/observables/tokens';
 import { useMemo } from 'react';
 import { Image } from 'components/image/Image';
+import { TokenMinimal } from 'services/observables/tokens';
 
 interface SuggestedTokensProps {
-  allTokens: Token[];
+  allTokens: (Token | TokenMinimal)[];
   suggestedTokens: string[];
-  onClick: (token: Token) => void;
+  onClick: (token: Token | TokenMinimal) => void;
 }
 
 export const SuggestedTokens = ({

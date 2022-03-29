@@ -2,11 +2,11 @@ import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { useAppSelector } from 'redux/index';
-import { PoolToken } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { PoolTokensCellActions } from './PoolTokensCellActions';
 import { PoolTokensCellName } from './PoolTokensCellName';
 import { PoolTokensCellReserve } from './PoolTokensCellReserve';
+import { PoolToken } from 'services/observables/pools';
 
 export const PoolTokensTable = () => {
   const [search, setSearch] = useState('');

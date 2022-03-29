@@ -6,7 +6,7 @@ import {
   NotificationType,
 } from 'redux/notification/notification';
 import { take } from 'rxjs/operators';
-import { Token, tokens$ } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
@@ -22,6 +22,7 @@ import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
 import { exchangeProxy$ } from 'services/observables/contracts';
+import { tokensNew$ } from 'services/observables/tokens';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -177,7 +178,7 @@ export const getOrders = async (currentUser: string): Promise<LimitOrder[]> => {
 const orderResToLimit = async (
   orders: OrderResponse[]
 ): Promise<LimitOrder[]> => {
-  const tokens = await tokens$.pipe(take(1)).toPromise();
+  const tokens = await tokensNew$.pipe(take(1)).toPromise();
 
   return orders.map((res) => {
     const payToken =

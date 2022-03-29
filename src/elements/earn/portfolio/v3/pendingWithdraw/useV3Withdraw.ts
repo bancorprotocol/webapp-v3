@@ -64,9 +64,11 @@ export const useV3Withdraw = () => {
 
   const withdraw = useCallback(async () => {
     // TODO: finish this flow
+    console.log('selected: ', selected);
     const res = await ContractsApi.BancorNetwork.write.withdraw(selected!.id);
     console.log(res);
-  }, [selected]);
+    await updatePortfolioData(dispatch, account!);
+  }, [account, dispatch, selected]);
 
   return {
     withdrawalRequests,
