@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'redux/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
 import {
   addLiquidityFailedNotification,
@@ -13,6 +13,7 @@ import { useCallback } from 'react';
 import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'redux/index';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

@@ -1,4 +1,4 @@
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityEmptyStep1 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep1';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { useNavigation } from 'services/router';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

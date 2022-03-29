@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useAppSelector } from 'redux/index';
 import { getTokenById } from 'redux/bancor/bancor';
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
@@ -15,8 +15,6 @@ import {
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
-import { EthNetworks } from 'services/web3/types';
-import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
 import { useDebounce } from 'hooks/useDebounce';
 import BigNumber from 'bignumber.js';
@@ -28,7 +26,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'redux/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
-import { wait } from '../../../../utils/pureFunctions';
+import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
 import {
   ConversionEvents,
@@ -37,7 +35,8 @@ import {
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from '../../../../services/api/googleTagManager';
+} from 'services/api/googleTagManager';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -51,7 +50,6 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const dispatch = useDispatch();
-  const { chainId } = useWeb3React();
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
@@ -68,15 +66,12 @@ export const WithdrawLiquidityWidget = ({
   const [breakdown, setBreakdown] = useState<
     { tkn: number; bnt: number } | undefined
   >();
-  const gov = getNetworkVariables(
-    chainId ? chainId : EthNetworks.Mainnet
-  ).govToken;
+  const gov = getNetworkVariables().govToken;
   const govToken = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, gov)
   );
-  const bnt = bntToken(chainId ?? EthNetworks.Mainnet);
 
-  const withdrawingBNT = reserveToken.address === bnt;
+  const withdrawingBNT = reserveToken.address === bntToken;
   const protectionNotReached = currentCoveragePercent !== 1;
   const multiplierWillReset = true;
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
@@ -85,7 +80,7 @@ export const WithdrawLiquidityWidget = ({
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const showVBNTWarning = useCallback(() => {
-    if (token && token.address !== bnt) {
+    if (token && token.address !== bntToken) {
       return false;
     }
     if (!amount) {
@@ -99,7 +94,6 @@ export const WithdrawLiquidityWidget = ({
       .gt(govTokenBalance);
   }, [
     amount,
-    bnt,
     govToken,
     protectedPosition.initialStake.tknAmount,
     tknAmount,
@@ -188,7 +182,7 @@ export const WithdrawLiquidityWidget = ({
       .toString();
     setCurrentLiquidity(
       'Withdraw Single',
-      chainId,
+      1,
       pool.name,
       token!.symbol,
       amount,
@@ -205,7 +199,6 @@ export const WithdrawLiquidityWidget = ({
     } else withdraw();
   }, [
     amount,
-    chainId,
     fiatToggle,
     onStart,
     pool.name,

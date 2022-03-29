@@ -86,13 +86,8 @@ export const NotificationContent = ({
     }
   };
 
-  const { chainId } = useWeb3React();
   const etherscanUrl = () => {
-    const currentNetwork =
-      chainId === EthNetworks.Ropsten
-        ? EthNetworks.Ropsten
-        : EthNetworks.Mainnet;
-    const baseUrl = getNetworkVariables(currentNetwork).etherscanUrl;
+    const baseUrl = getNetworkVariables().etherscanUrl;
     return `${baseUrl}/tx/${txHash}`;
   };
 

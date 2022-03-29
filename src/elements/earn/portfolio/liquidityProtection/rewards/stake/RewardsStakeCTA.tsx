@@ -1,4 +1,3 @@
-import { Pool } from 'services/observables/tokens';
 import {
   stakePoolLevelRewards,
   stakeRewards,
@@ -23,6 +22,7 @@ import {
 import { useAppSelector } from 'redux/index';
 import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

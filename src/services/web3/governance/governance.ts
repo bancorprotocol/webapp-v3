@@ -1,17 +1,16 @@
-import { take } from 'rxjs/operators';
-import { networkVars$ } from 'services/observables/network';
 import { Token } from 'services/observables/tokens';
 import { shrinkToken, expandToken } from 'utils/formulas';
 import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';
 import dayjs from 'utils/dayjs';
+import { getNetworkVariables } from 'services/web3/config';
 
 export const getStakedAmount = async (
   user: string,
   govToken: Token
 ): Promise<string> => {
-  const networkVars = await networkVars$.pipe(take(1)).toPromise();
+  const networkVars = getNetworkVariables();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3.provider
@@ -31,7 +30,7 @@ export const stakeAmount = async (
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
 
-    const networkVars = await networkVars$.pipe(take(1)).toPromise();
+    const networkVars = getNetworkVariables();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3.signer
@@ -58,7 +57,7 @@ export const unstakeAmount = async (
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
 
-    const networkVars = await networkVars$.pipe(take(1)).toPromise();
+    const networkVars = getNetworkVariables();
     const govContract = Governance__factory.connect(
       networkVars.governanceContractAddress,
       writeWeb3.signer
@@ -76,7 +75,7 @@ export const unstakeAmount = async (
 
 export const getUnstakeTimer = async (user: string) => {
   const now = dayjs().unix() * 1000;
-  const networkVars = await networkVars$.pipe(take(1)).toPromise();
+  const networkVars = getNetworkVariables();
   const govContract = Governance__factory.connect(
     networkVars.governanceContractAddress,
     web3.provider

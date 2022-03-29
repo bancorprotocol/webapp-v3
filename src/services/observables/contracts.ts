@@ -1,5 +1,4 @@
 import { switchMapIgnoreThrow } from './customOperators';
-import { currentNetwork$, networkVars$ } from './network';
 import {
   distinctUntilChanged,
   map,
@@ -16,13 +15,12 @@ import {
   LiquidityProtection__factory,
 } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
-import { EthNetworkVariables } from 'services/web3/config';
+import { getNetworkVariables } from 'services/web3/config';
 import { multicall } from 'services/web3/multicall/multicall';
+import { user$ } from 'services/observables/user';
 
-const zeroXContracts$ = currentNetwork$.pipe(
-  switchMapIgnoreThrow(async (currentNetwork) =>
-    getContractAddressesForChainOrThrow(currentNetwork as number)
-  )
+const zeroXContracts$ = user$.pipe(
+  switchMapIgnoreThrow(async () => getContractAddressesForChainOrThrow(1))
 );
 
 export const exchangeProxy$ = zeroXContracts$.pipe(
@@ -31,16 +29,13 @@ export const exchangeProxy$ = zeroXContracts$.pipe(
   shareReplay(1)
 );
 
-export const contractAddresses$ = networkVars$.pipe(
-  switchMapIgnoreThrow((networkVariables) =>
-    fetchContractAddresses(networkVariables)
-  ),
+export const contractAddresses$ = user$.pipe(
+  switchMapIgnoreThrow(() => fetchContractAddresses()),
   distinctUntilChanged<RegisteredContracts>(isEqual),
   shareReplay(1)
 );
-const fetchContractAddresses = async (
-  networkVariables: EthNetworkVariables
-): Promise<RegisteredContracts> => {
+const fetchContractAddresses = async (): Promise<RegisteredContracts> => {
+  const networkVariables = getNetworkVariables();
   const contract = ContractRegistry__factory.connect(
     networkVariables.contractRegistry,
     web3.provider

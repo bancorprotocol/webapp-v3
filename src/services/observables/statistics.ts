@@ -1,8 +1,9 @@
 import { combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { apiData$ } from 'services/observables/pools';
 import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
+import { apiData$ } from 'services/observables/apiData';
+import { bntToken } from 'services/web3/config';
 
 export interface Statistic {
   label: string;
@@ -38,11 +39,10 @@ export const statistics$ = combineLatest([apiData$]).pipe(
       .minus(100)
       .toNumber();
 
-    const bntAddress = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
     const bntSupply: string = apiData.bnt_supply;
     const totalBntStaked: number = apiData.pools.reduce((acc, item) => {
       const bntReserve = item.reserves.find(
-        (reserve) => reserve.address.toLowerCase() === bntAddress.toLowerCase()
+        (reserve) => reserve.address === bntToken
       );
       if (!bntReserve) return acc;
       return Number(bntReserve.balance) + acc;
