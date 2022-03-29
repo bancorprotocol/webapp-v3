@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from 'redux/index';
-import { Pool, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { createPool } from 'services/web3/liquidity/liquidity';
-import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 import { EthNetworks } from 'services/web3/types';
-import { getNetworkVariables, ropstenTokens } from 'services/web3/config';
+import { getNetworkVariables } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
 import { InputField } from 'components/inputField/InputField';
 import { Modal } from 'components/modal/Modal';
@@ -18,14 +17,10 @@ import {
   rejectNotification,
   setFeeNotification,
 } from 'services/notifications/notifications';
-import {
-  Button,
-  ButtonSize,
-  ButtonVariant,
-} from '../../components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { Pool } from 'services/observables/pools';
 
 export const ModalCreatePool = () => {
-  const { chainId } = useWeb3React();
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
@@ -46,7 +41,7 @@ export const ModalCreatePool = () => {
     await createPool(
       token,
       (Number(fee) / 100).toString(),
-      chainId ? chainId : EthNetworks.Mainnet,
+      EthNetworks.Mainnet,
       () => poolExistNotification(dispatch),
       (txHash: string) => poolCreateNotification(dispatch, txHash),
       (txHash: string) => ownershipNotification(dispatch, txHash),
@@ -59,11 +54,9 @@ export const ModalCreatePool = () => {
   };
 
   useEffect(() => {
-    const networkVars = getNetworkVariables(
-      chainId ? chainId : EthNetworks.Mainnet
-    );
+    const networkVars = getNetworkVariables();
     setBNT(tokens.find((x) => x.address === networkVars.bntToken));
-  }, [tokens, chainId]);
+  }, [tokens]);
 
   const errorText = useCallback(() => {
     if (
@@ -104,9 +97,7 @@ export const ModalCreatePool = () => {
               <SelectToken
                 label="Second Token"
                 token={token}
-                tokens={
-                  chainId === EthNetworks.Ropsten ? ropstenTokens : allTokens
-                }
+                tokens={allTokens}
                 setToken={setToken}
                 selectable
                 startEmpty

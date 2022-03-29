@@ -7,7 +7,7 @@ import {
   settingsContractAddress$,
   systemStoreAddress$,
 } from 'services/observables/contracts';
-import { Pool, PoolToken, Token } from 'services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
 import {
   calculateBntNeededToOpenSpace,
@@ -31,6 +31,7 @@ import {
   ConversionEvents,
   sendLiquidityEvent,
 } from '../../api/googleTagManager';
+import { Pool, PoolToken } from 'services/observables/pools';
 
 export const createPool = async (
   token: Token,
@@ -53,7 +54,7 @@ export const createPool = async (
       writeWeb3.signer
     );
 
-    const reserves = [bntToken(network), token.address];
+    const reserves = [bntToken, token.address];
     const weights = ['500000', '500000'];
 
     const poolAddress = await regContract.getLiquidityPoolByConfig(
@@ -115,7 +116,7 @@ export const addLiquidity = async (
 
     const value = tkn.address === ethToken ? tknWei : undefined;
 
-    sendLiquidityEvent(ConversionEvents.wallet_req);
+    // sendLiquidityEvent(ConversionEvents.wallet_req);
 
     const estimate = await contract.estimateGas.addLiquidity(
       [bnt.address, tkn.address],
@@ -132,7 +133,7 @@ export const addLiquidity = async (
       { value, gasLimit }
     );
 
-    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    // sendLiquidityEvent(ConversionEvents.wallet_confirm);
 
     onHash(tx.hash);
 

@@ -1,4 +1,3 @@
-import { Pool } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { RewardsStakeCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/stake/RewardsStakeCTA';
@@ -6,6 +5,7 @@ import { RewardsStakeSpaceAvailable } from 'elements/earn/portfolio/liquidityPro
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useNavigation } from 'services/router';
+import { Pool } from 'services/observables/pools';
 
 interface Props {
   pool: Pool;

@@ -4,12 +4,13 @@ import { SearchableTokenList } from 'components/searchableTokenList/SearchableTo
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Image } from 'components/image/Image';
+import { TokenMinimal } from 'services/observables/tokens';
 
 interface SelectTokenProps {
   label?: string;
   selectable?: boolean;
   token?: Token | null;
-  tokens?: Token[];
+  tokens?: (Token | TokenMinimal)[];
   setToken?: Function;
   startEmpty?: boolean;
   excludedTokens?: string[];

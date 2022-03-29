@@ -1,8 +1,7 @@
 import { Token__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3/index';
 import { BigNumber } from 'ethers';
-import { buildTokenBalanceCall } from 'services/observables/balances';
-import { multicall } from 'services/web3/multicall/multicall';
+import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 
 export const fetchTokenSupply = async (
   tokenAddress: string,
@@ -37,3 +36,31 @@ export const fetchTokenBalanceMulticall = async (
     })
   );
 };
+
+export const buildTokenBalanceCall = (
+  address: string,
+  user: string
+): MultiCall => {
+  const contract = Token__factory.connect(address, web3.provider);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'balanceOf',
+    methodParameters: [user],
+  };
+};
+
+export const buildTokenTotalSupplyCall = (address: string): MultiCall => {
+  const contract = Token__factory.connect(address, web3.provider);
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'totalSupply',
+    methodParameters: [],
+  };
+};
+
+export const fetchETH = async (user: string) =>
+  (await web3.provider.getBalance(user)).toString();

@@ -4,7 +4,6 @@ import {
   removeLiquidityNotification,
   removeLiquidityNotificationFailed,
 } from 'services/notifications/notifications';
-import { PoolToken } from 'services/observables/tokens';
 import { removeLiquidity } from 'services/web3/liquidity/liquidity';
 import {
   ConversionEvents,
@@ -12,8 +11,9 @@ import {
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from '../../../../../services/api/googleTagManager';
+} from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
+import { PoolToken } from 'services/observables/pools';
 
 export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();
