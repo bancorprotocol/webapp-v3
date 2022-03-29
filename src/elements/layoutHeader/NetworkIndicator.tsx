@@ -1,18 +1,39 @@
 import { EthNetworks } from 'services/web3/types';
 import { getNetworkName } from 'utils/helperFunctions';
-import { useWeb3React } from '@web3-react/core';
-import { useState } from 'react';
-import { isMainNetFork } from 'services/web3/config';
-import { getProvider, setProvider } from 'services/web3';
+import { AbstractConnector } from '@web3-react/abstract-connector';
+import {
+  getProvider,
+  setForkSinger,
+  setProvider,
+  setSigner,
+} from 'services/web3';
+import { useAppSelector } from 'redux/index';
+import { Web3Provider } from '@ethersproject/providers';
+import { useDispatch } from 'react-redux';
+import { setIsFork } from 'redux/user/user';
 
-export const NetworkIndicator = () => {
-  const [isFork, setIsFork] = useState(isMainNetFork);
+export const NetworkIndicator = ({
+  connector,
+}: {
+  connector?: AbstractConnector;
+}) => {
+  const isFork = useAppSelector<boolean>((state) => state.user.isFork);
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
+  const dispatch = useDispatch();
 
   return (
     <button
-      onClick={() => {
-        setIsFork(!isFork);
+      onClick={async () => {
+        dispatch(setIsFork(!isFork));
         setProvider(getProvider(EthNetworks.Mainnet, !isFork));
+
+        if (isFork && connector)
+          setSigner(
+            new Web3Provider(await connector.getProvider()).getSigner()
+          );
+        else if (account) setForkSinger(account);
       }}
       className="flex items-center h-[35px] px-20 text-12 rounded-full bg-fog border border-graphite text-charcoal dark:text-white text-opacity-50 dark:text-opacity-50 dark:border-grey dark:bg-black"
     >

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
 import { setAutoLoginLS } from 'utils/localStorage';
-import { setSigner } from 'services/web3';
+import { setForkSinger, setSigner } from 'services/web3';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
@@ -35,6 +35,7 @@ export const useWalletConnect = (): UseWalletConnect => {
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
+  const isFork = useAppSelector<boolean>((state) => state.user.isFork);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo>();
@@ -81,10 +82,12 @@ export const useWalletConnect = (): UseWalletConnect => {
           await activate(connector, undefined, true);
           setIsOpen(false);
           setAutoLoginLS(true);
-          setSigner(
-            new Web3Provider(await connector.getProvider()).getSigner()
-          );
           const account = await connector.getAccount();
+          if (isFork && account) setForkSinger(account);
+          else
+            setSigner(
+              new Web3Provider(await connector.getProvider()).getSigner()
+            );
           sendWalletEvent(
             WalletEvents.connect,
             undefined,
@@ -98,7 +101,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           setIsError(true);
         }
     },
-    [activate, setIsOpen]
+    [activate, setIsOpen, isFork]
   );
 
   const handleDisconnect = useCallback(() => {
