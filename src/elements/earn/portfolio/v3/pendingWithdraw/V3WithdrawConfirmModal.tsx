@@ -90,7 +90,7 @@ export const V3WithdrawConfirmModal = memo(
         setIsOpen={onModalClose}
         large
       >
-        <div className="p-30 space-y-20">
+        <div className="p-20 md:p-30 space-y-20">
           <div className="pb-10">
             <div className="text-12 font-semibold mb-10">Amount</div>
             <div className="flex items-center">

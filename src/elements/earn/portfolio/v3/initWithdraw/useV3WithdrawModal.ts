@@ -56,9 +56,14 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
   const initWithdraw = async () => {
     setTxBusy(true);
     try {
+      const inputAmountInPoolToken =
+        await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+          holding.poolId,
+          utils.parseUnits(amount.tkn, holding.token.decimals)
+        );
       const res = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
-        utils.parseUnits(amount.tkn, holding.token.decimals)
+        inputAmountInPoolToken
       );
       await res.wait();
       setStep(4);

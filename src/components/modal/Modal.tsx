@@ -36,7 +36,7 @@ export const Modal = ({
           className="fixed inset-0 z-50"
           onClose={() => (onClose ? onClose() : setIsOpen(false))}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div className="min-h-screen px-10 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -68,7 +68,7 @@ export const Modal = ({
                   large ? 'max-w-[485px]' : 'max-w-[380px]'
                 } overflow-hidden align-middle transition-all transform rounded-40 bg-white dark:bg-charcoal text-left`}
               >
-                <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30">
+                <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30 mb-20">
                   {showBackButton && (
                     <button
                       onClick={() => onBackClick && onBackClick()}
@@ -86,7 +86,7 @@ export const Modal = ({
                     <IconTimes className="w-14" />
                   </button>
                 </Dialog.Title>
-                <div>
+                <div className="max-h-[80vh] overflow-scroll">
                   {separator && <hr className="widget-separator m-0" />}
                   {children}
                 </div>
