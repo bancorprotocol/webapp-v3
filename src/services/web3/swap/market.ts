@@ -314,7 +314,7 @@ const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
     await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
       fromToken.address,
       toToken.address,
-      utils.parseEther(amount)
+      utils.parseUnits(amount, fromToken.decimals)
     );
   return utils.formatUnits(res, fromToken.decimals);
 };
