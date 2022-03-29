@@ -1,9 +1,19 @@
 import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { wait } from 'utils/pureFunctions';
 import { Modal } from 'components/modal/Modal';
-import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button } from 'components/button/Button';
+import { ProgressBar } from 'components/progressBar/ProgressBar';
+import useAsyncEffect from 'use-async-effect';
+import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
+import { bntToken, getNetworkVariables } from 'services/web3/config';
+import { useAppSelector } from 'redux/index';
+import { Token } from 'services/observables/tokens';
+import { getTokenById } from 'redux/bancor/bancor';
+import BigNumber from 'bignumber.js';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { Image } from 'components/image/Image';
+import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 
 interface Props {
   isModalOpen: boolean;
@@ -21,8 +31,39 @@ export const V3WithdrawConfirmModal = memo(
     withdraw,
     openCancelModal,
   }: Props) => {
+    const [outputBreakdown, setOutputBreakdown] = useState({
+      tkn: 0,
+      bnt: 0,
+    });
     const [txBusy, setTxBusy] = useState(false);
     const { token, reserveTokenAmount } = withdrawRequest;
+    const govToken = useAppSelector<Token | undefined>((state: any) =>
+      getTokenById(state, getNetworkVariables().govToken)
+    );
+    const isBntToken = useMemo(() => token.address === bntToken, [token]);
+
+    const missingGovTokenBalance = useMemo(() => {
+      if (!isBntToken) {
+        return 0;
+      }
+      return new BigNumber(reserveTokenAmount)
+        .minus(govToken?.balance || 0)
+        .toNumber();
+    }, [govToken?.balance, isBntToken, reserveTokenAmount]);
+
+    useAsyncEffect(async () => {
+      if (!isModalOpen) {
+        return;
+      }
+
+      const res = await fetchWithdrawalRequestOutputBreakdown(withdrawRequest);
+      setOutputBreakdown(res);
+    }, [withdrawRequest, isModalOpen]);
+
+    const onModalClose = useCallback(() => {
+      setIsModalOpen(false);
+      setOutputBreakdown({ tkn: 0, bnt: 0 });
+    }, [setIsModalOpen]);
 
     const handleCTAClick = useCallback(async () => {
       setTxBusy(true);
@@ -31,41 +72,137 @@ export const V3WithdrawConfirmModal = memo(
       } catch (e) {
         console.error(e);
       } finally {
-        setIsModalOpen(false);
+        onModalClose();
         setTxBusy(false);
       }
-    }, [setIsModalOpen, withdraw]);
+    }, [onModalClose, withdraw]);
 
     const handleCancelClick = useCallback(async () => {
-      setIsModalOpen(false);
+      onModalClose();
       await wait(400);
       openCancelModal(withdrawRequest);
-    }, [openCancelModal, setIsModalOpen, withdrawRequest]);
+    }, [onModalClose, openCancelModal, withdrawRequest]);
 
     return (
       <Modal
-        title="Confirm Withdraw"
+        title="Withdraw"
         isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
+        setIsOpen={onModalClose}
+        large
       >
-        <div className="p-20 space-y-20">
-          <TokenBalance
-            symbol={token.symbol}
-            amount={reserveTokenAmount}
-            usdPrice={token.usdPrice ?? '0'}
-            imgUrl={token.logoURI}
-          />
-          <Button
-            variant={ButtonVariant.SECONDARY}
-            onClick={handleCancelClick}
-            className="w-full"
-            disabled={txBusy}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleCTAClick} className="w-full" disabled={txBusy}>
-            Confirm Withdrawal
-          </Button>
+        <div className="p-30 space-y-20">
+          <div className="pb-10">
+            <div className="text-12 font-semibold mb-10">Amount</div>
+            <div className="flex items-center">
+              <Image
+                alt={'Token Logo'}
+                className="w-40 h-40 rounded-full mr-10"
+                src={token.logoURI}
+              />
+              <div className="flex justify-between items-center w-full">
+                <div className="flex items-center">
+                  <div className="text-[36px]">
+                    {prettifyNumber(withdrawRequest.reserveTokenAmount)}
+                  </div>
+                  <span className="ml-10">{token.symbol}</span>
+                </div>
+
+                <div className="text-secondary">
+                  {prettifyNumber(
+                    new BigNumber(withdrawRequest.reserveTokenAmount)
+                      .times(token.usdPrice)
+                      .toString(),
+                    true
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {outputBreakdown.bnt > 0 && !isBntToken && (
+            <div>
+              <div className="text-12 font-semibold">Output Breakdown</div>
+              <ProgressBar
+                percentage={outputBreakdown.tkn}
+                className="text-primary"
+              />
+              <div className="flex justify-between">
+                <div className="text-primary">
+                  {outputBreakdown.tkn.toFixed(2)}% {token.symbol}
+                </div>
+                <div className="text-secondary">
+                  {outputBreakdown.bnt.toFixed(2)}% BNT
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="bg-fog p-20 rounded space-y-20">
+            <h3 className="text-20">Cancel withdrawal and earn more!</h3>
+
+            <div className="flex space-x-10">
+              <div>
+                <IconCheck className="text-green-500 w-18 h-18" />
+              </div>
+              <div>
+                <h4 className="text-14 font-semibold">
+                  Claim cooldown rewards
+                </h4>
+                <p>
+                  Your tokens kept growing at a ??% rate after cooldown, if you
+                  don’t withdraw you will keep those earnings.
+                </p>
+              </div>
+            </div>
+            <div className="flex space-x-10">
+              <div>
+                <IconCheck className="text-green-500 w-18 h-18" />
+              </div>
+              <div>
+                <h4 className="text-14 font-semibold">Earn 24%</h4>
+                <p>
+                  Keep your eth earning from trading fees and rewards. Thats
+                  over $1000 earnings Auto-compounding for 5 years*
+                </p>
+              </div>
+            </div>
+            <div className="flex space-x-10">
+              <div>
+                <IconCheck className="text-green-500 w-18 h-18" />
+              </div>
+              <div>
+                <h4 className="text-14 font-semibold">Stay 100% protected</h4>
+                <p>
+                  From the first seconed you will earn with full protection and
+                  no risk from Impermanent loss
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleCancelClick}
+              className="text-primary text-16 font-semibold"
+            >
+              Cancel withdrawal and earn {'->'}
+            </button>
+          </div>
+
+          {missingGovTokenBalance > 0 ? (
+            <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
+              <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
+              <br />
+              To proceed, add {prettifyNumber(missingGovTokenBalance)}{' '}
+              {govToken?.symbol} to your wallet.
+            </div>
+          ) : (
+            <Button
+              onClick={handleCTAClick}
+              className="w-full"
+              disabled={txBusy || missingGovTokenBalance > 0}
+            >
+              Confirm Withdrawal
+            </Button>
+          )}
         </div>
       </Modal>
     );
