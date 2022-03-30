@@ -1,6 +1,7 @@
 import { ReactComponent as IconLock } from '../../assets/icons/lock.svg';
 import { Modal } from 'components/modal/Modal';
 import { Token } from 'services/observables/tokens';
+import { Button } from 'components/button/Button';
 
 interface Props {
   isOpen: boolean;
@@ -20,8 +21,8 @@ export const ModalApproveNew = ({
   isLoading,
 }: Props) => {
   return (
-    <Modal title={'Swap'} setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div className="p-10">
+    <Modal title={'Set Allowance'} setIsOpen={setIsOpen} isOpen={isOpen}>
+      <div className="px-30 py-10">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
             <IconLock className="w-[22px] text-white" />
@@ -30,13 +31,13 @@ export const ModalApproveNew = ({
           <p className="text-center text-graphite">
             Before you can proceed, you need to approve {token.symbol} spending.
           </p>
-          <button
+          <Button
             onClick={() => setApproval()}
-            className={'btn-primary w-full my-15'}
+            className={'w-full my-15'}
             disabled={isLoading}
           >
             {isLoading ? 'waiting for confirmation' : 'Approve'}
-          </button>
+          </Button>
           <p className="text-center text-graphite">
             Want to approve before each transaction?
           </p>
