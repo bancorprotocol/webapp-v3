@@ -39,7 +39,7 @@ const V3WithdrawStep3 = ({
     ];
     if (token.address === bntToken) {
       tokensToApprove.push({
-        amount: amount.tkn,
+        amount: holdingToWithdraw.poolTokenBalance,
         token: {
           ...token,
           address: getNetworkVariables().govToken,

@@ -38,7 +38,7 @@ export const V3WithdrawConfirmModal = memo(
       bnt: 0,
     });
     const [txBusy, setTxBusy] = useState(false);
-    const { token, reserveTokenAmount } = withdrawRequest;
+    const { token, reserveTokenAmount, poolTokenAmount } = withdrawRequest;
     const govToken = useAppSelector<Token | undefined>((state: any) =>
       getTokenById(state, getNetworkVariables().govToken)
     );
@@ -48,10 +48,10 @@ export const V3WithdrawConfirmModal = memo(
       if (!isBntToken) {
         return 0;
       }
-      return new BigNumber(reserveTokenAmount)
+      return new BigNumber(poolTokenAmount)
         .minus(govToken?.balance || 0)
         .toNumber();
-    }, [govToken?.balance, isBntToken, reserveTokenAmount]);
+    }, [govToken?.balance, isBntToken, poolTokenAmount]);
 
     useAsyncEffect(async () => {
       if (!isModalOpen) {
@@ -89,7 +89,7 @@ export const V3WithdrawConfirmModal = memo(
       const tokensToApprove = [];
       if (token.address === bntToken) {
         tokensToApprove.push({
-          amount: reserveTokenAmount,
+          amount: poolTokenAmount,
           token: {
             ...token,
             address: govToken?.address ?? '',
