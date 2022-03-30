@@ -135,7 +135,6 @@ export const sendConversionSuccessEvent = (
     event_properties: {
       ...currentConversion,
       conversion_market_token_rate: fromTokenPrice,
-      transaction_category: 'Conversion',
       transaction_hash,
     },
     ga_event: {
@@ -329,7 +328,6 @@ export const sendLiquiditySuccessEvent = (transaction_hash: string) => {
     event_properties: {
       ...currentLiquidity,
       transaction_hash,
-      transaction_category: 'Liquidity',
     },
     ga_event: {
       category: 'Liquidity',
