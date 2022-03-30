@@ -28,8 +28,8 @@ const V3WithdrawStep3 = ({
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
-        // TODO - use bnTKN for approval
-        amount: amount.tkn,
+        // TODO - use bnTKN for approval based on input amount
+        amount: holdingToWithdraw.poolTokenBalance,
         token: {
           ...token,
           address: poolTokenId,
@@ -49,7 +49,7 @@ const V3WithdrawStep3 = ({
     }
 
     return tokensToApprove;
-  }, [amount.tkn, poolTokenId, token]);
+  }, [amount.tkn, holdingToWithdraw.poolTokenBalance, poolTokenId, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
