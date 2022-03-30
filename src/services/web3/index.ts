@@ -67,14 +67,13 @@ export const setProvider = (
   web3.provider = provider;
 };
 
-export const setSigner = (signer: providers.JsonRpcSigner) => {
-  writeWeb3.signer = signer;
-};
-
-export const setForkSinger = (account: string) => {
-  setSigner(
-    new providers.JsonRpcProvider(
+export const setSigner = (
+  signer?: providers.JsonRpcSigner,
+  account?: string | null
+) => {
+  if (account)
+    writeWeb3.signer = new providers.JsonRpcProvider(
       process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
-    ).getUncheckedSigner(account)
-  );
+    ).getUncheckedSigner(account);
+  else if (signer) writeWeb3.signer = signer;
 };

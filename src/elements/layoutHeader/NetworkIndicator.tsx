@@ -1,12 +1,7 @@
 import { EthNetworks } from 'services/web3/types';
 import { getNetworkName } from 'utils/helperFunctions';
 import { AbstractConnector } from '@web3-react/abstract-connector';
-import {
-  getProvider,
-  setForkSinger,
-  setProvider,
-  setSigner,
-} from 'services/web3';
+import { getProvider, setProvider, setSigner } from 'services/web3';
 import { useAppSelector } from 'redux/index';
 import { Web3Provider } from '@ethersproject/providers';
 import { useDispatch } from 'react-redux';
@@ -33,7 +28,7 @@ export const NetworkIndicator = ({
           setSigner(
             new Web3Provider(await connector.getProvider()).getSigner()
           );
-        else if (account) setForkSinger(account);
+        else setSigner(undefined, account);
       }}
       className="flex items-center h-[35px] px-20 text-12 rounded-full bg-fog border border-graphite text-charcoal dark:text-white text-opacity-50 dark:text-opacity-50 dark:border-grey dark:bg-black"
     >
