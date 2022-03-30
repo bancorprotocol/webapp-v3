@@ -28,6 +28,7 @@ const V3WithdrawStep3 = ({
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
+        // TODO - use bnTKN for approval
         amount: amount.tkn,
         token: {
           ...token,
@@ -73,6 +74,7 @@ const V3WithdrawStep3 = ({
         <div className="flex justify-center space-x-20 mt-20">
           {approveTokens.map((t) => (
             <ResetApproval
+              key={t.token.address}
               spenderContract={ContractsApi.BancorNetwork.contractAddress}
               tokenContract={t.token.address}
               tokenSymbol={t.token.symbol}

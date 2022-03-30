@@ -14,6 +14,8 @@ import BigNumber from 'bignumber.js';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
+import { useApproveModal } from 'hooks/useApproveModal';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 interface Props {
   isModalOpen: boolean;
@@ -83,6 +85,28 @@ export const V3WithdrawConfirmModal = memo(
       openCancelModal(withdrawRequest);
     }, [onModalClose, openCancelModal, withdrawRequest]);
 
+    const approveTokens = useMemo(() => {
+      const tokensToApprove = [];
+      if (token.address === bntToken) {
+        tokensToApprove.push({
+          amount: reserveTokenAmount,
+          token: {
+            ...token,
+            address: govToken?.address ?? '',
+            symbol: govToken?.symbol ?? 'vBNT',
+          },
+        });
+      }
+
+      return tokensToApprove;
+    }, [govToken?.address, govToken?.symbol, reserveTokenAmount, token]);
+
+    const [onStart, ModalApprove] = useApproveModal(
+      approveTokens,
+      handleCTAClick,
+      ContractsApi.BancorNetwork.contractAddress
+    );
+
     return (
       <Modal
         title="Withdraw"
@@ -91,6 +115,7 @@ export const V3WithdrawConfirmModal = memo(
         large
       >
         <div className="p-20 md:p-30 space-y-20">
+          {ModalApprove}
           <div className="pb-10">
             <div className="text-12 font-semibold mb-10">Amount</div>
             <div className="flex items-center">
@@ -191,12 +216,12 @@ export const V3WithdrawConfirmModal = memo(
             <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
               <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
               <br />
-              To proceed, add {prettifyNumber(missingGovTokenBalance)}{' '}
-              {govToken?.symbol} to your wallet.
+              To proceed, add {missingGovTokenBalance} {govToken?.symbol} to
+              your wallet.
             </div>
           ) : (
             <Button
-              onClick={handleCTAClick}
+              onClick={() => onStart()}
               className="w-full"
               disabled={txBusy || missingGovTokenBalance > 0}
             >
