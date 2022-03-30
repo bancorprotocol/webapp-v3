@@ -146,3 +146,13 @@ const getApprovalAddress = async (
       return getNetworkVariables().governanceContractAddress;
   }
 };
+
+export const resetApproval = async (
+  contract: string,
+  user: string,
+  token: string
+): Promise<void> => {
+  const tokenContract = Token__factory.connect(token, writeWeb3.signer);
+  const tx = await tokenContract.approve(contract, '0');
+  await tx.wait();
+};
