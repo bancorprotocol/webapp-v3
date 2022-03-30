@@ -12,7 +12,7 @@ import { pools, portfolio, swap, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
 import { useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
-import { isMainNetFork } from 'services/web3/config';
+import { isForkAvailable } from 'services/web3/config';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -48,7 +48,9 @@ export const LayoutHeader = () => {
             <NavLink to={portfolio} exact strict>
               Portfolio
             </NavLink>
-            {isMainNetFork && <NetworkIndicator />}
+            {isForkAvailable && (
+              <NetworkIndicator connector={wallet.selectedWallet?.connector} />
+            )}
           </div>
           <div className="md:hidden">
             <NavLink to={pools}>
