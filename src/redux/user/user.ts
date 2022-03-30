@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { isForkAvailable } from 'services/web3/config';
 import {
   getShowBannerLS,
   setDarkModeLS,
@@ -16,6 +17,7 @@ export interface UserState {
   locale: string;
   loadingBalances: boolean;
   showBanner: boolean;
+  isFork: boolean;
 }
 
 export const initialState: UserState = {
@@ -27,6 +29,7 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   showBanner: getShowBannerLS() !== false,
+  isFork: isForkAvailable,
 };
 
 const userSlice = createSlice({
@@ -66,6 +69,9 @@ const userSlice = createSlice({
       setShowBannerLS(action.payload);
       state.showBanner = action.payload;
     },
+    setIsFork: (state, action) => {
+      state.isFork = action.payload;
+    },
   },
 });
 
@@ -78,6 +84,7 @@ export const {
   setUsdToggle,
   setLoadingBalances,
   setShowBanner,
+  setIsFork,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

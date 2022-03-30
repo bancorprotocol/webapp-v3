@@ -30,7 +30,6 @@ import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
-import { isMainNetFork } from 'services/web3/config';
 import { setUser } from 'services/observables/user';
 
 export const App = () => {
