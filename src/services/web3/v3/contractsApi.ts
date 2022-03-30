@@ -25,12 +25,42 @@ import {
 class BancorV1Contract<T> {
   constructor(contractAddress: string, contractFactory: any) {
     this.contractAddress = contractAddress;
-    this.read = contractFactory.connect(contractAddress, web3.provider);
-    this.write = contractFactory.connect(contractAddress, writeWeb3.signer);
+    this._contractFactory = contractFactory;
+    this._read = contractFactory.connect(contractAddress, web3.provider);
+    this._write = contractFactory.connect(contractAddress, writeWeb3.signer);
   }
+
   public readonly contractAddress: string;
-  public readonly read: T;
-  public readonly write: T;
+
+  private readonly _contractFactory: any;
+  private _lastProvider = web3.provider;
+  private _lastSigner = writeWeb3.signer;
+  private _read: T;
+  private _write: T;
+
+  get read(): T {
+    if (this._lastProvider === web3.provider) {
+      return this._read;
+    }
+    this._lastProvider = web3.provider;
+    this._read = this._contractFactory.connect(
+      this.contractAddress,
+      web3.provider
+    );
+    return this._read;
+  }
+
+  get write(): T {
+    if (this._lastSigner === writeWeb3.signer) {
+      return this._write;
+    }
+    this._lastSigner = writeWeb3.signer;
+    this._write = this._contractFactory.connect(
+      this.contractAddress,
+      writeWeb3.signer
+    );
+    return this._write;
+  }
 }
 
 export abstract class ContractsApi {
