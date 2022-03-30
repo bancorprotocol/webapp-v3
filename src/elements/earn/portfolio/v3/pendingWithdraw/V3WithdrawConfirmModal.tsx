@@ -38,7 +38,7 @@ export const V3WithdrawConfirmModal = memo(
       bnt: 0,
     });
     const [txBusy, setTxBusy] = useState(false);
-    const { token, reserveTokenAmount, poolTokenAmount } = withdrawRequest;
+    const { token, poolTokenAmount } = withdrawRequest;
     const govToken = useAppSelector<Token | undefined>((state: any) =>
       getTokenById(state, getNetworkVariables().govToken)
     );
@@ -99,7 +99,7 @@ export const V3WithdrawConfirmModal = memo(
       }
 
       return tokensToApprove;
-    }, [govToken?.address, govToken?.symbol, reserveTokenAmount, token]);
+    }, [govToken?.address, govToken?.symbol, poolTokenAmount, token]);
 
     const [onStart, ModalApprove] = useApproveModal(
       approveTokens,

@@ -49,7 +49,7 @@ const V3WithdrawStep3 = ({
     }
 
     return tokensToApprove;
-  }, [amount.tkn, holdingToWithdraw.poolTokenBalance, poolTokenId, token]);
+  }, [holdingToWithdraw.poolTokenBalance, poolTokenId, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
