@@ -2,9 +2,8 @@ import { resetApproval } from 'services/web3/approval';
 import { useAppSelector } from 'redux/index';
 import { useMemo, useState } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { Token__factory } from 'services/web3/abis/types';
-import { web3 } from 'services/web3';
 import useAsyncEffect from 'use-async-effect';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 interface Props {
   spenderContract: string;
@@ -43,8 +42,10 @@ export const ResetApproval = ({
       return;
     }
 
-    const contract = Token__factory.connect(tokenContract, web3.provider);
-    const allowanceWei = await contract.allowance(account, spenderContract);
+    const allowanceWei = await ContractsApi.Token(tokenContract).read.allowance(
+      account,
+      spenderContract
+    );
     setCurrentApproval(allowanceWei.toString());
   };
 

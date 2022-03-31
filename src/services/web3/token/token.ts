@@ -1,22 +1,13 @@
-import { Token__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3/index';
 import { BigNumber } from 'ethers';
 import { MultiCall, multicall } from 'services/web3/multicall/multicall';
-
-export const fetchTokenSupply = async (
-  tokenAddress: string,
-  blockHeight?: number
-) => {
-  const contract = Token__factory.connect(tokenAddress, web3.provider);
-  return contract.totalSupply({ blockTag: blockHeight });
-};
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const fetchTokenBalance = async (
   tokenId: string,
   user: string
 ): Promise<BigNumber> => {
-  const contract = Token__factory.connect(tokenId, web3.provider);
-  return await contract.balanceOf(user);
+  return await ContractsApi.Token(tokenId).read.balanceOf(user);
 };
 
 export const fetchTokenBalanceMulticall = async (
@@ -41,7 +32,7 @@ export const buildTokenBalanceCall = (
   address: string,
   user: string
 ): MultiCall => {
-  const contract = Token__factory.connect(address, web3.provider);
+  const contract = ContractsApi.Token(address).read;
 
   return {
     contractAddress: contract.address,
@@ -52,7 +43,7 @@ export const buildTokenBalanceCall = (
 };
 
 export const buildTokenTotalSupplyCall = (address: string): MultiCall => {
-  const contract = Token__factory.connect(address, web3.provider);
+  const contract = ContractsApi.Token(address).read;
 
   return {
     contractAddress: contract.address,

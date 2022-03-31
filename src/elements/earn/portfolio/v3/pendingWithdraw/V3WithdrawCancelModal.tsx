@@ -2,9 +2,7 @@ import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
 import { memo, useCallback, useState } from 'react';
 import { Modal } from 'components/modal/Modal';
 import { Button } from 'components/button/Button';
-import { Image } from 'components/image/Image';
-import { prettifyNumber } from 'utils/helperFunctions';
-import BigNumber from 'bignumber.js';
+import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 
 interface Props {
   isModalOpen: boolean;
@@ -38,33 +36,12 @@ export const V3WithdrawCancelModal = memo(
         large
       >
         <div className="p-10 md:p-30 space-y-20">
-          <div className="pb-10">
-            <div className="text-12 font-semibold mb-10">Amount</div>
-            <div className="flex items-center">
-              <Image
-                alt={'Token Logo'}
-                className="w-40 h-40 rounded-full mr-10"
-                src={token.logoURI}
-              />
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center">
-                  <div className="text-[36px]">
-                    {prettifyNumber(withdrawRequest.reserveTokenAmount)}
-                  </div>
-                  <span className="ml-10">{token.symbol}</span>
-                </div>
-
-                <div className="text-secondary">
-                  {prettifyNumber(
-                    new BigNumber(withdrawRequest.reserveTokenAmount)
-                      .times(token.usdPrice)
-                      .toString(),
-                    true
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          <TokenBalanceLarge
+            symbol={token.symbol}
+            amount={withdrawRequest.reserveTokenAmount}
+            usdPrice={token.usdPrice}
+            logoURI={token.logoURI}
+          />
 
           <div className="bg-fog rounded p-20 flex justify-between">
             <div>
