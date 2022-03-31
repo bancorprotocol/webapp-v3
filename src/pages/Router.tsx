@@ -8,12 +8,12 @@ import {
   portfolioRewardsClaim,
   portfolioRewardsStake,
   portfolioRewardsStakeByID,
-  portfolioWelcome,
   privacyPolicy,
   swap,
   tokens,
   tos,
   vote,
+  welcome,
 } from 'services/router';
 import { AddLiquidity } from './earn/pools/AddLiquidity';
 import { Pools } from './earn/pools/Pools';
@@ -43,7 +43,7 @@ export const Router = () => {
   return (
     <Switch>
       <Route exact path="/">
-        <Redirect to={swap} />
+        <Redirect to={portfolio} />
       </Route>
       <Route exact strict path={swap} component={Swap} />
       <Route
@@ -77,12 +77,7 @@ export const Router = () => {
       <Route exact path={legacyPortfolio}>
         <Redirect to={portfolio} />
       </Route>
-      <Route
-        exact
-        strict
-        path={portfolioWelcome}
-        component={PortfolioWelcome}
-      />
+      <Route exact strict path={welcome} component={PortfolioWelcome} />
       <Route
         exact
         strict
