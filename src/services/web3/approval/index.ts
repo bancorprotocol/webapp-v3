@@ -1,5 +1,4 @@
 import { Token } from 'services/observables/tokens';
-import { web3, writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
 import {
   bancorNetwork$,
@@ -14,7 +13,7 @@ import {
 } from 'services/web3/approval/constants';
 import { ethToken, getNetworkVariables } from 'services/web3/config';
 import { expandToken } from 'utils/formulas';
-import { Token__factory } from '../abis/types';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 interface GetApprovalReturn {
   allowanceWei: string;
@@ -37,9 +36,8 @@ const getApproval = async (
   if (token === ethToken)
     return { allowanceWei: '', isApprovalRequired: false };
 
-  const tokenContract = Token__factory.connect(token, web3.provider);
   const allowanceWei = (
-    await tokenContract.allowance(user, spender)
+    await ContractsApi.Token(token).read.allowance(user, spender)
   ).toString();
 
   const isApprovalRequired = new BigNumber(amountWei).gt(
@@ -58,8 +56,6 @@ const setApproval = async (
   const isEth = token === ethToken;
   if (isEth) return '';
 
-  const tokenContract = Token__factory.connect(token, writeWeb3.signer);
-
   const amountFinal = amountWei ? amountWei : UNLIMITED_WEI;
 
   const isNullApprovalContract = NULL_APPROVAL_CONTRACTS.includes(token);
@@ -72,13 +68,16 @@ const setApproval = async (
       amountFinal
     );
     if (Number(allowanceWei) !== 0) {
-      const tx = await tokenContract.approve(spender, '0');
+      const tx = await ContractsApi.Token(token).write.approve(spender, '0');
       await tx.wait();
     }
   }
 
   try {
-    const tx = await tokenContract.approve(spender, amountFinal);
+    const tx = await ContractsApi.Token(token).write.approve(
+      spender,
+      amountFinal
+    );
     if (!resolveImmediately) await tx.wait();
     return tx.hash;
   } catch (e: any) {
@@ -145,4 +144,13 @@ const getApprovalAddress = async (
     case ApprovalContract.Governance:
       return getNetworkVariables().governanceContractAddress;
   }
+};
+
+export const resetApproval = async (
+  contract: string,
+  user: string,
+  token: string
+): Promise<void> => {
+  const tx = await ContractsApi.Token(token).write.approve(contract, '0');
+  await tx.wait();
 };

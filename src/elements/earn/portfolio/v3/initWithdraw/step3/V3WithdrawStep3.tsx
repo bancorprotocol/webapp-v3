@@ -6,6 +6,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
+import { ResetApproval } from 'components/resetApproval/ResetApproval';
 
 interface Props {
   amount: AmountTknFiat;
@@ -27,7 +28,8 @@ const V3WithdrawStep3 = ({
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
-        amount: amount.tkn,
+        // TODO - use bnTKN for approval based on input amount
+        amount: holdingToWithdraw.poolTokenBalance,
         token: {
           ...token,
           address: poolTokenId,
@@ -37,7 +39,7 @@ const V3WithdrawStep3 = ({
     ];
     if (token.address === bntToken) {
       tokensToApprove.push({
-        amount: amount.tkn,
+        amount: holdingToWithdraw.poolTokenBalance,
         token: {
           ...token,
           address: getNetworkVariables().govToken,
@@ -47,7 +49,7 @@ const V3WithdrawStep3 = ({
     }
 
     return tokensToApprove;
-  }, [amount.tkn, poolTokenId, token]);
+  }, [holdingToWithdraw.poolTokenBalance, poolTokenId, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
@@ -59,7 +61,7 @@ const V3WithdrawStep3 = ({
     <>
       <div className="text-center">
         <h1 className="text-[36px] font-normal my-50">
-          Start {lockDurationInDays} day cooldown of{' '}
+          Start {lockDurationInDays.toFixed(4)} day cooldown of{' '}
           <span className="text-primary">
             {prettifyNumber(amount.tkn)} {token.symbol}
           </span>
@@ -68,6 +70,16 @@ const V3WithdrawStep3 = ({
           <Button className="px-50" onClick={() => onStart()} disabled={txBusy}>
             {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
           </Button>
+        </div>
+        <div className="flex justify-center space-x-20 mt-20">
+          {approveTokens.map((t) => (
+            <ResetApproval
+              key={t.token.address}
+              spenderContract={ContractsApi.BancorNetwork.contractAddress}
+              tokenContract={t.token.address}
+              tokenSymbol={t.token.symbol}
+            />
+          ))}
         </div>
       </div>
       {ModalApprove}

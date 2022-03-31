@@ -18,7 +18,7 @@ export const WithdrawItem = memo(
     const dateNow = useDateNow();
     const { token, lockEndsAt } = withdrawalRequest;
     const isLocked = useMemo(
-      () => lockEndsAt - dayjs(dateNow).unix() < 0,
+      () => lockEndsAt - dayjs(dateNow).unix() <= 0,
       [dateNow, lockEndsAt]
     );
 
