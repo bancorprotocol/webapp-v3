@@ -2,11 +2,21 @@ import { ReactComponent as LogoPWelcome } from 'assets/portfolio/portfolioWelcom
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { DynamicText } from 'components/dynamicText/DynamicText';
-import { StarRating } from 'components/rating/Rating.stories';
+import { Rating } from 'components/rating/Rating';
+import { MigrateProtect } from './MigrateProtect';
 
 export const PortfolioWelcome = () => {
+  const migrateProtect = true;
   return (
     <div className="max-w-[1140px] mx-auto">
+      {migrateProtect ? <MigrateProtect /> : <GrowYour />}
+    </div>
+  );
+};
+
+const GrowYour = () => {
+  return (
+    <>
       <div className="grid grid-cols-2 items-center">
         <div>
           <div className="flex text-6xl mb-20">
@@ -35,14 +45,10 @@ export const PortfolioWelcome = () => {
           </div>
         </div>
         <div>
-          <StarRating
-            className="w-[80px] h-20"
-            starCount={5}
-            percentage={100}
-          />
+          <Rating className="w-[80px] h-20" starCount={5} percentage={100} />
           <div className="text-graphite">Trusted by over 1M+ users</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
