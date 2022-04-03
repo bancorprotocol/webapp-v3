@@ -1,4 +1,5 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { useAppSelector } from 'redux/index';
 import {
   addLiquidity,
   addLiquidityByID,
@@ -40,6 +41,9 @@ const legacyVote = '/eth/vote';
 const legacyFiat = '/eth/fiat';
 
 export const Router = () => {
+  const account = useAppSelector((state) => state.user.account);
+
+  const redirectToWelcome = !account;
   return (
     <Switch>
       <Route exact path="/">
@@ -73,11 +77,15 @@ export const Router = () => {
           <Redirect to={addLiquidityByID(props.match.params.id)} />
         )}
       />
-      <Route exact strict path={portfolio} component={Portfolio} />
+      <Route exact strict path={portfolio} component={Portfolio}>
+        {redirectToWelcome && <Redirect to={welcome} />}
+      </Route>
       <Route exact path={legacyPortfolio}>
         <Redirect to={portfolio} />
       </Route>
-      <Route exact strict path={welcome} component={PortfolioWelcome} />
+      <Route exact strict path={welcome} component={PortfolioWelcome}>
+        {!redirectToWelcome && <Redirect to={portfolio} />}
+      </Route>
       <Route
         exact
         strict
