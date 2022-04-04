@@ -11,6 +11,7 @@ import { openWalletModal } from 'redux/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'redux/index';
 import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
+import { WhatsNew } from './WhatsNew';
 
 const V3Portfolio = () => {
   const account = useAppSelector<string | undefined>(
@@ -21,13 +22,20 @@ const V3Portfolio = () => {
   const handleLoginClick = () => {
     dispatch(openWalletModal(true));
   };
+  const hasHoldings = false;
 
   return account ? (
     <div className="grid grid-cols-12 lg:gap-x-[36px]">
       <div className="col-span-12 lg:col-span-12 xl:col-span-8 space-y-20">
-        <V3TotalHoldings />
-        <V3HoldingsStats />
-        <V3EarningTable />
+        {hasHoldings ? (
+          <>
+            <V3TotalHoldings />
+            <V3HoldingsStats />
+            <V3EarningTable />
+          </>
+        ) : (
+          <WhatsNew />
+        )}
         <V3AvailableToStake />
       </div>
       <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-20">
