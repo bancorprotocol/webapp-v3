@@ -45,11 +45,11 @@ export const DepositV3Modal = ({ pool }: Props) => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
       return;
     }
-    console.log(utils.parseUnits(fieldBalance, pool.reserveToken.decimals));
+
     try {
       const res = await ContractsApi.BancorNetwork.write.deposit(
         pool.pool_dlt_id,
-        utils.parseUnits(fieldBalance, pool.reserveToken.decimals)
+        utils.parseUnits(amount, pool.reserveToken.decimals)
       );
       console.log(res);
       setIsOpen(false);
