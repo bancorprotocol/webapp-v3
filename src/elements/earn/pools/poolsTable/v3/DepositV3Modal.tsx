@@ -20,26 +20,13 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
-  const percentages = useMemo(() => [25, 50, 75, 100], []);
-  const [, setSelPercentage] = useState<number>(-1);
 
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
   const depositDisabled = !account || !amount || Number(amount) === 0;
 
-  const fieldBalance = pool.reserveToken.balance
-    ? pool.reserveToken.balance
-    : undefined;
-
-  useEffect(() => {
-    if (amount && fieldBalance) {
-      const percentage = (Number(amount) / Number(fieldBalance)) * 100;
-      setSelPercentage(
-        percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
-      );
-    }
-  }, [amount, pool.reserveToken, percentages, fieldBalance]);
+  const fieldBalance = pool.reserveToken.balance;
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
@@ -87,7 +74,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
               amount={amount}
               setAmount={setAmount}
             />
-            <button
+            <Button
               onClick={() => {
                 setAmount('');
                 setIsOpen(false);
@@ -97,7 +84,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >
               {`Deposit ${pool.name}`}
-            </button>
+            </Button>
             {ApproveModal}
           </div>
         </div>
