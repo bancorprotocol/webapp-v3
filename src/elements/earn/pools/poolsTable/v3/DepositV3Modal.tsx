@@ -1,6 +1,6 @@
 import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
@@ -8,7 +8,9 @@ import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'redux/index';
 import { useApproveModal } from 'hooks/useApproveModal';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
+import { Modal } from 'components/modal/Modal';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 
 interface Props {
   pool: PoolV3;
@@ -17,17 +19,24 @@ interface Props {
 export const DepositV3Modal = ({ pool }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
+  const [amount, setAmount] = useState('');
+
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
+  const depositDisabled = !account || !amount || Number(amount) === 0;
+
+  const fieldBalance = pool.reserveToken.balance;
+
   const deposit = async () => {
-    if (!pool.reserveToken.balance || !account) {
+    if (!pool.reserveToken.balance || !account || !fieldBalance) {
       return;
     }
+
     try {
       const res = await ContractsApi.BancorNetwork.write.deposit(
         pool.pool_dlt_id,
-        utils.parseUnits(pool.reserveToken.balance, pool.reserveToken.decimals)
+        utils.parseUnits(amount, pool.reserveToken.decimals)
       );
       console.log(res);
       setIsOpen(false);
@@ -39,7 +48,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
   };
 
   const [onStart, ApproveModal] = useApproveModal(
-    [{ amount: pool.reserveToken.balance || '0', token: pool.reserveToken }],
+    [{ amount: fieldBalance || '0', token: pool.reserveToken }],
     deposit,
     ContractsApi.BancorNetwork.contractAddress
   );
@@ -47,19 +56,39 @@ export const DepositV3Modal = ({ pool }: Props) => {
   return (
     <>
       <Button onClick={() => setIsOpen(true)}>Deposit</Button>
-      <ModalFullscreenV3
-        title={'Deposit'}
+      <Modal
+        title={'Deposit & Earn'}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
+        titleElement={<SwapSwitch />}
+        separator
+        large
       >
-        <div>
-          <div>deposit {pool.name}</div>
-          <div>{pool.reserveToken.balance}</div>
-          <div className="text-error py-20">TKN5 deposits are disabled!!!!</div>
-          <Button onClick={() => onStart()}>Deposit</Button>
-          {ApproveModal}
+        <div className="p-10">
+          <div className="flex flex-col items-center text-12 mx-20">
+            <div className="text-20 font-semibold mb-10"></div>
+            <TokenInputPercentage
+              label="amount"
+              token={pool.reserveToken}
+              balance={fieldBalance}
+              amount={amount}
+              setAmount={setAmount}
+            />
+            <Button
+              onClick={() => {
+                setAmount('');
+                setIsOpen(false);
+                onStart();
+              }}
+              disabled={depositDisabled}
+              className={`btn-primary rounded w-full mt-30 mb-10`}
+            >
+              {`Deposit ${pool.name}`}
+            </Button>
+            {ApproveModal}
+          </div>
         </div>
-      </ModalFullscreenV3>
+      </Modal>
     </>
   );
 };

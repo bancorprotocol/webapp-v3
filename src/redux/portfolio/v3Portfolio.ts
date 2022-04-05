@@ -11,7 +11,6 @@ import {
 import { RootState } from 'redux/index';
 import { getAllTokensMap } from 'redux/bancor/token';
 import { Token } from 'services/observables/tokens';
-import { mockToken } from 'utils/mocked';
 import { utils } from 'ethers';
 
 export const initialState: V3PortfolioState = {
@@ -64,26 +63,33 @@ export const getPortfolioHoldings = createSelector(
   (state: RootState) => state.v3Portfolio.holdingsRaw,
   (state: RootState) => getAllTokensMap(state),
   (holdingsRaw: HoldingRaw[], allTokensMap: Map<string, Token>): Holding[] => {
-    return holdingsRaw.map((holdingRaw) => {
-      const token = allTokensMap.get(holdingRaw.poolId) ?? mockToken;
-      if (!token) {
-        // TODO: remove mockToken after API data available
-      }
-      const holding: Holding = {
-        poolId: holdingRaw.poolId,
-        poolTokenId: holdingRaw.poolTokenId,
-        poolTokenBalance: utils.formatUnits(
+    return holdingsRaw
+      .map((holdingRaw) => {
+        const token = allTokensMap.get(holdingRaw.poolId);
+        if (!token) {
+          return undefined;
+        }
+
+        const poolTokenBalance = utils.formatUnits(
           holdingRaw.poolTokenBalanceWei,
           token.decimals
-        ),
-        tokenBalance: utils.formatUnits(
+        );
+        const tokenBalance = utils.formatUnits(
           holdingRaw.tokenBalanceWei,
           token.decimals
-        ),
-        token: token,
-      };
-      return holding;
-    });
+        );
+
+        const holding: Holding = {
+          token,
+          poolId: holdingRaw.poolId,
+          poolTokenId: holdingRaw.poolTokenId,
+          poolTokenBalance,
+          tokenBalance,
+        };
+
+        return holding;
+      })
+      .filter((holding) => holding !== undefined) as Holding[];
   }
 );
 
@@ -96,31 +102,34 @@ export const getPortfolioWithdrawalRequests = createSelector(
     withdrawalSettings: WithdrawalSettings,
     allTokensMap: Map<string, Token>
   ): WithdrawalRequest[] => {
-    return withdrawalRequestsRaw.map((requestRaw) => {
-      const token = allTokensMap.get(requestRaw.reserveToken) ?? mockToken;
-      if (!token) {
-        // TODO: remove mockToken after API data available
-      }
+    return withdrawalRequestsRaw
+      .map((requestRaw) => {
+        const token = allTokensMap.get(requestRaw.reserveToken);
+        if (!token) {
+          return undefined;
+        }
 
-      const lockEndsAt = requestRaw.createdAt + withdrawalSettings.lockDuration;
-      const poolTokenAmount = utils.formatUnits(
-        requestRaw.poolTokenAmountWei,
-        token.decimals
-      );
-      const reserveTokenAmount = utils.formatUnits(
-        requestRaw.reserveTokenAmountWei,
-        token.decimals
-      );
+        const lockEndsAt =
+          requestRaw.createdAt + withdrawalSettings.lockDuration;
+        const poolTokenAmount = utils.formatUnits(
+          requestRaw.poolTokenAmountWei,
+          token.decimals
+        );
+        const reserveTokenAmount = utils.formatUnits(
+          requestRaw.reserveTokenAmountWei,
+          token.decimals
+        );
 
-      const request: WithdrawalRequest = {
-        ...requestRaw,
-        lockEndsAt,
-        poolTokenAmount,
-        reserveTokenAmount,
-        token,
-      };
+        const request: WithdrawalRequest = {
+          ...requestRaw,
+          lockEndsAt,
+          poolTokenAmount,
+          reserveTokenAmount,
+          token,
+        };
 
-      return request;
-    });
+        return request;
+      })
+      .filter((request) => request !== undefined) as WithdrawalRequest[];
   }
 );

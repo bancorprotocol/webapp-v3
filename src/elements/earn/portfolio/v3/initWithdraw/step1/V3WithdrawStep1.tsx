@@ -54,7 +54,7 @@ const V3WithdrawStep1 = ({
         onClick={() => setBalance(100)}
         className={`${isInputError ? 'text-error' : 'text-secondary'}`}
       >
-        Available {availableBalance} {token.symbol}
+        Available {prettifyNumber(availableBalance)} {token.symbol}
       </button>
 
       <TokenInputV3

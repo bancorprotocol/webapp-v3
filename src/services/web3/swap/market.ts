@@ -16,10 +16,13 @@ import {
   sendConversionEvent,
 } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
-import { ppmToDec } from 'utils/helperFunctions';
+import { getFutureTime, ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { ContractTransaction, utils } from 'ethers';
+import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
 
 export const getRateAndPriceImapct = async (
@@ -57,18 +60,20 @@ export const getRateAndPriceImapct = async (
     };
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
-    const rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const v3Rate = await getV3Rate(fromToken, toToken, amount);
+    const v2rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const isV3 = Number(v3Rate) >= Number(v2rate);
 
     const priceImpactNum = new BigNumber(1)
-      .minus(new BigNumber(rate).div(amount).div(spotRate.spotPrice))
+      .minus(new BigNumber(v2rate).div(amount).div(spotRate.spotPrice))
       .times(100);
 
     return {
-      rate,
+      rate: isV3 ? v3Rate : v2rate,
       priceImpact: isNaN(priceImpactNum.toNumber())
         ? '0.0000'
         : priceImpactNum.toFixed(4),
-      isV3: false,
+      isV3,
     };
   } catch (error) {
     console.error('Failed fetching rate and price impact: ', error);
@@ -118,6 +123,7 @@ const calculateMinimumReturn = (
 
 export const swap = async (
   isV3: boolean,
+  user: string,
   slippageTolerance: number,
   fromToken: Token,
   toToken: Token,
@@ -129,41 +135,16 @@ export const swap = async (
   failed: (error: string) => void
 ) => {
   try {
-    const fromIsEth = fromToken.address === ethToken;
-    const networkContractAddress = await bancorNetwork$
-      .pipe(take(1))
-      .toPromise();
-
-    const contract = BancorNetwork__factory.connect(
-      networkContractAddress,
-      writeWeb3.signer
-    );
-
-    const fromWei = expandToken(fromAmount, fromToken.decimals);
-    const expectedToWei = expandToken(toAmount, toToken.decimals);
-    const path = await findPath(fromToken.address, toToken.address);
-
     sendConversionEvent(ConversionEvents.wallet_req);
 
-    const estimate = await contract.estimateGas.convertByPath(
-      path,
-      fromWei,
-      calculateMinimumReturn(expectedToWei, slippageTolerance),
-      zeroAddress,
-      zeroAddress,
-      0,
-      { value: fromIsEth ? fromWei : undefined }
-    );
-    const gasLimit = changeGas(estimate.toString());
-
-    const tx = await contract.convertByPath(
-      path,
-      fromWei,
-      calculateMinimumReturn(expectedToWei, slippageTolerance),
-      zeroAddress,
-      zeroAddress,
-      0,
-      { value: fromIsEth ? fromWei : undefined, gasLimit }
+    const tx = await executeSwapTx(
+      isV3,
+      user,
+      slippageTolerance,
+      fromToken,
+      toToken,
+      fromAmount,
+      toAmount
     );
 
     sendConversionEvent(ConversionEvents.wallet_confirm);
@@ -177,6 +158,62 @@ export const swap = async (
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
   }
+};
+
+const executeSwapTx = async (
+  isV3: boolean,
+  user: string,
+  slippageTolerance: number,
+  fromToken: Token,
+  toToken: Token,
+  fromAmount: string,
+  toAmount: string
+) => {
+  if (isV3)
+    return await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
+      fromToken.address,
+      toToken.address,
+      utils.parseUnits(fromAmount, fromToken.decimals),
+      calculateMinimumReturn(
+        utils.parseUnits(toAmount, toToken.decimals).toString(),
+        slippageTolerance
+      ),
+      getFutureTime(dayjs.duration({ days: 7 })),
+      user
+    );
+
+  const fromIsEth = fromToken.address === ethToken;
+  const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
+
+  const contract = BancorNetwork__factory.connect(
+    networkContractAddress,
+    writeWeb3.signer
+  );
+
+  const fromWei = expandToken(fromAmount, fromToken.decimals);
+  const expectedToWei = expandToken(toAmount, toToken.decimals);
+  const path = await findPath(fromToken.address, toToken.address);
+
+  const estimate = await contract.estimateGas.convertByPath(
+    path,
+    fromWei,
+    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    zeroAddress,
+    zeroAddress,
+    0,
+    { value: fromIsEth ? fromWei : undefined }
+  );
+  const gasLimit = changeGas(estimate.toString());
+
+  return await contract.convertByPath(
+    path,
+    fromWei,
+    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    zeroAddress,
+    zeroAddress,
+    0,
+    { value: fromIsEth ? fromWei : undefined, gasLimit }
+  );
 };
 
 const findPath = async (from: string, to: string) => {
@@ -281,4 +318,14 @@ const findPoolByToken = async (tkn: string): Promise<APIPool> => {
   if (pool) return pool;
 
   throw new Error('No pool found');
+};
+
+const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
+  const res =
+    await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+      fromToken.address,
+      toToken.address,
+      utils.parseUnits(amount, fromToken.decimals)
+    );
+  return utils.formatUnits(res, fromToken.decimals);
 };

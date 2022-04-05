@@ -1,9 +1,12 @@
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import {
+  WithdrawalRequest,
   WithdrawalRequestRaw,
   WithdrawalSettings,
 } from 'redux/portfolio/v3Portfolio.types';
 import { ppmToDec } from 'utils/helperFunctions';
+import { utils } from 'ethers';
+import BigNumber from 'bignumber.js';
 
 export const fetchPortfolioV3WithdrawalSettings =
   async (): Promise<WithdrawalSettings> => {
@@ -38,4 +41,27 @@ export const fetchPortfolioV3Withdrawals = async (
     poolTokenAmountWei: request.poolTokenAmount.toString(),
     reserveTokenAmountWei: request.reserveTokenAmount.toString(),
   }));
+};
+
+export const fetchWithdrawalRequestOutputBreakdown = async (
+  req: WithdrawalRequest
+): Promise<{ tkn: number; bnt: number }> => {
+  try {
+    const res = await ContractsApi.BancorNetworkInfo.read.withdrawalAmounts(
+      req.reserveToken,
+      utils.parseUnits(req.poolTokenAmount, req.token.decimals)
+    );
+    const tkn = new BigNumber(res.baseTokenAmount.toString())
+      .div(res.totalAmount.toString())
+      .times(100)
+      .toNumber();
+    const bnt = new BigNumber(100).minus(tkn).toNumber();
+    return {
+      tkn,
+      bnt,
+    };
+  } catch (e) {
+    console.error('failed to fetch output distribution: ', e);
+    throw e;
+  }
 };

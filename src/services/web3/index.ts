@@ -2,11 +2,11 @@ import { Web3Provider } from '@ethersproject/providers';
 import { EthNetworks } from 'services/web3//types';
 import { providers } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
-import { isMainNetFork } from './config';
+import { isForkAvailable } from './config';
 
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet,
-  useFork: boolean = isMainNetFork
+  useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork) {
     return new providers.JsonRpcProvider(
@@ -67,6 +67,13 @@ export const setProvider = (
   web3.provider = provider;
 };
 
-export const setSigner = (signer: providers.JsonRpcSigner) => {
-  writeWeb3.signer = signer;
+export const setSigner = (
+  signer?: providers.JsonRpcSigner,
+  account?: string | null
+) => {
+  if (account)
+    writeWeb3.signer = new providers.JsonRpcProvider(
+      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+    ).getUncheckedSigner(account);
+  else if (signer) writeWeb3.signer = signer;
 };

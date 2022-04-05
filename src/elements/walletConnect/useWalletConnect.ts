@@ -35,6 +35,7 @@ export const useWalletConnect = (): UseWalletConnect => {
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
+  const isFork = useAppSelector<boolean>((state) => state.user.isFork);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo>();
@@ -81,10 +82,11 @@ export const useWalletConnect = (): UseWalletConnect => {
           await activate(connector, undefined, true);
           setIsOpen(false);
           setAutoLoginLS(true);
-          setSigner(
-            new Web3Provider(await connector.getProvider()).getSigner()
-          );
           const account = await connector.getAccount();
+          setSigner(
+            new Web3Provider(await connector.getProvider()).getSigner(),
+            isFork ? account : undefined
+          );
           sendWalletEvent(
             WalletEvents.connect,
             undefined,
@@ -98,7 +100,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           setIsError(true);
         }
     },
-    [activate, setIsOpen]
+    [activate, setIsOpen, isFork]
   );
 
   const handleDisconnect = useCallback(() => {
@@ -134,7 +136,12 @@ export const useWalletConnect = (): UseWalletConnect => {
       }
 
       if (connector) {
-        setSigner(new Web3Provider(await connector.getProvider()).getSigner());
+        const account = isFork ? await connector.getAccount() : undefined;
+
+        setSigner(
+          new Web3Provider(await connector.getProvider()).getSigner(),
+          account
+        );
         const wallet = SUPPORTED_WALLETS.find(
           (x) => typeof x.connector === typeof connector
         )!;

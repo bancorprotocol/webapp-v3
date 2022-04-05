@@ -162,22 +162,24 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <div className="flex items-center gap-x-10">
-          <ButtonToggle
-            labels={[
-              <div
-                key="v3"
-                className="flex items-center gap-x-[4px] text-16 w-[40px]"
-              >
-                <IconProtected className="w-15" />
-                V3
-              </div>,
-              <div key="v2" className="text-16 w-[25px]">
-                V2
-              </div>,
-            ]}
-            toggle={v3Selected}
-            setToggle={() => setV3Selected(!v3Selected)}
-          />
+          <div className="w-[120px] text-16">
+            <ButtonToggle
+              labels={[
+                <div
+                  key="v3"
+                  className="flex items-center gap-x-[4px] mx-12 my-6"
+                >
+                  <IconProtected className="w-15" />
+                  V3
+                </div>,
+                <div key="v2" className="mx-12 my-6">
+                  V2
+                </div>,
+              ]}
+              toggle={v3Selected}
+              setToggle={() => setV3Selected(!v3Selected)}
+            />
+          </div>
           <div className="mr-16">
             <SearchInput
               value={search}

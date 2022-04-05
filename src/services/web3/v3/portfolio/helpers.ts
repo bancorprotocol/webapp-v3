@@ -4,6 +4,7 @@ import {
   setWithdrawalRequestsRaw,
 } from 'redux/portfolio/v3Portfolio';
 import { fetchPortfolioV3Holdings } from 'services/web3/v3/portfolio/holdings';
+import { updateUserBalances } from 'services/observables/tokens';
 
 export const updatePortfolioData = async (
   dispatch: (data: any) => void,
@@ -13,4 +14,5 @@ export const updatePortfolioData = async (
   dispatch(setHoldingsRaw(holdings));
   const requests = await fetchPortfolioV3Withdrawals(account!);
   dispatch(setWithdrawalRequestsRaw(requests));
+  await updateUserBalances();
 };

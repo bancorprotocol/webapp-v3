@@ -4,9 +4,9 @@ import BigNumber from 'bignumber.js';
 import { wait } from 'utils/pureFunctions';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { utils } from 'ethers';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useDispatch } from 'react-redux';
+import { expandToken } from 'utils/formulas';
 
 export interface AmountTknFiat {
   tkn: string;
@@ -55,10 +55,19 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
 
   const initWithdraw = async () => {
     setTxBusy(true);
+    const isWithdrawingMax = holding.tokenBalance === amount.tkn;
+    const tokenAmount = expandToken(amount.tkn, holding.token.decimals);
     try {
+      const inputAmountInPoolToken =
+        await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+          holding.poolId,
+          tokenAmount
+        );
       const res = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
-        utils.parseUnits(amount.tkn, holding.token.decimals)
+        isWithdrawingMax
+          ? expandToken(holding.poolTokenBalance, 18)
+          : inputAmountInPoolToken
       );
       await res.wait();
       setStep(4);

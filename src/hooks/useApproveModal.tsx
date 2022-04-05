@@ -59,7 +59,7 @@ export const useApproveModal = (
 
   const onStart = async () => {
     if (tokens.length === 0) {
-      console.error('No tokens provided for approval!');
+      onComplete();
       return;
     }
     await checkApprovalRequired();
