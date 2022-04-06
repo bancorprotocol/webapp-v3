@@ -6,28 +6,28 @@ import imposterLogo from 'assets/logos/imposter.svg';
 const allTestTokens = [
   {
     symbol: 'TKN1',
-    address: '0xe288b25153D9B5F9aE874b347A4ba6aA8Ed77659',
-    poolTokenAddress: '0x21C7d59D96E6Bf9c326AecB0290a437ED5D68655',
+    address: '0x5fAeD2F6a99fae28D94833f521b43e9114Ec3B74',
+    poolTokenAddress: '0xC3479a27977225325D0F0f3d2816d7868CB4a9dA',
   },
   {
     symbol: 'TKN2',
-    address: '0xf825FB8541E7ACDdB6E7A3F3c5C0D6245B1C74a3',
-    poolTokenAddress: '0x0f981Ac6CD8876514Cf762483008d36fB8864104',
+    address: '0x30Bc1f2D0404f12683D0100325F536Caeb784548',
+    poolTokenAddress: '0x860D80C071feB128EACC8881d06644BC4d828583',
   },
   {
     symbol: 'TKN3',
-    address: '0xCf7BB92c72925783DDB3dD830BE6546BC5820e6A',
-    poolTokenAddress: '0xEB77C3a957e0b68a7c6a29bc2F10F0519eAe2f92',
+    address: '0x5E08991d5a90e98059d16ab48e2d5DE0Bb79f21f',
+    poolTokenAddress: '0x66e5FC1298Da3d8ee5622E192D36b03EbB7EEB1a',
   },
   {
     symbol: 'TKN4',
-    address: '0x307cB15E4E51Ab87C52571a124683EEc9dE3c95D',
-    poolTokenAddress: '0x6D66317F2667c6B056edaBAD26060FBEd20cBE85',
+    address: '0x3a8f010268BEc61B7714B1dFD1887979D5C7A15c',
+    poolTokenAddress: '0x300C161f4CFa354f113d8eE80bC3642d47216848',
   },
   {
     symbol: 'TKN5',
-    address: '0x475F095e6f663141E10cD29F39F54f4b8F270B16',
-    poolTokenAddress: '0x991B3a7606f0c375E3d66aF335132fA146262F1D',
+    address: '0xC5856985cDe9FeB8151ecA27cAAD2aB6D58e881B',
+    poolTokenAddress: '0xb6CD5C7875Ae0BFd20f8e787D94A12e34fa9d1E6',
   },
 ];
 
