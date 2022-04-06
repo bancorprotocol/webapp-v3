@@ -172,20 +172,23 @@ const executeSwapTx = async (
   fromAmount: string,
   toAmount: string
 ) => {
-  if (isV3)
+  const fromIsEth = fromToken.address === ethToken;
+  const fromWei = expandToken(fromAmount, fromToken.decimals);
+  const expectedToWei = expandToken(toAmount, toToken.decimals);
+  const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
+
+  if (isV3) {
     return await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
       fromToken.address,
       toToken.address,
-      utils.parseUnits(fromAmount, fromToken.decimals),
-      calculateMinimumReturn(
-        utils.parseUnits(toAmount, toToken.decimals).toString(),
-        slippageTolerance
-      ),
+      fromWei,
+      minReturn,
       getFutureTime(dayjs.duration({ days: 7 })),
-      user
+      user,
+      { value: fromIsEth ? fromWei : undefined }
     );
+  }
 
-  const fromIsEth = fromToken.address === ethToken;
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const contract = BancorNetwork__factory.connect(
@@ -193,15 +196,13 @@ const executeSwapTx = async (
     writeWeb3.signer
   );
 
-  const fromWei = expandToken(fromAmount, fromToken.decimals);
-  const expectedToWei = expandToken(toAmount, toToken.decimals);
   const path = await findPath(fromToken.address, toToken.address);
   if (path.length === 0) throw new Error('No path was found between tokens');
 
   const estimate = await contract.estimateGas.convertByPath(
     path,
     fromWei,
-    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    minReturn,
     zeroAddress,
     zeroAddress,
     0,
@@ -212,7 +213,7 @@ const executeSwapTx = async (
   return await contract.convertByPath(
     path,
     fromWei,
-    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    minReturn,
     zeroAddress,
     zeroAddress,
     0,
@@ -331,11 +332,15 @@ const findPoolByToken = async (tkn: string) => {
 };
 
 const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
-  const res =
-    await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
-      fromToken.address,
-      toToken.address,
-      utils.parseUnits(amount, fromToken.decimals)
-    );
-  return utils.formatUnits(res, fromToken.decimals);
+  try {
+    const res =
+      await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+        fromToken.address,
+        toToken.address,
+        utils.parseUnits(amount, fromToken.decimals)
+      );
+    return utils.formatUnits(res, fromToken.decimals);
+  } catch (error) {
+    return '0';
+  }
 };
