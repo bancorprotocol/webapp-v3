@@ -75,8 +75,8 @@ export const ButtonToggle = ({
           key={label.key}
           className={`rounded-10 ${
             (toggle && index === 0) || (!toggle && index !== 0)
-              ? onClass
-              : offClass
+              ? offClass
+              : onClass
           }`}
           onClick={() => setToggle()}
         >
