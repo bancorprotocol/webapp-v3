@@ -21,13 +21,13 @@ export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const ropstenImage: string = emptyTokenLogo;
 
-export const bancorNetwork = '0x6210cE7207537eE1ec219f4562e6d05bed208852';
-export const bancorNetworkInfo = '0x7a5D6EA7546f15d24b3a2519D80cc8Ec4B8f805A';
-export const networkSettings = '0x093C761bd5B8f71d72cBC74A72cc9c6aEDC8EE49';
+export const bancorNetwork = '0x66117856f27e7117b22c1Ae9b0e46a3f621eFe63';
+export const bancorNetworkInfo = '0x768D6Ee54022606374C43a9a6E48329D7c21296E';
+export const networkSettings = '0x1369f360E4a1Cd318a8a6628E59f3bF6c165c3C8';
 export const standardStakingRewards =
-  '0x1d4Bf6aC01c71Ceaf96b2A25f18c3C75Db3B1EbD';
-export const poolCollectionType1 = '0x7b0977cf6067585ABB49425BCA73E72EA982AE51';
-export const pendingWithdrawals = '0x7Cd247CF8Df355Bc0C965026d482fB27CdcD7eA6';
+  '0xe7aC71c6284ae7adc3909fA1A7ED71b5c8ff4dbd';
+export const poolCollectionType1 = '0xafFAAF302C0B97c6168E69b7A12C0dAe869a7E16';
+export const pendingWithdrawals = '0x09db4170cB04Da0372af771EF9646c330B92C51D';
 
 const gasBuffer = 1.05;
 
