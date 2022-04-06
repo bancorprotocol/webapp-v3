@@ -1,6 +1,6 @@
 import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
@@ -66,7 +66,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
       >
         <div className="p-10">
           <div className="flex flex-col items-center text-12 mx-20">
-            <div className="text-20 font-semibold mb-10"></div>
             <TokenInputPercentage
               label="amount"
               token={pool.reserveToken}
@@ -75,11 +74,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
               setAmount={setAmount}
             />
             <Button
-              onClick={() => {
-                setAmount('');
-                setIsOpen(false);
-                onStart();
-              }}
+              onClick={() => onStart()}
               disabled={depositDisabled}
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >
