@@ -7,6 +7,11 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useDispatch } from 'react-redux';
 import { expandToken } from 'utils/formulas';
+import { ErrorCode } from 'services/web3/types';
+import {
+  initWithdrawNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
 
 export interface AmountTknFiat {
   tkn: string;
@@ -63,17 +68,25 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
           holding.poolId,
           tokenAmount
         );
-      const res = await ContractsApi.BancorNetwork.write.initWithdrawal(
+      const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
         isWithdrawingMax
           ? expandToken(holding.poolTokenBalance, 18)
           : inputAmountInPoolToken
       );
-      await res.wait();
+      initWithdrawNotification(
+        dispatch,
+        tx.hash,
+        amount.tkn,
+        holding.token.symbol
+      );
       setStep(4);
-      await updatePortfolioData(dispatch, account!);
-    } catch (e) {
+      await updatePortfolioData(dispatch, account);
+    } catch (e: any) {
       console.error('initWithdraw failed', e);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      }
     } finally {
       setTxBusy(false);
     }

@@ -457,3 +457,55 @@ export const withdrawCancelNotification = (
     },
     dispatch
   );
+
+export const initWithdrawNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Cooldown is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${prettifyNumber(
+          amount
+        )} ${symbol} successfully began cooldown process.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Initiating cooldown for ${prettifyNumber(
+          amount
+        )} ${symbol} failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const confirmWithdrawNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Withdrawal is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${prettifyNumber(
+          amount
+        )} ${symbol} successfully withdrawn from pool.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Withdrawal for ${prettifyNumber(
+          amount
+        )} ${symbol} failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
