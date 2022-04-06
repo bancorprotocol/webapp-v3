@@ -11,6 +11,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { ethToken } from 'services/web3/config';
 
 interface Props {
   pool: PoolV3;
@@ -33,10 +34,14 @@ export const DepositV3Modal = ({ pool }: Props) => {
       return;
     }
 
+    const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
+    const isETH = pool.reserveToken.address === ethToken;
+
     try {
       const res = await ContractsApi.BancorNetwork.write.deposit(
         pool.pool_dlt_id,
-        utils.parseUnits(amount, pool.reserveToken.decimals)
+        amountWei,
+        { value: isETH ? amountWei : undefined }
       );
       console.log(res);
       setIsOpen(false);
