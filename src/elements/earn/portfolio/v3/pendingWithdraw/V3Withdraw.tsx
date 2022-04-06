@@ -15,7 +15,6 @@ export const V3Withdraw = () => {
     setIsModalConfirmOpen,
     selected,
     openConfirmModal,
-    withdraw,
   } = useV3Withdraw();
 
   return (
@@ -56,7 +55,6 @@ export const V3Withdraw = () => {
             isModalOpen={isModalConfirmOpen}
             setIsModalOpen={setIsModalConfirmOpen}
             withdrawRequest={selected!}
-            withdraw={withdraw}
             openCancelModal={openCancelModal}
           />
         </>

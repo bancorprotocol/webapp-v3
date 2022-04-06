@@ -31,7 +31,7 @@ export const useV3Withdraw = () => {
   }, []);
 
   const cancelWithdrawal = useCallback(async () => {
-    if (!selected) {
+    if (!selected || !account) {
       return;
     }
 
@@ -46,8 +46,7 @@ export const useV3Withdraw = () => {
         selected.token.symbol
       );
       setIsModalCancelOpen(false);
-      await tx.wait();
-      await updatePortfolioData(dispatch, account!);
+      await updatePortfolioData(dispatch, account);
     } catch (e: any) {
       setIsModalCancelOpen(false);
       console.error('cancelWithdrawal failed: ', e);
@@ -62,14 +61,6 @@ export const useV3Withdraw = () => {
     setIsModalConfirmOpen(true);
   }, []);
 
-  const withdraw = useCallback(async () => {
-    // TODO: finish this flow
-    console.log('selected: ', selected);
-    const res = await ContractsApi.BancorNetwork.write.withdraw(selected!.id);
-    console.log(res);
-    await updatePortfolioData(dispatch, account!);
-  }, [account, dispatch, selected]);
-
   return {
     withdrawalRequests,
     cancelWithdrawal,
@@ -80,7 +71,6 @@ export const useV3Withdraw = () => {
     selected,
     isModalConfirmOpen,
     setIsModalConfirmOpen,
-    withdraw,
     openConfirmModal,
   };
 };
