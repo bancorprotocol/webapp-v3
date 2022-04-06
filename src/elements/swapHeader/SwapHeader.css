@@ -1,5 +1,5 @@
 .swap-header {
-  @apply flex justify-between text-graphite text-[22px] py-16 px-20;
+  @apply flex justify-between items-center text-graphite text-[22px] py-16 px-20;
 }
 
 .swap-header button {
