@@ -11,7 +11,6 @@ interface Props {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   withdrawRequest: WithdrawalRequest;
-  withdraw: () => Promise<void>;
   openCancelModal: (req: WithdrawalRequest) => void;
 }
 
@@ -20,7 +19,6 @@ export const V3WithdrawConfirmModal = memo(
     isModalOpen,
     setIsModalOpen,
     withdrawRequest,
-    withdraw,
     openCancelModal,
   }: Props) => {
     const {
@@ -33,10 +31,9 @@ export const V3WithdrawConfirmModal = memo(
       isBntToken,
       handleCancelClick,
       govToken,
-      onStart,
+      handleWithdrawClick,
     } = useV3WithdrawConfirm({
       setIsModalOpen,
-      withdraw,
       withdrawRequest,
       openCancelModal,
       isModalOpen,
@@ -79,7 +76,7 @@ export const V3WithdrawConfirmModal = memo(
             </div>
           ) : (
             <Button
-              onClick={() => onStart()}
+              onClick={() => handleWithdrawClick()}
               className="w-full"
               disabled={txBusy || missingGovTokenBalance > 0}
             >

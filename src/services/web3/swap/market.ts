@@ -61,15 +61,18 @@ export const getRateAndPriceImapct = async (
 
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const v3Rate = await getV3Rate(fromToken, toToken, amount);
-    const v2rate = shrinkToken(spotRate.rate, toToken.decimals);
-    const isV3 = Number(v3Rate) >= Number(v2rate);
+    const v2Rate = shrinkToken(spotRate.rate, toToken.decimals);
+    const isV3 = Number(v3Rate) >= Number(v2Rate);
+
+    console.log('V2 Rate', v2Rate);
+    console.log('V3 Rate', v3Rate);
 
     const priceImpactNum = new BigNumber(1)
-      .minus(new BigNumber(v2rate).div(amount).div(spotRate.spotPrice))
+      .minus(new BigNumber(v2Rate).div(amount).div(spotRate.spotPrice))
       .times(100);
 
     return {
-      rate: isV3 ? v3Rate : v2rate,
+      rate: isV3 ? v3Rate : v2Rate,
       priceImpact: isNaN(priceImpactNum.toNumber())
         ? '0.0000'
         : priceImpactNum.toFixed(4),
@@ -169,20 +172,23 @@ const executeSwapTx = async (
   fromAmount: string,
   toAmount: string
 ) => {
-  if (isV3)
+  const fromIsEth = fromToken.address === ethToken;
+  const fromWei = expandToken(fromAmount, fromToken.decimals);
+  const expectedToWei = expandToken(toAmount, toToken.decimals);
+  const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
+
+  if (isV3) {
     return await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
       fromToken.address,
       toToken.address,
-      utils.parseUnits(fromAmount, fromToken.decimals),
-      calculateMinimumReturn(
-        utils.parseUnits(toAmount, toToken.decimals).toString(),
-        slippageTolerance
-      ),
+      fromWei,
+      minReturn,
       getFutureTime(dayjs.duration({ days: 7 })),
-      user
+      user,
+      { value: fromIsEth ? fromWei : undefined }
     );
+  }
 
-  const fromIsEth = fromToken.address === ethToken;
   const networkContractAddress = await bancorNetwork$.pipe(take(1)).toPromise();
 
   const contract = BancorNetwork__factory.connect(
@@ -190,14 +196,13 @@ const executeSwapTx = async (
     writeWeb3.signer
   );
 
-  const fromWei = expandToken(fromAmount, fromToken.decimals);
-  const expectedToWei = expandToken(toAmount, toToken.decimals);
   const path = await findPath(fromToken.address, toToken.address);
+  if (path.length === 0) throw new Error('No path was found between tokens');
 
   const estimate = await contract.estimateGas.convertByPath(
     path,
     fromWei,
-    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    minReturn,
     zeroAddress,
     zeroAddress,
     0,
@@ -208,7 +213,7 @@ const executeSwapTx = async (
   return await contract.convertByPath(
     path,
     fromWei,
-    calculateMinimumReturn(expectedToWei, slippageTolerance),
+    minReturn,
     zeroAddress,
     zeroAddress,
     0,
@@ -217,19 +222,23 @@ const executeSwapTx = async (
 };
 
 const findPath = async (from: string, to: string) => {
-  if (from === bntToken)
-    return [from, (await findPoolByToken(to)).pool_dlt_id, to];
+  if (from === bntToken) {
+    const pool = await findPoolByToken(to);
+    if (!pool) return [];
+    return [from, pool.pool_dlt_id, to];
+  }
 
-  if (to === bntToken)
-    return [from, (await findPoolByToken(from)).pool_dlt_id, to];
+  if (to === bntToken) {
+    const pool = await findPoolByToken(from);
+    if (!pool) return [];
+    return [from, pool.pool_dlt_id, to];
+  }
 
-  return [
-    from,
-    (await findPoolByToken(from)).pool_dlt_id,
-    bntToken,
-    (await findPoolByToken(to)).pool_dlt_id,
-    to,
-  ];
+  const fromPool = await findPoolByToken(from);
+  const toPool = await findPoolByToken(to);
+  if (!(fromPool && toPool)) return [];
+
+  return [from, fromPool.pool_dlt_id, bntToken, toPool.pool_dlt_id, to];
 };
 
 const calculateSpotPriceAndRate = async (
@@ -259,9 +268,11 @@ const calculateSpotPriceAndRate = async (
       };
     }
   }
-
+  const empty = { rate: '0', spotPrice: new BigNumber(0) };
   //First hop
   const fromPool = await findPoolByToken(from.address);
+  if (!fromPool) return empty;
+
   const fromShape1 = buildTokenPoolCall(
     fromPool.converter_dlt_id,
     from.address
@@ -270,6 +281,8 @@ const calculateSpotPriceAndRate = async (
 
   //Second hop
   const toPool = await findPoolByToken(to.address);
+  if (!toPool) return empty;
+
   const bntShape2 = buildTokenPoolCall(toPool.converter_dlt_id, bntToken);
   const toShape2 = buildTokenPoolCall(toPool.converter_dlt_id, to.address);
 
@@ -292,7 +305,7 @@ const calculateSpotPriceAndRate = async (
     return { spotPrice: spot1.times(spot2), rate: res[4].toString() };
   }
 
-  return { rate: '0', spotPrice: new BigNumber(0) };
+  return empty;
 };
 
 export const buildTokenPoolCall = (
@@ -309,23 +322,25 @@ export const buildTokenPoolCall = (
   };
 };
 
-const findPoolByToken = async (tkn: string): Promise<APIPool> => {
+const findPoolByToken = async (tkn: string) => {
   const apiData = await apiData$.pipe(take(1)).toPromise();
 
   const pool = apiData.pools.find(
     (x) => x && x.reserves.find((x) => x.address === tkn)
   );
   if (pool) return pool;
-
-  throw new Error('No pool found');
 };
 
 const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
-  const res =
-    await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
-      fromToken.address,
-      toToken.address,
-      utils.parseUnits(amount, fromToken.decimals)
-    );
-  return utils.formatUnits(res, fromToken.decimals);
+  try {
+    const res =
+      await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+        fromToken.address,
+        toToken.address,
+        utils.parseUnits(amount, fromToken.decimals)
+      );
+    return utils.formatUnits(res, fromToken.decimals);
+  } catch (error) {
+    return '0';
+  }
 };

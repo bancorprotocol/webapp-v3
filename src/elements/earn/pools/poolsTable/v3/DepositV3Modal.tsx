@@ -1,6 +1,6 @@
 import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
@@ -11,6 +11,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { ethToken } from 'services/web3/config';
 
 interface Props {
   pool: PoolV3;
@@ -33,10 +34,14 @@ export const DepositV3Modal = ({ pool }: Props) => {
       return;
     }
 
+    const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
+    const isETH = pool.reserveToken.address === ethToken;
+
     try {
       const res = await ContractsApi.BancorNetwork.write.deposit(
         pool.pool_dlt_id,
-        utils.parseUnits(amount, pool.reserveToken.decimals)
+        amountWei,
+        { value: isETH ? amountWei : undefined }
       );
       console.log(res);
       setIsOpen(false);
@@ -66,7 +71,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
       >
         <div className="p-10">
           <div className="flex flex-col items-center text-12 mx-20">
-            <div className="text-20 font-semibold mb-10"></div>
             <TokenInputPercentage
               label="amount"
               token={pool.reserveToken}
@@ -75,11 +79,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
               setAmount={setAmount}
             />
             <Button
-              onClick={() => {
-                setAmount('');
-                setIsOpen(false);
-                onStart();
-              }}
+              onClick={() => onStart()}
               disabled={depositDisabled}
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >

@@ -10,20 +10,29 @@ import { wait } from 'utils/pureFunctions';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import {
+  confirmWithdrawNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import { ErrorCode } from 'services/web3/types';
+import { useDispatch } from 'react-redux';
 interface Props {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   withdrawRequest: WithdrawalRequest;
-  withdraw: () => Promise<void>;
   openCancelModal: (req: WithdrawalRequest) => void;
 }
 export const useV3WithdrawConfirm = ({
   isModalOpen,
   setIsModalOpen,
   withdrawRequest,
-  withdraw,
   openCancelModal,
 }: Props) => {
+  const dispatch = useDispatch();
+  const account = useAppSelector<string | undefined>(
+    (state) => state.user.account
+  );
   const [outputBreakdown, setOutputBreakdown] = useState({
     tkn: 0,
     bnt: 0,
@@ -58,23 +67,33 @@ export const useV3WithdrawConfirm = ({
     setOutputBreakdown({ tkn: 0, bnt: 0 });
   }, [setIsModalOpen]);
 
-  const handleCTAClick = useCallback(async () => {
-    setTxBusy(true);
+  const withdraw = useCallback(async () => {
+    if (!withdrawRequest || !account) {
+      return;
+    }
+
     try {
-      await withdraw();
-    } catch (e) {
-      console.error(e);
-    } finally {
+      const tx = await ContractsApi.BancorNetwork.write.withdraw(
+        withdrawRequest.id
+      );
+      confirmWithdrawNotification(
+        dispatch,
+        tx.hash,
+        withdrawRequest.reserveTokenAmount,
+        withdrawRequest.token.symbol
+      );
+      onModalClose();
+      setTxBusy(false);
+      await updatePortfolioData(dispatch, account);
+    } catch (e: any) {
+      console.error('withdraw request failed', e);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      }
       onModalClose();
       setTxBusy(false);
     }
-  }, [onModalClose, withdraw]);
-
-  const handleCancelClick = useCallback(async () => {
-    onModalClose();
-    await wait(400);
-    openCancelModal(withdrawRequest);
-  }, [onModalClose, openCancelModal, withdrawRequest]);
+  }, [account, dispatch, onModalClose, withdrawRequest]);
 
   const approveTokens = useMemo(() => {
     const tokensToApprove = [];
@@ -94,9 +113,20 @@ export const useV3WithdrawConfirm = ({
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
-    handleCTAClick,
+    withdraw,
     ContractsApi.BancorNetwork.contractAddress
   );
+
+  const handleWithdrawClick = useCallback(async () => {
+    setTxBusy(true);
+    onStart();
+  }, [onStart]);
+
+  const handleCancelClick = useCallback(async () => {
+    onModalClose();
+    await wait(400);
+    openCancelModal(withdrawRequest);
+  }, [onModalClose, openCancelModal, withdrawRequest]);
 
   return {
     onModalClose,
@@ -108,6 +138,6 @@ export const useV3WithdrawConfirm = ({
     isBntToken,
     handleCancelClick,
     govToken,
-    onStart,
+    handleWithdrawClick,
   };
 };
