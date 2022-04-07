@@ -8,6 +8,8 @@ import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/ext
 import { useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { Switch } from 'components/switch/Switch';
+import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 
 export const MigrateProtect = () => {
   const migrate = true;
@@ -74,6 +76,7 @@ const Migrate = () => {
           <MigrateHoldingAtRisk
             className="mt-60"
             holdings={seeAllHoldings ? holdings : [holdings[0]]}
+            onSelect={(index: number) => setSelectedHolding(index)}
           />
           <div className="flex items-center mt-[70px]">
             <Button className="w-[170px]">Yes</Button>
@@ -96,6 +99,45 @@ const Migrate = () => {
             Moving to protected earnings
             <IconInfo className="w-[15px] h-[15px] ml-5" />
           </div>
+          <div className="rounded-20 bg-silver p-20 h-[120px] mt-10">
+            <div className="flex items-center justify-between text-black-medium">
+              Access full earnings
+              <div className="flex items-center gap-10 text-black-low">
+                additional gas ~$1000.00
+                <Switch selected={true} onChange={() => {}} />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between align-bottom">
+              <TokenBalance
+                symbol={'Symbol'}
+                amount={'100'}
+                usdPrice={'1000000'}
+                imgUrl={'token.logoURI'}
+              />
+              <div className="flex items-center gap-10 text-primary">
+                Earn 86%
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center text-black-low mt-40">
+            Exiting risky positions
+            <IconInfo className="w-[15px] h-[15px] ml-5" />
+          </div>
+          <hr className="text-silver my-10" />
+          <div className="flex items-center justify-between">
+            <TokenBalance
+              symbol={'Symbol'}
+              amount={'100'}
+              usdPrice={'1000000'}
+              imgUrl={'token.logoURI'}
+            />
+            <div className="text-black-low">HODL in your wallet</div>
+          </div>
+          <Button className="w-[160px] mt-50">Confirm</Button>
+          <button className="text-black-low mt-30">
+            100% Protected • 7 day cooldown • 0.25% withdrawal fee
+          </button>
         </>
       )}
     </>
@@ -105,16 +147,19 @@ const Migrate = () => {
 const MigrateHoldingAtRisk = ({
   holdings,
   className,
+  onSelect,
 }: {
   holdings: ExternalHolding[];
+  onSelect: (index: number) => void;
   className?: string;
 }) => {
   return (
     <div className={className}>
-      {holdings.map((holding) => {
+      {holdings.map((holding, index) => {
         return (
-          <div
+          <button
             key={holding.ammName}
+            onClick={() => onSelect(index)}
             className="flex items-center justify-between rounded-20 border border-silver p-20 h-[70px] w-[550px] mb-10"
           >
             <div>
@@ -130,7 +175,7 @@ const MigrateHoldingAtRisk = ({
             <div className={`h-30 w-[${20 * holding.tokens.length}px]`}>
               <TokensOverlap tokens={holding.tokens} />
             </div>
-          </div>
+          </button>
         );
       })}
     </div>

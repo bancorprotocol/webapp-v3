@@ -22,7 +22,7 @@ export const TokenBalance = ({
     : `${symbol} ${prettifyNumber(amount)}`;
 
   return (
-    <div className={`flex w-full ${inverted ? '' : 'items-center'}`}>
+    <div className={`flex ${inverted ? '' : 'items-center'}`}>
       <Image alt={`${symbol} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
       <div className={`w-full ${inverted ? 'text-right' : ''}`}>
         <div className="text-16">{label}</div>
