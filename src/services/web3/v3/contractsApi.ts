@@ -15,15 +15,13 @@ import {
   PendingWithdrawals__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
-import {
-  bancorNetwork,
-  bancorNetworkInfo,
-  networkSettings,
-  pendingWithdrawals,
-  poolCollectionType1,
-  standardStakingRewards,
-} from '../config';
 import { providers } from 'ethers';
+import { address as bancorNetworkAddress } from 'services/web3/abis/v3/BancorNetworkV3.json';
+import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/BancorNetworkInfo.json';
+import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings.json';
+import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals.json';
+import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
+import { address as standardStakingRewardsAddress } from 'services/web3/abis/v3/StandardStakingRewards.json';
 
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -66,32 +64,32 @@ class BancorContract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorContract<BancorNetworkV3>(
-    bancorNetwork,
+    bancorNetworkAddress,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorContract<BancorNetworkInfo>(
-    bancorNetworkInfo,
+    bancorNetworkInfoAddress,
     BancorNetworkInfo__factory
   );
 
   static NetworkSettings = new BancorContract<NetworkSettings>(
-    networkSettings,
+    networkSettingsAddress,
     NetworkSettings__factory
   );
 
   static StandardStakingRewards = new BancorContract<StandardStakingRewards>(
-    standardStakingRewards,
+    standardStakingRewardsAddress,
     StandardStakingRewards__factory
   );
 
   static PoolCollection = new BancorContract<PoolCollectionType1>(
-    poolCollectionType1,
+    poolCollectionType1Address,
     PoolCollectionType1__factory
   );
 
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
-    pendingWithdrawals,
+    pendingWithdrawalsAddress,
     PendingWithdrawals__factory
   );
 
