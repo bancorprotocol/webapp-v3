@@ -73,7 +73,7 @@ export const ImposterWallet = ({
             setUser(account, dispatch);
             setSigner(
               new providers.JsonRpcProvider(
-                process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+                'https://rpc.tenderly.co/fork/101fb597-1706-4ac0-b4f8-c9672af76cb8'
               ).getUncheckedSigner(account)
             );
           }

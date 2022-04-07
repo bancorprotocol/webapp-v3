@@ -10,7 +10,7 @@ export const getProvider = (
 ): providers.BaseProvider => {
   if (useFork) {
     return new providers.JsonRpcProvider(
-      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+      'https://rpc.tenderly.co/fork/101fb597-1706-4ac0-b4f8-c9672af76cb8'
     );
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
@@ -73,7 +73,7 @@ export const setSigner = (
 ) => {
   if (account)
     writeWeb3.signer = new providers.JsonRpcProvider(
-      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+      'https://rpc.tenderly.co/fork/101fb597-1706-4ac0-b4f8-c9672af76cb8'
     ).getUncheckedSigner(account);
   else if (signer) writeWeb3.signer = signer;
 };
