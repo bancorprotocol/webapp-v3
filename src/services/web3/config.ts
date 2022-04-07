@@ -61,4 +61,4 @@ export const getNetworkVariables = (): EthNetworkVariables => {
   };
 };
 
-export const isForkAvailable = !!process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;
+export const isForkAvailable = true;
