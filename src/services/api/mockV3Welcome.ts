@@ -2,32 +2,33 @@ import { APIPoolV3, APIToken } from 'services/api/bancor';
 import { bntToken, ethToken } from 'services/web3/config';
 import { TokenMinimal } from 'services/observables/tokens';
 import imposterLogo from 'assets/logos/imposter.svg';
+import { address as testToken1Address } from 'services/web3/abis/v3/TestToken1.json';
+import { address as testToken2Address } from 'services/web3/abis/v3/TestToken2.json';
+import { address as testToken3Address } from 'services/web3/abis/v3/TestToken3.json';
+import { address as testToken4Address } from 'services/web3/abis/v3/TestToken4.json';
+import { address as testToken5Address } from 'services/web3/abis/v3/TestToken5.json';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 const allTestTokens = [
   {
     symbol: 'TKN1',
-    address: '0x5fAeD2F6a99fae28D94833f521b43e9114Ec3B74',
-    poolTokenAddress: '0xC3479a27977225325D0F0f3d2816d7868CB4a9dA',
+    address: testToken1Address,
   },
   {
     symbol: 'TKN2',
-    address: '0x30Bc1f2D0404f12683D0100325F536Caeb784548',
-    poolTokenAddress: '0x860D80C071feB128EACC8881d06644BC4d828583',
+    address: testToken2Address,
   },
   {
     symbol: 'TKN3',
-    address: '0x5E08991d5a90e98059d16ab48e2d5DE0Bb79f21f',
-    poolTokenAddress: '0x66e5FC1298Da3d8ee5622E192D36b03EbB7EEB1a',
+    address: testToken3Address,
   },
   {
     symbol: 'TKN4',
-    address: '0x3a8f010268BEc61B7714B1dFD1887979D5C7A15c',
-    poolTokenAddress: '0x300C161f4CFa354f113d8eE80bC3642d47216848',
+    address: testToken4Address,
   },
   {
     symbol: 'TKN5',
-    address: '0xC5856985cDe9FeB8151ecA27cAAD2aB6D58e881B',
-    poolTokenAddress: '0xb6CD5C7875Ae0BFd20f8e787D94A12e34fa9d1E6',
+    address: testToken5Address,
   },
 ];
 
@@ -43,15 +44,17 @@ const buildAPIToken = (address: string, symbol: string): APIToken => {
   };
 };
 
-const buildAPIPoolV3 = (
+const buildAPIPoolV3 = async (
   address: string,
-  symbol: string,
-  poolTokenAddress: string
-): APIPoolV3 => {
+  symbol: string
+): Promise<APIPoolV3> => {
+  const poolToken_dlt_id = await ContractsApi.BancorNetworkInfo.read.poolToken(
+    address
+  );
   return {
     pool_dlt_id: address,
-    poolToken_dlt_id: poolTokenAddress,
-    name: `${symbol}/BNT`,
+    poolToken_dlt_id,
+    name: symbol,
     liquidity: { usd: '123' },
     volume_24h: { usd: '123' },
     fees_24h: { usd: '123' },
@@ -69,24 +72,14 @@ export const getMockV3Tokens = (): APIToken[] => {
   );
 };
 
-export const getMockV3Pools = (): APIPoolV3[] => {
-  const pools = allTestTokens.map((token) =>
-    buildAPIPoolV3(token.address, token.symbol, token.poolTokenAddress)
-  );
-  pools.push(
-    buildAPIPoolV3(
-      ethToken,
-      'ETH',
-      '0xa9FdEf68d93357b9E059E51D3Bee4D351417B463'
+export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
+  const pools = await Promise.all(
+    allTestTokens.map(
+      async (token) => await buildAPIPoolV3(token.address, token.symbol)
     )
   );
-  pools.push(
-    buildAPIPoolV3(
-      bntToken,
-      'BNT',
-      '0x3e568EAd153A14D2f8834576aE569ce1DE82fe72'
-    )
-  );
+  pools.push(await buildAPIPoolV3(ethToken, 'ETH'));
+  pools.push(await buildAPIPoolV3(bntToken, 'BNT'));
   return pools;
 };
 

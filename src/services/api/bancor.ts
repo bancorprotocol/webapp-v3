@@ -100,7 +100,7 @@ export const getWelcomeData = async (): Promise<WelcomeData> => {
         converter_dlt_id: utils.getAddress(pool.converter_dlt_id),
         pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
       })),
-      poolsV3: getMockV3Pools().map((pool) => ({
+      poolsV3: (await getMockV3Pools()).map((pool) => ({
         ...pool,
         pool_dlt_id: utils.getAddress(pool.pool_dlt_id),
         poolToken_dlt_id: utils.getAddress(pool.poolToken_dlt_id),
