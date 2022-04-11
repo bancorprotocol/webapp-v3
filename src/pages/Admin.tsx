@@ -8,6 +8,10 @@ import {
 } from 'utils/localStorage';
 import { useNavigation } from 'services/router';
 import JSZip from 'jszip';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { setProvider, setSigner } from 'services/web3';
+import { providers } from 'ethers';
+import { useAppSelector } from 'redux/index';
 
 interface InputProps
   extends DetailedHTMLProps<
@@ -77,7 +81,8 @@ export interface BancorV3Contracts {
 }
 
 export const Admin = () => {
-  const { pushPools } = useNavigation();
+  const account = useAppSelector<string | null>((state) => state.user.account);
+
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
   const [zipFileError, setZipFileError] = useState('');
   const [inputs, setInputs] = useState<BancorV3Contracts>(
@@ -88,8 +93,10 @@ export const Admin = () => {
     setTenderlyRpcLS(inputRpcUrl);
     setBancorV3Contracts(inputRpcUrl ? inputs : emptyContractInputs);
 
-    pushPools();
-    window.location.reload();
+    const rpc = new providers.JsonRpcProvider(inputRpcUrl);
+
+    setProvider(rpc);
+    if (account) setSigner(rpc.getUncheckedSigner(account));
   };
 
   const handleZipFile = async (files: FileList | null) => {
