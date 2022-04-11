@@ -2,33 +2,35 @@ import { APIPoolV3, APIToken } from 'services/api/bancor';
 import { bntToken, ethToken } from 'services/web3/config';
 import { TokenMinimal } from 'services/observables/tokens';
 import imposterLogo from 'assets/logos/imposter.svg';
-import { address as testToken1Address } from 'services/web3/abis/v3/TestToken1.json';
-import { address as testToken2Address } from 'services/web3/abis/v3/TestToken2.json';
-import { address as testToken3Address } from 'services/web3/abis/v3/TestToken3.json';
-import { address as testToken4Address } from 'services/web3/abis/v3/TestToken4.json';
-import { address as testToken5Address } from 'services/web3/abis/v3/TestToken5.json';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import {
+  getContractTestToken1LS,
+  getContractTestToken2LS,
+  getContractTestToken3LS,
+  getContractTestToken4LS,
+  getContractTestToken5LS,
+} from 'utils/localStorage';
 
 const allTestTokens = [
   {
     symbol: 'TKN1',
-    address: testToken1Address,
+    address: getContractTestToken1LS(),
   },
   {
     symbol: 'TKN2',
-    address: testToken2Address,
+    address: getContractTestToken2LS(),
   },
   {
     symbol: 'TKN3',
-    address: testToken3Address,
+    address: getContractTestToken3LS(),
   },
   {
     symbol: 'TKN4',
-    address: testToken4Address,
+    address: getContractTestToken4LS(),
   },
   {
     symbol: 'TKN5',
-    address: testToken5Address,
+    address: getContractTestToken5LS(),
   },
 ];
 

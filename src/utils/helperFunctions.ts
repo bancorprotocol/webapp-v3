@@ -60,10 +60,6 @@ export const formatTime = (ms: number): string => {
   }
 };
 
-export const getNetworkName = (isFork: boolean): string => {
-  return isFork ? 'Tenderly Fork' : 'Ethereum Mainnet';
-};
-
 export const isUnsupportedNetwork = (
   network: EthNetworks | undefined
 ): boolean => {

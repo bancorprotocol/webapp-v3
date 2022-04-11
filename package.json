@@ -31,7 +31,7 @@
     "chart.js": "^3.7.0",
     "cypress": "^8.0.0",
     "dayjs": "^1.10.5",
-    "ethers": "^5.5.1",
+    "ethers": "^5.6.2",
     "json-bigint": "^1.0.0",
     "lightweight-charts": "^3.5.0",
     "lodash": "^4.17.21",

@@ -6,6 +6,7 @@ import { setUser } from 'services/observables/user';
 import { WalletInfo } from 'services/web3/wallet/utils';
 import { setSigner } from 'services/web3';
 import { providers, utils } from 'ethers';
+import { getTenderlyRpcLS } from 'utils/localStorage';
 
 export const WalletConnectModalList = ({
   handleConnect,
@@ -73,7 +74,7 @@ export const ImposterWallet = ({
             setUser(account, dispatch);
             setSigner(
               new providers.JsonRpcProvider(
-                process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+                getTenderlyRpcLS()
               ).getUncheckedSigner(account)
             );
           }

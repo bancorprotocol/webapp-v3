@@ -9,6 +9,5 @@ declare namespace NodeJS {
     REACT_APP_PORTIS_DAPP_ID: string;
     REACT_APP_APY_VISION_TOKEN: string;
     REACT_APP_INTOTHEBLOCK_KEY: string;
-    REACT_APP_BANCOR_V3_TEST_RPC_URL?: string;
   }
 }
