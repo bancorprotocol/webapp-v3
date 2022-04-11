@@ -16,12 +16,14 @@ import {
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
-import { address as bancorNetworkAddress } from 'services/web3/abis/v3/BancorNetworkV3.json';
-import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/BancorNetworkInfo.json';
-import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings.json';
-import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals.json';
-import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
-import { address as standardStakingRewardsAddress } from 'services/web3/abis/v3/StandardStakingRewards.json';
+import {
+  getContractBancorNetworkInfoLS,
+  getContractBancorNetworkLS,
+  getContractNetworkSettingsLS,
+  getContractPendingWithdrawalsLS,
+  getContractPoolCollectionLS,
+  getContractStandardStakingRewardsLS,
+} from 'utils/localStorage';
 
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -64,32 +66,32 @@ class BancorContract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorContract<BancorNetworkV3>(
-    bancorNetworkAddress,
+    getContractBancorNetworkLS(),
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorContract<BancorNetworkInfo>(
-    bancorNetworkInfoAddress,
+    getContractBancorNetworkInfoLS(),
     BancorNetworkInfo__factory
   );
 
   static NetworkSettings = new BancorContract<NetworkSettings>(
-    networkSettingsAddress,
+    getContractNetworkSettingsLS(),
     NetworkSettings__factory
   );
 
   static StandardStakingRewards = new BancorContract<StandardStakingRewards>(
-    standardStakingRewardsAddress,
+    getContractStandardStakingRewardsLS(),
     StandardStakingRewards__factory
   );
 
   static PoolCollection = new BancorContract<PoolCollectionType1>(
-    poolCollectionType1Address,
+    getContractPoolCollectionLS(),
     PoolCollectionType1__factory
   );
 
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
-    pendingWithdrawalsAddress,
+    getContractPendingWithdrawalsLS(),
     PendingWithdrawals__factory
   );
 

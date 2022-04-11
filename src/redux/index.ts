@@ -11,7 +11,11 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredPaths: ['bancor.tokens', 'bancor.tokenLists'],
+        ignoredPaths: [
+          'bancor.allTokenListTokens',
+          'bancor.allTokens',
+          'bancor.tokenLists',
+        ],
       },
     }),
   reducer: {

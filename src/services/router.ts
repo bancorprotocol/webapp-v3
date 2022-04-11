@@ -17,6 +17,7 @@ export const addLiquidity = `${liquidityBase}:id`;
 export const addLiquidityError = `${liquidityBase}error`;
 export const portfolioRewardsClaim = `${rewardsBase}claim`;
 export const portfolioRewardsStake = `${rewardsBaseStake}:id`;
+export const admin = '/admin';
 
 export const addLiquidityByID = (id: string) => `${liquidityBase}${id}`;
 export const portfolioRewardsStakeByID = (id: string) =>

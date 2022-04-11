@@ -48,9 +48,7 @@ export const LayoutHeader = () => {
             <NavLink to={portfolio} exact strict>
               Portfolio
             </NavLink>
-            {isForkAvailable && (
-              <NetworkIndicator connector={wallet.selectedWallet?.connector} />
-            )}
+            {isForkAvailable && <NetworkIndicator />}
           </div>
           <div className="md:hidden">
             <NavLink to={pools}>
