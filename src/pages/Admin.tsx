@@ -26,7 +26,10 @@ import {
   setContractTestToken5LS,
   setTenderlyRpcLS,
 } from 'utils/localStorage';
-import { useNavigation } from 'services/router';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { setProvider, setSigner } from 'services/web3';
+import { providers } from 'ethers';
+import { useAppSelector } from 'redux/index';
 
 const AdminInput = ({
   label,
@@ -51,7 +54,8 @@ const AdminInput = ({
 };
 
 export const Admin = () => {
-  const { pushPools } = useNavigation();
+  const account = useAppSelector<string | null>((state) => state.user.account);
+
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
   const [inputBancorNetwork, setInputBancorNetwork] = useState(
     getContractBancorNetworkLS()
@@ -95,8 +99,10 @@ export const Admin = () => {
     setContractTestToken4LS(inputRpcUrl ? inputTKN4 : '');
     setContractTestToken5LS(inputRpcUrl ? inputTKN5 : '');
 
-    pushPools();
-    window.location.reload();
+    const rpc = new providers.JsonRpcProvider(inputRpcUrl);
+
+    setProvider(rpc);
+    if (account) setSigner(rpc.getUncheckedSigner(account));
   };
 
   return (
