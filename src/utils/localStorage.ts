@@ -79,7 +79,8 @@ export const setShowBannerLS = (flag: boolean) => {
 
 export const getTenderlyRpcLS = (): string => {
   const url = localStorage.getItem(tenderlyRpcUrl);
-  return url || '';
+  const envUrl = process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;
+  return url ? url : envUrl ? envUrl : '';
 };
 
 export const setTenderlyRpcLS = (url: string) => {

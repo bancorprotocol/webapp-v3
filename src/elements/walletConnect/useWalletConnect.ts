@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { openNewTab, wait } from 'utils/pureFunctions';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { setUser } from 'services/observables/user';
+import { isForkAvailable } from 'services/web3/config';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export const useWalletConnect = (): UseWalletConnect => {
   const account = useAppSelector<string | undefined>(
     (state) => state.user.account
   );
-  const isFork = useAppSelector<boolean>((state) => state.user.isFork);
+
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [selectedWallet, setSelectedWallet] = useState<WalletInfo>();
@@ -85,7 +86,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           const account = await connector.getAccount();
           setSigner(
             new Web3Provider(await connector.getProvider()).getSigner(),
-            isFork ? account : undefined
+            isForkAvailable ? account : undefined
           );
           sendWalletEvent(
             WalletEvents.connect,
@@ -100,7 +101,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           setIsError(true);
         }
     },
-    [activate, setIsOpen, isFork]
+    [activate, setIsOpen]
   );
 
   const handleDisconnect = useCallback(() => {
@@ -136,7 +137,9 @@ export const useWalletConnect = (): UseWalletConnect => {
       }
 
       if (connector) {
-        const account = isFork ? await connector.getAccount() : undefined;
+        const account = isForkAvailable
+          ? await connector.getAccount()
+          : undefined;
 
         setSigner(
           new Web3Provider(await connector.getProvider()).getSigner(),
