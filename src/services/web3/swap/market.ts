@@ -62,7 +62,7 @@ export const getRateAndPriceImapct = async (
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const v3Rate = await getV3Rate(fromToken, toToken, amount);
     const v2Rate = shrinkToken(spotRate.rate, toToken.decimals);
-    const isV3 = Number(v3Rate) >= Number(v2Rate);
+    const isV3 = v3Rate !== '0';
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
