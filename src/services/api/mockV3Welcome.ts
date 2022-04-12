@@ -82,6 +82,12 @@ export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
   );
   pools.push(await buildAPIPoolV3(ethToken, 'ETH'));
   pools.push(await buildAPIPoolV3(bntToken, 'BNT'));
+  pools.push(
+    await buildAPIPoolV3('0x6B175474E89094C44Da98b954EedeAC495271d0F', 'DAI')
+  );
+  pools.push(
+    await buildAPIPoolV3('0x514910771AF9Ca656af840dff83E8264EcF986CA', 'LINK')
+  );
   return pools;
 };
 
