@@ -178,7 +178,10 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
           ...apiPool,
           reserveToken,
           fundingLimit: shrinkToken(fundingLimit.toString(), apiPool.decimals),
-          poolLiquidity: poolLiquidity.toString(),
+          poolLiquidity: shrinkToken(
+            poolLiquidity.stakedBalance.toString(),
+            apiPool.decimals
+          ),
         };
         return pool;
       })
