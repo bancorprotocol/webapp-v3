@@ -1,6 +1,6 @@
 import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
-import { BancorV3Contracts } from 'pages/Admin';
+import { BancorV3Contracts } from 'elements/admin/AdminUseFork';
 
 const selected_lists = 'userTokenLists';
 const autoLogin = 'loginAuto';
@@ -83,8 +83,12 @@ export const getTenderlyRpcLS = (): string => {
   return url ? url : envUrl ? envUrl : '';
 };
 
-export const setTenderlyRpcLS = (url: string) => {
-  localStorage.setItem(tenderlyRpcUrl, url);
+export const setTenderlyRpcLS = (url?: string) => {
+  if (url) {
+    localStorage.setItem(tenderlyRpcUrl, url);
+  } else {
+    localStorage.removeItem(tenderlyRpcUrl);
+  }
 };
 
 export const getBancorV3Contracts = (): BancorV3Contracts | undefined => {
@@ -93,6 +97,10 @@ export const getBancorV3Contracts = (): BancorV3Contracts | undefined => {
   return JSON.parse(contracts);
 };
 
-export const setBancorV3Contracts = (contracts: BancorV3Contracts) => {
-  localStorage.setItem(bancorv3Contracts, JSON.stringify(contracts));
+export const setBancorV3Contracts = (contracts?: BancorV3Contracts) => {
+  if (contracts) {
+    localStorage.setItem(bancorv3Contracts, JSON.stringify(contracts));
+  } else {
+    localStorage.removeItem(bancorv3Contracts);
+  }
 };

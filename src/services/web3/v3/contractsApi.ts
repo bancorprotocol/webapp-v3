@@ -23,6 +23,7 @@ import { address as networkSettingsAddress } from 'services/web3/abis/v3/Network
 import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals.json';
 import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
 import { address as standardStakingRewardsAddress } from 'services/web3/abis/v3/StandardStakingRewards.json';
+
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
     this.contractAddress = contractAddress;
