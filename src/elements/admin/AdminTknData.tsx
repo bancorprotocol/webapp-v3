@@ -3,6 +3,7 @@ import { Token } from 'services/observables/tokens';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { PoolV3 } from 'services/observables/pools';
 import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
@@ -33,6 +34,8 @@ export const AdminTknData = () => {
             <div className="font-semibold">{pool.name}</div>
             <div>Pool ID: {pool.pool_dlt_id}</div>
             <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
+            <div>Funding Limit {prettifyNumber(pool.fundingLimit)}</div>
+            <div>Pool Liquidity {prettifyNumber(pool.poolLiquidity)}</div>
           </div>
         ))}
       </div>
