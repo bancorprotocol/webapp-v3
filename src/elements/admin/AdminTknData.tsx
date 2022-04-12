@@ -14,7 +14,7 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>All Tokens</h2>
         {allTokens.map((token) => (
-          <div>
+          <div key={token.address}>
             <TokenBalance
               symbol={token.symbol}
               amount={token.balance || '0'}
@@ -29,7 +29,7 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>All V3 Pools</h2>
         {allV3Pools.map((pool) => (
-          <div>
+          <div key={pool.pool_dlt_id}>
             <div className="font-semibold">{pool.name}</div>
             <div>Pool ID: {pool.pool_dlt_id}</div>
             <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
@@ -40,7 +40,7 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>Your Pool Token holdings</h2>
         {holdings.map((holding) => (
-          <div>
+          <div key={holding.poolId}>
             <div>{holding.token.name}</div>
             <div>Pool Token Balance: {holding.poolTokenBalance}</div>
             <div>To underlying Token: {holding.tokenBalance}</div>
