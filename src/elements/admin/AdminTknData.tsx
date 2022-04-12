@@ -36,10 +36,16 @@ export const AdminTknData = () => {
             <div className="font-semibold">{pool.name}</div>
             <div>Pool ID: {pool.pool_dlt_id}</div>
             <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
-            <div>Funding Limit {prettifyNumber(pool.fundingLimit)}</div>
-            <div>Pool Liquidity {prettifyNumber(pool.poolLiquidity)}</div>
-            <div>Trading Enabled {pool.tradingEnabled ? 'Yes' : 'No'}</div>
-            <div>Deposit Enabled {pool.depositingEnabled ? 'Yes' : 'No'}</div>
+            <div>Funding Limit: {prettifyNumber(pool.fundingLimit)}</div>
+            <div>Pool Liquidity: {prettifyNumber(pool.poolLiquidity)}</div>
+            <div>
+              Trading Liquidity of TKN: {prettifyNumber(pool.tradingLiqTKN)}
+            </div>
+            <div>
+              Trading Liquidity of BNT: {prettifyNumber(pool.tradingLiqBNT)}
+            </div>
+            <div>Trading Enabled: {pool.tradingEnabled ? 'Yes' : 'No'}</div>
+            <div>Deposit Enabled: {pool.depositingEnabled ? 'Yes' : 'No'}</div>
           </div>
         ))}
       </div>
