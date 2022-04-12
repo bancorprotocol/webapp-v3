@@ -95,6 +95,8 @@ export const useNavigation = () => {
     if (toToken) pushSwapParams(toToken.address, fromToken.address, limit);
   };
 
+  const pushAdmin = () => push(admin);
+
   return {
     replaceLimit,
     replaceFrom,
@@ -106,5 +108,6 @@ export const useNavigation = () => {
     pushRewardsStakeByID,
     pushRewardsStakeByIDnPos,
     pushAddLiquidityByID,
+    pushAdmin,
   };
 };
