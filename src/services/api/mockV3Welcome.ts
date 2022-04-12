@@ -3,34 +3,33 @@ import { bntToken, ethToken } from 'services/web3/config';
 import { TokenMinimal } from 'services/observables/tokens';
 import imposterLogo from 'assets/logos/imposter.svg';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import {
-  getContractTestToken1LS,
-  getContractTestToken2LS,
-  getContractTestToken3LS,
-  getContractTestToken4LS,
-  getContractTestToken5LS,
-} from 'utils/localStorage';
+import { getBancorV3Contracts } from 'utils/localStorage';
+import { address as testToken1Address } from 'services/web3/abis/v3/TestToken1.json';
+import { address as testToken2Address } from 'services/web3/abis/v3/TestToken2.json';
+import { address as testToken3Address } from 'services/web3/abis/v3/TestToken3.json';
+import { address as testToken4Address } from 'services/web3/abis/v3/TestToken4.json';
+import { address as testToken5Address } from 'services/web3/abis/v3/TestToken5.json';
 
 const allTestTokens = [
   {
     symbol: 'TKN1',
-    address: getContractTestToken1LS(),
+    address: getBancorV3Contracts()?.testToken1 || testToken1Address,
   },
   {
     symbol: 'TKN2',
-    address: getContractTestToken2LS(),
+    address: getBancorV3Contracts()?.testToken2 || testToken2Address,
   },
   {
     symbol: 'TKN3',
-    address: getContractTestToken3LS(),
+    address: getBancorV3Contracts()?.testToken3 || testToken3Address,
   },
   {
     symbol: 'TKN4',
-    address: getContractTestToken4LS(),
+    address: getBancorV3Contracts()?.testToken4 || testToken4Address,
   },
   {
     symbol: 'TKN5',
-    address: getContractTestToken5LS(),
+    address: getBancorV3Contracts()?.testToken5 || testToken5Address,
   },
 ];
 
