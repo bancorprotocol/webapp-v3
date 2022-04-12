@@ -44,6 +44,9 @@ export const AdminTknData = () => {
             <div>
               Trading Liquidity of BNT: {prettifyNumber(pool.tradingLiqBNT)}
             </div>
+            <div>
+              Vault Balance of TKN: {prettifyNumber(pool.tknVaultBalance)}
+            </div>
             <div>Trading Enabled: {pool.tradingEnabled ? 'Yes' : 'No'}</div>
             <div>Deposit Enabled: {pool.depositingEnabled ? 'Yes' : 'No'}</div>
           </div>

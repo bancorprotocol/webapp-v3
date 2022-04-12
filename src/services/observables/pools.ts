@@ -7,9 +7,15 @@ import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import { bntToken, getNetworkVariables } from 'services/web3/config';
+import {
+  bntToken,
+  ethToken,
+  getNetworkVariables,
+  zeroAddress,
+} from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { shrinkToken } from 'utils/formulas';
+import { fetchETH } from 'services/web3/token/token';
 
 export interface Reserve {
   address: string;
@@ -45,6 +51,7 @@ export interface PoolV3 extends APIPoolV3 {
   poolLiquidity: string;
   tradingLiqBNT: string;
   tradingLiqTKN: string;
+  tknVaultBalance: string;
   depositingEnabled: boolean;
   tradingEnabled: boolean;
 }
@@ -161,6 +168,7 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
     const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.pool_dlt_id, p]));
     const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    const masterVault = await ContractsApi.BancorNetworkInfo.read.masterVault();
     const poolsV3 = await Promise.all(
       allTokens.map(async (tkn) => {
         const apiPool = apiPoolsMap.get(tkn.address);
@@ -181,7 +189,15 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
         const data = await ContractsApi.PoolCollection.read.poolData(
           apiPool.pool_dlt_id
         );
+
         const isBnt = apiPool.pool_dlt_id === getNetworkVariables().bntToken;
+
+        const tknVaultBalance =
+          apiPool.pool_dlt_id !== ethToken
+            ? await ContractsApi.Token(apiPool.pool_dlt_id).read.balanceOf(
+                masterVault
+              )
+            : await fetchETH(masterVault);
 
         const pool: PoolV3 = {
           ...apiPool,
@@ -197,6 +213,10 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
           ),
           tradingLiqBNT: shrinkToken(
             poolLiquidity.bntTradingLiquidity.toString(),
+            apiPool.decimals
+          ),
+          tknVaultBalance: shrinkToken(
+            tknVaultBalance.toString(),
             apiPool.decimals
           ),
           depositingEnabled: data.depositingEnabled || isBnt,
