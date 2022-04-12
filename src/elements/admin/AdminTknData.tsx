@@ -14,17 +14,19 @@ export const AdminTknData = () => {
     <div className="grid grid-cols-3 text-left gap-20">
       <div className="space-y-20">
         <h2>All Tokens</h2>
-        {allTokens.map((token) => (
-          <div key={token.address}>
-            <TokenBalance
-              symbol={token.symbol}
-              amount={token.balance || '0'}
-              usdPrice={token.usdPrice}
-              imgUrl={token.logoURI}
-            />
-            <div>Token ID: {token.address}</div>
-          </div>
-        ))}
+        {allTokens
+          .filter((x) => Number(x.balance) !== 0)
+          .map((token) => (
+            <div key={token.address}>
+              <TokenBalance
+                symbol={token.symbol}
+                amount={token.balance || '0'}
+                usdPrice={token.usdPrice}
+                imgUrl={token.logoURI}
+              />
+              <div>Token ID: {token.address}</div>
+            </div>
+          ))}
       </div>
 
       <div className="space-y-20">
@@ -36,6 +38,8 @@ export const AdminTknData = () => {
             <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
             <div>Funding Limit {prettifyNumber(pool.fundingLimit)}</div>
             <div>Pool Liquidity {prettifyNumber(pool.poolLiquidity)}</div>
+            <div>Trading Enabled {pool.tradingEnabled ? 'Yes' : 'No'}</div>
+            <div>Deposit Enabled {pool.depositingEnabled ? 'Yes' : 'No'}</div>
           </div>
         ))}
       </div>

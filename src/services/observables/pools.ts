@@ -7,7 +7,7 @@ import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import { bntToken } from 'services/web3/config';
+import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { shrinkToken } from 'utils/formulas';
 
@@ -43,6 +43,8 @@ export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
   fundingLimit: string;
   poolLiquidity: string;
+  depositingEnabled: boolean;
+  tradingEnabled: boolean;
 }
 
 export interface PoolToken {
@@ -166,13 +168,18 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
         }
         const fundingLimit =
           await ContractsApi.NetworkSettings.read.poolFundingLimit(
-            apiPool?.pool_dlt_id
+            apiPool.pool_dlt_id
           );
 
         const poolLiquidity =
           await ContractsApi.PoolCollection.read.poolLiquidity(
-            apiPool?.pool_dlt_id
+            apiPool.pool_dlt_id
           );
+
+        const data = await ContractsApi.PoolCollection.read.poolData(
+          apiPool.pool_dlt_id
+        );
+        const isBnt = apiPool.pool_dlt_id === getNetworkVariables().bntToken;
 
         const pool: PoolV3 = {
           ...apiPool,
@@ -182,6 +189,8 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
             poolLiquidity.stakedBalance.toString(),
             apiPool.decimals
           ),
+          depositingEnabled: data.depositingEnabled || isBnt,
+          tradingEnabled: data.tradingEnabled || isBnt,
         };
         return pool;
       })
