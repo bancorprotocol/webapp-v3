@@ -10,7 +10,6 @@ import {
 } from 'services/web3/config';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import { APIPool } from 'services/api/bancor';
 import {
   ConversionEvents,
   sendConversionEvent,
@@ -21,7 +20,7 @@ import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { ContractTransaction, utils } from 'ethers';
+import { utils } from 'ethers';
 import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
 

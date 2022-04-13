@@ -52,6 +52,7 @@ export interface PoolV3 extends APIPoolV3 {
   tradingLiqBNT: string;
   tradingLiqTKN: string;
   tknVaultBalance: string;
+  depositLimit: string;
   depositingEnabled: boolean;
   tradingEnabled: boolean;
 }
@@ -217,6 +218,10 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
           ),
           tknVaultBalance: shrinkToken(
             tknVaultBalance.toString(),
+            apiPool.decimals
+          ),
+          depositLimit: shrinkToken(
+            data.depositLimit.toString(),
             apiPool.decimals
           ),
           depositingEnabled: data.depositingEnabled || isBnt,
