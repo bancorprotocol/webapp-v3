@@ -8,10 +8,18 @@ import {
   fetchPortfolioV3WithdrawalSettings,
 } from 'services/web3/v3/portfolio/withdraw';
 import { WithdrawalSettings } from 'redux/portfolio/v3Portfolio.types';
+import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';
 
 export const portfolioHoldings$ = combineLatest([user$]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
     return fetchPortfolioV3Holdings(user);
+  }),
+  shareReplay(1)
+);
+
+export const portfolioStandardRewards$ = combineLatest([user$]).pipe(
+  switchMapIgnoreThrow(async ([user]) => {
+    return fetchStandardRewardsByUser(user);
   }),
   shareReplay(1)
 );

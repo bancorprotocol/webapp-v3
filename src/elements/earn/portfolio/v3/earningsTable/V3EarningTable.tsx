@@ -27,7 +27,7 @@ export const V3EarningTable = () => {
         Cell: ({ cell }) => (
           <TokenBalance
             symbol={cell.row.original.token.symbol}
-            amount={cell.row.original.tokenBalance}
+            amount={cell.row.original.combinedTokenBalance}
             imgUrl={cell.row.original.token.logoURI}
             usdPrice={cell.row.original.token.usdPrice ?? '0'}
           />
