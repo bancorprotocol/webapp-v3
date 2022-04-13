@@ -26,11 +26,13 @@ import {
 } from './liquidity';
 import {
   setHoldingsRaw,
+  setStandardRewards,
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
 } from 'redux/portfolio/v3Portfolio';
 import {
   portfolioHoldings$,
+  portfolioStandardRewards$,
   portfolioWithdrawals$,
   portfolioWithdrawalSettings$,
 } from 'services/observables/portfolio';
@@ -112,6 +114,10 @@ export const subscribeToObservables = (dispatch: any) => {
 
   portfolioHoldings$.subscribe((holdingsRaw) => {
     dispatch(setHoldingsRaw(holdingsRaw));
+  });
+
+  portfolioStandardRewards$.subscribe((rewards) => {
+    dispatch(setStandardRewards(rewards));
   });
 
   portfolioWithdrawals$.subscribe((withdrawalRequests) => {

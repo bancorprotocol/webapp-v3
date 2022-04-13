@@ -4,6 +4,7 @@ import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { PoolV3 } from 'services/observables/pools';
 import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { utils } from 'ethers';
 
 export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
@@ -60,6 +61,26 @@ export const AdminTknData = () => {
             <div>{holding.token.name}</div>
             <div>Pool Token Balance: {holding.poolTokenBalance}</div>
             <div>To underlying Token: {holding.tokenBalance}</div>
+            {holding.standardStakingReward && (
+              <div>
+                <div>Standard Staking:</div>
+                <div>
+                  Pool Token staked:{' '}
+                  {utils.formatUnits(
+                    holding.standardStakingReward.poolTokenAmountWei,
+                    18
+                  )}
+                </div>
+                <div>
+                  Token value:{' '}
+                  {utils.formatUnits(
+                    holding.standardStakingReward.tokenAmountWei,
+                    holding.token.decimals
+                  )}
+                </div>
+                <div>Combined Token Value: {holding.combinedTokenBalance}</div>
+              </div>
+            )}
           </div>
         ))}
       </div>

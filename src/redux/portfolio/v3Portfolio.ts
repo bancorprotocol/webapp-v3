@@ -12,6 +12,8 @@ import { RootState } from 'redux/index';
 import { getAllTokensMap } from 'redux/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
+import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
+import BigNumber from 'bignumber.js';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -21,6 +23,7 @@ export const initialState: V3PortfolioState = {
   isLoadingWithdrawalRequests: true,
   bonusesModal: false,
   bonuses: mockBonuses,
+  standardRewards: [],
 };
 
 const v3PortfolioSlice = createSlice({
@@ -47,6 +50,12 @@ const v3PortfolioSlice = createSlice({
     openBonusesModal: (state, action: PayloadAction<boolean>) => {
       state.bonusesModal = action.payload;
     },
+    setStandardRewards: (
+      state,
+      action: PayloadAction<RewardsProgramStake[]>
+    ) => {
+      state.standardRewards = action.payload;
+    },
   },
 });
 
@@ -55,29 +64,48 @@ export const {
   openBonusesModal,
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
+  setStandardRewards,
 } = v3PortfolioSlice.actions;
 
 export const v3Portfolio = v3PortfolioSlice.reducer;
 
 export const getPortfolioHoldings = createSelector(
   (state: RootState) => state.v3Portfolio.holdingsRaw,
+  (state: RootState) => state.v3Portfolio.standardRewards,
   (state: RootState) => getAllTokensMap(state),
-  (holdingsRaw: HoldingRaw[], allTokensMap: Map<string, Token>): Holding[] => {
+  (
+    holdingsRaw: HoldingRaw[],
+    standardRewards: RewardsProgramStake[],
+    allTokensMap: Map<string, Token>
+  ): Holding[] => {
+    const standardRewardsMap = new Map(
+      standardRewards.map((reward) => [reward.pool, reward])
+    );
     return holdingsRaw
       .map((holdingRaw) => {
         const token = allTokensMap.get(holdingRaw.poolId);
+        const standardStakingReward = standardRewardsMap.get(holdingRaw.poolId);
         if (!token) {
           return undefined;
         }
 
         const poolTokenBalance = utils.formatUnits(
           holdingRaw.poolTokenBalanceWei,
-          token.decimals
+          18
         );
         const tokenBalance = utils.formatUnits(
           holdingRaw.tokenBalanceWei,
           token.decimals
         );
+
+        const stakedTokenBalance = utils.formatUnits(
+          standardStakingReward?.tokenAmountWei || 0,
+          token.decimals
+        );
+
+        const combinedTokenBalance = new BigNumber(tokenBalance)
+          .plus(stakedTokenBalance)
+          .toString();
 
         const holding: Holding = {
           token,
@@ -85,6 +113,8 @@ export const getPortfolioHoldings = createSelector(
           poolTokenId: holdingRaw.poolTokenId,
           poolTokenBalance,
           tokenBalance,
+          standardStakingReward,
+          combinedTokenBalance,
         };
 
         return holding;
