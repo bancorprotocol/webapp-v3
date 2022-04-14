@@ -110,7 +110,7 @@ export const Router = () => {
       </Route>
       <Route exact strict path={tos} component={TermsOfUse} />
       <Route exact strict path={privacyPolicy} component={PrivacyPolicy} />
-      {isForkAvailable && <Route exact strict path={admin} component={Admin} />}
+      <Route exact strict path={admin} component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -179,7 +179,9 @@ export const SwapMarket = ({
     try {
       const isApprovalReq = await getNetworkContractApproval(
         fromToken,
-        ApprovalContract.BancorNetwork,
+        isSwapV3
+          ? ApprovalContract.BancorNetworkV3
+          : ApprovalContract.BancorNetwork,
         fromAmount
       );
       if (isApprovalReq) {
@@ -445,7 +447,11 @@ export const SwapMarket = ({
         fromToken={fromToken}
         handleApproved={() => handleSwap(true)}
         waitForApproval={true}
-        contract={ApprovalContract.BancorNetwork}
+        contract={
+          isSwapV3
+            ? ApprovalContract.BancorNetworkV3
+            : ApprovalContract.BancorNetwork
+        }
       />
     </>
   );
