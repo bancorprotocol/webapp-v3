@@ -9,27 +9,44 @@ import { address as testToken2Address } from 'services/web3/abis/v3/TestToken2.j
 import { address as testToken3Address } from 'services/web3/abis/v3/TestToken3.json';
 import { address as testToken4Address } from 'services/web3/abis/v3/TestToken4.json';
 import { address as testToken5Address } from 'services/web3/abis/v3/TestToken5.json';
+import { address as testToken6Address } from 'services/web3/abis/v3/TestToken6.json';
+import { address as testToken7Address } from 'services/web3/abis/v3/TestToken7.json';
 
 const allTestTokens = [
   {
     symbol: 'TKN1',
     address: getBancorV3Contracts()?.testToken1 || testToken1Address,
+    decimals: 18,
   },
   {
     symbol: 'TKN2',
     address: getBancorV3Contracts()?.testToken2 || testToken2Address,
+    decimals: 18,
   },
   {
     symbol: 'TKN3',
     address: getBancorV3Contracts()?.testToken3 || testToken3Address,
+    decimals: 18,
   },
   {
     symbol: 'TKN4',
     address: getBancorV3Contracts()?.testToken4 || testToken4Address,
+    decimals: 18,
   },
   {
     symbol: 'TKN5',
     address: getBancorV3Contracts()?.testToken5 || testToken5Address,
+    decimals: 18,
+  },
+  {
+    symbol: 'TKN6',
+    address: getBancorV3Contracts()?.testToken6 || testToken6Address,
+    decimals: 4,
+  },
+  {
+    symbol: 'TKN7',
+    address: getBancorV3Contracts()?.testToken7 || testToken7Address,
+    decimals: 18,
   },
 ];
 
@@ -47,7 +64,8 @@ const buildAPIToken = (address: string, symbol: string): APIToken => {
 
 const buildAPIPoolV3 = async (
   address: string,
-  symbol: string
+  symbol: string,
+  decimals: number
 ): Promise<APIPoolV3> => {
   const poolToken_dlt_id = await ContractsApi.BancorNetworkInfo.read.poolToken(
     address
@@ -62,7 +80,7 @@ const buildAPIPoolV3 = async (
     fee: '123',
     version: 99,
     supply: '1123',
-    decimals: 18,
+    decimals,
     isWhitelisted: true,
   };
 };
@@ -76,16 +94,25 @@ export const getMockV3Tokens = (): APIToken[] => {
 export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
   const pools = await Promise.all(
     allTestTokens.map(
-      async (token) => await buildAPIPoolV3(token.address, token.symbol)
+      async (token) =>
+        await buildAPIPoolV3(token.address, token.symbol, token.decimals)
     )
   );
-  pools.push(await buildAPIPoolV3(ethToken, 'ETH'));
-  pools.push(await buildAPIPoolV3(bntToken, 'BNT'));
+  pools.push(await buildAPIPoolV3(ethToken, 'ETH', 18));
+  pools.push(await buildAPIPoolV3(bntToken, 'BNT', 18));
   pools.push(
-    await buildAPIPoolV3('0x6B175474E89094C44Da98b954EedeAC495271d0F', 'DAI')
+    await buildAPIPoolV3(
+      '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+      'DAI',
+      18
+    )
   );
   pools.push(
-    await buildAPIPoolV3('0x514910771AF9Ca656af840dff83E8264EcF986CA', 'LINK')
+    await buildAPIPoolV3(
+      '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+      'LINK',
+      18
+    )
   );
   return pools;
 };
