@@ -65,6 +65,7 @@ export const fetchStandardRewardsByUser = async (
           await ContractsApi.StandardStakingRewards.read.pendingRewards(user, [
             program.id,
           ]);
+
         return {
           rewardRate: program.rewardRate.toString(),
           isEnabled: program.isEnabled,
