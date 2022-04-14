@@ -25,6 +25,8 @@ const filenames = [
   'TestToken3.json',
   'TestToken4.json',
   'TestToken5.json',
+  'TestToken6.json',
+  'TestToken7.json',
 ];
 
 const foldername = 'tenderly';
@@ -41,6 +43,8 @@ const emptyContractInputs = {
   testToken3: '',
   testToken4: '',
   testToken5: '',
+  testToken6: '',
+  testToken7: '',
 };
 
 export interface BancorV3Contracts {
@@ -55,6 +59,8 @@ export interface BancorV3Contracts {
   testToken3: string;
   testToken4: string;
   testToken5: string;
+  testToken6: string;
+  testToken7: string;
 }
 
 export const AdminUseFork = () => {
@@ -96,6 +102,8 @@ export const AdminUseFork = () => {
         testToken3Address,
         testToken4Address,
         testToken5Address,
+        testToken6Address,
+        testToken7Address,
       ] = await Promise.all(
         filenames.map(async (name) => {
           const res2 = await zipFile
@@ -125,6 +133,8 @@ export const AdminUseFork = () => {
         testToken3: testToken3Address,
         testToken4: testToken4Address,
         testToken5: testToken5Address,
+        testToken6: testToken6Address,
+        testToken7: testToken7Address,
       });
       handleSave();
     } catch (e: any) {
