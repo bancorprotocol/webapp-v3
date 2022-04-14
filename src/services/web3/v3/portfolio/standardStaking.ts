@@ -26,6 +26,7 @@ export interface RewardsProgramStake {
   startTime: number;
   id: string;
   rewardsToken: string;
+  pendingRewardsWei: string;
   endTime: number;
 }
 
@@ -60,6 +61,10 @@ export const fetchStandardRewardsByUser = async (
             program.pool,
             poolTokenAmountWei
           );
+        const pendingRewardsWei =
+          await ContractsApi.StandardStakingRewards.read.pendingRewards(user, [
+            program.id,
+          ]);
         return {
           rewardRate: program.rewardRate.toString(),
           isEnabled: program.isEnabled,
@@ -68,6 +73,7 @@ export const fetchStandardRewardsByUser = async (
           startTime: program.startTime,
           id: program.id.toString(),
           rewardsToken: program.rewardsToken,
+          pendingRewardsWei: pendingRewardsWei.toString(),
           endTime: program.endTime,
           poolTokenAmountWei,
           tokenAmountWei: tokenAmountWei.toString(),

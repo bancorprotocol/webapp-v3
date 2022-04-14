@@ -14,6 +14,7 @@ import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
+import { get } from 'lodash';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -161,5 +162,64 @@ export const getPortfolioWithdrawalRequests = createSelector(
         return request;
       })
       .filter((request) => request !== undefined) as WithdrawalRequest[];
+  }
+);
+
+export interface GroupedStandardReward {
+  groupId: string;
+  groupToken: Token;
+  totalPendingRewards: string;
+  rewards: RewardsProgramStake[];
+}
+
+export const getStandardRewards = createSelector(
+  (state: RootState) => state.v3Portfolio.standardRewards,
+  (state: RootState) => getAllTokensMap(state),
+  (
+    standardRewards: RewardsProgramStake[],
+    allTokensMap: Map<string, Token>
+  ): GroupedStandardReward[] => {
+    return standardRewards.reduce(
+      ((obj) => (acc: GroupedStandardReward[], val: RewardsProgramStake) => {
+        const groupId = val.rewardsToken;
+        const filtered = standardRewards.filter(
+          (reward) => reward.rewardsToken === groupId
+        );
+        const groupToken = allTokensMap.get(groupId);
+        if (!groupToken) {
+          console.error(
+            `Failed GroupedStandardReward: No token found for ${groupId}`
+          );
+          return acc;
+        }
+
+        let item: GroupedStandardReward = obj.get(groupId);
+
+        if (!item) {
+          const calcSum = (key: keyof RewardsProgramStake): string => {
+            return filtered
+              .map((reward) => Number(get(reward, key)))
+              .reduce((sum, current) => sum + current, 0)
+              .toString();
+          };
+
+          const totalPendingRewards = calcSum('pendingRewardsWei');
+
+          item = {
+            groupId,
+            groupToken,
+            totalPendingRewards,
+            rewards: [],
+          };
+
+          obj.set(groupId, item);
+          acc.push(item);
+        }
+
+        item.rewards.push(val);
+        return acc;
+      })(new Map()),
+      []
+    );
   }
 );

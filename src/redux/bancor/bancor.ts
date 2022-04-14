@@ -6,6 +6,7 @@ import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap } from 'redux/bancor/token';
 import { utils } from 'ethers';
+import { GroupedStandardReward } from 'redux/portfolio/v3Portfolio';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -13,6 +14,7 @@ interface BancorState {
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
+  standardRewardPrograms: GroupedStandardReward[];
 }
 
 export const initialState: BancorState = {
@@ -21,6 +23,7 @@ export const initialState: BancorState = {
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
+  standardRewardPrograms: [],
 };
 
 const bancorSlice = createSlice({
