@@ -5,11 +5,15 @@ import { PoolV3 } from 'services/observables/pools';
 import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { utils } from 'ethers';
+import { getAllStandardRewardPrograms } from 'redux/bancor/bancor';
 
 export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const allV3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
   const holdings = useAppSelector(getPortfolioHoldings);
+  const allStandardRewardsPrograms = useAppSelector(
+    getAllStandardRewardPrograms
+  );
 
   return (
     <div className="grid grid-cols-3 text-left gap-20">
@@ -82,6 +86,15 @@ export const AdminTknData = () => {
                 <div>Combined Token Value: {holding.combinedTokenBalance}</div>
               </div>
             )}
+          </div>
+        ))}
+
+        <h2>All Standard Reward Programs</h2>
+        {allStandardRewardsPrograms.map((reward) => (
+          <div key={reward.id}>
+            <div>Program ID: {reward.id}</div>
+            <div>Pool: {reward.token?.symbol}</div>
+            <div>Rewards Token: {reward.rewardsToken?.symbol}</div>
           </div>
         ))}
       </div>

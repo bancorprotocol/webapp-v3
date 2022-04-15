@@ -86,3 +86,40 @@ export const fetchStandardRewardsByUser = async (
     throw e;
   }
 };
+
+export interface RewardsProgramRaw {
+  id: string;
+  pool: string;
+  poolToken: string;
+  rewardsToken: string;
+  isEnabled: boolean;
+  startTime: number;
+  endTime: number;
+  rewardRate: string;
+}
+
+export const fetchAllStandardRewards = async (): Promise<
+  RewardsProgramRaw[]
+> => {
+  try {
+    const ids = await ContractsApi.StandardStakingRewards.read.programIds();
+
+    const programs = await ContractsApi.StandardStakingRewards.read.programs(
+      ids
+    );
+
+    return programs.map((program) => ({
+      id: program.id.toString(),
+      pool: program.pool,
+      poolToken: program.poolToken,
+      rewardsToken: program.rewardsToken,
+      isEnabled: program.isEnabled,
+      startTime: program.startTime,
+      endTime: program.endTime,
+      rewardRate: program.rewardRate.toString(),
+    }));
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
