@@ -26,6 +26,7 @@ export interface RewardsProgramStake {
   startTime: number;
   id: string;
   rewardsToken: string;
+  pendingRewardsWei: string;
   endTime: number;
 }
 
@@ -60,6 +61,11 @@ export const fetchStandardRewardsByUser = async (
             program.pool,
             poolTokenAmountWei
           );
+        const pendingRewardsWei =
+          await ContractsApi.StandardStakingRewards.read.pendingRewards(user, [
+            program.id,
+          ]);
+
         return {
           rewardRate: program.rewardRate.toString(),
           isEnabled: program.isEnabled,
@@ -68,12 +74,50 @@ export const fetchStandardRewardsByUser = async (
           startTime: program.startTime,
           id: program.id.toString(),
           rewardsToken: program.rewardsToken,
+          pendingRewardsWei: pendingRewardsWei.toString(),
           endTime: program.endTime,
           poolTokenAmountWei,
           tokenAmountWei: tokenAmountWei.toString(),
         };
       })
     );
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+};
+
+export interface RewardsProgramRaw {
+  id: string;
+  pool: string;
+  poolToken: string;
+  rewardsToken: string;
+  isEnabled: boolean;
+  startTime: number;
+  endTime: number;
+  rewardRate: string;
+}
+
+export const fetchAllStandardRewards = async (): Promise<
+  RewardsProgramRaw[]
+> => {
+  try {
+    const ids = await ContractsApi.StandardStakingRewards.read.programIds();
+
+    const programs = await ContractsApi.StandardStakingRewards.read.programs(
+      ids
+    );
+
+    return programs.map((program) => ({
+      id: program.id.toString(),
+      pool: program.pool,
+      poolToken: program.poolToken,
+      rewardsToken: program.rewardsToken,
+      isEnabled: program.isEnabled,
+      startTime: program.startTime,
+      endTime: program.endTime,
+      rewardRate: program.rewardRate.toString(),
+    }));
   } catch (e) {
     console.error(e);
     throw e;

@@ -8,7 +8,11 @@ import {
   fetchPortfolioV3WithdrawalSettings,
 } from 'services/web3/v3/portfolio/withdraw';
 import { WithdrawalSettings } from 'redux/portfolio/v3Portfolio.types';
-import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';
+import {
+  fetchAllStandardRewards,
+  fetchStandardRewardsByUser,
+} from 'services/web3/v3/portfolio/standardStaking';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardStakingRewards';
 
 export const portfolioHoldings$ = combineLatest([user$]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
@@ -40,5 +44,15 @@ const portfolioWithdrawalSettingsReceiver$ =
 export const portfolioWithdrawalSettings$ =
   portfolioWithdrawalSettingsReceiver$.pipe(
     switchMapIgnoreThrow(() => fetchPortfolioV3WithdrawalSettings()),
+    shareReplay(1)
+  );
+
+const portfolioAllStandardRewardsReceiver$ = new BehaviorSubject<
+  ProgramDataStructOutput[]
+>([]);
+
+export const portfolioAllStandardRewards$ =
+  portfolioAllStandardRewardsReceiver$.pipe(
+    switchMapIgnoreThrow(() => fetchAllStandardRewards()),
     shareReplay(1)
   );

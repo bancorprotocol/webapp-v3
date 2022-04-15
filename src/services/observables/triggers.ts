@@ -1,5 +1,6 @@
 import { keeperDaoTokens$ } from 'services/observables/tokens';
 import {
+  setAllStandardRewardPrograms,
   setAllTokenListTokens,
   setAllTokens,
   setKeeperDaoTokens,
@@ -31,6 +32,7 @@ import {
   setWithdrawalSettings,
 } from 'redux/portfolio/v3Portfolio';
 import {
+  portfolioAllStandardRewards$,
   portfolioHoldings$,
   portfolioStandardRewards$,
   portfolioWithdrawals$,
@@ -126,5 +128,9 @@ export const subscribeToObservables = (dispatch: any) => {
 
   portfolioWithdrawalSettings$.subscribe((withdrawalSettings) => {
     dispatch(setWithdrawalSettings(withdrawalSettings));
+  });
+
+  portfolioAllStandardRewards$.subscribe((rewards) => {
+    dispatch(setAllStandardRewardPrograms(rewards));
   });
 };
