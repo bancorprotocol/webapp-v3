@@ -186,11 +186,15 @@ export const getPortfolioWithdrawalRequests = createSelector(
   }
 );
 
+export interface StandardReward extends RewardsProgramStake {
+  programToken: Token;
+}
+
 export interface GroupedStandardReward {
   groupId: string;
   groupToken: Token;
   totalPendingRewards: string;
-  rewards: RewardsProgramStake[];
+  rewards: StandardReward[];
 }
 
 export const getStandardRewards = createSelector(
@@ -238,7 +242,16 @@ export const getStandardRewards = createSelector(
           acc.push(item);
         }
 
-        item.rewards.push(val);
+        const programToken = allTokensMap.get(val.pool);
+
+        if (!programToken) {
+          console.error(
+            `Failed GroupedStandardReward: No programToken found for ${programToken}`
+          );
+          return acc;
+        }
+
+        item.rewards.push({ ...val, programToken });
         return acc;
       })(new Map()),
       []

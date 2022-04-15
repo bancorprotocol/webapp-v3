@@ -13,6 +13,7 @@ import {
   fetchStandardRewardsByUser,
 } from 'services/web3/v3/portfolio/standardStaking';
 import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardRewards';
+import { fifteenSeconds$ } from 'services/observables/timers';
 
 export const portfolioHoldings$ = combineLatest([user$]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
@@ -21,7 +22,10 @@ export const portfolioHoldings$ = combineLatest([user$]).pipe(
   shareReplay(1)
 );
 
-export const portfolioStandardRewards$ = combineLatest([user$]).pipe(
+export const portfolioStandardRewards$ = combineLatest([
+  user$,
+  fifteenSeconds$,
+]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
     return fetchStandardRewardsByUser(user);
   }),

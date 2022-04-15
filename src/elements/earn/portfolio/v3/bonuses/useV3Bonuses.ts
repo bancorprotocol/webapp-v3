@@ -1,16 +1,22 @@
 import { useAppSelector } from 'redux/index';
 import { useDispatch } from 'react-redux';
-import { openBonusesModal } from 'redux/portfolio/v3Portfolio';
+import {
+  getStandardRewards,
+  openBonusesModal,
+} from 'redux/portfolio/v3Portfolio';
 import { useCallback, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
-import { Bonus } from 'redux/portfolio/v3Portfolio.types';
+import { shrinkToken } from 'utils/formulas';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 export const useV3Bonuses = () => {
+  const account = useAppSelector<string>((state) => state.user.account);
   const dispatch = useDispatch();
   const isBonusModalOpen = useAppSelector<boolean>(
     (state) => state.v3Portfolio.bonusesModal
   );
-  const bonuses = useAppSelector<Bonus[]>((state) => state.v3Portfolio.bonuses);
+  const bonuses = useAppSelector(getStandardRewards);
 
   const setBonusModalOpen = (state: boolean) => {
     dispatch(openBonusesModal(state));
@@ -18,51 +24,40 @@ export const useV3Bonuses = () => {
 
   const bonusUsdTotal = useMemo(
     () =>
-      bonuses
-        .flatMap((b) => b.claimable)
-        .reduce((acc, item) => {
-          const usdPrice = item.token.usdPrice || 0;
-          const usdAmount = new BigNumber(item.amount).times(usdPrice);
-          return usdAmount.plus(acc).toNumber();
-        }, 0),
-    [bonuses]
-  );
-
-  const getItemById = useCallback(
-    (id: string) => {
-      const item = bonuses.find((bonus) =>
-        bonus.claimable.find((item) => item.id === id)
-      );
-      if (!item) {
-        throw new Error(`Bonus with ID: '${id}' not found`);
-      }
-      return item;
-    },
+      bonuses.reduce((acc, group) => {
+        const usdPrice = group.groupToken.usdPrice;
+        const usdAmount = new BigNumber(
+          shrinkToken(group.totalPendingRewards, group.groupToken.decimals)
+        ).times(usdPrice);
+        return usdAmount.plus(acc).toNumber();
+      }, 0),
     [bonuses]
   );
 
   const handleClaim = useCallback(
-    async (id: string) => {
+    async (ids: string[]) => {
       try {
-        const item = getItemById(id);
-        // TODO - add claim logic
+        const res = await ContractsApi.StandardRewards.write.claimRewards(ids);
+        console.log('Claimed', res);
+        await updatePortfolioData(dispatch, account);
       } catch (e: any) {
-        console.error(e.message);
+        console.error('failed to claim rewards', e);
       }
     },
-    [getItemById]
+    [account, dispatch]
   );
 
   const handleClaimAndEarn = useCallback(
-    async (id: string) => {
+    async (ids: string[]) => {
       try {
-        const item = getItemById(id);
-        // TODO - add claim and earn logic
+        const res = await ContractsApi.StandardRewards.write.stakeRewards(ids);
+        console.log('restaked', res);
+        await updatePortfolioData(dispatch, account);
       } catch (e: any) {
-        console.error(e.message);
+        console.error('failed to restake rewards', e);
       }
     },
-    [getItemById]
+    [account, dispatch]
   );
 
   return {
