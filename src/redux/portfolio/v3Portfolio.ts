@@ -200,9 +200,12 @@ export const getStandardRewards = createSelector(
     standardRewards: RewardsProgramStake[],
     allTokensMap: Map<string, Token>
   ): GroupedStandardReward[] => {
+    if (allTokensMap.size === 0) {
+      return [];
+    }
     return standardRewards.reduce(
       ((obj) => (acc: GroupedStandardReward[], val: RewardsProgramStake) => {
-        const groupId = val.rewardsToken;
+        const groupId = utils.getAddress(val.rewardsToken);
         const filtered = standardRewards.filter(
           (reward) => reward.rewardsToken === groupId
         );
