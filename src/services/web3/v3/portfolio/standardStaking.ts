@@ -33,6 +33,9 @@ export interface RewardsProgramStake {
 export const fetchStandardRewardsByUser = async (
   user: string
 ): Promise<RewardsProgramStake[]> => {
+  if (!user) {
+    throw new Error('no user address found');
+  }
   try {
     const ids =
       await ContractsApi.StandardStakingRewards.read.providerProgramIds(user);
@@ -57,10 +60,11 @@ export const fetchStandardRewardsByUser = async (
         const poolTokenAmountWei =
           poolTokenStakedWei.get(program.id.toString()) || '0';
         const tokenAmountWei =
-          await ContractsApi.PoolCollection.read.poolTokenToUnderlying(
+          await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
             program.pool,
             poolTokenAmountWei
           );
+
         const pendingRewardsWei =
           await ContractsApi.StandardStakingRewards.read.pendingRewards(user, [
             program.id,
@@ -82,7 +86,7 @@ export const fetchStandardRewardsByUser = async (
       })
     );
   } catch (e) {
-    console.error(e);
+    console.error('failed to fetchStandardRewardsByUser', e);
     throw e;
   }
 };
