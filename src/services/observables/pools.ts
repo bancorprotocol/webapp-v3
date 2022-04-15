@@ -7,12 +7,7 @@ import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import {
-  bntToken,
-  ethToken,
-  getNetworkVariables,
-  zeroAddress,
-} from 'services/web3/config';
+import { bntToken, ethToken, getNetworkVariables } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { shrinkToken } from 'utils/formulas';
 import { fetchETH } from 'services/web3/token/token';
@@ -48,7 +43,7 @@ export interface Pool {
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
   fundingLimit: string;
-  poolLiquidity: string;
+  stakedBalance: string;
   tradingLiqBNT: string;
   tradingLiqTKN: string;
   tknVaultBalance: string;
@@ -204,7 +199,7 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
           ...apiPool,
           reserveToken,
           fundingLimit: shrinkToken(fundingLimit.toString(), apiPool.decimals),
-          poolLiquidity: shrinkToken(
+          stakedBalance: shrinkToken(
             poolLiquidity.stakedBalance.toString(),
             apiPool.decimals
           ),

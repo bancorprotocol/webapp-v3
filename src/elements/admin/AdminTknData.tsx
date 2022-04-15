@@ -46,7 +46,7 @@ export const AdminTknData = () => {
             <div>Pool ID: {pool.pool_dlt_id}</div>
             <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
             <div>Funding Limit: {prettifyNumber(pool.fundingLimit)}</div>
-            <div>Pool Liquidity: {prettifyNumber(pool.poolLiquidity)}</div>
+            <div>Staked Balance: {prettifyNumber(pool.stakedBalance)}</div>
             <div>
               Trading Liquidity of TKN: {prettifyNumber(pool.tradingLiqTKN)}
             </div>
