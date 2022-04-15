@@ -14,7 +14,7 @@ import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
-import { get, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -217,14 +217,12 @@ export const getStandardRewards = createSelector(
         let item: GroupedStandardReward = obj.get(groupId);
 
         if (!item) {
-          const calcSum = (key: keyof RewardsProgramStake): string => {
-            return filtered
-              .map((reward) => Number(get(reward, key)))
-              .reduce((sum, current) => sum + current, 0)
-              .toString();
-          };
-
-          const totalPendingRewards = calcSum('pendingRewardsWei');
+          const totalPendingRewards = filtered
+            .map((reward) => reward.pendingRewardsWei)
+            .reduce(
+              (sum, current) => new BigNumber(sum).plus(current).toString(),
+              '0'
+            );
 
           item = {
             groupId,

@@ -2,7 +2,10 @@ import { useAppSelector } from 'redux/index';
 import { Token } from 'services/observables/tokens';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { PoolV3 } from 'services/observables/pools';
-import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
+import {
+  getPortfolioHoldings,
+  getStandardRewards,
+} from 'redux/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { utils } from 'ethers';
 import { getAllStandardRewardPrograms } from 'redux/bancor/bancor';
@@ -11,6 +14,7 @@ export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const allV3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
   const holdings = useAppSelector(getPortfolioHoldings);
+  const userStandardRewardPrograms = useAppSelector(getStandardRewards);
   const allStandardRewardsPrograms = useAppSelector(
     getAllStandardRewardPrograms
   );
@@ -86,6 +90,36 @@ export const AdminTknData = () => {
                 <div>Combined Token Value: {holding.combinedTokenBalance}</div>
               </div>
             )}
+          </div>
+        ))}
+
+        <h2>Your Joined Standard Reward Programs</h2>
+        {userStandardRewardPrograms.map((group) => (
+          <div key={group.groupId}>
+            <div className="font-semibold">
+              Reward Token: {group.groupToken.symbol}
+              <br />
+              Total Rewards:{' '}
+              {utils.formatUnits(
+                group.totalPendingRewards,
+                group.groupToken.decimals
+              )}{' '}
+              {group.groupToken.symbol}
+            </div>
+            {group.rewards.map((item) => (
+              <div className="mb-10" key={item.id}>
+                <div>Pool</div>
+                <div>Program ID: {item.id}</div>
+                <div>
+                  Pending Reward:{' '}
+                  {utils.formatUnits(
+                    item.pendingRewardsWei,
+                    group.groupToken.decimals
+                  )}{' '}
+                  {group.groupToken.symbol}
+                </div>
+              </div>
+            ))}
           </div>
         ))}
 
