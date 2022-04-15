@@ -2,7 +2,6 @@ import { useAppSelector } from 'redux/index';
 import { useNavigation } from 'services/router';
 import { useState } from 'react';
 import {
-  getBancorV3Contracts,
   getTenderlyRpcLS,
   setBancorV3Contracts,
   setTenderlyRpcLS,
@@ -31,22 +30,6 @@ const filenames = [
 
 const foldername = 'tenderly';
 
-const emptyContractInputs = {
-  bancorNetwork: '',
-  bancorNetworkInfo: '',
-  networkSettings: '',
-  pendingWithdrawals: '',
-  poolCollectionType1: '',
-  standardStakingRewards: '',
-  testToken1: '',
-  testToken2: '',
-  testToken3: '',
-  testToken4: '',
-  testToken5: '',
-  testToken6: '',
-  testToken7: '',
-};
-
 export interface BancorV3Contracts {
   bancorNetwork: string;
   bancorNetworkInfo: string;
@@ -68,13 +51,10 @@ export const AdminUseFork = () => {
   const { pushPools } = useNavigation();
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
   const [zipFileError, setZipFileError] = useState('');
-  const [inputs, setInputs] = useState<BancorV3Contracts>(
-    getBancorV3Contracts() || emptyContractInputs
-  );
 
-  const handleSave = () => {
+  const handleSave = (contracts: BancorV3Contracts) => {
     setTenderlyRpcLS(inputRpcUrl);
-    setBancorV3Contracts(inputs);
+    setBancorV3Contracts(contracts);
 
     const rpc = new providers.JsonRpcProvider(inputRpcUrl);
 
@@ -121,7 +101,7 @@ export const AdminUseFork = () => {
       );
 
       setZipFileError('');
-      setInputs({
+      const newInput = {
         bancorNetwork: bancorNetworkAddress,
         bancorNetworkInfo: bancorNetworkInfoAddress,
         networkSettings: networkSettingsAddress,
@@ -135,8 +115,8 @@ export const AdminUseFork = () => {
         testToken5: testToken5Address,
         testToken6: testToken6Address,
         testToken7: testToken7Address,
-      });
-      handleSave();
+      };
+      handleSave(newInput);
     } catch (e: any) {
       console.error(e.message);
       setZipFileError(e.message);
