@@ -18,7 +18,7 @@ const filenames = [
   'NetworkSettings_Proxy.json',
   'PendingWithdrawals_Proxy.json',
   'PoolCollectionType1V1.json',
-  'StandardStakingRewards_Proxy.json',
+  'StandardRewards_Proxy.json',
   'TestToken1.json',
   'TestToken2.json',
   'TestToken3.json',
@@ -36,7 +36,7 @@ export interface BancorV3Contracts {
   networkSettings: string;
   pendingWithdrawals: string;
   poolCollectionType1: string;
-  standardStakingRewards: string;
+  standardRewards: string;
   testToken1: string;
   testToken2: string;
   testToken3: string;
@@ -76,7 +76,7 @@ export const AdminUseFork = () => {
         networkSettingsAddress,
         pendingWithdrawalsAddress,
         poolCollectionType1Address,
-        standardStakingRewardsAddress,
+        standardRewardsAddress,
         testToken1Address,
         testToken2Address,
         testToken3Address,
@@ -107,7 +107,7 @@ export const AdminUseFork = () => {
         networkSettings: networkSettingsAddress,
         pendingWithdrawals: pendingWithdrawalsAddress,
         poolCollectionType1: poolCollectionType1Address,
-        standardStakingRewards: standardStakingRewardsAddress,
+        standardRewards: standardRewardsAddress,
         testToken1: testToken1Address,
         testToken2: testToken2Address,
         testToken3: testToken3Address,

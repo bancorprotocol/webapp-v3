@@ -6,7 +6,7 @@ export const buildProviderStakeCall = (
   id: BigNumber,
   user: string
 ): MultiCall => {
-  const contract = ContractsApi.StandardStakingRewards.read;
+  const contract = ContractsApi.StandardRewards.read;
 
   return {
     contractAddress: contract.address,
@@ -37,8 +37,9 @@ export const fetchStandardRewardsByUser = async (
     throw new Error('no user address found');
   }
   try {
-    const ids =
-      await ContractsApi.StandardStakingRewards.read.providerProgramIds(user);
+    const ids = await ContractsApi.StandardRewards.read.providerProgramIds(
+      user
+    );
 
     const calls = ids.map((id) => buildProviderStakeCall(id, user));
     const res = await multicall(calls);
@@ -51,9 +52,7 @@ export const fetchStandardRewardsByUser = async (
         bn && bn.length ? (bn[0].toString() as string) : '0',
       ])
     );
-    const programs = await ContractsApi.StandardStakingRewards.read.programs(
-      ids
-    );
+    const programs = await ContractsApi.StandardRewards.read.programs(ids);
 
     return await Promise.all(
       programs.map(async (program) => {
@@ -66,7 +65,7 @@ export const fetchStandardRewardsByUser = async (
           );
 
         const pendingRewardsWei =
-          await ContractsApi.StandardStakingRewards.read.pendingRewards(user, [
+          await ContractsApi.StandardRewards.read.pendingRewards(user, [
             program.id,
           ]);
 
@@ -106,11 +105,9 @@ export const fetchAllStandardRewards = async (): Promise<
   RewardsProgramRaw[]
 > => {
   try {
-    const ids = await ContractsApi.StandardStakingRewards.read.programIds();
+    const ids = await ContractsApi.StandardRewards.read.programIds();
 
-    const programs = await ContractsApi.StandardStakingRewards.read.programs(
-      ids
-    );
+    const programs = await ContractsApi.StandardRewards.read.programs(ids);
 
     return programs.map((program) => ({
       id: program.id.toString(),
