@@ -108,8 +108,8 @@ export const AdminTknData = () => {
             </div>
             {group.rewards.map((item) => (
               <div className="mb-10" key={item.id}>
-                <div>Pool</div>
                 <div>Program ID: {item.id}</div>
+                <div>Pool {item.programToken.symbol}</div>
                 <div>
                   Pending Reward:{' '}
                   {utils.formatUnits(

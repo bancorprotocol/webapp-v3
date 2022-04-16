@@ -5,7 +5,11 @@ import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { BonusClaimable } from 'redux/portfolio/v3Portfolio.types';
+import {
+  GroupedStandardReward,
+  StandardReward,
+} from 'redux/portfolio/v3Portfolio';
+import { shrinkToken } from 'utils/formulas';
 
 const BonusGroupHead = ({ token }: { token: Token }) => {
   return (
@@ -24,31 +28,40 @@ const BonusGroupHead = ({ token }: { token: Token }) => {
   );
 };
 
-const BonusGroupItems = ({ items }: { items: BonusClaimable[] }) => {
+const BonusGroupItems = ({
+  rewardsGroup,
+  rewards,
+}: {
+  rewardsGroup: GroupedStandardReward;
+  rewards: StandardReward[];
+}) => {
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
 
   return (
     <div className="space-y-20">
-      {items.map((item) => (
-        <div key={item.id} className="flex items-center justify-between">
+      {rewards.map((reward) => (
+        <div key={reward.id} className="flex items-center justify-between">
           <TokenBalance
-            symbol={item.token.symbol}
-            amount={item.amount}
-            usdPrice={item.token.usdPrice || '0'}
-            imgUrl={item.token.logoURI}
+            symbol={rewardsGroup.groupToken.symbol}
+            amount={shrinkToken(
+              reward.pendingRewardsWei,
+              rewardsGroup.groupToken.decimals
+            )}
+            usdPrice={rewardsGroup.groupToken.usdPrice}
+            imgUrl={reward.programToken.logoURI}
           />
           <div className="flex space-x-20">
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.EXTRASMALL}
-              onClick={() => handleClaim(item.id)}
+              onClick={() => handleClaim([reward.id])}
             >
               Claim
             </Button>
             <Button
               variant={ButtonVariant.DARK}
               size={ButtonSize.EXTRASMALL}
-              onClick={() => handleClaimAndEarn(item.id)}
+              onClick={() => handleClaimAndEarn([reward.id])}
               textBadge={'86%'}
               className="whitespace-nowrap"
             >
@@ -78,10 +91,10 @@ export const V3BonusesModal = () => {
             {prettifyNumber(bonusUsdTotal, true)}
           </div>
         </div>
-        {bonuses.map((bonus) => (
-          <div key={bonus.id}>
-            <BonusGroupHead token={bonus.token} />
-            <BonusGroupItems items={bonus.claimable} />
+        {bonuses.map((group) => (
+          <div key={group.groupId}>
+            <BonusGroupHead token={group.groupToken} />
+            <BonusGroupItems rewardsGroup={group} rewards={group.rewards} />
           </div>
         ))}
       </div>
