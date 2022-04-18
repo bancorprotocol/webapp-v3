@@ -92,12 +92,7 @@ export const getMockV3Tokens = (): APIToken[] => {
 };
 
 export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
-  const pools = await Promise.all(
-    allTestTokens.map(
-      async (token) =>
-        await buildAPIPoolV3(token.address, token.symbol, token.decimals)
-    )
-  );
+  const pools = [];
   pools.push(await buildAPIPoolV3(ethToken, 'ETH', 18));
   pools.push(await buildAPIPoolV3(bntToken, 'BNT', 18));
   pools.push(

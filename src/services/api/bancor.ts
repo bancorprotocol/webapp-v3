@@ -86,8 +86,8 @@ export const getWelcomeData = async (): Promise<WelcomeData> => {
     const { data } = await axios.get<WelcomeData>(
       'https://api-v2.bancor.network/welcome'
     );
-    // TODO remove MOCKED TEST TOKENS
-    data.tokens = [...data.tokens, ...getMockV3Tokens()];
+
+    data.tokens = [...data.tokens];
 
     return {
       ...data,

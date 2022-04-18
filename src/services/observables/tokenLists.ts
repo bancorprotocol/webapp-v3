@@ -43,10 +43,7 @@ const buildTokenListTokens = (
     }
   );
 
-  // TODO - REMOVE MOCK DATA
-  const tokensWithMock = tokenListTokensMerged.concat(getTokenListMock());
-
-  return uniqBy(tokensWithMock, (x) => x.address);
+  return uniqBy(tokenListTokensMerged, (x) => x.address);
 };
 
 export const getLogoByURI = (uri: string | undefined) =>
