@@ -1,5 +1,4 @@
 import { useAppSelector } from 'redux/index';
-import { useNavigation } from 'services/router';
 import { useState } from 'react';
 import {
   getTenderlyRpcLS,
@@ -9,6 +8,7 @@ import {
 import { setProvider, setSigner } from 'services/web3';
 import { providers } from 'ethers';
 import JSZip from 'jszip';
+import { Button, ButtonSize } from 'components/button/Button';
 
 const jsZip = new JSZip();
 
@@ -48,19 +48,22 @@ export interface BancorV3Contracts {
 
 export const AdminUseFork = () => {
   const account = useAppSelector<string | null>((state) => state.user.account);
-  const { pushPools } = useNavigation();
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
+  const [inputContracts, setInputContracts] = useState<BancorV3Contracts>();
   const [zipFileError, setZipFileError] = useState('');
+  const [saved, setSaved] = useState(false);
 
-  const handleSave = (contracts: BancorV3Contracts) => {
+  const handleSave = () => {
     setTenderlyRpcLS(inputRpcUrl);
-    setBancorV3Contracts(contracts);
+    setBancorV3Contracts(inputContracts);
 
     const rpc = new providers.JsonRpcProvider(inputRpcUrl);
 
     setProvider(rpc);
-    if (account) setSigner(rpc.getUncheckedSigner(account));
-    pushPools();
+    if (account && inputRpcUrl) {
+      setSigner(rpc.getUncheckedSigner(account));
+    }
+    setSaved(true);
   };
 
   const handleZipFile = async (files: FileList | null) => {
@@ -101,7 +104,7 @@ export const AdminUseFork = () => {
       );
 
       setZipFileError('');
-      const newInput = {
+      const newInput: BancorV3Contracts = {
         bancorNetwork: bancorNetworkAddress,
         bancorNetworkInfo: bancorNetworkInfoAddress,
         networkSettings: networkSettingsAddress,
@@ -116,7 +119,7 @@ export const AdminUseFork = () => {
         testToken6: testToken6Address,
         testToken7: testToken7Address,
       };
-      handleSave(newInput);
+      setInputContracts(newInput);
     } catch (e: any) {
       console.error(e.message);
       setZipFileError(e.message);
@@ -140,7 +143,7 @@ export const AdminUseFork = () => {
       {inputRpcUrl && (
         <label>
           <div className="font-semibold mt-20 mb-10">
-            Step 2: Select ZIP file
+            Optional: Select ZIP file
           </div>
 
           <input type="file" onChange={(e) => handleZipFile(e.target.files)} />
@@ -148,6 +151,19 @@ export const AdminUseFork = () => {
             <p className="text-error font-semibold">{zipFileError}</p>
           )}
         </label>
+      )}
+
+      <Button
+        onClick={handleSave}
+        size={ButtonSize.EXTRASMALL}
+        className="mx-auto mt-20"
+      >
+        Save
+      </Button>
+      {saved && (
+        <div className="text-success font-semibold text-center mt-10">
+          Successfully saved changes!
+        </div>
       )}
     </div>
   );
