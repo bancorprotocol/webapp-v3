@@ -16,11 +16,11 @@ export const MigrateProtect = () => {
   const migrate = false;
 
   return (
-    <div className="grid grid-cols-4 h-screen">
-      <div className="col-span-3 w-[550px] mx-auto my-auto">
+    <div className="grid md:grid-cols-4 h-screen">
+      <div className="col-span-3 md:w-[550px] mx-auto my-auto">
         {migrate ? <Migrate /> : <Protect />}
       </div>
-      <div className="bg-white">
+      <div className="hidden md:block bg-white">
         <div className="w-[320px] mx-auto my-auto">
           <LogoPWelcome className="h-[300px]" />
           <div>
@@ -137,7 +137,7 @@ const Migrate = () => {
             />
             <div className="text-black-low">HODL in your wallet</div>
           </div>
-          <Button className="w-[160px] mt-50">Confirm</Button>
+          <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
           <button className="text-black-low mt-30">
             100% Protected • 7 day cooldown • 0.25% withdrawal fee
           </button>
