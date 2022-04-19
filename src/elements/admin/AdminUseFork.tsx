@@ -162,7 +162,7 @@ export const AdminUseFork = () => {
       </Button>
       {saved && (
         <div className="text-success font-semibold text-center mt-10">
-          Successfully saved changes!
+          Successfully saved changes! Refresh to make them take effect.
         </div>
       )}
     </div>
