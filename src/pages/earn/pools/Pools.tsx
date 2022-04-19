@@ -7,7 +7,7 @@ export const Pools = () => {
   const [searchInput, setSearchInput] = useState('');
 
   return (
-    <div className="space-y-30 max-w-[1140px] mx-auto bg-fog dark:bg-black">
+    <div className="space-y-30 max-w-[1140px] pt-80 mb-20 mx-auto bg-fog dark:bg-black">
       <Statistics />
       <TopPools setSearch={setSearchInput} />
       <PoolsTable search={searchInput} setSearch={setSearchInput} />

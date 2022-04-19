@@ -21,7 +21,7 @@ export const Portfolio = () => {
     });
 
   return (
-    <div className="max-w-[1140px] mx-auto md:bg-fog md:dark:bg-black">
+    <div className="max-w-[1140px] pt-80 mb-20 mx-auto md:bg-fog md:dark:bg-black">
       <Tab.Group>
         <div className="flex items-center mb-30 pt-30">
           <h1 className="md:text-[30px] font-semibold pl-10 md:pl-0">

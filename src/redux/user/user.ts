@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isForkAvailable } from 'services/web3/config';
 import {
-  getShowBannerLS,
   setDarkModeLS,
-  setShowBannerLS,
   setSlippageToleranceLS,
   setUsdToggleLS,
 } from 'utils/localStorage';
@@ -16,7 +14,6 @@ export interface UserState {
   usdToggle: boolean;
   locale: string;
   loadingBalances: boolean;
-  showBanner: boolean;
   isFork: boolean;
 }
 
@@ -28,7 +25,6 @@ export const initialState: UserState = {
   usdToggle: false,
   locale: 'en',
   loadingBalances: false,
-  showBanner: getShowBannerLS() !== false,
   isFork: isForkAvailable,
 };
 
@@ -65,10 +61,6 @@ const userSlice = createSlice({
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
     },
-    setShowBanner: (state, action) => {
-      setShowBannerLS(action.payload);
-      state.showBanner = action.payload;
-    },
     setIsFork: (state, action) => {
       state.isFork = action.payload;
     },
@@ -83,7 +75,6 @@ export const {
   openWalletModal,
   setUsdToggle,
   setLoadingBalances,
-  setShowBanner,
   setIsFork,
 } = userSlice.actions;
 

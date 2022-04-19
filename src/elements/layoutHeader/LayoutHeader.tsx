@@ -5,7 +5,6 @@ import 'elements/layoutHeader/LayoutHeader.css';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
 import { useAppSelector } from 'redux/index';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, tokens, vote } from 'services/router';
@@ -16,12 +15,11 @@ import { isForkAvailable } from 'services/web3/config';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
-  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
 
   return (
     <>
-      <header className="flex items-center justify-center fixed w-full h-60 z-30 bg-fog dark:bg-black shadow-header dark:shadow-none">
-        <div className="flex items-center justify-between w-[1140px] mx-20 md:mx-0">
+      <header className="fixed flex items-center justify-center w-full h-60 z-30">
+        <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
             <NavLink to={pools}>
               <IconBancor className="w-[18px]" />
@@ -64,7 +62,6 @@ export const LayoutHeader = () => {
           </div>
         </div>
       </header>
-      {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
   );
