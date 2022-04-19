@@ -75,7 +75,7 @@ export const App = () => {
       ) : (
         <>
           <MarketingBanner />
-          <main className="max-w-[1400px] mx-auto md:py-[75px] py-60">
+          <main>
             <Router />
           </main>
         </>

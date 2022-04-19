@@ -16,25 +16,27 @@ export const MigrateProtect = () => {
   const migrate = false;
 
   return (
-    <div className="grid grid-cols-4 h-[700px]">
-      <div className="col-span-3 mr-[170px] w-[550px] my-auto">
+    <div className="grid grid-cols-4 h-screen">
+      <div className="col-span-3 w-[550px] mx-auto my-auto">
         {migrate ? <Migrate /> : <Protect />}
       </div>
-      <div className="my-auto">
-        <LogoPWelcome className="w-[240px] h-[300px]" />
-        <div>
-          <div className="flex items-center gap-4 mb-20">
-            <IconProtectedHeart />
-            Deposit only a single token
+      <div className="bg-white">
+        <div className="w-[320px] mx-auto my-auto">
+          <LogoPWelcome className="h-[300px]" />
+          <div>
+            <div className="flex items-center gap-4 mb-20">
+              <IconProtectedHeart />
+              Deposit only a single token
+            </div>
+            <div className="flex items-center gap-4">
+              <IconProtected />
+              100% Impermanent loss protection
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <IconProtected />
-            100% Impermanent loss protection
+          <div className="mt-40">
+            <Rating className="w-[80px] h-20" starCount={5} percentage={100} />
+            <div className="text-graphite">Trusted by over 1M+ users</div>
           </div>
-        </div>
-        <div className="mt-40">
-          <Rating className="w-[80px] h-20" starCount={5} percentage={100} />
-          <div className="text-graphite">Trusted by over 1M+ users</div>
         </div>
       </div>
     </div>

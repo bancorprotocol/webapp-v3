@@ -7,11 +7,7 @@ import { MigrateProtect } from './MigrateProtect';
 
 export const PortfolioWelcome = () => {
   const migrateProtect = true;
-  return (
-    <div className="max-w-[1140px] mx-auto">
-      {migrateProtect ? <MigrateProtect /> : <GrowYour />}
-    </div>
-  );
+  return <>{migrateProtect ? <MigrateProtect /> : <GrowYour />}</>;
 };
 
 const GrowYour = () => {
