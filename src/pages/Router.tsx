@@ -3,6 +3,7 @@ import { useAppSelector } from 'redux/index';
 import {
   addLiquidity,
   addLiquidityByID,
+  admin,
   fiat,
   pools,
   portfolio,
@@ -29,6 +30,8 @@ import { Swap } from './Swap';
 import { TermsOfUse } from './TermsOfUse';
 import { Tokens } from './Tokens';
 import { Vote } from './Vote';
+import { Admin } from 'pages/Admin';
+import { isForkAvailable } from 'services/web3/config';
 
 const legacySwap = '/eth/swap';
 const legacyPools = '/eth/data';
@@ -118,6 +121,7 @@ export const Router = () => {
       </Route>
       <Route exact strict path={tos} component={TermsOfUse} />
       <Route exact strict path={privacyPolicy} component={PrivacyPolicy} />
+      <Route exact strict path={admin} component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );

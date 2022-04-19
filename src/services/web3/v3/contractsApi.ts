@@ -7,23 +7,22 @@ import {
   BancorNetworkInfo__factory,
   NetworkSettings,
   NetworkSettings__factory,
-  StandardStakingRewards,
-  StandardStakingRewards__factory,
+  StandardRewards,
+  StandardRewards__factory,
   PoolCollectionType1,
   PoolCollectionType1__factory,
   PendingWithdrawals,
   PendingWithdrawals__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
-import {
-  bancorNetwork,
-  bancorNetworkInfo,
-  networkSettings,
-  pendingWithdrawals,
-  poolCollectionType1,
-  standardStakingRewards,
-} from '../config';
 import { providers } from 'ethers';
+import { getBancorV3Contracts } from 'utils/localStorage';
+import { address as bancorNetworkAddress } from 'services/web3/abis/v3/BancorNetworkV3_Proxy.json';
+import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/BancorNetworkInfo_Proxy.json';
+import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings_Proxy.json';
+import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals_Proxy.json';
+import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
+import { address as standardRewardsAddress } from 'services/web3/abis/v3/StandardRewards_Proxy.json';
 
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -66,32 +65,32 @@ class BancorContract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorContract<BancorNetworkV3>(
-    bancorNetwork,
+    getBancorV3Contracts()?.bancorNetwork || bancorNetworkAddress,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorContract<BancorNetworkInfo>(
-    bancorNetworkInfo,
+    getBancorV3Contracts()?.bancorNetworkInfo || bancorNetworkInfoAddress,
     BancorNetworkInfo__factory
   );
 
   static NetworkSettings = new BancorContract<NetworkSettings>(
-    networkSettings,
+    getBancorV3Contracts()?.networkSettings || networkSettingsAddress,
     NetworkSettings__factory
   );
 
-  static StandardStakingRewards = new BancorContract<StandardStakingRewards>(
-    standardStakingRewards,
-    StandardStakingRewards__factory
+  static StandardRewards = new BancorContract<StandardRewards>(
+    getBancorV3Contracts()?.standardRewards || standardRewardsAddress,
+    StandardRewards__factory
   );
 
   static PoolCollection = new BancorContract<PoolCollectionType1>(
-    poolCollectionType1,
+    getBancorV3Contracts()?.poolCollectionType1 || poolCollectionType1Address,
     PoolCollectionType1__factory
   );
 
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
-    pendingWithdrawals,
+    getBancorV3Contracts()?.pendingWithdrawals || pendingWithdrawalsAddress,
     PendingWithdrawals__factory
   );
 

@@ -7,7 +7,10 @@ import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import { bntToken } from 'services/web3/config';
+import { bntToken, ethToken, getNetworkVariables } from 'services/web3/config';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { shrinkToken } from 'utils/formulas';
+import { fetchETH } from 'services/web3/token/token';
 
 export interface Reserve {
   address: string;
@@ -39,6 +42,14 @@ export interface Pool {
 
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
+  fundingLimit: string;
+  stakedBalance: string;
+  tradingLiqBNT: string;
+  tradingLiqTKN: string;
+  tknVaultBalance: string;
+  depositLimit: string;
+  depositingEnabled: boolean;
+  tradingEnabled: boolean;
 }
 
 export interface PoolToken {
@@ -153,20 +164,69 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
     const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.pool_dlt_id, p]));
     const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
-    return allTokens
-      .map((tkn) => {
+    const masterVault = await ContractsApi.BancorNetworkInfo.read.masterVault();
+    const poolsV3 = await Promise.all(
+      allTokens.map(async (tkn) => {
         const apiPool = apiPoolsMap.get(tkn.address);
         const reserveToken = allTokensMap.get(tkn.address);
         if (!apiPool || !reserveToken) {
           return undefined;
         }
+        const fundingLimit =
+          await ContractsApi.NetworkSettings.read.poolFundingLimit(
+            apiPool.pool_dlt_id
+          );
+
+        const poolLiquidity =
+          await ContractsApi.PoolCollection.read.poolLiquidity(
+            apiPool.pool_dlt_id
+          );
+
+        const data = await ContractsApi.PoolCollection.read.poolData(
+          apiPool.pool_dlt_id
+        );
+
+        const isBnt = apiPool.pool_dlt_id === getNetworkVariables().bntToken;
+
+        const tknVaultBalance =
+          apiPool.pool_dlt_id !== ethToken
+            ? await ContractsApi.Token(apiPool.pool_dlt_id).read.balanceOf(
+                masterVault
+              )
+            : await fetchETH(masterVault);
+
         const pool: PoolV3 = {
           ...apiPool,
           reserveToken,
+          fundingLimit: shrinkToken(fundingLimit.toString(), apiPool.decimals),
+          stakedBalance: shrinkToken(
+            poolLiquidity.stakedBalance.toString(),
+            apiPool.decimals
+          ),
+          tradingLiqTKN: shrinkToken(
+            poolLiquidity.baseTokenTradingLiquidity.toString(),
+            apiPool.decimals
+          ),
+          tradingLiqBNT: shrinkToken(
+            poolLiquidity.bntTradingLiquidity.toString(),
+            apiPool.decimals
+          ),
+          tknVaultBalance: shrinkToken(
+            tknVaultBalance.toString(),
+            apiPool.decimals
+          ),
+          depositLimit: shrinkToken(
+            data.depositLimit.toString(),
+            apiPool.decimals
+          ),
+          depositingEnabled: data.depositingEnabled || isBnt,
+          tradingEnabled: data.tradingEnabled || isBnt,
         };
         return pool;
       })
-      .filter((pool) => !!pool) as PoolV3[];
+    );
+
+    return poolsV3.filter((pool) => !!pool) as PoolV3[];
   }),
   distinctUntilChanged<PoolV3[]>(isEqual),
   shareReplay(1)

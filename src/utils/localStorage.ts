@@ -1,5 +1,6 @@
 import { initialState as UserState } from 'redux/user/user';
 import { Notification } from 'redux/notification/notification';
+import { BancorV3Contracts } from 'elements/admin/AdminUseFork';
 
 const selected_lists = 'userTokenLists';
 const autoLogin = 'loginAuto';
@@ -7,6 +8,8 @@ const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
+const tenderlyRpcUrl = 'tenderlyRpcUrl';
+const bancorv3Contracts = 'bancorv3Contracts';
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
@@ -62,4 +65,30 @@ export const getNotificationsLS = (): Notification[] => {
 
 export const setNotificationsLS = (notify: Notification[]) => {
   localStorage.setItem(notifications, JSON.stringify(notify));
+};
+
+export const getTenderlyRpcLS = (): string => {
+  return localStorage.getItem(tenderlyRpcUrl) || '';
+};
+
+export const setTenderlyRpcLS = (url?: string) => {
+  if (url) {
+    localStorage.setItem(tenderlyRpcUrl, url);
+  } else {
+    localStorage.removeItem(tenderlyRpcUrl);
+  }
+};
+
+export const getBancorV3Contracts = (): BancorV3Contracts | undefined => {
+  const contracts = localStorage.getItem(bancorv3Contracts);
+  if (!contracts) return undefined;
+  return JSON.parse(contracts);
+};
+
+export const setBancorV3Contracts = (contracts?: BancorV3Contracts) => {
+  if (contracts) {
+    localStorage.setItem(bancorv3Contracts, JSON.stringify(contracts));
+  } else {
+    localStorage.removeItem(bancorv3Contracts);
+  }
 };

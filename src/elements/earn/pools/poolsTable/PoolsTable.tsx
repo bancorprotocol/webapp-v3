@@ -176,7 +176,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
                   V2
                 </div>,
               ]}
-              toggle={v3Selected}
+              toggle={!v3Selected}
               setToggle={() => setV3Selected(!v3Selected)}
             />
           </div>

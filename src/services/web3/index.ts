@@ -3,15 +3,14 @@ import { EthNetworks } from 'services/web3//types';
 import { providers } from 'ethers';
 import { buildAlchemyUrl } from 'services/web3/wallet/connectors';
 import { isForkAvailable } from './config';
+import { getTenderlyRpcLS } from 'utils/localStorage';
 
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet,
   useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork) {
-    return new providers.JsonRpcProvider(
-      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
-    );
+    return new providers.JsonRpcProvider(getTenderlyRpcLS());
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
     return new providers.WebSocketProvider(buildAlchemyUrl(network));
@@ -73,7 +72,7 @@ export const setSigner = (
 ) => {
   if (account)
     writeWeb3.signer = new providers.JsonRpcProvider(
-      process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL
+      getTenderlyRpcLS()
     ).getUncheckedSigner(account);
   else if (signer) writeWeb3.signer = signer;
 };

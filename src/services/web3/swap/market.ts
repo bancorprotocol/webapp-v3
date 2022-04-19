@@ -10,7 +10,6 @@ import {
 } from 'services/web3/config';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import { APIPool } from 'services/api/bancor';
 import {
   ConversionEvents,
   sendConversionEvent,
@@ -21,7 +20,7 @@ import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { ContractTransaction, utils } from 'ethers';
+import { utils } from 'ethers';
 import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
 
@@ -62,7 +61,7 @@ export const getRateAndPriceImapct = async (
     const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
     const v3Rate = await getV3Rate(fromToken, toToken, amount);
     const v2Rate = shrinkToken(spotRate.rate, toToken.decimals);
-    const isV3 = Number(v3Rate) >= Number(v2Rate);
+    const isV3 = v3Rate !== '0';
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);

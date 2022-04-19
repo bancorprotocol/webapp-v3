@@ -1,5 +1,6 @@
 import { keeperDaoTokens$ } from 'services/observables/tokens';
 import {
+  setAllStandardRewardPrograms,
   setAllTokenListTokens,
   setAllTokens,
   setKeeperDaoTokens,
@@ -26,11 +27,14 @@ import {
 } from './liquidity';
 import {
   setHoldingsRaw,
+  setStandardRewards,
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
 } from 'redux/portfolio/v3Portfolio';
 import {
+  portfolioAllStandardRewards$,
   portfolioHoldings$,
+  portfolioStandardRewards$,
   portfolioWithdrawals$,
   portfolioWithdrawalSettings$,
 } from 'services/observables/portfolio';
@@ -114,11 +118,19 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setHoldingsRaw(holdingsRaw));
   });
 
+  portfolioStandardRewards$.subscribe((rewards) => {
+    dispatch(setStandardRewards(rewards));
+  });
+
   portfolioWithdrawals$.subscribe((withdrawalRequests) => {
     dispatch(setWithdrawalRequestsRaw(withdrawalRequests));
   });
 
   portfolioWithdrawalSettings$.subscribe((withdrawalSettings) => {
     dispatch(setWithdrawalSettings(withdrawalSettings));
+  });
+
+  portfolioAllStandardRewards$.subscribe((rewards) => {
+    dispatch(setAllStandardRewardPrograms(rewards));
   });
 };

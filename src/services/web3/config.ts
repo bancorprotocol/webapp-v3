@@ -1,7 +1,7 @@
-import { APIToken } from 'services/api/bancor';
 import { EthNetworks } from './types';
 import { BigNumber } from 'bignumber.js';
 import emptyTokenLogo from 'assets/logos/empty-token.webp';
+import { getTenderlyRpcLS } from 'utils/localStorage';
 
 export interface EthNetworkVariables {
   network: EthNetworks;
@@ -21,33 +21,10 @@ export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const ropstenImage: string = emptyTokenLogo;
 
-export const bancorNetwork = '0x66117856f27e7117b22c1Ae9b0e46a3f621eFe63';
-export const bancorNetworkInfo = '0x768D6Ee54022606374C43a9a6E48329D7c21296E';
-export const networkSettings = '0x1369f360E4a1Cd318a8a6628E59f3bF6c165c3C8';
-export const standardStakingRewards =
-  '0xe7aC71c6284ae7adc3909fA1A7ED71b5c8ff4dbd';
-export const poolCollectionType1 = '0xafFAAF302C0B97c6168E69b7A12C0dAe869a7E16';
-export const pendingWithdrawals = '0x09db4170cB04Da0372af771EF9646c330B92C51D';
-
 const gasBuffer = 1.05;
 
 export const changeGas = (gasEstimation: string) =>
   new BigNumber(gasEstimation).times(gasBuffer).toFixed(0);
-
-// TODO - add weth token to observables
-export const buildWethToken = (apiTokens?: APIToken[]): APIToken => {
-  const eth = apiTokens && apiTokens.find((x) => x.dlt_id === ethToken);
-
-  return {
-    symbol: 'WETH',
-    dlt_id: wethToken,
-    liquidity: eth ? eth.liquidity : { usd: '0' },
-    rate: eth ? eth.rate : { usd: '0' },
-    rate_24h_ago: eth ? eth.rate_24h_ago : { usd: '0' },
-    decimals: eth ? eth.decimals : 18,
-    rates_7d: eth ? eth.rates_7d : [],
-  };
-};
 
 export const getNetworkVariables = (): EthNetworkVariables => {
   return {
@@ -61,4 +38,4 @@ export const getNetworkVariables = (): EthNetworkVariables => {
   };
 };
 
-export const isForkAvailable = !!process.env.REACT_APP_BANCOR_V3_TEST_RPC_URL;
+export const isForkAvailable = !!getTenderlyRpcLS();

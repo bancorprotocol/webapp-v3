@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 import { mockToken } from 'utils/mocked';
 import { Token } from 'services/observables/tokens';
+import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 
 export const mockBonuses: Bonus[] = [
   {
@@ -29,6 +30,7 @@ export interface V3PortfolioState {
   isLoadingWithdrawalRequests: boolean;
   bonusesModal: boolean;
   bonuses: Bonus[];
+  standardRewards: RewardsProgramStake[];
 }
 
 export interface WithdrawalRequestRaw {
@@ -81,4 +83,6 @@ export interface Holding
   token: Token;
   poolTokenBalance: string;
   tokenBalance: string;
+  standardStakingReward?: RewardsProgramStake;
+  combinedTokenBalance: string;
 }

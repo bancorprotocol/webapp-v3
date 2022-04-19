@@ -1,4 +1,4 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token } from 'services/observables/tokens';
 import { RootState } from 'redux/index';
@@ -6,6 +6,7 @@ import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap } from 'redux/bancor/token';
 import { utils } from 'ethers';
+import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -13,6 +14,7 @@ interface BancorState {
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
+  allStandardRewardPrograms: RewardsProgramRaw[];
 }
 
 export const initialState: BancorState = {
@@ -21,6 +23,7 @@ export const initialState: BancorState = {
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
+  allStandardRewardPrograms: [],
 };
 
 const bancorSlice = createSlice({
@@ -42,6 +45,12 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
+    setAllStandardRewardPrograms: (
+      state,
+      action: PayloadAction<RewardsProgramRaw[]>
+    ) => {
+      state.allStandardRewardPrograms = action.payload;
+    },
   },
 });
 
@@ -51,6 +60,7 @@ export const {
   setTokenLists,
   setAllTokenListTokens,
   setKeeperDaoTokens,
+  setAllStandardRewardPrograms,
 } = bancorSlice.actions;
 
 export const getTokenById = createSelector(
@@ -72,3 +82,22 @@ export const getTopMovers = createSelector(
 );
 
 export const bancor = bancorSlice.reducer;
+
+export const getAllStandardRewardPrograms = createSelector(
+  (state: RootState) => state.bancor.allStandardRewardPrograms,
+  (state: RootState) => getAllTokensMap(state),
+  (
+    allStandardRewardPrograms: RewardsProgramRaw[],
+    allTokensMap: Map<string, Token>
+  ) => {
+    return allStandardRewardPrograms.map((program) => {
+      const rewardsToken = allTokensMap.get(program.rewardsToken);
+      const token = allTokensMap.get(program.pool);
+      return {
+        ...program,
+        token,
+        rewardsToken,
+      };
+    });
+  }
+);

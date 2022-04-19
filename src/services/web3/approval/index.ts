@@ -22,6 +22,7 @@ interface GetApprovalReturn {
 
 export enum ApprovalContract {
   BancorNetwork,
+  BancorNetworkV3,
   ExchangeProxy,
   LiquidityProtection,
   Governance,
@@ -137,6 +138,8 @@ const getApprovalAddress = async (
   switch (contract) {
     case ApprovalContract.BancorNetwork:
       return await bancorNetwork$.pipe(take(1)).toPromise();
+    case ApprovalContract.BancorNetworkV3:
+      return ContractsApi.BancorNetwork.contractAddress;
     case ApprovalContract.ExchangeProxy:
       return await exchangeProxy$.pipe(take(1)).toPromise();
     case ApprovalContract.LiquidityProtection:

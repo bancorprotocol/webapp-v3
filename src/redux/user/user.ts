@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isForkAvailable } from 'services/web3/config';
 import {
   setDarkModeLS,
   setSlippageToleranceLS,
@@ -14,7 +13,6 @@ export interface UserState {
   usdToggle: boolean;
   locale: string;
   loadingBalances: boolean;
-  isFork: boolean;
 }
 
 export const initialState: UserState = {
@@ -25,7 +23,6 @@ export const initialState: UserState = {
   usdToggle: false,
   locale: 'en',
   loadingBalances: false,
-  isFork: isForkAvailable,
 };
 
 const userSlice = createSlice({
@@ -61,9 +58,6 @@ const userSlice = createSlice({
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
     },
-    setIsFork: (state, action) => {
-      state.isFork = action.payload;
-    },
   },
 });
 
@@ -75,7 +69,6 @@ export const {
   openWalletModal,
   setUsdToggle,
   setLoadingBalances,
-  setIsFork,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;
