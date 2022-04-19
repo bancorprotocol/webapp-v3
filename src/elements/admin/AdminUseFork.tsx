@@ -55,7 +55,7 @@ export const AdminUseFork = () => {
 
   const handleSave = () => {
     setTenderlyRpcLS(inputRpcUrl);
-    setBancorV3Contracts(inputContracts);
+    setBancorV3Contracts(inputRpcUrl ? inputContracts : undefined);
 
     const rpc = new providers.JsonRpcProvider(inputRpcUrl);
 
