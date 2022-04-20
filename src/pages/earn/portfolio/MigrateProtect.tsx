@@ -16,12 +16,12 @@ export const MigrateProtect = () => {
   const migrate = false;
 
   return (
-    <div className="grid md:grid-cols-4 h-screen">
-      <div className="col-span-3 md:w-[550px] mx-auto my-auto">
+    <div className="grid md:grid-cols-4 overflow-y-auto h-screen">
+      <div className="col-span-3 md:w-[550px] mx-auto ymy-auto">
         {migrate ? <Migrate /> : <Protect />}
       </div>
-      <div className="hidden md:block bg-white">
-        <div className="w-[320px] mx-auto my-auto">
+      <div className="hidden md:grid bg-white">
+        <div className="w-[320px] mx-auto self-end">
           <LogoPWelcome className="h-[300px]" />
           <div>
             <div className="flex items-center gap-4 mb-20">

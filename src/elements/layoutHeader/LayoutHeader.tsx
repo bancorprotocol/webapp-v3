@@ -1,24 +1,29 @@
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import 'elements/layoutHeader/LayoutHeader.css';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { useAppSelector } from 'redux/index';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
 import { useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
+import { useTopScroll } from 'hooks/useTopScroll';
+import 'elements/layoutHeader/LayoutHeader.css';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
+  const top = useTopScroll();
 
   return (
     <>
-      <header className="fixed flex items-center justify-center w-full h-60 z-30">
+      <header
+        className={`fixed flex items-center justify-center w-full h-60 z-30 transition-colors ease-in-out duration-300 ${
+          top ? '' : 'bg-white dark:bg-black-medium'
+        }`}
+      >
         <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
             <NavLink to={pools}>

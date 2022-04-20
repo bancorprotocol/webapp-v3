@@ -1,7 +1,7 @@
 import { ReactComponent as LogoPWelcome } from 'assets/portfolio/portfolioWelcome.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
-import { DynamicText } from 'components/dynamicText/DynamicText';
+import { useDynamicText } from 'hooks/useDynamicText';
 import { Rating } from 'components/rating/Rating';
 import { MigrateProtect } from './MigrateProtect';
 
@@ -15,40 +15,34 @@ export const PortfolioWelcome = () => {
 };
 
 const GrowYour = () => {
+  const text = useDynamicText(['ETH', 'BNT', 'DOT', 'SOL']);
   return (
-    <>
-      <div className="grid grid-cols-2 items-center">
-        <div>
-          <div className="flex text-6xl mb-20">
-            Grow Your
-            <div className="ml-10 text-primary">
-              <DynamicText texts={['ETH', 'BNT', 'DOT', 'SOL']} />
-            </div>
-          </div>
-          <div className="text-20 text-graphite mb-[40px]">
-            Earn up to 40% annually on your favorite tokens
-          </div>
-          <Button variant={ButtonVariant.PRIMARY}>Check our rates</Button>
+    <div className="grid md:grid-cols-2 items-center justify-items-center h-screen">
+      <div>
+        <div className="flex text-6xl mb-20">
+          Grow Your
+          <div className="ml-10 text-primary">{text}</div>
         </div>
-        <LogoPWelcome />
-      </div>
+        <div className="text-20 text-graphite mb-[100px]">
+          Earn up to 40% annually on your favorite tokens
+        </div>
+        <Button className="mb-20" variant={ButtonVariant.PRIMARY}>
+          Check our rates {'->'}
+        </Button>
 
-      <div className="flex items-center justify-between">
         <div className="text-graphite">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-10 mb-10">
             <IconCheck />
-            Deposit only a single token
+            Single Sided Staking
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-10">
             <IconCheck />
             100% Impermanent loss protection
           </div>
         </div>
-        <div>
-          <Rating className="w-[80px] h-20" starCount={5} percentage={100} />
-          <div className="text-graphite">Trusted by over 1M+ users</div>
-        </div>
       </div>
-    </>
+
+      <LogoPWelcome className="w-[400px] h-[500px]" />
+    </div>
   );
 };
