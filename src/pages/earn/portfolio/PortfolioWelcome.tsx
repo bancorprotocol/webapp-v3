@@ -8,7 +8,7 @@ import { MigrateProtect } from './MigrateProtect';
 export const PortfolioWelcome = () => {
   const migrateProtect = true;
   return (
-    <div className="mb-20 mx-20 pt-10 md:mb-0 md:mx-0 md:pt-0">
+    <div className="bg-white mb-20 mx-20 pt-10 md:mb-0 md:mx-0 md:pt-0">
       {migrateProtect ? <MigrateProtect /> : <GrowYour />}
     </div>
   );

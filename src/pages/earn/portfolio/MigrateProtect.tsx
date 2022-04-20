@@ -11,16 +11,19 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { Switch } from 'components/switch/Switch';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
+import { getAvailableToStakeTokens } from 'redux/bancor/token';
+import { useAppSelector } from 'redux/index';
+import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 
 export const MigrateProtect = () => {
   const migrate = false;
 
   return (
-    <div className="grid md:grid-cols-4 overflow-y-auto h-screen">
-      <div className="col-span-3 md:w-[550px] mx-auto ymy-auto">
+    <div className="grid md:grid-cols-4 h-screen">
+      <div className="col-span-3 md:w-[550px] mx-auto my-auto">
         {migrate ? <Migrate /> : <Protect />}
       </div>
-      <div className="hidden md:grid bg-white">
+      <div className="hidden md:grid bg-fog dark:bg-charcoal">
         <div className="w-[320px] mx-auto self-end">
           <LogoPWelcome className="h-[300px]" />
           <div>
@@ -187,7 +190,12 @@ const MigrateHoldingAtRisk = ({
 
 const Protect = () => {
   const [seeAll, setSeeAll] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState(0);
+  const [selectedPosition, setSelectedPosition] = useState(-1);
+  const [input, setInput] = useState('');
+  const [inputFiat, setInputFiat] = useState('');
+
+  const availabelToStake = useAppSelector(getAvailableToStakeTokens);
+  const topStake = availabelToStake[0];
 
   return (
     <>
@@ -199,32 +207,52 @@ const Protect = () => {
                 {'<-'} Back
               </button>
               <div className="text-4xl mt-30">Earn interest on your tokens</div>
-              <div className="text-16 text-black-low mt-10">
+              <div className="text-16 text-black-low mt-10 mb-100">
                 $10,020 balance
               </div>
-
-              <button className="flex items-center justify-between rounded-20 border border-silver p-20 h-[70px] mt-10 w-full">
-                <TokenBalance
-                  symbol={'Symbol'}
-                  amount={'100'}
-                  usdPrice={'1000000'}
-                  imgUrl={'token.logoURI'}
-                />
-                <div className="flex items-center gap-10 text-primary">
-                  Earn 86%
-                </div>
-              </button>
+              <div className="h-[400px] overflow-scroll">
+                {availabelToStake.map((stake, index) => {
+                  return (
+                    <button
+                      key={stake.token.address}
+                      onClick={() => setSelectedPosition(index)}
+                      className="flex items-center justify-between rounded-20 border border-silver p-20 h-[70px] mt-10 w-full"
+                    >
+                      <TokenBalance
+                        symbol={stake.token.symbol}
+                        amount={stake.token.balance!}
+                        usdPrice={stake.token.usdPrice}
+                        imgUrl={stake.token.logoURI}
+                      />
+                      <div className="flex items-center gap-10 text-primary">
+                        Earn {prettifyNumber(stake.tknApr)}%
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </>
           ) : (
             <>
-              <div className="text-4xl mb-20">
-                Would you like to earn 85% on your 25.45 ETH?
-              </div>
+              {topStake ? (
+                <div className="text-4xl mb-20 text-silver">
+                  Would you like to earn {prettifyNumber(topStake.tknApr)}% on
+                  your {prettifyNumber(topStake.token.balance!)}{' '}
+                  {topStake.token.symbol}?
+                </div>
+              ) : (
+                <div className="loading-skeleton h-[100px] w-[550px] mb-20"></div>
+              )}
               <button onClick={() => setSeeAll(true)}>
                 See my other tokens {'->'}
               </button>
-              <div className="flex items-center mt-[70px]">
-                <Button className="w-[170px]">Protect and earn 85%</Button>
+              <div className="flex items-center mt-[70px] gap-10">
+                <Button
+                  onClick={() => setSelectedPosition(0)}
+                  className="w-[170px]"
+                >
+                  Yes
+                </Button>
                 <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
               </div>
             </>
@@ -236,14 +264,22 @@ const Protect = () => {
             {'<-'} Back
           </button>
           <div className="text-4xl mt-30">
-            How much of your 25.455 ETH do you want to desposit?
+            {`How much of your ${prettifyNumber(
+              availabelToStake[selectedPosition].token.balance!
+            )} ${
+              availabelToStake[selectedPosition].token.symbol
+            } do you want to desposit?`}
           </div>
           <div className="text-16 text-black-low mt-10">$10,020 balance</div>
-          {/* <TokenInputV3
-            token={undefined}
-            inputTkn={undefined}
-            setInputTkn={() => {}}
-          /> */}
+          <TokenInputV3
+            token={availabelToStake[selectedPosition].token}
+            inputTkn={input}
+            setInputTkn={setInput}
+            inputFiat={''}
+            setInputFiat={() => {}}
+            isFiat={false}
+            isError={false}
+          />
           <div className="rounded-20 bg-silver p-20 h-[80px] mt-20">
             <div className="flex items-center justify-between text-black-medium">
               <div>
