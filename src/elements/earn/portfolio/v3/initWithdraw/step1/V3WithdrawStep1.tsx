@@ -1,47 +1,68 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { memo, useMemo } from 'react';
-import { Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
-  token: Token;
   inputTkn: string;
   setInputTkn: (amount: string) => void;
   inputFiat: string;
   setInputFiat: (amount: string) => void;
   setStep: (step: number) => void;
-  availableBalance: string;
+  holdingToWithdraw: Holding;
   isFiat: boolean;
   withdrawalFeeInPercent: string;
   withdrawalFeeInTkn: string;
 }
 
 const V3WithdrawStep1 = ({
-  token,
+  holdingToWithdraw,
   setStep,
   inputTkn,
   setInputTkn,
   inputFiat,
   setInputFiat,
   isFiat,
-  availableBalance,
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
 }: Props) => {
+  const { token, combinedTokenBalance, tokenBalance } = holdingToWithdraw;
   const isInputError = useMemo(
-    () => new BigNumber(availableBalance).lt(inputTkn),
-    [availableBalance, inputTkn]
+    () => new BigNumber(combinedTokenBalance).lt(inputTkn),
+    [combinedTokenBalance, inputTkn]
+  );
+
+  const percentageUnstaked = useMemo(
+    () =>
+      new BigNumber(tokenBalance)
+        .div(combinedTokenBalance)
+        .multipliedBy(100)
+        .toFixed(2),
+    [combinedTokenBalance, tokenBalance]
   );
 
   const setBalance = (percentage: 25 | 50 | 75 | 100) => {
-    const valueTkn = new BigNumber(availableBalance)
+    const valueTkn = new BigNumber(combinedTokenBalance)
       .times(percentage / 100)
       .toString();
     const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
     setInputTkn(valueTkn);
     setInputFiat(valueFiat);
+  };
+
+  const skipStep2 = useMemo(
+    () => new BigNumber(inputTkn).lte(tokenBalance),
+    [inputTkn, tokenBalance]
+  );
+
+  const handleNextStep = () => {
+    if (skipStep2) {
+      setStep(3);
+    } else {
+      setStep(2);
+    }
   };
 
   return (
@@ -54,8 +75,10 @@ const V3WithdrawStep1 = ({
         onClick={() => setBalance(100)}
         className={`${isInputError ? 'text-error' : 'text-secondary'}`}
       >
-        Available {prettifyNumber(availableBalance)} {token.symbol}
+        Available {prettifyNumber(combinedTokenBalance)} {token.symbol}
       </button>
+
+      <div>Ready to withdraw: {percentageUnstaked}%</div>
 
       <TokenInputV3
         token={token}
@@ -77,7 +100,7 @@ const V3WithdrawStep1 = ({
       <div className="flex justify-center">
         <Button
           className="px-50 my-40"
-          onClick={() => setStep(2)}
+          onClick={handleNextStep}
           disabled={!inputTkn || isInputError}
         >
           Next {'->'}

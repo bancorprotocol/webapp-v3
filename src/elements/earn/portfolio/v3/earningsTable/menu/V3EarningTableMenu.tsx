@@ -11,14 +11,14 @@ export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
   holding: Holding;
-  setHoldingToWithdraw: (holding: Holding) => void;
+  setHoldingToWithdrawId: (id: string) => void;
   placement?: Placement;
 }
 
 export const V3EarningTableMenu = memo(
   ({
     holding,
-    setHoldingToWithdraw,
+    setHoldingToWithdrawId,
     setIsWithdrawModalOpen,
     placement = 'left-start',
   }: Props) => {
@@ -69,7 +69,7 @@ export const V3EarningTableMenu = memo(
                     <div className="overflow-hidden rounded bg-white p-20 border border-silver h-[280px]">
                       <V3EarningsTableMenuContent
                         holding={holding}
-                        setHoldingToWithdraw={setHoldingToWithdraw}
+                        setHoldingToWithdrawId={setHoldingToWithdrawId}
                         setIsWithdrawModalOpen={setIsWithdrawModalOpen}
                       />
                     </div>

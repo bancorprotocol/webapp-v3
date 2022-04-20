@@ -9,9 +9,7 @@ import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding | null>(
-    null
-  );
+  const [holdingToWithdrawId, setHoldingToWithdrawId] = useState<string>();
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector<boolean>(
@@ -59,7 +57,7 @@ export const V3EarningTable = () => {
           <V3EarningTableMenu
             holding={cell.row.original}
             setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-            setHoldingToWithdraw={setHoldingToWithdraw}
+            setHoldingToWithdrawId={setHoldingToWithdrawId}
           />
         ),
         width: 50,
@@ -82,11 +80,11 @@ export const V3EarningTable = () => {
         isLoading={isLoadingHoldings}
       />
 
-      {holdingToWithdraw && (
+      {holdingToWithdrawId && (
         <V3WithdrawModal
           isOpen={isWithdrawModalOpen}
           setIsOpen={setIsWithdrawModalOpen}
-          holdingToWithdraw={holdingToWithdraw}
+          holdingToWithdrawId={holdingToWithdrawId}
         />
       )}
     </section>

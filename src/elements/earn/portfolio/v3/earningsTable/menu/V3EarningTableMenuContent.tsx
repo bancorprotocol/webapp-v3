@@ -7,12 +7,12 @@ import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
-  setHoldingToWithdraw: (holding: Holding) => void;
+  setHoldingToWithdrawId: (id: string) => void;
   holding: Holding;
 }
 
 export const V3EarningsTableMenuContent = memo(
-  ({ holding, setIsWithdrawModalOpen, setHoldingToWithdraw }: Props) => {
+  ({ holding, setIsWithdrawModalOpen, setHoldingToWithdrawId }: Props) => {
     const [currentMenu, setCurrentMenu] =
       useState<EarningTableMenuState>('main');
 
@@ -21,7 +21,7 @@ export const V3EarningsTableMenuContent = memo(
         {currentMenu === 'main' && (
           <V3EarningTableMenuMain
             holding={holding}
-            setHoldingToWithdraw={setHoldingToWithdraw}
+            setHoldingToWithdrawId={setHoldingToWithdrawId}
             setCurrentMenu={setCurrentMenu}
             setIsWithdrawModalOpen={setIsWithdrawModalOpen}
           />

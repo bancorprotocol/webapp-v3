@@ -141,7 +141,10 @@ export const getPortfolioHoldings = createSelector(
 
     return allPoolsUniq
       .map((pool) => buildHoldingObject(pool))
-      .filter((holding) => holding !== undefined) as Holding[];
+      .filter((holding) => holding !== undefined)
+      .filter((holding) =>
+        new BigNumber(holding!.combinedTokenBalance).gt(0)
+      ) as Holding[];
   }
 );
 
