@@ -37,8 +37,12 @@ export const MigrateProtect = () => {
             </div>
           </div>
           <div className="mt-40">
-            <Rating className="w-[80px] h-20" starCount={5} percentage={100} />
-            <div className="text-graphite">Trusted by over 1M+ users</div>
+            <Rating
+              className="w-[80px]"
+              classStar="text-primary"
+              percentage={100}
+            />
+            <div className="text-graphite mt-2">Trusted by over 1M+ users</div>
           </div>
         </div>
       </div>
