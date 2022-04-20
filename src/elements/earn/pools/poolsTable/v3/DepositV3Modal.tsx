@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { Modal } from 'components/modal/Modal';
+import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { ethToken } from 'services/web3/config';
@@ -67,7 +67,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
       >
         Deposit
       </Button>
-      <Modal
+      <ModalV3
         title={'Deposit & Earn'}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
@@ -94,7 +94,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
             {ApproveModal}
           </div>
         </div>
-      </Modal>
+      </ModalV3>
     </>
   );
 };
