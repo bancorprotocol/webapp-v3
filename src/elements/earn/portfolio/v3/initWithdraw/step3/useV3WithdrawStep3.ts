@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -27,13 +27,12 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const [txBusy, setTxBusy] = useState(false);
   const { token, poolTokenId } = holding;
 
-  const poolTokenAmountWei = useRef('0');
+  const [poolTokenAmountWei, setPoolTokenAmountWei] = useState('0');
 
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
-        // TODO - use bnTKN for approval based on input amount
-        amount: poolTokenAmountWei.current,
+        amount: poolTokenAmountWei,
         token: {
           ...token,
           address: poolTokenId,
@@ -43,7 +42,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ];
     if (token.address === bntToken) {
       tokensToApprove.push({
-        amount: poolTokenAmountWei.current,
+        amount: poolTokenAmountWei,
         token: {
           ...token,
           address: getNetworkVariables().govToken,
@@ -53,7 +52,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     }
 
     return tokensToApprove;
-  }, [poolTokenId, token]);
+  }, [poolTokenAmountWei, poolTokenId, token]);
 
   const setWithdrawalAmountWei = useCallback(async (): Promise<void> => {
     try {
@@ -76,7 +75,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         currentTknBalanceWithTolerance
       );
       if (isWithdrawingMax) {
-        poolTokenAmountWei.current = currentPoolTokenBalanceWei.toString();
+        setPoolTokenAmountWei(currentPoolTokenBalanceWei.toString());
         return;
       }
       const tokenAmountWei = expandToken(amount.tkn, holding.token.decimals);
@@ -85,7 +84,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
           holding.poolId,
           tokenAmountWei
         );
-      poolTokenAmountWei.current = inputAmountInPoolTokenWei.toString();
+      setPoolTokenAmountWei(inputAmountInPoolTokenWei.toString());
     } catch (e) {
       console.error('failed to getWithdrawalAmount', e);
       throw e;
@@ -103,7 +102,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     try {
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
-        poolTokenAmountWei.current
+        poolTokenAmountWei
       );
       initWithdrawNotification(
         dispatch,
@@ -132,8 +131,14 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const handleButtonClick = useCallback(async () => {
     setTxBusy(true);
     await setWithdrawalAmountWei();
+  }, [setWithdrawalAmountWei]);
+
+  useEffect(() => {
+    if (poolTokenAmountWei === '0') {
+      return;
+    }
     onStart();
-  }, [onStart, setWithdrawalAmountWei]);
+  }, [onStart, poolTokenAmountWei]);
 
   return { token, handleButtonClick, ModalApprove, approveTokens, txBusy };
 };
