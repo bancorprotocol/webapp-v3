@@ -3,6 +3,7 @@ import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
 import { utils } from 'ethers';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { useMemo } from 'react';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   holding: Holding;
@@ -35,11 +36,11 @@ export const V3WithdrawStep1Breakdown = ({
           <>
             <div>{percentageUnstaked}% ready</div>
             <div>
-              {tokenBalance} {symbol}
+              {prettifyNumber(tokenBalance)} {symbol}
             </div>
             <div>{percentageStaked}% Held for rewards</div>
             <div>
-              {amount} {symbol}
+              {prettifyNumber(amount)} {symbol}
             </div>
           </>
         }
