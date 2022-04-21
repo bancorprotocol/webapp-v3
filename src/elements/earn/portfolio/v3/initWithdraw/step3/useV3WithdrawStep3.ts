@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -27,11 +27,13 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const [txBusy, setTxBusy] = useState(false);
   const { token, poolTokenId } = holding;
 
+  const poolTokenAmountWei = useRef('0');
+
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
         // TODO - use bnTKN for approval based on input amount
-        amount: holding.poolTokenBalance,
+        amount: poolTokenAmountWei.current,
         token: {
           ...token,
           address: poolTokenId,
@@ -41,7 +43,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ];
     if (token.address === bntToken) {
       tokensToApprove.push({
-        amount: holding.poolTokenBalance,
+        amount: poolTokenAmountWei.current,
         token: {
           ...token,
           address: getNetworkVariables().govToken,
@@ -51,9 +53,9 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     }
 
     return tokensToApprove;
-  }, [holding.poolTokenBalance, poolTokenId, token]);
+  }, [poolTokenId, token]);
 
-  const getWithdrawalAmountWei = async (): Promise<string> => {
+  const setWithdrawalAmountWei = useCallback(async (): Promise<void> => {
     try {
       const currentPoolTokenBalanceWei = await ContractsApi.Token(
         holding.poolTokenId
@@ -67,12 +69,15 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         currentTknBalanceWei.toString(),
         token.decimals
       );
-      const inputAmountWithTolerance = new BigNumber(amount.tkn).times(0.99);
-      const isWithdrawingMax = new BigNumber(currentTknBalance).gt(
-        inputAmountWithTolerance
+      const currentTknBalanceWithTolerance = new BigNumber(
+        currentTknBalance
+      ).times(0.99);
+      const isWithdrawingMax = new BigNumber(amount.tkn).gt(
+        currentTknBalanceWithTolerance
       );
       if (isWithdrawingMax) {
-        return currentPoolTokenBalanceWei.toString();
+        poolTokenAmountWei.current = currentPoolTokenBalanceWei.toString();
+        return;
       }
       const tokenAmountWei = expandToken(amount.tkn, holding.token.decimals);
       const inputAmountInPoolTokenWei =
@@ -80,19 +85,25 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
           holding.poolId,
           tokenAmountWei
         );
-      return inputAmountInPoolTokenWei.toString();
+      poolTokenAmountWei.current = inputAmountInPoolTokenWei.toString();
     } catch (e) {
       console.error('failed to getWithdrawalAmount', e);
       throw e;
     }
-  };
+  }, [
+    account,
+    amount.tkn,
+    holding.poolId,
+    holding.poolTokenId,
+    holding.token.decimals,
+    token.decimals,
+  ]);
 
   const initWithdraw = async () => {
     try {
-      const poolTokenAmountWei = await getWithdrawalAmountWei();
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
-        poolTokenAmountWei
+        poolTokenAmountWei.current
       );
       initWithdrawNotification(
         dispatch,
@@ -100,8 +111,8 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         amount.tkn,
         holding.token.symbol
       );
-      setStep(4);
       await updatePortfolioData(dispatch, account);
+      setStep(4);
     } catch (e: any) {
       console.error('initWithdraw failed', e);
       if (e.code === ErrorCode.DeniedTx) {
@@ -118,10 +129,11 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ContractsApi.BancorNetwork.contractAddress
   );
 
-  const handleButtonClick = useCallback(() => {
+  const handleButtonClick = useCallback(async () => {
     setTxBusy(true);
+    await setWithdrawalAmountWei();
     onStart();
-  }, [onStart]);
+  }, [onStart, setWithdrawalAmountWei]);
 
   return { token, handleButtonClick, ModalApprove, approveTokens, txBusy };
 };

@@ -31,7 +31,7 @@ const V3WithdrawStep3 = ({
     <>
       <div className="text-center">
         <h1 className="text-[36px] font-normal my-50">
-          Start {lockDurationInDays.toFixed(4)} day cooldown of{' '}
+          Start {lockDurationInDays} day cooldown of{' '}
           <span className="text-primary">
             {prettifyNumber(amount.tkn)} {token.symbol}
           </span>
