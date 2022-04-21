@@ -7,11 +7,13 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+
 interface Props {
   holding: Holding;
   amount: AmountTknFiat;
   setStep: (step: number) => void;
 }
+
 export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector<string>((state) => state.user.account);

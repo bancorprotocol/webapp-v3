@@ -20,7 +20,7 @@ const V3WithdrawStep3 = ({
   holding,
   setStep,
 }: Props) => {
-  const { token, onStart, ModalApprove, approveTokens, txBusy } =
+  const { token, handleButtonClick, ModalApprove, approveTokens, txBusy } =
     useV3WithdrawStep3({
       holding,
       amount,
@@ -37,7 +37,11 @@ const V3WithdrawStep3 = ({
           </span>
         </h1>
         <div className="flex justify-center">
-          <Button className="px-50" onClick={() => onStart()} disabled={txBusy}>
+          <Button
+            className="px-50"
+            onClick={handleButtonClick}
+            disabled={txBusy}
+          >
             {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
           </Button>
         </div>

@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
-import { expandToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import {
   initWithdrawNotification,
   rejectNotification,
@@ -53,24 +53,46 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     return tokensToApprove;
   }, [holding.poolTokenBalance, poolTokenId, token]);
 
-  const initWithdraw = async () => {
-    setTxBusy(true);
-    const maxBalanceWithTolerance = new BigNumber(amount.tkn).times(0.99);
-    const isWithdrawingMax = new BigNumber(holding.tokenBalance).gt(
-      maxBalanceWithTolerance
-    );
-    const tokenAmount = expandToken(amount.tkn, holding.token.decimals);
+  const getWithdrawalAmountWei = async (): Promise<string> => {
     try {
-      const inputAmountInPoolToken =
+      const currentPoolTokenBalanceWei = await ContractsApi.Token(
+        holding.poolTokenId
+      ).read.balanceOf(account);
+      const currentTknBalanceWei =
+        await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
+          holding.poolId,
+          currentPoolTokenBalanceWei
+        );
+      const currentTknBalance = shrinkToken(
+        currentTknBalanceWei.toString(),
+        token.decimals
+      );
+      const inputAmountWithTolerance = new BigNumber(amount.tkn).times(0.99);
+      const isWithdrawingMax = new BigNumber(currentTknBalance).gt(
+        inputAmountWithTolerance
+      );
+      if (isWithdrawingMax) {
+        return currentPoolTokenBalanceWei.toString();
+      }
+      const tokenAmountWei = expandToken(amount.tkn, holding.token.decimals);
+      const inputAmountInPoolTokenWei =
         await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
           holding.poolId,
-          tokenAmount
+          tokenAmountWei
         );
+      return inputAmountInPoolTokenWei.toString();
+    } catch (e) {
+      console.error('failed to getWithdrawalAmount', e);
+      throw e;
+    }
+  };
+
+  const initWithdraw = async () => {
+    try {
+      const poolTokenAmountWei = await getWithdrawalAmountWei();
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,
-        isWithdrawingMax
-          ? expandToken(holding.poolTokenBalance, 18)
-          : inputAmountInPoolToken
+        poolTokenAmountWei
       );
       initWithdrawNotification(
         dispatch,
@@ -96,5 +118,10 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ContractsApi.BancorNetwork.contractAddress
   );
 
-  return { token, onStart, ModalApprove, approveTokens, txBusy };
+  const handleButtonClick = useCallback(() => {
+    setTxBusy(true);
+    onStart();
+  }, [onStart]);
+
+  return { token, handleButtonClick, ModalApprove, approveTokens, txBusy };
 };
