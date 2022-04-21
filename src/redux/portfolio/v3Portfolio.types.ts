@@ -31,6 +31,7 @@ export interface V3PortfolioState {
   bonusesModal: boolean;
   bonuses: Bonus[];
   standardRewards: RewardsProgramStake[];
+  isLoadingStandardRewards: boolean;
 }
 
 export interface WithdrawalRequestRaw {

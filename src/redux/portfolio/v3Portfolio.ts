@@ -25,6 +25,7 @@ export const initialState: V3PortfolioState = {
   bonusesModal: false,
   bonuses: mockBonuses,
   standardRewards: [],
+  isLoadingStandardRewards: true,
 };
 
 const v3PortfolioSlice = createSlice({
@@ -56,6 +57,7 @@ const v3PortfolioSlice = createSlice({
       action: PayloadAction<RewardsProgramStake[]>
     ) => {
       state.standardRewards = action.payload;
+      state.isLoadingStandardRewards = false;
     },
   },
 });
@@ -69,6 +71,15 @@ export const {
 } = v3PortfolioSlice.actions;
 
 export const v3Portfolio = v3PortfolioSlice.reducer;
+
+export const getIsLoadingHoldings = createSelector(
+  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.v3Portfolio.isLoadingHoldings,
+  (state: RootState) => state.v3Portfolio.isLoadingStandardRewards,
+  (isLoadingTokens, isLoadingHoldings, isLoadingStandardRewards): boolean => {
+    return isLoadingTokens || isLoadingHoldings || isLoadingStandardRewards;
+  }
+);
 
 export const getPortfolioHoldings = createSelector(
   (state: RootState) => state.v3Portfolio.holdingsRaw,
@@ -145,6 +156,14 @@ export const getPortfolioHoldings = createSelector(
       .filter((holding) =>
         new BigNumber(holding!.combinedTokenBalance).gt(0)
       ) as Holding[];
+  }
+);
+
+export const getIsLoadingWithdrawalRequests = createSelector(
+  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.v3Portfolio.isLoadingWithdrawalRequests,
+  (isLoadingTokens, isLoadingWithdrawalRequests): boolean => {
+    return isLoadingTokens || isLoadingWithdrawalRequests;
   }
 );
 
