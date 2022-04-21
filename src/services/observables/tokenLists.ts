@@ -7,7 +7,6 @@ import axios from 'axios';
 import { shareReplay } from 'rxjs/operators';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
-import { getTokenListMock } from 'services/api/mockV3Welcome';
 
 const buildTokenListTokens = (
   tokenLists: TokenList[],

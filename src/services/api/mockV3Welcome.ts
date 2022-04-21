@@ -3,52 +3,6 @@ import { bntToken, ethToken } from 'services/web3/config';
 import { TokenMinimal } from 'services/observables/tokens';
 import imposterLogo from 'assets/logos/imposter.svg';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { getBancorV3Contracts } from 'utils/localStorage';
-import { address as testToken1Address } from 'services/web3/abis/v3/TestToken1.json';
-import { address as testToken2Address } from 'services/web3/abis/v3/TestToken2.json';
-import { address as testToken3Address } from 'services/web3/abis/v3/TestToken3.json';
-import { address as testToken4Address } from 'services/web3/abis/v3/TestToken4.json';
-import { address as testToken5Address } from 'services/web3/abis/v3/TestToken5.json';
-import { address as testToken6Address } from 'services/web3/abis/v3/TestToken6.json';
-import { address as testToken7Address } from 'services/web3/abis/v3/TestToken7.json';
-
-const allTestTokens = [
-  {
-    symbol: 'TKN1',
-    address: getBancorV3Contracts()?.testToken1 || testToken1Address,
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN2',
-    address: getBancorV3Contracts()?.testToken2 || testToken2Address,
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN3',
-    address: getBancorV3Contracts()?.testToken3 || testToken3Address,
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN4',
-    address: getBancorV3Contracts()?.testToken4 || testToken4Address,
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN5',
-    address: getBancorV3Contracts()?.testToken5 || testToken5Address,
-    decimals: 18,
-  },
-  {
-    symbol: 'TKN6',
-    address: getBancorV3Contracts()?.testToken6 || testToken6Address,
-    decimals: 4,
-  },
-  {
-    symbol: 'TKN7',
-    address: getBancorV3Contracts()?.testToken7 || testToken7Address,
-    decimals: 18,
-  },
-];
 
 const buildAPIToken = (address: string, symbol: string): APIToken => {
   return {
@@ -85,12 +39,6 @@ const buildAPIPoolV3 = async (
   };
 };
 
-export const getMockV3Tokens = (): APIToken[] => {
-  return allTestTokens.map((token) =>
-    buildAPIToken(token.address, token.symbol)
-  );
-};
-
 export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
   const pools = [];
   pools.push(await buildAPIPoolV3(ethToken, 'ETH', 18));
@@ -110,13 +58,4 @@ export const getMockV3Pools = async (): Promise<APIPoolV3[]> => {
     )
   );
   return pools;
-};
-
-export const getTokenListMock = (): TokenMinimal[] => {
-  return allTestTokens.map(({ address, symbol }) => ({
-    symbol,
-    address,
-    decimals: 18,
-    logoURI: imposterLogo,
-  }));
 };
