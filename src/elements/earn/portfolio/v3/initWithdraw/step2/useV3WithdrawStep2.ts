@@ -1,10 +1,7 @@
-import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux/index';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 
@@ -15,9 +12,8 @@ interface Props {
 }
 
 export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
-  const dispatch = useDispatch();
-  const account = useAppSelector<string>((state) => state.user.account);
   const { token, standardStakingReward } = holding;
+  const [txBusy, setTxBusy] = useState(false);
 
   const tokenAmountToUnstakeWei = useMemo(() => {
     const amountToUnstake = new BigNumber(amount.tkn)
@@ -31,7 +27,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
       console.error('No standardStakingReward found');
       return;
     }
-
+    setTxBusy(true);
     try {
       const poolTokenAmountWei =
         await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
@@ -44,12 +40,12 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
         poolTokenAmountWei
       );
       await tx.wait();
-      await updatePortfolioData(dispatch, account);
       setStep(3);
     } catch (e) {
       console.error(e);
+      setTxBusy(false);
     }
   };
 
-  return { handleLeave, token };
+  return { handleLeave, token, txBusy };
 };

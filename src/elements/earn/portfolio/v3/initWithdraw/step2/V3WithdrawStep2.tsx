@@ -12,7 +12,7 @@ interface Props {
 }
 
 const V3WithdrawStep2 = ({ setStep, amount, holding }: Props) => {
-  const { handleLeave, token } = useV3WithdrawStep2({
+  const { handleLeave, token, txBusy } = useV3WithdrawStep2({
     amount,
     holding,
     setStep,
@@ -29,8 +29,8 @@ const V3WithdrawStep2 = ({ setStep, amount, holding }: Props) => {
         from earning rewards
       </h1>
       <div className="flex justify-center">
-        <Button className="px-50" onClick={handleLeave}>
-          Remove
+        <Button className="px-50" onClick={handleLeave} disabled={txBusy}>
+          {txBusy ? 'waiting for confirmation ...' : 'Remove'}
         </Button>
       </div>
     </div>
