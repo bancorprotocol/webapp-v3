@@ -7,6 +7,7 @@ import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step
 import { CirclePercentage } from 'components/circlePercentage/CirclePercentage';
 import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
 import { utils } from 'ethers';
+import { V3WithdrawStep1Breakdown } from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1Breakdown';
 
 interface Props {
   inputTkn: string;
@@ -38,6 +39,7 @@ const V3WithdrawStep1 = ({
     isInputError,
     combinedTokenBalance,
     percentageUnstaked,
+    showBreakdown,
   } = useV3WithdrawStep1({
     holding,
     setStep,
@@ -58,13 +60,15 @@ const V3WithdrawStep1 = ({
           isInputError ? 'text-error' : 'text-secondary'
         }`}
       >
-        <div className="relative flex items-center justify-center mr-10">
-          <IconLightning className="absolute w-6 text-primary" />
-          <CirclePercentage
-            percentage={percentageUnstaked}
-            className="w-24 h-24"
-          />
-        </div>
+        {showBreakdown && (
+          <div className="relative flex items-center justify-center mr-10">
+            <IconLightning className="absolute w-6 text-primary" />
+            <CirclePercentage
+              percentage={percentageUnstaked}
+              className="w-24 h-24"
+            />
+          </div>
+        )}
         Available {prettifyNumber(combinedTokenBalance)} {token.symbol}
       </button>
 
@@ -84,22 +88,12 @@ const V3WithdrawStep1 = ({
           <button onClick={() => setBalance(75)}>75%</button>
           <button onClick={() => setBalance(100)}>100%</button>
         </div>
-        <div className="text-right">
-          <div className="text-primary flex items-center">
-            <IconLightning className="w-8 mr-8" />
-            {percentageUnstaked}% ready
-          </div>
-          <div>
-            {holding.tokenBalance} {token.symbol}
-          </div>
-          <div>{100 - Number(percentageUnstaked)}% Held for rewards</div>
-          <div>
-            {utils.formatUnits(
-              holding.standardStakingReward?.tokenAmountWei || 0
-            )}{' '}
-            {token.symbol}
-          </div>
-        </div>
+        {showBreakdown && (
+          <V3WithdrawStep1Breakdown
+            holding={holding}
+            percentageUnstaked={percentageUnstaked}
+          />
+        )}
       </div>
 
       <div className="flex justify-center">

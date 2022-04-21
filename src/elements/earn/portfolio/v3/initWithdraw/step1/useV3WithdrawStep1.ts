@@ -23,6 +23,14 @@ export const useV3WithdrawStep1 = ({
     [combinedTokenBalance, inputTkn]
   );
 
+  const showBreakdown = useMemo(
+    () =>
+      new BigNumber(holding.standardStakingReward?.poolTokenAmountWei || 0).gt(
+        0
+      ),
+    [holding.standardStakingReward?.poolTokenAmountWei]
+  );
+
   const percentageUnstaked = useMemo(
     () =>
       new BigNumber(tokenBalance)
@@ -61,5 +69,6 @@ export const useV3WithdrawStep1 = ({
     isInputError,
     combinedTokenBalance,
     percentageUnstaked,
+    showBreakdown,
   };
 };
