@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux';
+import { useAppSelector } from 'redux/index';
 import { useMemo } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
