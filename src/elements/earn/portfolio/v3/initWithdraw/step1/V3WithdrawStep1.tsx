@@ -4,6 +4,9 @@ import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
+import { CirclePercentage } from 'components/circlePercentage/CirclePercentage';
+import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
+import { utils } from 'ethers';
 
 interface Props {
   inputTkn: string;
@@ -51,12 +54,19 @@ const V3WithdrawStep1 = ({
 
       <button
         onClick={() => setBalance(100)}
-        className={`${isInputError ? 'text-error' : 'text-secondary'}`}
+        className={`flex items-center mx-auto ${
+          isInputError ? 'text-error' : 'text-secondary'
+        }`}
       >
+        <div className="relative flex items-center justify-center mr-10">
+          <IconLightning className="absolute w-6 text-primary" />
+          <CirclePercentage
+            percentage={percentageUnstaked}
+            className="w-24 h-24"
+          />
+        </div>
         Available {prettifyNumber(combinedTokenBalance)} {token.symbol}
       </button>
-
-      <div>Ready to withdraw: {percentageUnstaked}%</div>
 
       <TokenInputV3
         token={token}
@@ -67,12 +77,29 @@ const V3WithdrawStep1 = ({
         isFiat={isFiat}
         isError={isInputError}
       />
-
-      <div className="space-x-10 opacity-50">
-        <button onClick={() => setBalance(25)}>25%</button>
-        <button onClick={() => setBalance(50)}>50%</button>
-        <button onClick={() => setBalance(75)}>75%</button>
-        <button onClick={() => setBalance(100)}>100%</button>
+      <div className="w-full flex justify-between px-20">
+        <div className="space-x-10 opacity-50">
+          <button onClick={() => setBalance(25)}>25%</button>
+          <button onClick={() => setBalance(50)}>50%</button>
+          <button onClick={() => setBalance(75)}>75%</button>
+          <button onClick={() => setBalance(100)}>100%</button>
+        </div>
+        <div className="text-right">
+          <div className="text-primary flex items-center">
+            <IconLightning className="w-8 mr-8" />
+            {percentageUnstaked}% ready
+          </div>
+          <div>
+            {holding.tokenBalance} {token.symbol}
+          </div>
+          <div>{100 - Number(percentageUnstaked)}% Held for rewards</div>
+          <div>
+            {utils.formatUnits(
+              holding.standardStakingReward?.tokenAmountWei || 0
+            )}{' '}
+            {token.symbol}
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-center">

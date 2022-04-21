@@ -28,7 +28,7 @@ export const useV3WithdrawStep1 = ({
       new BigNumber(tokenBalance)
         .div(combinedTokenBalance)
         .multipliedBy(100)
-        .toFixed(2),
+        .toFixed(0),
     [combinedTokenBalance, tokenBalance]
   );
 
