@@ -38,8 +38,8 @@ export const DepositV3Modal = ({ pool }: Props) => {
     const isETH = pool.reserveToken.address === ethToken;
 
     try {
-      const res = await ContractsApi.StandardRewards.write.depositAndJoin(
-        '4',
+      const res = await ContractsApi.BancorNetwork.write.deposit(
+        pool.pool_dlt_id,
         amountWei,
         { value: isETH ? amountWei : undefined }
       );
@@ -55,7 +55,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: fieldBalance || '0', token: pool.reserveToken }],
     deposit,
-    ContractsApi.StandardRewards.contractAddress
+    ContractsApi.BancorNetwork.contractAddress
   );
 
   return (
