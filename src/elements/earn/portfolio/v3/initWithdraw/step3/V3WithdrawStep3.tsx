@@ -1,61 +1,31 @@
 import { Button } from 'components/button/Button';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
-import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { ResetApproval } from 'components/resetApproval/ResetApproval';
+import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 
 interface Props {
   amount: AmountTknFiat;
   lockDurationInDays: number;
-  initWithdraw: () => void;
-  txBusy: boolean;
-  holdingToWithdraw: Holding;
+  holding: Holding;
+  setStep: (step: number) => void;
 }
 
 const V3WithdrawStep3 = ({
   amount,
   lockDurationInDays,
-  initWithdraw,
-  txBusy,
-  holdingToWithdraw,
+  holding,
+  setStep,
 }: Props) => {
-  const { token, poolTokenId } = holdingToWithdraw;
-
-  const approveTokens = useMemo(() => {
-    const tokensToApprove = [
-      {
-        // TODO - use bnTKN for approval based on input amount
-        amount: holdingToWithdraw.poolTokenBalance,
-        token: {
-          ...token,
-          address: poolTokenId,
-          symbol: `bn${token.symbol}`,
-        },
-      },
-    ];
-    if (token.address === bntToken) {
-      tokensToApprove.push({
-        amount: holdingToWithdraw.poolTokenBalance,
-        token: {
-          ...token,
-          address: getNetworkVariables().govToken,
-          symbol: `vBNT`,
-        },
-      });
-    }
-
-    return tokensToApprove;
-  }, [holdingToWithdraw.poolTokenBalance, poolTokenId, token]);
-
-  const [onStart, ModalApprove] = useApproveModal(
-    approveTokens,
-    initWithdraw,
-    ContractsApi.BancorNetwork.contractAddress
-  );
+  const { token, onStart, ModalApprove, approveTokens, txBusy } =
+    useV3WithdrawStep3({
+      holding,
+      amount,
+      setStep,
+    });
 
   return (
     <>

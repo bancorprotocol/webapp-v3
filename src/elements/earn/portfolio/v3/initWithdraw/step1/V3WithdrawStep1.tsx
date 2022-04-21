@@ -1,9 +1,9 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo, useMemo } from 'react';
-import BigNumber from 'bignumber.js';
-import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
+import { memo } from 'react';
+import { prettifyNumber } from 'utils/helperFunctions';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
 
 interface Props {
   inputTkn: string;
@@ -11,14 +11,14 @@ interface Props {
   inputFiat: string;
   setInputFiat: (amount: string) => void;
   setStep: (step: number) => void;
-  holdingToWithdraw: Holding;
+  holding: Holding;
   isFiat: boolean;
   withdrawalFeeInPercent: string;
   withdrawalFeeInTkn: string;
 }
 
 const V3WithdrawStep1 = ({
-  holdingToWithdraw,
+  holding,
   setStep,
   inputTkn,
   setInputTkn,
@@ -28,42 +28,20 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
 }: Props) => {
-  const { token, combinedTokenBalance, tokenBalance } = holdingToWithdraw;
-  const isInputError = useMemo(
-    () => new BigNumber(combinedTokenBalance).lt(inputTkn),
-    [combinedTokenBalance, inputTkn]
-  );
-
-  const percentageUnstaked = useMemo(
-    () =>
-      new BigNumber(tokenBalance)
-        .div(combinedTokenBalance)
-        .multipliedBy(100)
-        .toFixed(2),
-    [combinedTokenBalance, tokenBalance]
-  );
-
-  const setBalance = (percentage: 25 | 50 | 75 | 100) => {
-    const valueTkn = new BigNumber(combinedTokenBalance)
-      .times(percentage / 100)
-      .toString();
-    const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
-    setInputTkn(valueTkn);
-    setInputFiat(valueFiat);
-  };
-
-  const skipStep2 = useMemo(
-    () => new BigNumber(inputTkn).lte(tokenBalance),
-    [inputTkn, tokenBalance]
-  );
-
-  const handleNextStep = () => {
-    if (skipStep2) {
-      setStep(3);
-    } else {
-      setStep(2);
-    }
-  };
+  const {
+    handleNextStep,
+    token,
+    setBalance,
+    isInputError,
+    combinedTokenBalance,
+    percentageUnstaked,
+  } = useV3WithdrawStep1({
+    holding,
+    setStep,
+    inputTkn,
+    setInputTkn,
+    setInputFiat,
+  });
 
   return (
     <div className="text-center">

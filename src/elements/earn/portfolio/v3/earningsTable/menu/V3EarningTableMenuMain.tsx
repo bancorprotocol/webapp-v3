@@ -9,23 +9,23 @@ import { Holding } from 'redux/portfolio/v3Portfolio.types';
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
-  setHoldingToWithdrawId: (id: string) => void;
+  setHoldingToWithdraw: (holding: Holding) => void;
   holding: Holding;
 }
 
 export const V3EarningTableMenuMain = memo(
   ({
     holding,
-    setHoldingToWithdrawId,
+    setHoldingToWithdraw,
     setCurrentMenu,
     setIsWithdrawModalOpen,
   }: Props) => {
     const { setBonusModalOpen } = useV3Bonuses();
 
     const handleWithdrawClick = useCallback(() => {
-      setHoldingToWithdrawId(holding.poolId);
+      setHoldingToWithdraw(holding);
       setIsWithdrawModalOpen(true);
-    }, [holding.poolId, setHoldingToWithdrawId, setIsWithdrawModalOpen]);
+    }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
     const handleBonusClick = useCallback(() => {
       // TODO - add logic for what action to perform

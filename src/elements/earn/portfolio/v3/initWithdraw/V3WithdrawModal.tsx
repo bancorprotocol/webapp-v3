@@ -6,14 +6,15 @@ import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3Wit
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  holdingToWithdrawId: string;
+  holding: Holding;
 }
 
-const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdrawId }: Props) => {
+const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
   const {
     step,
     onClose,
@@ -27,10 +28,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdrawId }: Props) => {
     withdrawalFeeInTkn,
     withdrawalFeeInPercent,
     lockDurationInDays,
-    initWithdraw,
-    txBusy,
-    holding,
-  } = useV3WithdrawModal({ holdingToWithdrawId, setIsOpen });
+  } = useV3WithdrawModal({ setIsOpen });
 
   return (
     <ModalFullscreenV3
@@ -47,21 +45,20 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdrawId }: Props) => {
           inputFiat={inputFiat}
           setInputFiat={setInputFiat}
           isFiat={isFiat}
-          holdingToWithdraw={holding!}
+          holding={holding}
           withdrawalFeeInPercent={withdrawalFeeInPercent}
           withdrawalFeeInTkn={withdrawalFeeInTkn}
         />
       )}
       {step === 2 && (
-        <V3WithdrawStep2 setStep={setStep} amount={amount} holding={holding!} />
+        <V3WithdrawStep2 setStep={setStep} amount={amount} holding={holding} />
       )}
       {step === 3 && (
         <V3WithdrawStep3
-          txBusy={txBusy}
           amount={amount}
           lockDurationInDays={lockDurationInDays}
-          initWithdraw={initWithdraw}
-          holdingToWithdraw={holding!}
+          holding={holding}
+          setStep={setStep}
         />
       )}
       {step === 4 && (
