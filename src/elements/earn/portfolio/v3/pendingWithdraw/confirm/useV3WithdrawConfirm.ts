@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
-import { getTokenById } from 'redux/bancor/bancor';
+import { getTokenById } from 'store/bancor/bancor';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import useAsyncEffect from 'use-async-effect';
@@ -9,7 +9,7 @@ import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfoli
 import { wait } from 'utils/pureFunctions';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import {
   confirmWithdrawNotification,
   rejectNotification,
@@ -30,16 +30,14 @@ export const useV3WithdrawConfirm = ({
   openCancelModal,
 }: Props) => {
   const dispatch = useDispatch();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [outputBreakdown, setOutputBreakdown] = useState({
     tkn: 0,
     bnt: 0,
   });
   const [txBusy, setTxBusy] = useState(false);
   const { token, poolTokenAmount } = withdrawRequest;
-  const govToken = useAppSelector<Token | undefined>((state: any) =>
+  const govToken = useAppSelector<Token | undefined>((state) =>
     getTokenById(state, getNetworkVariables().govToken)
   );
   const isBntToken = useMemo(() => token.address === bntToken, [token]);

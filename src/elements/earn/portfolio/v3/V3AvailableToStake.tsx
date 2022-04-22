@@ -1,11 +1,11 @@
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js';
-import 'swiper/swiper.min.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { NavigationOptions } from 'swiper/types';
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
-import { useAppSelector } from 'redux/index';
-import { getAvailableToStakeTokens } from 'redux/bancor/token';
+import { useAppSelector } from 'store';
+import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 

@@ -7,9 +7,9 @@ import {
   WithdrawalRequest,
   WithdrawalRequestRaw,
   WithdrawalSettings,
-} from 'redux/portfolio/v3Portfolio.types';
-import { RootState } from 'redux/index';
-import { getAllTokensMap } from 'redux/bancor/token';
+} from 'store/portfolio/v3Portfolio.types';
+import { RootState } from 'store/index';
+import { getAllTokensMap } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';

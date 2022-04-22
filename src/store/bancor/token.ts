@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/index';
+import { RootState } from 'store/index';
 import { Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
 import { bntToken } from 'services/web3/config';

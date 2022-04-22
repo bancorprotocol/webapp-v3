@@ -1,6 +1,6 @@
 import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';

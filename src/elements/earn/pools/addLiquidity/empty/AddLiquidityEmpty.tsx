@@ -1,10 +1,9 @@
-import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityEmptyStep1 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep1';
 import { useEffect, useState } from 'react';
 import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep2';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
@@ -17,10 +16,10 @@ interface Props {
 
 export const AddLiquidityEmpty = ({ pool }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
-  const tkn = useAppSelector<Token | undefined>((state: any) =>
+  const tkn = useAppSelector((state) =>
     getTokenById(state, tknReserve.address)
   );
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector((state) =>
     getTokenById(state, bntReserve.address)
   );
   const [tknAmount, setTknAmount] = useState('');

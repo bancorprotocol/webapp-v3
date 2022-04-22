@@ -92,7 +92,7 @@ const notificationSlice = createSlice({
       );
       if (index > -1) {
         const oldNotification = state.notifications[index];
-        const notification = {
+        state.notifications[index] = {
           id: oldNotification.id,
           type: action.payload.type,
           title: action.payload.title
@@ -103,7 +103,6 @@ const notificationSlice = createSlice({
           txHash: oldNotification.txHash,
           timestamp: oldNotification.timestamp,
         };
-        state.notifications[index] = notification;
       }
     },
   },

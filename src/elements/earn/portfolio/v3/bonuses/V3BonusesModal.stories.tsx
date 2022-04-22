@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
-import { store } from 'redux/index';
+import { store } from 'store';
 import { Provider } from 'react-redux';
 import { V3BonusesModal } from 'elements/earn/portfolio/v3/bonuses/V3BonusesModal';
 

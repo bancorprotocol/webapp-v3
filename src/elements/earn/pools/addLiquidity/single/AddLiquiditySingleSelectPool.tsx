@@ -1,5 +1,5 @@
-import { useAppSelector } from 'redux/index';
-import { getPools } from 'redux/bancor/pool';
+import { useAppSelector } from 'store';
+import { getPools } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
@@ -10,7 +10,7 @@ interface Props {
 
 export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
   const { pushAddLiquidityByID } = useNavigation();
-  const pools = useAppSelector<Pool[]>(getPools);
+  const pools = useAppSelector(getPools);
 
   const onSelect = (pool: Pool) => {
     pushAddLiquidityByID(pool.pool_dlt_id);

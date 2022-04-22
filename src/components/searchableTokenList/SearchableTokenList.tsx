@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
@@ -13,7 +13,7 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
-import { TokenList, TokenMinimal } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { userPreferredListIds$ } from 'services/observables/tokenLists';
 
 interface SearchableTokenListProps {
@@ -85,9 +85,7 @@ export const SearchableTokenList = ({
   const [manage, setManage] = useState(false);
   const [userPreferredListIds, setUserLists] = useState(getTokenListLS());
 
-  const tokensLists = useAppSelector<TokenList[]>(
-    (state) => state.bancor.tokenLists
-  );
+  const tokensLists = useAppSelector((state) => state.bancor.tokenLists);
 
   const onClose = async () => {
     setIsOpen(false);

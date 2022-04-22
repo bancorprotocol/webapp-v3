@@ -1,9 +1,9 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import {
   getStandardRewards,
   openBonusesModal,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import { useCallback, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { shrinkToken } from 'utils/formulas';
@@ -11,9 +11,9 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 export const useV3Bonuses = () => {
-  const account = useAppSelector<string>((state) => state.user.account);
+  const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
-  const isBonusModalOpen = useAppSelector<boolean>(
+  const isBonusModalOpen = useAppSelector(
     (state) => state.v3Portfolio.bonusesModal
   );
   const bonuses = useAppSelector(getStandardRewards);
@@ -36,9 +36,12 @@ export const useV3Bonuses = () => {
 
   const handleClaim = useCallback(
     async (ids: string[]) => {
+      if (!account) {
+        console.error('No account found. Please login');
+        return;
+      }
       try {
         const res = await ContractsApi.StandardRewards.write.claimRewards(ids);
-        console.log('Claimed', res);
         await updatePortfolioData(dispatch, account);
       } catch (e: any) {
         console.error('failed to claim rewards', e);
@@ -49,6 +52,10 @@ export const useV3Bonuses = () => {
 
   const handleClaimAndEarn = useCallback(
     async (ids: string[]) => {
+      if (!account) {
+        console.error('No account found. Please login');
+        return;
+      }
       try {
         const res = await ContractsApi.StandardRewards.write.stakeRewards(ids);
         console.log('restaked', res);

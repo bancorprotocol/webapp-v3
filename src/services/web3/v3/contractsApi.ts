@@ -19,13 +19,13 @@ import {
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
 import { getBancorV3Contracts } from 'utils/localStorage';
-import { address as bancorNetworkAddress } from 'services/web3/abis/v3/BancorNetworkV3_Proxy.json';
-import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/BancorNetworkInfo_Proxy.json';
-import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings_Proxy.json';
-import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals_Proxy.json';
-import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
-import { address as standardRewardsAddress } from 'services/web3/abis/v3/StandardRewards_Proxy.json';
-import { address as bancorPortalAddress } from 'services/web3/abis/v3/BancorPortal_Proxy.json';
+import bancorNetworkABI from 'services/web3/abis/v3/BancorNetworkV3_Proxy.json';
+import bancorNetworkInfoABI from 'services/web3/abis/v3/BancorNetworkInfo_Proxy.json';
+import networkSettingsABI from 'services/web3/abis/v3/NetworkSettings_Proxy.json';
+import pendingWithdrawalsABI from 'services/web3/abis/v3/PendingWithdrawals_Proxy.json';
+import poolCollectionType1ABI from 'services/web3/abis/v3/PoolCollectionType1.json';
+import standardRewardsABI from 'services/web3/abis/v3/StandardRewards_Proxy.json';
+import bancorPortalABI from 'services/web3/abis/v3/BancorPortal_Proxy.json';
 
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -68,37 +68,38 @@ class BancorContract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorContract<BancorNetworkV3>(
-    getBancorV3Contracts()?.bancorNetwork || bancorNetworkAddress,
+    getBancorV3Contracts()?.bancorNetwork || bancorNetworkABI.address,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorContract<BancorNetworkInfo>(
-    getBancorV3Contracts()?.bancorNetworkInfo || bancorNetworkInfoAddress,
+    getBancorV3Contracts()?.bancorNetworkInfo || bancorNetworkInfoABI.address,
     BancorNetworkInfo__factory
   );
 
   static NetworkSettings = new BancorContract<NetworkSettings>(
-    getBancorV3Contracts()?.networkSettings || networkSettingsAddress,
+    getBancorV3Contracts()?.networkSettings || networkSettingsABI.address,
     NetworkSettings__factory
   );
 
   static StandardRewards = new BancorContract<StandardRewards>(
-    getBancorV3Contracts()?.standardRewards || standardRewardsAddress,
+    getBancorV3Contracts()?.standardRewards || standardRewardsABI.address,
     StandardRewards__factory
   );
 
   static PoolCollection = new BancorContract<PoolCollectionType1>(
-    getBancorV3Contracts()?.poolCollectionType1 || poolCollectionType1Address,
+    getBancorV3Contracts()?.poolCollectionType1 ||
+      poolCollectionType1ABI.address,
     PoolCollectionType1__factory
   );
 
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
-    getBancorV3Contracts()?.pendingWithdrawals || pendingWithdrawalsAddress,
+    getBancorV3Contracts()?.pendingWithdrawals || pendingWithdrawalsABI.address,
     PendingWithdrawals__factory
   );
 
   static BancorPortal = new BancorContract<BancorPortal>(
-    getBancorV3Contracts()?.bancorPortal || bancorPortalAddress,
+    getBancorV3Contracts()?.bancorPortal || bancorPortalABI.address,
     BancorPortal__factory
   );
 

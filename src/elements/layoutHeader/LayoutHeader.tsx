@@ -6,7 +6,7 @@ import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';

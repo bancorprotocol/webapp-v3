@@ -21,6 +21,7 @@ const fetchApyVisionUniswap = async (
     // const { data } = await axios.get<ApyVisionUniResponse>(url);
     // return data.result;
     return [];
+    // eslint-disable-next-line no-unreachable
   } catch (e: any) {
     console.error('fetchApyVisionUniswap failed: ', e.message);
     return [];

@@ -1,14 +1,14 @@
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import {
   Notification,
   NotificationType,
   removeNotification,
   setNotifications,
   setStatus,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { NotificationContent } from 'elements/notifications/NotificationContent';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';

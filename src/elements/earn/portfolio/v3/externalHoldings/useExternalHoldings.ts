@@ -5,13 +5,13 @@ import {
   getExternalHoldingsUni,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { Token } from 'services/observables/tokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useAsyncEffect } from 'use-async-effect';
 import {
   ApyVisionData,
   ExternalHolding,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { getV3Tokens } from 'redux/bancor/token';
+import { getV3Tokens } from 'store/bancor/token';
 
 const initialApyVisionData: ApyVisionData = {
   positionsUni: [],
@@ -19,9 +19,7 @@ const initialApyVisionData: ApyVisionData = {
 };
 
 export const useExternalHoldings = () => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [apyVisionData, setApyVisionData] =
     useState<ApyVisionData>(initialApyVisionData);
 

@@ -1,10 +1,9 @@
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
-import { useAppSelector } from 'redux/index';
-import { Statistic } from 'services/observables/statistics';
+import { useAppSelector } from 'store';
 import './Statistics.css';
 
 export const Statistics = () => {
-  const stats = useAppSelector<Statistic[]>((state) => state.pool.statistics);
+  const stats = useAppSelector((state) => state.pool.statistics);
 
   return (
     <section className="content-section py-20 pl-30 lg:pl-0 md:mt-20">

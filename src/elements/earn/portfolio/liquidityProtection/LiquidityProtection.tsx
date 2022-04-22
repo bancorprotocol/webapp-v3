@@ -3,24 +3,20 @@ import { MyRewards } from './rewards/MyRewards';
 import { ProtectedPositionsTable } from './protectedPositions/ProtectedPositionsTable';
 import { ClaimAvailable } from './claim/ClaimAvailable';
 import { ClaimLocked } from './claim/ClaimLocked';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
-import { Token } from 'services/observables/tokens';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import { bntToken } from 'services/web3/config';
-import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 
 export const LiquidityProtection = () => {
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, bntToken)
-  );
-  const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
+  const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const lockedAvailableBNT = useAppSelector(
     (state) => state.liquidity.lockedAvailableBNT
   );
-  const loadingLockedBnt = useAppSelector<boolean>(
+  const loadingLockedBnt = useAppSelector(
     (state) => state.liquidity.loadingLockedBnt
   );
 
-  const loadingPositions = useAppSelector<boolean>(
+  const loadingPositions = useAppSelector(
     (state) => state.liquidity.loadingPositions
   );
 

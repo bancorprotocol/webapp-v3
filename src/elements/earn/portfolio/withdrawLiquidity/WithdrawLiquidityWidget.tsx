@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
@@ -24,7 +24,7 @@ import {
   withdrawProtectedPositionFailed,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { setProtectedPositions } from 'redux/liquidity/liquidity';
+import { setProtectedPositions } from 'store/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
@@ -50,16 +50,14 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const dispatch = useDispatch();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
   const [amount, setAmount] = useState('');
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
-  const token = useAppSelector<Token | undefined>((state: any) =>
+  const token = useAppSelector<Token | undefined>((state) =>
     getTokenById(state, reserveToken.address)
   );
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
@@ -67,7 +65,7 @@ export const WithdrawLiquidityWidget = ({
     { tkn: number; bnt: number } | undefined
   >();
   const gov = getNetworkVariables().govToken;
-  const govToken = useAppSelector<Token | undefined>((state: any) =>
+  const govToken = useAppSelector<Token | undefined>((state) =>
     getTokenById(state, gov)
   );
 

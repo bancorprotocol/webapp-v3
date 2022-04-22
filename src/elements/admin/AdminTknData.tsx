@@ -1,18 +1,16 @@
-import { useAppSelector } from 'redux/index';
-import { Token } from 'services/observables/tokens';
+import { useAppSelector } from 'store';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { PoolV3 } from 'services/observables/pools';
 import {
   getPortfolioHoldings,
   getStandardRewards,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { utils } from 'ethers';
-import { getAllStandardRewardPrograms } from 'redux/bancor/bancor';
+import { getAllStandardRewardPrograms } from 'store/bancor/bancor';
 
 export const AdminTknData = () => {
-  const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
-  const allV3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
+  const allTokens = useAppSelector((state) => state.bancor.allTokens);
+  const allV3Pools = useAppSelector((state) => state.pool.v3Pools);
   const holdings = useAppSelector(getPortfolioHoldings);
   const userStandardRewardPrograms = useAppSelector(getStandardRewards);
   const allStandardRewardsPrograms = useAppSelector(

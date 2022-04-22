@@ -1,7 +1,7 @@
 import { memo, useState } from 'react';
 import V3ExternalHoldingsItem from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldingsItem';
 import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { NavigationOptions } from 'swiper/types';
 import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
 

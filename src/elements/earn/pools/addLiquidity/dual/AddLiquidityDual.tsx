@@ -1,8 +1,8 @@
 import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityDualStakeAmount } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualStakeAmount';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import { useState } from 'react';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
@@ -18,10 +18,10 @@ interface Props {
 
 export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
-  const tkn = useAppSelector<Token | undefined>((state: any) =>
+  const tkn = useAppSelector((state) =>
     getTokenById(state, tknReserve.address)
   );
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector((state) =>
     getTokenById(state, bntReserve.address)
   );
   const { pushLiquidityError, pushPools } = useNavigation();

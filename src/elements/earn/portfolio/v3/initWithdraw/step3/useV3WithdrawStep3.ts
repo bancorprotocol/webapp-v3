@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import {
@@ -12,7 +12,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 
 interface Props {
@@ -55,6 +55,10 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   }, [poolTokenAmountWei, poolTokenId, token]);
 
   const setWithdrawalAmountWei = useCallback(async (): Promise<void> => {
+    if (!account) {
+      console.error('No account found. Please login');
+      return;
+    }
     try {
       const currentPoolTokenBalanceWei = await ContractsApi.Token(
         holding.poolTokenId
@@ -99,6 +103,10 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   ]);
 
   const initWithdraw = async () => {
+    if (!account) {
+      console.error('No account found. Please login');
+      return;
+    }
     try {
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         holding.poolTokenId,

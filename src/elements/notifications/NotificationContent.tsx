@@ -4,16 +4,14 @@ import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import {
   Notification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { useWeb3React } from '@web3-react/core';
 import { getNetworkVariables } from 'services/web3/config';
-import { EthNetworks } from 'services/web3/types';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);

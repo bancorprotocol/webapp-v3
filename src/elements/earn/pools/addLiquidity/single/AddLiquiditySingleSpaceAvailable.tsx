@@ -5,8 +5,8 @@ import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import {
   checkPriceDeviationTooHigh,
   fetchBntNeededToOpenSpace,
@@ -37,7 +37,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
   spaceAvailableTkn,
   setSpaceAvailableTkn,
 }: Props) => {
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector((state) =>
     getTokenById(state, pool.reserves[1].address)
   );
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =

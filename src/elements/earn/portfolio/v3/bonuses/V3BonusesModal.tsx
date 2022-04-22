@@ -8,7 +8,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import {
   GroupedStandardReward,
   StandardReward,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
 
 const BonusGroupHead = ({ token }: { token: Token }) => {

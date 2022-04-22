@@ -1,17 +1,13 @@
 import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection/LiquidityProtection';
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import V3Portfolio from 'elements/earn/portfolio/v3/V3Portfolio';
 import { Tab } from '@headlessui/react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { PoolToken } from 'services/observables/pools';
-import { ProtectedPosition } from 'services/web3/protection/positions';
 
 export const Portfolio = () => {
-  const v2 = useAppSelector<ProtectedPosition[]>(
-    (state) => state.liquidity.protectedPositions
-  );
-  const v1 = useAppSelector<PoolToken[]>((state) => state.liquidity.poolTokens);
+  const v2 = useAppSelector((state) => state.liquidity.protectedPositions);
+  const v1 = useAppSelector((state) => state.liquidity.poolTokens);
 
   const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
     classNameGenerator({

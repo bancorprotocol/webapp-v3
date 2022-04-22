@@ -8,7 +8,7 @@ import 'components/inputField/InputField.css';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 interface TokenInputFieldProps {
   label?: string;
@@ -65,11 +65,9 @@ export const TokenInputField = ({
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
       : null;
 
-  const toggle = useAppSelector<boolean>((state) => state.user.usdToggle);
-  const loadingBalances = useAppSelector<boolean>(
-    (state) => state.user.loadingBalances
-  );
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const toggle = useAppSelector((state) => state.user.usdToggle);
+  const loadingBalances = useAppSelector((state) => state.user.loadingBalances);
+  const tokens = useAppSelector((state) => state.bancor.tokens);
 
   const onInputChange = (text: string, token?: Token) => {
     text = sanitizeNumberInput(text);

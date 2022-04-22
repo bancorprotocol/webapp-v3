@@ -20,7 +20,7 @@ import {
 import { useApproveModal } from 'hooks/useApproveModal';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { ApprovalContract } from 'services/web3/approval';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -39,10 +39,7 @@ export const ModalVbnt = ({
   stakeBalance,
   onCompleted,
 }: ModalVbntProps) => {
-  const { chainId } = useWeb3React();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [, setSelPercentage] = useState<number>(-1);

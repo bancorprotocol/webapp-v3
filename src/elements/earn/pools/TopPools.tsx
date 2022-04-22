@@ -1,14 +1,14 @@
 import { Ticker } from 'components/ticker/Ticker';
 import { Image } from 'components/image/Image';
-import { useAppSelector } from 'redux/index';
-import { getTopPools, TopPool } from 'redux/bancor/pool';
+import { useAppSelector } from 'store';
+import { getTopPools, TopPool } from 'store/bancor/pool';
 
 interface Props {
   setSearch: Function;
 }
 
 export const TopPools = ({ setSearch }: Props) => {
-  const pools = useAppSelector<TopPool[]>(getTopPools);
+  const pools = useAppSelector(getTopPools);
 
   const handleClick = (pool: TopPool) => {
     if (pool.tknSymbol === 'BNT') {

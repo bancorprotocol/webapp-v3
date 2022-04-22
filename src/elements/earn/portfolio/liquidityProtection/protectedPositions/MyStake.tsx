@@ -1,9 +1,9 @@
-import { useAppSelector } from 'redux/index';
-import { getStakeSummary, MyStakeSummary } from 'redux/liquidity/liquidity';
+import { useAppSelector } from 'store';
+import { getStakeSummary } from 'store/liquidity/liquidity';
 import { prettifyNumber } from 'utils/helperFunctions';
 
 export const MyStake = ({ loading }: { loading: boolean }) => {
-  const summary = useAppSelector<MyStakeSummary | undefined>(getStakeSummary);
+  const summary = useAppSelector(getStakeSummary);
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">

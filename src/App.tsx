@@ -8,12 +8,9 @@ import {
   setDarkMode,
   setSlippageTolerance,
   setUsdToggle,
-} from 'redux/user/user';
-import {
-  Notification,
-  setNotifications,
-} from 'redux/notification/notification';
-import { useAppSelector } from 'redux/index';
+} from 'store/user/user';
+import { setNotifications } from 'store/notification/notification';
+import { useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
   getDarkModeLS,
@@ -37,7 +34,7 @@ export const App = () => {
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 

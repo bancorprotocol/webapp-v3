@@ -3,7 +3,7 @@ import { Widget } from 'components/widgets/Widget';
 import { AddLiquiditySingleInfoBox } from './AddLiquiditySingleInfoBox';
 import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useState } from 'react';
 import { useApproveModal } from 'hooks/useApproveModal';
@@ -11,7 +11,7 @@ import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/A
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'redux/bancor/bancor';
+import { getTokenById } from 'store/bancor/bancor';
 import { addLiquidityV2Single } from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,
@@ -38,10 +38,10 @@ interface Props {
 export const AddLiquiditySingle = ({ pool }: Props) => {
   const { chainId } = useWeb3React();
   const dispatch = useDispatch();
-  const tkn = useAppSelector<Token | undefined>((state: any) =>
+  const tkn = useAppSelector((state) =>
     getTokenById(state, pool.reserves[0].address)
   );
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector((state) =>
     getTokenById(state, pool.reserves[1].address)
   );
   const { pushPortfolio, pushPools, pushLiquidityError } = useNavigation();
@@ -51,7 +51,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const fiatToggle = useAppSelector((state) => state.user.usdToggle);
 
   const selectedToken = isBNTSelected ? bnt! : tkn!;
   const setSelectedToken = useCallback(

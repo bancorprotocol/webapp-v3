@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
-import { getTokenById } from 'redux/bancor/bancor';
-import { getProtectedPools } from 'redux/bancor/pool';
+import { getTokenById } from 'store/bancor/bancor';
+import { getProtectedPools } from 'store/bancor/pool';
 
 import BigNumber from 'bignumber.js';
 import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
-import { getPositionById } from 'redux/liquidity/liquidity';
+import { getPositionById } from 'store/liquidity/liquidity';
 import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
 
@@ -27,7 +27,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector<Token | undefined>((state) =>
     getTokenById(state, pool ? pool.reserves[1].address : '')
   );
 
@@ -35,9 +35,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
     getPositionById(posGroupId ?? '')
   );
 
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
 
   const fetchClaimableRewards = async (account: string) => {
     if (posGroupId && position) {

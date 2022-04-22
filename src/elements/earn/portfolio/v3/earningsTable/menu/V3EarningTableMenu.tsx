@@ -4,7 +4,7 @@ import { Fragment, memo, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
