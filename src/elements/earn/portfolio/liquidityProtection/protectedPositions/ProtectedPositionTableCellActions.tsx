@@ -9,7 +9,7 @@ import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidi
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { StakeRewardsBtn } from '../rewards/StakeRewardsBtn';
 import BigNumber from 'bignumber.js';
-import { ButtonIcon } from '../../../../../components/button/ButtonIcon';
+import { ButtonIcon } from 'components/button/ButtonIcon';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<

@@ -6,8 +6,8 @@ import {
 import dayjs from 'utils/dayjs';
 import { web3, writeWeb3 } from 'services/web3';
 import {
-  LiquidityProtectionStore__factory,
   LiquidityProtection__factory,
+  LiquidityProtectionStore__factory,
 } from '../abis/types';
 import { ErrorCode } from '../types';
 import { shrinkToken } from 'utils/formulas';

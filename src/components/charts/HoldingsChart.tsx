@@ -1,16 +1,16 @@
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  ChartData,
+  ChartDataset,
+  ChartOptions,
+  Legend,
   LinearScale,
-  PointElement,
   LineElement,
+  PointElement,
+  ScatterDataPoint,
   Title,
   Tooltip,
-  Legend,
-  ChartOptions,
-  ChartData,
-  ScatterDataPoint,
-  ChartDataset,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import faker from '@faker-js/faker';

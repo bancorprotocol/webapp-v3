@@ -1,4 +1,4 @@
-import { Transition, Dialog } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconLeft } from 'assets/icons/left.svg';
 import { DarkMode } from 'elements/settings/DarkMode';

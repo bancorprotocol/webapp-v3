@@ -1,9 +1,8 @@
 import { APIPool, APIPoolV3, APIReward } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
+import { allTokensNew$, Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
-import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';

@@ -1,7 +1,5 @@
 import { APIPoolV3, APIToken } from 'services/api/bancor';
 import { bntToken, ethToken } from 'services/web3/config';
-import { TokenMinimal } from 'services/observables/tokens';
-import imposterLogo from 'assets/logos/imposter.svg';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 const buildAPIToken = (address: string, symbol: string): APIToken => {

@@ -13,9 +13,9 @@ import {
 import { switchMapIgnoreThrow } from './customOperators';
 import { fifteenSeconds$ } from './timers';
 import {
+  setLoadingLockedBnt,
   setLoadingPositions,
   setLoadingRewards,
-  setLoadingLockedBnt,
   user$,
 } from './user';
 import { poolsNew$ } from 'services/observables/pools';

@@ -1,9 +1,11 @@
 import { prettifyNumber } from 'utils/helperFunctions';
+
 interface Props {
   tknAmount: string;
   symbol: string;
   usdAmount: string;
 }
+
 export const ProtectedPositionTableCellAmount = ({
   tknAmount,
   symbol,

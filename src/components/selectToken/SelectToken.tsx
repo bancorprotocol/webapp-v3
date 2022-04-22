@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Image } from 'components/image/Image';
-import { TokenMinimal } from 'services/observables/tokens';
 
 interface SelectTokenProps {
   label?: string;

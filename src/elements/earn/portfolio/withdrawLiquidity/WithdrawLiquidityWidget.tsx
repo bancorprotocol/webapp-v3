@@ -19,8 +19,8 @@ import useAsyncEffect from 'use-async-effect';
 import { useDebounce } from 'hooks/useDebounce';
 import BigNumber from 'bignumber.js';
 import {
-  withdrawProtectedPosition,
   rejectNotification,
+  withdrawProtectedPosition,
   withdrawProtectedPositionFailed,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';

@@ -1,14 +1,14 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import {
+  fortmatic,
+  frame,
+  gnosisSafe,
   injected,
+  portis,
+  torus,
   walletconnect,
   walletlink,
-  frame,
-  fortmatic,
-  portis,
-  gnosisSafe,
-  torus,
 } from 'services/web3/wallet/connectors';
 
 import metamaskLogo from 'assets/logos/metamask.png';

@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { classNameGenerator } from 'utils/pureFunctions';
 

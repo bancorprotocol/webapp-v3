@@ -1,7 +1,6 @@
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { useMemo } from 'react';
 import { Image } from 'components/image/Image';
-import { TokenMinimal } from 'services/observables/tokens';
 
 interface SuggestedTokensProps {
   allTokens: (Token | TokenMinimal)[];

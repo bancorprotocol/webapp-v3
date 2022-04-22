@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { Popularity } from './Popularity';
 import { withDesign } from 'storybook-addon-designs';
 

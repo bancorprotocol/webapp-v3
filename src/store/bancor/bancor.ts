@@ -1,9 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store/index';
 import { orderBy } from 'lodash';
-import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
 import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';

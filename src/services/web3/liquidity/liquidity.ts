@@ -16,13 +16,13 @@ import {
 } from 'utils/helperFunctions';
 import { web3, writeWeb3 } from '..';
 import {
-  ConverterRegistry__factory,
   Converter__factory,
+  ConverterRegistry__factory,
   LiquidityProtection,
+  LiquidityProtection__factory,
   LiquidityProtectionSettings,
   LiquidityProtectionSettings__factory,
   LiquidityProtectionSystemStore__factory,
-  LiquidityProtection__factory,
 } from '../abis/types';
 import { MultiCall } from 'services/web3/multicall/multicall';
 import { bntToken, changeGas, ethToken, zeroAddress } from '../config';

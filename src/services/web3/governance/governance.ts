@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { shrinkToken, expandToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';

@@ -1,4 +1,4 @@
-import { Popover, Transition, Portal } from '@headlessui/react';
+import { Popover, Portal, Transition } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
 import { Fragment, memo, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';

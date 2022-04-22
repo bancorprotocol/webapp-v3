@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { useDispatch, TypedUseSelectorHook, useSelector } from 'react-redux';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { user } from 'store/user/user';
 import { bancor } from 'store/bancor/bancor';
 import { pool } from 'store/bancor/pool';

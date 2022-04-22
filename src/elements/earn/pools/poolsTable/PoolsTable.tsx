@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
-import { SortingRule, Row } from 'react-table';
+import { Row, SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';

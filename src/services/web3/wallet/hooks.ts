@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { gnosisSafe, injected } from 'services/web3/wallet/connectors';
 import { getAutoLoginLS, setAutoLoginLS } from 'utils/localStorage';

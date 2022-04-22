@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 export const switchMapIgnoreThrow =
   <T, Y>(switchMapProm: (data: T) => Promise<Y>) =>

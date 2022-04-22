@@ -1,9 +1,9 @@
 import {
-  useState,
-  useRef,
   MutableRefObject,
-  useEffect,
   useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 import { usePopper } from 'react-popper';
 import type * as PopperJS from '@popperjs/core';

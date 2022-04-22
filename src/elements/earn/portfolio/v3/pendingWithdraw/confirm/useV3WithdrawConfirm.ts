@@ -17,6 +17,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
+
 interface Props {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;

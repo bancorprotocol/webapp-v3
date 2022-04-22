@@ -1,15 +1,13 @@
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
 import {
   stakeAmount,
   unstakeAmount,
 } from 'services/web3/governance/governance';
-import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
 import {
   rejectNotification,
   stakeFailedNotification,

@@ -28,7 +28,6 @@ import { TermsOfUse } from './TermsOfUse';
 import { Tokens } from './Tokens';
 import { Vote } from './Vote';
 import { Admin } from 'pages/Admin';
-import { isForkAvailable } from 'services/web3/config';
 
 const legacySwap = '/eth/swap';
 const legacyPools = '/eth/data';

@@ -1,8 +1,8 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 import { DataTable, TableColumn } from './DataTable';
 import { useMemo } from 'react';
-import { Token } from '../../services/observables/tokens';
+import { Token } from 'services/observables/tokens';
 import { SortingRule } from 'react-table';
 
 export default {

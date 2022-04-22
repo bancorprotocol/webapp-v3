@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
 import { useAppSelector } from 'store';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -13,7 +13,6 @@ import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
-import { TokenMinimal } from 'services/observables/tokens';
 import { userPreferredListIds$ } from 'services/observables/tokenLists';
 
 interface SearchableTokenListProps {

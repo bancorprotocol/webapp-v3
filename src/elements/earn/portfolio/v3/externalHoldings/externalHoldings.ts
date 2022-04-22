@@ -7,7 +7,6 @@ import {
   ApyVisionNonUniPosition,
   ApyVisionNonUniResponse,
   ApyVisionUniPosition,
-  ApyVisionUniResponse,
   ExternalHolding,
 } from './externalHoldings.types';
 import { utils } from 'ethers';
