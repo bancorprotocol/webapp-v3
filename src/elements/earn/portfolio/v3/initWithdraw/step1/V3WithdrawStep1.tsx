@@ -1,48 +1,52 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo, useMemo } from 'react';
-import { Token } from 'services/observables/tokens';
-import BigNumber from 'bignumber.js';
-import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
+import { memo } from 'react';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
+import { CirclePercentage } from 'components/circlePercentage/CirclePercentage';
+import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
+import { utils } from 'ethers';
+import { V3WithdrawStep1Breakdown } from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1Breakdown';
 
 interface Props {
-  token: Token;
   inputTkn: string;
   setInputTkn: (amount: string) => void;
   inputFiat: string;
   setInputFiat: (amount: string) => void;
   setStep: (step: number) => void;
-  availableBalance: string;
+  holding: Holding;
   isFiat: boolean;
   withdrawalFeeInPercent: string;
   withdrawalFeeInTkn: string;
 }
 
 const V3WithdrawStep1 = ({
-  token,
+  holding,
   setStep,
   inputTkn,
   setInputTkn,
   inputFiat,
   setInputFiat,
   isFiat,
-  availableBalance,
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
 }: Props) => {
-  const isInputError = useMemo(
-    () => new BigNumber(availableBalance).lt(inputTkn),
-    [availableBalance, inputTkn]
-  );
-
-  const setBalance = (percentage: 25 | 50 | 75 | 100) => {
-    const valueTkn = new BigNumber(availableBalance)
-      .times(percentage / 100)
-      .toString();
-    const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
-    setInputTkn(valueTkn);
-    setInputFiat(valueFiat);
-  };
+  const {
+    handleNextStep,
+    token,
+    setBalance,
+    isInputError,
+    combinedTokenBalance,
+    percentageUnstaked,
+    showBreakdown,
+  } = useV3WithdrawStep1({
+    holding,
+    setStep,
+    inputTkn,
+    setInputTkn,
+    setInputFiat,
+  });
 
   return (
     <div className="text-center">
@@ -52,9 +56,20 @@ const V3WithdrawStep1 = ({
 
       <button
         onClick={() => setBalance(100)}
-        className={`${isInputError ? 'text-error' : 'text-secondary'}`}
+        className={`flex items-center mx-auto ${
+          isInputError ? 'text-error' : 'text-secondary'
+        }`}
       >
-        Available {prettifyNumber(availableBalance)} {token.symbol}
+        {showBreakdown && (
+          <div className="relative flex items-center justify-center mr-10">
+            <IconLightning className="absolute w-6 text-primary" />
+            <CirclePercentage
+              percentage={percentageUnstaked}
+              className="w-24 h-24"
+            />
+          </div>
+        )}
+        Available {prettifyNumber(combinedTokenBalance)} {token.symbol}
       </button>
 
       <TokenInputV3
@@ -66,18 +81,25 @@ const V3WithdrawStep1 = ({
         isFiat={isFiat}
         isError={isInputError}
       />
-
-      <div className="space-x-10 opacity-50">
-        <button onClick={() => setBalance(25)}>25%</button>
-        <button onClick={() => setBalance(50)}>50%</button>
-        <button onClick={() => setBalance(75)}>75%</button>
-        <button onClick={() => setBalance(100)}>100%</button>
+      <div className="w-full flex justify-between px-20">
+        <div className="space-x-10 opacity-50">
+          <button onClick={() => setBalance(25)}>25%</button>
+          <button onClick={() => setBalance(50)}>50%</button>
+          <button onClick={() => setBalance(75)}>75%</button>
+          <button onClick={() => setBalance(100)}>100%</button>
+        </div>
+        {showBreakdown && (
+          <V3WithdrawStep1Breakdown
+            holding={holding}
+            percentageUnstaked={percentageUnstaked}
+          />
+        )}
       </div>
 
       <div className="flex justify-center">
         <Button
           className="px-50 my-40"
-          onClick={() => setStep(2)}
+          onClick={handleNextStep}
           disabled={!inputTkn || isInputError}
         >
           Next {'->'}

@@ -5,16 +5,16 @@ import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3Wit
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3WithdrawStep4';
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  holdingToWithdraw: Holding;
+  holding: Holding;
 }
 
-const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdraw }: Props) => {
+const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
   const {
     step,
     onClose,
@@ -28,9 +28,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdraw }: Props) => {
     withdrawalFeeInTkn,
     withdrawalFeeInPercent,
     lockDurationInDays,
-    initWithdraw,
-    txBusy,
-  } = useV3WithdrawModal({ holding: holdingToWithdraw, setIsOpen });
+  } = useV3WithdrawModal({ setIsOpen });
 
   return (
     <ModalFullscreenV3
@@ -41,32 +39,26 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holdingToWithdraw }: Props) => {
     >
       {step === 1 && (
         <V3WithdrawStep1
-          token={holdingToWithdraw.token}
           setStep={setStep}
           inputTkn={inputTkn}
           setInputTkn={setInputTkn}
           inputFiat={inputFiat}
           setInputFiat={setInputFiat}
           isFiat={isFiat}
-          availableBalance={holdingToWithdraw.tokenBalance}
+          holding={holding}
           withdrawalFeeInPercent={withdrawalFeeInPercent}
           withdrawalFeeInTkn={withdrawalFeeInTkn}
         />
       )}
       {step === 2 && (
-        <V3WithdrawStep2
-          setStep={setStep}
-          amount={amount}
-          token={holdingToWithdraw.token}
-        />
+        <V3WithdrawStep2 setStep={setStep} amount={amount} holding={holding} />
       )}
       {step === 3 && (
         <V3WithdrawStep3
-          txBusy={txBusy}
           amount={amount}
           lockDurationInDays={lockDurationInDays}
-          initWithdraw={initWithdraw}
-          holdingToWithdraw={holdingToWithdraw}
+          holding={holding}
+          setStep={setStep}
         />
       )}
       {step === 4 && (

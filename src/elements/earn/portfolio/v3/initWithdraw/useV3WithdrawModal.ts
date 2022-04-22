@@ -2,16 +2,6 @@ import { useAppSelector } from 'redux/index';
 import { useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { wait } from 'utils/pureFunctions';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
-import { useDispatch } from 'react-redux';
-import { expandToken } from 'utils/formulas';
-import { ErrorCode } from 'services/web3/types';
-import {
-  initWithdrawNotification,
-  rejectNotification,
-} from 'services/notifications/notifications';
 
 export interface AmountTknFiat {
   tkn: string;
@@ -19,13 +9,10 @@ export interface AmountTknFiat {
 }
 
 interface Props {
-  holding: Holding;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
-  const dispatch = useDispatch();
-  const account = useAppSelector((state) => state.user.account);
+export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
@@ -33,7 +20,6 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
   const [step, setStep] = useState(1);
   const [inputTkn, setInputTkn] = useState('');
   const [inputFiat, setInputFiat] = useState('');
-  const [txBusy, setTxBusy] = useState(false);
 
   const amount: AmountTknFiat = useMemo(
     () => ({ tkn: inputTkn, fiat: inputFiat }),
@@ -58,40 +44,6 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
     }
   }, [inputTkn, withdrawalFee]);
 
-  const initWithdraw = async () => {
-    setTxBusy(true);
-    const isWithdrawingMax = holding.tokenBalance === amount.tkn;
-    const tokenAmount = expandToken(amount.tkn, holding.token.decimals);
-    try {
-      const inputAmountInPoolToken =
-        await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
-          holding.poolId,
-          tokenAmount
-        );
-      const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
-        holding.poolTokenId,
-        isWithdrawingMax
-          ? expandToken(holding.poolTokenBalance, 18)
-          : inputAmountInPoolToken
-      );
-      initWithdrawNotification(
-        dispatch,
-        tx.hash,
-        amount.tkn,
-        holding.token.symbol
-      );
-      setStep(4);
-      await updatePortfolioData(dispatch, account);
-    } catch (e: any) {
-      console.error('initWithdraw failed', e);
-      if (e.code === ErrorCode.DeniedTx) {
-        rejectNotification(dispatch);
-      }
-    } finally {
-      setTxBusy(false);
-    }
-  };
-
   const onClose = async (state: boolean) => {
     setIsOpen(state);
     await wait(500);
@@ -114,7 +66,5 @@ export const useV3WithdrawModal = ({ holding, setIsOpen }: Props) => {
     withdrawalFeeInPercent,
     withdrawalFee,
     withdrawalFeeInTkn,
-    initWithdraw,
-    txBusy,
   };
 };

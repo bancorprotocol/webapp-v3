@@ -4,19 +4,18 @@ import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'redux/index';
-import { getPortfolioHoldings } from 'redux/portfolio/v3Portfolio';
+import {
+  getIsLoadingHoldings,
+  getPortfolioHoldings,
+} from 'redux/portfolio/v3Portfolio';
 import { Holding } from 'redux/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding | null>(
-    null
-  );
+  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding>();
 
   const holdings = useAppSelector(getPortfolioHoldings);
-  const isLoadingHoldings = useAppSelector<boolean>(
-    (state) => state.v3Portfolio.isLoadingHoldings
-  );
+  const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
 
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
@@ -86,7 +85,7 @@ export const V3EarningTable = () => {
         <V3WithdrawModal
           isOpen={isWithdrawModalOpen}
           setIsOpen={setIsWithdrawModalOpen}
-          holdingToWithdraw={holdingToWithdraw}
+          holding={holdingToWithdraw}
         />
       )}
     </section>

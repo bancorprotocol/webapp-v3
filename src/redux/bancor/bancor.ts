@@ -15,6 +15,7 @@ interface BancorState {
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
   allStandardRewardPrograms: RewardsProgramRaw[];
+  isLoadingTokens: boolean;
 }
 
 export const initialState: BancorState = {
@@ -24,6 +25,7 @@ export const initialState: BancorState = {
   keeperDaoTokens: [],
   allTokenListTokens: [],
   allStandardRewardPrograms: [],
+  isLoadingTokens: true,
 };
 
 const bancorSlice = createSlice({
@@ -35,6 +37,7 @@ const bancorSlice = createSlice({
     },
     setAllTokens: (state, action) => {
       state.allTokens = action.payload;
+      state.isLoadingTokens = false;
     },
     setTokenLists: (state, action) => {
       state.tokenLists = action.payload;
