@@ -13,7 +13,7 @@ export const Portfolio = () => {
     classNameGenerator({
       'px-10 py-5 rounded-10': true,
       'bg-white dark:bg-charcoal': selected,
-      hidden: hidden,
+      hidden,
     });
 
   return (

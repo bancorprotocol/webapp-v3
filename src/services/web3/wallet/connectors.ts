@@ -37,7 +37,7 @@ export const walletconnect = new WalletConnectConnector({
 
 export const walletlink = new WalletLinkConnector({
   url: RPC_URLS[1],
-  appName: appName,
+  appName,
 });
 
 export const frame = new FrameConnector({ supportedChainIds: [1] });
@@ -53,5 +53,5 @@ export const portis = new PortisConnector({
 });
 
 export const torus = new TorusConnector({
-  chainId: 1
+  chainId: 1,
 });

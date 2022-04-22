@@ -246,8 +246,6 @@ export const addLiquidityV2Single = async (
   }
 };
 
-export const addLiquidityV3Single = async () => {};
-
 export const checkPriceDeviationTooHigh = async (
   pool: Pool,
   selectedTkn: Token
@@ -444,7 +442,7 @@ export const buildProtectionDelayCall = (
     return {
       contractAddress: contract.address,
       interface: contract.interface,
-      methodName: methodName,
+      methodName,
       methodParameters: [],
     };
   };

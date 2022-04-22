@@ -7,7 +7,7 @@ import { Token } from 'services/observables/tokens';
 import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
-import { Button, ButtonSize } from '../../../../../components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface ClaimAvailableProps {
   bnt?: Token;

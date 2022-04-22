@@ -84,7 +84,7 @@ export const ModalVbnt = ({
   };
 
   const [checkApprove, ModalApprove] = useApproveModal(
-    [{ amount: amount, token: token }],
+    [{ amount, token }],
     handleStakeUnstake,
     ApprovalContract.Governance
   );

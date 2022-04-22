@@ -6,10 +6,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from 'services/router';
-import {
-  Button,
-  ButtonVariant,
-} from '../../../../../../components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   claimableRewards?: string;

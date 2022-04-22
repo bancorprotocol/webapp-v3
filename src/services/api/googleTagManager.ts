@@ -202,7 +202,7 @@ export const sendWalletEvent = (
   else
     sendGTM({
       event: 'CE ' + event,
-      event_properties: event_properties,
+      event_properties,
       wallet_properties: undefined,
       ga_event: {
         category: wallet,

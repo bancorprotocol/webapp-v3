@@ -167,7 +167,7 @@ export const WithdrawLiquidityWidget = ({
   ]);
 
   const [onStart, ModalApprove] = useApproveModal(
-    govToken ? [{ amount: amount, token: govToken }] : [],
+    govToken ? [{ amount, token: govToken }] : [],
     withdraw,
     ApprovalContract.LiquidityProtection,
     sendLiquidityEvent,

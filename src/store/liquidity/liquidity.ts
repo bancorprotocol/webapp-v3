@@ -99,7 +99,7 @@ export const getGroupedPositions = createSelector(
             .toString();
 
           item = {
-            groupId: groupId,
+            groupId,
             positionId: val.positionId,
             pool: val.pool,
             fees: sumFees,

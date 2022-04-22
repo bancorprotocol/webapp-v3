@@ -1,4 +1,4 @@
-import { Image } from '../../../../../components/image/Image';
+import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { ReactComponent as IconLock } from 'assets/icons/locked.svg';

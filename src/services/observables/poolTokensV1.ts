@@ -172,7 +172,7 @@ export const poolTokens$ = combineLatest([
             amount: tknAmount.toString(),
           },
           amount,
-          value: value,
+          value,
           poolDecimals: pool.decimals,
           converter: poolToken.converter,
           poolName: pool.name,
