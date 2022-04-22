@@ -19,6 +19,7 @@ const filenames = [
   'PendingWithdrawals_Proxy.json',
   'PoolCollectionType1V1.json',
   'StandardRewards_Proxy.json',
+  'BancorPortal_Proxy.json',
 ];
 
 const foldername = 'tenderly';
@@ -30,6 +31,7 @@ export interface BancorV3Contracts {
   pendingWithdrawals: string;
   poolCollectionType1: string;
   standardRewards: string;
+  bancorPortal: string;
 }
 
 export const AdminUseFork = () => {
@@ -66,6 +68,7 @@ export const AdminUseFork = () => {
         pendingWithdrawalsAddress,
         poolCollectionType1Address,
         standardRewardsAddress,
+        bancorPortalAddress,
       ] = await Promise.all(
         filenames.map(async (name) => {
           const res2 = await zipFile
@@ -90,6 +93,7 @@ export const AdminUseFork = () => {
         pendingWithdrawals: pendingWithdrawalsAddress,
         poolCollectionType1: poolCollectionType1Address,
         standardRewards: standardRewardsAddress,
+        bancorPortal: bancorPortalAddress,
       };
       setInputContracts(newInput);
     } catch (e: any) {

@@ -50,6 +50,7 @@ export interface PoolV3 extends APIPoolV3 {
   depositLimit: string;
   depositingEnabled: boolean;
   tradingEnabled: boolean;
+  apr: number;
 }
 
 export interface PoolToken {

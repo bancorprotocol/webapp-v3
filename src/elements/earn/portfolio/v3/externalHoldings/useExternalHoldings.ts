@@ -11,6 +11,7 @@ import {
   ApyVisionData,
   ExternalHolding,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
+import { getV3Tokens } from 'redux/bancor/token';
 
 const initialApyVisionData: ApyVisionData = {
   positionsUni: [],
@@ -24,10 +25,10 @@ export const useExternalHoldings = () => {
   const [apyVisionData, setApyVisionData] =
     useState<ApyVisionData>(initialApyVisionData);
 
-  const allTokens: Token[] = useAppSelector((state) => state.bancor.tokens);
+  const v3Tokens: Token[] = useAppSelector(getV3Tokens);
   const tokensMap = useMemo(
-    () => new Map(allTokens.map((token) => [token.address, token])),
-    [allTokens]
+    () => new Map(v3Tokens.map((token) => [token.address, token])),
+    [v3Tokens]
   );
 
   const positionsUni: ExternalHolding[] = useMemo(

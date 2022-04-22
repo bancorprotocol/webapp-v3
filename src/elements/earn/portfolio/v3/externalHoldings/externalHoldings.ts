@@ -17,8 +17,10 @@ const fetchApyVisionUniswap = async (
 ): Promise<ApyVisionUniPosition[]> => {
   const url = `https://stats.apy.vision/api/v1/uniswapv3/user_positions/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}`;
   try {
-    const { data } = await axios.get<ApyVisionUniResponse>(url);
-    return data.result;
+    // TODO remove comment when uni v3 is supported - further adjustemnts may be needed
+    // const { data } = await axios.get<ApyVisionUniResponse>(url);
+    // return data.result;
+    return [];
   } catch (e: any) {
     console.error('fetchApyVisionUniswap failed: ', e.message);
     return [];
@@ -55,22 +57,23 @@ const getRektStatus = (usdValue: number, hodlValue: number): string => {
 
 const getProviderName = (key: string) => {
   switch (key) {
-    case 'balancerv2_eth':
-      return 'Balancer V2';
-    case 'oneinch_eth':
-      return '1inch';
-    case 'balancer_eth':
-      return 'Balancer V2';
     case 'sushiswap_eth':
       return 'Sushiswap';
     case 'uniswap_eth':
       return 'Uniswap';
-    case 'kyber_eth':
-      return 'Kyber';
-    case 'curve_eth':
-      return 'Curve';
+    // TODO remove comments once supported
+    // case 'balancerv2_eth':
+    //   return 'Balancer V2';
+    // case 'oneinch_eth':
+    //   return '1inch';
+    // case 'balancer_eth':
+    //   return 'Balancer V2';
+    // case 'kyber_eth':
+    //   return 'Kyber';
+    // case 'curve_eth':
+    //   return 'Curve';
     default:
-      return key;
+      return undefined;
   }
 };
 
@@ -112,13 +115,19 @@ export const getExternalHoldingsNonUni = (
         .map((token) => tokensMap.get(utils.getAddress(token.tokenAddress)))
         .filter((t) => !!t) as Token[];
 
-      if (tokens.length === 0) {
+      // TODO once we support pools with non 2 reserve tokens we need to update this
+      if (tokens.length !== 2) {
         return undefined;
       }
 
       const usdValue = pos.totalValueUsd;
       const rektStatus = getRektStatus(usdValue, pos.initialCapitalValueUsd);
+
       const ammName = getProviderName(pos.poolProviderKey);
+      if (!ammName) {
+        return undefined;
+      }
+
       const newPos: ExternalHolding = {
         ammName,
         tokens,

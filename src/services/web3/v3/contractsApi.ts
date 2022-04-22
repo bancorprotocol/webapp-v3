@@ -13,6 +13,8 @@ import {
   PoolCollectionType1__factory,
   PendingWithdrawals,
   PendingWithdrawals__factory,
+  BancorPortal,
+  BancorPortal__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
@@ -23,6 +25,7 @@ import { address as networkSettingsAddress } from 'services/web3/abis/v3/Network
 import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals_Proxy.json';
 import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
 import { address as standardRewardsAddress } from 'services/web3/abis/v3/StandardRewards_Proxy.json';
+import { address as bancorPortalAddress } from 'services/web3/abis/v3/BancorPortal_Proxy.json';
 
 class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -92,6 +95,11 @@ export abstract class ContractsApi {
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
     getBancorV3Contracts()?.pendingWithdrawals || pendingWithdrawalsAddress,
     PendingWithdrawals__factory
+  );
+
+  static BancorPortal = new BancorContract<BancorPortal>(
+    getBancorV3Contracts()?.bancorPortal || bancorPortalAddress,
+    BancorPortal__factory
   );
 
   static Token = (tokenAddress: string) => {
