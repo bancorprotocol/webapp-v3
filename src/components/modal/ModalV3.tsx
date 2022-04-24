@@ -69,22 +69,26 @@ export const ModalV3 = ({
                 } overflow-hidden align-middle transition-all transform rounded-40 bg-white dark:bg-charcoal text-left`}
               >
                 <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30 mb-20">
-                  {showBackButton && (
+                  <h3 className="flex items-center text-20">
+                    {showBackButton && (
+                      <button
+                        onClick={() => onBackClick && onBackClick()}
+                        className="rounded-10 focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        <IconChevron className="w-24 transform rotate-180" />
+                      </button>
+                    )}
+                    {title && title}
+                  </h3>
+                  <div className="flex items-center space-x-10">
+                    {titleElement && titleElement}
                     <button
-                      onClick={() => onBackClick && onBackClick()}
-                      className="rounded-10 focus:outline-none focus:ring-2 focus:ring-primary"
+                      onClick={() => setIsOpen(false)}
+                      className="rounded-10 px-5 py-2 focus:outline-none"
                     >
-                      <IconChevron className="w-24 transform rotate-180" />
+                      <IconTimes className="w-14" />
                     </button>
-                  )}
-                  {titleElement && titleElement}
-                  {title && title}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-10 px-5 py-2 focus:outline-none"
-                  >
-                    <IconTimes className="w-14" />
-                  </button>
+                  </div>
                 </Dialog.Title>
                 <div className="max-h-[80vh] overflow-scroll">
                   {separator && <hr className="widget-separator m-0" />}

@@ -78,11 +78,12 @@ export const DepositV3Modal = ({ pool }: Props) => {
         <div className="p-10">
           <div className="flex flex-col items-center text-12 mx-20">
             <TokenInputPercentage
-              label="amount"
+              label="Amount"
               token={pool.reserveToken}
               balance={fieldBalance}
               amount={amount}
               setAmount={setAmount}
+              balanceLabel="Claimable"
             />
             <Button
               onClick={() => onStart()}
