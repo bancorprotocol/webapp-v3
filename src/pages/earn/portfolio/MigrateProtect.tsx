@@ -1,4 +1,4 @@
-import { ReactComponent as LogoPWelcome } from 'assets/portfolio/portfolioWelcome.svg';
+import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { ReactComponent as IconProtectedHeart } from 'assets/icons/protectedHeart.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
@@ -25,7 +25,7 @@ export const MigrateProtect = () => {
       </div>
       <div className="hidden md:grid bg-fog dark:bg-charcoal">
         <div className="w-[320px] mx-auto self-end">
-          <LogoPWelcome className="h-[300px]" />
+          <GrowCoins className="h-[300px]" />
           <div>
             <div className="flex items-center gap-4 mb-20">
               <IconProtectedHeart />
@@ -36,7 +36,7 @@ export const MigrateProtect = () => {
               100% Impermanent loss protection
             </div>
           </div>
-          <div className="mt-40">
+          <div className="my-40">
             <Rating
               className="w-[80px]"
               classStar="text-primary"
@@ -59,7 +59,7 @@ const Migrate = () => {
       ammName: 'Some holding',
       tokens: [],
       usdValue: 100,
-      rektStatus: '$1,000,000.00',
+      rektStatus: '$?,???,???.??',
     },
     {
       ammName: 'Some other holding',
@@ -102,7 +102,7 @@ const Migrate = () => {
             Secure this balancer holding from impermanent loss
           </div>
           <div className="text-16 text-black-low mt-10">
-            You've lost $15,000 in impermanent loss so far, get 100% protected
+            You've lost $??,??? in impermanent loss so far, get 100% protected
             on bancor.
           </div>
           <div className="flex items-center text-black-low mt-40">
@@ -113,7 +113,7 @@ const Migrate = () => {
             <div className="flex items-center justify-between text-black-medium">
               Access full earnings
               <div className="flex items-center gap-10 text-black-low">
-                additional gas ~$1000.00
+                additional gas ~$????.??
                 <Switch selected={true} onChange={() => {}} />
               </div>
             </div>
@@ -126,7 +126,7 @@ const Migrate = () => {
                 imgUrl={'token.logoURI'}
               />
               <div className="flex items-center gap-10 text-primary">
-                Earn 86%
+                Earn ??%
               </div>
             </div>
           </div>
@@ -146,7 +146,7 @@ const Migrate = () => {
           </div>
           <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
           <button className="text-black-low mt-30">
-            100% Protected • 7 day cooldown • 0.25% withdrawal fee
+            {`100% Protected • ${'?????'} day cooldown • ${'???'}% withdrawal fee`}
           </button>
         </>
       )}
@@ -196,7 +196,6 @@ const Protect = () => {
   const [seeAll, setSeeAll] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(-1);
   const [input, setInput] = useState('');
-  const [inputFiat, setInputFiat] = useState('');
 
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
   const topStake = availabelToStake[0];
@@ -212,7 +211,7 @@ const Protect = () => {
               </button>
               <div className="text-4xl mt-30">Earn interest on your tokens</div>
               <div className="text-16 text-black-low mt-10 mb-100">
-                $10,020 balance
+                $??,??? balance
               </div>
               <div className="h-[400px] overflow-scroll">
                 {availabelToStake.map((stake, index) => {
@@ -288,10 +287,10 @@ const Protect = () => {
             <div className="flex items-center justify-between text-black-medium">
               <div>
                 Access full earnings
-                <div className="text-black-low">additional gas ~$1000.00</div>
+                <div className="text-black-low">additional gas ~$????.??</div>
               </div>
               <div className="flex items-center gap-10">
-                40%
+                ??%
                 <Switch selected={true} onChange={() => {}} />
               </div>
             </div>
@@ -304,7 +303,7 @@ const Protect = () => {
             className="flex items-center text-black-low font-semibold mt-20"
             rel="noreferrer"
           >
-            100% Protected • 7 day cooldown • 0.25% withdrawal fee{' '}
+            {`100% Protected • ${'?????'} day cooldown • ${'???'}% withdrawal fee`}
             <IconLink className="w-14 ml-6" />
           </a>
         </>

@@ -1,4 +1,4 @@
-import { ReactComponent as LogoPWelcome } from 'assets/portfolio/portfolioWelcome.svg';
+import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useDynamicText } from 'hooks/useDynamicText';
@@ -42,7 +42,7 @@ const GrowYour = () => {
         </div>
       </div>
 
-      <LogoPWelcome className="w-[400px] h-[500px]" />
+      <GrowCoins className="w-[400px] h-[500px]" />
     </div>
   );
 };
