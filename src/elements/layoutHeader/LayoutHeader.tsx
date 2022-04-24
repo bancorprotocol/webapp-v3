@@ -28,7 +28,9 @@ export const LayoutHeader = () => {
     <>
       <header
         className={`fixed flex items-center justify-center w-full h-60 z-30 transition-colors ease-in-out duration-300 ${
-          isTop ? '' : 'bg-white dark:bg-black-medium'
+          isTop
+            ? ''
+            : 'bg-white dark:bg-black dark:border-b dark:border-charcoal'
         }`}
       >
         <div className="flex items-center justify-between w-full mx-20">
