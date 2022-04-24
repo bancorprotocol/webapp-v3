@@ -2,15 +2,22 @@ import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { Token } from 'services/observables/tokens';
+import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { useV3WithdrawStep2 } from 'elements/earn/portfolio/v3/initWithdraw/step2/useV3WithdrawStep2';
 
 interface Props {
   amount: AmountTknFiat;
   setStep: (step: number) => void;
-  token: Token;
+  holding: Holding;
 }
 
-const V3WithdrawStep2 = ({ setStep, amount, token }: Props) => {
+const V3WithdrawStep2 = ({ setStep, amount, holding }: Props) => {
+  const { handleLeave, token, txBusy } = useV3WithdrawStep2({
+    amount,
+    holding,
+    setStep,
+  });
+
   return (
     <div className="text-center">
       <button onClick={() => setStep(1)}>{'<-'} Change amount</button>
@@ -22,8 +29,8 @@ const V3WithdrawStep2 = ({ setStep, amount, token }: Props) => {
         from earning rewards
       </h1>
       <div className="flex justify-center">
-        <Button className="px-50" onClick={() => setStep(3)}>
-          Remove
+        <Button className="px-50" onClick={handleLeave} disabled={txBusy}>
+          {txBusy ? 'waiting for confirmation ...' : 'Remove'}
         </Button>
       </div>
     </div>

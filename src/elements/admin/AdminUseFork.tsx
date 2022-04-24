@@ -19,16 +19,7 @@ const filenames = [
   'PendingWithdrawals_Proxy.json',
   'PoolCollectionType1V1.json',
   'StandardRewards_Proxy.json',
-  'TestToken1.json',
-  'TestToken2.json',
-  'TestToken3.json',
-  'TestToken4.json',
-  'TestToken5.json',
-  'TestToken6.json',
-  'TestToken7.json',
 ];
-
-const foldername = 'tenderly';
 
 export interface BancorV3Contracts {
   bancorNetwork: string;
@@ -37,13 +28,6 @@ export interface BancorV3Contracts {
   pendingWithdrawals: string;
   poolCollectionType1: string;
   standardRewards: string;
-  testToken1: string;
-  testToken2: string;
-  testToken3: string;
-  testToken4: string;
-  testToken5: string;
-  testToken6: string;
-  testToken7: string;
 }
 
 export const AdminUseFork = () => {
@@ -80,23 +64,13 @@ export const AdminUseFork = () => {
         pendingWithdrawalsAddress,
         poolCollectionType1Address,
         standardRewardsAddress,
-        testToken1Address,
-        testToken2Address,
-        testToken3Address,
-        testToken4Address,
-        testToken5Address,
-        testToken6Address,
-        testToken7Address,
       ] = await Promise.all(
         filenames.map(async (name) => {
-          const res2 = await zipFile
-            .folder(foldername)
-            ?.file(name)
-            ?.async('string');
+          const res2 = await zipFile.file(new RegExp(name))[0]?.async('string');
 
           if (!res2)
             throw new Error(
-              `Error reading zip file. Check that extracted folder is called '${foldername}' and that the file '${name}' exists.`
+              `Error reading zip file. It's likely that the structure isn't as expected or that a file called '${name}' doesn't exists or more than one exist.`
             );
 
           return JSON.parse(res2).address;
@@ -111,14 +85,8 @@ export const AdminUseFork = () => {
         pendingWithdrawals: pendingWithdrawalsAddress,
         poolCollectionType1: poolCollectionType1Address,
         standardRewards: standardRewardsAddress,
-        testToken1: testToken1Address,
-        testToken2: testToken2Address,
-        testToken3: testToken3Address,
-        testToken4: testToken4Address,
-        testToken5: testToken5Address,
-        testToken6: testToken6Address,
-        testToken7: testToken7Address,
       };
+
       setInputContracts(newInput);
     } catch (e: any) {
       console.error(e.message);

@@ -1,5 +1,8 @@
 import { useAppSelector } from 'redux/index';
-import { getPortfolioWithdrawalRequests } from 'redux/portfolio/v3Portfolio';
+import {
+  getIsLoadingWithdrawalRequests,
+  getPortfolioWithdrawalRequests,
+} from 'redux/portfolio/v3Portfolio';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
 import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
@@ -14,7 +17,7 @@ import { ErrorCode } from 'services/web3/types';
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
   const isLoadingWithdrawalRequests = useAppSelector(
-    (state) => state.v3Portfolio.isLoadingWithdrawalRequests
+    getIsLoadingWithdrawalRequests
   );
   const dispatch = useDispatch();
   const account = useAppSelector<string | undefined>(

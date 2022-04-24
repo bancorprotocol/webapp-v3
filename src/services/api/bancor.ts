@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { utils } from 'ethers';
 import { UTCTimestamp } from 'lightweight-charts';
-import { getMockV3Pools, getMockV3Tokens } from 'services/api/mockV3Welcome';
+import { getMockV3Pools } from 'services/api/mockV3Welcome';
 
 export interface WelcomeData {
   total_liquidity: {
