@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { useInterval } from 'hooks/useInterval';
 
-export const useDynamicText = (texts: string[], interval: number = 1500) => {
+export const DynamicText = ({
+  texts,
+  interval = 1500,
+}: {
+  texts: string[];
+  interval?: number;
+}) => {
   const [currentIndex, setCurrentIndex] = useState(-1);
 
   useInterval(() => {
     setCurrentIndex(currentIndex === texts.length - 1 ? 0 : currentIndex + 1);
   }, interval);
 
-  return texts[currentIndex];
+  return <>{texts[currentIndex]}</>;
 };

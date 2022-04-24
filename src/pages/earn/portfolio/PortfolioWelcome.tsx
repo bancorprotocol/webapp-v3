@@ -1,8 +1,7 @@
 import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
-import { useDynamicText } from 'hooks/useDynamicText';
-import { Rating } from 'components/rating/Rating';
+import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from './MigrateProtect';
 
 export const PortfolioWelcome = () => {
@@ -15,13 +14,14 @@ export const PortfolioWelcome = () => {
 };
 
 const GrowYour = () => {
-  const text = useDynamicText(['ETH', 'BNT', 'DOT', 'SOL']);
   return (
     <div className="grid md:grid-cols-2 items-center justify-items-center h-screen">
       <div>
         <div className="flex text-6xl mb-20">
           Grow Your
-          <div className="ml-10 text-primary">{text}</div>
+          <div className="ml-10 text-primary">
+            <DynamicText texts={['ETH', 'BNT', 'DOT', 'SOL']} />
+          </div>
         </div>
         <div className="text-20 text-graphite mb-[100px]">
           Earn up to 40% annually on your favorite tokens
