@@ -31,7 +31,7 @@ import { TermsOfUse } from './TermsOfUse';
 import { Tokens } from './Tokens';
 import { Vote } from './Vote';
 import { Admin } from 'pages/Admin';
-import { isForkAvailable } from 'services/web3/config';
+import { useWelcomeRedirect } from './earn/portfolio/usePortfolioRedirect';
 
 const legacySwap = '/eth/swap';
 const legacyPools = '/eth/data';
@@ -44,9 +44,8 @@ const legacyVote = '/eth/vote';
 const legacyFiat = '/eth/fiat';
 
 export const Router = () => {
-  const account = useAppSelector((state) => state.user.account);
+  const redirectToWelcome = useWelcomeRedirect();
 
-  const redirectToWelcome = !account;
   return (
     <Switch>
       <Route exact path="/">

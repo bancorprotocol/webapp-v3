@@ -3,12 +3,14 @@ import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from './MigrateProtect';
+import { useWalletEmpty } from './usePortfolioRedirect';
 
 export const PortfolioWelcome = () => {
-  const migrateProtect = true;
+  const walletIsEmpty = useWalletEmpty();
+
   return (
     <div className="bg-white mb-20 mx-20 pt-10 md:mb-0 md:mx-0 md:pt-0">
-      {migrateProtect ? <MigrateProtect /> : <GrowYour />}
+      {walletIsEmpty ? <GrowYour /> : <MigrateProtect />}
     </div>
   );
 };

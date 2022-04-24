@@ -14,9 +14,10 @@ import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { getAvailableToStakeTokens } from 'redux/bancor/token';
 import { useAppSelector } from 'redux/index';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
+import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
 
 export const MigrateProtect = () => {
-  const migrate = false;
+  const migrate = true;
 
   return (
     <div className="grid md:grid-cols-4 h-screen">
@@ -54,20 +55,8 @@ const Migrate = () => {
   const [seeAllHoldings, setSeeAllHoldings] = useState(false);
   const [selectedHolding, setSelectedHolding] = useState(-1);
 
-  const holdings = [
-    {
-      ammName: 'Some holding',
-      tokens: [],
-      usdValue: 100,
-      rektStatus: '$?,???,???.??',
-    },
-    {
-      ammName: 'Some other holding',
-      tokens: [],
-      usdValue: 200,
-      rektStatus: 'At risk',
-    },
-  ];
+  const { positions } = useExternalHoldings();
+
   return (
     <>
       {selectedHolding === -1 ? (
@@ -83,12 +72,16 @@ const Migrate = () => {
               See my other holdings at risk {'->'}
             </button>
           )}
-          <MigrateHoldingAtRisk
-            className="mt-60"
-            holdings={seeAllHoldings ? holdings : [holdings[0]]}
-            onSelect={(index: number) => setSelectedHolding(index)}
-          />
-          <div className="flex items-center mt-[70px]">
+          {positions.length ? (
+            <MigrateHoldingAtRisk
+              className="mt-60 max-h-[400px] overflow-scroll"
+              holdings={seeAllHoldings ? positions : [positions[0]]}
+              onSelect={(index: number) => setSelectedHolding(index)}
+            />
+          ) : (
+            <div className="loading-skeleton h-[100px] w-[550px] mt-60"></div>
+          )}
+          <div className="flex items-center mt-[70px] gap-10">
             <Button className="w-[170px]">Yes</Button>
             <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
           </div>
@@ -168,7 +161,7 @@ const MigrateHoldingAtRisk = ({
       {holdings.map((holding, index) => {
         return (
           <button
-            key={holding.ammName}
+            key={holding.tokens[0].address}
             onClick={() => onSelect(index)}
             className="flex items-center justify-between rounded-20 border border-silver p-20 h-[70px] w-full mb-10"
           >
@@ -182,7 +175,7 @@ const MigrateHoldingAtRisk = ({
               <div className="text-error">{holding.rektStatus}</div>
             </div>
 
-            <div className={`h-30 w-[${20 * holding.tokens.length}px]`}>
+            <div className={`h-30 w-[${30 * holding.tokens.length}px]`}>
               <TokensOverlap tokens={holding.tokens} />
             </div>
           </button>
@@ -213,7 +206,7 @@ const Protect = () => {
               <div className="text-16 text-black-low mt-10 mb-100">
                 $??,??? balance
               </div>
-              <div className="h-[400px] overflow-scroll">
+              <div className="max-h-[400px] overflow-scroll">
                 {availabelToStake.map((stake, index) => {
                   return (
                     <button
