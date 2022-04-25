@@ -2,9 +2,9 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconBancorv3 } from 'assets/logos/bancorv3.svg';
 import { ReactComponent as IconSlogan } from 'assets/logos/discoverDefiSlogan.svg';
 import { useDispatch } from 'react-redux';
-import { setShowBanner } from 'redux/user/user';
+import { setShowBanner } from 'store/user/user';
 import { useCallback } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 export const MarketingBanner = () => {
   const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);

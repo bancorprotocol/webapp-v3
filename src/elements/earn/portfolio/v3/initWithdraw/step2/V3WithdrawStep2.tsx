@@ -2,7 +2,7 @@ import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useV3WithdrawStep2 } from 'elements/earn/portfolio/v3/initWithdraw/step2/useV3WithdrawStep2';
 
 interface Props {

@@ -6,6 +6,7 @@ import {
   setSlippageToleranceLS,
   setUsdToggleLS,
 } from 'utils/localStorage';
+import { LocaleType } from '../../i18n';
 
 export interface UserState {
   account: string | null | undefined;
@@ -13,7 +14,7 @@ export interface UserState {
   walletModal: boolean;
   slippageTolerance: number;
   usdToggle: boolean;
-  locale: string;
+  locale: LocaleType;
   loadingBalances: boolean;
   showBanner: boolean;
 }

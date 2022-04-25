@@ -13,7 +13,7 @@ import dayjs from 'utils/dayjs';
 import {
   BaseNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { expandToken } from 'utils/formulas';
 import { Weth__factory } from '../abis/types';
 import { utils } from 'ethers';

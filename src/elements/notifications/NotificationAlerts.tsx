@@ -1,5 +1,5 @@
-import { useAppSelector } from 'redux/index';
-import { Notification, hideAlert } from 'redux/notification/notification';
+import { useAppSelector } from 'store';
+import { Notification, hideAlert } from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
 import { wait } from 'utils/pureFunctions';
 import { NotificationAlert } from 'elements/notifications/NotificationAlert';

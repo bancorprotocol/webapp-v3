@@ -1,4 +1,4 @@
-import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { memo } from 'react';
 import { Modal } from 'components/modal/Modal';
 import { Button } from 'components/button/Button';

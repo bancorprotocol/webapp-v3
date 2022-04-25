@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
@@ -24,7 +24,7 @@ import {
   withdrawProtectedPositionFailed,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { setProtectedPositions } from 'redux/liquidity/liquidity';
+import { setProtectedPositions } from 'store/liquidity/liquidity';
 import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
@@ -50,9 +50,7 @@ export const WithdrawLiquidityWidget = ({
   setIsModalOpen,
 }: Props) => {
   const dispatch = useDispatch();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const { positionId, reserveToken, currentCoveragePercent, pool } =
     protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;

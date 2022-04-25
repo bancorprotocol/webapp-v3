@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { App } from 'App';
-import { store } from 'redux/index';
+import { store } from 'store';
 import reportWebVitals from 'reportWebVitals';
 import { I18nProvider } from 'i18n/i18nProvider';
 import { getLibrary } from 'services/web3/wallet/utils';

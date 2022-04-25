@@ -12,12 +12,12 @@ import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import {
   addNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
-import { useAppSelector } from 'redux/index';
-import { openWalletModal } from 'redux/user/user';
+import { useAppSelector } from 'store';
+import { openWalletModal } from 'store/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import {
   ApprovalContract,
@@ -59,9 +59,7 @@ export const SwapLimit = ({
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
   const { chainId } = useWeb3React();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [toAmountUsd, setToAmountUsd] = useState('');

@@ -1,5 +1,5 @@
 import { resetApproval } from 'services/web3/approval';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useMemo, useState } from 'react';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
@@ -17,7 +17,7 @@ export const ResetApproval = ({
   tokenContract,
   tokenSymbol = 'TKN',
 }: Props) => {
-  const account = useAppSelector<string | null>((state) => state.user.account);
+  const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
   const [currentApproval, setCurrentApproval] = useState('');
 

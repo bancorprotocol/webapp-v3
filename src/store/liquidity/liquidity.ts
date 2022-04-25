@@ -1,4 +1,4 @@
-import { createSelector, createSlice, RootState } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
 import { Rewards } from 'services/observables/liquidity';
@@ -8,6 +8,7 @@ import {
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
 import { PoolToken } from 'services/observables/pools';
+import { RootState } from 'store';
 
 interface LiquidityState {
   poolTokens: PoolToken[];

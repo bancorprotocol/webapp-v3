@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
 import { utils } from 'ethers';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 
 interface Props {

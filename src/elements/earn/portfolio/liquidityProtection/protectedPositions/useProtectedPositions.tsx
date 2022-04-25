@@ -1,4 +1,4 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { useMemo, useState } from 'react';
 import { TableColumn } from 'components/table/DataTable';
@@ -6,7 +6,7 @@ import { ProtectedPositionTableCellLiquidity } from 'elements/earn/portfolio/liq
 import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellStake';
 import { ProtectedPositionTableCellFees } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellFees';
 import { ProtectedPositionTableCellRoi } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellRoi';
-import { getGroupedPositions } from 'redux/liquidity/liquidity';
+import { getGroupedPositions } from 'store/liquidity/liquidity';
 import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
 import { ProtectedPositionTableCellClaimable } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellClaimable';
 

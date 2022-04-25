@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAppSelector } from 'redux/index';
-import { getProtectedPools } from 'redux/bancor/pool';
+import { useAppSelector } from 'store';
+import { getProtectedPools } from 'store/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';

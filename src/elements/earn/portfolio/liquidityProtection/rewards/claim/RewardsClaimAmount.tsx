@@ -1,17 +1,17 @@
 import { prettifyNumber } from 'utils/helperFunctions';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
+import { getTokenById } from 'store/bancor/bancor';
+import { bntToken } from 'services/web3/config';
 
 interface Props {
   amount?: string;
 }
 
 export const RewardsClaimAmount = ({ amount }: Props) => {
-  const bntPrice = useAppSelector<string | null>(
-    (state) => state.bancor.bntPrice
-  );
-  const usdPrice = () => new BigNumber(amount ?? 0).times(bntPrice ?? 0);
+  const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const usdPrice = () => new BigNumber(amount ?? 0).times(bnt?.usdPrice ?? 0);
 
   return (
     <div className="flex justify-between mt-20">
@@ -25,7 +25,7 @@ export const RewardsClaimAmount = ({ amount }: Props) => {
       </div>
 
       <div className="text-right text-graphite w-full border-2 border-primary dark:border-black-low rounded px-20 py-10">
-        {amount && bntPrice ? (
+        {amount && bnt?.usdPrice ? (
           <div>
             <div className="text-20">{prettifyNumber(amount)} BNT</div>
             <div className="text-12">~{prettifyNumber(usdPrice(), true)}</div>
