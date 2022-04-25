@@ -1,5 +1,4 @@
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { useAppSelector } from 'redux/index';
 import {
   addLiquidity,
   addLiquidityByID,

@@ -4,7 +4,7 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from './MigrateProtect';
 import { useWalletEmpty } from './usePortfolioRedirect';
-import { openWalletModal } from 'redux/user/user';
+import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
 
 export const PortfolioWelcome = () => {

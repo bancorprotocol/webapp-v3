@@ -11,8 +11,8 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { Switch } from 'components/switch/Switch';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
-import { getAvailableToStakeTokens } from 'redux/bancor/token';
-import { useAppSelector } from 'redux/index';
+import { getAvailableToStakeTokens } from 'store/bancor/token';
+import { useAppSelector } from 'store';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
 

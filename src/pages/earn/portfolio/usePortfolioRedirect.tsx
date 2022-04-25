@@ -1,6 +1,6 @@
 import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
-import { getAvailableToStakeTokens } from 'redux/bancor/token';
-import { useAppSelector } from 'redux/index';
+import { getAvailableToStakeTokens } from 'store/bancor/token';
+import { useAppSelector } from 'store';
 import { PoolToken } from 'services/observables/pools';
 import { ProtectedPosition } from 'services/web3/protection/positions';
 
