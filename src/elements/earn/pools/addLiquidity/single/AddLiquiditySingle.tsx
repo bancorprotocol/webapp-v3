@@ -3,7 +3,7 @@ import { Widget } from 'components/widgets/Widget';
 import { AddLiquiditySingleInfoBox } from './AddLiquiditySingleInfoBox';
 import { AddLiquiditySingleSelectPool } from './AddLiquiditySingleSelectPool';
 import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleSpaceAvailable';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useState } from 'react';
 import { useApproveModal } from 'hooks/useApproveModal';
@@ -11,7 +11,7 @@ import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/A
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'redux/bancor/bancor';
+import { getTokenById } from 'store/bancor/bancor';
 import { addLiquidityV2Single } from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,

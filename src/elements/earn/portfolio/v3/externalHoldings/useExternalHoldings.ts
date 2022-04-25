@@ -5,7 +5,7 @@ import {
   getExternalHoldingsUni,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { Token } from 'services/observables/tokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useAsyncEffect } from 'use-async-effect';
 import {
   ApyVisionData,
@@ -18,9 +18,7 @@ const initialApyVisionData: ApyVisionData = {
 };
 
 export const useExternalHoldings = () => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [apyVisionData, setApyVisionData] =
     useState<ApyVisionData>(initialApyVisionData);
 

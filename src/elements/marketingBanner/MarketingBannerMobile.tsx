@@ -1,7 +1,7 @@
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconBancorv3 } from 'assets/logos/bancorv3mobile.svg';
 import { useDispatch } from 'react-redux';
-import { setShowBanner } from 'redux/user/user';
+import { setShowBanner } from 'store/user/user';
 import { useCallback } from 'react';
 
 export const MarketingBannerMobile = () => {

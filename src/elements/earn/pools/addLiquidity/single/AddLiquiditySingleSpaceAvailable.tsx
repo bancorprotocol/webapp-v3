@@ -5,8 +5,8 @@ import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
-import { useAppSelector } from 'redux/index';
-import { getTokenById } from 'redux/bancor/bancor';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 import {
   checkPriceDeviationTooHigh,
   fetchBntNeededToOpenSpace,

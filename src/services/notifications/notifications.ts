@@ -2,7 +2,7 @@ import {
   addNotification,
   BaseNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { InputField } from 'components/inputField/InputField';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconPlus } from 'assets/icons/plus-circle.svg';
 import { createPool } from 'services/web3/liquidity/liquidity';
@@ -21,9 +21,7 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
 
 export const ModalCreatePool = () => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);

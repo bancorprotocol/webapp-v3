@@ -7,7 +7,7 @@ import {
   fetchPortfolioV3Withdrawals,
   fetchPortfolioV3WithdrawalSettings,
 } from 'services/web3/v3/portfolio/withdraw';
-import { WithdrawalSettings } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalSettings } from 'store/portfolio/v3Portfolio.types';
 import {
   fetchAllStandardRewards,
   fetchStandardRewardsByUser,

@@ -1,4 +1,4 @@
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
 import { utils } from 'ethers';
 import { Tooltip } from 'components/tooltip/Tooltip';

@@ -4,7 +4,7 @@ import JSONbig from 'json-bigint';
 import {
   BaseNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { take } from 'rxjs/operators';
 import { Token } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';

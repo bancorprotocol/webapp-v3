@@ -6,7 +6,7 @@ import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3Wit
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { wait } from 'utils/pureFunctions';

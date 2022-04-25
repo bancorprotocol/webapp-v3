@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import BigNumber from 'bignumber.js';
 import { calcFiatValue } from 'utils/helperFunctions';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
   holding: Holding;

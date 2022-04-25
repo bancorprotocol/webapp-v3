@@ -1,5 +1,5 @@
-import { useAppSelector } from 'redux/index';
-import { getPools } from 'redux/bancor/pool';
+import { useAppSelector } from 'store';
+import { getPools } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';

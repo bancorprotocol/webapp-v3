@@ -9,16 +9,16 @@ import { useDispatch } from 'react-redux';
 import {
   addNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import {
   ApprovalContract,
   getNetworkContractApproval,
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { openWalletModal } from 'redux/user/user';
+import { openWalletModal } from 'store/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
@@ -53,9 +53,7 @@ export const SwapMarket = ({
   setToToken,
   switchTokens,
 }: SwapMarketProps) => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [fromDebounce, setFromDebounce] = useDebounce('');
   const [toAmount, setToAmount] = useState('');

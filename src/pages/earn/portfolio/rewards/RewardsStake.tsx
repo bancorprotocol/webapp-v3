@@ -1,6 +1,6 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { useAppSelector } from 'redux/index';
-import { getPoolById, SelectedPool } from 'redux/bancor/pool';
+import { useAppSelector } from 'store';
+import { getPoolById, SelectedPool } from 'store/bancor/pool';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';
 import { RewardsStakeWidget } from 'elements/earn/portfolio/liquidityProtection/rewards/stake/RewardsStakeWidget';
 import { WidgetError } from 'components/widgets/WidgetError';

@@ -3,7 +3,7 @@ import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { Token } from 'services/observables/tokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
