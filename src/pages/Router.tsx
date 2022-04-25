@@ -14,10 +14,12 @@ import {
   tokens,
   tos,
   vote,
+  welcome,
 } from 'services/router';
 import { AddLiquidity } from './earn/pools/AddLiquidity';
 import { Pools } from './earn/pools/Pools';
 import { Portfolio } from './earn/portfolio/Portfolio';
+import { PortfolioWelcome } from './earn/portfolio/PortfolioWelcome';
 import { RewardsClaim } from './earn/portfolio/rewards/RewardsClaim';
 import { RewardsStake } from './earn/portfolio/rewards/RewardsStake';
 import { Fiat } from './Fiat';
@@ -28,7 +30,7 @@ import { TermsOfUse } from './TermsOfUse';
 import { Tokens } from './Tokens';
 import { Vote } from './Vote';
 import { Admin } from 'pages/Admin';
-import { isForkAvailable } from 'services/web3/config';
+import { useWelcomeRedirect } from './earn/portfolio/usePortfolioRedirect';
 
 const legacySwap = '/eth/swap';
 const legacyPools = '/eth/data';
@@ -41,10 +43,12 @@ const legacyVote = '/eth/vote';
 const legacyFiat = '/eth/fiat';
 
 export const Router = () => {
+  const redirectToWelcome = useWelcomeRedirect();
+
   return (
     <Switch>
       <Route exact path="/">
-        <Redirect to={swap} />
+        <Redirect to={portfolio} />
       </Route>
       <Route exact strict path={swap} component={Swap} />
       <Route
@@ -74,9 +78,14 @@ export const Router = () => {
           <Redirect to={addLiquidityByID(props.match.params.id)} />
         )}
       />
-      <Route exact strict path={portfolio} component={Portfolio} />
+      <Route exact strict path={portfolio} component={Portfolio}>
+        {redirectToWelcome && <Redirect to={welcome} />}
+      </Route>
       <Route exact path={legacyPortfolio}>
         <Redirect to={portfolio} />
+      </Route>
+      <Route exact strict path={welcome} component={PortfolioWelcome}>
+        {!redirectToWelcome && <Redirect to={portfolio} />}
       </Route>
       <Route
         exact

@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
-  getShowBannerLS,
   setDarkModeLS,
-  setShowBannerLS,
   setSlippageToleranceLS,
   setUsdToggleLS,
 } from 'utils/localStorage';
@@ -16,7 +14,6 @@ export interface UserState {
   usdToggle: boolean;
   locale: LocaleType;
   loadingBalances: boolean;
-  showBanner: boolean;
 }
 
 export const initialState: UserState = {
@@ -27,7 +24,6 @@ export const initialState: UserState = {
   usdToggle: false,
   locale: 'en',
   loadingBalances: false,
-  showBanner: getShowBannerLS() !== false,
 };
 
 const userSlice = createSlice({
@@ -63,10 +59,6 @@ const userSlice = createSlice({
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
     },
-    setShowBanner: (state, action) => {
-      setShowBannerLS(action.payload);
-      state.showBanner = action.payload;
-    },
   },
 });
 
@@ -78,7 +70,6 @@ export const {
   openWalletModal,
   setUsdToggle,
   setLoadingBalances,
-  setShowBanner,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

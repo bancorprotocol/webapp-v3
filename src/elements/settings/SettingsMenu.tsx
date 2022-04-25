@@ -41,6 +41,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
   );
 
   const slippages = [0.001, 0.005, 0.01];
+  const normalizedSlippage = Number(customSlippage) / 100;
   return (
     <div className="space-y-15 text-black-low dark:text-white-low">
       <div>Slippage Tolerance</div>
@@ -49,11 +50,12 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           {slippages.map((slippage) => (
             <button
               key={slippage}
-              onClick={() => dispatch(setSlippageTolerance(slippage))}
-              className={`w-full border border-silver rounded-[12px] text-12 p-8 ${
-                currentSlippage === slippage
-                  ? 'bg-primary !border-primary text-black'
-                  : ''
+              onClick={() => {
+                dispatch(setSlippageTolerance(slippage));
+                setCustomSlippage('');
+              }}
+              className={`w-full border border-silver dark:border-grey text-black dark:text-white rounded-[12px] text-12 p-8 ${
+                currentSlippage === slippage ? 'bg-fog dark:bg-grey' : ''
               }`}
             >
               +{slippage * 100}%
@@ -61,14 +63,15 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           ))}
           <input
             type="text"
-            className={`w-[69px] dark:bg-blue-2 outline-none text-center text-12 rounded-[12px] ${
-              currentSlippage === Number(customSlippage) / 100
-                ? 'bg-primary text-black placeholder-black'
-                : 'bg-fog'
+            className={`w-[69px] border border-silver dark:border-grey outline-none text-black dark:text-white text-center text-12 rounded-[12px] ${
+              currentSlippage === normalizedSlippage &&
+              !slippages.includes(currentSlippage)
+                ? 'bg-fog dark:bg-grey'
+                : 'bg-white dark:bg-black'
             }`}
             onFocus={() => {
               if (!Number.isNaN(customSlippage)) {
-                dispatch(setSlippageTolerance(Number(customSlippage) / 100));
+                dispatch(setSlippageTolerance(normalizedSlippage));
               }
             }}
             value={customSlippage}
@@ -79,6 +82,9 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
               }
               setCustomSlippage(value);
             }}
+            onBlur={() =>
+              slippages.includes(currentSlippage) && setCustomSlippage('')
+            }
             placeholder="Custom"
           />
         </div>

@@ -9,7 +9,7 @@ export const Swap = () => {
   const query = useQuery();
 
   return (
-    <div className="md:pt-[55px]">
+    <div className="pt-60 md:pt-[120px]">
       <SwapWidget
         isLimit={isLimit}
         setIsLimit={setIsLimit}

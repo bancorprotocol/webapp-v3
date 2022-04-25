@@ -24,7 +24,6 @@ import {
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
-import { MarketingBanner } from 'elements/marketingBanner/MarketingBanner';
 import { keepWSOpen } from 'services/web3';
 import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
@@ -74,8 +73,7 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <>
-          <MarketingBanner />
-          <main className="max-w-[1400px] mx-auto md:py-[75px] py-60">
+          <main>
             <Router />
           </main>
         </>

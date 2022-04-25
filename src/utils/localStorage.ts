@@ -8,7 +8,6 @@ const darkMode = 'darkMode';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
-const showBanner = 'showBanner';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const bancorv3Contracts = 'bancorv3Contracts';
 
@@ -66,15 +65,6 @@ export const getNotificationsLS = (): Notification[] => {
 
 export const setNotificationsLS = (notify: Notification[]) => {
   localStorage.setItem(notifications, JSON.stringify(notify));
-};
-
-export const getShowBannerLS = (): boolean | undefined => {
-  const show = localStorage.getItem(showBanner);
-  return show ? JSON.parse(show) : undefined;
-};
-
-export const setShowBannerLS = (flag: boolean) => {
-  localStorage.setItem(showBanner, JSON.stringify(flag));
 };
 
 export const getTenderlyRpcLS = (): string => {
