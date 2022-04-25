@@ -43,7 +43,7 @@ const legacyVote = '/eth/vote';
 const legacyFiat = '/eth/fiat';
 
 export const Router = () => {
-  const redirectToWelcome = useWelcomeRedirect();
+  const redirectToWelcome = false;
 
   return (
     <Switch>
