@@ -18,7 +18,8 @@ export const useWelcomeRedirect = () => {
 
 export const useWalletEmpty = () => {
   const { positions } = useExternalHoldings();
+  const account = useAppSelector((state) => state.user.account);
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
 
-  return !positions.length && !availabelToStake;
+  return !account || (!positions.length && !availabelToStake);
 };

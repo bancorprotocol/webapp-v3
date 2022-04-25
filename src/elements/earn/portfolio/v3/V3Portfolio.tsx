@@ -22,7 +22,7 @@ const V3Portfolio = () => {
   const handleLoginClick = () => {
     dispatch(openWalletModal(true));
   };
-  const hasHoldings = false;
+  const hasHoldings = true;
 
   return account ? (
     <div className="grid grid-cols-12 lg:gap-x-[36px]">

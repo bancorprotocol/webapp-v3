@@ -5,7 +5,7 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Rating } from 'components/rating/Rating';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Switch } from 'components/switch/Switch';
@@ -17,12 +17,36 @@ import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
 
 export const MigrateProtect = () => {
-  const migrate = true;
+  const migrate = false;
+
+  const { withdrawalFee, lockDuration } = useAppSelector(
+    (state) => state.v3Portfolio.withdrawalSettings
+  );
+
+  const lockDurationInDays = useMemo(
+    () => lockDuration / 60 / 60 / 24,
+    [lockDuration]
+  );
+
+  const withdrawalFeeInPercent = useMemo(
+    () => (withdrawalFee * 100).toFixed(2),
+    [withdrawalFee]
+  );
 
   return (
     <div className="grid md:grid-cols-4 h-screen">
       <div className="col-span-3 md:w-[550px] mx-auto my-auto">
-        {migrate ? <Migrate /> : <Protect />}
+        {migrate ? (
+          <Migrate
+            lockDuration={lockDurationInDays}
+            withdrawalFee={withdrawalFeeInPercent}
+          />
+        ) : (
+          <Protect
+            lockDuration={lockDurationInDays}
+            withdrawalFee={withdrawalFeeInPercent}
+          />
+        )}
       </div>
       <div className="hidden md:grid bg-fog dark:bg-charcoal">
         <div className="w-[320px] mx-auto self-end">
@@ -51,7 +75,13 @@ export const MigrateProtect = () => {
   );
 };
 
-const Migrate = () => {
+const Migrate = ({
+  lockDuration,
+  withdrawalFee,
+}: {
+  lockDuration: number;
+  withdrawalFee: string;
+}) => {
   const [seeAllHoldings, setSeeAllHoldings] = useState(false);
   const [selectedHolding, setSelectedHolding] = useState(-1);
 
@@ -113,10 +143,10 @@ const Migrate = () => {
 
             <div className="flex items-center justify-between align-bottom">
               <TokenBalance
-                symbol={'Symbol'}
-                amount={'100'}
-                usdPrice={'1000000'}
-                imgUrl={'token.logoURI'}
+                symbol={positions[selectedHolding].tokens[0].symbol}
+                amount={positions[selectedHolding].tokens[0].balance!}
+                usdPrice={positions[selectedHolding].tokens[0].usdPrice}
+                imgUrl={positions[selectedHolding].tokens[0].logoURI}
               />
               <div className="flex items-center gap-10 text-primary">
                 Earn ??%
@@ -128,19 +158,30 @@ const Migrate = () => {
             <IconInfo className="w-[15px] h-[15px] ml-5" />
           </div>
           <hr className="text-silver my-10" />
-          <div className="flex items-center justify-between">
-            <TokenBalance
-              symbol={'Symbol'}
-              amount={'100'}
-              usdPrice={'1000000'}
-              imgUrl={'token.logoURI'}
-            />
-            <div className="text-black-low">HODL in your wallet</div>
-          </div>
+          {positions[selectedHolding].tokens
+            .slice(1, positions[selectedHolding].tokens.length)
+            .map((token) => (
+              <div className="flex items-center justify-between">
+                <TokenBalance
+                  symbol={token.symbol}
+                  amount={token.balance!}
+                  usdPrice={token.usdPrice}
+                  imgUrl={token.logoURI}
+                />
+                <div className="text-black-low">HODL in your wallet</div>
+              </div>
+            ))}
+
           <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
-          <button className="text-black-low mt-30">
-            {`100% Protected • ${'?????'} day cooldown • ${'???'}% withdrawal fee`}
-          </button>
+          <a
+            href={''}
+            target="_blank"
+            className="flex items-center text-black-low font-semibold mt-30"
+            rel="noreferrer"
+          >
+            {`100% Protected • ${lockDuration} day cooldown • ${withdrawalFee}% withdrawal fee`}
+            <IconLink className="w-14 ml-6" />
+          </a>
         </>
       )}
     </>
@@ -185,7 +226,13 @@ const MigrateHoldingAtRisk = ({
   );
 };
 
-const Protect = () => {
+const Protect = ({
+  lockDuration,
+  withdrawalFee,
+}: {
+  lockDuration: number;
+  withdrawalFee: string;
+}) => {
   const [seeAll, setSeeAll] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(-1);
   const [input, setInput] = useState('');
@@ -266,7 +313,7 @@ const Protect = () => {
               availabelToStake[selectedPosition].token.symbol
             } do you want to desposit?`}
           </div>
-          <div className="text-16 text-black-low mt-10">$10,020 balance</div>
+          <div className="text-16 text-black-low mt-10">$??,??? balance</div>
           <TokenInputV3
             token={availabelToStake[selectedPosition].token}
             inputTkn={input}
@@ -296,7 +343,7 @@ const Protect = () => {
             className="flex items-center text-black-low font-semibold mt-20"
             rel="noreferrer"
           >
-            {`100% Protected • ${'?????'} day cooldown • ${'???'}% withdrawal fee`}
+            {`100% Protected • ${lockDuration} day cooldown • ${withdrawalFee}% withdrawal fee`}
             <IconLink className="w-14 ml-6" />
           </a>
         </>

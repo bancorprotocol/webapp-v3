@@ -17,10 +17,11 @@ export const LayoutHeader = () => {
   const [isTop, setIsTop] = useState(true);
 
   useEffect(() => {
-    window.onscroll = () => setIsTop(window.pageYOffset === 0);
+    const listener = () => setIsTop(window.pageYOffset === 0);
+    window.addEventListener('scroll', listener);
 
     return () => {
-      window.onscroll = null;
+      window.removeEventListener('scroll', listener);
     };
   }, [isTop]);
 
