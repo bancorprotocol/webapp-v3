@@ -3,7 +3,7 @@ import {
   setHoldingsRaw,
   setStandardRewards,
   setWithdrawalRequestsRaw,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import { fetchPortfolioV3Holdings } from 'services/web3/v3/portfolio/holdings';
 import { updateUserBalances } from 'services/observables/tokens';
 import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';

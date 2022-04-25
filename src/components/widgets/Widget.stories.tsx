@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 import { Widget } from './Widget';
-import { store } from '../../redux';
+import { store } from 'store';
 import { Provider } from 'react-redux';
 
 export default {

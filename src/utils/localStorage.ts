@@ -1,5 +1,5 @@
-import { initialState as UserState } from 'redux/user/user';
-import { Notification } from 'redux/notification/notification';
+import { initialState as UserState } from 'store/user/user';
+import { Notification } from 'store/notification/notification';
 import { BancorV3Contracts } from 'elements/admin/AdminUseFork';
 
 const selected_lists = 'userTokenLists';

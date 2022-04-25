@@ -1,5 +1,5 @@
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Statistic } from 'services/observables/statistics';
 import './Statistics.css';
 

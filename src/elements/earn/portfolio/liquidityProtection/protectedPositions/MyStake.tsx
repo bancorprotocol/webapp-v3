@@ -1,5 +1,5 @@
-import { useAppSelector } from 'redux/index';
-import { getStakeSummary, MyStakeSummary } from 'redux/liquidity/liquidity';
+import { useAppSelector } from 'store';
+import { getStakeSummary, MyStakeSummary } from 'store/liquidity/liquidity';
 import { prettifyNumber } from 'utils/helperFunctions';
 
 export const MyStake = ({ loading }: { loading: boolean }) => {

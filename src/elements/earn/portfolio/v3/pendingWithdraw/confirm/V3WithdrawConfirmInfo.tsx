@@ -1,5 +1,5 @@
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
-import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
   withdrawRequest: WithdrawalRequest;

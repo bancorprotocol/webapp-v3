@@ -1,4 +1,4 @@
-import { setAccount } from 'redux/user/user';
+import { setAccount } from 'store/user/user';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 

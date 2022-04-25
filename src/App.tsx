@@ -8,12 +8,12 @@ import {
   setDarkMode,
   setSlippageTolerance,
   setUsdToggle,
-} from 'redux/user/user';
+} from 'store/user/user';
 import {
   Notification,
   setNotifications,
-} from 'redux/notification/notification';
-import { useAppSelector } from 'redux/index';
+} from 'store/notification/notification';
+import { useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
   getDarkModeLS,

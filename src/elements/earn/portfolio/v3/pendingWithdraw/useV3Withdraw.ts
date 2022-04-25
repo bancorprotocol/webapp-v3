@@ -1,11 +1,11 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import {
   getIsLoadingWithdrawalRequests,
   getPortfolioWithdrawalRequests,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import { useDispatch } from 'react-redux';
 import { useCallback, useState } from 'react';
-import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import {
   rejectNotification,
@@ -20,9 +20,7 @@ export const useV3Withdraw = () => {
     getIsLoadingWithdrawalRequests
   );
   const dispatch = useDispatch();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
 
   const [selected, setSelected] = useState<WithdrawalRequest | null>(null);
   const [isModalCancelOpen, setIsModalCancelOpen] = useState(false);

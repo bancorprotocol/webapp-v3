@@ -3,7 +3,7 @@ import {
   WithdrawalRequest,
   WithdrawalRequestRaw,
   WithdrawalSettings,
-} from 'redux/portfolio/v3Portfolio.types';
+} from 'store/portfolio/v3Portfolio.types';
 import { ppmToDec } from 'utils/helperFunctions';
 import { utils } from 'ethers';
 import BigNumber from 'bignumber.js';

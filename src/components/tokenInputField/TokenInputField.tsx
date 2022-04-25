@@ -8,7 +8,7 @@ import 'components/inputField/InputField.css';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 interface TokenInputFieldProps {
   label?: string;

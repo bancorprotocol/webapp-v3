@@ -1,4 +1,4 @@
-import { WithdrawalRequest } from 'redux/portfolio/v3Portfolio.types';
+import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { useDateNow } from 'hooks/useDateNow';
 import { memo, useMemo } from 'react';
 import dayjs from 'dayjs';

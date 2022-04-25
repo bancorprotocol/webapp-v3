@@ -1,10 +1,10 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token } from 'services/observables/tokens';
-import { RootState } from 'redux/index';
+import { RootState } from 'store';
 import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
-import { getAllTokensMap } from 'redux/bancor/token';
+import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
 import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 

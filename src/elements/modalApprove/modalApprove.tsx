@@ -3,7 +3,7 @@ import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import {
   addNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import {
   ApprovalContract,
   setNetworkContractApproval,

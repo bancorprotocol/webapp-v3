@@ -1,6 +1,6 @@
 import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection/LiquidityProtection';
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import V3Portfolio from 'elements/earn/portfolio/v3/V3Portfolio';
 import { Tab } from '@headlessui/react';
 import { classNameGenerator } from 'utils/pureFunctions';

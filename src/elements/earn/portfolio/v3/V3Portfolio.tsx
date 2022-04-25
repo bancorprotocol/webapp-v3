@@ -7,16 +7,14 @@ import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStak
 import { Button, ButtonSize } from 'components/button/Button';
 import { useDispatch } from 'react-redux';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { openWalletModal } from 'redux/user/user';
+import { openWalletModal } from 'store/user/user';
 import { memo } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
 import { WhatsNew } from './WhatsNew';
 
 const V3Portfolio = () => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
 
   const handleLoginClick = () => {

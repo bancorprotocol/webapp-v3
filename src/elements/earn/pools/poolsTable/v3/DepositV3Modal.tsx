@@ -6,7 +6,7 @@ import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Modal } from 'components/modal/Modal';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';

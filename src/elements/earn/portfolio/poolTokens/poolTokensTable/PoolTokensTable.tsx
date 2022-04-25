@@ -1,7 +1,7 @@
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { PoolTokensCellActions } from './PoolTokensCellActions';
 import { PoolTokensCellName } from './PoolTokensCellName';

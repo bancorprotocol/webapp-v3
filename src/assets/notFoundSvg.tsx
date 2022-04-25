@@ -1,4 +1,4 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 export const NotFoundSvg = () => {
   const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);

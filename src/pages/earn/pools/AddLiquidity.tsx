@@ -1,9 +1,9 @@
-import { getPoolById, SelectedPool } from 'redux/bancor/pool';
+import { getPoolById, SelectedPool } from 'store/bancor/pool';
 import { RouteComponentProps } from 'react-router-dom';
 import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
 import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmpty';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import React, { useCallback, useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { WidgetLoading } from 'components/widgets/WidgetLoading';

@@ -5,18 +5,17 @@ import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux/index';
-import { openWalletModal } from 'redux/user/user';
+import { useAppSelector } from 'store';
+import { openWalletModal } from 'store/user/user';
 import { Token } from 'services/observables/tokens';
 import { getNetworkVariables } from 'services/web3/config';
 import {
   getStakedAmount,
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
-import { EthNetworks } from 'services/web3/types';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { openNewTab } from 'utils/pureFunctions';
-import { Button, ButtonSize, ButtonVariant } from '../components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 interface VoteCardProps {
   title: string;
@@ -52,9 +51,7 @@ const VoteCard = ({
 
 export const Vote = () => {
   const { chainId } = useWeb3React();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [stakeAmount, setStakeAmount] = useState<string | undefined>();

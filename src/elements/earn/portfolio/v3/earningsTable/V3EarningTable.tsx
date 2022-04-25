@@ -3,12 +3,12 @@ import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import {
   getIsLoadingHoldings,
   getPortfolioHoldings,
-} from 'redux/portfolio/v3Portfolio';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+} from 'store/portfolio/v3Portfolio';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);

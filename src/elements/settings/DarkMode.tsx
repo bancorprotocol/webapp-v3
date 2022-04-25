@@ -1,8 +1,8 @@
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
-import { setDarkMode } from 'redux/user/user';
+import { setDarkMode } from 'store/user/user';
 import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 export const DarkMode = ({ showText = false }: { showText?: boolean }) => {
   const dispatch = useDispatch();
