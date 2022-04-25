@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -25,7 +25,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
+  const hasStarted = useRef(false);
   const { token, poolTokenId } = holding;
 
   const [poolTokenAmountWei, setPoolTokenAmountWei] = useState('0');
@@ -135,12 +135,12 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   }, [setWithdrawalAmountWei]);
 
   useEffect(() => {
-    if (poolTokenAmountWei === '0' || hasStarted) {
+    if (poolTokenAmountWei === '0' || hasStarted.current) {
       return;
     }
-    setHasStarted(true);
+    hasStarted.current = true;
     onStart();
-  }, [onStart, poolTokenAmountWei, hasStarted]);
+  }, [onStart, poolTokenAmountWei]);
 
   return { token, handleButtonClick, ModalApprove, approveTokens, txBusy };
 };
