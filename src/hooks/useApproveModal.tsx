@@ -9,7 +9,7 @@ import { ModalApproveNew } from 'elements/modalApprove/modalApproveNew';
 import {
   addNotification,
   NotificationType,
-} from 'redux/notification/notification';
+} from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';

@@ -3,7 +3,7 @@ import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { ResetApproval } from 'components/resetApproval/ResetApproval';
 import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 

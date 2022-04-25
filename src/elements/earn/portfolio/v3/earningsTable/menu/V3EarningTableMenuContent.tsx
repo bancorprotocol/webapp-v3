@@ -3,7 +3,7 @@ import { V3EarningTableMenuMain } from 'elements/earn/portfolio/v3/earningsTable
 import { V3EarningTableMenuBonus } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuBonus';
 import { V3EarningTableMenuRate } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuRate';
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;

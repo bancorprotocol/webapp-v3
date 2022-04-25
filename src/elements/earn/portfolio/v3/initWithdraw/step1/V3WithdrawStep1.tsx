@@ -2,11 +2,10 @@ import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Holding } from 'redux/portfolio/v3Portfolio.types';
+import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
 import { CirclePercentage } from 'components/circlePercentage/CirclePercentage';
 import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
-import { utils } from 'ethers';
 import { V3WithdrawStep1Breakdown } from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1Breakdown';
 
 interface Props {

@@ -1,4 +1,4 @@
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { useState } from 'react';
 import {
   getTenderlyRpcLS,
@@ -33,7 +33,7 @@ export interface BancorV3Contracts {
 }
 
 export const AdminUseFork = () => {
-  const account = useAppSelector<string | null>((state) => state.user.account);
+  const account = useAppSelector((state) => state.user.account);
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
   const [inputContracts, setInputContracts] = useState<BancorV3Contracts>();
   const [zipFileError, setZipFileError] = useState('');

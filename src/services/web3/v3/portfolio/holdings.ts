@@ -1,6 +1,6 @@
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
-import { HoldingRaw } from 'redux/portfolio/v3Portfolio.types';
+import { HoldingRaw } from 'store/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
 import { multicall } from 'services/web3/multicall/multicall';
 import { bntToken } from 'services/web3/config';

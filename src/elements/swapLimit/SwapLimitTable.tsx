@@ -5,8 +5,8 @@ import { cancelOrders, getOrders, LimitOrder } from 'services/api/keeperDao';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { useDispatch } from 'react-redux';
-import { addNotification } from 'redux/notification/notification';
-import { useAppSelector } from 'redux/index';
+import { addNotification } from 'store/notification/notification';
+import { useAppSelector } from 'store';
 import { wethToken } from 'services/web3/config';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
@@ -16,9 +16,7 @@ import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
 
 export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
   const [orders, setOrders] = useState<LimitOrder[]>([]);
   const [weth, setWeth] = useState<Token>();
   const [search, setSearch] = useState('');

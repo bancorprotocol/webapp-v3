@@ -6,11 +6,11 @@ import {
   setKeeperDaoTokens,
   setTokenLists,
   setTokens,
-} from 'redux/bancor/bancor';
+} from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
 import { statistics$ } from 'services/observables/statistics';
-import { setv2Pools, setStats, setv3Pools } from 'redux/bancor/pool';
+import { setv2Pools, setStats, setv3Pools } from 'store/bancor/pool';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -19,7 +19,7 @@ import {
   setPoolTokens,
   setProtectedPositions,
   setRewards,
-} from 'redux/liquidity/liquidity';
+} from 'store/liquidity/liquidity';
 import {
   lockedAvailableBnt$,
   protectedPositions$,
@@ -30,7 +30,7 @@ import {
   setStandardRewards,
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
-} from 'redux/portfolio/v3Portfolio';
+} from 'store/portfolio/v3Portfolio';
 import {
   portfolioAllStandardRewards$,
   portfolioHoldings$,

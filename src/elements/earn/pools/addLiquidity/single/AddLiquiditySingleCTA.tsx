@@ -1,6 +1,6 @@
-import { openWalletModal } from 'redux/user/user';
+import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 
 interface Props {
   onStart: Function;
@@ -10,9 +10,7 @@ interface Props {
 
 export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
   const dispatch = useDispatch();
-  const account = useAppSelector<string | undefined>(
-    (state) => state.user.account
-  );
+  const account = useAppSelector((state) => state.user.account);
 
   const button = () => {
     if (errorMsg) {

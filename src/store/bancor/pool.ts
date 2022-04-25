@@ -1,7 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { Token } from 'services/observables/tokens';
 import { Statistic } from 'services/observables/statistics';
-import { RootState } from 'redux/index';
+import { RootState } from 'store';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { Pool, PoolV3 } from 'services/observables/pools';

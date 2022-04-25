@@ -1,8 +1,8 @@
 import { Ticker } from 'components/ticker/Ticker';
-import { useAppSelector } from 'redux/index';
+import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { getTopMovers } from '../../redux/bancor/bancor';
+import { getTopMovers } from 'store/bancor/bancor';
 
 interface Props {
   setSearch: Function;
