@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
 import { web3 } from 'services/web3';
-import { ConversionEvents } from '../services/api/googleTagManager';
+import { ConversionEvents } from 'services/api/googleTagManager';
 
 interface Tokens {
   token: Token;

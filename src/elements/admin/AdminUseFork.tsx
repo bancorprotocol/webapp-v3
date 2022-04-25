@@ -22,8 +22,6 @@ const filenames = [
   'BancorPortal_Proxy.json',
 ];
 
-const foldername = 'tenderly';
-
 export interface BancorV3Contracts {
   bancorNetwork: string;
   bancorNetworkInfo: string;
@@ -71,14 +69,11 @@ export const AdminUseFork = () => {
         bancorPortalAddress,
       ] = await Promise.all(
         filenames.map(async (name) => {
-          const res2 = await zipFile
-            .folder(foldername)
-            ?.file(name)
-            ?.async('string');
+          const res2 = await zipFile.file(new RegExp(name))[0]?.async('string');
 
           if (!res2)
             throw new Error(
-              `Error reading zip file. Check that extracted folder is called '${foldername}' and that the file '${name}' exists.`
+              `Error reading zip file. It's likely that the structure isn't as expected or that a file called '${name}' doesn't exists or more than one exist.`
             );
 
           return JSON.parse(res2).address;
@@ -95,6 +90,7 @@ export const AdminUseFork = () => {
         standardRewards: standardRewardsAddress,
         bancorPortal: bancorPortalAddress,
       };
+
       setInputContracts(newInput);
     } catch (e: any) {
       console.error(e.message);
