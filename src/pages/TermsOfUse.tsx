@@ -93,8 +93,8 @@ const content = [
 
 export const TermsOfUse = () => {
   return (
-    <div className="max-w-[1140px] mx-auto bg-fog dark:bg-black">
-      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0 my-20">
+    <div className="max-w-[1140px] pt-80 mb-20 mx-auto bg-fog dark:bg-black">
+      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0 mb-20">
         Terms of Use
       </h1>
 

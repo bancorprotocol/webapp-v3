@@ -1,27 +1,40 @@
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
-import 'elements/layoutHeader/LayoutHeader.css';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { MarketingBannerMobile } from '../marketingBanner/MarketingBannerMobile';
-import { useAppSelector } from 'store';
 import { NavLink } from 'react-router-dom';
 import { pools, portfolio, swap, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
+import 'elements/layoutHeader/LayoutHeader.css';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
-  const showBanner = useAppSelector<boolean>((state) => state.user.showBanner);
+  const [isTop, setIsTop] = useState(true);
+
+  useEffect(() => {
+    const listener = () => setIsTop(window.pageYOffset === 0);
+    window.addEventListener('scroll', listener);
+
+    return () => {
+      window.removeEventListener('scroll', listener);
+    };
+  }, [isTop]);
 
   return (
     <>
-      <header className="flex items-center justify-center fixed w-full h-60 z-30 bg-fog dark:bg-black shadow-header dark:shadow-none">
-        <div className="flex items-center justify-between w-[1140px] mx-20 md:mx-0">
+      <header
+        className={`fixed flex items-center justify-center w-full h-60 z-30 transition-colors ease-in-out duration-300 ${
+          isTop
+            ? ''
+            : 'bg-white dark:bg-black dark:border-b dark:border-charcoal'
+        }`}
+      >
+        <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
             <NavLink to={pools}>
               <IconBancor className="w-[18px]" />
@@ -62,7 +75,6 @@ export const LayoutHeader = () => {
           </div>
         </div>
       </header>
-      {showBanner && <MarketingBannerMobile />}
       <WalletConnectModal {...wallet} />
     </>
   );

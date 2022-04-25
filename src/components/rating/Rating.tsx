@@ -8,7 +8,7 @@ const getAttr = (percentage: number, starCount: number) => ({
 });
 
 const StarSVG = () => (
-  <svg className="display-none" xmlns="http://www.w3.org/2000/svg">
+  <svg className="display-none h-0 w-0" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <symbol id="star-svg">
         <path
