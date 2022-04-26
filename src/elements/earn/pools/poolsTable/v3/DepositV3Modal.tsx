@@ -12,6 +12,7 @@ import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { ethToken } from 'services/web3/config';
+import { AccessFullEarningsToggle } from 'elements/earn/pools/poolsTable/v3/AccessFullEarningsToggle';
 
 interface Props {
   pool: PoolV3;
@@ -85,6 +86,9 @@ export const DepositV3Modal = ({ pool }: Props) => {
               setAmount={setAmount}
               balanceLabel="Claimable"
             />
+            <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
+              <AccessFullEarningsToggle />
+            </div>
             <Button
               onClick={() => onStart()}
               disabled={depositDisabled}

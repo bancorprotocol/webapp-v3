@@ -69,7 +69,7 @@ export const ModalV3 = ({
                 } overflow-hidden align-middle transition-all transform rounded-40 bg-white dark:bg-charcoal text-left`}
               >
                 <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30 mb-20">
-                  <h3 className="flex items-center text-20">
+                  <div className="flex items-center text-20">
                     {showBackButton && (
                       <button
                         onClick={() => onBackClick && onBackClick()}
@@ -79,7 +79,7 @@ export const ModalV3 = ({
                       </button>
                     )}
                     {title && title}
-                  </h3>
+                  </div>
                   <div className="flex items-center space-x-10">
                     {titleElement && titleElement}
                     <button
