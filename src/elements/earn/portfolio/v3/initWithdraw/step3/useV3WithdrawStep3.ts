@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -25,6 +25,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
+  const hasStarted = useRef(false);
   const { token, poolTokenId } = holding;
 
   const [poolTokenAmountWei, setPoolTokenAmountWei] = useState('0');
@@ -112,21 +113,21 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         holding.poolTokenId,
         poolTokenAmountWei
       );
+      await tx.wait();
       initWithdrawNotification(
         dispatch,
         tx.hash,
         amount.tkn,
         holding.token.symbol
       );
-      await updatePortfolioData(dispatch, account);
       setStep(4);
+      await updatePortfolioData(dispatch, account);
     } catch (e: any) {
+      setTxBusy(false);
       console.error('initWithdraw failed', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
       }
-    } finally {
-      setTxBusy(false);
     }
   };
 
@@ -142,9 +143,10 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   }, [setWithdrawalAmountWei]);
 
   useEffect(() => {
-    if (poolTokenAmountWei === '0') {
+    if (poolTokenAmountWei === '0' || hasStarted.current) {
       return;
     }
+    hasStarted.current = true;
     onStart();
   }, [onStart, poolTokenAmountWei]);
 
