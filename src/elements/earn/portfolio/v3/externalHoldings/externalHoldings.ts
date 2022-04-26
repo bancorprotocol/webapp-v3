@@ -7,10 +7,11 @@ import {
   ApyVisionNonUniPosition,
   ApyVisionNonUniResponse,
   ApyVisionUniPosition,
-  ApyVisionUniResponse,
   ExternalHolding,
 } from './externalHoldings.types';
 import { utils } from 'ethers';
+import { ethToken, wethToken } from 'services/web3/config';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 const fetchApyVisionUniswap = async (
   user: string
@@ -21,6 +22,7 @@ const fetchApyVisionUniswap = async (
     // const { data } = await axios.get<ApyVisionUniResponse>(url);
     // return data.result;
     return [];
+    // eslint-disable-next-line no-unreachable
   } catch (e: any) {
     console.error('fetchApyVisionUniswap failed: ', e.message);
     return [];
@@ -55,12 +57,20 @@ const getRektStatus = (usdValue: number, hodlValue: number): string => {
   return rektAtRisk ? prettifyNumber(rektUsdValue.times(-1), true) : 'At risk';
 };
 
-const getProviderName = (key: string) => {
+export enum AMMProvider {
+  UniswapV2 = 'uniswap_eth',
+  UniswapV3 = 'uniswapv3_eth',
+  Sushiswap = 'sushiswap_eth',
+}
+
+const getProviderName = (key: AMMProvider): string | undefined => {
   switch (key) {
-    case 'sushiswap_eth':
+    case AMMProvider.Sushiswap:
       return 'Sushiswap';
-    case 'uniswap_eth':
-      return 'Uniswap';
+    case AMMProvider.UniswapV2:
+      return 'Uniswap V2';
+    case AMMProvider.UniswapV3:
+      return 'Uniswap V3';
     // TODO remove comments once supported
     // case 'balancerv2_eth':
     //   return 'Balancer V2';
@@ -95,12 +105,17 @@ export const getExternalHoldingsUni = (
         pos.current_day_data.hodl_value
       );
       const ammName = 'Uniswap V3';
-      return {
+      const externalHolding: ExternalHolding = {
+        ammKey: AMMProvider.UniswapV3,
         ammName,
         tokens,
         rektStatus,
         usdValue,
+        // TODO add poolTokenAddress
+        poolTokenAddress: '',
+        poolTokenBalanceWei: '',
       };
+      return externalHolding;
     })
     .filter((pos) => !!pos) as ExternalHolding[];
 };
@@ -109,32 +124,69 @@ export const getExternalHoldingsNonUni = (
   positions: ApyVisionNonUniPosition[],
   tokensMap: Map<string, Token>
 ): ExternalHolding[] => {
-  return positions
-    .map((pos) => {
-      const tokens = pos.tokens
-        .map((token) => tokensMap.get(utils.getAddress(token.tokenAddress)))
-        .filter((t) => !!t) as Token[];
+  return (
+    positions
+      // TODO Remove this filter once we support more than 2 reseves
+      .filter((pos) => pos.tokens.length === 2)
+      .map((pos) => {
+        const tokens = pos.tokens
+          .map((token) => {
+            const address = utils.getAddress(token.tokenAddress);
+            const isETH = address === utils.getAddress(wethToken);
+            const tkn = tokensMap.get(isETH ? ethToken : address);
+            if (!tkn) {
+              return undefined;
+            }
+            if (isETH) {
+              return {
+                ...tkn,
+                address: wethToken,
+                balance: token.tokenCurrentBalance.toString(),
+              } as Token;
+            }
+            return {
+              ...tkn,
+              balance: token.tokenCurrentBalance.toString(),
+            } as Token;
+          })
+          .filter((t) => !!t) as Token[];
 
-      // TODO once we support pools with non 2 reserve tokens we need to update this
-      if (tokens.length !== 2) {
-        return undefined;
-      }
+        // TODO once we support pools with more than 2 reserve tokens we need to update this
+        if (tokens.length !== 2) {
+          return undefined;
+        }
 
-      const usdValue = pos.totalValueUsd;
-      const rektStatus = getRektStatus(usdValue, pos.initialCapitalValueUsd);
+        const usdValue = pos.totalValueUsd;
+        const rektStatus = getRektStatus(usdValue, pos.initialCapitalValueUsd);
 
-      const ammName = getProviderName(pos.poolProviderKey);
-      if (!ammName) {
-        return undefined;
-      }
+        const ammName = getProviderName(pos.poolProviderKey);
+        if (!ammName) {
+          return undefined;
+        }
+        const poolTokenBalanceWei = utils
+          .parseUnits(pos.currentOwnedLpTokens.toString(), 18)
+          .toString();
 
-      const newPos: ExternalHolding = {
-        ammName,
-        tokens,
-        rektStatus,
-        usdValue,
-      };
-      return newPos;
-    })
-    .filter((pos) => !!pos) as ExternalHolding[];
+        const newPos: ExternalHolding = {
+          ammKey: pos.poolProviderKey,
+          ammName,
+          tokens,
+          rektStatus,
+          usdValue,
+          poolTokenAddress: pos.address,
+          poolTokenBalanceWei,
+        };
+        return newPos;
+      })
+      .filter((pos) => !!pos) as ExternalHolding[]
+  );
+};
+
+export const getMigrateFnByAmmProvider = (ammKey: AMMProvider) => {
+  switch (ammKey) {
+    case AMMProvider.Sushiswap:
+      return ContractsApi.BancorPortal.write.migrateSushiSwapV1Position;
+    case AMMProvider.UniswapV2:
+      return ContractsApi.BancorPortal.write.migrateUniswapV2Position;
+  }
 };

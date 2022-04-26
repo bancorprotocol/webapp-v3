@@ -1,4 +1,5 @@
 import { Token } from 'services/observables/tokens';
+import { AMMProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 
 export interface ApyVisionUniPosition {
   nft_id: number;
@@ -54,7 +55,7 @@ export interface ApyVisionUniPosition {
 }
 
 export interface ApyVisionNonUniPosition {
-  poolProviderKey: string;
+  poolProviderKey: AMMProvider;
   networkId: number;
   lastSyncBlock: number;
   name: string;
@@ -110,10 +111,13 @@ export interface ApyVisionNonUniResponse {
 }
 
 export interface ExternalHolding {
+  ammKey: AMMProvider;
   ammName: string;
   tokens: Token[];
   usdValue: number;
   rektStatus: string;
+  poolTokenAddress: string;
+  poolTokenBalanceWei: string;
 }
 
 export interface ApyVisionData {

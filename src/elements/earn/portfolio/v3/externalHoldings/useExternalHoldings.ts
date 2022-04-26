@@ -11,7 +11,7 @@ import {
   ApyVisionData,
   ExternalHolding,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { getV3Tokens } from 'redux/bancor/token';
+import { getV3Tokens } from 'store/bancor/token';
 
 const initialApyVisionData: ApyVisionData = {
   positionsUni: [],

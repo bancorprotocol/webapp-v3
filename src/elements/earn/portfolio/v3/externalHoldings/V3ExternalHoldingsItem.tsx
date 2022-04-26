@@ -1,8 +1,8 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Image } from 'components/image/Image';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
+import { V3ExternalHoldingsModal } from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldingsModal';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 
 interface Props {
@@ -10,6 +10,8 @@ interface Props {
 }
 
 const V3ExternalHoldingsItem = ({ position }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="rounded-20 border border-fog p-20">
       <div className="h-30">
@@ -27,9 +29,16 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
         variant={ButtonVariant.SECONDARY}
         size={ButtonSize.SMALL}
         className="w-full mt-20"
+        onClick={() => setIsOpen(true)}
       >
         Protect and earn
       </Button>
+
+      <V3ExternalHoldingsModal
+        position={position}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </div>
   );
 };
