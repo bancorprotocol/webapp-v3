@@ -1,33 +1,27 @@
 import { CellProps } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { PropsWithChildren } from 'react';
+import { Button, ButtonVariant } from 'components/button/Button';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 interface Props {
-  getExpandedContent?: () => JSX.Element;
-  getCollapsedContent?: () => JSX.Element;
-  getCannotExpandContent?: () => JSX.Element | string;
+  singleContent: JSX.Element;
+  groupContent: JSX.Element;
   cellData: PropsWithChildren<CellProps<any>>;
   canExpandMultiple?: boolean;
 }
 
-const getDefaultExpandedContent = () => (
-  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14 rotate-180" />
-  </button>
+const Expander = (isExpanded: boolean) => (
+  <IconChevronDown
+    className={`w-14 ${classNameGenerator({ 'rotate-180': isExpanded })}`}
+  />
 );
-const getDefaultCollapsedContent = () => (
-  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14" />
-  </button>
-);
-const getDefaultCannotExpandContent = () => '';
 
 export const TableCellExpander = ({
   cellData,
   canExpandMultiple = false,
-  getExpandedContent = getDefaultExpandedContent,
-  getCollapsedContent = getDefaultCollapsedContent,
-  getCannotExpandContent = getDefaultCannotExpandContent,
+  singleContent,
+  groupContent,
 }: Props) => {
   const {
     row: { canExpand, isExpanded, toggleRowExpanded },
@@ -35,17 +29,19 @@ export const TableCellExpander = ({
   } = cellData;
 
   const handleClick = () => {
-    if (!canExpandMultiple && !isExpanded) {
-      toggleAllRowsExpanded(false);
-    }
+    if (!canExpandMultiple && !isExpanded) toggleAllRowsExpanded(false);
+
     toggleRowExpanded(!isExpanded);
   };
 
   return canExpand ? (
-    <span onClick={() => handleClick()}>
-      {isExpanded ? getExpandedContent() : getCollapsedContent()}
-    </span>
+    <div className="flex items-center justify-between">
+      {groupContent}
+      <Button onClick={() => handleClick()} variant={ButtonVariant.SECONDARY}>
+        {Expander(isExpanded)}
+      </Button>
+    </div>
   ) : (
-    getCannotExpandContent()
+    singleContent
   );
 };
