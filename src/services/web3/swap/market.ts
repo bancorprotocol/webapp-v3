@@ -58,23 +58,33 @@ export const getRateAndPriceImapct = async (
       methodParameters: [path, fromAmountWei],
     };
 
-    const spotRate = await calculateSpotPriceAndRate(fromToken, to, rateShape);
+    const v2SpotRate = await calculateSpotPriceAndRate(
+      fromToken,
+      to,
+      rateShape
+    );
+    const v2Rate = shrinkToken(v2SpotRate.rate, toToken.decimals);
+    const v2PI = new BigNumber(1)
+      .minus(new BigNumber(v2Rate).div(amount).div(v2SpotRate.spotPrice))
+      .times(100);
+    const v2PriceImpact = isNaN(v2PI.toNumber()) ? '0.0000' : v2PI.toFixed(4);
+
     const v3Rate = await getV3Rate(fromToken, toToken, amount);
-    const v2Rate = shrinkToken(spotRate.rate, toToken.decimals);
-    const isV3 = v3Rate !== '0';
+    const v3PriceImpact = await getV3PriceImpact(
+      fromToken,
+      toToken,
+      amount,
+      v3Rate
+    );
+
+    const isV3 = v3Rate >= v2Rate;
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
 
-    const priceImpactNum = new BigNumber(1)
-      .minus(new BigNumber(v2Rate).div(amount).div(spotRate.spotPrice))
-      .times(100);
-
     return {
       rate: isV3 ? v3Rate : v2Rate,
-      priceImpact: isNaN(priceImpactNum.toNumber())
-        ? '0.0000'
-        : priceImpactNum.toFixed(4),
+      priceImpact: isV3 ? v3PriceImpact : v2PriceImpact,
       isV3,
     };
   } catch (error) {
@@ -336,10 +346,54 @@ const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
       await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
         fromToken.address,
         toToken.address,
-        utils.parseUnits(amount, fromToken.decimals)
+        expandToken(amount, fromToken.decimals)
       );
-    return utils.formatUnits(res, fromToken.decimals);
+    return shrinkToken(res.toString(), fromToken.decimals);
   } catch (error) {
     return '0';
   }
+};
+
+const getV3PriceImpact = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string,
+  rate: string
+) => {
+  const masterVault = await ContractsApi.BancorNetworkInfo.read.masterVault();
+  const fromBalance =
+    fromToken.address === bntToken
+      ? await (
+          await ContractsApi.Token(bntToken).read.balanceOf(masterVault)
+        ).toString()
+      : (
+          await ContractsApi.PoolCollection.read.poolLiquidity(
+            fromToken.address
+          )
+        ).baseTokenTradingLiquidity.toString();
+
+  const toBalance =
+    toToken.address === bntToken
+      ? await (
+          await ContractsApi.Token(bntToken).read.balanceOf(masterVault)
+        ).toString()
+      : (
+          await ContractsApi.PoolCollection.read.poolLiquidity(toToken.address)
+        ).baseTokenTradingLiquidity.toString();
+
+  const fromData = await ContractsApi.PoolCollection.read.poolData(
+    fromToken.address
+  );
+
+  const spotPrice = calcReserve(
+    shrinkToken(fromBalance, fromToken.decimals),
+    shrinkToken(toBalance, toToken.decimals),
+    ppmToDec(fromData.tradingFeePPM)
+  );
+
+  const priceImpact = new BigNumber(1)
+    .minus(new BigNumber(rate).div(amount).div(spotPrice))
+    .times(100);
+
+  return priceImpact.toFixed(4);
 };
