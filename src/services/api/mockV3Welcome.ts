@@ -36,6 +36,7 @@ const buildAPIPoolV3 = async (
     supply: '1123',
     decimals,
     isWhitelisted: true,
+    apr: 123,
   };
 };
 

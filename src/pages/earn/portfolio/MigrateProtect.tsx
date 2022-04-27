@@ -174,7 +174,7 @@ const Migrate = ({
 
           <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
           <a
-            href={''}
+            href={'/'}
             target="_blank"
             className="flex items-center text-black-low font-semibold mt-30"
             rel="noreferrer"
@@ -338,7 +338,7 @@ const Protect = ({
           <Button className="mt-30 w-[160px]">Deposit</Button>
 
           <a
-            href={''}
+            href={'/'}
             target="_blank"
             className="flex items-center text-black-low font-semibold mt-20"
             rel="noreferrer"
