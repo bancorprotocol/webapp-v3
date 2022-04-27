@@ -12,7 +12,8 @@ import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
-import { AccessFullEarningsToggle } from 'elements/earn/pools/poolsTable/v3/AccessFullEarningsToggle';
+import { Switch } from 'components/switch/Switch';
+import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
 
 interface Props {
   pool: PoolV3;
@@ -22,6 +23,11 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [accessFullEarnings, setAccessFullEarnings] = useState(false);
+  const rewardProgram = useAppSelector(
+    getAllStandardRewardProgramsByPoolId
+  ).get(pool.pool_dlt_id);
+  console.log(rewardProgram);
 
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
@@ -39,11 +45,17 @@ export const DepositV3Modal = ({ pool }: Props) => {
     const isETH = pool.reserveToken.address === ethToken;
 
     try {
-      const res = await ContractsApi.BancorNetwork.write.deposit(
-        pool.poolDltId,
-        amountWei,
-        { value: isETH ? amountWei : undefined }
-      );
+      const res = accessFullEarnings
+        ? await ContractsApi.StandardRewards.write.depositAndJoin(
+            rewardProgram.id,
+            amountWei
+          )
+        : await ContractsApi.BancorNetwork.write.deposit(
+            pool.poolDltId,
+            amountWei,
+            { value: isETH ? amountWei : undefined }
+          );
+      console.log('accessFullEarnings?', accessFullEarnings);
       console.log(res);
       setIsOpen(false);
       pushPortfolio();
@@ -56,7 +68,9 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: fieldBalance || '0', token: pool.reserveToken }],
     deposit,
-    ContractsApi.BancorNetwork.contractAddress
+    accessFullEarnings
+      ? ContractsApi.StandardRewards.contractAddress
+      : ContractsApi.BancorNetwork.contractAddress
   );
 
   return (
@@ -86,9 +100,24 @@ export const DepositV3Modal = ({ pool }: Props) => {
               setAmount={setAmount}
               balanceLabel="Claimable"
             />
-            <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
-              <AccessFullEarningsToggle />
-            </div>
+            {rewardProgram ? (
+              <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
+                <div className="flex justify-between pr-10 mb-4">
+                  Access full earnings
+                  <Switch
+                    selected={accessFullEarnings}
+                    onChange={() => setAccessFullEarnings((prev) => !prev)}
+                  />
+                  {'40%'}
+                </div>
+                Additional gas ~$2 Compounding rewards === $0.00
+              </div>
+            ) : (
+              <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
+                <span>Compunding rewards {pool.reserveToken.symbol}</span>
+                <span>??40%</span>
+              </div>
+            )}
             <Button
               onClick={() => onStart()}
               disabled={depositDisabled}

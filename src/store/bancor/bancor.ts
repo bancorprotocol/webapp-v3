@@ -70,7 +70,7 @@ export const getTokenById = createSelector(
   (state: RootState) => getAllTokensMap(state),
   (_: any, id: string) => id,
   (allTokensMap: Map<string, Token>, id: string): Token | undefined => {
-    if (!id) return undefined
+    if (!id) return undefined;
     return allTokensMap.get(utils.getAddress(id));
   }
 );
@@ -103,5 +103,15 @@ export const getAllStandardRewardPrograms = createSelector(
         rewardsToken,
       };
     });
+  }
+);
+
+export const getAllStandardRewardProgramsByPoolId = createSelector(
+  getAllStandardRewardPrograms,
+  (allStandardRewardPrograms) => {
+    return allStandardRewardPrograms.reduce((acc, program) => {
+      if (program.token?.address) acc.set(program.token.address, program);
+      return acc;
+    }, new Map());
   }
 );
