@@ -51,7 +51,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
         setTknUsdPrice={setTknUsdPrice}
         bntTknRate={bntTknRate()}
       />
-      <div className="p-10 rounded bg-primary dark:bg-black-disabled mt-20">
+      <div className="p-10 rounded bg-secondary mt-20">
         <AddLiquidityEmptyStep2
           tkn={tkn}
           bnt={bnt}

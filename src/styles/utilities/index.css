@@ -9,6 +9,10 @@
         @apply text-charcoal text-opacity-50;
     }
 
+    .bg-secondary {
+        @apply bg-fog dark:bg-grey;
+    }
+
 
     .loading-skeleton {
         @apply bg-silver bg-opacity-30 animate-pulse rounded-10;

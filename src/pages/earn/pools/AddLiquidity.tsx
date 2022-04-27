@@ -53,7 +53,7 @@ export const AddLiquidity = React.memo(
     };
 
     return (
-      <div>
+      <div className="pt-40 md:pt-[100px]">
         {isLoading() ? (
           <WidgetLoading title="Add Liquidity" />
         ) : (
