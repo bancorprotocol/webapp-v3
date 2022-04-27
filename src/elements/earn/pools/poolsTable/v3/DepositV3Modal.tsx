@@ -10,7 +10,7 @@ import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
+import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
 import { AccessFullEarningsToggle } from 'elements/earn/pools/poolsTable/v3/AccessFullEarningsToggle';
 
@@ -78,7 +78,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
       >
         <div className="p-10">
           <div className="flex flex-col items-center text-12 mx-20">
-            <TokenInputPercentage
+            <TokenInputPercentageV3
               label="Amount"
               token={pool.reserveToken}
               balance={fieldBalance}
