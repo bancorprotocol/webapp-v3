@@ -14,7 +14,7 @@ import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
-import { orderBy, sortBy, uniqBy } from 'lodash';
+import { orderBy, uniqBy } from 'lodash';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
