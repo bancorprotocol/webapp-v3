@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'store';
-import { Token } from 'services/observables/tokens';
 import { getTokenById } from 'store/bancor/bancor';
 import { getProtectedPools } from 'store/bancor/pool';
 
@@ -27,7 +26,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
-  const bnt = useAppSelector<Token | undefined>((state: any) =>
+  const bnt = useAppSelector((state) =>
     getTokenById(state, pool ? pool.reserves[1].address : '')
   );
 
