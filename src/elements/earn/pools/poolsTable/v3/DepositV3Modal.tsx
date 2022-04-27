@@ -14,6 +14,7 @@ import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInp
 import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import useAsyncEffect from 'use-async-effect';
 
 interface Props {
   pool: PoolV3;
@@ -24,6 +25,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
   const [accessFullEarnings, setAccessFullEarnings] = useState(false);
+  const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const rewardProgram = useAppSelector(
     getAllStandardRewardProgramsByPoolId
   ).get(pool.pool_dlt_id);
@@ -35,6 +37,36 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const depositDisabled = !account || !amount || Number(amount) === 0;
 
   const fieldBalance = pool.reserveToken.balance;
+
+  useAsyncEffect(async () => {
+    if (
+      !accessFullEarnings ||
+      !pool.reserveToken.balance ||
+      !account ||
+      !fieldBalance ||
+      !amount
+    ) {
+      setExtraGasNeeded('0');
+      return;
+    }
+    const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
+    const isETH = pool.reserveToken.address === ethToken;
+    const estimatedGasDeposit =
+      await ContractsApi.BancorNetwork.write.estimateGas.deposit(
+        pool.pool_dlt_id,
+        amountWei,
+        { value: isETH ? amountWei : undefined }
+      );
+    const estimatedGasJoin =
+      await ContractsApi.StandardRewards.write.estimateGas.depositAndJoin(
+        rewardProgram.id,
+        amountWei
+      );
+    const extraGasNeeded = estimatedGasJoin.sub(estimatedGasDeposit);
+    // TODO: calculate to USD: extraGasNeeded * ETHUSDPrice * 10^18
+    console.log('extraGasNeeded', extraGasNeeded);
+    setExtraGasNeeded(extraGasNeeded.toString());
+  }, [accessFullEarnings, amount, fieldBalance, pool.pool_dlt_id]);
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
@@ -108,9 +140,10 @@ export const DepositV3Modal = ({ pool }: Props) => {
                     selected={accessFullEarnings}
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
                   />
-                  {'40%'}
+                  {'40%???'}
                 </div>
-                Additional gas ~$2 Compounding rewards === $0.00
+                <div>Additional gas ~${extraGasNeeded} TODO: to USD</div>
+                <div>Compounding rewards {pool.reserveToken.symbol} ???30%</div>
               </div>
             ) : (
               <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
