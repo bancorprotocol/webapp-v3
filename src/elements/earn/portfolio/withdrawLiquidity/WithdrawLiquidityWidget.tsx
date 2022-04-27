@@ -10,7 +10,7 @@ import {
   fetchProtectedPositions,
   getWithdrawBreakdown,
   ProtectedPosition,
-  withdrawProtection,
+  withdrawProtection
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
@@ -19,9 +19,9 @@ import useAsyncEffect from 'use-async-effect';
 import { useDebounce } from 'hooks/useDebounce';
 import BigNumber from 'bignumber.js';
 import {
-  withdrawProtectedPosition,
   rejectNotification,
-  withdrawProtectedPositionFailed,
+  withdrawProtectedPosition,
+  withdrawProtectedPositionFailed
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
@@ -34,9 +34,10 @@ import {
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
-  setCurrentLiquidity,
+  setCurrentLiquidity
 } from 'services/api/googleTagManager';
 import { Pool } from 'services/observables/pools';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -274,13 +275,14 @@ export const WithdrawLiquidityWidget = ({
               Insufficient vBNT balance.
             </div>
           )}
-          <button
+          <Button
             onClick={handleWithdraw}
             disabled={withdrawDisabled}
-            className={`btn-primary rounded w-full mt-20`}
+            variant={ButtonVariant.PRIMARY}
+            className={`w-full mt-20`}
           >
             {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
-          </button>
+          </Button>
         </div>
       </Modal>
       {ModalApprove}
