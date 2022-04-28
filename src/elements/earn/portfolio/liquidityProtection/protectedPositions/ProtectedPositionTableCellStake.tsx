@@ -14,7 +14,7 @@ export const ProtectedPositionTableCellAmount = ({
       <div className="flex items-center justify-center font-medium h-24">
         {`${prettifyNumber(tknAmount)} ${symbol}`}
       </div>
-      <div className="text-12 text-grey mt-4">
+      <div className="text-12 text-black-low dark:text-white-low mt-4">
         {prettifyNumber(usdAmount, true)} USD
       </div>
     </div>

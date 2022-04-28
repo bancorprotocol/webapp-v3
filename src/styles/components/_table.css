@@ -26,7 +26,7 @@
   }
 
   .table-responsive tbody tr {
-    @apply bg-white dark:bg-charcoal hover:bg-primary dark:hover:bg-grey;
+    @apply bg-white dark:bg-charcoal hover:bg-fog dark:hover:bg-grey;
   }
 
   .table-responsive tbody td {
