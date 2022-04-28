@@ -8,8 +8,8 @@ export const V3ClaimBonuses = () => {
 
   return (
     <>
-      <section className="content-block p-14 space-y-20">
-        <div className="text-secondary text-12 hidden md:block">
+      <section className="content-block p-14">
+        <div className="text-secondary text-12 hidden md:block mb-14">
           Claim Bonuses
         </div>
         <div className="flex items-center justify-between">
