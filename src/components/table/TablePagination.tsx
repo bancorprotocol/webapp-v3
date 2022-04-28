@@ -22,11 +22,11 @@ export const TablePagination = ({
   const showResults = [10, 20, 30, 40, 50];
   return (
     <div className="flex justify-center md:justify-between items-center p-20 text-graphite text-12">
-      <div className="hidden md:flex justify-between items-center  space-x-10">
+      <div className="hidden md:flex justify-between items-center space-x-10">
         <span>Show</span>
         <div className="px-10 py-5 border border-silver dark:border-graphite rounded-[14px]">
           <select
-            className="outline-none dark:bg-charcoal"
+            className="outline-none bg-white dark:bg-charcoal w-[40px]"
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));

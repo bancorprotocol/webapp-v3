@@ -14,6 +14,7 @@ import {
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
 import { PoolToken } from 'services/observables/pools';
+import { Button } from 'components/button/Button';
 
 export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();
@@ -63,11 +64,8 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
   };
 
   return (
-    <button
-      onClick={() => handleClick()}
-      className="btn-outline-primary border border-primary dark:border-primary-light h-[30px]"
-    >
+    <Button onClick={() => handleClick()} className="h-[30px]">
       Remove Liquidity
-    </button>
+    </Button>
   );
 };
