@@ -1,6 +1,11 @@
 @import 'tailwindcss/components';
 
 @layer components {
+  .content-block {
+    @apply bg-white dark:bg-charcoal;
+    @apply rounded-10;
+  }
+
   .content-section {
     @apply md:rounded-20;
     @apply bg-white dark:bg-charcoal;
@@ -8,6 +13,6 @@
   }
 
   .content-separator {
-    @apply border-t-2 border-silver dark:border-black-low;
+    @apply border-t border-fog dark:border-grey;
   }
 }

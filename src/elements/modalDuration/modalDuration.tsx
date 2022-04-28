@@ -6,6 +6,7 @@ import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { formatDuration } from 'utils/helperFunctions';
+import { Button } from 'components/button/Button';
 
 interface ModalDurationProps {
   duration: Duration;
@@ -59,7 +60,7 @@ export const ModalDuration = ({
         {formatDuration(duration)}
         <IconChevronDown className="w-10 ml-10" />
       </button>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={'Duration'}>
         <div className="flex flex-col items-center w-full px-20 pb-20">
           <IconClock className="w-[52px] h-[52px] text-primary dark:text-primary-dark mb-14" />
           <div className="font-semibold text-20 mb-10">Custom Time</div>
@@ -102,15 +103,15 @@ export const ModalDuration = ({
               </div>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => {
               setDuration(dayjs.duration({ days, hours, minutes }));
               setIsOpen(false);
             }}
-            className="btn-primary rounded-full w-full mt-15"
+            className="w-full mt-15"
           >
             Confirm
-          </button>
+          </Button>
         </div>
       </Modal>
     </>

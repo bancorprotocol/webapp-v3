@@ -26,7 +26,7 @@ export const TokenBalance = ({
       <Image alt={`${symbol} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
       <div className={`${inverted ? 'text-right' : ''}`}>
         <div className="text-16">{label}</div>
-        <span className="text-graphite text-14">
+        <span className="text-secondary">
           {prettifyNumber(usdAmount, true)}
         </span>
       </div>

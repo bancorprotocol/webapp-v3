@@ -159,7 +159,7 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-section pt-20 pb-10">
+    <section className="content-block pt-20">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <div className="flex items-center gap-x-10">
           <div className="w-[120px] text-16">

@@ -28,10 +28,9 @@ const AvailableItem = ({
         amount={token.balance!}
         usdPrice={token.usdPrice!}
         imgUrl={token.logoURI}
-        inverted
       />
       <div>
-        <div className="text-graphite mb-5">Earn</div>
+        <div className="text-secondary mb-5">Earn</div>
         <div className="flex">
           <span className="text-[22px]">{tknApr.toFixed(2)}%</span>
           <IconArrow className="w-10 rotate-[90deg] ml-10" />
@@ -45,18 +44,18 @@ const navOptions: NavigationOptions = {
   nextEl: '.swiper-next-btn',
   prevEl: '.swiper-prev-btn',
   disabledClass:
-    'cursor-not-allowed text-graphite disabled:hover:text-graphite',
+    'cursor-not-allowed text-secondary disabled:hover:text-secondary',
 };
 
 export const V3AvailableToStake = () => {
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
 
   return (
-    <section className="">
-      <div className="flex justify-between mb-10 pr-10">
+    <section>
+      <div className="flex justify-between mb-20 pr-10">
         <h2>
           Available to stake{' '}
-          <span className="text-12 ml-4 text-graphite">
+          <span className="text-12 ml-4 text-secondary">
             ({availabelToStake.length})
           </span>
         </h2>

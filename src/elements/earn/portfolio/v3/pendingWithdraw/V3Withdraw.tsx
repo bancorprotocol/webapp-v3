@@ -20,9 +20,7 @@ export const V3Withdraw = () => {
   return (
     <>
       <section className="content-block p-14">
-        <h2 className="text-12 text-secondary font-normal mb-10">
-          Pending Withdrawals
-        </h2>
+        <h2 className="text-12 text-secondary mb-20">Pending Withdrawals</h2>
         <div className="space-y-10">
           {withdrawalRequests.map((withdrawalRequest) => (
             <WithdrawItem

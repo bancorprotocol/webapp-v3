@@ -1,7 +1,6 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
 import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
-import { V3HoldingsStats } from 'elements/earn/portfolio/v3/V3HoldingsStats';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
@@ -23,12 +22,11 @@ const V3Portfolio = () => {
   const hasHoldings = true;
 
   return account ? (
-    <div className="grid grid-cols-12 lg:gap-x-[36px]">
-      <div className="col-span-12 lg:col-span-12 xl:col-span-8 space-y-20">
+    <div className="grid grid-cols-12 lg:gap-x-40">
+      <div className="col-span-12 lg:col-span-12 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
             <V3TotalHoldings />
-            <V3HoldingsStats />
             <V3EarningTable />
           </>
         ) : (
@@ -36,7 +34,7 @@ const V3Portfolio = () => {
         )}
         <V3AvailableToStake />
       </div>
-      <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-20">
+      <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-40">
         <V3ClaimBonuses />
         <V3Withdraw />
         <V3ExternalHoldings />

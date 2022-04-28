@@ -1,16 +1,20 @@
 @import 'tailwindcss/utilities';
 
 @layer utilities {
-    .content-block {
-        @apply bg-white rounded-10 dark:bg-charcoal;
-    }
-
     .text-secondary {
-        @apply text-charcoal text-opacity-50;
+        @apply text-charcoal text-opacity-50 dark:text-light dark:text-opacity-50;
     }
 
     .bg-secondary {
         @apply bg-fog dark:bg-grey;
+    }
+
+    .page {
+        @apply pt-[100px] pb-[80px] px-10  md:px-20 max-w-[1140px] mx-auto;
+    }
+
+    .page h1 {
+        @apply text-[36px] font-normal m-0 p-0;
     }
 
 

@@ -133,7 +133,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
           return (
             <NavLink
               to={swapByfrom(cellData.row.original.address)}
-              className="btn btn-primary btn-xs"
+              className="btn btn-secondary btn-xs"
             >
               Trade
             </NavLink>

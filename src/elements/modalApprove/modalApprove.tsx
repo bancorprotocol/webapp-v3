@@ -14,6 +14,7 @@ import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import { sendConversionApprovedEvent } from 'services/api/googleTagManager';
 import { ErrorCode } from 'services/web3/types';
+import { Button } from 'components/button/Button';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -95,8 +96,8 @@ export const ModalApprove = ({
   };
 
   return (
-    <Modal title={'Swap'} setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div className="p-10">
+    <Modal title={'Set Allowance'} setIsOpen={setIsOpen} isOpen={isOpen}>
+      <div className="p-10 px-30">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
             <IconLock className="w-[22px] text-white" />
@@ -106,12 +107,9 @@ export const ModalApprove = ({
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.
           </p>
-          <button
-            onClick={() => approve()}
-            className={'btn-primary w-full my-15'}
-          >
+          <Button onClick={() => approve()} className={'w-full my-15'}>
             Approve
-          </button>
+          </Button>
           <p className="text-center text-graphite">
             Want to approve before each transaction?
           </p>

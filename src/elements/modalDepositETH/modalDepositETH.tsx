@@ -1,5 +1,6 @@
 import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
+import { Button } from 'components/button/Button';
 
 interface ModalDepositETHProps {
   amount: string;
@@ -34,15 +35,15 @@ export const ModalDepositETH = ({
           WETH is a token that represents ETH 1:1 and conforms to the ERC20
           token standard
         </div>
-        <button
-          className="btn-primary rounded w-full"
+        <Button
+          className="w-full"
           onClick={() => {
             setIsOpen(false);
             onConfirm();
           }}
         >
           Confirm
-        </button>
+        </Button>
       </div>
     </Modal>
   );
