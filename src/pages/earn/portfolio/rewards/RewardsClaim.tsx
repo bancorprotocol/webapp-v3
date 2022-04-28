@@ -10,15 +10,17 @@ export const RewardsClaim = () => {
   const { pushPortfolio } = useNavigation();
 
   return (
-    <Widget title="Claim Rewards" goBack={pushPortfolio}>
-      <div className="px-10 pb-10">
-        <RewardsClaimInfo />
-        <RewardsClaimAmount amount={claimableRewards} />
-        <RewardsClaimCTA
-          account={account}
-          claimableRewards={claimableRewards}
-        />
-      </div>
-    </Widget>
+    <div className="pt-40 md:pt-[100px]">
+      <Widget title="Claim Rewards" goBack={pushPortfolio}>
+        <div className="px-10 pb-10">
+          <RewardsClaimInfo />
+          <RewardsClaimAmount amount={claimableRewards} />
+          <RewardsClaimCTA
+            account={account}
+            claimableRewards={claimableRewards}
+          />
+        </div>
+      </Widget>
+    </div>
   );
 };

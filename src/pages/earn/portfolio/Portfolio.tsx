@@ -6,6 +6,7 @@ import { Tab } from '@headlessui/react';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { PoolToken } from 'services/observables/pools';
 import { ProtectedPosition } from 'services/web3/protection/positions';
+import { Page } from 'components/Page';
 
 export const Portfolio = () => {
   const v2 = useAppSelector<ProtectedPosition[]>(
@@ -20,14 +21,13 @@ export const Portfolio = () => {
       hidden: hidden,
     });
 
+  const title = 'Portfolio';
+
   return (
-    <div className="max-w-[1140px] pt-80 mb-20 mx-auto md:bg-fog md:dark:bg-black">
+    <Page title={title}>
       <Tab.Group>
-        <div className="flex items-center mb-30 pt-30">
-          <h1 className="md:text-[30px] font-semibold pl-10 md:pl-0">
-            Portfolio
-          </h1>
-          <Tab.List className="space-x-10 ml-20">
+        <div className="flex items-center mb-30">
+          <Tab.List className="space-x-10 ml-[180px] mt-[-25px]">
             <Tab className={({ selected }) => getTabBtnClasses(selected)}>
               V3
             </Tab>
@@ -70,6 +70,6 @@ export const Portfolio = () => {
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
-    </div>
+    </Page>
   );
 };

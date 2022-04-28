@@ -10,25 +10,15 @@ interface Props {
 export const TopPools = ({ setSearch }: Props) => {
   const pools = useAppSelector<TopPool[]>(getTopPools);
 
-  const handleClick = (pool: TopPool) => {
-    if (pool.tknSymbol === 'BNT') {
-      setSearch(pool.poolName);
-    } else {
-      setSearch(pool.tknSymbol);
-    }
-  };
-
   return (
-    <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Earners</h2>
-      <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
+    <section className="content-block pt-20 pb-10">
+      <h2 className="ml-[20px]">Top Performing</h2>
       <Ticker id="top-tokens">
-        <div className="flex space-x-16 mt-10">
+        <div className="flex space-x-16 mt-20">
           {pools.length
             ? pools.map((pool, index) => {
                 return (
-                  <button
-                    onClick={() => handleClick(pool)}
+                  <div
                     key={`pool-table-key-${index}`}
                     className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-graphite dark:border-grey transition-all duration-300"
                   >
@@ -48,7 +38,7 @@ export const TopPools = ({ setSearch }: Props) => {
                         APR
                       </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })
             : [...Array(20)].map((_, index) => (

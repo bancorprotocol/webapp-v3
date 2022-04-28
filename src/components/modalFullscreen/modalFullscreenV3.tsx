@@ -33,11 +33,11 @@ const ModalFullscreenV3 = ({
       >
         <Dialog
           as="div"
-          className="fixed inset-0 z-50 overflow-y-auto min-w-full max-h-screen bg-white"
+          className="fixed inset-0 z-50 overflow-y-auto min-w-full max-h-screen bg-white dark:bg-black"
           onClose={() => setIsOpen(false)}
         >
           <div className="inline-block w-full">
-            <header className="fixed top-0 w-full bg-white h-[70px] flex items-center justify-between px-20">
+            <header className="fixed top-0 w-full bg-white dark:bg-black h-[70px] flex items-center justify-between px-20">
               <h3 className="flex items-center text-20">
                 <IconBancor className="w-20 mr-20" />
                 {title}

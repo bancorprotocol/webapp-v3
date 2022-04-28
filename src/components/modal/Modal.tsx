@@ -79,12 +79,15 @@ export const Modal = ({
                   )}
                   {titleElement && titleElement}
                   {title && title}
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-10 px-5 py-2 focus:outline-none"
-                  >
-                    <IconTimes className="w-14" />
-                  </button>
+                  <div className='w-[80px] flex justify-end'>
+                    <button
+                      onClick={() => setIsOpen(false)}
+                      className="rounded-10 px-5 py-2 focus:outline-none"
+                    >
+                      <IconTimes className="w-14" />
+                    </button>
+                  </div>
+
                 </Dialog.Title>
                 <div className="max-h-[80vh] overflow-scroll">
                   {separator && <hr className="widget-separator m-0" />}

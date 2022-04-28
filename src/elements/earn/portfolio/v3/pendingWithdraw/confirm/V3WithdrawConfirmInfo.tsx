@@ -10,7 +10,7 @@ export const V3WithdrawConfirmInfo = ({
   handleCancelClick,
 }: Props) => {
   return (
-    <div className="bg-fog p-20 rounded space-y-20">
+    <div className="bg-secondary p-20 rounded space-y-20">
       <h3 className="text-20">Cancel withdrawal and earn more!</h3>
 
       <div className="flex space-x-10">

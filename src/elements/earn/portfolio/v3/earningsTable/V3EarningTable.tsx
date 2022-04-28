@@ -21,7 +21,7 @@ export const V3EarningTable = () => {
     () => [
       {
         id: 'poolId',
-        Header: '',
+        Header: 'Balance',
         accessor: 'poolId',
         Cell: ({ cell }) => (
           <TokenBalance
@@ -36,16 +36,16 @@ export const V3EarningTable = () => {
       },
       {
         id: 'totalGains',
-        Header: 'Total gains',
-        Cell: () => 'ETH 123123',
+        Header: 'Lifetime gains',
+        Cell: () => '????',
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,
       },
       {
         id: 'roi',
-        Header: 'Total returns',
-        Cell: () => <span className="text-primary">7.5%</span>,
+        Header: 'Lifetime Bonuses',
+        Cell: () => <span className="text-primary">????%</span>,
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,
@@ -69,17 +69,17 @@ export const V3EarningTable = () => {
     []
   );
   return (
-    <section className="content-block pt-20">
-      <div className="absolute z-30 pt-10 pl-40">
-        <h2 className="text-[22px]">Earnings</h2>
-      </div>
+    <section>
+      <h2>Holdings</h2>
 
-      <DataTable<Holding>
-        data={holdings}
-        columns={columns}
-        stickyColumn
-        isLoading={isLoadingHoldings}
-      />
+      <div className="content-block pt-10 mt-20">
+        <DataTable<Holding>
+          data={holdings}
+          columns={columns}
+          stickyColumn
+          isLoading={isLoadingHoldings}
+        />
+      </div>
 
       {holdingToWithdraw && (
         <V3WithdrawModal

@@ -1,6 +1,6 @@
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { SortingRule, Row } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
@@ -8,7 +8,6 @@ import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCel
 import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
-import { ButtonToggle } from 'components/button/Button';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
 import { Popularity } from 'components/popularity/Popularity';
 import { PoolsTableSort } from './PoolsTableSort';
@@ -19,12 +18,12 @@ import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal
 interface Props {
   search: string;
   setSearch: (value: string) => void;
+  v3Selected: boolean;
 }
 
-export const PoolsTable = ({ search, setSearch }: Props) => {
+export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
   const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const v3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
-  const [v3Selected, setV3Selected] = useState(true);
 
   const v2Data = useMemo<Pool[]>(() => {
     return v2Pools
@@ -159,27 +158,9 @@ export const PoolsTable = ({ search, setSearch }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-section pt-20 pb-10">
-      <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
+    <section className="content-block pt-20">
+      <div className="flex justify-between items-center mb-20 mx-[20px]">
         <div className="flex items-center gap-x-10">
-          <div className="w-[120px] text-16">
-            <ButtonToggle
-              labels={[
-                <div
-                  key="v3"
-                  className="flex items-center gap-x-[4px] mx-12 my-6"
-                >
-                  <IconProtected className="w-15" />
-                  V3
-                </div>,
-                <div key="v2" className="mx-12 my-6">
-                  V2
-                </div>,
-              ]}
-              toggle={!v3Selected}
-              setToggle={() => setV3Selected(!v3Selected)}
-            />
-          </div>
           <div className="mr-16">
             <SearchInput
               value={search}

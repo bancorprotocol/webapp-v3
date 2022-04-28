@@ -12,7 +12,7 @@
   }
 
   h2 {
-    @apply text-16 font-semibold;
+    @apply text-20 font-normal;
   }
 
   h3 {
