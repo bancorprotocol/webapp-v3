@@ -78,7 +78,7 @@ export const getRateAndPriceImapct = async (
       v3Rate
     );
 
-    const isV3 = v3Rate >= v2Rate;
+    const isV3 = Number(v3Rate) >= Number(v2Rate);
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
