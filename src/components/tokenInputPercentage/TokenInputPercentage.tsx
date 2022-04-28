@@ -1,8 +1,8 @@
 import { BigNumber } from 'bignumber.js';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Token } from 'services/observables/tokens';
-import { classNameGenerator } from 'utils/pureFunctions';
 
 interface TokenInputPercentageProps {
   label: string;
@@ -63,17 +63,17 @@ export const TokenInputPercentage = ({
           balanceLabel={balanceLabel}
         />
       )}
-      <div className="flex justify-between space-x-8 mt-15">
-        <div className="md:w-[125px]" />
+      <div className="flex justify-end space-x-5 mt-10">
         {percentages.map((slip, index) => (
-          <button
+          <Button
             key={'slippage' + slip}
-            className={`btn-sm rounded-10 h-[34px] w-[66px] text-14 ${classNameGenerator(
-              {
-                'btn-outline-secondary': selPercentage !== index,
-                'btn-primary': selPercentage === index,
-              }
-            )} bg-opacity-0`}
+            size={ButtonSize.EXTRASMALL}
+            variant={
+              selPercentage === index
+                ? ButtonVariant.PRIMARY
+                : ButtonVariant.SECONDARY
+            }
+            className="rounded-10 w-full"
             onClick={() => {
               setSelPercentage(index);
               if (token && fieldBalance) {
@@ -88,7 +88,7 @@ export const TokenInputPercentage = ({
             }}
           >
             +{slip}%
-          </button>
+          </Button>
         ))}
       </div>
     </>

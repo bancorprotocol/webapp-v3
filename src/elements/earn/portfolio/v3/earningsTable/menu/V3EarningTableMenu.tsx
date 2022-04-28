@@ -66,7 +66,7 @@ export const V3EarningTableMenu = memo(
                   afterLeave={() => setPopperElement(null)}
                 >
                   <Popover.Panel className="w-screen max-w-[300px]">
-                    <div className="overflow-hidden rounded bg-white p-20 border border-silver h-[280px]">
+                    <div className="overflow-hidden rounded bg-white dark:bg-black p-20 border border-silver dark:border-grey h-[280px]">
                       <V3EarningsTableMenuContent
                         holding={holding}
                         setHoldingToWithdraw={setHoldingToWithdraw}

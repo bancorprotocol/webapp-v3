@@ -10,7 +10,7 @@ export const RewardsStake = (props: RouteComponentProps<{ id: string }>) => {
   const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id));
   const title = 'Stake Rewards';
   return (
-    <div>
+    <div className="pt-40 md:pt-[100px]">
       {status === 'loading' ? (
         <WidgetLoading title={title} />
       ) : (

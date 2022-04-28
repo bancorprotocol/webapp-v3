@@ -1,3 +1,5 @@
+import { Page } from 'components/Page';
+
 const content = [
   {
     id: 1,
@@ -92,79 +94,80 @@ const content = [
 ];
 
 export const TermsOfUse = () => {
+  const title = 'Terms of Use';
+
   return (
-    <div className="max-w-[1140px] pt-80 mb-20 mx-auto bg-fog dark:bg-black">
-      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0 mb-20">
-        Terms of Use
-      </h1>
+    <Page title={title}>
+      <>
+        <p className="mt-40">
+          By accessing or using the Token Liquidity Network website and API
+          located at{' '}
+          <a
+            target="_blank"
+            href="https://bancor.network/"
+            rel="noopener noreferrer nofollow"
+            data-radium="true"
+          >
+            https://bancor.network
+          </a>
+          , and any linked or directed subdomain (such as{' '}
+          <a
+            target="_blank"
+            href="https://app.bancor.network/"
+            rel="noopener noreferrer nofollow"
+            data-radium="true"
+          >
+            https://app.bancor.network
+          </a>
+          ) (the “Site”) and any content made available through the Site, you
+          (the “User” and collectively with others using the Site - “Users”)
+          agree to be bound by these Terms of Use (“Terms”). The rights in the
+          Site are held by Bprotocol Foundation, a Swiss foundation, with legal
+          seat in Zug, Switzerland, registered in the Swiss commercial register
+          under UID CHE-181.679.849 (“Bancor”), and the terms “we,” “us,” and
+          “our” refer to Bancor. Please read these Terms carefully. These Terms
+          govern your access to and use of the Site and Content (as defined
+          herein). By using the Content or visiting the Site, you signify your
+          consent to both these Terms and our Privacy Policy, a current version
+          of which is available at
+          <a
+            target="_blank"
+            href="https://app.bancor.network/privacy-policy"
+            rel="noopener noreferrer nofollow"
+            data-radium="true"
+          >
+            https://app.bancor.network/privacy-policy
+          </a>
+          , which is incorporated herein by reference and which may be modified
+          from time to time at our sole discretion and without prior notice.
+          Changes may be made to these Terms from time to time. These changes
+          will apply at that instant to all then current and subsequent uses of
+          the Site. You waive any right you may have to receive specific notice
+          of such changes or modifications. Your continued use of this Site acts
+          as acceptance of such changes or modifications. If you do not agree to
+          the Terms in effect when you access or use the Site, you must stop
+          using the Site.
+        </p>
+        <p className="my-20">
+          <strong>
+            IF YOU DO NOT AGREE TO ANY OF THESE TERMS, PLEASE DO NOT USE THE
+            SITE OR CONTENT.
+          </strong>
+        </p>
 
-      <p>
-        By accessing or using the Token Liquidity Network website and API
-        located at{' '}
-        <a
-          target="_blank"
-          href="https://bancor.network/"
-          rel="noopener noreferrer nofollow"
-          data-radium="true"
-        >
-          https://bancor.network
-        </a>
-        , and any linked or directed subdomain (such as{' '}
-        <a
-          target="_blank"
-          href="https://app.bancor.network/"
-          rel="noopener noreferrer nofollow"
-          data-radium="true"
-        >
-          https://app.bancor.network
-        </a>
-        ) (the “Site”) and any content made available through the Site, you (the
-        “User” and collectively with others using the Site - “Users”) agree to
-        be bound by these Terms of Use (“Terms”). The rights in the Site are
-        held by Bprotocol Foundation, a Swiss foundation, with legal seat in
-        Zug, Switzerland, registered in the Swiss commercial register under UID
-        CHE-181.679.849 (“Bancor”), and the terms “we,” “us,” and “our” refer to
-        Bancor. Please read these Terms carefully. These Terms govern your
-        access to and use of the Site and Content (as defined herein). By using
-        the Content or visiting the Site, you signify your consent to both these
-        Terms and our Privacy Policy, a current version of which is available at
-        <a
-          target="_blank"
-          href="https://app.bancor.network/privacy-policy"
-          rel="noopener noreferrer nofollow"
-          data-radium="true"
-        >
-          https://app.bancor.network/privacy-policy
-        </a>
-        , which is incorporated herein by reference and which may be modified
-        from time to time at our sole discretion and without prior notice.
-        Changes may be made to these Terms from time to time. These changes will
-        apply at that instant to all then current and subsequent uses of the
-        Site. You waive any right you may have to receive specific notice of
-        such changes or modifications. Your continued use of this Site acts as
-        acceptance of such changes or modifications. If you do not agree to the
-        Terms in effect when you access or use the Site, you must stop using the
-        Site.
-      </p>
-      <p className="my-20">
-        <strong>
-          IF YOU DO NOT AGREE TO ANY OF THESE TERMS, PLEASE DO NOT USE THE SITE
-          OR CONTENT.
-        </strong>
-      </p>
+        {content.map((item, index) => (
+          <div key={index} className="pt-10 legal">
+            <h2 className="text-[20px] font-semibold mb-10">
+              {item.id}. {item.subtitle}
+            </h2>
 
-      {content.map((item, index) => (
-        <div key={index} className="pt-10 legal">
-          <h2 className="text-[20px] font-semibold mb-10">
-            {item.id}. {item.subtitle}
-          </h2>
-
-          <p
-            className="text-[16px] mb-20"
-            dangerouslySetInnerHTML={{ __html: item.html }}
-          />
-        </div>
-      ))}
-    </div>
+            <p
+              className="text-[16px] mb-20"
+              dangerouslySetInnerHTML={{ __html: item.html }}
+            />
+          </div>
+        ))}
+      </>
+    </Page>
   );
 };

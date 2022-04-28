@@ -1,4 +1,4 @@
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -60,7 +60,13 @@ export const DepositV3Modal = ({ pool }: Props) => {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Deposit</Button>
+      <Button
+        onClick={() => setIsOpen(true)}
+        variant={ButtonVariant.SECONDARY}
+        size={ButtonSize.EXTRASMALL}
+      >
+        Deposit
+      </Button>
       <Modal
         title={'Deposit & Earn'}
         setIsOpen={setIsOpen}

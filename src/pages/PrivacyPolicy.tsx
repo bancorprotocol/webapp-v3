@@ -1,3 +1,5 @@
+import { Page } from 'components/Page';
+
 const content = [
   {
     id: 1,
@@ -67,18 +69,18 @@ const content = [
 ];
 
 export const PrivacyPolicy = () => {
-  return (
-    <div className="max-w-[1140px] pt-80 mb-20 mx-auto bg-fog dark:bg-black">
-      <h1 className="pt-10 text-[30px] font-semibold pl-10 md:pl-0 mb-20">
-        Privacy Policy
-      </h1>
+  const title = 'Privacy Policy';
 
-      {content.map((item, index) => (
-        <div key={index} className="pt-10 legal">
-          <h2 className="text-[20px] font-semibold mb-10">{item.subtitle}</h2>
-          <p className="text-[16px] mb-20">{item.subcontent}</p>
-        </div>
-      ))}
-    </div>
+  return (
+    <Page title={title}>
+      <div className="mt-40">
+        {content.map((item, index) => (
+          <div key={index} className="pt-10 legal">
+            <h2 className="text-[20px] font-semibold mb-10">{item.subtitle}</h2>
+            <p className="text-[16px] mb-20">{item.subcontent}</p>
+          </div>
+        ))}
+      </div>
+    </Page>
   );
 };

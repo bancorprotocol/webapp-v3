@@ -67,7 +67,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
         errorBalanceTkn={errorBalanceTkn}
         setErrorBalanceTkn={setErrorBalanceTkn}
       />
-      <div className="p-10 rounded bg-primary dark:bg-black-disabled mt-20">
+      <div className="p-10 rounded bg-secondary mt-20">
         <AddLiquidityDualTokenPrices
           bnt={bnt}
           tkn={tknWithUsd()}
