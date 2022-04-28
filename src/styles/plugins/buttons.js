@@ -28,7 +28,7 @@ module.exports = function () {
         [`@apply bg-${variant}`]: '',
         [`@apply hover:${hover}`]: '',
         [`@apply active:transform active:scale-95`]: '',
-        [`@apply disabled:bg-graphite`]: '',
+        [`@apply disabled:bg-graphite dark:disabled:bg-charcoal`]: '',
       };
       buttons[`.btn-${variant}-hover`] = {
         [`@apply ${hover}`]: '',

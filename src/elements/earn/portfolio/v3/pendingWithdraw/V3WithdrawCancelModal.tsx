@@ -43,7 +43,7 @@ export const V3WithdrawCancelModal = memo(
             logoURI={token.logoURI}
           />
 
-          <div className="bg-fog rounded p-20 flex justify-between">
+          <div className="bg-secondary rounded p-20 flex justify-between">
             <div>
               Compounding rewards{' '}
               <span className="text-secondary">{token.symbol}</span>
