@@ -378,16 +378,16 @@ const getV3PriceImpact = async (
 
     const spotPrice = calcReserve(
       shrinkToken(
-        fromBNT
-          ? toLiqudity.baseTokenTradingLiquidity.toString()
-          : toLiqudity.bntTradingLiquidity.toString(),
-        fromBNT ? toToken.decimals : fromToken.decimals
-      ),
-      shrinkToken(
         toBNT
           ? fromLiqudity.baseTokenTradingLiquidity.toString()
-          : fromLiqudity.bntTradingLiquidity.toString(),
+          : toLiqudity.bntTradingLiquidity.toString(),
         toBNT ? fromToken.decimals : toToken.decimals
+      ),
+      shrinkToken(
+        fromBNT
+          ? toLiqudity.baseTokenTradingLiquidity.toString()
+          : fromLiqudity.bntTradingLiquidity.toString(),
+        fromBNT ? toToken.decimals : fromToken.decimals
       ),
       ppmToDec(pool.tradingFeePPM)
     );
@@ -407,20 +407,20 @@ const getV3PriceImpact = async (
   );
 
   const spot1 = calcReserve(
-    shrinkToken(fromLiqudity.bntTradingLiquidity.toString(), bntDecimals),
     shrinkToken(
       fromLiqudity.baseTokenTradingLiquidity.toString(),
       fromToken.decimals
     ),
+    shrinkToken(fromLiqudity.bntTradingLiquidity.toString(), bntDecimals),
     ppmToDec(fromPool.tradingFeePPM)
   );
 
   const spot2 = calcReserve(
+    shrinkToken(toLiqudity.bntTradingLiquidity.toString(), bntDecimals),
     shrinkToken(
       toLiqudity.baseTokenTradingLiquidity.toString(),
       toToken.decimals
     ),
-    shrinkToken(toLiqudity.bntTradingLiquidity.toString(), bntDecimals),
     ppmToDec(toPool.tradingFeePPM)
   );
 
