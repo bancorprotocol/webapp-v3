@@ -14,7 +14,7 @@ import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
-import { uniqBy } from 'lodash';
+import { orderBy, uniqBy } from 'lodash';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -176,7 +176,7 @@ export const getPortfolioWithdrawalRequests = createSelector(
     withdrawalSettings: WithdrawalSettings,
     allTokensMap: Map<string, Token>
   ): WithdrawalRequest[] => {
-    return withdrawalRequestsRaw
+    const withdrawalRequests = withdrawalRequestsRaw
       .map((requestRaw) => {
         const token = allTokensMap.get(requestRaw.reserveToken);
         if (!token) {
@@ -205,6 +205,8 @@ export const getPortfolioWithdrawalRequests = createSelector(
         return request;
       })
       .filter((request) => request !== undefined) as WithdrawalRequest[];
+
+    return orderBy(withdrawalRequests, (request) => request.createdAt, 'asc');
   }
 );
 

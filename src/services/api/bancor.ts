@@ -69,6 +69,7 @@ export interface APIPoolV3 {
   supply: string;
   decimals: number;
   isWhitelisted: boolean;
+  apr: number;
 }
 
 export interface APIToken {
