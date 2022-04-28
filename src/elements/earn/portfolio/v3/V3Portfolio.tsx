@@ -22,8 +22,8 @@ const V3Portfolio = () => {
   const hasHoldings = true;
 
   return account ? (
-    <div className="grid grid-cols-12 lg:gap-x-40">
-      <div className="col-span-12 lg:col-span-12 xl:col-span-8 space-y-40">
+    <div className="grid grid-cols-12 gap-40">
+      <div className="col-span-12 md:col-span-6 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
             <V3TotalHoldings />
@@ -34,9 +34,21 @@ const V3Portfolio = () => {
         )}
         <V3AvailableToStake />
       </div>
-      <div className="col-span-12 lg:col-span-12 xl:col-span-4 space-y-40">
-        <V3ClaimBonuses />
-        <V3Withdraw />
+      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40">
+        <div>
+          <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px]">
+            Claim Bonuses
+          </h2>
+          <V3ClaimBonuses />
+        </div>
+
+        <div>
+          <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px]">
+            Pendings Withdrawals
+          </h2>
+          <V3Withdraw />
+        </div>
+
         <V3ExternalHoldings />
       </div>
     </div>

@@ -159,7 +159,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
 
   return (
     <section className="content-block pt-20">
-      <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
+      <div className="flex justify-between items-center mb-20 mx-[20px]">
         <div className="flex items-center gap-x-10">
           <div className="mr-16">
             <SearchInput

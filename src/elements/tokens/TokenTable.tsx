@@ -150,13 +150,13 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-section pt-20 pb-10">
-      <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
+    <section className="content-block pt-20 pb-10">
+      <div className="flex justify-between items-center mb-20 mx-[20px]">
         <h2>Tokens</h2>
         <SearchInput
           value={searchInput}
           setValue={setSearchInput}
-          className="max-w-[160px] rounded-10 h-[35px]"
+          className="max-w-[300px] rounded-20 h-[35px]"
         />
       </div>
 
