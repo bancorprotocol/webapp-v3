@@ -41,7 +41,6 @@ export const Pools = () => {
         <div className={`${v3Selected ? 'col-span-8' : 'col-span-12'}`}>
           <PoolsTable
             v3Selected={v3Selected}
-            setV3Selected={setV3Selected}
             search={searchInput}
             setSearch={setSearchInput}
           />
