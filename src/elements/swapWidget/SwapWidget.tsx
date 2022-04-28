@@ -85,53 +85,55 @@ export const SwapWidget = ({
   );
 
   return (
-    <div className="2xl:space-x-20">
-      <div className="flex justify-center w-full mx-auto">
-        <div className="widget">
-          <SwapHeader
-            isLimit={isLimit}
-            setIsLimit={(limit: boolean) =>
-              replaceLimit(fromToken, tokens, limit, toToken)
-            }
-          />
-          <hr className="widget-separator" />
+    <div className="2xl:space-x-20 flex justify-center mx-auto">
+      <div className="flex justify-center w-full md:w-auto mx-auto space-x-30">
+        <div className="w-full md:w-auto">
+          <div className="widget">
+            <SwapHeader
+              isLimit={isLimit}
+              setIsLimit={(limit: boolean) =>
+                replaceLimit(fromToken, tokens, limit, toToken)
+              }
+            />
+            <hr className="widget-separator" />
+            {isLimit ? (
+              <SwapLimit
+                fromToken={fromToken}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, true, toToken)
+                }
+                toToken={toToken}
+                setToToken={(to: Token) => replaceTo(fromToken, true, to)}
+                switchTokens={() => switchTokens(fromToken, true, toToken)}
+                refreshLimit={refreshLimit}
+              />
+            ) : (
+              <SwapMarket
+                fromToken={fromToken}
+                setFromToken={(from: Token) =>
+                  replaceFrom(from, tokens, false, toToken)
+                }
+                toToken={toToken}
+                setToToken={(to: Token) => replaceTo(fromToken, false, to)}
+                switchTokens={() => switchTokens(fromToken, false, toToken)}
+              />
+            )}
+          </div>
           {isLimit ? (
-            <SwapLimit
-              fromToken={fromToken}
-              setFromToken={(from: Token) =>
-                replaceFrom(from, tokens, true, toToken)
-              }
-              toToken={toToken}
-              setToToken={(to: Token) => replaceTo(fromToken, true, to)}
-              switchTokens={() => switchTokens(fromToken, true, toToken)}
-              refreshLimit={refreshLimit}
-            />
+            <div className="text-center text-10 text-grey mt-18">
+              Limit orders are powered by KeeperDAO
+            </div>
           ) : (
-            <SwapMarket
-              fromToken={fromToken}
-              setFromToken={(from: Token) =>
-                replaceFrom(from, tokens, false, toToken)
-              }
-              toToken={toToken}
-              setToToken={(to: Token) => replaceTo(fromToken, false, to)}
-              switchTokens={() => switchTokens(fromToken, false, toToken)}
-            />
+            ''
           )}
         </div>
-        {isLimit ? (
-          <div className="text-center text-10 text-grey mt-18">
-            Limit orders are powered by KeeperDAO
-          </div>
-        ) : (
-          ''
-        )}
+        <Insight
+          fromToken={fromToken}
+          toToken={toToken}
+          fromTokenIntoBlock={fromTokenITB}
+          toTokenIntoBlock={toTokenITB}
+        />
       </div>
-      <Insight
-        fromToken={fromToken}
-        toToken={toToken}
-        fromTokenIntoBlock={fromTokenITB}
-        toTokenIntoBlock={toTokenITB}
-      />
     </div>
   );
 };
