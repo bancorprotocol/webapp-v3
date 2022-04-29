@@ -1,5 +1,3 @@
-import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
-import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
@@ -8,7 +6,6 @@ import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { openWalletModal } from 'store/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'store';
-import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
 import { WhatsNew } from './WhatsNew';
 
 const V3Portfolio = () => {
@@ -21,7 +18,7 @@ const V3Portfolio = () => {
   const hasHoldings = true;
 
   return account ? (
-    <div className="grid grid-cols-12 gap-40">
+    <div className="grid grid-cols-12 md:gap-40">
       <div className="col-span-12 md:col-span-6 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
@@ -31,23 +28,6 @@ const V3Portfolio = () => {
           <WhatsNew />
         )}
         <V3AvailableToStake />
-      </div>
-      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40 md:mt-[44px]">
-        <div>
-          <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
-            Claim Bonuses
-          </h2>
-          <V3ClaimBonuses />
-        </div>
-
-        <div>
-          <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
-            Pendings Withdrawals
-          </h2>
-          <V3Withdraw />
-        </div>
-
-        <V3ExternalHoldings />
       </div>
     </div>
   ) : (
