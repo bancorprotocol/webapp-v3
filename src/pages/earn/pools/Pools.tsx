@@ -48,7 +48,7 @@ export const Pools = () => {
         {v3Selected && (
           <div className="hidden lg:block col-span-4 space-y-40">
             <Statistics />
-            <TopPools setSearch={setSearchInput} />
+            <TopPools />
           </div>
         )}
       </div>

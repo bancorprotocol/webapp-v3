@@ -221,6 +221,13 @@ export interface GroupedStandardReward {
   rewards: StandardReward[];
 }
 
+export const getIsLoadingStandardRewards = createSelector(
+  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.v3Portfolio.isLoadingStandardRewards,
+  (isLoadingTokens, isLoadingStandardRewards): boolean => {
+    return isLoadingTokens || isLoadingStandardRewards;
+  }
+);
 export const getStandardRewards = createSelector(
   (state: RootState) => state.v3Portfolio.standardRewards,
   (state: RootState) => getAllTokensMap(state),

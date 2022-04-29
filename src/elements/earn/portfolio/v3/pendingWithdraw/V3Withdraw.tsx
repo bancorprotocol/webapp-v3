@@ -33,7 +33,7 @@ export const V3Withdraw = () => {
             />
           ))}
           {isLoadingWithdrawalRequests &&
-            [...Array(5)].map((_, index) => (
+            [...Array(3)].map((_, index) => (
               <div key={index} className="loading-skeleton w-full h-[30px]" />
             ))}
         </div>

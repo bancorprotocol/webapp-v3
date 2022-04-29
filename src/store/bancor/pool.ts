@@ -56,12 +56,11 @@ export const getPools = createSelector(
   }
 );
 
-export const getProtectedPools: any = createSelector(
-  getPools,
-  (pools: Pool[]) => pools.filter((p) => p.isProtected)
+export const getProtectedPools = createSelector(getPools, (pools: Pool[]) =>
+  pools.filter((p) => p.isProtected)
 );
 
-export const getTopPools: any = createSelector(getPools, (pools: Pool[]) => {
+export const getTopPools = createSelector(getPools, (pools: Pool[]) => {
   const filteredPools = pools
     .filter((p) => p.isProtected && p.liquidity > 100000)
     .map((p) => {
@@ -94,6 +93,13 @@ export const getTopPools: any = createSelector(getPools, (pools: Pool[]) => {
   }
   return orderBy(topPools, 'apr', 'desc').slice(0, 20);
 });
+
+export const getTopPoolsV3 = createSelector(
+  (state: RootState) => state.pool.v3Pools,
+  (pools: PoolV3[]) => {
+    return orderBy(pools, 'apr', 'desc').slice(0, 20);
+  }
+);
 
 export interface SelectedPool {
   status: 'loading' | 'ready';

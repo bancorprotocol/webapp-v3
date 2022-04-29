@@ -1,6 +1,5 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
 import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
-import { V3TotalHoldings } from 'elements/earn/portfolio/v3/V3TotalHoldings';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
@@ -26,7 +25,6 @@ const V3Portfolio = () => {
       <div className="col-span-12 md:col-span-6 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
-            <V3TotalHoldings />
             <V3EarningTable />
           </>
         ) : (
@@ -34,7 +32,7 @@ const V3Portfolio = () => {
         )}
         <V3AvailableToStake />
       </div>
-      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40">
+      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40 md:mt-[44px]">
         <div>
           <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
             Claim Bonuses

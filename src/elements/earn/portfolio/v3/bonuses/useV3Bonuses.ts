@@ -1,6 +1,7 @@
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import {
+  getIsLoadingStandardRewards,
   getStandardRewards,
   openBonusesModal,
 } from 'store/portfolio/v3Portfolio';
@@ -17,6 +18,7 @@ export const useV3Bonuses = () => {
     (state) => state.v3Portfolio.bonusesModal
   );
   const bonuses = useAppSelector(getStandardRewards);
+  const isLoading = useAppSelector(getIsLoadingStandardRewards);
 
   const setBonusModalOpen = (state: boolean) => {
     dispatch(openBonusesModal(state));
@@ -75,5 +77,6 @@ export const useV3Bonuses = () => {
     handleClaim,
     handleClaimAndEarn,
     bonusUsdTotal,
+    isLoading,
   };
 };

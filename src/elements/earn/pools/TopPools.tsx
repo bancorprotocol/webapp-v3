@@ -1,14 +1,10 @@
 import { Ticker } from 'components/ticker/Ticker';
 import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
-import { getTopPools, TopPool } from 'store/bancor/pool';
+import { getTopPoolsV3 } from 'store/bancor/pool';
 
-interface Props {
-  setSearch: Function;
-}
-
-export const TopPools = ({ setSearch }: Props) => {
-  const pools = useAppSelector<TopPool[]>(getTopPools);
+export const TopPools = () => {
+  const pools = useAppSelector(getTopPoolsV3);
 
   return (
     <section className="content-block pt-20 pb-10">
@@ -24,13 +20,15 @@ export const TopPools = ({ setSearch }: Props) => {
                   >
                     <div className="flex">
                       <Image
-                        src={pool.tknLogoURI.replace('thumb', 'small')}
+                        src={pool.reserveToken.logoURI}
                         alt="Token Logo"
                         className="bg-fog rounded-full w-50 h-50"
                       />
                     </div>
                     <div className="ml-10 text-12 dark:text-graphite text-left">
-                      <div className="font-medium">{pool.tknSymbol}</div>
+                      <div className="font-medium">
+                        {pool.reserveToken.symbol}
+                      </div>
                       <div className="text-16">
                         <span className="text-primary text-20 font-semibold">
                           {pool.apr.toFixed(0)}%
