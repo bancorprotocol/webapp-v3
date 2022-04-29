@@ -13,8 +13,14 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
-import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import {
+  getAllStandardRewardProgramsByPoolId,
+  getTokenById,
+} from 'store/bancor/bancor';
 import useAsyncEffect from 'use-async-effect';
+import { Token } from 'services/observables/tokens';
+import { toBigNumber } from 'utils/helperFunctions';
+import { shrinkToken } from 'utils/formulas';
 
 interface Props {
   pool: PoolV3;
@@ -30,6 +36,9 @@ export const DepositV3Modal = ({ pool }: Props) => {
     getAllStandardRewardProgramsByPoolId
   ).get(pool.pool_dlt_id);
   console.log(rewardProgram);
+  const eth = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, ethToken)
+  );
 
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
@@ -44,29 +53,50 @@ export const DepositV3Modal = ({ pool }: Props) => {
       !pool.reserveToken.balance ||
       !account ||
       !fieldBalance ||
-      !amount
+      !amount ||
+      !eth
     ) {
       setExtraGasNeeded('0');
       return;
     }
     const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
     const isETH = pool.reserveToken.address === ethToken;
-    const estimatedGasDeposit =
+
+    const estimatedGasDeposit = toBigNumber(
       await ContractsApi.BancorNetwork.write.estimateGas.deposit(
         pool.pool_dlt_id,
         amountWei,
         { value: isETH ? amountWei : undefined }
-      );
-    const estimatedGasJoin =
+      )
+    );
+
+    const estimatedGasJoin = toBigNumber(
       await ContractsApi.StandardRewards.write.estimateGas.depositAndJoin(
         rewardProgram.id,
         amountWei
-      );
-    const extraGasNeeded = estimatedGasJoin.sub(estimatedGasDeposit);
-    // TODO: calculate to USD: extraGasNeeded * ETHUSDPrice * 10^18
+      )
+    );
+
+    const extraGasNeeded = shrinkToken(
+      estimatedGasJoin.minus(estimatedGasDeposit).times(eth.usdPrice),
+      eth.decimals
+    );
     console.log('extraGasNeeded', extraGasNeeded);
+
     setExtraGasNeeded(extraGasNeeded.toString());
-  }, [accessFullEarnings, amount, fieldBalance, pool.pool_dlt_id]);
+  }, [
+    accessFullEarnings,
+    amount,
+    fieldBalance,
+    pool.pool_dlt_id,
+    account,
+    eth,
+    rewardProgram,
+    pool.reserveToken.address,
+    pool.reserveToken.decimals,
+    pool.reserveToken.balance,
+    eth,
+  ]);
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
