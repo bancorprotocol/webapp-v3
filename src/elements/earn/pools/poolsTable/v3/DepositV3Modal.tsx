@@ -73,7 +73,8 @@ export const DepositV3Modal = ({ pool }: Props) => {
     const estimatedGasJoin = toBigNumber(
       await ContractsApi.StandardRewards.write.estimateGas.depositAndJoin(
         rewardProgram.id,
-        amountWei
+        amountWei,
+        { value: isETH ? amountWei : undefined }
       )
     );
 
@@ -81,7 +82,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
       estimatedGasJoin.minus(estimatedGasDeposit).times(eth.usdPrice),
       eth.decimals
     );
-    console.log('extraGasNeeded', extraGasNeeded);
 
     setExtraGasNeeded(extraGasNeeded.toString());
   }, [
@@ -117,7 +117,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
             amountWei,
             { value: isETH ? amountWei : undefined }
           );
-      console.log('accessFullEarnings?', accessFullEarnings);
       console.log(res);
       setIsOpen(false);
       pushPortfolio();
@@ -172,7 +171,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
                   />
                   {'40%???'}
                 </div>
-                <div>Additional gas ~${extraGasNeeded} TODO: to USD</div>
+                <div>Additional gas ~${extraGasNeeded}</div>
                 <div>Compounding rewards {pool.reserveToken.symbol} ???30%</div>
               </div>
             ) : (
