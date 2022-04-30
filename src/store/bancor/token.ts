@@ -19,7 +19,7 @@ export const getAvailableToStakeTokens = createSelector(
   (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     const poolsWithApr = pools
       .map((pool) => {
-        const token = allTokensMap.get(pool.pool_dlt_id);
+        const token = allTokensMap.get(pool.poolDltId);
         const tknApr = pool.apr;
         const bntApr = pool.apr;
 
@@ -43,7 +43,7 @@ export const getV3Tokens = createSelector(
   ],
   (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     return pools
-      .map((pool) => allTokensMap.get(pool.pool_dlt_id))
+      .map((pool) => allTokensMap.get(pool.poolDltId))
       .filter((t) => !!t) as Token[];
   }
 );

@@ -1,4 +1,3 @@
-import { APIPool, APIToken } from 'services/api/bancor';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { user$ } from 'services/observables/user';
@@ -20,6 +19,7 @@ import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
+import { APIPool, APIToken } from 'services/api/bancorApi/bancorApi.types';
 
 export interface TokenMinimal {
   address: string;

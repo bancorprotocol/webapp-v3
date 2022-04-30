@@ -39,7 +39,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
 
     try {
       const res = await ContractsApi.BancorNetwork.write.deposit(
-        pool.pool_dlt_id,
+        pool.poolDltId,
         amountWei,
         { value: isETH ? amountWei : undefined }
       );

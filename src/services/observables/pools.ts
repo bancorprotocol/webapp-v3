@@ -1,9 +1,7 @@
-import { APIPool, APIPoolV3, APIReward } from 'services/api/bancor';
-import { Token } from 'services/observables/tokens';
+import { allTokensNew$, Token } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
-import { allTokensNew$ } from 'services/observables/tokens';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
@@ -11,6 +9,11 @@ import { bntToken, ethToken, getNetworkVariables } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { shrinkToken } from 'utils/formulas';
 import { fetchETH } from 'services/web3/token/token';
+import {
+  APIPool,
+  APIPoolV3,
+  APIReward,
+} from 'services/api/bancorApi/bancorApi.types';
 
 export interface Reserve {
   address: string;
@@ -163,7 +166,7 @@ export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
 
 export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
-    const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.pool_dlt_id, p]));
+    const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
     const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
     const masterVault = await ContractsApi.BancorNetworkInfo.read.masterVault();
     const poolsV3 = await Promise.all(
@@ -175,29 +178,36 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
         }
         const fundingLimit =
           await ContractsApi.NetworkSettings.read.poolFundingLimit(
-            apiPool.pool_dlt_id
+            apiPool.poolDltId
           );
 
         const poolLiquidity =
           await ContractsApi.PoolCollection.read.poolLiquidity(
-            apiPool.pool_dlt_id
+            apiPool.poolDltId
           );
 
         const data = await ContractsApi.PoolCollection.read.poolData(
-          apiPool.pool_dlt_id
+          apiPool.poolDltId
         );
 
-        const isBnt = apiPool.pool_dlt_id === getNetworkVariables().bntToken;
+        const isBnt = apiPool.poolDltId === getNetworkVariables().bntToken;
 
         const tknVaultBalance =
-          apiPool.pool_dlt_id !== ethToken
-            ? await ContractsApi.Token(apiPool.pool_dlt_id).read.balanceOf(
+          apiPool.poolDltId !== ethToken
+            ? await ContractsApi.Token(apiPool.poolDltId).read.balanceOf(
                 masterVault
               )
             : await fetchETH(masterVault);
 
+        let apr = new BigNumber(apiPool.fees24h.usd)
+          .times(365)
+          .div(apiPool.tradingLiquidity.usd)
+          .times(100)
+          .toNumber();
+
         const pool: PoolV3 = {
           ...apiPool,
+          apr,
           reserveToken,
           fundingLimit: shrinkToken(fundingLimit.toString(), apiPool.decimals),
           stakedBalance: shrinkToken(
