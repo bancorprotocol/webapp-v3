@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 });
 
 export abstract class BancorV2Api {
-  static fetchWelcome = async (): Promise<WelcomeData> => {
+  static getWelcome = async (): Promise<WelcomeData> => {
     const { data } = await axiosInstance.get<WelcomeData>('welcome');
 
     return {

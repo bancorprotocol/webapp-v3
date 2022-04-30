@@ -7,7 +7,7 @@ import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { APIPoolV3, WelcomeData } from 'services/api/bancorApi/bancorApi.types';
 
 export const apiData$ = combineLatest([fifteenSeconds$]).pipe(
-  switchMapIgnoreThrow(() => BancorApi.v2.fetchWelcome()),
+  switchMapIgnoreThrow(() => BancorApi.v2.getWelcome()),
   distinctUntilChanged<WelcomeData>(isEqual),
   shareReplay(1)
 );
@@ -25,7 +25,7 @@ export const apiPools$ = apiData$.pipe(
 );
 
 export const apiPoolsV3$ = combineLatest([fifteenSeconds$]).pipe(
-  switchMapIgnoreThrow(() => BancorApi.v3.fetchPools()),
+  switchMapIgnoreThrow(() => BancorApi.v3.getPools()),
   distinctUntilChanged<APIPoolV3[]>(isEqual),
   shareReplay(1)
 );

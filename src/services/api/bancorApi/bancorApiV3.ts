@@ -12,18 +12,18 @@ const axiosInstance = axios.create({
 });
 
 export abstract class BancorV3Api {
-  static fetchWelcome = async (): Promise<APIWelcomeV3> => {
+  static getWelcome = async (): Promise<APIWelcomeV3> => {
     const { data } = await axiosInstance.get<APIWelcomeV3>('/welcome');
     return data;
   };
 
-  static fetchPools = async (): Promise<APIPoolV3[]> => {
+  static getPools = async (): Promise<APIPoolV3[]> => {
     // TODO - add pools endpoint to backend
-    const { pools } = await this.fetchWelcome();
+    const { pools } = await this.getWelcome();
     return pools;
   };
 
-  static fetchStatistics = async (): Promise<any[]> => {
+  static getStatistics = async (): Promise<any[]> => {
     // TODO - add statistics endpoint to backend
     return [];
   };
