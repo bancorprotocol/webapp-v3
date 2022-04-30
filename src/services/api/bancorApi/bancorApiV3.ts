@@ -22,4 +22,9 @@ export abstract class BancorV3Api {
     const { pools } = await this.fetchWelcome();
     return pools;
   };
+
+  static fetchStatistics = async (): Promise<any[]> => {
+    // TODO - add statistics endpoint to backend
+    return [];
+  };
 }
