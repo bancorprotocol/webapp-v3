@@ -5,7 +5,7 @@ import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { NavLink } from 'react-router-dom';
-import { pools, portfolio, swap, tokens, vote } from 'services/router';
+import { earn, portfolio, trade, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
@@ -36,18 +36,18 @@ export const LayoutHeader = () => {
       >
         <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
-            <NavLink to={pools}>
+            <NavLink to={earn}>
               <IconBancor className="w-[18px]" />
             </NavLink>
             <TopMenuDropdown
               items={[
-                { title: 'Trade', link: swap },
+                { title: 'Trade', link: trade },
                 { title: 'Tokens', link: tokens },
               ]}
               className="w-[115px]"
             />
 
-            <NavLink to={pools} exact strict>
+            <NavLink to={earn} exact strict>
               Earn
             </NavLink>
             <TopMenuDropdown
@@ -64,7 +64,7 @@ export const LayoutHeader = () => {
             {isForkAvailable && <NetworkIndicator />}
           </div>
           <div className="md:hidden">
-            <NavLink to={pools}>
+            <NavLink to={earn}>
               <IconBancor className="w-[18px]" />
             </NavLink>
           </div>
