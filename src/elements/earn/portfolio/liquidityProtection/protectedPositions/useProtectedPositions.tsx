@@ -9,6 +9,7 @@ import { ProtectedPositionTableCellRoi } from 'elements/earn/portfolio/liquidity
 import { getGroupedPositions } from 'store/liquidity/liquidity';
 import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
 import { ProtectedPositionTableCellClaimable } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellClaimable';
+import { sorAlphaByKey, sortNumbersByKey } from 'utils/pureFunctions';
 
 export const useProtectedPositions = () => {
   const groupedPositions =
@@ -30,6 +31,8 @@ export const useProtectedPositions = () => {
         accessor: 'pool',
         Cell: (cellData) =>
           ProtectedPositionTableCellLiquidity(cellData.row.original),
+        sortType: (a, b) =>
+          sorAlphaByKey(a.original, b.original, ['reserveToken', 'symbol']),
         minWidth: 130,
         sortDescFirst: true,
       },
@@ -43,6 +46,11 @@ export const useProtectedPositions = () => {
             usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
           }),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, [
+            'initialStake',
+            'usdAmount',
+          ]),
         minWidth: 130,
         sortDescFirst: true,
         headerClassName: 'justify-center',
@@ -58,6 +66,11 @@ export const useProtectedPositions = () => {
             usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
           }),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, [
+            'protectedAmount',
+            'usdAmount',
+          ]),
         minWidth: 130,
         sortDescFirst: true,
         headerClassName: 'justify-center',
@@ -69,6 +82,11 @@ export const useProtectedPositions = () => {
         accessor: 'claimableAmount',
         Header: 'Claimable',
         Cell: (cellData) => ProtectedPositionTableCellClaimable(cellData.row),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, [
+            'claimableAmount',
+            'usdAmount',
+          ]),
         minWidth: 130,
         sortDescFirst: true,
         headerClassName: 'justify-center',

@@ -1,4 +1,6 @@
 import { Token } from 'services/observables/tokens';
+import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
+import { get as _get } from 'lodash';
 
 export const shortenString = (
   string: string,
@@ -63,6 +65,15 @@ export const sortTokenBalanceAlphabetic = (a: Token, b: Token) => {
   if (diff !== 0) return diff;
 
   return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase());
+};
+
+export const sortNumbersByKey = <T>(a: T, b: T, key: string[]) =>
+  Number(_get(a, key)) - Number(_get(b, key));
+
+export const sorAlphaByKey = <T>(a: T, b: T, key: string[]) => {
+  return (_get(a, key) as unknown as string)
+    .toUpperCase()
+    .localeCompare((_get(b, key) as unknown as string).toUpperCase());
 };
 
 export const openNewTab = (url: string) =>
