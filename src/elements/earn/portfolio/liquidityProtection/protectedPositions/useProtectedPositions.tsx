@@ -99,6 +99,7 @@ export const useProtectedPositions = () => {
         Header: 'Fees & Rewards',
         Cell: (cellData) =>
           ProtectedPositionTableCellFees(cellData.row.original),
+        sortType: (a, b) => sortNumbersByKey(a.original, b.original, ['fees']),
         minWidth: 130,
         sortDescFirst: true,
         headerClassName: 'justify-center',
@@ -111,8 +112,9 @@ export const useProtectedPositions = () => {
         Header: 'ROI',
         Cell: (cellData) =>
           ProtectedPositionTableCellRoi(cellData.row.original),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['roi', 'fees']),
         minWidth: 130,
-        disableSortBy: true,
         headerClassName: 'justify-center',
         tooltip:
           'The ROI of your fully protected value vs. your initial stake.',
@@ -134,6 +136,7 @@ export const useProtectedPositions = () => {
       // },
       {
         id: 'expander',
+        disableSortBy: true,
         accessor: 'subRows',
         minWidth: 250,
         width: 250,
