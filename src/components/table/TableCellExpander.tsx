@@ -11,13 +11,13 @@ interface Props {
 }
 
 const getDefaultExpandedContent = () => (
-  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14 rotate-180" />
+  <button className="rounded-[12px] w-[35px] h-[35px] p-0 border shadow-header">
+    <IconChevronDown className="w-14 mx-auto rotate-180" />
   </button>
 );
 const getDefaultCollapsedContent = () => (
-  <button className="btn-outline-primary btn-sm rounded-[12px] !w-[35px] !h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14" />
+  <button className="rounded-[12px] w-[35px] h-[35px] p-0 border shadow-header">
+    <IconChevronDown className="w-14 mx-auto" />
   </button>
 );
 const getDefaultCannotExpandContent = () => '';
