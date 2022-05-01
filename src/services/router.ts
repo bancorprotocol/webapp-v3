@@ -5,9 +5,9 @@ import { wethToken, ethToken } from 'services/web3/config';
 const liquidityBase = '/pools/add-liquidity/';
 const rewardsBase = '/portfolio/rewards/';
 const rewardsBaseStake = `${rewardsBase}stake/`;
-export const swap = '/swap';
+export const trade = '/trade';
 export const tokens = '/tokens';
-export const pools = '/pools';
+export const earn = '/earn';
 export const vote = '/vote';
 export const fiat = '/fiat';
 export const tos = '/terms-of-use';
@@ -26,7 +26,7 @@ export const portfolioRewardsStakeByID = (id: string) =>
 export const portfolioRewardsStakeByIDnPos = (id: string, pos: string) =>
   `${rewardsBaseStake}${id}?posGroupId=${pos}`;
 export const swapByfrom = (from?: string) =>
-  `${swap}${from ? `?from=${from}` : ''}`;
+  `${trade}${from ? `?from=${from}` : ''}`;
 
 export const useNavigation = () => {
   const history = useHistory();
@@ -37,7 +37,7 @@ export const useNavigation = () => {
 
   const pushPortfolio = () => push(portfolio);
 
-  const pushPools = () => push(pools);
+  const pushPools = () => push(earn);
 
   const pushLiquidityError = () => push(addLiquidityError);
 
