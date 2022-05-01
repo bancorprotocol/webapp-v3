@@ -19,30 +19,27 @@ export const V3Withdraw = () => {
 
   return (
     <>
-      <section className="content-block p-14">
-        <h2 className="text-12 text-secondary mb-20 hidden md:block">
-          Pending Withdrawals
-        </h2>
-        <div className="space-y-10">
-          {withdrawalRequests.map((withdrawalRequest) => (
-            <WithdrawItem
-              withdrawalRequest={withdrawalRequest}
-              key={withdrawalRequest.id}
-              openCancelModal={openCancelModal}
-              openConfirmModal={openConfirmModal}
-            />
-          ))}
-          {isLoadingWithdrawalRequests &&
-            [...Array(3)].map((_, index) => (
-              <div key={index} className="loading-skeleton w-full h-[30px]" />
+      {withdrawalRequests.length !== 0 && (
+        <section className="content-block p-14">
+          <h2 className="text-12 text-secondary mb-20 hidden md:block">
+            Pending Withdrawals
+          </h2>
+          <div className="space-y-10">
+            {withdrawalRequests.map((withdrawalRequest) => (
+              <WithdrawItem
+                withdrawalRequest={withdrawalRequest}
+                key={withdrawalRequest.id}
+                openCancelModal={openCancelModal}
+                openConfirmModal={openConfirmModal}
+              />
             ))}
-        </div>
-        {withdrawalRequests.length === 0 && !isLoadingWithdrawalRequests && (
-          <div className="text-center text-primary text-12 py-20">
-            No pending withdrawals
+            {isLoadingWithdrawalRequests &&
+              [...Array(3)].map((_, index) => (
+                <div key={index} className="loading-skeleton w-full h-[30px]" />
+              ))}
           </div>
-        )}
-      </section>
+        </section>
+      )}
       {selected && (
         <>
           <V3WithdrawCancelModal
