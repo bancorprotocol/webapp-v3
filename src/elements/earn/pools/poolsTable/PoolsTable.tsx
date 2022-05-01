@@ -9,11 +9,13 @@ import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTable
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
-import { Popularity } from 'components/popularity/Popularity';
+import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableSort';
 import { Pool, PoolV3 } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { sortNumbersByKey } from 'utils/pureFunctions';
 
 interface Props {
   search: string;
@@ -63,16 +65,19 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
           ) : (
             <div />
           ),
-        tooltip: 'Protected',
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['isProtected']),
         minWidth: 160,
         sortDescFirst: true,
       },
       {
-        id: 'popularity',
-        Header: 'Popularity',
-        accessor: 'isProtected',
-        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
-        tooltip: 'Popularity',
+        id: 'liquidity',
+        Header: 'Liquidity',
+        accessor: 'liquidity',
+        Cell: (cellData) => prettifyNumber(cellData.value, true),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['liquidity']),
+        tooltip: 'The value of tokens staked in the pool.',
         minWidth: 130,
         sortDescFirst: true,
       },
@@ -82,12 +87,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         accessor: 'reward',
         Cell: (cellData) => PoolsTableCellRewards(cellData.row.original),
         minWidth: 100,
-        sortDescFirst: true,
-        sortType: (a: Row<Pool>, b: Row<Pool>, id: string) => {
-          if (!!a.values[id] && !b.values[id]) return 1;
-          if (!a.values[id] && !!b.values[id]) return -1;
-          return a.values['liquidity'] > b.values['liquidity'] ? 1 : -1;
-        },
+        disableSortBy: true,
         tooltip:
           'Active indicates a current liquidity mining program on the pool.',
       },
@@ -99,7 +99,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         minWidth: 180,
         disableSortBy: true,
         tooltip:
-          'Estimated based on the maximum BNT Liquidity Mining rewards multiplier (2x) and annualized trading fees. ',
+          'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',
       },
       {
         id: 'actions',
@@ -134,11 +134,16 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         sortDescFirst: true,
       },
       {
-        id: 'popularity',
-        Header: 'Popularity',
-        accessor: 'poolDltId',
-        Cell: (cellData) => cellData.value && <Popularity stars={4} />,
-        tooltip: 'Popularity',
+        id: 'apr',
+        Header: 'Earn',
+        accessor: 'apr',
+        Cell: (cellData) => (
+          <div className="flex items-center gap-8 text-20 text-primary">
+            {cellData.value.toFixed(2)}%
+            <IconGift className="w-14 h-14" />
+          </div>
+        ),
+        tooltip: '????',
         minWidth: 130,
         sortDescFirst: true,
       },

@@ -9,6 +9,7 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { sortNumbersByKey } from 'utils/pureFunctions';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -31,8 +32,17 @@ export const V3EarningTable = () => {
             usdPrice={cell.row.original.token.usdPrice ?? '0'}
           />
         ),
+        sortType: (a, b) => {
+          const usdPriceA =
+            Number(a.original.combinedTokenBalance) *
+              Number(a.original.token.usdPrice) ?? 0;
+          const usdPriceB =
+            Number(b.original.combinedTokenBalance) *
+              Number(b.original.token.usdPrice) ?? 0;
+          return usdPriceA - usdPriceB;
+        },
+
         minWidth: 225,
-        disableSortBy: true,
       },
       {
         id: 'totalGains',

@@ -18,10 +18,23 @@ export const Pools = () => {
 
   const title = 'Earn';
   const subtitle =
-    'Deposit your favorite token and earn in the safest decentralized platform.';
+    'Your tokens were never exposed to Impermanent Loss during the cooldown period. Whether or not you withdraw, you’re always fully protected.';
 
   return (
-    <Page title={title} subtitle={subtitle}>
+    <Page
+      title={title}
+      subtitle={subtitle}
+      trailing={
+        <a
+          href="https://newsletter.banklesshq.com/p/how-to-protect-yourself-from-impermanent"
+          className="hover:underline text-primary"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Learn More
+        </a>
+      }
+    >
       <div className="mb-20">
         <button
           onClick={() => setV3Selected((prev) => !prev)}
