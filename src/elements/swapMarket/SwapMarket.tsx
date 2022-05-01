@@ -199,6 +199,9 @@ export const SwapMarket = ({
 
   const onConfirmation = async () => {
     if (!(toToken && account)) return;
+    setFromAmount('');
+    setFromAmountUsd('');
+    setFromDebounce('');
     await updateUserBalances();
   };
 
