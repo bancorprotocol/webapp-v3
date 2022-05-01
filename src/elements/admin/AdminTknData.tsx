@@ -41,10 +41,10 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>All V3 Pools</h2>
         {allV3Pools.map((pool) => (
-          <div key={pool.pool_dlt_id}>
+          <div key={pool.poolDltId}>
             <div className="font-semibold">{pool.name}</div>
-            <div>Pool ID: {pool.pool_dlt_id}</div>
-            <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
+            <div>Pool ID: {pool.poolDltId}</div>
+            <div>Pool Token ID: {pool.poolTokenDltId}</div>
             <div>Funding Limit: {prettifyNumber(pool.fundingLimit)}</div>
             <div>Staked Balance: {prettifyNumber(pool.stakedBalance)}</div>
             <div>

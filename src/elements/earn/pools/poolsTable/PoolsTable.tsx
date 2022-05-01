@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
-import { SortingRule, Row } from 'react-table';
+import { Row, SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
@@ -136,7 +136,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
       {
         id: 'popularity',
         Header: 'Popularity',
-        accessor: 'pool_dlt_id',
+        accessor: 'poolDltId',
         Cell: (cellData) => cellData.value && <Popularity stars={4} />,
         tooltip: 'Popularity',
         minWidth: 130,
@@ -145,7 +145,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
       {
         id: 'actions',
         Header: '',
-        accessor: 'pool_dlt_id',
+        accessor: 'poolDltId',
         Cell: (cellData) => DepositV3Modal({ pool: cellData.row.original }),
         width: 50,
         minWidth: 50,
