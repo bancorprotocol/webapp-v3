@@ -34,7 +34,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const rewardProgram = useAppSelector(
     getAllStandardRewardProgramsByPoolId
-  ).get(pool.pool_dlt_id);
+  ).get(pool.poolDltId);
   console.log(rewardProgram);
   const eth = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, ethToken)
@@ -64,7 +64,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
 
     const estimatedGasDeposit = toBigNumber(
       await ContractsApi.BancorNetwork.write.estimateGas.deposit(
-        pool.pool_dlt_id,
+        pool.poolDltId,
         amountWei,
         { value: isETH ? amountWei : undefined }
       )
@@ -88,7 +88,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
     accessFullEarnings,
     amount,
     fieldBalance,
-    pool.pool_dlt_id,
+    pool.poolDltId,
     account,
     eth,
     rewardProgram,
