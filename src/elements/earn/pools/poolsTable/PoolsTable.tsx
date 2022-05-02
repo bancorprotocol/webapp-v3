@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useMemo } from 'react';
-import { Row, SortingRule } from 'react-table';
+import { useCallback, useMemo } from 'react';
+import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
@@ -16,6 +16,7 @@ import { Image } from 'components/image/Image';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
+import { Tooltip } from 'components/tooltip/Tooltip';
 
 interface Props {
   search: string;
@@ -114,6 +115,26 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
     []
   );
 
+  const v3ToolTip = useCallback(
+    (row: PoolV3) => (
+      <div className="w-[150px] text-black-medium dark:text-white-medium">
+        <div className="flex items-center justify-between">
+          Liquidity
+          <div>{prettifyNumber(row.tradingLiquidity.usd, true)}</div>
+        </div>
+        <div className="flex items-center justify-between">
+          Volume 24h
+          <div>{prettifyNumber(row.volume24h.usd, true)}</div>
+        </div>
+        <div className="flex items-center justify-between">
+          Fees 24h
+          <div>{prettifyNumber(row.fees24h.usd, true)}</div>
+        </div>
+      </div>
+    ),
+    []
+  );
+
   const v3Columns = useMemo<TableColumn<PoolV3>[]>(
     () => [
       {
@@ -121,14 +142,20 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => (
-          <div className="flex items-center">
-            <Image
-              src={cellData.row.original.reserveToken.logoURI}
-              alt="Pool Logo"
-              className="w-40 h-40 rounded-full mr-10"
-            />
-            <span>{cellData.value}</span>
-          </div>
+          <Tooltip
+            content={v3ToolTip(cellData.row.original)}
+            placement={'bottom'}
+            button={
+              <div className="flex items-center">
+                <Image
+                  src={cellData.row.original.reserveToken.logoURI}
+                  alt="Pool Logo"
+                  className="w-40 h-40 rounded-full mr-10"
+                />
+                <span>{cellData.value}</span>
+              </div>
+            }
+          />
         ),
         minWidth: 100,
         sortDescFirst: true,
@@ -157,7 +184,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         disableSortBy: true,
       },
     ],
-    []
+    [v3ToolTip]
   );
 
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
