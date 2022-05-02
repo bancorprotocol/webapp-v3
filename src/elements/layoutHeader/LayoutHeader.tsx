@@ -121,7 +121,7 @@ const TopMenuDropdown = ({
           static
           onMouseEnter={() => openPopover()}
           onMouseLeave={() => closePopover(200)}
-          className={`dropdown-menu flex flex-col gap-20 ${className}`}
+          className={`dropdown-menu flex flex-col gap-20 left-[-25px] ${className}`}
         >
           {items.map((item) => (
             <TopMenuDropdownItem key={item.title} item={item} />
