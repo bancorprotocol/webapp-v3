@@ -17,14 +17,17 @@ import {
   getAllStandardRewardProgramsByPoolId,
   getTokenById,
 } from 'store/bancor/bancor';
-import useAsyncEffect from 'use-async-effect';
 import { Token } from 'services/observables/tokens';
 import { toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
+import { web3 } from 'services/web3';
+import { useInterval } from 'hooks/useInterval';
 
 interface Props {
   pool: PoolV3;
 }
+
+const REWARDS_EXTRA_GAS = 130_000;
 
 export const DepositV3Modal = ({ pool }: Props) => {
   const account = useAppSelector((state) => state.user.account);
@@ -35,7 +38,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const rewardProgram = useAppSelector(
     getAllStandardRewardProgramsByPoolId
   ).get(pool.poolDltId);
-  console.log(rewardProgram);
   const eth = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, ethToken)
   );
@@ -47,56 +49,21 @@ export const DepositV3Modal = ({ pool }: Props) => {
 
   const fieldBalance = pool.reserveToken.balance;
 
-  useAsyncEffect(async () => {
-    if (
-      !accessFullEarnings ||
-      !pool.reserveToken.balance ||
-      !account ||
-      !fieldBalance ||
-      !amount ||
-      !eth
-    ) {
+  const updateExtraGasCost = async () => {
+    if (accessFullEarnings && eth && amount) {
+      const gasPrice = toBigNumber(await web3.provider.getGasPrice());
+      const extraGasCostUSD = shrinkToken(
+        gasPrice.times(REWARDS_EXTRA_GAS).times(eth.usdPrice),
+        eth.decimals
+      );
+
+      setExtraGasNeeded(extraGasCostUSD);
+    } else {
       setExtraGasNeeded('0');
-      return;
     }
-    const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
-    const isETH = pool.reserveToken.address === ethToken;
+  };
 
-    const estimatedGasDeposit = toBigNumber(
-      await ContractsApi.BancorNetwork.write.estimateGas.deposit(
-        pool.poolDltId,
-        amountWei,
-        { value: isETH ? amountWei : undefined }
-      )
-    );
-
-    const estimatedGasJoin = toBigNumber(
-      await ContractsApi.StandardRewards.write.estimateGas.depositAndJoin(
-        rewardProgram.id,
-        amountWei,
-        { value: isETH ? amountWei : undefined }
-      )
-    );
-
-    const extraGasNeeded = shrinkToken(
-      estimatedGasJoin.minus(estimatedGasDeposit).times(eth.usdPrice),
-      eth.decimals
-    );
-
-    setExtraGasNeeded(extraGasNeeded.toString());
-  }, [
-    accessFullEarnings,
-    amount,
-    fieldBalance,
-    pool.poolDltId,
-    account,
-    eth,
-    rewardProgram,
-    pool.reserveToken.address,
-    pool.reserveToken.decimals,
-    pool.reserveToken.balance,
-    eth,
-  ]);
+  useInterval(updateExtraGasCost, 13000);
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
