@@ -11,6 +11,7 @@ import { NavLink } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { swapByfrom } from 'services/router';
+import { sortNumbersByKey } from 'utils/pureFunctions';
 
 interface Props {
   searchInput: string;
@@ -84,6 +85,8 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
             </div>
           );
         },
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['price_change_24']),
         minWidth: 110,
         sortDescFirst: true,
       },
