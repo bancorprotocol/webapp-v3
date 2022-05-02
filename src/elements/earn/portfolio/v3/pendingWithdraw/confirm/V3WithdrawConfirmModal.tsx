@@ -54,6 +54,7 @@ export const V3WithdrawConfirmModal = memo(
             amount={withdrawRequest.reserveTokenAmount}
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
+            label={'Amount'}
           />
 
           <V3WithdrawConfirmOutputBreakdown

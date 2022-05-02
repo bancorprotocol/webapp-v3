@@ -62,7 +62,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        variant={ButtonVariant.SECONDARY}
+        variant={ButtonVariant.PRIMARY}
         size={ButtonSize.EXTRASMALL}
       >
         Deposit

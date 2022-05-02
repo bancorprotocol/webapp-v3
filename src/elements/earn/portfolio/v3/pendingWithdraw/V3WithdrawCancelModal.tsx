@@ -41,6 +41,7 @@ export const V3WithdrawCancelModal = memo(
             amount={withdrawRequest.reserveTokenAmount}
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
+            label={'Amount'}
           />
 
           <div className="bg-secondary rounded p-20 flex justify-between">
