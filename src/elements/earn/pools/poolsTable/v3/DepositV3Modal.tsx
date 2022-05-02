@@ -126,7 +126,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
               balance={fieldBalance}
               amount={amount}
               setAmount={setAmount}
-              balanceLabel="Claimable"
+              balanceLabel="Available"
             />
             {rewardProgram ? (
               <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
