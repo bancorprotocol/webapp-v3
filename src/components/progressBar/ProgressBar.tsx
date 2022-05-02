@@ -7,11 +7,15 @@ interface Props {
 }
 
 export const ProgressBar = memo(
-  ({ percentage, showPercentage = false, className = 'text-black' }: Props) => {
+  ({
+    percentage,
+    showPercentage = false,
+    className = 'text-black dark:text-white',
+  }: Props) => {
     return (
       <div className="flex items-center space-x-10 h-20">
         <div className="relative w-full">
-          <div className="absolute bg-silver rounded-full h-4 w-full" />
+          <div className="absolute bg-silver dark:bg-grey rounded-full h-4 w-full" />
           <div
             className={`absolute rounded-full h-4 ${className}`}
             style={{ width: `${percentage}%`, backgroundColor: 'currentcolor' }}

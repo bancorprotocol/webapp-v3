@@ -20,15 +20,15 @@ export const V3EarningTable = () => {
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
       {
-        id: 'poolId',
+        id: 'balance',
         Header: 'Balance',
-        accessor: 'poolId',
+        accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <TokenBalance
-            symbol={cell.row.original.token.symbol}
+            symbol={cell.row.original.pool.reserveToken.symbol}
             amount={cell.row.original.combinedTokenBalance}
-            imgUrl={cell.row.original.token.logoURI}
-            usdPrice={cell.row.original.token.usdPrice ?? '0'}
+            imgUrl={cell.row.original.pool.reserveToken.logoURI}
+            usdPrice={cell.row.original.pool.reserveToken.usdPrice}
           />
         ),
         minWidth: 225,
@@ -53,7 +53,7 @@ export const V3EarningTable = () => {
       {
         id: 'actions',
         Header: '',
-        accessor: 'poolId',
+        accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <V3EarningTableMenu
             holding={cell.row.original}

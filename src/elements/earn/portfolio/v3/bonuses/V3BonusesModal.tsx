@@ -54,18 +54,18 @@ const BonusGroupItems = ({
                 <Image
                   alt={'Token Logo'}
                   className="w-30 h-30 rounded-full mx-20"
-                  src={reward.programToken.logoURI}
+                  src={reward.programPool.reserveToken.logoURI}
                 />
-                <div>{reward.programToken.symbol}</div>
+                <div>{reward.programPool.reserveToken.symbol}</div>
               </div>
               <div>
                 {prettifyNumber(
                   shrinkToken(
                     reward.pendingRewardsWei,
-                    rewardsGroup.groupToken.decimals
+                    rewardsGroup.groupPool.decimals
                   )
                 )}{' '}
-                {rewardsGroup.groupToken.symbol}
+                {rewardsGroup.groupPool.reserveToken.symbol}
               </div>
             </div>
           </button>
@@ -83,8 +83,10 @@ const BonusGroup = ({
   showMore: boolean;
 }) => {
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
-  const { groupToken } = rewardsGroup;
-  const allTokens = rewardsGroup.rewards.map((reward) => reward.programToken);
+  const { groupPool } = rewardsGroup;
+  const allTokens = rewardsGroup.rewards.map(
+    (reward) => reward.programPool.reserveToken
+  );
   const allIds: string[] = rewardsGroup.rewards.map((reward) => reward.id);
   const [selectedIds, setSelectedIds] = useState(allIds);
 
@@ -94,13 +96,13 @@ const BonusGroup = ({
     <div>
       <div className="p-10">
         <TokenBalanceLarge
-          symbol={groupToken.symbol}
+          symbol={groupPool.reserveToken.symbol}
           amount={shrinkToken(
             rewardsGroup.totalPendingRewards,
-            groupToken.decimals
+            groupPool.decimals
           )}
-          usdPrice={rewardsGroup.groupToken.usdPrice}
-          logoURI={groupToken.logoURI}
+          usdPrice={rewardsGroup.groupPool.reserveToken.usdPrice}
+          logoURI={groupPool.reserveToken.logoURI}
         />
 
         {showMore ? (
@@ -128,7 +130,7 @@ const BonusGroup = ({
             className="w-full"
             disabled={bntDisabled}
           >
-            Claim {groupToken.symbol} to wallet
+            Claim {groupPool.reserveToken.symbol} to wallet
           </Button>
         )}
         <Button
@@ -137,7 +139,7 @@ const BonusGroup = ({
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupToken.symbol} and Earn ??%
+          Claim {groupPool.reserveToken.symbol} and Earn ??%
         </Button>
       </div>
     </div>

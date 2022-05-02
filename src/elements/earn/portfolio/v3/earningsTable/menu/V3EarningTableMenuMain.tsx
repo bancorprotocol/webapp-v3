@@ -5,6 +5,9 @@ import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.sv
 import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { shrinkToken } from 'utils/formulas';
+import { useAppSelector } from 'store';
+import { getTokenById } from 'store/bancor/bancor';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -21,6 +24,16 @@ export const V3EarningTableMenuMain = memo(
     setIsWithdrawModalOpen,
   }: Props) => {
     const { setBonusModalOpen } = useV3Bonuses();
+    const { standardStakingReward } = holding;
+
+    const rewardsToken = useAppSelector((state) =>
+      getTokenById(state, holding.standardStakingReward?.rewardsToken || '')
+    );
+
+    const unclaimedReward = shrinkToken(
+      standardStakingReward?.tokenAmountWei || 0,
+      rewardsToken?.decimals || 0
+    );
 
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
@@ -28,13 +41,14 @@ export const V3EarningTableMenuMain = memo(
     }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
     const handleBonusClick = useCallback(() => {
+      setBonusModalOpen(true);
       // TODO - add logic for what action to perform
-      if (true) {
-        setBonusModalOpen(true);
-      } else {
-        setCurrentMenu('bonus');
-      }
-    }, [setBonusModalOpen, setCurrentMenu]);
+      // if (true) {
+      //
+      // } else {
+      //   setCurrentMenu('bonus');
+      // }
+    }, [setBonusModalOpen]);
 
     return (
       <div className="flex flex-col justify-between h-full">
@@ -57,28 +71,32 @@ export const V3EarningTableMenuMain = memo(
               Withdraw
             </Button>
           </div>
-          <button
-            onClick={handleBonusClick}
-            className="flex justify-between w-full"
-          >
-            <span>Bonus gain</span>
-            <span className="text-secondary flex items-center">
-              {prettifyNumber(0.00123123123132)} BNT{' '}
-              <IconChevronRight className="w-16 ml-5" />
-            </span>
-          </button>
+          {standardStakingReward && rewardsToken && (
+            <button
+              onClick={handleBonusClick}
+              className="flex justify-between w-full"
+            >
+              <span>Bonus gain</span>
+              <span className="text-secondary flex items-center">
+                {prettifyNumber(unclaimedReward)} {rewardsToken.symbol}{' '}
+                <IconChevronRight className="w-16 ml-5" />
+              </span>
+            </button>
+          )}
+
           <button
             onClick={() => setCurrentMenu('rate')}
             className="flex justify-between w-full"
           >
-            <span>Earning rate</span>
+            <span>Standard Rewards</span>
             <span className="text-secondary flex items-center">
-              32 % <IconChevronRight className="w-16 ml-5" />
+              {holding.pool.apr.toFixed(2)}%{' '}
+              <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>
         </div>
 
-        <hr className="border-silver" />
+        <hr className="border-silver dark:border-grey" />
 
         <div className="flex flex-col items-start space-y-14 text-12 text-secondary">
           <button>Buy ETH with Fiat</button>

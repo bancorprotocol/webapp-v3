@@ -1,26 +1,6 @@
-import { uniqueId } from 'lodash';
-import { mockToken } from 'utils/mocked';
 import { Token } from 'services/observables/tokens';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
-
-export const mockBonuses: Bonus[] = [
-  {
-    id: uniqueId(),
-    token: mockToken,
-    claimable: [
-      { id: uniqueId(), token: mockToken, amount: '123.123' },
-      { id: uniqueId(), token: mockToken, amount: '123.123' },
-    ],
-  },
-  {
-    id: uniqueId(),
-    token: mockToken,
-    claimable: [
-      { id: uniqueId(), token: mockToken, amount: '123.123' },
-      { id: uniqueId(), token: mockToken, amount: '123.123' },
-    ],
-  },
-];
+import { PoolV3 } from 'services/observables/pools';
 
 export interface V3PortfolioState {
   holdingsRaw: HoldingRaw[];
@@ -29,7 +9,6 @@ export interface V3PortfolioState {
   withdrawalSettings: WithdrawalSettings;
   isLoadingWithdrawalRequests: boolean;
   bonusesModal: boolean;
-  bonuses: Bonus[];
   standardRewards: RewardsProgramStake[];
   isLoadingStandardRewards: boolean;
 }
@@ -79,9 +58,8 @@ export interface HoldingRaw {
   tokenBalanceWei: string;
 }
 
-export interface Holding
-  extends Omit<HoldingRaw, 'poolTokenBalanceWei' | 'tokenBalanceWei'> {
-  token: Token;
+export interface Holding {
+  pool: PoolV3;
   poolTokenBalance: string;
   tokenBalance: string;
   standardStakingReward?: RewardsProgramStake;

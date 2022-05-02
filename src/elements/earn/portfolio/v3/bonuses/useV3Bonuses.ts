@@ -27,9 +27,9 @@ export const useV3Bonuses = () => {
   const bonusUsdTotal = useMemo(
     () =>
       bonuses.reduce((acc, group) => {
-        const usdPrice = group.groupToken.usdPrice;
+        const usdPrice = group.groupPool.reserveToken.usdPrice;
         const usdAmount = new BigNumber(
-          shrinkToken(group.totalPendingRewards, group.groupToken.decimals)
+          shrinkToken(group.totalPendingRewards, group.groupPool.decimals)
         ).times(usdPrice);
         return usdAmount.plus(acc).toNumber();
       }, 0),

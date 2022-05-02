@@ -30,7 +30,10 @@ export const V3EarningsTableMenuContent = memo(
           <V3EarningTableMenuBonus setCurrentMenu={setCurrentMenu} />
         )}
         {currentMenu === 'rate' && (
-          <V3EarningTableMenuRate setCurrentMenu={setCurrentMenu} />
+          <V3EarningTableMenuRate
+            holding={holding}
+            setCurrentMenu={setCurrentMenu}
+          />
         )}
       </>
     );

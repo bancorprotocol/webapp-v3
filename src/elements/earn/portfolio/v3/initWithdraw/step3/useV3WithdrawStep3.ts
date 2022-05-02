@@ -26,7 +26,8 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
   const hasStarted = useRef(false);
-  const { token, poolTokenId } = holding;
+  const { pool } = holding;
+  const { reserveToken, poolDltId, poolTokenDltId, decimals } = pool;
 
   const [poolTokenAmountWei, setPoolTokenAmountWei] = useState('0');
 
@@ -35,17 +36,17 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
       {
         amount: poolTokenAmountWei,
         token: {
-          ...token,
-          address: poolTokenId,
-          symbol: `bn${token.symbol}`,
+          ...reserveToken,
+          address: poolTokenDltId,
+          symbol: `bn${reserveToken.symbol}`,
         },
       },
     ];
-    if (token.address === bntToken) {
+    if (reserveToken.address === bntToken) {
       tokensToApprove.push({
         amount: poolTokenAmountWei,
         token: {
-          ...token,
+          ...reserveToken,
           address: getNetworkVariables().govToken,
           symbol: `vBNT`,
         },
@@ -53,7 +54,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     }
 
     return tokensToApprove;
-  }, [poolTokenAmountWei, poolTokenId, token]);
+  }, [poolTokenAmountWei, poolTokenDltId, reserveToken]);
 
   const setWithdrawalAmountWei = useCallback(async (): Promise<void> => {
     if (!account) {
@@ -62,16 +63,16 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     }
     try {
       const currentPoolTokenBalanceWei = await ContractsApi.Token(
-        holding.poolTokenId
+        poolTokenDltId
       ).read.balanceOf(account);
       const currentTknBalanceWei =
         await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
-          holding.poolId,
+          poolDltId,
           currentPoolTokenBalanceWei
         );
       const currentTknBalance = shrinkToken(
         currentTknBalanceWei.toString(),
-        token.decimals
+        decimals
       );
       const currentTknBalanceWithTolerance = new BigNumber(
         currentTknBalance
@@ -83,10 +84,10 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         setPoolTokenAmountWei(currentPoolTokenBalanceWei.toString());
         return;
       }
-      const tokenAmountWei = expandToken(amount.tkn, holding.token.decimals);
+      const tokenAmountWei = expandToken(amount.tkn, decimals);
       const inputAmountInPoolTokenWei =
         await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
-          holding.poolId,
+          poolDltId,
           tokenAmountWei
         );
       setPoolTokenAmountWei(inputAmountInPoolTokenWei.toString());
@@ -94,14 +95,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
       console.error('failed to getWithdrawalAmount', e);
       throw e;
     }
-  }, [
-    account,
-    amount.tkn,
-    holding.poolId,
-    holding.poolTokenId,
-    holding.token.decimals,
-    token.decimals,
-  ]);
+  }, [account, amount.tkn, decimals, poolDltId, poolTokenDltId]);
 
   const initWithdraw = async () => {
     if (!account) {
@@ -110,7 +104,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     }
     try {
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
-        holding.poolTokenId,
+        poolTokenDltId,
         poolTokenAmountWei
       );
       await tx.wait();
@@ -118,7 +112,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         dispatch,
         tx.hash,
         amount.tkn,
-        holding.token.symbol
+        reserveToken.symbol
       );
       setStep(4);
       await updatePortfolioData(dispatch, account);
@@ -150,5 +144,11 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     onStart();
   }, [onStart, poolTokenAmountWei]);
 
-  return { token, handleButtonClick, ModalApprove, approveTokens, txBusy };
+  return {
+    token: reserveToken,
+    handleButtonClick,
+    ModalApprove,
+    approveTokens,
+    txBusy,
+  };
 };
