@@ -1,6 +1,6 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
@@ -21,6 +21,7 @@ import { Token } from 'services/observables/tokens';
 import { toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
+import { useConditionalInterval } from 'hooks/useConditionalInterval';
 
 interface Props {
   pool: PoolV3;
@@ -44,20 +45,18 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
-  const gasPriceInterval = useRef<number | null>(null);
-
   const depositDisabled = !account || !amount || Number(amount) === 0;
 
   const fieldBalance = pool.reserveToken.balance;
 
   const shouldPollForGasPrice = useMemo(() => {
     return (
-      pool.reserveToken.balance &&
-      account &&
-      fieldBalance &&
+      !!pool.reserveToken.balance &&
+      !!account &&
+      !!fieldBalance &&
       accessFullEarnings &&
-      eth &&
-      amount
+      !!eth &&
+      !!amount
     );
   }, [
     accessFullEarnings,
@@ -69,7 +68,6 @@ export const DepositV3Modal = ({ pool }: Props) => {
   ]);
 
   const updateExtraGasCost = useCallback(async () => {
-    console.log('called with', accessFullEarnings, amount, eth);
     if (accessFullEarnings && eth && amount) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
@@ -83,32 +81,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
     }
   }, [accessFullEarnings, amount, eth]);
 
-  useEffect(() => {
-    if (shouldPollForGasPrice) {
-      if (!gasPriceInterval.current) {
-        console.log('interval started');
-        gasPriceInterval.current = window.setInterval(
-          updateExtraGasCost,
-          13000
-        );
-        updateExtraGasCost();
-      }
-    } else {
-      if (gasPriceInterval.current) {
-        console.log('interval stopped');
-        window.clearInterval(gasPriceInterval.current);
-        gasPriceInterval.current = null;
-        updateExtraGasCost();
-      }
-    }
-    return () => {
-      console.log('clearing interval', gasPriceInterval.current);
-      if (gasPriceInterval.current) {
-        window.clearInterval(gasPriceInterval.current);
-        gasPriceInterval.current = null;
-      }
-    };
-  }, [shouldPollForGasPrice, updateExtraGasCost]);
+  useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !fieldBalance) {
