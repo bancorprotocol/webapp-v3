@@ -113,7 +113,11 @@ export const V3EarningTableMenu = memo(
             <>
               {/*@ts-ignore*/}
               <div ref={setTargetElement}>
-                <Popover.Button className={`${open ? '' : ''}`}>
+                <Popover.Button
+                  className={`${
+                    open ? 'bg-silver dark:bg-grey' : ''
+                  } rounded-full w-[34px] h-[34px] flex items-center justify-center`}
+                >
                   <IconMenuDots className="w-20" />
                 </Popover.Button>
               </div>
