@@ -10,6 +10,7 @@ interface Props {
   lockDurationInDays: number;
   holding: Holding;
   setStep: (step: number) => void;
+  isFiat: boolean;
 }
 
 const V3WithdrawStep3 = ({
@@ -17,6 +18,7 @@ const V3WithdrawStep3 = ({
   lockDurationInDays,
   holding,
   setStep,
+  isFiat,
 }: Props) => {
   const { token, handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3(
     {
@@ -32,7 +34,9 @@ const V3WithdrawStep3 = ({
         <h1 className="text-[36px] font-normal my-50">
           Start {lockDurationInDays} day cooldown of{' '}
           <span className="text-primary">
-            {prettifyNumber(amount.tkn)} {token.symbol}
+            {isFiat
+              ? `${prettifyNumber(amount.fiat, true)} USD`
+              : `${prettifyNumber(amount.tkn)} ${token.symbol}`}
           </span>
         </h1>
         <div className="flex justify-center">

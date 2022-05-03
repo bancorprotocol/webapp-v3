@@ -52,7 +52,12 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
         />
       )}
       {step === 2 && (
-        <V3WithdrawStep2 setStep={setStep} amount={amount} holding={holding} />
+        <V3WithdrawStep2
+          setStep={setStep}
+          amount={amount}
+          holding={holding}
+          isFiat={isFiat}
+        />
       )}
       {step === 3 && (
         <V3WithdrawStep3
@@ -60,6 +65,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           lockDurationInDays={lockDurationInDays}
           holding={holding}
           setStep={setStep}
+          isFiat={isFiat}
         />
       )}
       {step === 4 && (
