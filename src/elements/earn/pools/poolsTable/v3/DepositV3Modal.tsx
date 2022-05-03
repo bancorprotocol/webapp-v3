@@ -24,11 +24,12 @@ import { useConditionalInterval } from 'hooks/useConditionalInterval';
 
 interface Props {
   pool: PoolV3;
+  renderButton?: (onClick: () => void) => React.ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
 
-export const DepositV3Modal = ({ pool }: Props) => {
+export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
@@ -109,13 +110,17 @@ export const DepositV3Modal = ({ pool }: Props) => {
 
   return (
     <>
-      <Button
-        onClick={() => setIsOpen(true)}
-        variant={ButtonVariant.PRIMARY}
-        size={ButtonSize.EXTRASMALL}
-      >
-        Deposit
-      </Button>
+      {renderButton ? (
+        renderButton(() => setIsOpen(true))
+      ) : (
+        <Button
+          onClick={() => setIsOpen(true)}
+          variant={ButtonVariant.PRIMARY}
+          size={ButtonSize.EXTRASMALL}
+        >
+          Deposit
+        </Button>
+      )}
       <ModalV3
         title={'Deposit & Earn'}
         setIsOpen={setIsOpen}
