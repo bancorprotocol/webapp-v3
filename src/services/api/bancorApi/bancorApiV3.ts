@@ -5,6 +5,7 @@ import {
   APITokenV3,
   APIWelcomeV3,
 } from 'services/api/bancorApi/bancorApi.types';
+import { ethToken } from 'services/web3/config';
 
 const axiosInstance = axios.create({
   baseURL: 'https://api-v3.bancor.network/',
@@ -50,13 +51,98 @@ export abstract class BancorV3Api {
           eth: '0.015463204894002320',
           tkn: '20.980718782281364071',
         },
+        fundingLimit: '',
+        stakedBalance: '',
+        tradingLiqBNT: '',
+        tradingLiqTKN: '',
+        tknVaultBalance: '',
+        depositLimit: '',
+        depositingEnabled: true,
+        tradingEnabled: true,
       },
     ];
   };
 
   static getTokens = async (): Promise<APITokenV3[]> => {
-    const { data } = await axiosInstance.get<APITokenV3[]>('/tokens');
-    return data;
+    // const { data } = await axiosInstance.get<APITokenV3[]>('/tokens');
+    return [
+      {
+        symbol: 'BNT',
+        dltId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+        rate: {
+          bnt: '1',
+          usd: '1',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rate24hAgo: {
+          bnt: '1',
+          usd: '0.00',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rateHistory7d: [],
+      },
+      {
+        symbol: 'ETH',
+        dltId: ethToken,
+        rate: {
+          bnt: '1',
+          usd: '1',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rate24hAgo: {
+          bnt: '1',
+          usd: '0.00',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rateHistory7d: [],
+      },
+      {
+        symbol: 'LINK',
+        dltId: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+        rate: {
+          bnt: '1',
+          usd: '1',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rate24hAgo: {
+          bnt: '1',
+          usd: '0.00',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rateHistory7d: [],
+      },
+      {
+        symbol: 'DAI',
+        dltId: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+        rate: {
+          bnt: '1',
+          usd: '1',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rate24hAgo: {
+          bnt: '1',
+          usd: '0.00',
+          eur: '0.00',
+          eth: '0.00',
+          tkn: '0.00',
+        },
+        rateHistory7d: [],
+      },
+    ];
   };
 
   static getStatistics = async (): Promise<APIStatsV3[]> => {

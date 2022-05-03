@@ -102,7 +102,7 @@ export const AdminTknData = () => {
               Total Rewards:{' '}
               {utils.formatUnits(
                 group.totalPendingRewards,
-                group.groupPool.reserveToken.decimals
+                group.groupPool.decimals
               )}{' '}
               {group.groupPool.reserveToken.symbol}
             </div>
@@ -114,7 +114,7 @@ export const AdminTknData = () => {
                   Pending Reward:{' '}
                   {utils.formatUnits(
                     item.pendingRewardsWei,
-                    group.groupPool.reserveToken.decimals
+                    group.groupPool.decimals
                   )}{' '}
                   {group.groupPool.reserveToken.symbol}
                 </div>

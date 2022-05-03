@@ -85,13 +85,21 @@ export interface APIPoolV3 {
   tradingLiquidity: PriceDictionary;
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
+  fundingLimit: string;
+  stakedBalance: string;
+  tradingLiqBNT: string;
+  tradingLiqTKN: string;
+  tknVaultBalance: string;
+  depositLimit: string;
+  depositingEnabled: boolean;
+  tradingEnabled: boolean;
 }
 
 export interface APITokenV3 {
   symbol: string;
   dltId: string;
   rate: PriceDictionary;
-  rate_24h_ago: PriceDictionary;
+  rate24hAgo: PriceDictionary;
   rateHistory7d: { time: UTCTimestamp; value: number }[];
 }
 

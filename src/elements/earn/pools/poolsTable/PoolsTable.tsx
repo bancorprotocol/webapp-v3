@@ -23,7 +23,7 @@ interface Props {
 
 export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
   const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
-  const v3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
+  const v3Pools = useAppSelector((state) => state.pool.v3Pools);
 
   const v2Data = useMemo<Pool[]>(() => {
     return v2Pools
