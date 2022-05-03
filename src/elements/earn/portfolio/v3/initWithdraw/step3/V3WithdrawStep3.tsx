@@ -2,9 +2,7 @@ import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { ResetApproval } from 'components/resetApproval/ResetApproval';
 import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 
 interface Props {
@@ -20,12 +18,13 @@ const V3WithdrawStep3 = ({
   holding,
   setStep,
 }: Props) => {
-  const { token, handleButtonClick, ModalApprove, approveTokens, txBusy } =
-    useV3WithdrawStep3({
+  const { token, handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3(
+    {
       holding,
       amount,
       setStep,
-    });
+    }
+  );
 
   return (
     <>
@@ -44,16 +43,6 @@ const V3WithdrawStep3 = ({
           >
             {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
           </Button>
-        </div>
-        <div className="flex justify-center space-x-20 mt-20">
-          {approveTokens.map((t) => (
-            <ResetApproval
-              key={t.token.address}
-              spenderContract={ContractsApi.BancorNetwork.contractAddress}
-              tokenContract={t.token.address}
-              tokenSymbol={t.token.symbol}
-            />
-          ))}
         </div>
       </div>
       {ModalApprove}
