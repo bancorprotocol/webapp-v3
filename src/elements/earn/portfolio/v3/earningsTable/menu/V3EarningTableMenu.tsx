@@ -16,7 +16,6 @@ import {
   confirmJoinNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
-import { prettifyNumber } from 'utils/helperFunctions';
 import { ErrorCode } from 'services/web3/types';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
@@ -70,7 +69,7 @@ export const V3EarningTableMenu = memo(
         confirmJoinNotification(
           dispatch,
           tx.hash,
-          prettifyNumber(holding.tokenBalance),
+          holding.tokenBalance,
           holding.pool.reserveToken.symbol
         );
         await tx.wait();
