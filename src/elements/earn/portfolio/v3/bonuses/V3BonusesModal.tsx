@@ -5,7 +5,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
 import { Modal } from 'components/modal/Modal';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
@@ -54,18 +54,18 @@ const BonusGroupItems = ({
                 <Image
                   alt={'Token Logo'}
                   className="w-30 h-30 rounded-full mx-20"
-                  src={reward.programToken.logoURI}
+                  src={reward.programPool.reserveToken.logoURI}
                 />
-                <div>{reward.programToken.symbol}</div>
+                <div>{reward.programPool.reserveToken.symbol}</div>
               </div>
               <div>
                 {prettifyNumber(
                   shrinkToken(
                     reward.pendingRewardsWei,
-                    rewardsGroup.groupToken.decimals
+                    rewardsGroup.groupPool.decimals
                   )
                 )}{' '}
-                {rewardsGroup.groupToken.symbol}
+                {rewardsGroup.groupPool.reserveToken.symbol}
               </div>
             </div>
           </button>
@@ -83,24 +83,39 @@ const BonusGroup = ({
   showMore: boolean;
 }) => {
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
-  const { groupToken } = rewardsGroup;
-  const allTokens = rewardsGroup.rewards.map((reward) => reward.programToken);
+  const { groupPool } = rewardsGroup;
+  const allTokens = rewardsGroup.rewards.map(
+    (reward) => reward.programPool.reserveToken
+  );
   const allIds: string[] = rewardsGroup.rewards.map((reward) => reward.id);
   const [selectedIds, setSelectedIds] = useState(allIds);
+  const [isTxClaimBusy, setIsTxClaimBusy] = useState(false);
 
-  const bntDisabled = selectedIds.length === 0;
+  const bntDisabled = selectedIds.length === 0 || isTxClaimBusy;
+
+  const onClaimClick = useCallback(async () => {
+    setIsTxClaimBusy(true);
+    await handleClaim(selectedIds);
+    setIsTxClaimBusy(false);
+  }, [handleClaim, selectedIds]);
+
+  const onRestakeClick = useCallback(async () => {
+    setIsTxClaimBusy(true);
+    await handleClaimAndEarn(selectedIds);
+    setIsTxClaimBusy(false);
+  }, [handleClaimAndEarn, selectedIds]);
 
   return (
     <div>
       <div className="p-10">
         <TokenBalanceLarge
-          symbol={groupToken.symbol}
+          symbol={groupPool.reserveToken.symbol}
           amount={shrinkToken(
             rewardsGroup.totalPendingRewards,
-            groupToken.decimals
+            groupPool.decimals
           )}
-          usdPrice={rewardsGroup.groupToken.usdPrice}
-          logoURI={groupToken.logoURI}
+          usdPrice={rewardsGroup.groupPool.reserveToken.usdPrice}
+          logoURI={groupPool.reserveToken.logoURI}
         />
 
         {showMore ? (
@@ -124,20 +139,20 @@ const BonusGroup = ({
         {showMore && (
           <Button
             variant={ButtonVariant.DARK}
-            onClick={() => handleClaim(selectedIds)}
+            onClick={onClaimClick}
             className="w-full"
             disabled={bntDisabled}
           >
-            Claim {groupToken.symbol} to wallet
+            Claim {groupPool.reserveToken.symbol} to wallet
           </Button>
         )}
         <Button
           variant={ButtonVariant.PRIMARY}
-          onClick={() => handleClaimAndEarn(selectedIds)}
+          onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupToken.symbol} and Earn ??%
+          Claim {groupPool.reserveToken.symbol} and Earn ??%
         </Button>
       </div>
     </div>

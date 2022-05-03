@@ -56,6 +56,13 @@ export const getPools = createSelector(
   }
 );
 
+export const getPoolsV3Map = createSelector(
+  [(state: RootState) => state.pool.v3Pools],
+  (pools: PoolV3[]): Map<string, PoolV3> => {
+    return new Map(pools.map((pool) => [pool.poolDltId, pool]));
+  }
+);
+
 export const getProtectedPools = createSelector(getPools, (pools: Pool[]) =>
   pools.filter((p) => p.isProtected)
 );

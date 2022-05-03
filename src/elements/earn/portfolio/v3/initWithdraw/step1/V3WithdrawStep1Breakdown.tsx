@@ -15,14 +15,18 @@ export const V3WithdrawStep1Breakdown = ({
   percentageUnstaked,
 }: Props) => {
   const {
-    token: { symbol },
+    pool: {
+      reserveToken: { symbol },
+    },
     standardStakingReward,
     tokenBalance,
   } = holding;
+
   const amount = useMemo(
     () => utils.formatUnits(standardStakingReward?.tokenAmountWei || 0),
     [standardStakingReward?.tokenAmountWei]
   );
+
   const percentageStaked = useMemo(
     () => 100 - Number(percentageUnstaked),
     [percentageUnstaked]

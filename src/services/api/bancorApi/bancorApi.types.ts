@@ -86,3 +86,24 @@ export interface APIPoolV3 {
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
 }
+
+export interface APITokenV3 {
+  symbol: string;
+  dltId: string;
+  rate: PriceDictionary;
+  rate_24h_ago: PriceDictionary;
+  rateHistory7d: { time: UTCTimestamp; value: number }[];
+}
+
+export interface APIStatsV3 {
+  totalLiquidity: PriceDictionary;
+  totalLiquidity24hAgo: PriceDictionary;
+  volume: PriceDictionary;
+  volume24hAgo: PriceDictionary;
+  fees: PriceDictionary;
+  fees24hAgo: PriceDictionary;
+  bntRate: PriceDictionary;
+  bntRate24hAgo: PriceDictionary;
+  bntStakedPercentage: number;
+  bntStakedPercentage24hAgo: number;
+}

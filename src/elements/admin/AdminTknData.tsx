@@ -66,8 +66,8 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>Your Pool Token holdings</h2>
         {holdings.map((holding) => (
-          <div key={holding.poolId}>
-            <div>{holding.token.name}</div>
+          <div key={holding.pool.poolDltId}>
+            <div>{holding.pool.reserveToken.name}</div>
             <div>Pool Token Balance: {holding.poolTokenBalance}</div>
             <div>To underlying Token: {holding.tokenBalance}</div>
             {holding.standardStakingReward && (
@@ -84,7 +84,7 @@ export const AdminTknData = () => {
                   Token value:{' '}
                   {utils.formatUnits(
                     holding.standardStakingReward.tokenAmountWei,
-                    holding.token.decimals
+                    holding.pool.decimals
                   )}
                 </div>
                 <div>Combined Token Value: {holding.combinedTokenBalance}</div>
@@ -97,26 +97,26 @@ export const AdminTknData = () => {
         {userStandardRewardPrograms.map((group) => (
           <div key={group.groupId}>
             <div className="font-semibold">
-              Reward Token: {group.groupToken.symbol}
+              Reward Token: {group.groupPool.reserveToken.symbol}
               <br />
               Total Rewards:{' '}
               {utils.formatUnits(
                 group.totalPendingRewards,
-                group.groupToken.decimals
+                group.groupPool.reserveToken.decimals
               )}{' '}
-              {group.groupToken.symbol}
+              {group.groupPool.reserveToken.symbol}
             </div>
             {group.rewards.map((item) => (
               <div className="mb-10" key={item.id}>
                 <div>Program ID: {item.id}</div>
-                <div>Pool {item.programToken.symbol}</div>
+                <div>Pool {item.programPool.reserveToken.symbol}</div>
                 <div>
                   Pending Reward:{' '}
                   {utils.formatUnits(
                     item.pendingRewardsWei,
-                    group.groupToken.decimals
+                    group.groupPool.reserveToken.decimals
                   )}{' '}
-                  {group.groupToken.symbol}
+                  {group.groupPool.reserveToken.symbol}
                 </div>
               </div>
             ))}

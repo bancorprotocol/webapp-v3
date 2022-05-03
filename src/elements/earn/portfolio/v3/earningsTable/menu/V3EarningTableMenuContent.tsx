@@ -9,10 +9,18 @@ interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
   setHoldingToWithdraw: (holding: Holding) => void;
   holding: Holding;
+  onStartJoin: Function;
+  txJoinBusy: boolean;
 }
 
 export const V3EarningsTableMenuContent = memo(
-  ({ holding, setIsWithdrawModalOpen, setHoldingToWithdraw }: Props) => {
+  ({
+    holding,
+    setIsWithdrawModalOpen,
+    setHoldingToWithdraw,
+    onStartJoin,
+    txJoinBusy,
+  }: Props) => {
     const [currentMenu, setCurrentMenu] =
       useState<EarningTableMenuState>('main');
 
@@ -30,7 +38,12 @@ export const V3EarningsTableMenuContent = memo(
           <V3EarningTableMenuBonus setCurrentMenu={setCurrentMenu} />
         )}
         {currentMenu === 'rate' && (
-          <V3EarningTableMenuRate setCurrentMenu={setCurrentMenu} />
+          <V3EarningTableMenuRate
+            holding={holding}
+            setCurrentMenu={setCurrentMenu}
+            onStartJoin={onStartJoin}
+            txJoinBusy={txJoinBusy}
+          />
         )}
       </>
     );

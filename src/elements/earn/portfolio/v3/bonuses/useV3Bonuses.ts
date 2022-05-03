@@ -10,6 +10,11 @@ import BigNumber from 'bignumber.js';
 import { shrinkToken } from 'utils/formulas';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import {
+  confirmClaimNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { ErrorCode } from 'services/web3/types';
 
 export const useV3Bonuses = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -27,9 +32,9 @@ export const useV3Bonuses = () => {
   const bonusUsdTotal = useMemo(
     () =>
       bonuses.reduce((acc, group) => {
-        const usdPrice = group.groupToken.usdPrice;
+        const usdPrice = group.groupPool.reserveToken.usdPrice;
         const usdAmount = new BigNumber(
-          shrinkToken(group.totalPendingRewards, group.groupToken.decimals)
+          shrinkToken(group.totalPendingRewards, group.groupPool.decimals)
         ).times(usdPrice);
         return usdAmount.plus(acc).toNumber();
       }, 0),
@@ -43,11 +48,15 @@ export const useV3Bonuses = () => {
         return;
       }
       try {
-        const res = await ContractsApi.StandardRewards.write.claimRewards(ids);
-        console.log('Claimed', res);
+        const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
+        confirmClaimNotification(dispatch, tx.hash);
+        await tx.wait();
         await updatePortfolioData(dispatch, account);
       } catch (e: any) {
         console.error('failed to claim rewards', e);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        }
       }
     },
     [account, dispatch]
@@ -60,11 +69,15 @@ export const useV3Bonuses = () => {
         return;
       }
       try {
-        const res = await ContractsApi.StandardRewards.write.stakeRewards(ids);
-        console.log('restaked', res);
+        const tx = await ContractsApi.StandardRewards.write.stakeRewards(ids);
+        confirmClaimNotification(dispatch, tx.hash);
+        await tx.wait();
         await updatePortfolioData(dispatch, account);
       } catch (e: any) {
         console.error('failed to restake rewards', e);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        }
       }
     },
     [account, dispatch]

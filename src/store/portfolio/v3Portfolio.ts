@@ -2,7 +2,6 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   Holding,
   HoldingRaw,
-  mockBonuses,
   V3PortfolioState,
   WithdrawalRequest,
   WithdrawalRequestRaw,
@@ -15,6 +14,8 @@ import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
 import { orderBy, uniqBy } from 'lodash';
+import { getPoolsV3Map } from 'store/bancor/pool';
+import { PoolV3 } from 'services/observables/pools';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -23,7 +24,6 @@ export const initialState: V3PortfolioState = {
   withdrawalSettings: { lockDuration: 0, withdrawalFee: 0 },
   isLoadingWithdrawalRequests: true,
   bonusesModal: false,
-  bonuses: mockBonuses,
   standardRewards: [],
   isLoadingStandardRewards: true,
 };
@@ -84,11 +84,11 @@ export const getIsLoadingHoldings = createSelector(
 export const getPortfolioHoldings = createSelector(
   (state: RootState) => state.v3Portfolio.holdingsRaw,
   (state: RootState) => state.v3Portfolio.standardRewards,
-  (state: RootState) => getAllTokensMap(state),
+  (state: RootState) => getPoolsV3Map(state),
   (
     holdingsRaw: HoldingRaw[],
     standardRewards: RewardsProgramStake[],
-    allTokensMap: Map<string, Token>
+    allPoolsV3Map: Map<string, PoolV3>
   ): Holding[] => {
     const standardRewardsMap = new Map(
       standardRewards.map((reward) => [reward.pool, reward])
@@ -101,14 +101,9 @@ export const getPortfolioHoldings = createSelector(
     const buildHoldingObject = (poolId: string) => {
       const standardStakingReward = standardRewardsMap.get(poolId);
       const holdingRaw = holdingsRawMap.get(poolId);
-      const poolTokenId =
-        holdingRaw?.poolTokenId || standardStakingReward?.poolToken;
-      if (!poolTokenId) {
-        console.error('buildHoldingObject: poolTokenId is undefined');
-        return undefined;
-      }
-      const token = allTokensMap.get(poolId);
-      if (!token) {
+
+      const pool = allPoolsV3Map.get(poolId);
+      if (!pool) {
         return undefined;
       }
 
@@ -118,12 +113,12 @@ export const getPortfolioHoldings = createSelector(
       );
       const tokenBalance = utils.formatUnits(
         holdingRaw?.tokenBalanceWei || '0',
-        token.decimals
+        pool.decimals
       );
 
       const stakedTokenBalance = utils.formatUnits(
         standardStakingReward?.tokenAmountWei || '0',
-        token.decimals
+        pool.decimals
       );
 
       const combinedTokenBalance = new BigNumber(tokenBalance)
@@ -131,9 +126,7 @@ export const getPortfolioHoldings = createSelector(
         .toString();
 
       const holding: Holding = {
-        token,
-        poolId,
-        poolTokenId,
+        pool,
         poolTokenBalance,
         tokenBalance,
         standardStakingReward,
@@ -211,12 +204,12 @@ export const getPortfolioWithdrawalRequests = createSelector(
 );
 
 export interface StandardReward extends RewardsProgramStake {
-  programToken: Token;
+  programPool: PoolV3;
 }
 
 export interface GroupedStandardReward {
   groupId: string;
-  groupToken: Token;
+  groupPool: PoolV3;
   totalPendingRewards: string;
   rewards: StandardReward[];
 }
@@ -228,14 +221,15 @@ export const getIsLoadingStandardRewards = createSelector(
     return isLoadingTokens || isLoadingStandardRewards;
   }
 );
+
 export const getStandardRewards = createSelector(
   (state: RootState) => state.v3Portfolio.standardRewards,
-  (state: RootState) => getAllTokensMap(state),
+  (state: RootState) => getPoolsV3Map(state),
   (
     standardRewards: RewardsProgramStake[],
-    allTokensMap: Map<string, Token>
+    allPoolsMap: Map<string, PoolV3>
   ): GroupedStandardReward[] => {
-    if (allTokensMap.size === 0) {
+    if (allPoolsMap.size === 0) {
       return [];
     }
     return standardRewards.reduce(
@@ -244,10 +238,10 @@ export const getStandardRewards = createSelector(
         const filtered = standardRewards.filter(
           (reward) => reward.rewardsToken === groupId
         );
-        const groupToken = allTokensMap.get(groupId);
-        if (!groupToken) {
+        const groupPool = allPoolsMap.get(groupId);
+        if (!groupPool) {
           console.error(
-            `Failed GroupedStandardReward: No token found for ${groupId}`
+            `Failed GroupedStandardReward: No Pool found for ${groupId}`
           );
           return acc;
         }
@@ -264,7 +258,7 @@ export const getStandardRewards = createSelector(
 
           item = {
             groupId,
-            groupToken,
+            groupPool,
             totalPendingRewards,
             rewards: [],
           };
@@ -273,16 +267,16 @@ export const getStandardRewards = createSelector(
           acc.push(item);
         }
 
-        const programToken = allTokensMap.get(val.pool);
+        const programPool = allPoolsMap.get(val.pool);
 
-        if (!programToken) {
+        if (!programPool) {
           console.error(
-            `Failed GroupedStandardReward: No programToken found for ${programToken}`
+            `Failed GroupedStandardReward: No pool found for ${programPool}`
           );
           return acc;
         }
 
-        item.rewards.push({ ...val, programToken });
+        item.rewards.push({ ...val, programPool });
         return acc;
       })(new Map()),
       []
