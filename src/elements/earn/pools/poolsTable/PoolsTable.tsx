@@ -1,6 +1,6 @@
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
@@ -28,6 +28,11 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
   const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const v3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
 
+  const [rewards, setRewards] = useState(false);
+  const [lowVolume, setLowVolume] = useState(false);
+  const [lowLiquidity, setLowLiquidity] = useState(false);
+  const [lowEarnRate, setLowEarnRate] = useState(false);
+
   const v2Data = useMemo<Pool[]>(() => {
     return v2Pools
       .filter((p) => p.version >= 28)
@@ -38,9 +43,14 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
 
   const v3Data = useMemo<PoolV3[]>(() => {
     return v3Pools.filter(
-      (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+      (p) =>
+        p.name &&
+        p.name.toLowerCase().includes(search.toLowerCase()) &&
+        (lowVolume || Number(p.volume24h.usd) > 5000) &&
+        (lowLiquidity || Number(p.tradingLiquidity.usd) > 50000) &&
+        (lowEarnRate || p.apr > 0.15)
     );
-  }, [v3Pools, search]);
+  }, [v3Pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
   const v2Columns = useMemo<TableColumn<Pool>[]>(
     () => [
@@ -201,7 +211,16 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
             />
           </div>
         </div>
-        <PoolsTableSort />
+        <PoolsTableSort
+          rewards={rewards}
+          setRewards={setRewards}
+          lowVolume={lowVolume}
+          setLowVolume={setLowVolume}
+          lowLiquidity={lowLiquidity}
+          setLowLiquidity={setLowLiquidity}
+          lowEarnRate={lowEarnRate}
+          setLowEarnRate={setLowEarnRate}
+        />
       </div>
       {v3Selected ? (
         <DataTable<PoolV3>
