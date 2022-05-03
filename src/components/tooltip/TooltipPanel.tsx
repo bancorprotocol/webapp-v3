@@ -78,7 +78,7 @@ export const TooltipPanel = ({
       {...attributes.popper}
     >
       <div
-        className="tooltip-arrow"
+        className="dark:bg-black dark:border-t dark:border-l dark:border-grey tooltip-arrow"
         ref={setArrowRef}
         style={{
           ...styles.arrow,
