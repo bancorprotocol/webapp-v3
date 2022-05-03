@@ -17,7 +17,6 @@ import {
   getAllStandardRewardProgramsByPoolId,
   getTokenById,
 } from 'store/bancor/bancor';
-import { Token } from 'services/observables/tokens';
 import { toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
@@ -38,9 +37,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const rewardProgram = useAppSelector(
     getAllStandardRewardProgramsByPoolId
   ).get(pool.poolDltId);
-  const eth = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, ethToken)
-  );
+  const eth = useAppSelector((state) => getTokenById(state, ethToken));
 
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
@@ -135,7 +132,7 @@ export const DepositV3Modal = ({ pool }: Props) => {
             {rewardProgram ? (
               <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
                 <div className="flex pr-10 mb-4">
-                  <span className='mr-20'>Access full earnings</span>
+                  <span className="mr-20">Access full earnings</span>
                   <Switch
                     selected={accessFullEarnings}
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
