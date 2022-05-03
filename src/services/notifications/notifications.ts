@@ -561,3 +561,20 @@ export const confirmLeaveNotification = (
     },
     dispatch
   );
+
+export const confirmClaimNotification = (dispatch: any, txHash: string) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Claim bonuses is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Successfully claimed from bonus program.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Claim from bonus program failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
