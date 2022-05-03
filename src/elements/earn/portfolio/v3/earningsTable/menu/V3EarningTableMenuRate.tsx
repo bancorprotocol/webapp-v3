@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { useState } from 'react';
 import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import { confirmLeaveNotification } from 'services/notifications/notifications';
 
 interface Props {
   holding: Holding;
@@ -54,6 +55,15 @@ export const V3EarningTableMenuRate = ({
       const tx = await ContractsApi.StandardRewards.write.leave(
         standardStakingReward.id,
         standardStakingReward.poolTokenAmountWei
+      );
+      confirmLeaveNotification(
+        dispatch,
+        tx.hash,
+        shrinkToken(
+          holding.standardStakingReward?.tokenAmountWei || 0,
+          holding.pool.decimals
+        ),
+        holding.pool.reserveToken.symbol
       );
       await tx.wait();
       await updatePortfolioData(dispatch, account);

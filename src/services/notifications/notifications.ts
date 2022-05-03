@@ -509,3 +509,55 @@ export const confirmWithdrawNotification = (
     },
     dispatch
   );
+
+export const confirmJoinNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Stake in bonus program is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${prettifyNumber(
+          amount
+        )} ${symbol} successfully staked in bonus program.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Stake ${prettifyNumber(
+          amount
+        )} ${symbol} in bonus program failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const confirmLeaveNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Unstake from bonus program is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `${prettifyNumber(
+          amount
+        )} ${symbol} successfully unstaked from bonus program.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Unstake ${prettifyNumber(
+          amount
+        )} ${symbol} from bonus program failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );

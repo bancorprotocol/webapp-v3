@@ -12,6 +12,12 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import {
+  confirmJoinNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { ErrorCode } from 'services/web3/types';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
@@ -61,12 +67,21 @@ export const V3EarningTableMenu = memo(
           rewardProgram.id,
           expandToken(holding.poolTokenBalance, 18)
         );
+        confirmJoinNotification(
+          dispatch,
+          tx.hash,
+          prettifyNumber(holding.tokenBalance),
+          holding.pool.reserveToken.symbol
+        );
         await tx.wait();
         await updatePortfolioData(dispatch, account);
         setTxJoinBusy(false);
-      } catch (e) {
+      } catch (e: any) {
         console.error('handleJoinClick', e);
         setTxJoinBusy(false);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        }
       }
     };
 
