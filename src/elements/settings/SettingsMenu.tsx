@@ -76,7 +76,6 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
             value={customSlippage}
             onChange={(event) => setCustomSlippage(event.target.value)}
             onBlur={() => {
-              console.log('ienfie', isNaN(Number(customSlippage)));
               if (
                 customSlippage.trim() !== '' &&
                 !isNaN(Number(customSlippage))
