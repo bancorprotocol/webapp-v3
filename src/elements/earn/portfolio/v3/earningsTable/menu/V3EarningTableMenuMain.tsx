@@ -30,11 +30,6 @@ export const V3EarningTableMenuMain = memo(
       getTokenById(state, holding.standardStakingReward?.rewardsToken || '')
     );
 
-    const unclaimedReward = shrinkToken(
-      standardStakingReward?.tokenAmountWei || 0,
-      rewardsToken?.decimals || 0
-    );
-
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
       setIsWithdrawModalOpen(true);
@@ -58,7 +53,7 @@ export const V3EarningTableMenuMain = memo(
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
               className="w-full"
-              textBadge="86%"
+              textBadge={`${holding.pool.apr.toFixed(2)}%`}
             >
               Deposit
             </Button>
@@ -71,18 +66,24 @@ export const V3EarningTableMenuMain = memo(
               Withdraw
             </Button>
           </div>
-          {standardStakingReward && rewardsToken && (
+          {standardStakingReward &&
+          Number(standardStakingReward.pendingRewardsWei) ? (
             <button
               onClick={handleBonusClick}
               className="flex justify-between w-full"
             >
               <span>Bonus gain</span>
               <span className="text-secondary flex items-center">
-                {prettifyNumber(unclaimedReward)} {rewardsToken.symbol}{' '}
+                {prettifyNumber(
+                  shrinkToken(
+                    standardStakingReward.pendingRewardsWei,
+                    rewardsToken?.decimals || 0
+                  )
+                )}{' '}
                 <IconChevronRight className="w-16 ml-5" />
               </span>
             </button>
-          )}
+          ) : null}
 
           <button
             onClick={() => setCurrentMenu('rate')}
@@ -90,7 +91,6 @@ export const V3EarningTableMenuMain = memo(
           >
             <span>Standard Rewards</span>
             <span className="text-secondary flex items-center">
-              {holding.pool.apr.toFixed(2)}%{' '}
               <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>

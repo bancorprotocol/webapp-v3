@@ -5,6 +5,13 @@ import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { useApproveModal } from 'hooks/useApproveModal';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { expandToken } from 'utils/formulas';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import { useAppSelector } from 'store';
+import { useDispatch } from 'react-redux';
+import { ResetApproval } from 'components/resetApproval/ResetApproval';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
@@ -36,50 +43,97 @@ export const V3EarningTableMenu = memo(
         },
       ],
     });
+    const { standardStakingReward } = holding;
+    const account = useAppSelector((state) => state.user.account);
+    const dispatch = useDispatch();
+
+    const handleJoinClick = async () => {
+      if (!standardStakingReward || !account) {
+        console.error('standardStakingReward is not defined');
+        return;
+      }
+
+      try {
+        const tx = await ContractsApi.StandardRewards.write.join(
+          standardStakingReward.id,
+          expandToken(holding.poolTokenBalance, 18)
+        );
+        await tx.wait();
+        await updatePortfolioData(dispatch, account);
+      } catch (e) {
+        console.error('handleJoinClick', e);
+      }
+    };
+
+    const [onStart, ApproveModal] = useApproveModal(
+      [
+        {
+          amount: holding.poolTokenBalance,
+          token: {
+            ...holding.pool.reserveToken,
+            address: holding.pool.poolTokenDltId,
+            decimals: 18,
+            symbol: `bn${holding.pool.reserveToken.symbol}`,
+          },
+        },
+      ],
+      handleJoinClick,
+      ContractsApi.StandardRewards.contractAddress
+    );
 
     return (
-      <Popover className="relative">
-        {({ open }) => (
-          <>
-            {/*@ts-ignore*/}
-            <div ref={setTargetElement}>
-              <Popover.Button className={`${open ? '' : ''}`}>
-                <IconMenuDots className="w-20" />
-              </Popover.Button>
-            </div>
-            <Portal>
-              <div
-                ref={popperElRef}
-                style={styles.popper}
-                {...attributes.popper}
-                className="z-50"
-              >
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 translate-y-1"
-                  enterTo="opacity-100 translate-y-0"
-                  leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 translate-y-0"
-                  leaveTo="opacity-0 translate-y-1"
-                  beforeEnter={() => setPopperElement(popperElRef.current)}
-                  afterLeave={() => setPopperElement(null)}
-                >
-                  <Popover.Panel className="w-screen max-w-[300px]">
-                    <div className="overflow-hidden rounded bg-white dark:bg-black p-20 border border-silver dark:border-grey h-[280px]">
-                      <V3EarningsTableMenuContent
-                        holding={holding}
-                        setHoldingToWithdraw={setHoldingToWithdraw}
-                        setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                      />
-                    </div>
-                  </Popover.Panel>
-                </Transition>
+      <>
+        {ApproveModal}
+        <Popover className="relative">
+          {({ open }) => (
+            <>
+              {/*@ts-ignore*/}
+              <div ref={setTargetElement}>
+                <Popover.Button className={`${open ? '' : ''}`}>
+                  <IconMenuDots className="w-20" />
+                </Popover.Button>
               </div>
-            </Portal>
-          </>
-        )}
-      </Popover>
+              <Portal>
+                <div
+                  ref={popperElRef}
+                  style={styles.popper}
+                  {...attributes.popper}
+                  className="z-50"
+                >
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                    beforeEnter={() => setPopperElement(popperElRef.current)}
+                    afterLeave={() => setPopperElement(null)}
+                  >
+                    <Popover.Panel className="w-screen max-w-[300px]">
+                      <div className="overflow-hidden rounded bg-white dark:bg-black p-20 border border-silver dark:border-grey h-[280px]">
+                        <V3EarningsTableMenuContent
+                          holding={holding}
+                          setHoldingToWithdraw={setHoldingToWithdraw}
+                          setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                          handleApprove={onStart}
+                        />
+                        <ResetApproval
+                          spenderContract={
+                            ContractsApi.StandardRewards.contractAddress
+                          }
+                          tokenContract={holding.pool.poolTokenDltId}
+                        />
+                      </div>
+                    </Popover.Panel>
+                  </Transition>
+                </div>
+              </Portal>
+            </>
+          )}
+        </Popover>
+      </>
     );
   }
 );
