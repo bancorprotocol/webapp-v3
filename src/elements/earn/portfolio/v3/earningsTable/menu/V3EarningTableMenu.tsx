@@ -1,6 +1,6 @@
 import { Popover, Transition, Portal } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
-import { Fragment, memo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
@@ -11,7 +11,6 @@ import { expandToken } from 'utils/formulas';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
-import { ResetApproval } from 'components/resetApproval/ResetApproval';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
@@ -46,6 +45,7 @@ export const V3EarningTableMenu = memo(
     const { standardStakingReward } = holding;
     const account = useAppSelector((state) => state.user.account);
     const dispatch = useDispatch();
+    const [txJoinBusy, setTxJoinBusy] = useState(false);
 
     const handleJoinClick = async () => {
       if (!standardStakingReward || !account) {
@@ -60,8 +60,10 @@ export const V3EarningTableMenu = memo(
         );
         await tx.wait();
         await updatePortfolioData(dispatch, account);
+        setTxJoinBusy(false);
       } catch (e) {
         console.error('handleJoinClick', e);
+        setTxJoinBusy(false);
       }
     };
 
@@ -80,6 +82,11 @@ export const V3EarningTableMenu = memo(
       handleJoinClick,
       ContractsApi.StandardRewards.contractAddress
     );
+
+    const onStartJoin = useCallback(() => {
+      setTxJoinBusy(true);
+      onStart();
+    }, [onStart]);
 
     return (
       <>
@@ -117,13 +124,8 @@ export const V3EarningTableMenu = memo(
                           holding={holding}
                           setHoldingToWithdraw={setHoldingToWithdraw}
                           setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                          handleApprove={onStart}
-                        />
-                        <ResetApproval
-                          spenderContract={
-                            ContractsApi.StandardRewards.contractAddress
-                          }
-                          tokenContract={holding.pool.poolTokenDltId}
+                          onStartJoin={onStartJoin}
+                          txJoinBusy={txJoinBusy}
                         />
                       </div>
                     </Popover.Panel>
