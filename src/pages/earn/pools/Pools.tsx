@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { Page } from 'components/Page';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 
 export const Pools = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -18,25 +19,42 @@ export const Pools = () => {
 
   const title = 'Earn';
   const subtitle =
-    'Deposit your favorite token and earn in the safest decentralized platform.';
+    'Your tokens were never exposed to Impermanent Loss during the cooldown period. Whether or not you withdraw, you’re always fully protected.';
 
   return (
-    <Page title={title} subtitle={subtitle}>
-      <div className="mb-20">
-        <button
-          onClick={() => setV3Selected((prev) => !prev)}
-          className={getTabBtnClasses(v3Selected)}
+    <Page
+      title={title}
+      subtitle={subtitle}
+      trailingSubtitle={
+        <a
+          href="https://newsletter.banklesshq.com/p/how-to-protect-yourself-from-impermanent"
+          className="hover:underline text-primary"
+          target="_blank"
+          rel="noreferrer"
         >
-          V3
-        </button>
-        <button
-          onClick={() => setV3Selected((prev) => !prev)}
-          className={getTabBtnClasses(!v3Selected)}
-        >
-          V2
-        </button>
-      </div>
-
+          Learn More
+        </a>
+      }
+      trailingTitle={
+        <div className="flex items-center">
+          <button
+            onClick={() => setV3Selected((prev) => !prev)}
+            className={`flex items-center gap-4 ${getTabBtnClasses(
+              v3Selected
+            )}`}
+          >
+            <IconProtected className="text-primary" />
+            V3
+          </button>
+          <button
+            onClick={() => setV3Selected((prev) => !prev)}
+            className={getTabBtnClasses(!v3Selected)}
+          >
+            V2
+          </button>
+        </div>
+      }
+    >
       <div className="lg:grid lg:grid-cols-12 lg:gap-40">
         <div className={`${v3Selected ? 'col-span-8' : 'col-span-12'}`}>
           <PoolsTable
