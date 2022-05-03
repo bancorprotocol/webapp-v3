@@ -6,7 +6,10 @@ import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
-import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
+import {
+  RewardsProgramRaw,
+  RewardsProgramV3,
+} from 'services/web3/v3/portfolio/standardStaking';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -93,7 +96,7 @@ export const getAllStandardRewardPrograms = createSelector(
   (
     allStandardRewardPrograms: RewardsProgramRaw[],
     allTokensMap: Map<string, Token>
-  ) => {
+  ): RewardsProgramV3[] => {
     return allStandardRewardPrograms.map((program) => {
       const rewardsToken = allTokensMap.get(program.rewardsToken);
       const token = allTokensMap.get(program.pool);
@@ -108,7 +111,9 @@ export const getAllStandardRewardPrograms = createSelector(
 
 export const getAllStandardRewardProgramsByPoolId = createSelector(
   getAllStandardRewardPrograms,
-  (allStandardRewardPrograms) => {
+  (
+    allStandardRewardPrograms: RewardsProgramV3[]
+  ): Map<string, RewardsProgramV3> => {
     return allStandardRewardPrograms.reduce((acc, program) => {
       if (program.token?.address) acc.set(program.token.address, program);
       return acc;

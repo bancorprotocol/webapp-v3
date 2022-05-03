@@ -11,6 +11,7 @@ import { expandToken } from 'utils/formulas';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
+import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
@@ -42,20 +43,22 @@ export const V3EarningTableMenu = memo(
         },
       ],
     });
-    const { standardStakingReward } = holding;
     const account = useAppSelector((state) => state.user.account);
     const dispatch = useDispatch();
     const [txJoinBusy, setTxJoinBusy] = useState(false);
+    const rewardProgram = useAppSelector(
+      getAllStandardRewardProgramsByPoolId
+    ).get(holding.pool.poolDltId);
 
     const handleJoinClick = async () => {
-      if (!standardStakingReward || !account) {
-        console.error('standardStakingReward is not defined');
+      if (!rewardProgram || !account) {
+        console.error('rewardProgram is not defined');
         return;
       }
 
       try {
         const tx = await ContractsApi.StandardRewards.write.join(
-          standardStakingReward.id,
+          rewardProgram.id,
           expandToken(holding.poolTokenBalance, 18)
         );
         await tx.wait();

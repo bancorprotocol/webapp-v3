@@ -67,7 +67,12 @@ export const DepositV3Modal = ({ pool }: Props) => {
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
   const deposit = async () => {
-    if (!pool.reserveToken.balance || !account || !fieldBalance) {
+    if (
+      !pool.reserveToken.balance ||
+      !account ||
+      !fieldBalance ||
+      !rewardProgram
+    ) {
       return;
     }
 

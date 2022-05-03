@@ -1,6 +1,7 @@
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
+import { Token } from 'services/observables/tokens';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -99,6 +100,12 @@ export interface RewardsProgramRaw {
   startTime: number;
   endTime: number;
   rewardRate: string;
+}
+
+export interface RewardsProgramV3
+  extends Omit<RewardsProgramRaw, 'rewardsToken'> {
+  token?: Token;
+  rewardsToken?: Token;
 }
 
 export const fetchAllStandardRewards = async (): Promise<
