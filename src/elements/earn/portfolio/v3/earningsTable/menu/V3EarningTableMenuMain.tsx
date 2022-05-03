@@ -78,6 +78,7 @@ export const V3EarningTableMenuMain = memo(
                   rewardsToken?.decimals || 0
                 )
               )}{' '}
+              {rewardsToken?.symbol}
               <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>
