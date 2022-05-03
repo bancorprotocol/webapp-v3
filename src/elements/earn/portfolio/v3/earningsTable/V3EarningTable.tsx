@@ -34,10 +34,10 @@ export const V3EarningTable = () => {
         sortType: (a, b) => {
           const usdPriceA =
             Number(a.original.combinedTokenBalance) *
-              Number(a.original.token.usdPrice) ?? 0;
+              Number(a.original.pool.reserveToken.usdPrice) ?? 0;
           const usdPriceB =
             Number(b.original.combinedTokenBalance) *
-              Number(b.original.token.usdPrice) ?? 0;
+              Number(b.original.pool.reserveToken.usdPrice) ?? 0;
           return usdPriceA - usdPriceB;
         },
 
