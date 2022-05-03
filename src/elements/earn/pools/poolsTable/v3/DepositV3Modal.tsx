@@ -50,22 +50,8 @@ export const DepositV3Modal = ({ pool }: Props) => {
   const fieldBalance = pool.reserveToken.balance;
 
   const shouldPollForGasPrice = useMemo(() => {
-    return (
-      !!pool.reserveToken.balance &&
-      !!account &&
-      !!fieldBalance &&
-      accessFullEarnings &&
-      !!eth &&
-      !!amount
-    );
-  }, [
-    accessFullEarnings,
-    account,
-    amount,
-    eth,
-    fieldBalance,
-    pool.reserveToken.balance,
-  ]);
+    return !depositDisabled && accessFullEarnings && !!eth;
+  }, [accessFullEarnings, depositDisabled, eth]);
 
   const updateExtraGasCost = useCallback(async () => {
     if (accessFullEarnings && eth && amount) {
@@ -148,21 +134,18 @@ export const DepositV3Modal = ({ pool }: Props) => {
             />
             {rewardProgram ? (
               <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
-                <div className="flex justify-between pr-10 mb-4">
-                  Access full earnings
+                <div className="flex pr-10 mb-4">
+                  <span className='mr-20'>Access full earnings</span>
                   <Switch
                     selected={accessFullEarnings}
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
                   />
-                  {'40%???'}
                 </div>
                 <div>Additional gas ~${extraGasNeeded}</div>
-                <div>Compounding rewards {pool.reserveToken.symbol} ???30%</div>
               </div>
             ) : (
               <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
                 <span>Compunding rewards {pool.reserveToken.symbol}</span>
-                <span>??40%</span>
               </div>
             )}
             <Button
