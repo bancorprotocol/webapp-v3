@@ -19,6 +19,7 @@ const filenames = [
   'PendingWithdrawals_Proxy.json',
   'PoolCollectionType1V1.json',
   'StandardRewards_Proxy.json',
+  'BancorPortal_Proxy.json',
 ];
 
 export interface BancorV3Contracts {
@@ -28,6 +29,7 @@ export interface BancorV3Contracts {
   pendingWithdrawals: string;
   poolCollectionType1: string;
   standardRewards: string;
+  bancorPortal: string;
 }
 
 export const AdminUseFork = () => {
@@ -64,6 +66,7 @@ export const AdminUseFork = () => {
         pendingWithdrawalsAddress,
         poolCollectionType1Address,
         standardRewardsAddress,
+        bancorPortalAddress,
       ] = await Promise.all(
         filenames.map(async (name) => {
           const res2 = await zipFile.file(new RegExp(name))[0]?.async('string');
@@ -85,6 +88,7 @@ export const AdminUseFork = () => {
         pendingWithdrawals: pendingWithdrawalsAddress,
         poolCollectionType1: poolCollectionType1Address,
         standardRewards: standardRewardsAddress,
+        bancorPortal: bancorPortalAddress,
       };
 
       setInputContracts(newInput);

@@ -239,6 +239,9 @@ export const SwapLimit = ({
   const updateETHandWETH = async () => {
     if (!(toToken && account)) return;
 
+    setFromAmount('');
+    setFromAmountUsd('');
+
     await updateUserBalances();
   };
 

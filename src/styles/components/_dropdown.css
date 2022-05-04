@@ -4,8 +4,7 @@
   .dropdown-menu {
     @apply absolute w-[306px] mt-20 py-20 px-24 -right-30 rounded z-10;
     @apply bg-white dark:bg-black;
-    @apply shadow-header dark:shadow-none;
-    @apply dark:border dark:border-grey;
+    @apply border border-silver dark:border-grey;
   }
 
   .dropdown-header {

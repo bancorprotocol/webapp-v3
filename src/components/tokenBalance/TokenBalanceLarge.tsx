@@ -8,6 +8,7 @@ interface Props {
   amount: string;
   usdPrice: string;
   logoURI: string;
+  label?: string;
 }
 
 export const TokenBalanceLarge = ({
@@ -15,6 +16,7 @@ export const TokenBalanceLarge = ({
   amount,
   usdPrice,
   logoURI,
+  label,
 }: Props) => {
   const usdAmount = useMemo(
     () => new BigNumber(amount).times(usdPrice),
@@ -23,7 +25,7 @@ export const TokenBalanceLarge = ({
 
   return (
     <div className="pb-10">
-      <div className="text-12 font-semibold mb-10">Amount</div>
+      {label && <div className="text-12 font-semibold mb-10">{label}</div>}
       <div className="flex items-center">
         <Image
           alt={'Token Logo'}

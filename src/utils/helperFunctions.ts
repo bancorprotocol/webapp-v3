@@ -1,10 +1,11 @@
 import BigNumber from 'bignumber.js';
+import { BigNumber as BigNumberEther } from 'ethers';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
 import { shrinkToken } from './formulas';
-import { APIPool } from 'services/api/bancor';
 import dayjs from './dayjs';
 import { Pool } from 'services/observables/pools';
+import { APIPool } from 'services/api/bancorApi/bancorApi.types';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -177,3 +178,6 @@ export const calcTknValue = (
     .div(price ?? 0)
     .toFixed(decimals)
     .toString();
+
+export const toBigNumber = (num: BigNumberEther): BigNumber => 
+  new BigNumber(num.toString());

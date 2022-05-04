@@ -1,4 +1,4 @@
-import { swap } from 'services/router';
+import { trade } from 'services/router';
 import { EthNetworks } from '../web3/types';
 
 declare global {
@@ -236,7 +236,7 @@ export const sendGTMPath = (
       to_path: to,
       theme: darkMode ? 'Dark' : 'Light',
       currency: 'USD',
-      swap_insights: to === swap ? (open ? 'Open' : 'Closed') : undefined,
+      swap_insights: to === trade ? (open ? 'Open' : 'Closed') : undefined,
     },
     wallet_properties: undefined,
     ga_event: undefined,

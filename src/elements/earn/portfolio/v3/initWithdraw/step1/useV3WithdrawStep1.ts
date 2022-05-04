@@ -17,7 +17,7 @@ export const useV3WithdrawStep1 = ({
   setInputFiat,
   setStep,
 }: Props) => {
-  const { token, combinedTokenBalance, tokenBalance } = holding;
+  const { pool, combinedTokenBalance, tokenBalance } = holding;
   const isInputError = useMemo(
     () => new BigNumber(combinedTokenBalance).lt(inputTkn),
     [combinedTokenBalance, inputTkn]
@@ -44,7 +44,7 @@ export const useV3WithdrawStep1 = ({
     const valueTkn = new BigNumber(combinedTokenBalance)
       .times(percentage / 100)
       .toString();
-    const valueFiat = calcFiatValue(valueTkn, token.usdPrice);
+    const valueFiat = calcFiatValue(valueTkn, pool.reserveToken.usdPrice);
     setInputTkn(valueTkn);
     setInputFiat(valueFiat);
   };
@@ -64,7 +64,7 @@ export const useV3WithdrawStep1 = ({
 
   return {
     handleNextStep,
-    token,
+    token: pool.reserveToken,
     setBalance,
     isInputError,
     combinedTokenBalance,

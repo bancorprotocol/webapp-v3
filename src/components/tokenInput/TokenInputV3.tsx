@@ -50,8 +50,8 @@ const TokenInputV3 = ({
       onClick={() => {
         inputRef.current && inputRef.current.focus();
       }}
-      className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] bg-white ${
-        isFocused ? 'border-primary' : 'border-graphite'
+      className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] bg-white dark:bg-charcoal ${
+        isFocused ? 'border-primary' : 'border-graphite dark:border-grey'
       } ${isError ? 'border-error text-error' : ''}`}
     >
       <Image
@@ -73,7 +73,7 @@ const TokenInputV3 = ({
         onChange={handleChange}
         className={`${
           inputTkn === '' ? 'min-w-[80px]' : 'min-w-[10px]'
-        } ml-[80px] outline-none h-[75px] rounded-20 font-inherit`}
+        } ml-[80px] outline-none h-[75px] bg-white dark:bg-charcoal rounded-20 font-inherit`}
         style={{
           maxWidth: maxInputWidth,
         }}

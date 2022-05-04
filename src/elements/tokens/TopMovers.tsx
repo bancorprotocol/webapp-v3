@@ -15,11 +15,10 @@ export const TopMovers = ({ setSearch }: Props) => {
   };
 
   return (
-    <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Movers</h2>
-      <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
+    <section className="content-block pt-20 pb-10">
+      <h2 className="ml-[20px]">Top Movers</h2>
       <Ticker id="top-tokens">
-        <div className="flex space-x-16 mt-10">
+        <div className="flex space-x-16 mt-20">
           {tokens.length
             ? tokens.map((token) => {
                 const changePositive = Number(token.price_change_24) > 0;
@@ -27,12 +26,8 @@ export const TopMovers = ({ setSearch }: Props) => {
                   <button
                     onClick={() => handleClick(token)}
                     key={token.address}
-                    className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-white dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
                   >
-                    <div
-                      key={token.address}
-                      className="flex items-center justify-center min-w-[150px] h-[75px] rounded-[6px] bg-white dark:bg-grey shadow-ticker hover:shadow-content dark:shadow-none transition-all duration-300"
-                    >
+                    <div className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-graphite dark:border-grey transition-all duration-300">
                       <img
                         src={token.logoURI.replace('thumb', 'small')}
                         alt="Token Logo"

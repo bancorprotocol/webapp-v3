@@ -2,9 +2,9 @@
 
 @layer components {
   .widget {
-    @apply max-w-[483px] 2xl:min-w-[483px] p-10 md:rounded-30;
-    @apply bg-white md:shadow-widget;
-    @apply dark:bg-charcoal dark:shadow-none;
+    @apply w-full md:max-w-[483px] 2xl:min-w-[483px] p-10 md:rounded-30;
+    @apply bg-white;
+    @apply dark:bg-charcoal;
   }
 
   .widget-large {

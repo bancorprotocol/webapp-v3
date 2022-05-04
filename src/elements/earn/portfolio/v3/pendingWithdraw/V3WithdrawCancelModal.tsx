@@ -41,9 +41,10 @@ export const V3WithdrawCancelModal = memo(
             amount={withdrawRequest.reserveTokenAmount}
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
+            label={'Amount'}
           />
 
-          <div className="bg-fog rounded p-20 flex justify-between">
+          <div className="bg-secondary rounded p-20 flex justify-between">
             <div>
               Compounding rewards{' '}
               <span className="text-secondary">{token.symbol}</span>

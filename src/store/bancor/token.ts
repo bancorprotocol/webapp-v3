@@ -2,8 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import { Token } from 'services/observables/tokens';
 import { orderBy } from 'lodash';
-import { bntToken } from 'services/web3/config';
-import { Pool } from 'services/observables/pools';
+import { PoolV3 } from 'services/observables/pools';
 
 export const getAllTokensMap = createSelector(
   [(state: RootState) => state.bancor.allTokens],
@@ -12,18 +11,24 @@ export const getAllTokensMap = createSelector(
   }
 );
 
-// TODO Filter for V3 Only pools
+export const getTokensV3Map = createSelector(
+  [(state: RootState) => state.pool.v3Pools],
+  (pools: PoolV3[]): Map<string, Token> => {
+    return new Map(pools.map((pool) => [pool.poolDltId, pool.reserveToken]));
+  }
+);
+
 export const getAvailableToStakeTokens = createSelector(
   [
-    (state: RootState) => state.pool.v2Pools,
-    (state: RootState) => getAllTokensMap(state),
+    (state: RootState) => state.pool.v3Pools,
+    (state: RootState) => getTokensV3Map(state),
   ],
-  (pools: Pool[], allTokensMap: Map<string, Token>) => {
+  (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     const poolsWithApr = pools
       .map((pool) => {
-        const token = allTokensMap.get(pool.reserves[0].address);
-        const tknApr = pool.apr + (pool.reserves[0].rewardApr || 0);
-        const bntApr = pool.apr + (pool.reserves[1].rewardApr || 0);
+        const token = allTokensMap.get(pool.poolDltId);
+        const tknApr = pool.apr;
+        const bntApr = pool.apr;
 
         return {
           token: token!,
@@ -32,25 +37,20 @@ export const getAvailableToStakeTokens = createSelector(
           bntApr,
         };
       })
-      .filter((p) => !!p && !!p.token);
-    const [poolWithHighestBntApr] = orderBy(
-      poolsWithApr,
-      'bntApr',
-      'desc'
-    ).slice(0, 1);
-    const filteredByTokenBalance = poolsWithApr.filter(
-      (p) => !!Number(p.token.balance)
-    );
-    if (poolWithHighestBntApr) {
-      const bnt = allTokensMap.get(bntToken);
-      if (bnt && !!Number(bnt.balance)) {
-        filteredByTokenBalance.push({
-          ...poolWithHighestBntApr,
-          token: bnt,
-          tknApr: poolWithHighestBntApr.bntApr,
-        });
-      }
-    }
-    return orderBy(filteredByTokenBalance, 'tknApr', 'desc');
+      .filter((p) => !!p && !!p.token && !!Number(p.token.balance));
+
+    return orderBy(poolsWithApr, 'tknApr', 'desc');
+  }
+);
+
+export const getV3Tokens = createSelector(
+  [
+    (state: RootState) => state.pool.v3Pools,
+    (state: RootState) => getAllTokensMap(state),
+  ],
+  (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
+    return pools
+      .map((pool) => allTokensMap.get(pool.poolDltId))
+      .filter((t) => !!t) as Token[];
   }
 );

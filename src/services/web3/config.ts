@@ -21,6 +21,7 @@ export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const ropstenImage: string = emptyTokenLogo;
 
+export const bntDecimals: number = 18;
 const gasBuffer = 1.05;
 
 export const changeGas = (gasEstimation: string) =>

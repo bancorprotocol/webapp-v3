@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { BigNumber } from 'bignumber.js';
-import { utils } from 'ethers';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+import { expandToken } from 'utils/formulas';
 
 interface Props {
   holding: Holding;
@@ -12,15 +12,15 @@ interface Props {
 }
 
 export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
-  const { token, standardStakingReward } = holding;
+  const { pool, standardStakingReward } = holding;
   const [txBusy, setTxBusy] = useState(false);
 
   const tokenAmountToUnstakeWei = useMemo(() => {
     const amountToUnstake = new BigNumber(amount.tkn)
       .minus(holding.tokenBalance)
       .toString();
-    return utils.parseUnits(amountToUnstake, token.decimals);
-  }, [amount.tkn, holding.tokenBalance, token.decimals]);
+    return expandToken(amountToUnstake, pool.decimals);
+  }, [amount.tkn, holding.tokenBalance, pool.decimals]);
 
   const handleLeave = async () => {
     if (!standardStakingReward) {
@@ -31,7 +31,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
     try {
       const poolTokenAmountWei =
         await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
-          token.address,
+          pool.poolDltId,
           tokenAmountToUnstakeWei
         );
 
@@ -47,5 +47,5 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
     }
   };
 
-  return { handleLeave, token, txBusy };
+  return { handleLeave, token: pool.reserveToken, txBusy };
 };

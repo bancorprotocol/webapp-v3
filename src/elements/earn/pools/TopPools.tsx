@@ -1,46 +1,34 @@
 import { Ticker } from 'components/ticker/Ticker';
 import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
-import { getTopPools, TopPool } from 'store/bancor/pool';
+import { getTopPoolsV3 } from 'store/bancor/pool';
 
-interface Props {
-  setSearch: Function;
-}
-
-export const TopPools = ({ setSearch }: Props) => {
-  const pools = useAppSelector<TopPool[]>(getTopPools);
-
-  const handleClick = (pool: TopPool) => {
-    if (pool.tknSymbol === 'BNT') {
-      setSearch(pool.poolName);
-    } else {
-      setSearch(pool.tknSymbol);
-    }
-  };
+export const TopPools = () => {
+  const pools = useAppSelector(getTopPoolsV3);
 
   return (
-    <section className="content-section pt-20 pb-10">
-      <h2 className="ml-[20px] md:ml-[44px]">Top Earners</h2>
-      <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
+    <section className="content-block pt-20 pb-10">
+      <h2 className="ml-[20px]">Top Performing</h2>
       <Ticker id="top-tokens">
-        <div className="flex space-x-16 mt-10">
+        <div className="flex space-x-16 mt-20">
           {pools.length
             ? pools.map((pool, index) => {
                 return (
-                  <button
-                    onClick={() => handleClick(pool)}
+                  <div
                     key={`pool-table-key-${index}`}
                     className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-graphite dark:border-grey transition-all duration-300"
                   >
                     <div className="flex">
                       <Image
-                        src={pool.tknLogoURI.replace('thumb', 'small')}
+                        src={pool.reserveToken.logoURI}
                         alt="Token Logo"
                         className="bg-fog rounded-full w-50 h-50"
                       />
                     </div>
                     <div className="ml-10 text-12 dark:text-graphite text-left">
-                      <div className="font-medium">{pool.tknSymbol}</div>
+                      <div className="font-medium">
+                        {pool.reserveToken.symbol}
+                      </div>
                       <div className="text-16">
                         <span className="text-primary text-20 font-semibold">
                           {pool.apr.toFixed(0)}%
@@ -48,7 +36,7 @@ export const TopPools = ({ setSearch }: Props) => {
                         APR
                       </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })
             : [...Array(20)].map((_, index) => (

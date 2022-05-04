@@ -9,6 +9,7 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -20,32 +21,41 @@ export const V3EarningTable = () => {
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
       {
-        id: 'poolId',
-        Header: '',
-        accessor: 'poolId',
+        id: 'balance',
+        Header: 'Balance',
+        accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <TokenBalance
-            symbol={cell.row.original.token.symbol}
+            symbol={cell.row.original.pool.reserveToken.symbol}
             amount={cell.row.original.combinedTokenBalance}
-            imgUrl={cell.row.original.token.logoURI}
-            usdPrice={cell.row.original.token.usdPrice ?? '0'}
+            imgUrl={cell.row.original.pool.reserveToken.logoURI}
+            usdPrice={cell.row.original.pool.reserveToken.usdPrice}
           />
         ),
+        sortType: (a, b) => {
+          const usdPriceA =
+            Number(a.original.combinedTokenBalance) *
+              Number(a.original.pool.reserveToken.usdPrice) ?? 0;
+          const usdPriceB =
+            Number(b.original.combinedTokenBalance) *
+              Number(b.original.pool.reserveToken.usdPrice) ?? 0;
+          return usdPriceA - usdPriceB;
+        },
+
         minWidth: 225,
-        disableSortBy: true,
       },
       {
         id: 'totalGains',
-        Header: 'Total gains',
-        Cell: () => 'ETH 123123',
+        Header: 'Lifetime gains',
+        Cell: () => '????',
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,
       },
       {
         id: 'roi',
-        Header: 'Total returns',
-        Cell: () => <span className="text-primary">7.5%</span>,
+        Header: 'Lifetime Bonuses',
+        Cell: () => <span className="text-primary">????%</span>,
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,
@@ -53,12 +63,18 @@ export const V3EarningTable = () => {
       {
         id: 'actions',
         Header: '',
-        accessor: 'poolId',
+        accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
-          <V3EarningTableMenu
-            holding={cell.row.original}
-            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-            setHoldingToWithdraw={setHoldingToWithdraw}
+          <DepositV3Modal
+            pool={cell.row.original.pool}
+            renderButton={(onClick) => (
+              <V3EarningTableMenu
+                holding={cell.row.original}
+                handleDepositClick={onClick}
+                setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                setHoldingToWithdraw={setHoldingToWithdraw}
+              />
+            )}
           />
         ),
         width: 50,
@@ -69,17 +85,17 @@ export const V3EarningTable = () => {
     []
   );
   return (
-    <section className="content-block pt-20">
-      <div className="absolute z-30 pt-10 pl-40">
-        <h2 className="text-[22px]">Earnings</h2>
-      </div>
+    <section>
+      <h2>Holdings</h2>
 
-      <DataTable<Holding>
-        data={holdings}
-        columns={columns}
-        stickyColumn
-        isLoading={isLoadingHoldings}
-      />
+      <div className="content-block pt-10 mt-20">
+        <DataTable<Holding>
+          data={holdings}
+          columns={columns}
+          stickyColumn
+          isLoading={isLoadingHoldings}
+        />
+      </div>
 
       {holdingToWithdraw && (
         <V3WithdrawModal

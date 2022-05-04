@@ -4,7 +4,6 @@ import {
   setAllTokenListTokens,
   setAllTokens,
   setKeeperDaoTokens,
-  setTokenLists,
   setTokens,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
@@ -41,7 +40,6 @@ import {
 import { allTokensNew$, tokensNew$ } from 'services/observables/tokens';
 import {
   listOfLists,
-  tokenListsNew$,
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
@@ -49,8 +47,8 @@ import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 
 export const subscribeToObservables = (dispatch: any) => {
-  tokenListsNew$.subscribe((tokenLists) => {
-    dispatch(setTokenLists(tokenLists));
+  poolsV3$.subscribe((pools) => {
+    dispatch(setv3Pools(pools));
   });
 
   allTokensNew$.subscribe((tokens) => {
@@ -78,10 +76,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   poolsNew$.subscribe((pools) => {
     dispatch(setv2Pools(pools));
-  });
-
-  poolsV3$.subscribe((pools) => {
-    dispatch(setv3Pools(pools));
   });
 
   statistics$.subscribe((stats) => {

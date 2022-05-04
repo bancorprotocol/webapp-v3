@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect';
 
 export const NotFound = () => {
   return (
-    <div className="mx-10 mt- md:mx-auto">
+    <div className="mx-10 pt-60 md:mx-auto">
       <div className="flex flex-col items-center text-center">
         <div className="text-4xl">Page Not Found!</div>
         <div className="text-20 mt-10">

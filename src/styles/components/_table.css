@@ -10,15 +10,15 @@
   }
 
   .table-responsive thead tr {
-    @apply text-left text-grey dark:text-graphite h-[56px];
+    @apply text-left h-[56px] text-charcoal text-opacity-50 dark:text-light dark:text-opacity-50;
   }
 
   .table-responsive thead th {
-    @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-charcoal border-b border-silver dark:border-black;
+    @apply font-normal first:pl-[20px] last:pr-[20px] md:first:pl-[44px] md:last:pr-[44px] bg-white dark:bg-charcoal border-b border-silver dark:border-grey;
   }
 
   .table-responsive tbody tr {
-    @apply border-b border-silver dark:border-black;
+    @apply border-b border-silver dark:border-grey;
   }
 
   .table-responsive tbody {
@@ -26,7 +26,7 @@
   }
 
   .table-responsive tbody tr {
-    @apply bg-white dark:bg-charcoal hover:bg-primary dark:hover:bg-grey;
+    @apply bg-white dark:bg-charcoal hover:bg-fog dark:hover:bg-grey;
   }
 
   .table-responsive tbody td {
@@ -34,7 +34,7 @@
   }
 
   .table-sticky-cell {
-    @apply first:sticky first:left-0 first:z-20 first:border-b first:border-silver;
+    @apply first:sticky first:left-0 first:z-20 first:border-b first:border-silver dark:border-grey;
   }
 
   .table-sticky-column thead th,

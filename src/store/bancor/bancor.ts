@@ -4,9 +4,12 @@ import { Token } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
-import { getAllTokensMap } from 'store/bancor/token';
+import { getAllTokensMap, getTokensV3Map } from 'store/bancor/token';
 import { utils } from 'ethers';
-import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
+import {
+  RewardsProgramRaw,
+  RewardsProgramV3,
+} from 'services/web3/v3/portfolio/standardStaking';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -69,7 +72,8 @@ export const {
 export const getTokenById = createSelector(
   (state: RootState) => getAllTokensMap(state),
   (_: any, id: string) => id,
-  (allTokensMap: Map<string, Token>, id: string) => {
+  (allTokensMap: Map<string, Token>, id: string): Token | undefined => {
+    if (!id) return undefined;
     return allTokensMap.get(utils.getAddress(id));
   }
 );
@@ -88,11 +92,11 @@ export const bancor = bancorSlice.reducer;
 
 export const getAllStandardRewardPrograms = createSelector(
   (state: RootState) => state.bancor.allStandardRewardPrograms,
-  (state: RootState) => getAllTokensMap(state),
+  (state: RootState) => getTokensV3Map(state),
   (
     allStandardRewardPrograms: RewardsProgramRaw[],
     allTokensMap: Map<string, Token>
-  ) => {
+  ): RewardsProgramV3[] => {
     return allStandardRewardPrograms.map((program) => {
       const rewardsToken = allTokensMap.get(program.rewardsToken);
       const token = allTokensMap.get(program.pool);
@@ -102,5 +106,17 @@ export const getAllStandardRewardPrograms = createSelector(
         rewardsToken,
       };
     });
+  }
+);
+
+export const getAllStandardRewardProgramsByPoolId = createSelector(
+  getAllStandardRewardPrograms,
+  (
+    allStandardRewardPrograms: RewardsProgramV3[]
+  ): Map<string, RewardsProgramV3> => {
+    return allStandardRewardPrograms.reduce((acc, program) => {
+      if (program.token?.address) acc.set(program.token.address, program);
+      return acc;
+    }, new Map());
   }
 );

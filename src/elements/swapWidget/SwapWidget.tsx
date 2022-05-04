@@ -85,10 +85,10 @@ export const SwapWidget = ({
   );
 
   return (
-    <div className="bg-white dark:bg-charcoal h-screen w-screen md:h-auto md:w-auto md:bg-fog md:dark:bg-black">
-      <div className="flex justify-center w-full mx-auto 2xl:space-x-20">
-        <div>
-          <div className="widget ">
+    <div className="2xl:space-x-20 flex justify-center mx-auto">
+      <div className="flex justify-center w-full md:w-auto mx-auto space-x-30">
+        <div className="w-full md:w-auto">
+          <div className="widget">
             <SwapHeader
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
@@ -121,7 +121,7 @@ export const SwapWidget = ({
           </div>
           {isLimit ? (
             <div className="text-center text-10 text-grey mt-18">
-              Limit orders are powered by KeeperDAO
+              Limit orders are powered by Rook
             </div>
           ) : (
             ''

@@ -7,6 +7,7 @@ import { PoolTokensCellActions } from './PoolTokensCellActions';
 import { PoolTokensCellName } from './PoolTokensCellName';
 import { PoolTokensCellReserve } from './PoolTokensCellReserve';
 import { PoolToken } from 'services/observables/pools';
+import { sorAlphaByKey, sortNumbersByKey } from 'utils/pureFunctions';
 
 export const PoolTokensTable = () => {
   const [search, setSearch] = useState('');
@@ -27,6 +28,8 @@ export const PoolTokensTable = () => {
         Header: 'Name',
         accessor: 'bnt',
         Cell: (cellData) => PoolTokensCellName(cellData.row.original),
+        sortType: (a, b) =>
+          sorAlphaByKey(a.original, b.original, ['tkn', 'token', 'symbol']),
         minWidth: 130,
       },
       {
@@ -34,6 +37,8 @@ export const PoolTokensTable = () => {
         Header: 'Amount',
         accessor: 'amount',
         Cell: (cellData) => prettifyNumber(cellData.value),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['amount']),
         minWidth: 130,
       },
       {
@@ -41,6 +46,7 @@ export const PoolTokensTable = () => {
         Header: 'Value',
         accessor: 'value',
         Cell: (cellData) => prettifyNumber(cellData.value, true),
+        sortType: (a, b) => sortNumbersByKey(a.original, b.original, ['value']),
         minWidth: 130,
       },
       {
@@ -48,6 +54,7 @@ export const PoolTokensTable = () => {
         Header: 'Reserve Breakdown',
         accessor: 'tkn',
         Cell: (cellData) => PoolTokensCellReserve(cellData.row.original),
+        disableSortBy: true,
         minWidth: 130,
       },
       {

@@ -41,24 +41,11 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>All V3 Pools</h2>
         {allV3Pools.map((pool) => (
-          <div key={pool.pool_dlt_id}>
+          <div key={pool.poolDltId}>
             <div className="font-semibold">{pool.name}</div>
-            <div>Pool ID: {pool.pool_dlt_id}</div>
-            <div>Pool Token ID: {pool.poolToken_dlt_id}</div>
-            <div>Funding Limit: {prettifyNumber(pool.fundingLimit)}</div>
-            <div>Staked Balance: {prettifyNumber(pool.stakedBalance)}</div>
-            <div>
-              Trading Liquidity of TKN: {prettifyNumber(pool.tradingLiqTKN)}
-            </div>
-            <div>
-              Trading Liquidity of BNT: {prettifyNumber(pool.tradingLiqBNT)}
-            </div>
-            <div>
-              Vault Balance of TKN: {prettifyNumber(pool.tknVaultBalance)}
-            </div>
-            <div>Deposit Limit: {prettifyNumber(pool.depositLimit)}</div>
-            <div>Trading Enabled: {pool.tradingEnabled ? 'Yes' : 'No'}</div>
-            <div>Deposit Enabled: {pool.depositingEnabled ? 'Yes' : 'No'}</div>
+            <div>Pool ID: {pool.poolDltId}</div>
+            <div>Pool Token ID: {pool.poolTokenDltId}</div>
+            <div>Staked Balance: {prettifyNumber(pool.stakedBalance.tkn)}</div>
           </div>
         ))}
       </div>
@@ -66,8 +53,8 @@ export const AdminTknData = () => {
       <div className="space-y-20">
         <h2>Your Pool Token holdings</h2>
         {holdings.map((holding) => (
-          <div key={holding.poolId}>
-            <div>{holding.token.name}</div>
+          <div key={holding.pool.poolDltId}>
+            <div>{holding.pool.reserveToken.name}</div>
             <div>Pool Token Balance: {holding.poolTokenBalance}</div>
             <div>To underlying Token: {holding.tokenBalance}</div>
             {holding.standardStakingReward && (
@@ -84,7 +71,7 @@ export const AdminTknData = () => {
                   Token value:{' '}
                   {utils.formatUnits(
                     holding.standardStakingReward.tokenAmountWei,
-                    holding.token.decimals
+                    holding.pool.decimals
                   )}
                 </div>
                 <div>Combined Token Value: {holding.combinedTokenBalance}</div>
@@ -97,26 +84,26 @@ export const AdminTknData = () => {
         {userStandardRewardPrograms.map((group) => (
           <div key={group.groupId}>
             <div className="font-semibold">
-              Reward Token: {group.groupToken.symbol}
+              Reward Token: {group.groupPool.reserveToken.symbol}
               <br />
               Total Rewards:{' '}
               {utils.formatUnits(
                 group.totalPendingRewards,
-                group.groupToken.decimals
+                group.groupPool.decimals
               )}{' '}
-              {group.groupToken.symbol}
+              {group.groupPool.reserveToken.symbol}
             </div>
             {group.rewards.map((item) => (
               <div className="mb-10" key={item.id}>
                 <div>Program ID: {item.id}</div>
-                <div>Pool {item.programToken.symbol}</div>
+                <div>Pool {item.programPool.reserveToken.symbol}</div>
                 <div>
                   Pending Reward:{' '}
                   {utils.formatUnits(
                     item.pendingRewardsWei,
-                    group.groupToken.decimals
+                    group.groupPool.decimals
                   )}{' '}
-                  {group.groupToken.symbol}
+                  {group.groupPool.reserveToken.symbol}
                 </div>
               </div>
             ))}

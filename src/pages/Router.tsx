@@ -4,13 +4,13 @@ import {
   addLiquidityByID,
   admin,
   fiat,
-  pools,
+  earn,
   portfolio,
   portfolioRewardsClaim,
   portfolioRewardsStake,
   portfolioRewardsStakeByID,
   privacyPolicy,
-  swap,
+  trade,
   tokens,
   tos,
   vote,
@@ -30,10 +30,11 @@ import { TermsOfUse } from './TermsOfUse';
 import { Tokens } from './Tokens';
 import { Vote } from './Vote';
 import { Admin } from 'pages/Admin';
-import { useWelcomeRedirect } from './earn/portfolio/usePortfolioRedirect';
 
 const legacySwap = '/eth/swap';
+const legacySwap2 = '/swap';
 const legacyPools = '/eth/data';
+const legacyPools2 = '/pools';
 const legacyStake = '/eth/portfolio/stake/add/single/:id';
 const legacyStakeDual = '/eth/pool/add/:id';
 const legacyPortfolio = '/eth/portfolio';
@@ -50,18 +51,20 @@ export const Router = () => {
       <Route exact path="/">
         <Redirect to={portfolio} />
       </Route>
-      <Route exact strict path={swap} component={Swap} />
-      <Route
-        exact
-        path={legacySwap}
-        render={(props) => {
-          return <Redirect to={`/${props.location.search}`} />;
-        }}
-      />
+      <Route exact strict path={trade} component={Swap} />
+      <Route exact path={legacySwap}>
+        <Redirect to={trade} />
+      </Route>
+      <Route exact path={legacySwap2}>
+        <Redirect to={trade} />
+      </Route>
       <Route exact strict path={tokens} component={Tokens} />
-      <Route exact strict path={pools} component={Pools} />
+      <Route exact strict path={earn} component={Pools} />
       <Route exact path={legacyPools}>
-        <Redirect to={pools} />
+        <Redirect to={earn} />
+      </Route>
+      <Route exact path={legacyPools2}>
+        <Redirect to={earn} />
       </Route>
       <Route exact strict path={addLiquidity} component={AddLiquidity} />
       <Route

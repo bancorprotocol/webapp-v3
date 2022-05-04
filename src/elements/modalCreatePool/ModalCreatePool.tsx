@@ -116,13 +116,13 @@ export const ModalCreatePool = () => {
               />
             </div>
           </div>
-          <button
+          <Button
             onClick={() => confirm()}
             disabled={isCreateDisabled()}
-            className="btn-primary w-full"
+            className="w-full"
           >
             {errorText() ?? 'Create a Pool'}
-          </button>
+          </Button>
         </div>
       </Modal>
     </>

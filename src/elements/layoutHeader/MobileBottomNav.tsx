@@ -3,7 +3,7 @@ import { ReactComponent as IconEarn } from 'assets/icons/earn.svg';
 import { ReactComponent as IconPortfolio } from 'assets/icons/portfolio.svg';
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { NavLink } from 'react-router-dom';
-import { pools, portfolio, swap } from 'services/router';
+import { earn, portfolio, trade } from 'services/router';
 import { useState } from 'react';
 import { MobileSidebar } from './MobileSidebar';
 import { SettingsMenuContent } from 'elements/settings/SettingsMenu';
@@ -14,7 +14,7 @@ export const MobileBottomNav = () => {
   return (
     <div className="md:hidden fixed bottom-0 flex items-center justify-between px-30 w-full h-60 z-30 bg-white dark:bg-black shadow-header text-10 text-black dark:text-white-low dark:text-white-low">
       <NavLink
-        to={swap}
+        to={trade}
         exact
         strict
         className="flex flex-col items-center gap-4"
@@ -23,7 +23,7 @@ export const MobileBottomNav = () => {
         Trade
       </NavLink>
       <NavLink
-        to={pools}
+        to={earn}
         exact
         strict
         className="flex flex-col items-center gap-4"
