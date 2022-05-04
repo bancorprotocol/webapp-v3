@@ -47,7 +47,7 @@ export const useV3Withdraw = () => {
         selected.token.symbol
       );
       setIsModalCancelOpen(false);
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e: any) {
       setIsModalCancelOpen(false);
       console.error('cancelWithdrawal failed: ', e);
