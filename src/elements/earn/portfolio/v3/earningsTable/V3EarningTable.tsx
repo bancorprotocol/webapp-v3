@@ -9,6 +9,7 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -64,10 +65,16 @@ export const V3EarningTable = () => {
         Header: '',
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
-          <V3EarningTableMenu
-            holding={cell.row.original}
-            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-            setHoldingToWithdraw={setHoldingToWithdraw}
+          <DepositV3Modal
+            pool={cell.row.original.pool}
+            renderButton={(onClick) => (
+              <V3EarningTableMenu
+                holding={cell.row.original}
+                handleDepositClick={onClick}
+                setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                setHoldingToWithdraw={setHoldingToWithdraw}
+              />
+            )}
           />
         ),
         width: 50,

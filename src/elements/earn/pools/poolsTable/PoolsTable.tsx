@@ -17,6 +17,7 @@ import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Tooltip } from 'components/tooltip/Tooltip';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   search: string;
@@ -188,7 +189,20 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (cellData) => DepositV3Modal({ pool: cellData.row.original }),
+        Cell: (cellData) => (
+          <DepositV3Modal
+            pool={cellData.row.original}
+            renderButton={(onClick) => (
+              <Button
+                onClick={onClick}
+                variant={ButtonVariant.PRIMARY}
+                size={ButtonSize.EXTRASMALL}
+              >
+                Deposit
+              </Button>
+            )}
+          />
+        ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
