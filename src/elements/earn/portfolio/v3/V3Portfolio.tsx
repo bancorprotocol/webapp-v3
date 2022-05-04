@@ -46,8 +46,6 @@ const V3Portfolio = () => {
           </h2>
           <V3Withdraw />
         </div>
-
-        <V3ExternalHoldings />
       </div>
     </div>
   ) : (
