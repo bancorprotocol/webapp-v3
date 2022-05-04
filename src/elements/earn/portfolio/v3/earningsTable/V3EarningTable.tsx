@@ -31,8 +31,17 @@ export const V3EarningTable = () => {
             usdPrice={cell.row.original.pool.reserveToken.usdPrice}
           />
         ),
+        sortType: (a, b) => {
+          const usdPriceA =
+            Number(a.original.combinedTokenBalance) *
+              Number(a.original.pool.reserveToken.usdPrice) ?? 0;
+          const usdPriceB =
+            Number(b.original.combinedTokenBalance) *
+              Number(b.original.pool.reserveToken.usdPrice) ?? 0;
+          return usdPriceA - usdPriceB;
+        },
+
         minWidth: 225,
-        disableSortBy: true,
       },
       {
         id: 'totalGains',

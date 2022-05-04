@@ -5,7 +5,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
 import { Modal } from 'components/modal/Modal';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
@@ -89,8 +89,21 @@ const BonusGroup = ({
   );
   const allIds: string[] = rewardsGroup.rewards.map((reward) => reward.id);
   const [selectedIds, setSelectedIds] = useState(allIds);
+  const [isTxClaimBusy, setIsTxClaimBusy] = useState(false);
 
-  const bntDisabled = selectedIds.length === 0;
+  const bntDisabled = selectedIds.length === 0 || isTxClaimBusy;
+
+  const onClaimClick = useCallback(async () => {
+    setIsTxClaimBusy(true);
+    await handleClaim(selectedIds);
+    setIsTxClaimBusy(false);
+  }, [handleClaim, selectedIds]);
+
+  const onRestakeClick = useCallback(async () => {
+    setIsTxClaimBusy(true);
+    await handleClaimAndEarn(selectedIds);
+    setIsTxClaimBusy(false);
+  }, [handleClaimAndEarn, selectedIds]);
 
   return (
     <div>
@@ -126,7 +139,7 @@ const BonusGroup = ({
         {showMore && (
           <Button
             variant={ButtonVariant.DARK}
-            onClick={() => handleClaim(selectedIds)}
+            onClick={onClaimClick}
             className="w-full"
             disabled={bntDisabled}
           >
@@ -135,7 +148,7 @@ const BonusGroup = ({
         )}
         <Button
           variant={ButtonVariant.PRIMARY}
-          onClick={() => handleClaimAndEarn(selectedIds)}
+          onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}
         >

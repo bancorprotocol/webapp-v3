@@ -66,24 +66,21 @@ export const V3EarningTableMenuMain = memo(
               Withdraw
             </Button>
           </div>
-          {standardStakingReward &&
-          Number(standardStakingReward.pendingRewardsWei) ? (
-            <button
-              onClick={handleBonusClick}
-              className="flex justify-between w-full"
-            >
-              <span>Bonus gain</span>
-              <span className="text-secondary flex items-center">
-                {prettifyNumber(
-                  shrinkToken(
-                    standardStakingReward.pendingRewardsWei,
-                    rewardsToken?.decimals || 0
-                  )
-                )}{' '}
-                <IconChevronRight className="w-16 ml-5" />
-              </span>
-            </button>
-          ) : null}
+          <button
+            onClick={handleBonusClick}
+            className="flex justify-between w-full"
+          >
+            <span>Bonus gain</span>
+            <span className="text-secondary flex items-center">
+              {prettifyNumber(
+                shrinkToken(
+                  standardStakingReward?.pendingRewardsWei || 0,
+                  rewardsToken?.decimals || 0
+                )
+              )}{' '}
+              <IconChevronRight className="w-16 ml-5" />
+            </span>
+          </button>
 
           <button
             onClick={() => setCurrentMenu('rate')}

@@ -1,6 +1,6 @@
 import { Popover, Transition, Portal } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
-import { Fragment, memo, useRef, useState } from 'react';
+import { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
@@ -11,7 +11,12 @@ import { expandToken } from 'utils/formulas';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
-import { ResetApproval } from 'components/resetApproval/ResetApproval';
+import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import {
+  confirmJoinNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { ErrorCode } from 'services/web3/types';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
@@ -43,25 +48,39 @@ export const V3EarningTableMenu = memo(
         },
       ],
     });
-    const { standardStakingReward } = holding;
     const account = useAppSelector((state) => state.user.account);
     const dispatch = useDispatch();
+    const [txJoinBusy, setTxJoinBusy] = useState(false);
+    const rewardProgram = useAppSelector(
+      getAllStandardRewardProgramsByPoolId
+    ).get(holding.pool.poolDltId);
 
     const handleJoinClick = async () => {
-      if (!standardStakingReward || !account) {
-        console.error('standardStakingReward is not defined');
+      if (!rewardProgram || !account) {
+        console.error('rewardProgram is not defined');
         return;
       }
 
       try {
         const tx = await ContractsApi.StandardRewards.write.join(
-          standardStakingReward.id,
+          rewardProgram.id,
           expandToken(holding.poolTokenBalance, 18)
+        );
+        confirmJoinNotification(
+          dispatch,
+          tx.hash,
+          holding.tokenBalance,
+          holding.pool.reserveToken.symbol
         );
         await tx.wait();
         await updatePortfolioData(dispatch, account);
-      } catch (e) {
+        setTxJoinBusy(false);
+      } catch (e: any) {
         console.error('handleJoinClick', e);
+        setTxJoinBusy(false);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        }
       }
     };
 
@@ -81,6 +100,11 @@ export const V3EarningTableMenu = memo(
       ContractsApi.StandardRewards.contractAddress
     );
 
+    const onStartJoin = useCallback(() => {
+      setTxJoinBusy(true);
+      onStart();
+    }, [onStart]);
+
     return (
       <>
         {ApproveModal}
@@ -89,7 +113,11 @@ export const V3EarningTableMenu = memo(
             <>
               {/*@ts-ignore*/}
               <div ref={setTargetElement}>
-                <Popover.Button className={`${open ? '' : ''}`}>
+                <Popover.Button
+                  className={`${
+                    open ? 'bg-silver dark:bg-grey' : ''
+                  } rounded-full w-[34px] h-[34px] hover:bg-silver dark:hover:bg-grey flex items-center justify-center`}
+                >
                   <IconMenuDots className="w-20" />
                 </Popover.Button>
               </div>
@@ -117,13 +145,8 @@ export const V3EarningTableMenu = memo(
                           holding={holding}
                           setHoldingToWithdraw={setHoldingToWithdraw}
                           setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                          handleApprove={onStart}
-                        />
-                        <ResetApproval
-                          spenderContract={
-                            ContractsApi.StandardRewards.contractAddress
-                          }
-                          tokenContract={holding.pool.poolTokenDltId}
+                          onStartJoin={onStartJoin}
+                          txJoinBusy={txJoinBusy}
                         />
                       </div>
                     </Popover.Panel>

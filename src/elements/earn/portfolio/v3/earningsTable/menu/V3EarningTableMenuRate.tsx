@@ -9,37 +9,68 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
+import { useState } from 'react';
+import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
+import { confirmLeaveNotification } from 'services/notifications/notifications';
 
 interface Props {
   holding: Holding;
   setCurrentMenu: (menu: EarningTableMenuState) => void;
-  handleApprove: Function;
+  onStartJoin: Function;
+  txJoinBusy: boolean;
 }
 
 export const V3EarningTableMenuRate = ({
   setCurrentMenu,
   holding,
-  handleApprove,
+  onStartJoin,
+  txJoinBusy,
 }: Props) => {
   const { standardStakingReward } = holding;
+  const rewardProgram = useAppSelector(
+    getAllStandardRewardProgramsByPoolId
+  ).get(holding.pool.poolDltId);
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
+  const [txLeaveBusy, setTxLeaveBusy] = useState(false);
+
+  const btnLeaveDisabled =
+    txJoinBusy ||
+    txLeaveBusy ||
+    !standardStakingReward ||
+    standardStakingReward?.tokenAmountWei === '0';
+
+  const btnJoinDisabled =
+    txJoinBusy ||
+    txLeaveBusy ||
+    !Number(holding.tokenBalance || !rewardProgram);
 
   const handleLeaveClick = async () => {
     if (!standardStakingReward || !account) {
       console.error('handleLeaveClick because arguments are not defined');
       return;
     }
-
+    setTxLeaveBusy(true);
     try {
       const tx = await ContractsApi.StandardRewards.write.leave(
         standardStakingReward.id,
         standardStakingReward.poolTokenAmountWei
       );
+      confirmLeaveNotification(
+        dispatch,
+        tx.hash,
+        shrinkToken(
+          holding.standardStakingReward?.tokenAmountWei || 0,
+          holding.pool.decimals
+        ),
+        holding.pool.reserveToken.symbol
+      );
       await tx.wait();
       await updatePortfolioData(dispatch, account);
+      setTxLeaveBusy(false);
     } catch (e) {
       console.error('handleJoinClick', e);
+      setTxLeaveBusy(false);
     }
   };
 
@@ -52,7 +83,8 @@ export const V3EarningTableMenuRate = ({
         {/*<ProgressBar percentage={55} showPercentage />*/}
         <Button
           variant={ButtonVariant.PRIMARY}
-          onClick={() => handleApprove()}
+          onClick={() => onStartJoin()}
+          disabled={btnJoinDisabled}
           className="rounded flex-col w-full my-10 text-left items-start"
         >
           <div className="py-4">
@@ -69,29 +101,36 @@ export const V3EarningTableMenuRate = ({
             <IconChevronRight className="w-16 ml-5" />
           </div>
         </Button>
-        {holding.standardStakingReward && (
-          <Button
-            variant={ButtonVariant.SECONDARY}
-            onClick={handleLeaveClick}
-            className="rounded flex-col w-full mb-10 py-8 text-left items-start"
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          onClick={handleLeaveClick}
+          disabled={btnLeaveDisabled}
+          className="rounded flex-col w-full mb-10 py-8 text-left items-start"
+        >
+          <div
+            className={`${btnLeaveDisabled ? 'text-secondary' : 'text-error'}`}
           >
-            <div className="text-error">Unstake</div>
-            <div className="text-20 text-error">
-              {prettifyNumber(
-                shrinkToken(
-                  holding.standardStakingReward?.tokenAmountWei,
-                  holding.pool.decimals
-                )
-              )}{' '}
-              {holding.pool.reserveToken.symbol}
-            </div>
+            Unstake
+          </div>
+          <div
+            className={`text-20 ${
+              btnLeaveDisabled ? 'text-secondary' : 'text-error'
+            }`}
+          >
+            {prettifyNumber(
+              shrinkToken(
+                holding.standardStakingReward?.tokenAmountWei || 0,
+                holding.pool.decimals
+              )
+            )}{' '}
+            {holding.pool.reserveToken.symbol}
+          </div>
 
-            <div className="text-12 flex mt-10 text-secondary">
-              <span>Leave the bonus program</span>
-              <IconChevronRight className="w-16 ml-5" />
-            </div>
-          </Button>
-        )}
+          <div className="text-12 flex mt-10 text-secondary">
+            <span>Leave the bonus program</span>
+            <IconChevronRight className="w-16 ml-5" />
+          </div>
+        </Button>
       </V3EarningsTableSubMenuWrapper>
     </>
   );

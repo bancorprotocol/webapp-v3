@@ -13,8 +13,8 @@ export const updatePortfolioData = async (
   account: string
 ) => {
   const standardRewards = await fetchStandardRewardsByUser(account!);
-  dispatch(setStandardRewards(standardRewards));
   const holdings = await fetchPortfolioV3Holdings(account!);
+  dispatch(setStandardRewards(standardRewards));
   dispatch(setHoldingsRaw(holdings));
   const requests = await fetchPortfolioV3Withdrawals(account!);
   dispatch(setWithdrawalRequestsRaw(requests));
