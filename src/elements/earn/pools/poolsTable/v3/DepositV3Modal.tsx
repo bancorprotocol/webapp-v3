@@ -17,7 +17,7 @@ import {
   getAllStandardRewardProgramsByPoolId,
   getTokenById,
 } from 'store/bancor/bancor';
-import { toBigNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
 import { useConditionalInterval } from 'hooks/useConditionalInterval';
@@ -138,7 +138,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
                   />
                 </div>
-                <div>Additional gas ~${extraGasNeeded}</div>
+                <div>Additional gas ~{prettifyNumber(extraGasNeeded, true)}</div>
               </div>
             ) : (
               <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
