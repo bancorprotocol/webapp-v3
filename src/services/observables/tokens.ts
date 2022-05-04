@@ -19,7 +19,7 @@ import {
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
-import { isEqual, uniqBy, uniqueId } from 'lodash';
+import { isEqual, uniqueId } from 'lodash';
 import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
@@ -179,21 +179,17 @@ export const updateUserBalances = async () => {
 
 export const userBalancesInWei$ = combineLatest([
   apiTokens$,
-  apiTokensV3$,
   user$,
   userBalancesReceiver$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([apiTokens, apiTokensv3, user]) => {
+  switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
       return undefined;
     }
-    const v2Ids = apiTokens.map((t) => t.dlt_id);
-    const v3Ids = apiTokensv3.map((t) => t.dltId);
-    const ids = uniqBy([...v2Ids, ...v3Ids], (id) => id);
 
     // get balances for tokens other than ETH
     const balances = await fetchTokenBalanceMulticall(
-      ids.filter((id) => id !== ethToken),
+      apiTokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
       user
     );
     // get balance for ETH
