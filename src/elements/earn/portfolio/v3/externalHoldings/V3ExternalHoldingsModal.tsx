@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { useAppSelector } from 'store/index';
+import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { Button } from 'components/button/Button';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
