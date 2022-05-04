@@ -148,7 +148,6 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     token: reserveToken,
     handleButtonClick,
     ModalApprove,
-    approveTokens,
     txBusy,
   };
 };

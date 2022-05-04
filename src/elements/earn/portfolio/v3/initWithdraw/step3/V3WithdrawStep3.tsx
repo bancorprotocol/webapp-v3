@@ -2,9 +2,7 @@ import { Button } from 'components/button/Button';
 import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { ResetApproval } from 'components/resetApproval/ResetApproval';
 import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 
 interface Props {
@@ -12,6 +10,7 @@ interface Props {
   lockDurationInDays: number;
   holding: Holding;
   setStep: (step: number) => void;
+  isFiat: boolean;
 }
 
 const V3WithdrawStep3 = ({
@@ -19,13 +18,15 @@ const V3WithdrawStep3 = ({
   lockDurationInDays,
   holding,
   setStep,
+  isFiat,
 }: Props) => {
-  const { token, handleButtonClick, ModalApprove, approveTokens, txBusy } =
-    useV3WithdrawStep3({
+  const { token, handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3(
+    {
       holding,
       amount,
       setStep,
-    });
+    }
+  );
 
   return (
     <>
@@ -33,7 +34,9 @@ const V3WithdrawStep3 = ({
         <h1 className="text-[36px] font-normal my-50">
           Start {lockDurationInDays} day cooldown of{' '}
           <span className="text-primary">
-            {prettifyNumber(amount.tkn)} {token.symbol}
+            {isFiat
+              ? `${prettifyNumber(amount.fiat, true)} USD`
+              : `${prettifyNumber(amount.tkn)} ${token.symbol}`}
           </span>
         </h1>
         <div className="flex justify-center">
@@ -44,16 +47,6 @@ const V3WithdrawStep3 = ({
           >
             {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
           </Button>
-        </div>
-        <div className="flex justify-center space-x-20 mt-20">
-          {approveTokens.map((t) => (
-            <ResetApproval
-              key={t.token.address}
-              spenderContract={ContractsApi.BancorNetwork.contractAddress}
-              tokenContract={t.token.address}
-              tokenSymbol={t.token.symbol}
-            />
-          ))}
         </div>
       </div>
       {ModalApprove}
