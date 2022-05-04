@@ -4,7 +4,7 @@ import { Token } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy } from 'lodash';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
-import { getAllTokensMap } from 'store/bancor/token';
+import { getAllTokensMap, getTokensV3Map } from 'store/bancor/token';
 import { utils } from 'ethers';
 import {
   RewardsProgramRaw,
@@ -92,7 +92,7 @@ export const bancor = bancorSlice.reducer;
 
 export const getAllStandardRewardPrograms = createSelector(
   (state: RootState) => state.bancor.allStandardRewardPrograms,
-  (state: RootState) => getAllTokensMap(state),
+  (state: RootState) => getTokensV3Map(state),
   (
     allStandardRewardPrograms: RewardsProgramRaw[],
     allTokensMap: Map<string, Token>

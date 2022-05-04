@@ -9,12 +9,14 @@ import { Pool, PoolV3 } from 'services/observables/pools';
 interface PoolState {
   v2Pools: Pool[];
   v3Pools: PoolV3[];
+  isLoadingV3Pools: boolean;
   statistics: Statistic[];
 }
 
 const initialState: PoolState = {
   v2Pools: [],
   v3Pools: [],
+  isLoadingV3Pools: true,
   statistics: [],
 };
 
@@ -27,6 +29,7 @@ const poolSlice = createSlice({
     },
     setv3Pools: (state, action) => {
       state.v3Pools = action.payload;
+      state.isLoadingV3Pools = false;
     },
     setStats: (state, action) => {
       state.statistics = action.payload;
