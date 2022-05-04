@@ -5,8 +5,8 @@ import {
   WithdrawalSettings,
 } from 'store/portfolio/v3Portfolio.types';
 import { ppmToDec } from 'utils/helperFunctions';
-import { utils } from 'ethers';
 import BigNumber from 'bignumber.js';
+import { expandToken } from 'utils/formulas';
 
 export const fetchPortfolioV3WithdrawalSettings =
   async (): Promise<WithdrawalSettings> => {
@@ -49,7 +49,7 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
   try {
     const res = await ContractsApi.BancorNetworkInfo.read.withdrawalAmounts(
       req.reserveToken,
-      utils.parseUnits(req.poolTokenAmount, req.token.decimals)
+      expandToken(req.poolTokenAmount, req.token.decimals)
     );
     const tkn = new BigNumber(res.baseTokenAmount.toString())
       .div(res.totalAmount.toString())

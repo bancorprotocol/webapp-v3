@@ -7,8 +7,8 @@ import {
   getStandardRewards,
 } from 'store/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { utils } from 'ethers';
 import { getAllStandardRewardPrograms } from 'store/bancor/bancor';
+import { shrinkToken } from 'utils/formulas';
 
 export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
@@ -62,14 +62,14 @@ export const AdminTknData = () => {
                 <div>Standard Staking:</div>
                 <div>
                   Pool Token staked:{' '}
-                  {utils.formatUnits(
+                  {shrinkToken(
                     holding.standardStakingReward.poolTokenAmountWei,
                     18
                   )}
                 </div>
                 <div>
                   Token value:{' '}
-                  {utils.formatUnits(
+                  {shrinkToken(
                     holding.standardStakingReward.tokenAmountWei,
                     holding.pool.decimals
                   )}
@@ -87,7 +87,7 @@ export const AdminTknData = () => {
               Reward Token: {group.groupPool.reserveToken.symbol}
               <br />
               Total Rewards:{' '}
-              {utils.formatUnits(
+              {shrinkToken(
                 group.totalPendingRewards,
                 group.groupPool.decimals
               )}{' '}
@@ -99,7 +99,7 @@ export const AdminTknData = () => {
                 <div>Pool {item.programPool.reserveToken.symbol}</div>
                 <div>
                   Pending Reward:{' '}
-                  {utils.formatUnits(
+                  {shrinkToken(
                     item.pendingRewardsWei,
                     group.groupPool.decimals
                   )}{' '}

@@ -1,9 +1,9 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { ReactComponent as IconLightning } from 'assets/icons/lightning.svg';
-import { utils } from 'ethers';
 import { Tooltip } from 'components/tooltip/Tooltip';
 import { useMemo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { shrinkToken } from 'utils/formulas';
 
 interface Props {
   holding: Holding;
@@ -23,8 +23,12 @@ export const V3WithdrawStep1Breakdown = ({
   } = holding;
 
   const amount = useMemo(
-    () => utils.formatUnits(standardStakingReward?.tokenAmountWei || 0),
-    [standardStakingReward?.tokenAmountWei]
+    () =>
+      shrinkToken(
+        standardStakingReward?.tokenAmountWei || 0,
+        holding.pool.decimals
+      ),
+    [holding.pool.decimals, standardStakingReward?.tokenAmountWei]
   );
 
   const percentageStaked = useMemo(
