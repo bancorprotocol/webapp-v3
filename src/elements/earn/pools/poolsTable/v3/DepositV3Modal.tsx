@@ -1,4 +1,4 @@
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -24,7 +24,7 @@ import { useConditionalInterval } from 'hooks/useConditionalInterval';
 
 interface Props {
   pool: PoolV3;
-  renderButton?: (onClick: () => void) => React.ReactNode;
+  renderButton: (onClick: () => void) => React.ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
@@ -110,17 +110,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   return (
     <>
-      {renderButton ? (
-        renderButton(() => setIsOpen(true))
-      ) : (
-        <Button
-          onClick={() => setIsOpen(true)}
-          variant={ButtonVariant.PRIMARY}
-          size={ButtonSize.EXTRASMALL}
-        >
-          Deposit
-        </Button>
-      )}
+      {renderButton(() => setIsOpen(true))}
       <ModalV3
         title={'Deposit & Earn'}
         setIsOpen={setIsOpen}
