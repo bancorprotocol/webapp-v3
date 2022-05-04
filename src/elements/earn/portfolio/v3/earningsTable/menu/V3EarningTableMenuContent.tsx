@@ -8,6 +8,7 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
   setHoldingToWithdraw: (holding: Holding) => void;
+  handleDepositClick: () => void;
   holding: Holding;
   onStartJoin: Function;
   txJoinBusy: boolean;
@@ -18,6 +19,7 @@ export const V3EarningsTableMenuContent = memo(
     holding,
     setIsWithdrawModalOpen,
     setHoldingToWithdraw,
+    handleDepositClick,
     onStartJoin,
     txJoinBusy,
   }: Props) => {
@@ -32,6 +34,7 @@ export const V3EarningsTableMenuContent = memo(
             setHoldingToWithdraw={setHoldingToWithdraw}
             setCurrentMenu={setCurrentMenu}
             setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+            handleDepositClick={handleDepositClick}
           />
         )}
         {currentMenu === 'bonus' && (

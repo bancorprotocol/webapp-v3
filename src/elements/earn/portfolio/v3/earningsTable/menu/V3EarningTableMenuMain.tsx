@@ -13,6 +13,7 @@ interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
   setHoldingToWithdraw: (holding: Holding) => void;
+  handleDepositClick: () => void;
   holding: Holding;
 }
 
@@ -22,6 +23,7 @@ export const V3EarningTableMenuMain = memo(
     setHoldingToWithdraw,
     setCurrentMenu,
     setIsWithdrawModalOpen,
+    handleDepositClick,
   }: Props) => {
     const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
     const { standardStakingReward } = holding;
@@ -54,6 +56,7 @@ export const V3EarningTableMenuMain = memo(
               size={ButtonSize.SMALL}
               className="w-full"
               textBadge={`${holding.pool.apr.toFixed(2)}%`}
+              onClick={handleDepositClick}
             >
               Deposit
             </Button>

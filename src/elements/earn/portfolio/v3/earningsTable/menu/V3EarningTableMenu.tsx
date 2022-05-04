@@ -24,6 +24,7 @@ interface Props {
   setIsWithdrawModalOpen: (isOpen: boolean) => void;
   holding: Holding;
   setHoldingToWithdraw: (holding: Holding) => void;
+  handleDepositClick: () => void;
   placement?: Placement;
 }
 
@@ -32,6 +33,7 @@ export const V3EarningTableMenu = memo(
     holding,
     setHoldingToWithdraw,
     setIsWithdrawModalOpen,
+    handleDepositClick,
     placement = 'left-start',
   }: Props) => {
     const popperElRef = useRef(null);
@@ -145,6 +147,7 @@ export const V3EarningTableMenu = memo(
                           holding={holding}
                           setHoldingToWithdraw={setHoldingToWithdraw}
                           setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                          handleDepositClick={handleDepositClick}
                           onStartJoin={onStartJoin}
                           txJoinBusy={txJoinBusy}
                         />

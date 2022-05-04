@@ -8,10 +8,12 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 const AvailableItem = ({
   token,
   tknApr,
+  pool,
 }: {
   token: Token;
   pool: PoolV3;
@@ -19,24 +21,29 @@ const AvailableItem = ({
   bntApr: number;
 }) => {
   return (
-    <button
-      onClick={() => alert('clicked')}
-      className="content-block w-full flex items-start space-y-20 flex-col p-14 text-left"
-    >
-      <TokenBalance
-        symbol={token.symbol}
-        amount={token.balance!}
-        usdPrice={token.usdPrice!}
-        imgUrl={token.logoURI}
-      />
-      <div>
-        <div className="text-secondary mb-5">Earn</div>
-        <div className="flex">
-          <span className="text-[22px]">{tknApr.toFixed(2)}%</span>
-          <IconArrow className="w-10 rotate-[90deg] ml-10" />
-        </div>
-      </div>
-    </button>
+    <DepositV3Modal
+      pool={pool}
+      renderButton={(onClick) => (
+        <button
+          onClick={onClick}
+          className="content-block w-full flex items-start space-y-20 flex-col p-14 text-left"
+        >
+          <TokenBalance
+            symbol={token.symbol}
+            amount={token.balance!}
+            usdPrice={token.usdPrice!}
+            imgUrl={token.logoURI}
+          />
+          <div>
+            <div className="text-secondary mb-5">Earn</div>
+            <div className="flex">
+              <span className="text-[22px]">{tknApr.toFixed(2)}%</span>
+              <IconArrow className="w-10 rotate-[90deg] ml-10" />
+            </div>
+          </div>
+        </button>
+      )}
+    />
   );
 };
 
