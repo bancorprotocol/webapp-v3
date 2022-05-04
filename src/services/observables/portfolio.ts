@@ -14,10 +14,11 @@ import {
 } from 'services/web3/v3/portfolio/standardStaking';
 import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardRewards';
 import { fifteenSeconds$ } from 'services/observables/timers';
+import { apiPoolsV3$ } from 'services/observables/apiData';
 
-export const portfolioHoldings$ = combineLatest([user$]).pipe(
-  switchMapIgnoreThrow(async ([user]) => {
-    return fetchPortfolioV3Holdings(user);
+export const portfolioHoldings$ = combineLatest([apiPoolsV3$, user$]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, user]) => {
+    return fetchPortfolioV3Holdings(apiPools, user);
   }),
   shareReplay(1)
 );

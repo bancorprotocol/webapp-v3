@@ -51,7 +51,7 @@ export const useV3Bonuses = () => {
         const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to claim rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
@@ -72,7 +72,7 @@ export const useV3Bonuses = () => {
         const tx = await ContractsApi.StandardRewards.write.stakeRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to restake rewards', e);
         if (e.code === ErrorCode.DeniedTx) {

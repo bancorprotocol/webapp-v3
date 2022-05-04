@@ -94,7 +94,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       console.log(res);
       setIsOpen(false);
       pushPortfolio();
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
     }

@@ -75,7 +75,7 @@ export const V3ExternalHoldingsModal = ({
       );
       await res.wait();
       setIsOpen(false);
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
     } finally {
