@@ -1,10 +1,15 @@
 import { prettifyNumber } from 'utils/helperFunctions';
-import { NavLink } from 'react-router-dom';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
-import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
 import { useAppSelector } from 'store';
-import { portfolioRewardsClaim } from 'services/router';
+import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { portfolioRewardsClaim } from 'services/router';
+import { NavLink } from 'react-router-dom';
+import { Popover } from '@headlessui/react';
+import { DropdownTransition } from 'components/transitions/DropdownTransition';
+import { claimBntToV3 } from 'services/web3/protection/migration';
+import { rejectNotification } from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
@@ -12,24 +17,39 @@ export const MyRewards = () => {
   const loading = useAppSelector<boolean>(
     (state) => state.liquidity.loadingRewards
   );
+  const dispatch = useDispatch();
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex justify-between items-center">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex mr-[20px] md:mr-[44px] space-x-8">
-          <NavLink to={portfolioRewardsClaim}>
-            <Button
-              variant={ButtonVariant.SECONDARY}
-              size={ButtonSize.EXTRASMALL}
-            >
-              Claim
-            </Button>
-          </NavLink>
-          <StakeRewardsBtn
-            buttonLabel="Stake"
-            buttonClass="btn btn-primary btn-xs"
-          />
+          <Button
+            onClick={() =>
+              claimBntToV3(
+                () => {},
+                () => {},
+                () => rejectNotification(dispatch),
+                () => {}
+              )
+            }
+            size={ButtonSize.EXTRASMALL}
+          >
+            Claim To V3
+          </Button>
+          <Popover className="block relative">
+            <Popover.Button>
+              <IconMore className="rotate-90 w-16" />
+            </Popover.Button>
+            <DropdownTransition>
+              <Popover.Panel
+                className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
+                static
+              >
+                <NavLink to={portfolioRewardsClaim}>Withdraw</NavLink>
+              </Popover.Panel>
+            </DropdownTransition>
+          </Popover>
         </div>
       </div>
       <hr className="content-separator my-14 mx-[20px] md:ml-[34px] md:mr-[44px]" />

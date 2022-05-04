@@ -1,7 +1,7 @@
 import { CellProps } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';

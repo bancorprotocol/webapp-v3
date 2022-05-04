@@ -39,3 +39,16 @@ export const migrateV2Positions = async (
 };
 
 export const migrateV1Positions = (poolToken: PoolToken) => {};
+
+export const claimBntToV3 = async (
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
+) => {
+  try {
+  } catch (e: any) {
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
+  }
+};
