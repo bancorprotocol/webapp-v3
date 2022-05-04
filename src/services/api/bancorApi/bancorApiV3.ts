@@ -20,16 +20,23 @@ export abstract class BancorV3Api {
   };
 
   static getPools = async (): Promise<APIPoolV3[]> => {
-    // TODO - add pools endpoint to backend
-    const { pools } = await this.getWelcome();
+    const { data } = await axiosInstance.get<{ data: APIPoolV3[] }>('/pools');
+
     return [
-      ...pools,
+      ...data.data,
       {
         poolDltId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
         poolTokenDltId: '0xAB05Cf7C6c3a288cd36326e4f7b8600e7268E344',
         name: 'BNT',
         decimals: 18,
-        tradingLiquidity: {
+        tradingLiquidityTKN: {
+          bnt: '874714.922719076940267372',
+          usd: '1759274.297463',
+          eur: '1669402.307878',
+          eth: '626.442651829626649662',
+          tkn: '874714.922719076940267372',
+        },
+        tradingLiquidityBNT: {
           bnt: '874714.922719076940267372',
           usd: '1759274.297463',
           eur: '1669402.307878',
@@ -50,6 +57,14 @@ export abstract class BancorV3Api {
           eth: '0.002493610903282354',
           tkn: '3.499374188239432901',
         },
+        stakedBalance: {
+          bnt: '3.496860052282084843',
+          usd: '7.081141',
+          eur: '6.720965',
+          eth: '0.002493610903282354',
+          tkn: '3.499374188239432901',
+        },
+        tradingFeePPM: '0.1',
       },
     ];
   };

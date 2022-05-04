@@ -46,9 +46,6 @@ export interface Pool {
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
   fundingLimit: string;
-  stakedBalance: string;
-  tradingLiqBNT: string;
-  tradingLiqTKN: string;
   tknVaultBalance: string;
   depositLimit: string;
   depositingEnabled: boolean;
@@ -201,7 +198,7 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
 
         let apr = new BigNumber(apiPool.fees24h.usd)
           .times(365)
-          .div(apiPool.tradingLiquidity.usd)
+          .div(apiPool.tradingLiquidityTKN.usd)
           .times(100)
           .toNumber();
 
@@ -210,18 +207,6 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, allTokensNew$]).pipe(
           apr,
           reserveToken,
           fundingLimit: shrinkToken(fundingLimit.toString(), apiPool.decimals),
-          stakedBalance: shrinkToken(
-            poolLiquidity.stakedBalance.toString(),
-            apiPool.decimals
-          ),
-          tradingLiqTKN: shrinkToken(
-            poolLiquidity.baseTokenTradingLiquidity.toString(),
-            apiPool.decimals
-          ),
-          tradingLiqBNT: shrinkToken(
-            poolLiquidity.bntTradingLiquidity.toString(),
-            apiPool.decimals
-          ),
           tknVaultBalance: shrinkToken(
             tknVaultBalance.toString(),
             apiPool.decimals

@@ -47,7 +47,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         p.name &&
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
-        (lowLiquidity || Number(p.tradingLiquidity.usd) > 50000) &&
+        (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
         (lowEarnRate || p.apr > 0.15)
     );
   }, [v3Pools, search, lowVolume, lowLiquidity, lowEarnRate]);
@@ -130,7 +130,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.tradingLiquidity.usd, true)}</div>
+          <div>{prettifyNumber(row.tradingLiquidityTKN.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Volume 24h

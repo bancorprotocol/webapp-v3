@@ -82,9 +82,12 @@ export interface APIPoolV3 {
   poolTokenDltId: string;
   name: string;
   decimals: number;
-  tradingLiquidity: PriceDictionary;
+  tradingLiquidityBNT: PriceDictionary;
+  tradingLiquidityTKN: PriceDictionary;
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
+  stakedBalance: PriceDictionary;
+  tradingFeePPM: string;
 }
 
 export interface APITokenV3 {
