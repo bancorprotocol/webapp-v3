@@ -14,29 +14,36 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
+import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
+import { bntToken } from 'services/web3/config';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
     CellProps<ProtectedPositionGrouped, ProtectedPosition[]>
   >
 ) => {
-  const [isOpen, setOpen] = useState(false);
+  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
+  const [isOpenBnt, setIsOpenBnt] = useState(false);
   const { row } = cellData;
   const position = row.original;
   const dispatch = useDispatch();
 
+  const migrate = (positions: ProtectedPosition[]) => {
+    const isBnt = positions[0].reserveToken.address === bntToken;
+    if (isBnt) setIsOpenBnt(true);
+    else
+      migrateV2Positions(
+        positions,
+        (txHash: string) => migrateNotification(dispatch, txHash),
+        () => {},
+        () => rejectNotification(dispatch),
+        () => migrateFailedNotification(dispatch)
+      );
+  };
   const singleContent = useMemo(
     () => (
       <Button
-        onClick={() =>
-          migrateV2Positions(
-            [position],
-            (txHash: string) => migrateNotification(dispatch, txHash),
-            () => {},
-            () => rejectNotification(dispatch),
-            () => migrateFailedNotification(dispatch)
-          )
-        }
+        onClick={() => migrate([position])}
         className="text-12 w-[165px] h-[32px]"
       >
         Upgrade To V3
@@ -48,15 +55,7 @@ export const ProtectedPositionTableCellActions = (
   const groupContent = useMemo(
     () => (
       <Button
-        onClick={() =>
-          migrateV2Positions(
-            position.subRows,
-            (txHash: string) => migrateNotification(dispatch, txHash),
-            () => {},
-            () => rejectNotification(dispatch),
-            () => migrateFailedNotification(dispatch)
-          )
-        }
+        onClick={() => migrate(position.subRows)}
         className="text-12 w-[145px] h-[32px]"
       >
         Upgrade All To V3
@@ -70,12 +69,17 @@ export const ProtectedPositionTableCellActions = (
         cellData,
         singleContent,
         groupContent,
-        subMenu: () => setOpen(true),
+        subMenu: () => setIsOpenWithdraw(true),
       })}
       <WithdrawLiquidityWidget
         protectedPosition={position}
-        isModalOpen={isOpen}
-        setIsModalOpen={setOpen}
+        isModalOpen={isOpenWithdraw}
+        setIsModalOpen={setIsOpenWithdraw}
+      />
+      <UpgradeBntModal
+        isOpen={isOpenBnt}
+        setIsOpen={setIsOpenBnt}
+        position={position}
       />
     </div>
   );

@@ -30,7 +30,7 @@ export const TableCellExpander = ({
   subMenu,
 }: Props) => {
   const {
-    row: { canExpand, isExpanded, toggleRowExpanded },
+    row: { canExpand, isExpanded, toggleRowExpanded, original },
     toggleAllRowsExpanded,
   } = cellData;
 
@@ -53,7 +53,7 @@ export const TableCellExpander = ({
           </button>
         </>
       ) : (
-        singleContent
+        original.groupId && singleContent
       )}
       {subMenu && (
         <Popover className="block relative">
