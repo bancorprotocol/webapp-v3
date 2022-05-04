@@ -8,8 +8,6 @@ import {
   WithdrawalSettings,
 } from 'store/portfolio/v3Portfolio.types';
 import { RootState } from 'store';
-import { getAllTokensMap } from 'store/bancor/token';
-import { Token } from 'services/observables/tokens';
 import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
@@ -73,11 +71,11 @@ export const {
 export const v3Portfolio = v3PortfolioSlice.reducer;
 
 export const getIsLoadingHoldings = createSelector(
-  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.pool.isLoadingV3Pools,
   (state: RootState) => state.v3Portfolio.isLoadingHoldings,
   (state: RootState) => state.v3Portfolio.isLoadingStandardRewards,
-  (isLoadingTokens, isLoadingHoldings, isLoadingStandardRewards): boolean => {
-    return isLoadingTokens || isLoadingHoldings || isLoadingStandardRewards;
+  (isLoadingV3Pools, isLoadingHoldings, isLoadingStandardRewards): boolean => {
+    return isLoadingV3Pools || isLoadingHoldings || isLoadingStandardRewards;
   }
 );
 
@@ -153,25 +151,25 @@ export const getPortfolioHoldings = createSelector(
 );
 
 export const getIsLoadingWithdrawalRequests = createSelector(
-  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.pool.isLoadingV3Pools,
   (state: RootState) => state.v3Portfolio.isLoadingWithdrawalRequests,
-  (isLoadingTokens, isLoadingWithdrawalRequests): boolean => {
-    return isLoadingTokens || isLoadingWithdrawalRequests;
+  (isLoadingV3Pools, isLoadingWithdrawalRequests): boolean => {
+    return isLoadingV3Pools || isLoadingWithdrawalRequests;
   }
 );
 
 export const getPortfolioWithdrawalRequests = createSelector(
   (state: RootState) => state.v3Portfolio.withdrawalRequestsRaw,
   (state: RootState) => state.v3Portfolio.withdrawalSettings,
-  (state: RootState) => getAllTokensMap(state),
+  (state: RootState) => getPoolsV3Map(state),
   (
     withdrawalRequestsRaw: WithdrawalRequestRaw[],
     withdrawalSettings: WithdrawalSettings,
-    allTokensMap: Map<string, Token>
+    allPoolsMap: Map<string, PoolV3>
   ): WithdrawalRequest[] => {
     const withdrawalRequests = withdrawalRequestsRaw
       .map((requestRaw) => {
-        const token = allTokensMap.get(requestRaw.reserveToken);
+        const token = allPoolsMap.get(requestRaw.reserveToken)?.reserveToken;
         if (!token) {
           return undefined;
         }
@@ -215,10 +213,10 @@ export interface GroupedStandardReward {
 }
 
 export const getIsLoadingStandardRewards = createSelector(
-  (state: RootState) => state.bancor.isLoadingTokens,
+  (state: RootState) => state.pool.isLoadingV3Pools,
   (state: RootState) => state.v3Portfolio.isLoadingStandardRewards,
-  (isLoadingTokens, isLoadingStandardRewards): boolean => {
-    return isLoadingTokens || isLoadingStandardRewards;
+  (isLoadingV3Pools, isLoadingStandardRewards): boolean => {
+    return isLoadingV3Pools || isLoadingStandardRewards;
   }
 );
 

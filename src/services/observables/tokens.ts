@@ -10,7 +10,12 @@ import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
 import { tokenListTokens$ } from 'services/observables/tokenLists';
-import { apiPools$, apiTokens$ } from 'services/observables/apiData';
+import {
+  apiPools$,
+  apiPoolsV3$,
+  apiTokens$,
+  apiTokensV3$,
+} from 'services/observables/apiData';
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
@@ -19,7 +24,12 @@ import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
-import { APIPool, APIToken } from 'services/api/bancorApi/bancorApi.types';
+import {
+  APIPool,
+  APIPoolV3,
+  APIToken,
+  APITokenV3,
+} from 'services/api/bancorApi/bancorApi.types';
 
 export interface TokenMinimal {
   address: string;
@@ -112,6 +122,55 @@ export const buildTokenObject = (
   };
 };
 
+export const buildTokenObjectV3 = (
+  apiToken: APITokenV3,
+  pool: APIPoolV3,
+  balances?: Map<string, string>,
+  tlToken?: TokenMinimal
+): Token => {
+  // Set balance; if user is NOT logged in set null
+  const balance = balances
+    ? utils
+        .formatUnits(balances.get(apiToken.dltId) ?? '0', pool.decimals)
+        .toString()
+    : undefined;
+
+  // Get fallback token and set image and name
+  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const name = tlToken?.name ?? apiToken.symbol;
+
+  const price_change_24 =
+    calculatePercentageChange(
+      Number(apiToken.rate.usd),
+      Number(apiToken.rate24hAgo.usd)
+    ) || 0;
+
+  const seven_days_ago = get7DaysAgo().getUTCSeconds();
+  const price_history_7d = apiToken.rateHistory7d
+    .filter((x) => !!x)
+    .map((x, i) => ({
+      value: Number(x),
+      time: (seven_days_ago + i * 360) as UTCTimestamp,
+    }));
+
+  const usd_volume_24 = pool ? pool.volume24h.usd : null;
+  return {
+    name,
+    logoURI,
+    balance,
+    address: apiToken.dltId,
+    decimals: pool.decimals,
+    symbol: apiToken.symbol,
+    liquidity: pool.tradingLiquidityTKN.usd,
+    usdPrice: apiToken.rate.usd,
+    usd_24h_ago: apiToken.rate24hAgo.usd,
+    price_change_24,
+    price_history_7d,
+    usd_volume_24: usd_volume_24 ?? '0',
+    isProtected: true,
+  };
+};
+
 const userBalancesReceiver$ = new BehaviorSubject<string>(uniqueId());
 
 export const updateUserBalances = async () => {
@@ -127,9 +186,33 @@ export const userBalancesInWei$ = combineLatest([
     if (!user) {
       return undefined;
     }
+
     // get balances for tokens other than ETH
     const balances = await fetchTokenBalanceMulticall(
       apiTokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
+      user
+    );
+    // get balance for ETH
+    balances.set(ethToken, await fetchETH(user));
+    return balances;
+  }),
+  distinctUntilChanged<Map<string, string> | undefined>(isEqual),
+  shareReplay(1)
+);
+
+export const userBalancesInWeiV3$ = combineLatest([
+  apiTokensV3$,
+  user$,
+  userBalancesReceiver$,
+]).pipe(
+  switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
+    if (!user) {
+      return undefined;
+    }
+
+    // get balances for tokens other than ETH
+    const balances = await fetchTokenBalanceMulticall(
+      apiTokensv3.map((t) => t.dltId).filter((id) => id !== ethToken),
       user
     );
     // get balance for ETH
@@ -185,6 +268,44 @@ export const tokensNew$ = combineLatest([
             apiToken,
             apiPools,
             minMintingBalance,
+            balances,
+            tokenListToken
+          );
+        })
+        .filter((token) => !!token) as Token[];
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
+  shareReplay(1)
+);
+
+export const tokensV3$ = combineLatest([
+  apiTokensV3$,
+  apiPoolsV3$,
+  tokenListTokens$,
+  userBalancesInWeiV3$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+      const userPreferredTokenListTokensMap = new Map(
+        tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
+      );
+      const apiPoolsMap = new Map(apiPools.map((p) => [p.poolDltId, p]));
+      return apiTokens
+        .map((apiToken) => {
+          const tokenListToken = userPreferredTokenListTokensMap.get(
+            apiToken.dltId
+          );
+          if (!tokenListToken) {
+            return undefined;
+          }
+          const apiPool = apiPoolsMap.get(apiToken.dltId);
+          if (!apiPool) {
+            return undefined;
+          }
+          return buildTokenObjectV3(
+            apiToken,
+            apiPool,
             balances,
             tokenListToken
           );

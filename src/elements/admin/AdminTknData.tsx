@@ -45,20 +45,7 @@ export const AdminTknData = () => {
             <div className="font-semibold">{pool.name}</div>
             <div>Pool ID: {pool.poolDltId}</div>
             <div>Pool Token ID: {pool.poolTokenDltId}</div>
-            <div>Funding Limit: {prettifyNumber(pool.fundingLimit)}</div>
-            <div>Staked Balance: {prettifyNumber(pool.stakedBalance)}</div>
-            <div>
-              Trading Liquidity of TKN: {prettifyNumber(pool.tradingLiqTKN)}
-            </div>
-            <div>
-              Trading Liquidity of BNT: {prettifyNumber(pool.tradingLiqBNT)}
-            </div>
-            <div>
-              Vault Balance of TKN: {prettifyNumber(pool.tknVaultBalance)}
-            </div>
-            <div>Deposit Limit: {prettifyNumber(pool.depositLimit)}</div>
-            <div>Trading Enabled: {pool.tradingEnabled ? 'Yes' : 'No'}</div>
-            <div>Deposit Enabled: {pool.depositingEnabled ? 'Yes' : 'No'}</div>
+            <div>Staked Balance: {prettifyNumber(pool.stakedBalance.tkn)}</div>
           </div>
         ))}
       </div>
@@ -102,7 +89,7 @@ export const AdminTknData = () => {
               Total Rewards:{' '}
               {utils.formatUnits(
                 group.totalPendingRewards,
-                group.groupPool.reserveToken.decimals
+                group.groupPool.decimals
               )}{' '}
               {group.groupPool.reserveToken.symbol}
             </div>
@@ -114,7 +101,7 @@ export const AdminTknData = () => {
                   Pending Reward:{' '}
                   {utils.formatUnits(
                     item.pendingRewardsWei,
-                    group.groupPool.reserveToken.decimals
+                    group.groupPool.decimals
                   )}{' '}
                   {group.groupPool.reserveToken.symbol}
                 </div>
