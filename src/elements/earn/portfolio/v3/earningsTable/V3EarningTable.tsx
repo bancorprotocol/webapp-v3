@@ -10,6 +10,7 @@ import {
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { SortingRule } from 'react-table';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -84,6 +85,12 @@ export const V3EarningTable = () => {
     ],
     []
   );
+
+  const defaultSort: SortingRule<Holding> = {
+    id: 'balance',
+    desc: true,
+  };
+
   return (
     <section>
       <h2>Holdings</h2>
@@ -94,6 +101,7 @@ export const V3EarningTable = () => {
           columns={columns}
           stickyColumn
           isLoading={isLoadingHoldings}
+          defaultSort={defaultSort}
         />
       </div>
 
