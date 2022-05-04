@@ -21,7 +21,7 @@ export const getTokensV3Map = createSelector(
 export const getAvailableToStakeTokens = createSelector(
   [
     (state: RootState) => state.pool.v3Pools,
-    (state: RootState) => getAllTokensMap(state),
+    (state: RootState) => getTokensV3Map(state),
   ],
   (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     const poolsWithApr = pools
