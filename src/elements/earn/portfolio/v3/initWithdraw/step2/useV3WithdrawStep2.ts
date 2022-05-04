@@ -46,7 +46,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
       );
       await tx.wait();
       setStep(3);
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
       setTxBusy(false);
