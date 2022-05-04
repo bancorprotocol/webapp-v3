@@ -7,9 +7,7 @@ import { portfolioRewardsClaim } from 'services/router';
 import { NavLink } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
-import { claimBntToV3 } from 'services/web3/protection/migration';
-import { rejectNotification } from 'services/notifications/notifications';
-import { useDispatch } from 'react-redux';
+import { StakeRewardsBtn } from './StakeRewardsBtn';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
@@ -17,26 +15,16 @@ export const MyRewards = () => {
   const loading = useAppSelector<boolean>(
     (state) => state.liquidity.loadingRewards
   );
-  const dispatch = useDispatch();
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex justify-between items-center">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
-        <div className="flex mr-[20px] md:mr-[44px] space-x-8">
-          <Button
-            onClick={() =>
-              claimBntToV3(
-                () => {},
-                () => {},
-                () => rejectNotification(dispatch),
-                () => {}
-              )
-            }
-            size={ButtonSize.EXTRASMALL}
-          >
-            Claim To V3
-          </Button>
+        <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
+          <StakeRewardsBtn
+            buttonLabel="Stake Rewards"
+            buttonClass="btn btn-primary btn-xs"
+          />
           <Popover className="block relative">
             <Popover.Button>
               <IconMore className="rotate-90 w-16" />
@@ -46,7 +34,7 @@ export const MyRewards = () => {
                 className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
                 static
               >
-                <NavLink to={portfolioRewardsClaim}>Withdraw</NavLink>
+                <NavLink to={portfolioRewardsClaim}>Claim</NavLink>
               </Popover.Panel>
             </DropdownTransition>
           </Popover>

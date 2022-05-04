@@ -13,7 +13,6 @@ import {
   rejectNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { ButtonIcon } from 'components/button/ButtonIcon';
 import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
 
 export const ProtectedPositionTableCellActions = (
