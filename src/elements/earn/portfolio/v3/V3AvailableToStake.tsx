@@ -7,7 +7,7 @@ import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
 import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
-import { PoolV3 } from 'services/observables/pools';
+import { PoolV3, PoolV3Apr } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 const AvailableItem = ({
@@ -17,8 +17,7 @@ const AvailableItem = ({
 }: {
   token: Token;
   pool: PoolV3;
-  tknApr: number;
-  bntApr: number;
+  tknApr: PoolV3Apr;
 }) => {
   return (
     <DepositV3Modal
@@ -37,7 +36,7 @@ const AvailableItem = ({
           <div>
             <div className="text-secondary mb-5">Earn</div>
             <div className="flex">
-              <span className="text-[22px]">{tknApr.toFixed(2)}%</span>
+              <span className="text-[22px]">{tknApr.total.toFixed(2)}%</span>
               <IconArrow className="w-10 rotate-[90deg] ml-10" />
             </div>
           </div>

@@ -41,9 +41,16 @@ export interface Pool {
   isProtected: boolean;
 }
 
+export interface PoolV3Apr {
+  tradingFees: number;
+  autoCompounding: number;
+  standardRewards: number;
+  total: number;
+}
+
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr: number;
+  apr: PoolV3Apr;
 }
 
 export interface PoolToken {
@@ -164,10 +171,28 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
       if (!apiPool || !reserveToken) {
         return undefined;
       }
-      let apr = new BigNumber(apiPool.fees24h.usd)
+
+      const apr: {
+        tradingFees: number;
+        autoCompounding: number;
+        standardRewards: number;
+        total: number;
+      } = {
+        tradingFees: 0,
+        autoCompounding: 0,
+        standardRewards: 0,
+        total: 0,
+      };
+
+      apr.tradingFees = new BigNumber(apiPool.fees24h.usd)
         .times(365)
-        .div(apiPool.tradingLiquidityBNT.usd)
+        .div(apiPool.stakedBalance.usd)
         .times(100)
+        .toNumber();
+
+      apr.total = new BigNumber(apr.tradingFees)
+        .plus(apr.autoCompounding)
+        .plus(apr.standardRewards)
         .toNumber();
 
       const pool: PoolV3 = {
