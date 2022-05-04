@@ -14,6 +14,7 @@ import BigNumber from 'bignumber.js';
 import { orderBy, uniqBy } from 'lodash';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { PoolV3 } from 'services/observables/pools';
+import { shrinkToken } from 'utils/formulas';
 
 export const initialState: V3PortfolioState = {
   holdingsRaw: [],
@@ -105,16 +106,16 @@ export const getPortfolioHoldings = createSelector(
         return undefined;
       }
 
-      const poolTokenBalance = utils.formatUnits(
+      const poolTokenBalance = shrinkToken(
         holdingRaw?.poolTokenBalanceWei || '0',
         18
       );
-      const tokenBalance = utils.formatUnits(
+      const tokenBalance = shrinkToken(
         holdingRaw?.tokenBalanceWei || '0',
         pool.decimals
       );
 
-      const stakedTokenBalance = utils.formatUnits(
+      const stakedTokenBalance = shrinkToken(
         standardStakingReward?.tokenAmountWei || '0',
         pool.decimals
       );
@@ -176,11 +177,11 @@ export const getPortfolioWithdrawalRequests = createSelector(
 
         const lockEndsAt =
           requestRaw.createdAt + withdrawalSettings.lockDuration;
-        const poolTokenAmount = utils.formatUnits(
+        const poolTokenAmount = shrinkToken(
           requestRaw.poolTokenAmountWei,
           token.decimals
         );
-        const reserveTokenAmount = utils.formatUnits(
+        const reserveTokenAmount = shrinkToken(
           requestRaw.reserveTokenAmountWei,
           token.decimals
         );
