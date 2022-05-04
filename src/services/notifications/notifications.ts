@@ -578,3 +578,30 @@ export const confirmClaimNotification = (dispatch: any, txHash: string) =>
     },
     dispatch
   );
+
+export const migrateNotification = (dispatch: any, txHash: string) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: 'Migrating your positions is pending confirmation',
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Successfully migrated your positions to V3`,
+        errorTitle: 'Migration Failed',
+        errorMsg: `Migrating positions failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const migrateFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Migration Failed',
+      msg: `Migrating positions failed. Please try again or contact support.`,
+    },
+    dispatch
+  );
