@@ -65,6 +65,11 @@ export interface APIToken {
 
 // V3
 
+export interface APIDataV3<T> {
+  data: T;
+  timestamp: { ethereum: { block: number; timestamp: number } };
+}
+
 export interface PriceDictionary {
   bnt: string;
   usd: string;
@@ -73,26 +78,17 @@ export interface PriceDictionary {
   tkn: string;
 }
 
-export interface APIWelcomeV3 {
-  pools: APIPoolV3[];
-}
-
 export interface APIPoolV3 {
   poolDltId: string;
   poolTokenDltId: string;
   name: string;
   decimals: number;
-  tradingLiquidity: PriceDictionary;
+  tradingLiquidityBNT: PriceDictionary;
+  tradingLiquidityTKN: PriceDictionary;
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
-  fundingLimit: string;
-  stakedBalance: string;
-  tradingLiqBNT: string;
-  tradingLiqTKN: string;
-  tknVaultBalance: string;
-  depositLimit: string;
-  depositingEnabled: boolean;
-  tradingEnabled: boolean;
+  stakedBalance: PriceDictionary;
+  tradingFeePPM: string;
 }
 
 export interface APITokenV3 {

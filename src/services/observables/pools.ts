@@ -166,7 +166,7 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
       }
       let apr = new BigNumber(apiPool.fees24h.usd)
         .times(365)
-        .div(apiPool.tradingLiquidity.usd)
+        .div(apiPool.tradingLiquidityBNT.usd)
         .times(100)
         .toNumber();
 
@@ -177,7 +177,6 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
       };
       return pool;
     });
-    console.log('poolsV3', poolsV3.length);
     return poolsV3.filter((pool) => !!pool) as PoolV3[];
   }),
   distinctUntilChanged<PoolV3[]>(isEqual),

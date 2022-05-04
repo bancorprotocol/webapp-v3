@@ -161,7 +161,7 @@ export const buildTokenObjectV3 = (
     address: apiToken.dltId,
     decimals: pool.decimals,
     symbol: apiToken.symbol,
-    liquidity: pool.tradingLiquidity.usd,
+    liquidity: pool.tradingLiquidityTKN.usd,
     usdPrice: apiToken.rate.usd,
     usd_24h_ago: apiToken.rate24hAgo.usd,
     price_change_24,

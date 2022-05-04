@@ -47,20 +47,15 @@ import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 
 export const subscribeToObservables = (dispatch: any) => {
-  console.log('01');
-
   poolsV3$.subscribe((pools) => {
-    console.log('1');
     dispatch(setv3Pools(pools));
   });
 
   allTokensNew$.subscribe((tokens) => {
-    console.log('2');
     dispatch(setAllTokens(tokens));
   });
 
   tokensNew$.subscribe((tokens) => {
-    console.log('3');
     dispatch(setTokens(tokens));
   });
 
