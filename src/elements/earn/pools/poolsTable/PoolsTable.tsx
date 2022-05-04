@@ -17,6 +17,7 @@ import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Tooltip } from 'components/tooltip/Tooltip';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 interface Props {
   search: string;
@@ -26,7 +27,7 @@ interface Props {
 
 export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
   const v2Pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
-  const v3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
+  const v3Pools = useAppSelector((state) => state.pool.v3Pools);
 
   const [rewards, setRewards] = useState(false);
   const [lowVolume, setLowVolume] = useState(false);
@@ -47,7 +48,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         p.name &&
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
-        (lowLiquidity || Number(p.tradingLiquidity.usd) > 50000) &&
+        (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
         (lowEarnRate || p.apr > 0.15)
     );
   }, [v3Pools, search, lowVolume, lowLiquidity, lowEarnRate]);
@@ -130,7 +131,7 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.tradingLiquidity.usd, true)}</div>
+          <div>{prettifyNumber(row.tradingLiquidityTKN.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Volume 24h
@@ -188,7 +189,20 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (cellData) => DepositV3Modal({ pool: cellData.row.original }),
+        Cell: (cellData) => (
+          <DepositV3Modal
+            pool={cellData.row.original}
+            renderButton={(onClick) => (
+              <Button
+                onClick={onClick}
+                variant={ButtonVariant.PRIMARY}
+                size={ButtonSize.EXTRASMALL}
+              >
+                Deposit
+              </Button>
+            )}
+          />
+        ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,

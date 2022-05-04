@@ -11,10 +11,17 @@ export const getAllTokensMap = createSelector(
   }
 );
 
+export const getTokensV3Map = createSelector(
+  [(state: RootState) => state.pool.v3Pools],
+  (pools: PoolV3[]): Map<string, Token> => {
+    return new Map(pools.map((pool) => [pool.poolDltId, pool.reserveToken]));
+  }
+);
+
 export const getAvailableToStakeTokens = createSelector(
   [
     (state: RootState) => state.pool.v3Pools,
-    (state: RootState) => getAllTokensMap(state),
+    (state: RootState) => getTokensV3Map(state),
   ],
   (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     const poolsWithApr = pools
