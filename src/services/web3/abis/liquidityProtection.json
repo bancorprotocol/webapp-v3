@@ -2,6 +2,16 @@
   {
     "inputs": [
       {
+        "internalType": "contract IBancorNetworkV3",
+        "name": "networkV3",
+        "type": "address"
+      },
+      {
+        "internalType": "address payable",
+        "name": "vaultV3",
+        "type": "address"
+      },
+      {
         "internalType": "contract ILiquidityProtectionSettings",
         "name": "settings",
         "type": "address"
@@ -51,13 +61,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "_prevOwner",
+        "name": "prevOwner",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "_newOwner",
+        "name": "newOwner",
         "type": "address"
       }
     ],
@@ -97,16 +107,30 @@
         "name": "reserveToken",
         "type": "address"
       },
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "addLiquidity",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
       {
         "internalType": "contract IConverterAnchor",
         "name": "poolAnchor",
@@ -117,17 +141,35 @@
         "name": "reserveToken",
         "type": "address"
       },
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "addLiquidityFor",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "startIndex", "type": "uint256" },
-      { "internalType": "uint256", "name": "endIndex", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "startIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "endIndex",
+        "type": "uint256"
+      }
     ],
     "name": "claimBalance",
     "outputs": [],
@@ -135,16 +177,71 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "contract IDSToken",
+            "name": "poolToken",
+            "type": "address"
+          },
+          {
+            "internalType": "contract IReserveToken",
+            "name": "reserveToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "positionIds",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct LiquidityProtection.PositionList[]",
+        "name": "positionLists",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "migratePositions",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IConverterAnchor[]",
+        "name": "poolAnchors",
+        "type": "address[]"
+      }
+    ],
+    "name": "migrateSystemPoolTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "newOwner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "owner",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
@@ -158,8 +255,16 @@
     ],
     "name": "poolAvailableSpace",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -176,21 +281,55 @@
         "name": "reserveToken",
         "type": "address"
       },
-      { "internalType": "uint256", "name": "reserveAmount", "type": "uint256" },
-      { "internalType": "uint256", "name": "poolRateN", "type": "uint256" },
-      { "internalType": "uint256", "name": "poolRateD", "type": "uint256" },
-      { "internalType": "uint256", "name": "reserveRateN", "type": "uint256" },
-      { "internalType": "uint256", "name": "reserveRateD", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "reserveAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "poolRateN",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "poolRateD",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reserveRateN",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "reserveRateD",
+        "type": "uint256"
+      }
     ],
     "name": "poolROI",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "uint32", "name": "portion", "type": "uint32" }
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "portion",
+        "type": "uint32"
+      }
     ],
     "name": "removeLiquidity",
     "outputs": [],
@@ -199,8 +338,16 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "uint32", "name": "portion", "type": "uint32" },
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint32",
+        "name": "portion",
+        "type": "uint32"
+      },
       {
         "internalType": "uint256",
         "name": "removeTimestamp",
@@ -209,9 +356,21 @@
     ],
     "name": "removeLiquidityReturn",
     "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -256,21 +415,12 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "systemStore",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "contract ILiquidityProtectionSystemStore",
-        "name": "",
+        "internalType": "address",
+        "name": "newOwner",
         "type": "address"
       }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "_newOwner", "type": "address" }
     ],
     "name": "transferOwnership",
     "outputs": [],
@@ -279,33 +429,69 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "address", "name": "newProvider", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "newProvider",
+        "type": "address"
+      }
     ],
     "name": "transferPosition",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "internalType": "address", "name": "newProvider", "type": "address" },
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "newProvider",
+        "type": "address"
+      },
       {
         "internalType": "contract ITransferPositionCallback",
         "name": "callback",
         "type": "address"
       },
-      { "internalType": "bytes", "name": "data", "type": "bytes" }
+      {
+        "internalType": "bytes",
+        "name": "data",
+        "type": "bytes"
+      }
     ],
     "name": "transferPositionAndNotify",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferStoreOwnership",
     "outputs": [],
@@ -314,7 +500,11 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "newOwner", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
     ],
     "name": "transferWalletOwnership",
     "outputs": [],
@@ -322,13 +512,7 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "wallet",
-    "outputs": [
-      { "internalType": "contract ITokenHolder", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  { "stateMutability": "payable", "type": "receive" }
+    "stateMutability": "payable",
+    "type": "receive"
+  }
 ]
