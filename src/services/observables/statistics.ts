@@ -4,6 +4,9 @@ import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
 import { apiData$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
+import { fifteenSeconds$ } from 'services/observables/timers';
+import { BancorApi } from 'services/api/bancorApi/bancorApi';
+import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 
 export interface Statistic {
   label: string;
@@ -11,16 +14,60 @@ export interface Statistic {
   change24h?: number;
 }
 
+const averageFormat = {
+  average: true,
+  mantissa: 2,
+  optionalMantissa: true,
+  spaceSeparated: true,
+  lowPrecision: false,
+};
+
+export const statisticsV3$ = combineLatest([fifteenSeconds$]).pipe(
+  switchMapIgnoreThrow(async () => {
+    const stats = await BancorApi.v3.getStatistics();
+
+    const bnt24hChange = new BigNumber(stats.bntRate.usd)
+      .div(stats.bntRate24hAgo.usd)
+      .times(100)
+      .minus(100)
+      .toNumber();
+
+    const liquidity24hChange = new BigNumber(stats.totalTradingLiquidity.usd)
+      .div(stats.totalTradingLiquidity24hAgo.usd)
+      .times(100)
+      .minus(100)
+      .toNumber();
+
+    const statistics: Statistic[] = [
+      {
+        label: 'BNT Price',
+        value: '$' + numbro(stats.bntRate.usd).format({ mantissa: 2 }),
+        change24h: bnt24hChange,
+      },
+      {
+        label: 'Total Liquidity',
+        value:
+          '$' + numbro(stats.totalTradingLiquidity.usd).format(averageFormat),
+        change24h: liquidity24hChange,
+      },
+      {
+        label: 'Fees (24h)',
+        value: '$' + numbro(stats.totalFees24h.usd).format(averageFormat),
+        change24h: 0,
+      },
+      {
+        label: 'Total BNT Staked',
+        //value: numbro(stakedBntPercent).format({ mantissa: 2 }) + '%',
+        value: '?????',
+      },
+    ];
+    return statistics;
+  }),
+  shareReplay(1)
+);
+
 export const statistics$ = combineLatest([apiData$]).pipe(
   map(([apiData]) => {
-    const averageFormat = {
-      average: true,
-      mantissa: 2,
-      optionalMantissa: true,
-      spaceSeparated: true,
-      lowPrecision: false,
-    };
-
     const bnt24hChange = new BigNumber(apiData.bnt_price.usd!)
       .div(apiData.bnt_price_24h_ago.usd!)
       .times(100)

@@ -1,15 +1,15 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy } from 'lodash';
-import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap, getTokensV3Map } from 'store/bancor/token';
 import { utils } from 'ethers';
 import {
   RewardsProgramRaw,
   RewardsProgramV3,
 } from 'services/web3/v3/portfolio/standardStaking';
+import { Statistic } from 'services/observables/statistics';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -19,6 +19,7 @@ interface BancorState {
   allTokens: Token[];
   allStandardRewardPrograms: RewardsProgramRaw[];
   isLoadingTokens: boolean;
+  statisticsV3: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -29,6 +30,7 @@ export const initialState: BancorState = {
   allTokenListTokens: [],
   allStandardRewardPrograms: [],
   isLoadingTokens: true,
+  statisticsV3: [],
 };
 
 const bancorSlice = createSlice({
@@ -57,13 +59,16 @@ const bancorSlice = createSlice({
     ) => {
       state.allStandardRewardPrograms = action.payload;
     },
+    setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
+      state.statisticsV3 = action.payload;
+    },
   },
 });
 
 export const {
   setTokens,
   setAllTokens,
-  setTokenLists,
+  setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
   setAllStandardRewardPrograms,

@@ -95,8 +95,8 @@ export abstract class BancorV3Api {
     ];
   };
 
-  static getStatistics = async (): Promise<APIStatsV3[]> => {
-    const { data } = await axiosInstance.get<APIStatsV3[]>('/stats');
-    return data;
+  static getStatistics = async (): Promise<APIStatsV3> => {
+    const { data } = await axiosInstance.get<APIDataV3<APIStatsV3>>('/stats');
+    return data.data;
   };
 }
