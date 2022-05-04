@@ -2,7 +2,6 @@ import { Button } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { utils } from 'ethers';
 import { useNavigation } from 'services/router';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -18,7 +17,7 @@ import {
   getTokenById,
 } from 'store/bancor/bancor';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { shrinkToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
 import { useConditionalInterval } from 'hooks/useConditionalInterval';
 
@@ -77,7 +76,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       return;
     }
 
-    const amountWei = utils.parseUnits(amount, pool.reserveToken.decimals);
+    const amountWei = expandToken(amount, pool.reserveToken.decimals);
     const isETH = pool.reserveToken.address === ethToken;
 
     try {
@@ -138,7 +137,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
                   />
                 </div>
-                <div>Additional gas ~{prettifyNumber(extraGasNeeded, true)}</div>
+                <div>
+                  Additional gas ~{prettifyNumber(extraGasNeeded, true)}
+                </div>
               </div>
             ) : (
               <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">

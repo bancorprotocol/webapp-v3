@@ -9,8 +9,8 @@ import { Button } from 'components/button/Button';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
-import { utils } from 'ethers';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
+import { shrinkToken } from 'utils/formulas';
 
 interface Props {
   position: ExternalHolding;
@@ -49,7 +49,7 @@ export const V3ExternalHoldingsModal = ({
           address: position.poolTokenAddress,
           symbol: 'lpTKN',
         },
-        amount: utils.formatUnits(position.poolTokenBalanceWei, 18),
+        amount: shrinkToken(position.poolTokenBalanceWei, 18),
       },
     ],
     [position.poolTokenAddress, position.poolTokenBalanceWei]
