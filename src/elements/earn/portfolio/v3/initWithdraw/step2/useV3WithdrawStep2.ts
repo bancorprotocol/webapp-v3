@@ -4,6 +4,9 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { expandToken } from 'utils/formulas';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store/index';
 
 interface Props {
   holding: Holding;
@@ -14,6 +17,8 @@ interface Props {
 export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
   const { pool, standardStakingReward } = holding;
   const [txBusy, setTxBusy] = useState(false);
+  const dispatch = useDispatch();
+  const account = useAppSelector((state) => state.user.account);
 
   const tokenAmountToUnstakeWei = useMemo(() => {
     const amountToUnstake = new BigNumber(amount.tkn)
@@ -23,8 +28,8 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
   }, [amount.tkn, holding.tokenBalance, pool.decimals]);
 
   const handleLeave = async () => {
-    if (!standardStakingReward) {
-      console.error('No standardStakingReward found');
+    if (!standardStakingReward || !account) {
+      console.error('handleLeave: missing data');
       return;
     }
     setTxBusy(true);
@@ -41,6 +46,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
       );
       await tx.wait();
       setStep(3);
+      await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
       setTxBusy(false);

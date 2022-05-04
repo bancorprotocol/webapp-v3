@@ -9,9 +9,10 @@ interface Props {
   amount: AmountTknFiat;
   setStep: (step: number) => void;
   holding: Holding;
+  isFiat: boolean;
 }
 
-const V3WithdrawStep2 = ({ setStep, amount, holding }: Props) => {
+const V3WithdrawStep2 = ({ setStep, amount, holding, isFiat }: Props) => {
   const { handleLeave, token, txBusy } = useV3WithdrawStep2({
     amount,
     holding,
@@ -24,7 +25,9 @@ const V3WithdrawStep2 = ({ setStep, amount, holding }: Props) => {
       <h1 className="text-[36px] font-normal my-50">
         Remove{' '}
         <span className="text-primary">
-          {prettifyNumber(amount.tkn)} {token.symbol}
+          {isFiat
+            ? `${prettifyNumber(amount.fiat, true)} USD`
+            : `${prettifyNumber(amount.tkn)} ${token.symbol}`}
         </span>{' '}
         from earning rewards
       </h1>

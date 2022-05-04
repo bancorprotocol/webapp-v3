@@ -66,7 +66,7 @@ export const V3EarningTableMenuRate = ({
         holding.pool.reserveToken.symbol
       );
       await tx.wait();
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
       setTxLeaveBusy(false);
     } catch (e) {
       console.error('handleJoinClick', e);

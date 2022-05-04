@@ -3,40 +3,16 @@ import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 import { HoldingRaw } from 'store/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
 import { multicall } from 'services/web3/multicall/multicall';
-import { bntToken } from 'services/web3/config';
-
-const fetchPoolTokenIdsMulticall = async (
-  ids: string[]
-): Promise<Map<string, string>> => {
-  const calls = ids.map((id) => ({
-    contractAddress: ContractsApi.BancorNetworkInfo.read.address,
-    interface: ContractsApi.BancorNetworkInfo.read.interface,
-    methodName: 'poolToken',
-    methodParameters: [id],
-  }));
-  const res = await multicall(calls);
-
-  if (!res || !res.length) {
-    throw new Error('Multicall Error while fetching pool token ids');
-  }
-
-  return new Map(
-    res.map((id, idx) => {
-      const tokenId = ids[idx];
-      const poolTokenId = id && id.length ? id[0] : '';
-      return [tokenId, poolTokenId];
-    })
-  );
-};
+import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
 
 const fetchPoolTokenToUnderlyingMulticall = async (
-  data: { poolId: string; amount: string }[]
+  data: { poolDltId: string; amount: string }[]
 ): Promise<Map<string, string>> => {
-  const calls = data.map(({ poolId, amount }) => ({
+  const calls = data.map(({ poolDltId, amount }) => ({
     contractAddress: ContractsApi.BancorNetworkInfo.read.address,
     interface: ContractsApi.BancorNetworkInfo.read.interface,
     methodName: 'poolTokenToUnderlying',
-    methodParameters: [poolId, amount],
+    methodParameters: [poolDltId, amount],
   }));
   const res = await multicall(calls);
 
@@ -46,7 +22,7 @@ const fetchPoolTokenToUnderlyingMulticall = async (
 
   return new Map(
     res.map((bn, idx) => {
-      const tokenId = data[idx].poolId;
+      const tokenId = data[idx].poolDltId;
       const amount = bn && bn.length ? bn[0].toString() : '0';
       return [tokenId, amount];
     })
@@ -54,6 +30,7 @@ const fetchPoolTokenToUnderlyingMulticall = async (
 };
 
 export const fetchPortfolioV3Holdings = async (
+  apiPools: APIPoolV3[],
   user?: string
 ): Promise<HoldingRaw[]> => {
   if (!user) {
@@ -61,21 +38,20 @@ export const fetchPortfolioV3Holdings = async (
   }
 
   try {
-    const liquidityPools =
-      await ContractsApi.BancorNetwork.read.liquidityPools();
-    const poolIds = [...liquidityPools, bntToken];
-    const poolTokenIdsMap = await fetchPoolTokenIdsMulticall(poolIds);
-    const poolTokenIds = Array.from(poolTokenIdsMap.values());
+    const poolTokenIdsMap = new Map(
+      apiPools.map((pool) => [pool.poolDltId, pool.poolTokenDltId])
+    );
+    const poolTokenIds = apiPools.map((pool) => pool.poolTokenDltId);
     const poolTokenBalancesMap = await fetchTokenBalanceMulticall(
       poolTokenIds,
       user
     );
 
-    const poolIdsWithPoolTokenBalance = poolIds.map((poolId) => {
-      const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
+    const poolIdsWithPoolTokenBalance = apiPools.map(({ poolDltId }) => {
+      const poolTokenId = poolTokenIdsMap.get(poolDltId) ?? '';
       const amount = poolTokenBalancesMap.get(poolTokenId) ?? '0';
       return {
-        poolId,
+        poolDltId,
         amount,
       };
     });
@@ -84,18 +60,18 @@ export const fetchPortfolioV3Holdings = async (
       poolIdsWithPoolTokenBalance
     );
 
-    const holdingsRaw: HoldingRaw[] = poolIds
-      .map((poolId) => {
-        const poolTokenId = poolTokenIdsMap.get(poolId) ?? '';
+    const holdingsRaw: HoldingRaw[] = apiPools
+      .map(({ poolDltId }) => {
+        const poolTokenId = poolTokenIdsMap.get(poolDltId) ?? '';
         const poolTokenBalanceWei = poolTokenBalancesMap.get(poolTokenId);
-        const tokenBalanceWei = poolTokenToUnderlyingMap.get(poolId);
+        const tokenBalanceWei = poolTokenToUnderlyingMap.get(poolDltId);
 
         if (!poolTokenId || !poolTokenBalanceWei || !tokenBalanceWei) {
           return undefined;
         }
 
         return {
-          poolId,
+          poolDltId,
           poolTokenId,
           poolTokenBalanceWei,
           tokenBalanceWei,
