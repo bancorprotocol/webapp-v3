@@ -30,6 +30,7 @@ import {
   APIToken,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
+import { fifteenSeconds$ } from 'services/observables/timers';
 
 export interface TokenMinimal {
   address: string;
@@ -181,6 +182,7 @@ export const userBalancesInWei$ = combineLatest([
   apiTokens$,
   user$,
   userBalancesReceiver$,
+  fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
@@ -204,6 +206,7 @@ export const userBalancesInWeiV3$ = combineLatest([
   apiTokensV3$,
   user$,
   userBalancesReceiver$,
+  fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
     if (!user) {

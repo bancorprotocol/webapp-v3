@@ -16,7 +16,11 @@ import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardReward
 import { fifteenSeconds$ } from 'services/observables/timers';
 import { apiPoolsV3$ } from 'services/observables/apiData';
 
-export const portfolioHoldings$ = combineLatest([apiPoolsV3$, user$]).pipe(
+export const portfolioHoldings$ = combineLatest([
+  apiPoolsV3$,
+  user$,
+  fifteenSeconds$,
+]).pipe(
   switchMapIgnoreThrow(async ([apiPools, user]) => {
     return fetchPortfolioV3Holdings(apiPools, user);
   }),
@@ -33,7 +37,10 @@ export const portfolioStandardRewards$ = combineLatest([
   shareReplay(1)
 );
 
-export const portfolioWithdrawals$ = combineLatest([user$]).pipe(
+export const portfolioWithdrawals$ = combineLatest([
+  user$,
+  fifteenSeconds$,
+]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
     return fetchPortfolioV3Withdrawals(user);
   }),
