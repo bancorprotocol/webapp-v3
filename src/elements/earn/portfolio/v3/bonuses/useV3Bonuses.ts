@@ -55,7 +55,7 @@ export const useV3Bonuses = () => {
         confirmClaimNotification(dispatch, tx.hash);
         setBonusModalOpen(false);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to claim rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
@@ -78,7 +78,7 @@ export const useV3Bonuses = () => {
         confirmClaimNotification(dispatch, tx.hash);
         setBonusModalOpen(false);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to restake rewards', e);
         if (e.code === ErrorCode.DeniedTx) {

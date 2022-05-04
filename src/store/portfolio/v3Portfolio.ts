@@ -93,7 +93,7 @@ export const getPortfolioHoldings = createSelector(
     );
 
     const holdingsRawMap = new Map(
-      holdingsRaw.map((holding) => [holding.poolId, holding])
+      holdingsRaw.map((holding) => [holding.poolDltId, holding])
     );
 
     const buildHoldingObject = (poolId: string) => {
@@ -134,7 +134,7 @@ export const getPortfolioHoldings = createSelector(
       return holding;
     };
 
-    const allHoldingPools = holdingsRaw.map((holding) => holding.poolId);
+    const allHoldingPools = holdingsRaw.map((holding) => holding.poolDltId);
     const allStakedPools = standardRewards.map((reward) => reward.pool);
     const allPoolsUniq = uniqBy(
       [...allHoldingPools, ...allStakedPools],

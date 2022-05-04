@@ -45,15 +45,9 @@ export interface BonusClaimable {
   amount: string;
 }
 
-export interface Bonus {
-  id: string;
-  token: Token;
-  claimable: BonusClaimable[];
-}
-
 export interface HoldingRaw {
   poolTokenId: string;
-  poolId: string;
+  poolDltId: string;
   poolTokenBalanceWei: string;
   tokenBalanceWei: string;
 }
