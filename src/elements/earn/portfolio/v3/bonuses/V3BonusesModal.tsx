@@ -162,7 +162,7 @@ const BonusGroup = ({
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupPool.reserveToken.symbol} and Earn ??%
+          Claim {groupPool.reserveToken.symbol} and Earn
         </Button>
       </div>
     </div>
