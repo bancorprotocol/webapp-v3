@@ -2,8 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import TokenInputV3, {
   TokenInputV3Props,
 } from 'components/tokenInput/TokenInputV3';
-import { useState, useEffect, useCallback } from 'react';
-import { Token } from 'services/observables/tokens';
+import { useEffect, useState } from 'react';
 import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
 
 interface TokenInputPercentageV3Props extends TokenInputV3Props {
@@ -31,6 +30,15 @@ export const TokenInputPercentageV3 = ({
 
   const [selPercentage, setSelPercentage] = useState<number>(-1);
 
+  const handleSetPercentage = (percent: number) => {
+    setSelPercentage(percentages.indexOf(percent));
+    if (fieldBalance !== undefined) {
+      const amount = new BigNumber(fieldBalance).times(percent / 100);
+      setInputTkn(amount.toString());
+      setInputFiat(calcFiatValue(amount, token.usdPrice));
+    }
+  };
+
   useEffect(() => {
     if (fieldBalance !== undefined) {
       const percentage = new BigNumber(inputTkn)
@@ -46,13 +54,13 @@ export const TokenInputPercentageV3 = ({
 
   return (
     <div className="w-full">
-      <div className="flex justify-between pr-10 mb-4">
+      <div className="flex justify-between items-end mb-10">
         <span>{label}</span>
         {fieldBalance && (
-          <span>
+          <button onClick={() => handleSetPercentage(100)} className="text-12">
             {balanceLabel}: {prettifyNumber(fieldBalance)} (~
             {prettifyNumber(calcFiatValue(fieldBalance, token.usdPrice), true)})
-          </span>
+          </button>
         )}
       </div>
       {token && (
@@ -66,19 +74,16 @@ export const TokenInputPercentageV3 = ({
           isError={isError}
         />
       )}
-      <div className="flex justify-between pb-20">
+      <div className="flex justify-between mt-20">
         {percentages.map((percent, index) => (
           <button
             key={'percent' + percent}
-            className={`btn-sm rounded-10 border border-graphite w-[90px] text-14 btn-outline-secondary bg-opacity-0`}
-            onClick={() => {
-              setSelPercentage(index);
-              if (fieldBalance !== undefined) {
-                const amount = new BigNumber(fieldBalance).times(percent / 100);
-                setInputTkn(amount.toString());
-                setInputFiat(calcFiatValue(amount, token.usdPrice));
-              }
-            }}
+            className={`btn btn-sm rounded-10 border ${
+              selPercentage === index
+                ? 'btn-primary border-primary'
+                : 'border-fog dark:border-grey hover:border-primary'
+            }`}
+            onClick={() => handleSetPercentage(percent)}
           >
             +{percent}%
           </button>

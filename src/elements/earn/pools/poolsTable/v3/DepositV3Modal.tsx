@@ -1,4 +1,4 @@
-import { Button } from 'components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -27,6 +27,7 @@ import {
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
 import { openWalletModal } from 'store/user/user';
+import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 
 interface Props {
   pool: PoolV3;
@@ -152,21 +153,21 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         separator
         large
       >
-        <div className="p-10">
-          <div className="flex flex-col items-center text-12 mx-20">
-            <TokenInputPercentageV3
-              label="Amount"
-              balanceLabel="Available"
-              token={pool.reserveToken}
-              inputTkn={amount}
-              inputFiat={inputFiat}
-              setInputFiat={setInputFiat}
-              setInputTkn={setAmount}
-              isFiat={isFiat}
-              isError={isInputError}
-            />
+        <div className="p-30 pb-14">
+          <TokenInputPercentageV3
+            label="Amount"
+            balanceLabel="Available"
+            token={pool.reserveToken}
+            inputTkn={amount}
+            inputFiat={inputFiat}
+            setInputFiat={setInputFiat}
+            setInputTkn={setAmount}
+            isFiat={isFiat}
+            isError={isInputError}
+          />
+          <div className="w-full px-20 py-10 mt-20 rounded bg-secondary">
             {rewardProgram ? (
-              <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
+              <>
                 <div className="flex pr-10 mb-4">
                   <span className="mr-20">Access full earnings</span>
                   <Switch
@@ -174,30 +175,31 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
                   />
                 </div>
-                <div>
+                <div className="text-12 text-secondary">
                   Additional gas ~{prettifyNumber(extraGasNeeded, true)}
                 </div>
-              </div>
+              </>
             ) : (
-              <div className="flex justify-between w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">
-                <span>Compunding rewards {pool.reserveToken.symbol}</span>
-              </div>
+              <span>Compounding rewards {pool.reserveToken.symbol}</span>
             )}
-            <Button
-              onClick={handleClick}
-              disabled={!amount || txBusy || isInputError}
-              className={`btn-primary rounded w-full mt-30 mb-10`}
-            >
-              {txBusy
-                ? '... waiting for confirmation'
-                : shouldConnect
-                ? 'Connect your wallet'
-                : canDeposit
-                ? `Deposit ${pool.name}`
-                : 'Enter amount'}
-            </Button>
-            {ApproveModal}
           </div>
+
+          <Button
+            onClick={handleClick}
+            disabled={!amount || txBusy || isInputError}
+            variant={ButtonVariant.PRIMARY}
+            className={`w-full mt-20 mb-14`}
+          >
+            {txBusy
+              ? '... waiting for confirmation'
+              : shouldConnect
+              ? 'Connect your wallet'
+              : canDeposit
+              ? `Deposit ${pool.name}`
+              : 'Enter amount'}
+          </Button>
+          <ProtectedSettingsV3 />
+          {ApproveModal}
         </div>
       </ModalV3>
     </>

@@ -50,8 +50,8 @@ const TokenInputV3 = ({
       onClick={() => {
         inputRef.current && inputRef.current.focus();
       }}
-      className={`relative flex items-center my-10 border-2 rounded-20 text-[36px] bg-white dark:bg-charcoal ${
-        isFocused ? 'border-primary' : 'border-graphite dark:border-grey'
+      className={`relative flex items-center border-2 rounded-20 text-[36px] bg-white dark:bg-charcoal ${
+        isFocused ? 'border-primary' : 'border-fog dark:border-grey'
       } ${isError ? 'border-error text-error' : ''}`}
     >
       <Image
