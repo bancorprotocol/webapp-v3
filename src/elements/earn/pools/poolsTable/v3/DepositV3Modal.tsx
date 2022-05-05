@@ -50,7 +50,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
-  const depositDisabled = !account || !amount || Number(amount) === 0;
+  const depositDisabled = !account || !amount || Number(amount) === 0 || isInputError;
 
   const shouldPollForGasPrice = useMemo(() => {
     return !depositDisabled && accessFullEarnings && !!eth;
