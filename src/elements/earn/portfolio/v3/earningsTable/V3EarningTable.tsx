@@ -12,7 +12,6 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { SortingRule } from 'react-table';
 import { Button, ButtonVariant } from 'components/button/Button';
-import { V3BonusesModal } from '../bonuses/V3BonusesModal';
 import { useV3Bonuses } from '../bonuses/useV3Bonuses';
 
 export const V3EarningTable = () => {
@@ -119,7 +118,6 @@ export const V3EarningTable = () => {
           holding={holdingToWithdraw}
         />
       )}
-      <V3BonusesModal />
     </section>
   );
 };
