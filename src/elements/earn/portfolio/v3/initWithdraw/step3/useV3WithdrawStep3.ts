@@ -34,7 +34,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
-        amount: poolTokenAmountWei,
+        amount: shrinkToken(poolTokenAmountWei, 18),
         token: {
           ...reserveToken,
           address: poolTokenDltId,
@@ -44,7 +44,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ];
     if (reserveToken.address === bntToken) {
       tokensToApprove.push({
-        amount: poolTokenAmountWei,
+        amount: shrinkToken(poolTokenAmountWei, 18),
         token: {
           ...reserveToken,
           address: getNetworkVariables().govToken,
