@@ -1,5 +1,8 @@
 import { Modal } from 'components/modal/Modal';
-import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
+import {
+  ProtectedPosition,
+  ProtectedPositionGrouped,
+} from 'services/web3/protection/positions';
 import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
@@ -7,6 +10,14 @@ import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { useAppSelector } from 'store';
 import { useMemo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { getAllBntPositionsAndAmount } from 'store/liquidity/liquidity';
+import {
+  migrateNotification,
+  rejectNotification,
+  migrateFailedNotification,
+} from 'services/notifications/notifications';
+import { migrateV2Positions } from 'services/web3/protection/migration';
+import { useDispatch } from 'react-redux';
 
 export const UpgradeBntModal = ({
   position,
@@ -17,6 +28,14 @@ export const UpgradeBntModal = ({
   isOpen: boolean;
   setIsOpen: Function;
 }) => {
+  const dispatch = useDispatch();
+
+  const totalBNT = useAppSelector<{
+    usdAmount: number;
+    tknAmount: number;
+    bntPositions: ProtectedPosition[];
+  }>(getAllBntPositionsAndAmount);
+
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
@@ -31,11 +50,16 @@ export const UpgradeBntModal = ({
     [withdrawalFee]
   );
 
-  const balance = useMemo(
-    () =>
-      Number(position.reserveToken.usdPrice) * Number(position.rewardsAmount),
-    [withdrawalFee]
-  );
+  const migrate = (positions: ProtectedPosition[]) => {
+    migrateV2Positions(
+      positions,
+      (txHash: string) => migrateNotification(dispatch, txHash),
+      () => {},
+      () => rejectNotification(dispatch),
+      () => migrateFailedNotification(dispatch)
+    );
+    setIsOpen(false);
+  };
 
   return (
     <Modal large isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -52,9 +76,9 @@ export const UpgradeBntModal = ({
         <div className="w-full bg-fog rounded-20 p-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all BNT</div>
-            {`${prettifyNumber(position.rewardsAmount)} ${
+            {`${prettifyNumber(totalBNT.tknAmount)} ${
               position.reserveToken.symbol
-            } (~${prettifyNumber(balance, true)})`}
+            } (~${prettifyNumber(totalBNT.usdAmount, true)})`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
@@ -69,8 +93,15 @@ export const UpgradeBntModal = ({
             Fully upgrade paritialy protected holdings
           </div>
         </div>
-        <Button className="w-full h-[50px]">Upgrade All</Button>
-        <button className="text-primary">No Thanks, just BNT to ETH</button>
+        <Button
+          onClick={() => migrate(totalBNT.bntPositions)}
+          className="w-full h-[50px]"
+        >
+          Upgrade All
+        </Button>
+        <button onClick={() => migrate([position])} className="text-primary">
+          No Thanks, just BNT to {position.pool.reserves[0].symbol}
+        </button>
         <a
           href={'/'}
           target="_blank"

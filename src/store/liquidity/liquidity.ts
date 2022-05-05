@@ -9,6 +9,7 @@ import {
 } from 'services/web3/protection/positions';
 import { PoolToken } from 'services/observables/pools';
 import { RootState } from 'store';
+import { bntToken } from 'services/web3/config';
 
 interface LiquidityState {
   poolTokens: PoolToken[];
@@ -142,6 +143,24 @@ export const getGroupedPositions = createSelector(
       })(new Map()),
       []
     );
+  }
+);
+
+export const getAllBntPositionsAndAmount = createSelector(
+  (state: RootState) => state.liquidity.protectedPositions,
+  (protectedPositions: ProtectedPosition[]) => {
+    const bntPositions = protectedPositions.filter(
+      (pos) => pos.reserveToken.address === bntToken
+    );
+
+    const tknAmount = bntPositions
+      .map((x) => Number(x.claimableAmount.tknAmount))
+      .reduce((sum, current) => sum + current, 0);
+    const usdAmount = bntPositions
+      .map((x) => Number(x.claimableAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    return { tknAmount, usdAmount, bntPositions };
   }
 );
 
