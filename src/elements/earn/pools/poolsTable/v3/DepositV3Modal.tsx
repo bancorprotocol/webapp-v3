@@ -21,6 +21,12 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
 import { useConditionalInterval } from 'hooks/useConditionalInterval';
 import BigNumber from 'bignumber.js';
+import {
+  confirmDepositNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { ErrorCode } from 'services/web3/types';
+import { openWalletModal } from 'store/user/user';
 
 interface Props {
   pool: PoolV3;
@@ -32,6 +38,7 @@ const REWARDS_EXTRA_GAS = 130_000;
 export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
+  const [txBusy, setTxBusy] = useState(false);
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
   const isFiat = useAppSelector((state) => state.user.usdToggle);
@@ -43,18 +50,80 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
 
   const isInputError = useMemo(
-    () => new BigNumber(pool.reserveToken.balance || 0).lt(amount),
-    [amount, pool.reserveToken.balance]
+    () => !!account && new BigNumber(pool.reserveToken.balance || 0).lt(amount),
+    [account, amount, pool.reserveToken.balance]
   );
 
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
-  const depositDisabled = !account || !amount || Number(amount) === 0 || isInputError;
+  const deposit = async () => {
+    if (!pool.reserveToken.balance || !account || !rewardProgram) {
+      return;
+    }
+
+    const amountWei = expandToken(amount, pool.reserveToken.decimals);
+    const isETH = pool.reserveToken.address === ethToken;
+
+    try {
+      setTxBusy(true);
+      const tx = accessFullEarnings
+        ? await ContractsApi.StandardRewards.write.depositAndJoin(
+            rewardProgram.id,
+            amountWei
+          )
+        : await ContractsApi.BancorNetwork.write.deposit(
+            pool.poolDltId,
+            amountWei,
+            { value: isETH ? amountWei : undefined }
+          );
+      console.log(tx);
+      confirmDepositNotification(
+        dispatch,
+        tx.hash,
+        amount,
+        pool.reserveToken.symbol
+      );
+      await tx.wait();
+      setTxBusy(false);
+      setIsOpen(false);
+      pushPortfolio();
+      await updatePortfolioData(dispatch);
+    } catch (e: any) {
+      console.error('failed to deposit', e);
+      setIsOpen(false);
+      setTxBusy(false);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      }
+    }
+  };
+
+  const [onStart, ApproveModal] = useApproveModal(
+    [{ amount: amount || '0', token: pool.reserveToken }],
+    deposit,
+    accessFullEarnings
+      ? ContractsApi.StandardRewards.contractAddress
+      : ContractsApi.BancorNetwork.contractAddress
+  );
+
+  const shouldConnect = useMemo(() => !account && amount, [account, amount]);
+  const canDeposit = useMemo(
+    () => !!account && !!amount && !isInputError && !txBusy,
+    [account, amount, isInputError, txBusy]
+  );
+
+  const handleClick = useCallback(() => {
+    if (canDeposit) {
+      onStart();
+    } else if (shouldConnect) {
+      dispatch(openWalletModal(true));
+    }
+  }, [canDeposit, dispatch, onStart, shouldConnect]);
 
   const shouldPollForGasPrice = useMemo(() => {
-    return !depositDisabled && accessFullEarnings && !!eth;
-  }, [accessFullEarnings, depositDisabled, eth]);
+    return !!amount && !txBusy && accessFullEarnings && !!eth;
+  }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
     if (accessFullEarnings && eth && amount) {
@@ -71,42 +140,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
-
-  const deposit = async () => {
-    if (!pool.reserveToken.balance || !account || !rewardProgram) {
-      return;
-    }
-
-    const amountWei = expandToken(amount, pool.reserveToken.decimals);
-    const isETH = pool.reserveToken.address === ethToken;
-
-    try {
-      const res = accessFullEarnings
-        ? await ContractsApi.StandardRewards.write.depositAndJoin(
-            rewardProgram.id,
-            amountWei
-          )
-        : await ContractsApi.BancorNetwork.write.deposit(
-            pool.poolDltId,
-            amountWei,
-            { value: isETH ? amountWei : undefined }
-          );
-      console.log(res);
-      setIsOpen(false);
-      pushPortfolio();
-      await updatePortfolioData(dispatch);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const [onStart, ApproveModal] = useApproveModal(
-    [{ amount: amount || '0', token: pool.reserveToken }],
-    deposit,
-    accessFullEarnings
-      ? ContractsApi.StandardRewards.contractAddress
-      : ContractsApi.BancorNetwork.contractAddress
-  );
 
   return (
     <>
@@ -151,11 +184,17 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               </div>
             )}
             <Button
-              onClick={() => onStart()}
-              disabled={depositDisabled}
+              onClick={handleClick}
+              disabled={!amount || txBusy || isInputError}
               className={`btn-primary rounded w-full mt-30 mb-10`}
             >
-              {`Deposit ${pool.name}`}
+              {txBusy
+                ? '... waiting for confirmation'
+                : shouldConnect
+                ? 'Connect your wallet'
+                : canDeposit
+                ? `Deposit ${pool.name}`
+                : 'Enter amount'}
             </Button>
             {ApproveModal}
           </div>

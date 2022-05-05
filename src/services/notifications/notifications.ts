@@ -578,3 +578,26 @@ export const confirmClaimNotification = (dispatch: any, txHash: string) =>
     },
     dispatch
   );
+
+export const confirmDepositNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: 'Deposit is pending confirmation',
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success',
+        successMsg: `Your deposit of ${amount} ${symbol} has been successfully completed.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Your deposit of ${amount} ${symbol} had failed.`,
+      },
+    },
+    dispatch
+  );
+
