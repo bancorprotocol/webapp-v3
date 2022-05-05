@@ -2,17 +2,18 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import {
   addLiquidity,
   addLiquidityByID,
+  addLiquidityLegacy,
   admin,
-  fiat,
   earn,
+  fiat,
   portfolio,
   portfolioRewardsClaim,
   portfolioRewardsStake,
   portfolioRewardsStakeByID,
   privacyPolicy,
-  trade,
   tokens,
   tos,
+  trade,
   vote,
   welcome,
 } from 'services/router';
@@ -52,12 +53,30 @@ export const Router = () => {
         <Redirect to={portfolio} />
       </Route>
       <Route exact strict path={trade} component={Swap} />
-      <Route exact path={legacySwap}>
-        <Redirect to={trade} />
-      </Route>
-      <Route exact path={legacySwap2}>
-        <Redirect to={trade} />
-      </Route>
+      <Route
+        exact
+        path={legacySwap}
+        render={(data) => (
+          <Redirect
+            to={{
+              ...data.location,
+              pathname: trade,
+            }}
+          />
+        )}
+      />
+      <Route
+        exact
+        path={legacySwap2}
+        render={(data) => (
+          <Redirect
+            to={{
+              ...data.location,
+              pathname: trade,
+            }}
+          />
+        )}
+      />
       <Route exact strict path={tokens} component={Tokens} />
       <Route exact strict path={earn} component={Pools} />
       <Route exact path={legacyPools}>
@@ -67,6 +86,13 @@ export const Router = () => {
         <Redirect to={earn} />
       </Route>
       <Route exact strict path={addLiquidity} component={AddLiquidity} />
+      <Route
+        exact
+        path={addLiquidityLegacy}
+        render={(props) => (
+          <Redirect to={addLiquidityByID(props.match.params.id)} />
+        )}
+      />
       <Route
         exact
         path={legacyStake}

@@ -1,8 +1,8 @@
 import { useHistory } from 'react-router-dom';
 import { Token } from 'services/observables/tokens';
-import { wethToken, ethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
 
-const liquidityBase = '/pools/add-liquidity/';
+const liquidityBase = '/earn/add-liquidity/';
 const rewardsBase = '/portfolio/rewards/';
 const rewardsBaseStake = `${rewardsBase}stake/`;
 export const trade = '/trade';
@@ -15,6 +15,7 @@ export const privacyPolicy = '/privacy-policy';
 export const portfolio = '/portfolio';
 export const welcome = '/welcome';
 export const addLiquidity = `${liquidityBase}:id`;
+export const addLiquidityLegacy = `/pool/add-liquidity/:id`;
 export const addLiquidityError = `${liquidityBase}error`;
 export const portfolioRewardsClaim = `${rewardsBase}claim`;
 export const portfolioRewardsStake = `${rewardsBaseStake}:id`;
