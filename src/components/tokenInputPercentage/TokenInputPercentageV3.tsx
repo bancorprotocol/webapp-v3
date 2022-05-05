@@ -57,9 +57,19 @@ export const TokenInputPercentageV3 = ({
       <div className="flex justify-between items-end mb-10">
         <span>{label}</span>
         {fieldBalance && (
-          <button onClick={() => handleSetPercentage(100)} className="text-12">
-            {balanceLabel}: {prettifyNumber(fieldBalance)} (~
-            {prettifyNumber(calcFiatValue(fieldBalance, token.usdPrice), true)})
+          <button
+            onClick={() => handleSetPercentage(100)}
+            className={`text-12 ${isError ? 'text-error' : ''}`}
+          >
+            {balanceLabel}: {prettifyNumber(fieldBalance)}{' '}
+            <span className="text-secondary">
+              (~
+              {prettifyNumber(
+                calcFiatValue(fieldBalance, token.usdPrice),
+                true
+              )}
+              )
+            </span>
           </button>
         )}
       </div>
