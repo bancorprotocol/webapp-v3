@@ -20,6 +20,7 @@ import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
 import { useConditionalInterval } from 'hooks/useConditionalInterval';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   pool: PoolV3;
@@ -32,6 +33,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState('');
+  const [inputFiat, setInputFiat] = useState('');
+  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [accessFullEarnings, setAccessFullEarnings] = useState(false);
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const rewardProgram = useAppSelector(
@@ -39,12 +42,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   ).get(pool.poolDltId);
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
 
+  const isInputError = useMemo(
+    () => new BigNumber(pool.reserveToken.balance || 0).lt(amount),
+    [amount, pool.reserveToken.balance]
+  );
+
   const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
 
   const depositDisabled = !account || !amount || Number(amount) === 0;
-
-  const fieldBalance = pool.reserveToken.balance;
 
   const shouldPollForGasPrice = useMemo(() => {
     return !depositDisabled && accessFullEarnings && !!eth;
@@ -67,12 +73,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
   const deposit = async () => {
-    if (
-      !pool.reserveToken.balance ||
-      !account ||
-      !fieldBalance ||
-      !rewardProgram
-    ) {
+    if (!pool.reserveToken.balance || !account || !rewardProgram) {
       return;
     }
 
@@ -100,7 +101,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   };
 
   const [onStart, ApproveModal] = useApproveModal(
-    [{ amount: fieldBalance || '0', token: pool.reserveToken }],
+    [{ amount: amount || '0', token: pool.reserveToken }],
     deposit,
     accessFullEarnings
       ? ContractsApi.StandardRewards.contractAddress
@@ -122,11 +123,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           <div className="flex flex-col items-center text-12 mx-20">
             <TokenInputPercentageV3
               label="Amount"
-              token={pool.reserveToken}
-              balance={fieldBalance}
-              amount={amount}
-              setAmount={setAmount}
               balanceLabel="Available"
+              token={pool.reserveToken}
+              inputTkn={amount}
+              inputFiat={inputFiat}
+              setInputFiat={setInputFiat}
+              setInputTkn={setAmount}
+              isFiat={isFiat}
+              isError={isInputError}
             />
             {rewardProgram ? (
               <div className="flex flex-col w-full p-20 rounded bg-fog dark:bg-black-disabled dark:text-primary-light">

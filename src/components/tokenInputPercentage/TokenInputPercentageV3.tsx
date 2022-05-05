@@ -1,45 +1,48 @@
 import { BigNumber } from 'bignumber.js';
-import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { useState, useEffect } from 'react';
+import TokenInputV3, {
+  TokenInputV3Props,
+} from 'components/tokenInput/TokenInputV3';
+import { useState, useEffect, useCallback } from 'react';
 import { Token } from 'services/observables/tokens';
-import { prettifyNumber } from 'utils/helperFunctions';
-import { classNameGenerator } from 'utils/pureFunctions';
+import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
 
-interface TokenInputPercentageV3Props {
+interface TokenInputPercentageV3Props extends TokenInputV3Props {
   label: string;
-  token?: Token;
-  balance?: string;
-  amount: string;
-  setAmount: Function;
   balanceLabel?: string;
 }
 const percentages = [25, 50, 75, 100];
 
 export const TokenInputPercentageV3 = ({
   token,
-  balance,
+  inputTkn,
+  setInputTkn,
+  inputFiat,
+  setInputFiat,
+  isFiat,
+  isError,
   label,
-  amount,
-  setAmount,
   balanceLabel = 'Balance',
 }: TokenInputPercentageV3Props) => {
-  const [amountUSD, setAmountUSD] = useState('');
-  const [selPercentage, setSelPercentage] = useState<number>(-1);
-
-  const fieldBalance = balance
-    ? balance
+  const fieldBalance = token.balance
+    ? token.balance
     : token && token.balance
     ? token.balance
     : undefined;
 
+  const [selPercentage, setSelPercentage] = useState<number>(-1);
+
   useEffect(() => {
-    if (amount && fieldBalance) {
-      const percentage = (Number(amount) / Number(fieldBalance)) * 100;
+    if (fieldBalance !== undefined) {
+      const percentage = new BigNumber(inputTkn)
+        .div(fieldBalance)
+        .times(100)
+        .toNumber()
+        .toFixed(10);
       setSelPercentage(
-        percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
+        percentages.findIndex((x) => percentage === x.toFixed(10))
       );
     }
-  }, [amount, token, fieldBalance]);
+  }, [fieldBalance, inputTkn]);
 
   return (
     <div className="w-full">
@@ -47,40 +50,37 @@ export const TokenInputPercentageV3 = ({
         <span>{label}</span>
         {fieldBalance && (
           <span>
-            {balanceLabel}: {prettifyNumber(fieldBalance)}
+            {balanceLabel}: {prettifyNumber(fieldBalance)} (~
+            {prettifyNumber(calcFiatValue(fieldBalance, token.usdPrice), true)})
           </span>
         )}
       </div>
       {token && (
         <TokenInputV3
           token={token}
-          inputTkn={amount}
-          setInputTkn={setAmount as (amount: string) => void}
-          inputFiat={amountUSD}
-          setInputFiat={setAmountUSD}
-          isFiat={false}
-          isError={false}
+          inputTkn={inputTkn}
+          setInputTkn={setInputTkn}
+          inputFiat={inputFiat}
+          setInputFiat={setInputFiat}
+          isFiat={isFiat}
+          isError={isError}
         />
       )}
       <div className="flex justify-between pb-20">
-        {percentages.map((slip, index) => (
+        {percentages.map((percent, index) => (
           <button
-            key={'slippage' + slip}
+            key={'percent' + percent}
             className={`btn-sm rounded-10 border border-graphite w-[90px] text-14 btn-outline-secondary bg-opacity-0`}
             onClick={() => {
               setSelPercentage(index);
-              if (token && fieldBalance) {
-                const amount = new BigNumber(fieldBalance).times(
-                  new BigNumber(slip / 100)
-                );
-                setAmount(amount.toString());
-                setAmountUSD(
-                  (amount.toNumber() * Number(token.usdPrice)).toString()
-                );
+              if (fieldBalance !== undefined) {
+                const amount = new BigNumber(fieldBalance).times(percent / 100);
+                setInputTkn(amount.toString());
+                setInputFiat(calcFiatValue(amount, token.usdPrice));
               }
             }}
           >
-            +{slip}%
+            +{percent}%
           </button>
         ))}
       </div>

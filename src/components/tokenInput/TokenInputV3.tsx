@@ -6,7 +6,7 @@ import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
 import { Token } from 'services/observables/tokens';
 import useDimensions from 'hooks/useDimensions';
 
-interface TokenInputV3Props {
+export interface TokenInputV3Props {
   token: Token;
   inputTkn: string;
   setInputTkn: (amount: string) => void;
