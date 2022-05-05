@@ -41,7 +41,7 @@ const V3Portfolio = () => {
         )}
         <V3AvailableToStake />
       </div>
-      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40 md:mt-[44px]">
+      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40">
         <div>
           <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
             Claim Bonuses
