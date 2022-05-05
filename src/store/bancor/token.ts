@@ -1,8 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import { Token } from 'services/observables/tokens';
-import { orderBy } from 'lodash';
+import { orderBy, uniqBy } from 'lodash';
 import { PoolV3 } from 'services/observables/pools';
+import BigNumber from 'bignumber.js';
 
 export const getAllTokensMap = createSelector(
   [(state: RootState) => state.bancor.allTokens],
@@ -51,6 +52,50 @@ export const getV3Tokens = createSelector(
   (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
     return pools
       .map((pool) => allTokensMap.get(pool.poolDltId))
+      .filter((t) => !!t) as Token[];
+  }
+);
+
+export const getTokenTableData = createSelector(
+  [
+    (state: RootState) => state.bancor.allTokens,
+    (state: RootState) => getV3Tokens(state),
+  ],
+  (tokens: Token[], v3Tokens: Token[]) => {
+    const tokensMap = new Map(tokens.map((token) => [token.address, token]));
+    const v3TokensMap = new Map(
+      v3Tokens.map((token) => [token.address, token])
+    );
+    const ids = uniqBy(
+      [...tokens.map((t) => t.address), ...v3Tokens.map((t) => t.address)],
+      (id) => id
+    );
+    return ids
+      .map((id) => {
+        const token = tokensMap.get(id);
+        const v3Token = v3TokensMap.get(id);
+
+        if (!token && !v3Token) {
+          return undefined;
+        }
+
+        if (!(token && v3Token)) {
+          return v3Token || token;
+        }
+
+        const merged: Token = {
+          ...v3Token,
+          price_history_7d: token.price_history_7d,
+          usd_volume_24: new BigNumber(token.usd_volume_24)
+            .plus(v3Token.usd_volume_24)
+            .toString(),
+          liquidity: new BigNumber(token.liquidity)
+            .plus(v3Token.liquidity)
+            .toString(),
+        };
+
+        return merged;
+      })
       .filter((t) => !!t) as Token[];
   }
 );

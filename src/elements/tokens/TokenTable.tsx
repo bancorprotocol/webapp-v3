@@ -12,6 +12,7 @@ import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { swapByfrom } from 'services/router';
 import { sortNumbersByKey } from 'utils/pureFunctions';
+import { getTokenTableData } from 'store/bancor/token';
 
 interface Props {
   searchInput: string;
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector(getTokenTableData);
 
   const data = useMemo<Token[]>(() => {
     return tokens.filter(
