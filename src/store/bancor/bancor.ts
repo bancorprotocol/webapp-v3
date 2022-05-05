@@ -10,6 +10,7 @@ import {
   RewardsProgramV3,
 } from 'services/web3/v3/portfolio/standardStaking';
 import { Statistic } from 'services/observables/statistics';
+import { NotificationType } from 'store/notification/notification';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -94,6 +95,19 @@ export const getTopMovers = createSelector(
 );
 
 export const bancor = bancorSlice.reducer;
+
+export const getIsAppBusy = createSelector(
+  [
+    (state: RootState) => state.v3Portfolio.isPortfolioLoading,
+    (state: RootState) => state.notification.notifications,
+  ],
+  (isPortfolioLoading, notifications): boolean => {
+    const hasPendingTx = notifications.some(
+      (n) => n.type === NotificationType.pending
+    );
+    return isPortfolioLoading || hasPendingTx;
+  }
+);
 
 export const getAllStandardRewardPrograms = createSelector(
   (state: RootState) => state.bancor.allStandardRewardPrograms,

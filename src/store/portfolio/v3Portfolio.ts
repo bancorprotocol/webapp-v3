@@ -17,6 +17,7 @@ import { PoolV3 } from 'services/observables/pools';
 import { shrinkToken } from 'utils/formulas';
 
 export const initialState: V3PortfolioState = {
+  isPortfolioLoading: false,
   holdingsRaw: [],
   isLoadingHoldings: true,
   withdrawalRequestsRaw: [],
@@ -31,6 +32,9 @@ const v3PortfolioSlice = createSlice({
   name: 'v3Portfolio',
   initialState,
   reducers: {
+    setIsPortfolioLoading: (state, action: PayloadAction<boolean>) => {
+      state.isPortfolioLoading = action.payload;
+    },
     setHoldingsRaw: (state, action: PayloadAction<HoldingRaw[]>) => {
       state.holdingsRaw = action.payload;
       state.isLoadingHoldings = false;
@@ -67,6 +71,7 @@ export const {
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
   setStandardRewards,
+  setIsPortfolioLoading,
 } = v3PortfolioSlice.actions;
 
 export const v3Portfolio = v3PortfolioSlice.reducer;

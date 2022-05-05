@@ -3,6 +3,7 @@ import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking'
 import { PoolV3 } from 'services/observables/pools';
 
 export interface V3PortfolioState {
+  isPortfolioLoading: boolean;
   holdingsRaw: HoldingRaw[];
   isLoadingHoldings: boolean;
   withdrawalRequestsRaw: WithdrawalRequestRaw[];

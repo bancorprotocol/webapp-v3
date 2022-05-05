@@ -1,6 +1,7 @@
 import { fetchPortfolioV3Withdrawals } from 'services/web3/v3/portfolio/withdraw';
 import {
   setHoldingsRaw,
+  setIsPortfolioLoading,
   setStandardRewards,
   setWithdrawalRequestsRaw,
 } from 'store/portfolio/v3Portfolio';
@@ -16,6 +17,7 @@ export const updatePortfolioData = async (dispatch: (data: any) => void) => {
   if (!account) {
     return;
   }
+  dispatch(setIsPortfolioLoading(true));
   const standardRewards = await fetchStandardRewardsByUser(account!);
   const apiPools = await apiPoolsV3$.pipe(take(1)).toPromise();
   const holdings = await fetchPortfolioV3Holdings(apiPools, account!);
@@ -24,4 +26,5 @@ export const updatePortfolioData = async (dispatch: (data: any) => void) => {
   const requests = await fetchPortfolioV3Withdrawals(account!);
   dispatch(setWithdrawalRequestsRaw(requests));
   await updateUserBalances();
+  dispatch(setIsPortfolioLoading(false));
 };

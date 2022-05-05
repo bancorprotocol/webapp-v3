@@ -5,16 +5,20 @@ import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { NavLink } from 'react-router-dom';
-import { earn, portfolio, trade, tokens, vote } from 'services/router';
+import { earn, portfolio, tokens, trade, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
+import { useAppSelector } from 'store/index';
+import { getIsAppBusy } from 'store/bancor/bancor';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
   const [isTop, setIsTop] = useState(true);
+
+  const isLoading = useAppSelector(getIsAppBusy);
 
   useEffect(() => {
     const listener = () => setIsTop(window.pageYOffset === 0);
@@ -69,6 +73,18 @@ export const LayoutHeader = () => {
             </NavLink>
           </div>
           <div className="flex items-center gap-20">
+            {isLoading && (
+              <div className="h-[20px] w-[20px]">
+                <span className="absolute flex items-center justify-center h-[20px] w-[20px]">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75">
+                    &nbsp;
+                  </span>
+                  <span className="relative inline-flex rounded-full h-[12px] w-[12px] bg-primary/60">
+                    &nbsp;
+                  </span>
+                </span>
+              </div>
+            )}
             {wallet.account && <NotificationsMenu />}
             <SettingsMenu />
             <WalletConnectButton {...wallet} />
