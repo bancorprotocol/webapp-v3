@@ -593,11 +593,14 @@ export const confirmDepositNotification = (
       txHash,
       updatedInfo: {
         successTitle: 'Success',
-        successMsg: `Your deposit of ${amount} ${symbol} has been successfully completed.`,
+        successMsg: `Your deposit of ${prettifyNumber(
+          amount
+        )} ${symbol} has been successfully completed.`,
         errorTitle: 'Transaction Failed',
-        errorMsg: `Your deposit of ${amount} ${symbol} had failed.`,
+        errorMsg: `Your deposit of ${prettifyNumber(
+          amount
+        )} ${symbol} had failed.`,
       },
     },
     dispatch
   );
-

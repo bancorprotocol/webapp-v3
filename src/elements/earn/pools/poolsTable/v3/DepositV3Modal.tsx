@@ -85,10 +85,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         amount,
         pool.reserveToken.symbol
       );
-      await tx.wait();
       setTxBusy(false);
       setIsOpen(false);
       pushPortfolio();
+      await tx.wait();
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('failed to deposit', e);
