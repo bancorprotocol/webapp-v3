@@ -12,22 +12,13 @@ import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { useAppSelector } from 'store/index';
-import { NotificationType } from 'store/notification/notification';
+import { getIsAppBusy } from 'store/bancor/bancor';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
   const [isTop, setIsTop] = useState(true);
-  const isPortfolioLoading = useAppSelector(
-    (state) => state.v3Portfolio.isPortfolioLoading
-  );
-  const notifications = useAppSelector(
-    (state) => state.notification.notifications
-  );
-  const hasPendingTx = notifications.some(
-    (n) => n.type === NotificationType.pending
-  );
 
-  const isLoading = isPortfolioLoading || hasPendingTx;
+  const isLoading = useAppSelector(getIsAppBusy);
 
   useEffect(() => {
     const listener = () => setIsTop(window.pageYOffset === 0);
