@@ -20,7 +20,7 @@ interface BancorState {
   allTokens: Token[];
   allStandardRewardPrograms: RewardsProgramRaw[];
   isLoadingTokens: boolean;
-  statisticsV3: Statistic[];
+  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -31,7 +31,7 @@ export const initialState: BancorState = {
   allTokenListTokens: [],
   allStandardRewardPrograms: [],
   isLoadingTokens: true,
-  statisticsV3: [],
+  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -61,7 +61,7 @@ const bancorSlice = createSlice({
       state.allStandardRewardPrograms = action.payload;
     },
     setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
-      state.statisticsV3 = action.payload;
+      state.statistics = action.payload;
     },
   },
 });

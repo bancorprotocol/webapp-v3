@@ -1,5 +1,5 @@
 import { combineLatest } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { shareReplay } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
 import { apiData$ } from 'services/observables/apiData';
@@ -32,17 +32,39 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
       .minus(100)
       .toNumber();
 
-    const totalLiquidity = new BigNumber(stats.tradingLiquidityBNT.usd).plus(
-      stats.tradingLiquidityTKN.usd
-    );
-
     const bntSupply = apiDataV2.bnt_supply;
-    const totalBntStaked = stats.stakedBalanceBNT.bnt;
 
-    const bntStakedPercentage =
-      (Number(totalBntStaked) /
+    const totalBntStakedV2: number = apiDataV2.pools.reduce((acc, item) => {
+      const bntReserve = item.reserves.find(
+        (reserve) => reserve.address === bntToken
+      );
+      if (!bntReserve) return acc;
+      return Number(bntReserve.balance) + acc;
+    }, 0);
+
+    const stakedBntPercentV2 =
+      (totalBntStakedV2 / Number(parseFloat(bntSupply).toExponential(18))) *
+      100;
+
+    const stakedBntPercentV3 =
+      (Number(stats.stakedBalanceBNT.bnt) /
         Number(parseFloat(bntSupply).toExponential(18))) *
       100;
+
+    const totalBNTStaked = new BigNumber(stakedBntPercentV2).plus(
+      stakedBntPercentV3
+    );
+
+    const totalLiquidity = new BigNumber(stats.tradingLiquidityBNT.usd)
+      .plus(stats.tradingLiquidityTKN.usd)
+      .plus(apiDataV2.total_liquidity.usd);
+
+    const totalVolume = new BigNumber(apiDataV2.total_volume_24h.usd).plus(
+      stats.totalVolume24h.usd
+    );
+    const totalFees = new BigNumber(apiDataV2.total_fees_24h.usd).plus(
+      stats.totalFees24h.usd
+    );
 
     const statistics: Statistic[] = [
       {
@@ -57,75 +79,17 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
       },
       {
         label: 'Volume (24h)',
-        value: '$' + numbro(stats.totalVolume24h.usd).format(averageFormat),
+        value: '$' + numbro(totalVolume).format(averageFormat),
         change24h: 0,
       },
       {
         label: 'Fees (24h)',
-        value: '$' + numbro(stats.totalFees24h.usd).format(averageFormat),
+        value: '$' + numbro(totalFees).format(averageFormat),
         change24h: 0,
       },
       {
         label: 'Total BNT Staked',
-        value: numbro(bntStakedPercentage).format({ mantissa: 2 }) + '%',
-      },
-    ];
-    return statistics;
-  }),
-  shareReplay(1)
-);
-
-export const statistics$ = combineLatest([apiData$]).pipe(
-  map(([apiData]) => {
-    const bnt24hChange = new BigNumber(apiData.bnt_price.usd!)
-      .div(apiData.bnt_price_24h_ago.usd!)
-      .times(100)
-      .minus(100)
-      .toNumber();
-
-    const liquidity24hChange = new BigNumber(apiData.total_liquidity.usd!)
-      .div(apiData.total_liquidity_24h_ago.usd!)
-      .times(100)
-      .minus(100)
-      .toNumber();
-
-    const fees24hChange = new BigNumber(apiData.total_fees_24h.usd!)
-      .div(apiData.total_fees_24h_ago.usd!)
-      .times(100)
-      .minus(100)
-      .toNumber();
-
-    const bntSupply: string = apiData.bnt_supply;
-    const totalBntStaked: number = apiData.pools.reduce((acc, item) => {
-      const bntReserve = item.reserves.find(
-        (reserve) => reserve.address === bntToken
-      );
-      if (!bntReserve) return acc;
-      return Number(bntReserve.balance) + acc;
-    }, 0);
-
-    const stakedBntPercent =
-      (totalBntStaked / Number(parseFloat(bntSupply).toExponential(18))) * 100;
-
-    const statistics: Statistic[] = [
-      {
-        label: 'BNT Price',
-        value: '$' + numbro(apiData.bnt_price.usd).format({ mantissa: 2 }),
-        change24h: bnt24hChange,
-      },
-      {
-        label: 'Total Liquidity',
-        value: '$' + numbro(apiData.total_liquidity.usd).format(averageFormat),
-        change24h: liquidity24hChange,
-      },
-      {
-        label: 'Fees (24h)',
-        value: '$' + numbro(apiData.total_fees_24h.usd).format(averageFormat),
-        change24h: fees24hChange,
-      },
-      {
-        label: 'Total BNT Staked',
-        value: numbro(stakedBntPercent).format({ mantissa: 2 }) + '%',
+        value: numbro(totalBNTStaked).format({ mantissa: 2 }) + '%',
       },
     ];
     return statistics;
