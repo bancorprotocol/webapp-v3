@@ -125,21 +125,3 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
   }),
   shareReplay(1)
 );
-
-export const systemStoreAddress$ = liquidityProtection$.pipe(
-  switchMap(async (liquidityProtection) => {
-    const contract = LiquidityProtection__factory.connect(
-      liquidityProtection,
-      web3.provider
-    );
-
-    try {
-      return utils.getAddress(await contract.systemStore());
-    } catch (error) {
-      console.error(error);
-    }
-
-    return '';
-  }),
-  shareReplay(1)
-);
