@@ -6,6 +6,7 @@ import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
 import { BancorRoutes } from 'router/routes.service';
+import { Admin } from 'pages/Admin';
 
 export const useRoutesMain = (): RouteObject[] => {
   return [
@@ -32,6 +33,10 @@ export const useRoutesMain = (): RouteObject[] => {
     {
       path: BancorRoutes.privacyPolicy,
       element: <PrivacyPolicy />,
+    },
+    {
+      path: BancorRoutes.admin,
+      element: <Admin />,
     },
     {
       path: '*',
