@@ -4,8 +4,8 @@ import { RewardsStakeCTA } from 'elements/earn/portfolio/liquidityProtection/rew
 import { RewardsStakeSpaceAvailable } from 'elements/earn/portfolio/liquidityProtection/rewards/stake/RewardsStakeSpaceAvailable';
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool: Pool;
@@ -25,10 +25,10 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
     onSelect,
     position,
   } = useRewardsClaim({ pool });
-  const { pushPortfolio } = useNavigation();
+  const { goToPage } = usePages();
 
   return (
-    <Widget title="Stake Rewards" goBack={pushPortfolio}>
+    <Widget title="Stake Rewards" goBack={goToPage.portfolio}>
       <div className="p-10">
         <SelectPool
           pool={pool}

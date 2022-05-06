@@ -2,7 +2,6 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { useNavigation } from 'services/router';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
@@ -28,6 +27,7 @@ import {
 import { ErrorCode } from 'services/web3/types';
 import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool: PoolV3;
@@ -55,8 +55,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     [account, amount, pool.reserveToken.balance]
   );
 
-  const { pushPortfolio } = useNavigation();
   const dispatch = useDispatch();
+  const { goToPage } = usePages();
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !rewardProgram) {
@@ -78,7 +78,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             amountWei,
             { value: isETH ? amountWei : undefined }
           );
-      console.log(tx);
       confirmDepositNotification(
         dispatch,
         tx.hash,
@@ -87,7 +86,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       );
       setTxBusy(false);
       setIsOpen(false);
-      pushPortfolio();
+      goToPage.portfolio();
       await tx.wait();
       await updatePortfolioData(dispatch);
     } catch (e: any) {

@@ -4,8 +4,7 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { NavLink } from 'react-router-dom';
-import { earn, portfolio, tokens, trade, vote } from 'services/router';
+import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
@@ -13,6 +12,7 @@ import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { useAppSelector } from 'store/index';
 import { getIsAppBusy } from 'store/bancor/bancor';
+import { BancorRoutes } from 'pages/Router';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -40,37 +40,33 @@ export const LayoutHeader = () => {
       >
         <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
-            <NavLink to={earn}>
+            <Link to={BancorRoutes.earn}>
               <IconBancor className="w-[18px]" />
-            </NavLink>
+            </Link>
             <TopMenuDropdown
               items={[
-                { title: 'Trade', link: trade },
-                { title: 'Tokens', link: tokens },
+                { title: 'Trade', link: BancorRoutes.trade() },
+                { title: 'Tokens', link: BancorRoutes.tokens },
               ]}
               className="w-[115px]"
             />
 
-            <NavLink to={earn} exact strict>
-              Earn
-            </NavLink>
+            <Link to={BancorRoutes.earn}>Earn</Link>
             <TopMenuDropdown
               items={[
-                { title: 'Vote', link: vote },
+                { title: 'Vote', link: BancorRoutes.vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
               className="w-[125px]"
             />
 
-            <NavLink to={portfolio} exact strict>
-              Portfolio
-            </NavLink>
+            <Link to={BancorRoutes.portfolio}>Portfolio</Link>
             {isForkAvailable && <NetworkIndicator />}
           </div>
           <div className="md:hidden">
-            <NavLink to={earn}>
+            <Link to={BancorRoutes.earn}>
               <IconBancor className="w-[18px]" />
-            </NavLink>
+            </Link>
           </div>
           <div className="flex items-center gap-20">
             {isLoading && (
@@ -151,14 +147,12 @@ const TopMenuDropdown = ({
 const TopMenuDropdownItem = ({ item }: { item: TopMenu }) => {
   const href = item.link.startsWith('http');
   return (
-    <NavLink
-      exact
-      strict
+    <Link
       to={{ pathname: item.link }}
       target={href ? '_blank' : undefined}
       rel={href ? 'noopener' : undefined}
     >
       {item.title}
-    </NavLink>
+    </Link>
   );
 };

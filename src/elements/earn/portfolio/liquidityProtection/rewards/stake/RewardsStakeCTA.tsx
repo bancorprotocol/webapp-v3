@@ -20,9 +20,9 @@ import {
   setProtectedPositions,
 } from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
-import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool: Pool;
@@ -41,8 +41,8 @@ export const RewardsStakeCTA = ({
 }: Props) => {
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
-  const { pushPortfolio } = useNavigation();
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const { goToPage } = usePages();
 
   const onCompleted = useCallback(async () => {
     dispatch(setLoadingPositions(true));
@@ -59,9 +59,9 @@ export const RewardsStakeCTA = ({
         prettifyNumber(bntAmount),
         pool.name
       );
-      pushPortfolio();
+      goToPage.portfolio();
     },
-    [bntAmount, dispatch, pushPortfolio, pool.name]
+    [bntAmount, dispatch, goToPage, pool.name]
   );
 
   const handleClick = async () => {

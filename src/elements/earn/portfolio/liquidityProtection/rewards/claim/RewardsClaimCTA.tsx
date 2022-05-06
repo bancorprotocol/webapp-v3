@@ -5,11 +5,8 @@ import {
   claimRewardsNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { useNavigation } from 'services/router';
-import {
-  Button,
-  ButtonVariant,
-} from '../../../../../../components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
+import { usePages } from 'pages/Router';
 
 interface Props {
   claimableRewards?: string;
@@ -18,14 +15,14 @@ interface Props {
 
 export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
   const dispatch = useDispatch();
-  const { pushPortfolio } = useNavigation();
+  const { goToPage } = usePages();
 
   const handleClaim = async () => {
     if (account && claimableRewards) {
       try {
         const txHash = await claimRewards();
         claimRewardsNotification(dispatch, txHash, claimableRewards);
-        pushPortfolio();
+        goToPage.portfolio();
       } catch (e: any) {
         console.error('Claiming Rewards failed with msg: ', e.message);
         claimRewardsFailedNotification(dispatch);

@@ -72,11 +72,9 @@ export const App = () => {
       {unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
-        <>
-          <main>
-            <Router />
-          </main>
-        </>
+        <main>
+          <Router />
+        </main>
       )}
       <MobileBottomNav />
       <NotificationAlerts />

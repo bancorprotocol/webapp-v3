@@ -8,8 +8,8 @@ import { getTokenById } from 'store/bancor/bancor';
 import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
-import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool: Pool;
@@ -33,9 +33,10 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const { pushLiquidityError, pushPools } = useNavigation();
+  const { goToPage } = usePages();
+
   if (!tkn || !bnt) {
-    pushLiquidityError();
+    goToPage.notFound();
     return <></>;
   }
 
@@ -43,7 +44,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     return new BigNumber(bnt.usdPrice!).div(tknUsdPrice).toString();
   };
   return (
-    <Widget title="Add Liquidity" goBack={pushPools}>
+    <Widget title="Add Liquidity" goBack={goToPage.earn}>
       <AddLiquidityEmptyStep1
         tkn={tkn}
         bnt={bnt}

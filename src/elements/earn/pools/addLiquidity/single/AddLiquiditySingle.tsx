@@ -18,7 +18,6 @@ import {
   addLiquiditySingleNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
-import { useNavigation } from 'services/router';
 import { ApprovalContract } from 'services/web3/approval';
 import {
   ConversionEvents,
@@ -30,6 +29,7 @@ import {
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool: Pool;
@@ -44,7 +44,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, pool.reserves[1].address)
   );
-  const { pushPortfolio, pushPools, pushLiquidityError } = useNavigation();
+  const { goToPage } = usePages();
+
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');
   const [amountUsd, setAmountUsd] = useState('');
@@ -90,7 +91,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       () => {
         sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          pushPortfolio();
+          goToPage.portfolio();
       },
       () => {
         sendLiquidityFailEvent('User rejected transaction');
@@ -173,12 +174,16 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   ]);
 
   if (!tkn) {
-    pushLiquidityError();
+    goToPage.notFound();
     return <></>;
   }
 
   return (
-    <Widget title="Add Liquidity" subtitle="Single-Sided" goBack={pushPools}>
+    <Widget
+      title="Add Liquidity"
+      subtitle="Single-Sided"
+      goBack={goToPage.earn}
+    >
       <AddLiquiditySingleInfoBox />
       <div className="px-10">
         <AddLiquiditySingleSelectPool pool={pool} />

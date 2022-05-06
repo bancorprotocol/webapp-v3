@@ -1,10 +1,10 @@
 import { Widget } from 'components/widgets/Widget';
-import { useNavigation } from 'services/router';
+import { usePages } from 'pages/Router';
 
 export const WidgetError = ({ title = 'ERROR' }) => {
-  const { pushPools } = useNavigation();
+  const { goToPage } = usePages();
   return (
-    <Widget title={title} goBack={pushPools}>
+    <Widget title={title} goBack={goToPage.earn}>
       <div className="bg-error rounded p-20 text-white text-center">
         <div className="font-semibold mb-10">
           Invalid Pool or Pool not found!

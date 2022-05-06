@@ -9,8 +9,8 @@ import BigNumber from 'bignumber.js';
 import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'store/liquidity/liquidity';
-import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
+import { usePages } from 'pages/Router';
 
 interface Props {
   pool?: Pool;
@@ -22,7 +22,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const [bntAmount, setBntAmount] = useState('');
   const [bntAmountUsd, setBntAmountUsd] = useState('');
   const pools = useAppSelector<Pool[]>(getProtectedPools);
-  const { pushRewardsStakeByID, pushRewardsStakeByIDnPos } = useNavigation();
+  const { goToPage } = usePages();
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 
@@ -46,8 +46,9 @@ export const useRewardsClaim = ({ pool }: Props) => {
   };
 
   const onSelect = (pool: Pool) => {
-    if (posGroupId) pushRewardsStakeByIDnPos(pool.pool_dlt_id, posGroupId);
-    else pushRewardsStakeByID(pool.pool_dlt_id);
+    if (posGroupId)
+      goToPage.portfolioV2RewardsStake(pool.pool_dlt_id, posGroupId);
+    else goToPage.portfolioV2RewardsStake(pool.pool_dlt_id);
   };
 
   useInterval(
