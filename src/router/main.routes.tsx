@@ -1,7 +1,5 @@
 import { Navigate, RouteObject } from 'react-router-dom';
-import { Pools } from 'pages/earn/pools/Pools';
 import { Tokens } from 'pages/Tokens';
-import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 import { Fiat } from 'pages/Fiat';
 import { Vote } from 'pages/Vote';
 import { TermsOfUse } from 'pages/TermsOfUse';
@@ -16,16 +14,8 @@ export const useRoutesMain = (): RouteObject[] => {
       element: <Navigate to={BancorRoutes.trade()} replace />,
     },
     {
-      path: BancorRoutes.earn,
-      element: <Pools />,
-    },
-    {
       path: BancorRoutes.tokens,
       element: <Tokens />,
-    },
-    {
-      path: BancorRoutes.addLiquidityV2(':id'),
-      element: <AddLiquidity />,
     },
     {
       path: BancorRoutes.fiat,
