@@ -22,7 +22,7 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
       try {
         const txHash = await claimRewards();
         claimRewardsNotification(dispatch, txHash, claimableRewards);
-        goToPage.portfolio();
+        goToPage.portfolioV2();
       } catch (e: any) {
         console.error('Claiming Rewards failed with msg: ', e.message);
         claimRewardsFailedNotification(dispatch);

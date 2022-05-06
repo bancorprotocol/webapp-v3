@@ -57,7 +57,7 @@ export const AddLiquidityEmptyCTA = ({
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          goToPage.portfolio();
+          goToPage.portfolioV2();
       },
       () => rejectNotification(dispatch),
       () =>

@@ -11,7 +11,7 @@ export const RewardsClaim = () => {
 
   return (
     <div className="pt-40 md:pt-[100px]">
-      <Widget title="Claim Rewards" goBack={goToPage.portfolio}>
+      <Widget title="Claim Rewards" goBack={goToPage.portfolioV2}>
         <div className="px-10 pb-10">
           <RewardsClaimInfo />
           <RewardsClaimAmount amount={claimableRewards} />

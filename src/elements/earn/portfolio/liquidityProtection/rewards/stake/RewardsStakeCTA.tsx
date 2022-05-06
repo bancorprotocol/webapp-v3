@@ -59,7 +59,7 @@ export const RewardsStakeCTA = ({
         prettifyNumber(bntAmount),
         pool.name
       );
-      goToPage.portfolio();
+      goToPage.portfolioV2();
     },
     [bntAmount, dispatch, goToPage, pool.name]
   );

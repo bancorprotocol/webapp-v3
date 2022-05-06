@@ -91,7 +91,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       () => {
         sendLiquiditySuccessEvent(transactionId);
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          goToPage.portfolio();
+          goToPage.portfolioV2();
       },
       () => {
         sendLiquidityFailEvent('User rejected transaction');

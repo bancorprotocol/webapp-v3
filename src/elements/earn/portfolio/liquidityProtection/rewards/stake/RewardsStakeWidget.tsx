@@ -28,7 +28,7 @@ export const RewardsStakeWidget = ({ pool }: Props) => {
   const { goToPage } = useNavigation();
 
   return (
-    <Widget title="Stake Rewards" goBack={goToPage.portfolio}>
+    <Widget title="Stake Rewards" goBack={goToPage.portfolioV2}>
       <div className="p-10">
         <SelectPool
           pool={pool}
