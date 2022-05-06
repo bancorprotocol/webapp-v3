@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;

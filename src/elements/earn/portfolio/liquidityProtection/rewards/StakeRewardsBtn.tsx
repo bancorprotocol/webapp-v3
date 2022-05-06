@@ -3,7 +3,7 @@ import { useAppSelector } from 'store';
 import { getProtectedPools } from 'store/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   buttonLabel: string;

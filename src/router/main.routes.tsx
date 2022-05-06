@@ -7,7 +7,7 @@ import { Vote } from 'pages/Vote';
 import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 
 export const useRoutesMain = (): RouteObject[] => {
   return [

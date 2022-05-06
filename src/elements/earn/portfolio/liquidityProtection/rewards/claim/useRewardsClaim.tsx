@@ -10,7 +10,7 @@ import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'store/liquidity/liquidity';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool?: Pool;

@@ -13,7 +13,7 @@ import { useCallback } from 'react';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;

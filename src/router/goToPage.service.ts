@@ -1,6 +1,6 @@
 import { NavigateFunction } from 'react-router-dom';
-import { PageTradeQuery } from 'services/router/index';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
+import { PageTradeQuery } from 'router/trade.routes';
 
 export class GoToPage {
   constructor(navigate: NavigateFunction) {

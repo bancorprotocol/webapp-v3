@@ -1,4 +1,4 @@
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const NetworkIndicator = () => {
   const { goToPage } = useNavigation();

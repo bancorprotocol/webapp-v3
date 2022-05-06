@@ -1,4 +1,4 @@
-import { PageTradeQuery } from 'services/router/index';
+import { PageTradeQuery } from 'router/trade.routes';
 
 export abstract class BancorRoutes {
   static index = '/';

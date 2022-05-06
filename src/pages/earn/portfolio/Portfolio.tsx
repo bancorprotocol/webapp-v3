@@ -6,7 +6,7 @@ import {
   useMatch,
   useResolvedPath,
 } from 'react-router-dom';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 import { classNameGenerator } from 'utils/pureFunctions';
 
 export const PageNavLink = ({ children, to, ...props }: LinkProps) => {

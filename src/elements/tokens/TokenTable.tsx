@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { sortNumbersByKey } from 'utils/pureFunctions';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 
 interface Props {
   searchInput: string;

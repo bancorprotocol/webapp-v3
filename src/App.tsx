@@ -29,7 +29,7 @@ import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
-import { BancorRouter } from 'services/router/index';
+import { BancorRouter } from 'router/BancorRouter';
 
 export const App = () => {
   const dispatch = useDispatch();

@@ -27,7 +27,7 @@ import {
 import { ErrorCode } from 'services/web3/types';
 import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: PoolV3;

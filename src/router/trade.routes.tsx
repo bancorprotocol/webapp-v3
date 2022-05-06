@@ -1,7 +1,12 @@
 import { Navigate, RouteObject, useLocation } from 'react-router-dom';
 import { Swap } from 'pages/Swap';
-import { PageTradeQuery } from 'services/router/index';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
+
+export interface PageTradeQuery {
+  from?: string | null;
+  to?: string | null;
+  limit?: boolean | null;
+}
 
 export const useRoutesTrade = (): RouteObject[] => {
   const searchParams = new URLSearchParams(useLocation().search);

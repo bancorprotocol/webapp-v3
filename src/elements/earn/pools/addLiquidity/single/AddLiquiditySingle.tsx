@@ -29,7 +29,7 @@ import {
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { MobileSidebar } from './MobileSidebar';
 import { SettingsMenuContent } from 'elements/settings/SettingsMenu';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 
 export const MobileBottomNav = () => {
   const [show, setShow] = useState(false);

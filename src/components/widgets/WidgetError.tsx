@@ -1,5 +1,5 @@
 import { Widget } from 'components/widgets/Widget';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const WidgetError = ({ title = 'ERROR' }) => {
   const { goToPage } = useNavigation();

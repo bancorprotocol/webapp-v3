@@ -5,7 +5,7 @@ import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 
 export const useRoutesPortfolio = (): RouteObject[] => {
   return [

@@ -1,6 +1,6 @@
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   title: string;

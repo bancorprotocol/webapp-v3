@@ -4,7 +4,7 @@ import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/reward
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
 import { useAppSelector } from 'store';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { BancorRoutes } from 'services/router/routes.service';
+import { BancorRoutes } from 'router/routes.service';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =

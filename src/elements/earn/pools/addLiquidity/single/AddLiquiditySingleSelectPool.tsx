@@ -2,7 +2,7 @@ import { useAppSelector } from 'store';
 import { getPools } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;

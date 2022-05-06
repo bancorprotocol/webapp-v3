@@ -5,7 +5,7 @@ import { RewardsStakeSpaceAvailable } from 'elements/earn/portfolio/liquidityPro
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;

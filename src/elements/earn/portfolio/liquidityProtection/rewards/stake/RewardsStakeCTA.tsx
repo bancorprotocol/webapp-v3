@@ -22,7 +22,7 @@ import {
 import { useAppSelector } from 'store';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'services/router/index';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;
