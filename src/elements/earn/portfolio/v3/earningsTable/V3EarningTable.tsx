@@ -11,6 +11,8 @@ import {
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { SortingRule } from 'react-table';
+import { Button, ButtonVariant } from 'components/button/Button';
+import { useV3Bonuses } from '../bonuses/useV3Bonuses';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -18,6 +20,7 @@ export const V3EarningTable = () => {
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
+  const { setBonusModalOpen } = useV3Bonuses();
 
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
@@ -46,16 +49,8 @@ export const V3EarningTable = () => {
         minWidth: 225,
       },
       {
-        id: 'totalGains',
-        Header: 'Lifetime gains',
-        Cell: () => '????',
-        tooltip: 'Tooltip text',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
         id: 'roi',
-        Header: 'Lifetime Bonuses',
+        Header: 'Bonuses',
         Cell: () => <span className="text-primary">????%</span>,
         tooltip: 'Tooltip text',
         minWidth: 130,
@@ -66,24 +61,35 @@ export const V3EarningTable = () => {
         Header: '',
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
-          <DepositV3Modal
-            pool={cell.row.original.pool}
-            renderButton={(onClick) => (
-              <V3EarningTableMenu
-                holding={cell.row.original}
-                handleDepositClick={onClick}
-                setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                setHoldingToWithdraw={setHoldingToWithdraw}
-              />
-            )}
-          />
+          <div className="flex items-center">
+            <Button
+              onClick={() => {
+                setBonusModalOpen(true);
+              }}
+              className="w-[95px] h-[33px]"
+              variant={ButtonVariant.SECONDARY}
+            >
+              Claim
+            </Button>
+            <DepositV3Modal
+              pool={cell.row.original.pool}
+              renderButton={(onClick) => (
+                <V3EarningTableMenu
+                  holding={cell.row.original}
+                  handleDepositClick={onClick}
+                  setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                  setHoldingToWithdraw={setHoldingToWithdraw}
+                />
+              )}
+            />
+          </div>
         ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
       },
     ],
-    []
+    [setBonusModalOpen]
   );
 
   const defaultSort: SortingRule<Holding> = {
