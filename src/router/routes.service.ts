@@ -20,7 +20,7 @@ export abstract class BancorRoutes {
       posGroupId ? `?posGroupId=${posGroupId}` : ''
     }`;
 
-  static addLiquidityV2 = (id: string) => this.earn + '/add-liquidity/' + id;
+  static addLiquidityV2 = (id: string) => this.earnV2 + '/add-liquidity/' + id;
 
   static trade = (query?: PageTradeQuery) => {
     const path = '/trade';
