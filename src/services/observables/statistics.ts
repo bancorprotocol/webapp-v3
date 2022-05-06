@@ -7,6 +7,7 @@ import { bntToken } from 'services/web3/config';
 import { fifteenSeconds$ } from 'services/observables/timers';
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export interface Statistic {
   label: string;
@@ -42,9 +43,9 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
       return Number(bntReserve.balance) + acc;
     }, 0);
 
-    const stakedBntPercentV2 =
-      (totalBntStakedV2 / Number(parseFloat(bntSupply).toExponential(18))) *
-      100;
+    const stakedBntPercentV2 = new BigNumber(totalBntStakedV2)
+      .div(toBigNumber(bntSupply).toExponential(18))
+      .times(100);
 
     const stakedBntPercentV3 =
       (Number(stats.stakedBalanceBNT.bnt) /
