@@ -1,8 +1,8 @@
 import { Widget } from 'components/widgets/Widget';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 export const WidgetError = ({ title = 'ERROR' }) => {
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
   return (
     <Widget title={title} goBack={goToPage.earn}>
       <div className="bg-error rounded p-20 text-white text-center">

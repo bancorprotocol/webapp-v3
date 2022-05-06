@@ -27,7 +27,7 @@ import {
 import { ErrorCode } from 'services/web3/types';
 import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: PoolV3;
@@ -56,7 +56,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   );
 
   const dispatch = useDispatch();
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account || !rewardProgram) {

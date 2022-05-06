@@ -12,7 +12,7 @@ import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { useAppSelector } from 'store/index';
 import { getIsAppBusy } from 'store/bancor/bancor';
-import { BancorRoutes } from 'pages/Router';
+import { BancorRoutes } from 'services/router/routes.service';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();

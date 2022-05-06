@@ -29,7 +29,7 @@ import {
 } from 'services/api/googleTagManager';
 import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
@@ -44,7 +44,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, pool.reserves[1].address)
   );
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const [isBNTSelected, setIsBNTSelected] = useState(false);
   const [amount, setAmount] = useState('');

@@ -1,6 +1,6 @@
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   title: string;
@@ -9,7 +9,7 @@ interface Props {
   children: JSX.Element | JSX.Element[];
 }
 export const Widget = ({ title, subtitle, children, goBack }: Props) => {
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const handleBackClick = () => {
     goBack ? goBack() : goToPage.earn();

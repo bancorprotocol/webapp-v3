@@ -6,7 +6,7 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { Button, ButtonVariant } from 'components/button/Button';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   claimableRewards?: string;
@@ -15,7 +15,7 @@ interface Props {
 
 export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
   const dispatch = useDispatch();
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const handleClaim = async () => {
     if (account && claimableRewards) {

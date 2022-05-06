@@ -25,11 +25,11 @@ import {
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { keepWSOpen } from 'services/web3';
-import { Router } from 'pages/Router';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
+import { BancorRouter } from 'services/router/index';
 
 export const App = () => {
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ export const App = () => {
         <UnsupportedNetwork />
       ) : (
         <main>
-          <Router />
+          <BancorRouter />
         </main>
       )}
       <MobileBottomNav />

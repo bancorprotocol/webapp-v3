@@ -22,7 +22,7 @@ import {
 import { useAppSelector } from 'store';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
@@ -42,7 +42,7 @@ export const RewardsStakeCTA = ({
   const [isBusy, setIsBusy] = useState(false);
   const dispatch = useDispatch();
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const onCompleted = useCallback(async () => {
     dispatch(setLoadingPositions(true));

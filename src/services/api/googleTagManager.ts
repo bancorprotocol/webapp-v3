@@ -1,5 +1,5 @@
 import { EthNetworks } from '../web3/types';
-import { BancorRoutes } from 'pages/Router';
+import { BancorRoutes } from 'services/router/routes.service';
 
 declare global {
   interface Window {

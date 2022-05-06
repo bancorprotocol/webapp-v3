@@ -13,7 +13,7 @@ import { useCallback } from 'react';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
@@ -34,7 +34,7 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);

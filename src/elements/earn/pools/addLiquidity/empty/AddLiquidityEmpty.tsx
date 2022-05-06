@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
@@ -33,7 +33,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     setTknAmount('');
   }, [tknUsdPrice]);
 
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   if (!tkn || !bnt) {
     goToPage.notFound();

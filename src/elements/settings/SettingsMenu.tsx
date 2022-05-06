@@ -13,7 +13,7 @@ import { useAppSelector } from 'store';
 import { useState } from 'react';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
-import { BancorRoutes } from 'pages/Router';
+import { BancorRoutes } from 'services/router/routes.service';
 
 export const SettingsMenu = () => {
   return (

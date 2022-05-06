@@ -2,14 +2,14 @@ import { useAppSelector } from 'store';
 import { getPools } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
   const pools = useAppSelector<Pool[]>(getPools);
 
   const onSelect = (pool: Pool) => {

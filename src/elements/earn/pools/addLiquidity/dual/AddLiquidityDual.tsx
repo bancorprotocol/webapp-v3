@@ -9,7 +9,7 @@ import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/Add
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool: Pool;
@@ -25,7 +25,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
     getTokenById(state, bntReserve.address)
   );
 
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');

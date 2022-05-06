@@ -3,11 +3,11 @@ import { RewardsClaimAmount } from 'elements/earn/portfolio/liquidityProtection/
 import { RewardsClaimInfo } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimInfo';
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { RewardsClaimCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimCTA';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 export const RewardsClaim = () => {
   const { claimableRewards, account } = useRewardsClaim({});
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   return (
     <div className="pt-40 md:pt-[100px]">

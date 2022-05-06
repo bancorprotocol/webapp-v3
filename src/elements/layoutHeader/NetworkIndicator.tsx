@@ -1,7 +1,7 @@
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 export const NetworkIndicator = () => {
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
 
   return (
     <button

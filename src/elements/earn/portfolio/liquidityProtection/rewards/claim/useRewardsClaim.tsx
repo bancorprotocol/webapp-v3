@@ -10,7 +10,7 @@ import { useQuery } from 'hooks/useQuery';
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { getPositionById } from 'store/liquidity/liquidity';
 import { Pool } from 'services/observables/pools';
-import { usePages } from 'pages/Router';
+import { useNavigation } from 'services/router/index';
 
 interface Props {
   pool?: Pool;
@@ -22,7 +22,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const [bntAmount, setBntAmount] = useState('');
   const [bntAmountUsd, setBntAmountUsd] = useState('');
   const pools = useAppSelector<Pool[]>(getProtectedPools);
-  const { goToPage } = usePages();
+  const { goToPage } = useNavigation();
   const query = useQuery();
   const posGroupId = query.get('posGroupId');
 

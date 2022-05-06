@@ -8,7 +8,6 @@ import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
-import { usePages } from 'pages/Router';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -82,7 +81,7 @@ export const SwapWidget = ({
     [toToken]
   );
 
-  const { goToPage } = usePages();
+  const { goToPage } = useNawvigation();
 
   return (
     <div className="2xl:space-x-20 flex justify-center mx-auto">
