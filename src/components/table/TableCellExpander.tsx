@@ -41,35 +41,33 @@ export const TableCellExpander = ({
   };
 
   return (
-    <div className="flex items-center justify-between">
-      {canExpand ? (
-        <>
-          {groupContent}
+    <div className="flex items-center">
+      {canExpand ? groupContent : original.groupId && singleContent}
+      <div className="flex items-center justify-end gap-5">
+        {canExpand && (
           <button
             className="w-[35px] h-[35px] border border-primary rounded-[12px]"
             onClick={() => handleClick()}
           >
             {Expander(isExpanded)}
           </button>
-        </>
-      ) : (
-        original.groupId && singleContent
-      )}
-      {subMenu && (
-        <Popover className="block relative">
-          <Popover.Button>
-            <IconMore className="rotate-90 w-16" />
-          </Popover.Button>
-          <DropdownTransition>
-            <Popover.Panel
-              className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
-              static
-            >
-              <button onClick={() => subMenu()}>Withdraw</button>
-            </Popover.Panel>
-          </DropdownTransition>
-        </Popover>
-      )}
+        )}
+        {subMenu && (
+          <Popover className="block relative">
+            <Popover.Button>
+              <IconMore className="rotate-90 w-16" />
+            </Popover.Button>
+            <DropdownTransition>
+              <Popover.Panel
+                className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
+                static
+              >
+                <button onClick={() => subMenu()}>Withdraw</button>
+              </Popover.Panel>
+            </DropdownTransition>
+          </Popover>
+        )}
+      </div>
     </div>
   );
 };

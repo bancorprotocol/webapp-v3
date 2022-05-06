@@ -62,7 +62,7 @@ export const UpgradeBntModal = ({
   };
 
   return (
-    <Modal large isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
       <div className="flex flex-col items-center gap-20 p-20 text-center">
         <Image
           alt="Token"
@@ -100,17 +100,11 @@ export const UpgradeBntModal = ({
           Upgrade All
         </Button>
         <button onClick={() => migrate([position])} className="text-primary">
-          No Thanks, just BNT to {position.pool.reserves[0].symbol}
+          No Thanks, just BNT from the {position.pool.name}
         </button>
-        <a
-          href={'/'}
-          target="_blank"
-          className="flex items-center text-12 text-black-low font-semibold mt-30"
-          rel="noreferrer"
-        >
+        <div className="text-12 text-black-low font-semibold mt-30">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
-          <IconLink className="w-14 ml-6" />
-        </a>
+        </div>
       </div>
     </Modal>
   );

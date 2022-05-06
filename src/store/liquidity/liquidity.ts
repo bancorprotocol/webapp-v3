@@ -154,10 +154,10 @@ export const getAllBntPositionsAndAmount = createSelector(
     );
 
     const tknAmount = bntPositions
-      .map((x) => Number(x.claimableAmount.tknAmount))
+      .map((x) => Number(x.protectedAmount.tknAmount))
       .reduce((sum, current) => sum + current, 0);
     const usdAmount = bntPositions
-      .map((x) => Number(x.claimableAmount.usdAmount))
+      .map((x) => Number(x.protectedAmount.usdAmount))
       .reduce((sum, current) => sum + current, 0);
 
     return { tknAmount, usdAmount, bntPositions };
