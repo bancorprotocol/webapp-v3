@@ -2,8 +2,13 @@ import { Page } from 'components/Page';
 import { Outlet } from 'react-router-dom';
 import { BancorRoutes } from 'router/routes.service';
 import { PageNavLink } from 'components/pageNavLink/PageNavLink';
+import { useAppSelector } from 'store/index';
 
 export const Portfolio = () => {
+  const v1 = useAppSelector((state) => state.liquidity.poolTokens);
+
+  const v2 = useAppSelector((state) => state.liquidity.protectedPositions);
+
   const title = 'Portfolio';
 
   return (
@@ -12,8 +17,22 @@ export const Portfolio = () => {
       trailingTitle={
         <div className="flex items-center space-x-10">
           <PageNavLink to={BancorRoutes.portfolio}>V3</PageNavLink>
-          <PageNavLink to={BancorRoutes.portfolioV2}>V2</PageNavLink>
-          <PageNavLink to={BancorRoutes.portfolioV1}>V1</PageNavLink>
+          {v2.length > 0 && (
+            <PageNavLink to={BancorRoutes.portfolioV2}>
+              <div className="flex space-x-5">
+                <div>V2</div>
+                <div className="bg-primary rounded-full w-6 h-6" />
+              </div>
+            </PageNavLink>
+          )}
+          {v1.length > 0 && (
+            <PageNavLink to={BancorRoutes.portfolioV1}>
+              <div className="flex space-x-5">
+                <div>V1</div>
+                <div className="bg-primary rounded-full w-6 h-6" />
+              </div>
+            </PageNavLink>
+          )}
         </div>
       }
     >

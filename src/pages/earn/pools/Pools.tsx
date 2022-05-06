@@ -2,6 +2,7 @@ import { Page } from 'components/Page';
 import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorRoutes } from 'router/routes.service';
 import { Outlet } from 'react-router-dom';
+import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 
 export const Pools = () => {
   const title = 'Earn';
@@ -24,7 +25,10 @@ export const Pools = () => {
       }
       trailingTitle={
         <div className="flex items-center space-x-10">
-          <PageNavLink to={BancorRoutes.earn}>V3</PageNavLink>
+          <PageNavLink to={BancorRoutes.earn}>
+            <IconProtected className="text-primary" />
+            V3
+          </PageNavLink>
           <PageNavLink to={BancorRoutes.earnV2}>V2</PageNavLink>
         </div>
       }
