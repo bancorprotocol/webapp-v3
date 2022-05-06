@@ -1,22 +1,9 @@
-import { TopPools } from 'elements/earn/pools/TopPools';
-import { PoolsTable } from 'elements/earn/pools/poolsTable/PoolsTable';
-import { useState } from 'react';
-import { Statistics } from 'elements/earn/pools/Statistics';
 import { Page } from 'components/Page';
-import { classNameGenerator } from 'utils/pureFunctions';
-import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
+import { PageNavLink } from 'components/pageNavLink/PageNavLink';
+import { BancorRoutes } from 'router/routes.service';
+import { Outlet } from 'react-router-dom';
 
 export const Pools = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [v3Selected, setV3Selected] = useState(true);
-
-  const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
-    classNameGenerator({
-      'px-10 py-5 rounded-10': true,
-      'bg-white dark:bg-charcoal': selected,
-      hidden: hidden,
-    });
-
   const title = 'Earn';
   const subtitle =
     'Your tokens were never exposed to Impermanent Loss during the cooldown period. Whether or not you withdraw, you’re always fully protected.';
@@ -36,40 +23,13 @@ export const Pools = () => {
         </a>
       }
       trailingTitle={
-        <div className="flex items-center">
-          <button
-            onClick={() => setV3Selected((prev) => !prev)}
-            className={`flex items-center gap-4 ${getTabBtnClasses(
-              v3Selected
-            )}`}
-          >
-            <IconProtected className="text-primary" />
-            V3
-          </button>
-          <button
-            onClick={() => setV3Selected((prev) => !prev)}
-            className={getTabBtnClasses(!v3Selected)}
-          >
-            V2
-          </button>
+        <div className="flex items-center space-x-10">
+          <PageNavLink to={BancorRoutes.earn}>V3</PageNavLink>
+          <PageNavLink to={BancorRoutes.earnV2}>V2</PageNavLink>
         </div>
       }
     >
-      <div className="lg:grid lg:grid-cols-12 lg:gap-40">
-        <div className={`${v3Selected ? 'col-span-8' : 'col-span-12'}`}>
-          <PoolsTable
-            v3Selected={v3Selected}
-            search={searchInput}
-            setSearch={setSearchInput}
-          />
-        </div>
-        {v3Selected && (
-          <div className="hidden lg:block col-span-4 space-y-40">
-            <Statistics />
-            <TopPools />
-          </div>
-        )}
-      </div>
+      <Outlet />
     </Page>
   );
 };

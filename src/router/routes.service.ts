@@ -7,6 +7,7 @@ export abstract class BancorRoutes {
   static notFound = '/404';
   static admin = '/admin';
   static earn = '/earn';
+  static earnV2 = this.earn + '/v2';
   static tokens = '/tokens';
   static vote = '/vote';
   static fiat = '/fiat';
