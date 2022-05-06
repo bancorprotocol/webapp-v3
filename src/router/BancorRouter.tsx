@@ -12,8 +12,6 @@ export const BancorRouter = () => {
     ...useRoutesPortfolio(),
     ...useRoutesMain(),
     ...useRoutesRedirect(),
-    // redirectToWelcome
-    // welcome
   ];
 
   const element = useRoutes(routes);

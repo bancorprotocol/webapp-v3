@@ -14,6 +14,11 @@ export class GoToPage {
     this.navigate(url, { replace });
   };
 
+  welcome = (replace = false) => {
+    const url = BancorRoutes.welcome;
+    this.navigate(url, { replace });
+  };
+
   earn = (replace = false) => {
     const url = BancorRoutes.earn;
     this.navigate(url, { replace });

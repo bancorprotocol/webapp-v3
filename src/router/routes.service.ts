@@ -6,6 +6,7 @@ export abstract class BancorRoutes {
   static privacyPolicy = '/privacy-policy';
   static notFound = '/404';
   static admin = '/admin';
+  static welcome = '/welcome';
   static earn = '/earn';
   static earnV2 = this.earn + '/v2';
   static tokens = '/tokens';
