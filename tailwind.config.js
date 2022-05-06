@@ -274,8 +274,7 @@ module.exports = {
     },
 
     fontFamily: {
-      inter: ['Inter', 'sans-serif'],
-      poppins: ['Poppins', 'sans-serif'],
+      euclid: ['Euclid Circular A', 'sans-serif'],
       sans: [
         'ui-sans-serif',
         'system-ui',
