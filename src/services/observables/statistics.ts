@@ -22,33 +22,43 @@ const averageFormat = {
   lowPrecision: false,
 };
 
-export const statisticsV3$ = combineLatest([fifteenSeconds$]).pipe(
-  switchMapIgnoreThrow(async () => {
+export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
+  switchMapIgnoreThrow(async ([apiDataV2]) => {
     const stats = await BancorApi.v3.getStatistics();
 
-    const bnt24hChange = new BigNumber(stats.bntRate.usd)
-      .div(stats.bntRate24hAgo.usd)
+    const bnt24hChange = new BigNumber(stats.bntRate)
+      .div(stats.bntRate24hAgo)
       .times(100)
       .minus(100)
       .toNumber();
 
-    const liquidity24hChange = new BigNumber(stats.totalTradingLiquidity.usd)
-      .div(stats.totalTradingLiquidity24hAgo.usd)
-      .times(100)
-      .minus(100)
-      .toNumber();
+    const totalLiquidity = new BigNumber(stats.tradingLiquidityBNT.usd).plus(
+      stats.tradingLiquidityTKN.usd
+    );
+
+    const bntSupply = apiDataV2.bnt_supply;
+    const totalBntStaked = stats.stakedBalanceBNT.bnt;
+
+    const bntStakedPercentage =
+      (Number(totalBntStaked) /
+        Number(parseFloat(bntSupply).toExponential(18))) *
+      100;
 
     const statistics: Statistic[] = [
       {
         label: 'BNT Price',
-        value: '$' + numbro(stats.bntRate.usd).format({ mantissa: 2 }),
+        value: '$' + numbro(stats.bntRate).format({ mantissa: 2 }),
         change24h: bnt24hChange,
       },
       {
         label: 'Total Liquidity',
-        value:
-          '$' + numbro(stats.totalTradingLiquidity.usd).format(averageFormat),
-        change24h: liquidity24hChange,
+        value: '$' + numbro(totalLiquidity).format(averageFormat),
+        change24h: 0,
+      },
+      {
+        label: 'Volume (24h)',
+        value: '$' + numbro(stats.totalVolume24h.usd).format(averageFormat),
+        change24h: 0,
       },
       {
         label: 'Fees (24h)',
@@ -57,8 +67,7 @@ export const statisticsV3$ = combineLatest([fifteenSeconds$]).pipe(
       },
       {
         label: 'Total BNT Staked',
-        //value: numbro(stakedBntPercent).format({ mantissa: 2 }) + '%',
-        value: '?????',
+        value: numbro(bntStakedPercentage).format({ mantissa: 2 }) + '%',
       },
     ];
     return statistics;
