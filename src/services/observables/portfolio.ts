@@ -15,6 +15,7 @@ import {
 import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardRewards';
 import { fifteenSeconds$ } from 'services/observables/timers';
 import { apiPoolsV3$ } from 'services/observables/apiData';
+import { tokensV3$ } from './tokens';
 
 export const portfolioHoldings$ = combineLatest([
   apiPoolsV3$,
@@ -29,10 +30,11 @@ export const portfolioHoldings$ = combineLatest([
 
 export const portfolioStandardRewards$ = combineLatest([
   user$,
+  tokensV3$,
   fifteenSeconds$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([user]) => {
-    return fetchStandardRewardsByUser(user);
+  switchMapIgnoreThrow(async ([user, tokensV3]) => {
+    return fetchStandardRewardsByUser(user, tokensV3);
   }),
   shareReplay(1)
 );

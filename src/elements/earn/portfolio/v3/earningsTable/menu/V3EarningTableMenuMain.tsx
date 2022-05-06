@@ -28,10 +28,6 @@ export const V3EarningTableMenuMain = memo(
     const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
     const { standardStakingReward } = holding;
 
-    const rewardsToken = useAppSelector((state) =>
-      getTokenById(state, holding.standardStakingReward?.rewardsToken || '')
-    );
-
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
       setIsWithdrawModalOpen(true);
@@ -79,10 +75,10 @@ export const V3EarningTableMenuMain = memo(
               {prettifyNumber(
                 shrinkToken(
                   standardStakingReward?.pendingRewardsWei || 0,
-                  rewardsToken?.decimals || 0
+                  standardStakingReward?.rewardsToken.decimals || 0
                 )
               )}{' '}
-              {rewardsToken?.symbol}
+              {standardStakingReward?.rewardsToken.symbol}
               <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>

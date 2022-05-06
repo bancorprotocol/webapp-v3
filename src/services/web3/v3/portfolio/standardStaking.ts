@@ -26,13 +26,14 @@ export interface RewardsProgramStake {
   poolToken: string;
   startTime: number;
   id: string;
-  rewardsToken: string;
+  rewardsToken: Token;
   pendingRewardsWei: string;
   endTime: number;
 }
 
 export const fetchStandardRewardsByUser = async (
-  user: string
+  user: string,
+  tokensV3: Token[]
 ): Promise<RewardsProgramStake[]> => {
   if (!user) {
     throw new Error('no user address found');
@@ -70,6 +71,10 @@ export const fetchStandardRewardsByUser = async (
             program.id,
           ]);
 
+        const rewardsToken = tokensV3.find(
+          (token) => token.address === program.rewardsToken
+        );
+
         return {
           rewardRate: program.rewardRate.toString(),
           isEnabled: program.isEnabled,
@@ -77,7 +82,7 @@ export const fetchStandardRewardsByUser = async (
           poolToken: program.poolToken,
           startTime: program.startTime,
           id: program.id.toString(),
-          rewardsToken: program.rewardsToken,
+          rewardsToken: rewardsToken!,
           pendingRewardsWei: pendingRewardsWei.toString(),
           endTime: program.endTime,
           poolTokenAmountWei,
