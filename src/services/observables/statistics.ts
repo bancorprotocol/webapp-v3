@@ -47,10 +47,9 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
       .div(toBigNumber(bntSupply).toExponential(18))
       .times(100);
 
-    const stakedBntPercentV3 =
-      (Number(stats.stakedBalanceBNT.bnt) /
-        Number(parseFloat(bntSupply).toExponential(18))) *
-      100;
+    const stakedBntPercentV3 = new BigNumber(stats.stakedBalanceBNT.bnt)
+      .div(toBigNumber(bntSupply).toExponential(18))
+      .times(100);
 
     const totalBNTStaked = new BigNumber(stakedBntPercentV2).plus(
       stakedBntPercentV3
