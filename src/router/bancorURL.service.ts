@@ -1,6 +1,6 @@
-import { PageTradeQuery } from 'router/trade.routes';
+import { PageTradeQuery } from 'router/useRoutesTrade';
 
-export abstract class BancorRoutes {
+export abstract class BancorURL {
   static index = '/';
   static termsOfUse = '/terms-of-use';
   static privacyPolicy = '/privacy-policy';

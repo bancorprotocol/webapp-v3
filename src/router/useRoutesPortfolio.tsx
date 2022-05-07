@@ -5,7 +5,7 @@ import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection
 import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
 import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 import { PortfolioWelcome } from 'pages/earn/portfolio/PortfolioWelcome';
 
 export const useRoutesPortfolio = (): RouteObject[] => {
@@ -14,22 +14,22 @@ export const useRoutesPortfolio = (): RouteObject[] => {
   const welcomeElement = redirectToWelcome ? (
     <PortfolioWelcome />
   ) : (
-    <Navigate to={BancorRoutes.portfolio} />
+    <Navigate to={BancorURL.portfolio} />
   );
 
   const portfolioElement = redirectToWelcome ? (
-    <Navigate to={BancorRoutes.welcome} />
+    <Navigate to={BancorURL.welcome} />
   ) : (
     <Portfolio />
   );
 
   return [
     {
-      path: BancorRoutes.welcome,
+      path: BancorURL.welcome,
       element: welcomeElement,
     },
     {
-      path: BancorRoutes.portfolio,
+      path: BancorURL.portfolio,
       element: portfolioElement,
       children: [
         {
@@ -37,21 +37,21 @@ export const useRoutesPortfolio = (): RouteObject[] => {
           element: <V3Portfolio />,
         },
         {
-          path: BancorRoutes.portfolioV2,
+          path: BancorURL.portfolioV2,
           element: <LiquidityProtection />,
         },
         {
-          path: BancorRoutes.portfolioV1,
+          path: BancorURL.portfolioV1,
           element: <PoolTokens />,
         },
       ],
     },
     {
-      path: BancorRoutes.portfolioV2RewardsStake(':id'),
+      path: BancorURL.portfolioV2RewardsStake(':id'),
       element: <RewardsStake />,
     },
     {
-      path: BancorRoutes.portfolioV2RewardsClaim,
+      path: BancorURL.portfolioV2RewardsClaim,
       element: <RewardsClaim />,
     },
   ];

@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { sortNumbersByKey } from 'utils/pureFunctions';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 
 interface Props {
   searchInput: string;
@@ -135,7 +135,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         Cell: (cellData) => {
           return (
             <Link
-              to={BancorRoutes.trade({ to: cellData.row.original.address })}
+              to={BancorURL.trade({ to: cellData.row.original.address })}
               className="btn btn-secondary btn-xs"
             >
               Trade

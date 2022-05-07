@@ -1,6 +1,6 @@
 import { Page } from 'components/Page';
 import { Outlet } from 'react-router-dom';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { useAppSelector } from 'store/index';
 
@@ -16,9 +16,9 @@ export const Portfolio = () => {
       title={title}
       trailingTitle={
         <div className="flex items-center space-x-10">
-          <PageNavLink to={BancorRoutes.portfolio}>V3</PageNavLink>
+          <PageNavLink to={BancorURL.portfolio}>V3</PageNavLink>
           {v2.length > 0 && (
-            <PageNavLink to={BancorRoutes.portfolioV2}>
+            <PageNavLink to={BancorURL.portfolioV2}>
               <div className="flex space-x-5">
                 <div>V2</div>
                 <div className="bg-primary rounded-full w-6 h-6" />
@@ -26,7 +26,7 @@ export const Portfolio = () => {
             </PageNavLink>
           )}
           {v1.length > 0 && (
-            <PageNavLink to={BancorRoutes.portfolioV1}>
+            <PageNavLink to={BancorURL.portfolioV1}>
               <div className="flex space-x-5">
                 <div>V1</div>
                 <div className="bg-primary rounded-full w-6 h-6" />

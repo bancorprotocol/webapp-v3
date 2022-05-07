@@ -1,7 +1,7 @@
 import {
   allTokensNew$,
   keeperDaoTokens$,
-  tokensNew$,
+  tokensV2$,
 } from 'services/observables/tokens';
 import {
   setAllStandardRewardPrograms,
@@ -59,7 +59,7 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setAllTokens(tokens));
   });
 
-  tokensNew$.subscribe((tokens) => {
+  tokensV2$.subscribe((tokens) => {
     dispatch(setTokens(tokens));
   });
 

@@ -1,6 +1,6 @@
 import { Navigate, RouteObject, useLocation } from 'react-router-dom';
-import { BancorRoutes } from 'router/routes.service';
-import { PageTradeQuery } from 'router/trade.routes';
+import { BancorURL } from 'router/bancorURL.service';
+import { PageTradeQuery } from 'router/useRoutesTrade';
 
 export const useRoutesRedirect = (): RouteObject[] => {
   const pathSplit = useLocation().pathname.split('/');
@@ -16,58 +16,58 @@ export const useRoutesRedirect = (): RouteObject[] => {
     // Legacy routes trade
     {
       path: '/swap',
-      element: <Navigate to={BancorRoutes.trade(tradeSearchParams)} replace />,
+      element: <Navigate to={BancorURL.trade(tradeSearchParams)} replace />,
     },
     {
       path: '/eth/swap',
-      element: <Navigate to={BancorRoutes.trade(tradeSearchParams)} replace />,
+      element: <Navigate to={BancorURL.trade(tradeSearchParams)} replace />,
     },
     // Legacy routes Earn
     {
       path: '/pools',
-      element: <Navigate to={BancorRoutes.earn} replace />,
+      element: <Navigate to={BancorURL.earn} replace />,
     },
     {
       path: '/eth/data',
-      element: <Navigate to={BancorRoutes.earn} replace />,
+      element: <Navigate to={BancorURL.earn} replace />,
     },
     {
       path: '/pools/add-liquidity/:id',
-      element: <Navigate to={BancorRoutes.addLiquidityV2(id ?? '')} replace />,
+      element: <Navigate to={BancorURL.addLiquidityV2(id ?? '')} replace />,
     },
     {
       path: '/eth/portfolio/stake/add/single/:id',
-      element: <Navigate to={BancorRoutes.addLiquidityV2(id ?? '')} replace />,
+      element: <Navigate to={BancorURL.addLiquidityV2(id ?? '')} replace />,
     },
     {
       path: '/eth/pool/add/:id',
       element: (
-        <Navigate to={BancorRoutes.addLiquidityV2(id ?? 'error')} replace />
+        <Navigate to={BancorURL.addLiquidityV2(id ?? 'error')} replace />
       ),
     },
     // Legacy routes portfolio
     {
       path: '/eth/portfolio',
-      element: <Navigate to={BancorRoutes.portfolio} replace />,
+      element: <Navigate to={BancorURL.portfolio} replace />,
     },
     {
       path: '/eth/portfolio/stake/rewards/withdraw',
-      element: <Navigate to={BancorRoutes.portfolioV2RewardsClaim} replace />,
+      element: <Navigate to={BancorURL.portfolioV2RewardsClaim} replace />,
     },
     {
       path: '/eth/portfolio/stake/rewards/restake/:id',
       element: (
-        <Navigate to={BancorRoutes.portfolioV2RewardsStake(id || '')} replace />
+        <Navigate to={BancorURL.portfolioV2RewardsStake(id || '')} replace />
       ),
     },
     // Legacy routes main
     {
       path: '/eth/vote',
-      element: <Navigate to={BancorRoutes.vote} replace />,
+      element: <Navigate to={BancorURL.vote} replace />,
     },
     {
       path: '/eth/fiat',
-      element: <Navigate to={BancorRoutes.fiat} replace />,
+      element: <Navigate to={BancorURL.fiat} replace />,
     },
   ];
 };

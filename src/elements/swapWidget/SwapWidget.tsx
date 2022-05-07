@@ -120,8 +120,8 @@ export const SwapWidget = ({
                 }
                 switchTokens={() =>
                   goToPage.trade({
-                    from: fromToken?.address,
-                    to: toToken?.address,
+                    from: toToken?.address,
+                    to: fromToken?.address,
                     limit: true,
                   })
                 }
@@ -147,8 +147,8 @@ export const SwapWidget = ({
                 }
                 switchTokens={() =>
                   goToPage.trade({
-                    from: fromToken?.address,
-                    to: toToken?.address,
+                    from: toToken?.address,
+                    to: fromToken?.address,
                     limit: false,
                   })
                 }

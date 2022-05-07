@@ -1,6 +1,6 @@
 import { NavigateFunction } from 'react-router-dom';
-import { BancorRoutes } from 'router/routes.service';
-import { PageTradeQuery } from 'router/trade.routes';
+import { BancorURL } from 'router/bancorURL.service';
+import { PageTradeQuery } from 'router/useRoutesTrade';
 
 export class GoToPage {
   constructor(navigate: NavigateFunction) {
@@ -10,37 +10,37 @@ export class GoToPage {
   private readonly navigate: NavigateFunction;
 
   index = (replace = false) => {
-    const url = BancorRoutes.index;
+    const url = BancorURL.index;
     this.navigate(url, { replace });
   };
 
   welcome = (replace = false) => {
-    const url = BancorRoutes.welcome;
+    const url = BancorURL.welcome;
     this.navigate(url, { replace });
   };
 
   earn = (replace = false) => {
-    const url = BancorRoutes.earn;
+    const url = BancorURL.earn;
     this.navigate(url, { replace });
   };
 
   earnV2 = (replace = false) => {
-    const url = BancorRoutes.earnV2;
+    const url = BancorURL.earnV2;
     this.navigate(url, { replace });
   };
 
   tokens = (replace = false) => {
-    const url = BancorRoutes.tokens;
+    const url = BancorURL.tokens;
     this.navigate(url, { replace });
   };
 
   portfolio = (replace = false) => {
-    const url = BancorRoutes.portfolio;
+    const url = BancorURL.portfolio;
     this.navigate(url, { replace });
   };
 
   portfolioV2 = (replace = false) => {
-    const url = BancorRoutes.portfolioV2;
+    const url = BancorURL.portfolioV2;
     this.navigate(url, { replace });
   };
 
@@ -49,57 +49,57 @@ export class GoToPage {
     posGroupId?: string,
     replace = false
   ) => {
-    const url = BancorRoutes.portfolioV2RewardsStake(id, posGroupId);
+    const url = BancorURL.portfolioV2RewardsStake(id, posGroupId);
     this.navigate(url, { replace });
   };
 
   portfolioV2RewardsClaim = (replace = false) => {
-    const url = BancorRoutes.portfolioV2RewardsClaim;
+    const url = BancorURL.portfolioV2RewardsClaim;
     this.navigate(url, { replace });
   };
 
   portfolioV1 = (replace = false) => {
-    const url = BancorRoutes.portfolioV1;
+    const url = BancorURL.portfolioV1;
     this.navigate(url, { replace });
   };
 
   trade = (query: PageTradeQuery, replace = false) => {
-    const url = BancorRoutes.trade(query);
+    const url = BancorURL.trade(query);
     this.navigate(url, { replace });
   };
 
   addLiquidityV2 = (id: string, replace = false) => {
-    const url = BancorRoutes.addLiquidityV2(id);
+    const url = BancorURL.addLiquidityV2(id);
     this.navigate(url, { replace });
   };
 
   vote = (replace = false) => {
-    const url = BancorRoutes.vote;
+    const url = BancorURL.vote;
     this.navigate(url, { replace });
   };
 
   fiat = (replace = false) => {
-    const url = BancorRoutes.fiat;
+    const url = BancorURL.fiat;
     this.navigate(url, { replace });
   };
 
   termsOfUse = (replace = false) => {
-    const url = BancorRoutes.termsOfUse;
+    const url = BancorURL.termsOfUse;
     this.navigate(url, { replace });
   };
 
   privacyPolicy = (replace = false) => {
-    const url = BancorRoutes.privacyPolicy;
+    const url = BancorURL.privacyPolicy;
     this.navigate(url, { replace });
   };
 
   admin = (replace = false) => {
-    const url = BancorRoutes.admin;
+    const url = BancorURL.admin;
     this.navigate(url, { replace });
   };
 
   notFound = (replace = false) => {
-    const url = BancorRoutes.notFound;
+    const url = BancorURL.notFound;
     this.navigate(url, { replace });
   };
 }

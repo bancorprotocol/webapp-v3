@@ -1,5 +1,5 @@
 import { EthNetworks } from '../web3/types';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 
 declare global {
   interface Window {
@@ -237,7 +237,7 @@ export const sendGTMPath = (
       theme: darkMode ? 'Dark' : 'Light',
       currency: 'USD',
       swap_insights:
-        to === BancorRoutes.trade() ? (open ? 'Open' : 'Closed') : undefined,
+        to === BancorURL.trade() ? (open ? 'Open' : 'Closed') : undefined,
     },
     wallet_properties: undefined,
     ga_event: undefined,

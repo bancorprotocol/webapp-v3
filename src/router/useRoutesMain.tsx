@@ -5,37 +5,37 @@ import { Vote } from 'pages/Vote';
 import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 import { Admin } from 'pages/Admin';
 
 export const useRoutesMain = (): RouteObject[] => {
   return [
     {
-      path: BancorRoutes.index,
-      element: <Navigate to={BancorRoutes.trade()} replace />,
+      path: BancorURL.index,
+      element: <Navigate to={BancorURL.trade()} replace />,
     },
     {
-      path: BancorRoutes.tokens,
+      path: BancorURL.tokens,
       element: <Tokens />,
     },
     {
-      path: BancorRoutes.fiat,
+      path: BancorURL.fiat,
       element: <Fiat />,
     },
     {
-      path: BancorRoutes.vote,
+      path: BancorURL.vote,
       element: <Vote />,
     },
     {
-      path: BancorRoutes.termsOfUse,
+      path: BancorURL.termsOfUse,
       element: <TermsOfUse />,
     },
     {
-      path: BancorRoutes.privacyPolicy,
+      path: BancorURL.privacyPolicy,
       element: <PrivacyPolicy />,
     },
     {
-      path: BancorRoutes.admin,
+      path: BancorURL.admin,
       element: <Admin />,
     },
     {

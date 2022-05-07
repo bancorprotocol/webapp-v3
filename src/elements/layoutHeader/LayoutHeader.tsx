@@ -12,7 +12,7 @@ import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
 import { useAppSelector } from 'store/index';
 import { getIsAppBusy } from 'store/bancor/bancor';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -40,31 +40,31 @@ export const LayoutHeader = () => {
       >
         <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
-            <Link to={BancorRoutes.earn}>
+            <Link to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
             </Link>
             <TopMenuDropdown
               items={[
-                { title: 'Trade', link: BancorRoutes.trade() },
-                { title: 'Tokens', link: BancorRoutes.tokens },
+                { title: 'Trade', link: BancorURL.trade() },
+                { title: 'Tokens', link: BancorURL.tokens },
               ]}
               className="w-[115px]"
             />
 
-            <Link to={BancorRoutes.earn}>Earn</Link>
+            <Link to={BancorURL.earn}>Earn</Link>
             <TopMenuDropdown
               items={[
-                { title: 'Vote', link: BancorRoutes.vote },
+                { title: 'Vote', link: BancorURL.vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
               className="w-[125px]"
             />
 
-            <Link to={BancorRoutes.portfolio}>Portfolio</Link>
+            <Link to={BancorURL.portfolio}>Portfolio</Link>
             {isForkAvailable && <NetworkIndicator />}
           </div>
           <div className="md:hidden">
-            <Link to={BancorRoutes.earn}>
+            <Link to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
             </Link>
           </div>

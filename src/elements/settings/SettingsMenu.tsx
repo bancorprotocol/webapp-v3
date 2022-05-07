@@ -13,7 +13,7 @@ import { useAppSelector } from 'store';
 import { useState } from 'react';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const SettingsMenu = () => {
   return (
@@ -88,7 +88,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           />
         </div>
         {mobile ? (
-          <Navigate to={BancorRoutes.vote}>
+          <Navigate to={BancorURL.vote}>
             <div className="flex items-center gap-10 text-black dark:text-white">
               <IconVote className="text-black dark:text-white w-20" />
               Vote
@@ -97,7 +97,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         ) : (
           <DarkMode showText />
         )}
-        <Navigate to={BancorRoutes.fiat}>
+        <Navigate to={BancorURL.fiat}>
           <div className="flex items-center gap-10 text-black dark:text-white">
             <IconFiat className="w-20" />
             Buy crypto with fiat
@@ -110,8 +110,8 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           Analytics
         </Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
-        <Navigate to={BancorRoutes.termsOfUse}>Terms Of Use</Navigate>
-        <Navigate to={BancorRoutes.privacyPolicy}>Privacy Policy</Navigate>
+        <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
+        <Navigate to={BancorURL.privacyPolicy}>Privacy Policy</Navigate>
         <div className="flex justify-between text- dark:black-disabled">
           <Navigate to="https://twitter.com/Bancor">
             <IconTwitter className="h-20" />

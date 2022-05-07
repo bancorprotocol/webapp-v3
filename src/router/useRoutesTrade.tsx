@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import { Swap } from 'pages/Swap';
-import { BancorRoutes } from 'router/routes.service';
+import { BancorURL } from 'router/bancorURL.service';
 
 export interface PageTradeQuery {
   from?: string | null;
@@ -11,7 +11,7 @@ export interface PageTradeQuery {
 export const useRoutesTrade = (): RouteObject[] => {
   return [
     {
-      path: BancorRoutes.trade(),
+      path: BancorURL.trade(),
       element: <Swap />,
     },
   ];

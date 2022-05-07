@@ -1,9 +1,9 @@
 import { RouteObject, useRoutes } from 'react-router-dom';
-import { useRoutesTrade } from 'router/trade.routes';
-import { useRoutesPortfolio } from 'router/portfolio.routes';
-import { useRoutesMain } from 'router/main.routes';
-import { useRoutesEarn } from 'router/earn.routes';
-import { useRoutesRedirect } from 'router/redirects.routes';
+import { useRoutesTrade } from 'router/useRoutesTrade';
+import { useRoutesPortfolio } from 'router/useRoutesPortfolio';
+import { useRoutesMain } from 'router/useRoutesMain';
+import { useRoutesEarn } from 'router/useRoutesEarn';
+import { useRoutesRedirect } from 'router/useRoutesRedirect';
 
 export const BancorRouter = () => {
   const routes: RouteObject[] = [
