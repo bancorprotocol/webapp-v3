@@ -59,7 +59,7 @@ export const LayoutHeader = () => {
                 { title: 'Vote', link: vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
-              className="w-[125px]"
+              className="w-[135px]"
             />
 
             <NavLink to={portfolio} exact strict>
