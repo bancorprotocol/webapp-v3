@@ -95,7 +95,7 @@ export const TokenInputPercentageV3 = ({
             }`}
             onClick={() => handleSetPercentage(percent)}
           >
-            +{percent}%
+            {percent}%
           </button>
         ))}
       </div>
