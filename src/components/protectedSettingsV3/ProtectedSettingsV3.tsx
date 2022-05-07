@@ -3,7 +3,7 @@ import { useAppSelector } from 'store/index';
 import { useMemo } from 'react';
 
 export const ProtectedSettingsV3 = ({
-  asLink = true,
+  asLink = false,
 }: {
   asLink?: boolean;
 }) => {

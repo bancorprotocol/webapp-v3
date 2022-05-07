@@ -30,9 +30,9 @@ export const PoolsTable = ({ search, setSearch, v3Selected }: Props) => {
   const v3Pools = useAppSelector((state) => state.pool.v3Pools);
 
   const [rewards, setRewards] = useState(false);
-  const [lowVolume, setLowVolume] = useState(false);
-  const [lowLiquidity, setLowLiquidity] = useState(false);
-  const [lowEarnRate, setLowEarnRate] = useState(false);
+  const [lowVolume, setLowVolume] = useState(true);
+  const [lowLiquidity, setLowLiquidity] = useState(true);
+  const [lowEarnRate, setLowEarnRate] = useState(true);
 
   const v2Data = useMemo<Pool[]>(() => {
     return v2Pools

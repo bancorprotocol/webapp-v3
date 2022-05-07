@@ -5,48 +5,24 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Rating } from 'components/rating/Rating';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Switch } from 'components/switch/Switch';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { useAppSelector } from 'store';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { useExternalHoldings } from 'elements/earn/portfolio/v3/externalHoldings/useExternalHoldings';
+import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 
 export const MigrateProtect = () => {
   const migrate = false;
 
-  const { withdrawalFee, lockDuration } = useAppSelector(
-    (state) => state.v3Portfolio.withdrawalSettings
-  );
-
-  const lockDurationInDays = useMemo(
-    () => lockDuration / 60 / 60 / 24,
-    [lockDuration]
-  );
-
-  const withdrawalFeeInPercent = useMemo(
-    () => (withdrawalFee * 100).toFixed(2),
-    [withdrawalFee]
-  );
-
   return (
     <div className="grid md:grid-cols-4 h-screen">
       <div className="col-span-3 md:w-[550px] mx-auto my-auto">
-        {migrate ? (
-          <Migrate
-            lockDuration={lockDurationInDays}
-            withdrawalFee={withdrawalFeeInPercent}
-          />
-        ) : (
-          <Protect
-            lockDuration={lockDurationInDays}
-            withdrawalFee={withdrawalFeeInPercent}
-          />
-        )}
+        {migrate ? <Migrate /> : <Protect />}
       </div>
       <div className="hidden md:grid bg-fog dark:bg-charcoal">
         <div className="w-[320px] mx-auto self-end">
@@ -75,13 +51,7 @@ export const MigrateProtect = () => {
   );
 };
 
-const Migrate = ({
-  lockDuration,
-  withdrawalFee,
-}: {
-  lockDuration: number;
-  withdrawalFee: string;
-}) => {
+const Migrate = () => {
   const [seeAllHoldings, setSeeAllHoldings] = useState(false);
   const [selectedHolding, setSelectedHolding] = useState(-1);
 
@@ -173,15 +143,7 @@ const Migrate = ({
             ))}
 
           <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
-          <a
-            href={'/'}
-            target="_blank"
-            className="flex items-center text-black-low font-semibold mt-30"
-            rel="noreferrer"
-          >
-            {`100% Protected • ${lockDuration} day cooldown • ${withdrawalFee}% withdrawal fee`}
-            <IconLink className="w-14 ml-6" />
-          </a>
+          <ProtectedSettingsV3 />
         </>
       )}
     </>
@@ -226,13 +188,7 @@ const MigrateHoldingAtRisk = ({
   );
 };
 
-const Protect = ({
-  lockDuration,
-  withdrawalFee,
-}: {
-  lockDuration: number;
-  withdrawalFee: string;
-}) => {
+const Protect = () => {
   const [seeAll, setSeeAll] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(-1);
   const [input, setInput] = useState('');
@@ -337,15 +293,7 @@ const Protect = ({
           </div>
           <Button className="mt-30 w-[160px]">Deposit</Button>
 
-          <a
-            href={'/'}
-            target="_blank"
-            className="flex items-center text-black-low font-semibold mt-20"
-            rel="noreferrer"
-          >
-            {`100% Protected • ${lockDuration} day cooldown • ${withdrawalFee}% withdrawal fee`}
-            <IconLink className="w-14 ml-6" />
-          </a>
+          <ProtectedSettingsV3 />
         </>
       )}
     </>
