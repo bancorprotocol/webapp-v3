@@ -182,7 +182,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     <Widget
       title="Add Liquidity"
       subtitle="Single-Sided"
-      goBack={goToPage.earn}
+      goBack={goToPage.earnV2}
     >
       <AddLiquiditySingleInfoBox />
       <div className="px-10">

@@ -44,7 +44,7 @@ export const AddLiquidityEmpty = ({ pool }: Props) => {
     return new BigNumber(bnt.usdPrice!).div(tknUsdPrice).toString();
   };
   return (
-    <Widget title="Add Liquidity" goBack={goToPage.earn}>
+    <Widget title="Add Liquidity" goBack={goToPage.earnV2}>
       <AddLiquidityEmptyStep1
         tkn={tkn}
         bnt={bnt}

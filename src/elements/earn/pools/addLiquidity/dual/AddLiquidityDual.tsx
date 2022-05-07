@@ -54,7 +54,7 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   }
 
   return (
-    <Widget title="Add Liquidity" goBack={goToPage.earn}>
+    <Widget title="Add Liquidity" goBack={goToPage.earnV2}>
       <AddLiquidityDualStakeAmount
         tkn={tknWithUsd()}
         bnt={bnt}
