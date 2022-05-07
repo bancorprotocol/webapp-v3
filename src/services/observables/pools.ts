@@ -39,6 +39,7 @@ export interface Pool {
   apr: number;
   reward?: APIReward;
   isProtected: boolean;
+  isWhitelisted: boolean;
 }
 
 export interface PoolV3 extends APIPoolV3 {
@@ -124,6 +125,7 @@ export const buildPoolObject = (
     apr,
     reward: apiPool.reward,
     isProtected,
+    isWhitelisted: apiPool.isWhitelisted,
   };
 };
 
