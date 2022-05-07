@@ -3,7 +3,7 @@
 @layer base {
   body,
   #root {
-    @apply bg-white md:bg-fog text-charcoal text-14 font-inter font-normal;
+    @apply bg-white md:bg-fog text-charcoal text-14 font-normal font-euclid;
     @apply dark:bg-charcoal dark:md:bg-black dark:text-fog;
   }
 
