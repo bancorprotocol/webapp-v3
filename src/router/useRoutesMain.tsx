@@ -12,7 +12,7 @@ export const useRoutesMain = (): RouteObject[] => {
   return [
     {
       path: BancorURL.index,
-      element: <Navigate to={BancorURL.trade()} replace />,
+      element: <Navigate to={BancorURL.earn} replace />,
     },
     {
       path: BancorURL.tokens,

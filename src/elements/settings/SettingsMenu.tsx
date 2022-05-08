@@ -105,7 +105,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         </Navigate>
         <hr className="border-fog" />
         <Navigate to="https://support.bancor.network">Help Center</Navigate>
-        <Navigate to={'/'}>FAQ</Navigate>
+        <Navigate to="https://support.bancor.network">FAQ</Navigate>
         <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
           Analytics
         </Navigate>
