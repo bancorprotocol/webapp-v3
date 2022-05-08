@@ -60,7 +60,7 @@ const BonusGroupItems = ({
                   <Image
                     alt={'Token Logo'}
                     className="w-30 h-30 rounded-full mx-20"
-                    src={reward.programPool.reserveToken.logoURI}
+                    src={reward.rewardsToken.logoURI}
                   />
                   {prettifyNumber(
                     shrinkToken(
@@ -68,7 +68,7 @@ const BonusGroupItems = ({
                       rewardsGroup.groupPool.decimals
                     )
                   )}{' '}
-                  <div>{reward.programPool.reserveToken.symbol}</div>
+                  <div>{reward.rewardsToken.symbol}</div>
                 </div>
               </div>
               <div>
