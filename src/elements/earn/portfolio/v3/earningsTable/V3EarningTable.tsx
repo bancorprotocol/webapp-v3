@@ -13,6 +13,9 @@ import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal
 import { SortingRule } from 'react-table';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useV3Bonuses } from '../bonuses/useV3Bonuses';
+import { shrinkToken } from 'utils/formulas';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { bntDecimals } from 'services/web3/config';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -51,7 +54,19 @@ export const V3EarningTable = () => {
       {
         id: 'roi',
         Header: 'Bonuses',
-        Cell: () => <span className="text-primary">????%</span>,
+        accessor: 'poolTokenBalance',
+        Cell: ({ cell }) => (
+          <span>
+            {prettifyNumber(
+              shrinkToken(
+                cell.row.original.standardStakingReward?.pendingRewardsWei || 0,
+                cell.row.original.standardStakingReward?.rewardsToken
+                  .decimals || 0
+              )
+            )}{' '}
+            {cell.row.original.standardStakingReward?.rewardsToken.symbol}
+          </span>
+        ),
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,

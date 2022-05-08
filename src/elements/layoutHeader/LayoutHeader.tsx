@@ -57,7 +57,7 @@ export const LayoutHeader = () => {
                 { title: 'Vote', link: BancorURL.vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
-              className="w-[125px]"
+              className="w-[135px]"
             />
 
             <Link to={BancorURL.portfolio}>Portfolio</Link>

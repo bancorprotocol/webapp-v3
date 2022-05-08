@@ -27,7 +27,11 @@ const V3Portfolio = () => {
       <div className="col-span-12 md:col-span-6 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center justify-center relative">
+              <div className="absolute z-10 text-20 text-center">
+                Personal Chart
+                <div className="text-primary text-16">Coming Soon</div>
+              </div>
               {darkMode ? (
                 <HoldingsDark className="blur-[3px]" />
               ) : (

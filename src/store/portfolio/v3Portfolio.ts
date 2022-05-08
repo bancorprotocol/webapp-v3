@@ -238,9 +238,9 @@ export const getStandardRewards = createSelector(
     }
     return standardRewards.reduce(
       ((obj) => (acc: GroupedStandardReward[], val: RewardsProgramStake) => {
-        const groupId = utils.getAddress(val.rewardsToken);
+        const groupId = utils.getAddress(val.rewardsToken.address);
         const filtered = standardRewards.filter(
-          (reward) => reward.rewardsToken === groupId
+          (reward) => reward.rewardsToken.address === groupId
         );
         const groupPool = allPoolsMap.get(groupId);
         if (!groupPool) {

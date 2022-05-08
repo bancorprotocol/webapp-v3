@@ -28,6 +28,7 @@ import { ErrorCode } from 'services/web3/types';
 import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 import { useNavigation } from 'hooks/useNavigation';
+import { wait } from 'utils/pureFunctions';
 
 interface Props {
   pool: PoolV3;
@@ -49,6 +50,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     getAllStandardRewardProgramsByPoolId
   ).get(pool.poolDltId);
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
+
+  const onClose = async () => {
+    setIsOpen(false);
+    await wait(500);
+    setAmount('');
+    setInputFiat('');
+    setExtraGasNeeded('0');
+    setAccessFullEarnings(false);
+  };
 
   const isInputError = useMemo(
     () => !!account && new BigNumber(pool.reserveToken.balance || 0).lt(amount),
@@ -85,13 +95,13 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         pool.reserveToken.symbol
       );
       setTxBusy(false);
-      setIsOpen(false);
+      onClose();
       goToPage.portfolio();
       await tx.wait();
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('failed to deposit', e);
-      setIsOpen(false);
+      onClose();
       setTxBusy(false);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
@@ -146,7 +156,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       {renderButton(() => setIsOpen(true))}
       <ModalV3
         title={'Deposit & Earn'}
-        setIsOpen={setIsOpen}
+        setIsOpen={onClose}
         isOpen={isOpen}
         titleElement={<SwapSwitch />}
         separator

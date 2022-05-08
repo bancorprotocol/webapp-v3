@@ -5,7 +5,6 @@ import {
   bancorConverterRegistry$,
   liquidityProtection$,
   settingsContractAddress$,
-  systemStoreAddress$,
 } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
 import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
@@ -25,7 +24,13 @@ import {
   LiquidityProtection__factory,
 } from '../abis/types';
 import { MultiCall } from 'services/web3/multicall/multicall';
-import { bntToken, changeGas, ethToken, zeroAddress } from '../config';
+import {
+  bntToken,
+  changeGas,
+  ethToken,
+  systemStore,
+  zeroAddress,
+} from '../config';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
 import {
   ConversionEvents,
@@ -133,7 +138,7 @@ export const addLiquidity = async (
       { value, gasLimit }
     );
 
-    // sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
 
     onHash(tx.hash);
 
@@ -234,7 +239,7 @@ export const addLiquidityV2Single = async (
       { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
     );
     onHash(tx.hash);
-    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
 
     await tx.wait();
 
@@ -329,11 +334,8 @@ export const fetchBntNeededToOpenSpace = async (
     web3.provider
   );
 
-  const systemStoreAddress = await systemStoreAddress$
-    .pipe(take(1))
-    .toPromise();
   const systemStoreContract = LiquidityProtectionSystemStore__factory.connect(
-    systemStoreAddress,
+    systemStore,
     web3.provider
   );
 

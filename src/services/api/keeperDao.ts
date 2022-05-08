@@ -220,12 +220,9 @@ export const sendOrders = async (rfqOrder: RfqOrderJson[]) => {
       result: { hashList: string[] };
     }>(url, rfqOrder);
 
-    const succeededResponseMessage = 'Order creation succeeded';
-    if (res.data.message === succeededResponseMessage) {
-      return res.data;
-    } else {
-      throw new Error(`Unexpected response from server, ${res.data.message}`);
-    }
+    if (res.status === 201) return res.data;
+
+    throw new Error(`Unexpected response from server, ${res.data.message}`);
   } catch (e: any) {
     throw new Error(`Unexpected error during send order request ${e.message}`);
   }
