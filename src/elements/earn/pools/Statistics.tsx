@@ -1,9 +1,8 @@
 import { useAppSelector } from 'store';
-import { Statistic } from 'services/observables/statistics';
 import './Statistics.css';
 
 export const Statistics = () => {
-  const stats = useAppSelector<Statistic[]>((state) => state.pool.statistics);
+  const stats = useAppSelector((state) => state.bancor.statistics);
 
   return (
     <section className="content-block p-20">

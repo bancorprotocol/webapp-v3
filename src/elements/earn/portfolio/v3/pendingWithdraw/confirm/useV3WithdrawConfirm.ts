@@ -17,6 +17,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
+
 interface Props {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -82,7 +83,7 @@ export const useV3WithdrawConfirm = ({
       );
       onModalClose();
       setTxBusy(false);
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('withdraw request failed', e);
       if (e.code === ErrorCode.DeniedTx) {

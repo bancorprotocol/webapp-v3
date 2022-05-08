@@ -237,8 +237,8 @@ export const SwapMarket = ({
           toAmount,
           txHash
         ),
-      () => {
-        sendConversionSuccessEvent(fromToken.usdPrice);
+      (txHash: string) => {
+        sendConversionSuccessEvent(fromToken.usdPrice, txHash);
         onConfirmation();
       },
       () => {

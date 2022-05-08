@@ -3,6 +3,7 @@ import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking'
 import { PoolV3 } from 'services/observables/pools';
 
 export interface V3PortfolioState {
+  isPortfolioLoading: boolean;
   holdingsRaw: HoldingRaw[];
   isLoadingHoldings: boolean;
   withdrawalRequestsRaw: WithdrawalRequestRaw[];
@@ -45,15 +46,9 @@ export interface BonusClaimable {
   amount: string;
 }
 
-export interface Bonus {
-  id: string;
-  token: Token;
-  claimable: BonusClaimable[];
-}
-
 export interface HoldingRaw {
   poolTokenId: string;
-  poolId: string;
+  poolDltId: string;
   poolTokenBalanceWei: string;
   tokenBalanceWei: string;
 }

@@ -19,7 +19,7 @@ import { MobileSidebar } from 'elements/layoutHeader/MobileSidebar';
 export const NotificationsMenu = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 

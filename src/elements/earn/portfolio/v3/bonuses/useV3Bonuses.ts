@@ -25,9 +25,12 @@ export const useV3Bonuses = () => {
   const bonuses = useAppSelector(getStandardRewards);
   const isLoading = useAppSelector(getIsLoadingStandardRewards);
 
-  const setBonusModalOpen = (state: boolean) => {
-    dispatch(openBonusesModal(state));
-  };
+  const setBonusModalOpen = useCallback(
+    (state: boolean) => {
+      dispatch(openBonusesModal(state));
+    },
+    [dispatch]
+  );
 
   const bonusUsdTotal = useMemo(
     () =>
@@ -50,16 +53,18 @@ export const useV3Bonuses = () => {
       try {
         const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
+        setBonusModalOpen(false);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to claim rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
           rejectNotification(dispatch);
         }
+        setBonusModalOpen(false);
       }
     },
-    [account, dispatch]
+    [account, dispatch, setBonusModalOpen]
   );
 
   const handleClaimAndEarn = useCallback(
@@ -71,16 +76,18 @@ export const useV3Bonuses = () => {
       try {
         const tx = await ContractsApi.StandardRewards.write.stakeRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
+        setBonusModalOpen(false);
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
       } catch (e: any) {
         console.error('failed to restake rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
           rejectNotification(dispatch);
         }
+        setBonusModalOpen(false);
       }
     },
-    [account, dispatch]
+    [account, dispatch, setBonusModalOpen]
   );
 
   return {

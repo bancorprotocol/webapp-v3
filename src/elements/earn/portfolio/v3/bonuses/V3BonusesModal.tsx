@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -77,10 +78,8 @@ const BonusGroupItems = ({
 
 const BonusGroup = ({
   rewardsGroup,
-  showMore,
 }: {
   rewardsGroup: GroupedStandardReward;
-  showMore: boolean;
 }) => {
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
@@ -90,6 +89,7 @@ const BonusGroup = ({
   const allIds: string[] = rewardsGroup.rewards.map((reward) => reward.id);
   const [selectedIds, setSelectedIds] = useState(allIds);
   const [isTxClaimBusy, setIsTxClaimBusy] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   const bntDisabled = selectedIds.length === 0 || isTxClaimBusy;
 
@@ -107,7 +107,7 @@ const BonusGroup = ({
 
   return (
     <div>
-      <div className="p-10">
+      <div>
         <TokenBalanceLarge
           symbol={groupPool.reserveToken.symbol}
           amount={shrinkToken(
@@ -117,42 +117,52 @@ const BonusGroup = ({
           usdPrice={rewardsGroup.groupPool.reserveToken.usdPrice}
           logoURI={groupPool.reserveToken.logoURI}
         />
-
-        {showMore ? (
-          <div>
-            <BonusGroupItems
-              rewardsGroup={rewardsGroup}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-            />
-          </div>
-        ) : (
-          <div className="flex justify-between items-center mt-20">
-            <div className="text-secondary">From {allTokens.length} Pools</div>
-            <div>
-              <TokensOverlap tokens={allTokens} />
+        <div className="bg-secondary p-10 rounded mb-30 mt-20">
+          <button
+            onClick={() => setShowMore((prev) => !prev)}
+            className="flex justify-between items-center px-20 h-[40px] w-full"
+          >
+            <div className="text-secondary">Explore Bonuses</div>
+            <div className="flex items-center">
+              {!showMore && (
+                <div>
+                  <TokensOverlap tokens={allTokens} />
+                </div>
+              )}
+              <IconChevron
+                className={`w-14 ml-20 ${
+                  showMore ? 'transform rotate-180' : ''
+                }`}
+              />
             </div>
-          </div>
-        )}
+          </button>
+          {showMore && (
+            <div>
+              <BonusGroupItems
+                rewardsGroup={rewardsGroup}
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
+              />
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex space-x-10 mt-20">
-        {showMore && (
-          <Button
-            variant={ButtonVariant.DARK}
-            onClick={onClaimClick}
-            className="w-full"
-            disabled={bntDisabled}
-          >
-            Claim {groupPool.reserveToken.symbol} to wallet
-          </Button>
-        )}
+        <Button
+          variant={ButtonVariant.DARK}
+          onClick={onClaimClick}
+          className="w-full"
+          disabled={bntDisabled}
+        >
+          Claim {groupPool.reserveToken.symbol} to wallet
+        </Button>
         <Button
           variant={ButtonVariant.PRIMARY}
           onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupPool.reserveToken.symbol} and Earn ??%
+          Claim {groupPool.reserveToken.symbol} and Earn
         </Button>
       </div>
     </div>
@@ -160,37 +170,21 @@ const BonusGroup = ({
 };
 
 export const V3BonusesModal = () => {
-  const [showMore, setShowMore] = useState(false);
-  const { bonuses, isBonusModalOpen, setBonusModalOpen, bonusUsdTotal } =
-    useV3Bonuses();
+  const { bonuses, isBonusModalOpen, setBonusModalOpen } = useV3Bonuses();
 
   return (
     <Modal
-      title="Bonuses"
+      title="Claim Bonus"
       isOpen={isBonusModalOpen}
       setIsOpen={setBonusModalOpen}
       large
     >
-      <div className="space-y-40 w-full max-w-[700px] p-10">
-        <div className="text-center">
-          <div className="text-secondary text-12">Bonuses Total</div>
-          <div className="text-[30px] mt-20">
-            {prettifyNumber(bonusUsdTotal, true)}
+      <div>
+        {bonuses.map((group) => (
+          <div key={group.groupId} className="p-30">
+            <BonusGroup rewardsGroup={group} />
           </div>
-          <button
-            onClick={() => setShowMore((prev) => !prev)}
-            className="text-primary mt-20"
-          >
-            {showMore ? 'Simple' : 'Advanced'}
-          </button>
-        </div>
-        <div>
-          {bonuses.map((group) => (
-            <div key={group.groupId} className="bg-secondary p-10 rounded-30">
-              <BonusGroup rewardsGroup={group} showMore={showMore} />
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </Modal>
   );

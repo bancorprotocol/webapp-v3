@@ -510,6 +510,33 @@ export const confirmWithdrawNotification = (
     dispatch
   );
 
+export const migrateNotification = (dispatch: any, txHash: string) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: 'Migrating your positions is pending confirmation',
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Successfully migrated your positions to V3`,
+        errorTitle: 'Migration Failed',
+        errorMsg: `Migrating positions failed. Please try again or contact support.`,
+      },
+    },
+    dispatch
+  );
+
+export const migrateFailedNotification = (dispatch: any) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Migration Failed',
+      msg: `Migrating positions failed. Please try again or contact support.`,
+    },
+    dispatch
+  );
+
 export const confirmJoinNotification = (
   dispatch: any,
   txHash: string,
@@ -579,29 +606,28 @@ export const confirmClaimNotification = (dispatch: any, txHash: string) =>
     dispatch
   );
 
-export const migrateNotification = (dispatch: any, txHash: string) =>
+export const confirmDepositNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string,
+  symbol: string
+) =>
   showNotification(
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: 'Migrating your positions is pending confirmation',
+      msg: 'Deposit is pending confirmation',
       txHash,
       updatedInfo: {
-        successTitle: 'Success!',
-        successMsg: `Successfully migrated your positions to V3`,
-        errorTitle: 'Migration Failed',
-        errorMsg: `Migrating positions failed. Please try again or contact support.`,
+        successTitle: 'Success',
+        successMsg: `Your deposit of ${prettifyNumber(
+          amount
+        )} ${symbol} has been successfully completed.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Your deposit of ${prettifyNumber(
+          amount
+        )} ${symbol} had failed.`,
       },
-    },
-    dispatch
-  );
-
-export const migrateFailedNotification = (dispatch: any) =>
-  showNotification(
-    {
-      type: NotificationType.error,
-      title: 'Migration Failed',
-      msg: `Migrating positions failed. Please try again or contact support.`,
     },
     dispatch
   );

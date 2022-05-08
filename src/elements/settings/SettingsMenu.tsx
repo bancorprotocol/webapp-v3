@@ -33,14 +33,18 @@ export const SettingsMenu = () => {
 };
 
 export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
-  const [customSlippage, setCustomSlippage] = useState('');
-
-  const dispatch = useDispatch();
   const currentSlippage = useAppSelector<number>(
     (state) => state.user.slippageTolerance
   );
-
   const slippages = [0.001, 0.005, 0.01];
+  const [customSlippage, setCustomSlippage] = useState(
+    slippages.includes(currentSlippage)
+      ? ''
+      : (currentSlippage * 100).toString()
+  );
+
+  const dispatch = useDispatch();
+
   const normalizedSlippage = Number(customSlippage) / 100;
   return (
     <div className="space-y-15 text-black-low dark:text-white-low">
@@ -69,22 +73,17 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
                 ? 'bg-fog dark:bg-grey'
                 : 'bg-white dark:bg-black'
             }`}
-            onFocus={() => {
-              if (!Number.isNaN(customSlippage)) {
-                dispatch(setSlippageTolerance(normalizedSlippage));
-              }
-            }}
             value={customSlippage}
-            onChange={(event) => {
-              const { value } = event.target;
-              if (!Number.isNaN(value)) {
-                dispatch(setSlippageTolerance(Number(value) / 100));
-              }
-              setCustomSlippage(value);
+            onChange={(event) => setCustomSlippage(event.target.value)}
+            onBlur={() => {
+              if (
+                customSlippage.trim() !== '' &&
+                !isNaN(Number(customSlippage))
+              )
+                dispatch(setSlippageTolerance(normalizedSlippage));
+
+              slippages.includes(currentSlippage) && setCustomSlippage('');
             }}
-            onBlur={() =>
-              slippages.includes(currentSlippage) && setCustomSlippage('')
-            }
             placeholder="Custom"
           />
         </div>

@@ -14,8 +14,10 @@ import BigNumber from 'bignumber.js';
 import { orderBy, uniqBy } from 'lodash';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { PoolV3 } from 'services/observables/pools';
+import { shrinkToken } from 'utils/formulas';
 
 export const initialState: V3PortfolioState = {
+  isPortfolioLoading: false,
   holdingsRaw: [],
   isLoadingHoldings: true,
   withdrawalRequestsRaw: [],
@@ -30,6 +32,9 @@ const v3PortfolioSlice = createSlice({
   name: 'v3Portfolio',
   initialState,
   reducers: {
+    setIsPortfolioLoading: (state, action: PayloadAction<boolean>) => {
+      state.isPortfolioLoading = action.payload;
+    },
     setHoldingsRaw: (state, action: PayloadAction<HoldingRaw[]>) => {
       state.holdingsRaw = action.payload;
       state.isLoadingHoldings = false;
@@ -66,6 +71,7 @@ export const {
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
   setStandardRewards,
+  setIsPortfolioLoading,
 } = v3PortfolioSlice.actions;
 
 export const v3Portfolio = v3PortfolioSlice.reducer;
@@ -93,7 +99,7 @@ export const getPortfolioHoldings = createSelector(
     );
 
     const holdingsRawMap = new Map(
-      holdingsRaw.map((holding) => [holding.poolId, holding])
+      holdingsRaw.map((holding) => [holding.poolDltId, holding])
     );
 
     const buildHoldingObject = (poolId: string) => {
@@ -105,16 +111,16 @@ export const getPortfolioHoldings = createSelector(
         return undefined;
       }
 
-      const poolTokenBalance = utils.formatUnits(
+      const poolTokenBalance = shrinkToken(
         holdingRaw?.poolTokenBalanceWei || '0',
         18
       );
-      const tokenBalance = utils.formatUnits(
+      const tokenBalance = shrinkToken(
         holdingRaw?.tokenBalanceWei || '0',
         pool.decimals
       );
 
-      const stakedTokenBalance = utils.formatUnits(
+      const stakedTokenBalance = shrinkToken(
         standardStakingReward?.tokenAmountWei || '0',
         pool.decimals
       );
@@ -134,7 +140,7 @@ export const getPortfolioHoldings = createSelector(
       return holding;
     };
 
-    const allHoldingPools = holdingsRaw.map((holding) => holding.poolId);
+    const allHoldingPools = holdingsRaw.map((holding) => holding.poolDltId);
     const allStakedPools = standardRewards.map((reward) => reward.pool);
     const allPoolsUniq = uniqBy(
       [...allHoldingPools, ...allStakedPools],
@@ -176,11 +182,11 @@ export const getPortfolioWithdrawalRequests = createSelector(
 
         const lockEndsAt =
           requestRaw.createdAt + withdrawalSettings.lockDuration;
-        const poolTokenAmount = utils.formatUnits(
+        const poolTokenAmount = shrinkToken(
           requestRaw.poolTokenAmountWei,
           token.decimals
         );
-        const reserveTokenAmount = utils.formatUnits(
+        const reserveTokenAmount = shrinkToken(
           requestRaw.reserveTokenAmountWei,
           token.decimals
         );
@@ -232,9 +238,9 @@ export const getStandardRewards = createSelector(
     }
     return standardRewards.reduce(
       ((obj) => (acc: GroupedStandardReward[], val: RewardsProgramStake) => {
-        const groupId = utils.getAddress(val.rewardsToken);
+        const groupId = utils.getAddress(val.rewardsToken.address);
         const filtered = standardRewards.filter(
-          (reward) => reward.rewardsToken === groupId
+          (reward) => reward.rewardsToken.address === groupId
         );
         const groupPool = allPoolsMap.get(groupId);
         if (!groupPool) {

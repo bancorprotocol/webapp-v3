@@ -25,12 +25,8 @@ export const V3EarningTableMenuMain = memo(
     setIsWithdrawModalOpen,
     handleDepositClick,
   }: Props) => {
-    const { setBonusModalOpen } = useV3Bonuses();
+    const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
     const { standardStakingReward } = holding;
-
-    const rewardsToken = useAppSelector((state) =>
-      getTokenById(state, holding.standardStakingReward?.rewardsToken || '')
-    );
 
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
@@ -72,15 +68,17 @@ export const V3EarningTableMenuMain = memo(
           <button
             onClick={handleBonusClick}
             className="flex justify-between w-full"
+            disabled={!(bonusUsdTotal > 0)}
           >
             <span>Bonus gain</span>
             <span className="text-secondary flex items-center">
               {prettifyNumber(
                 shrinkToken(
                   standardStakingReward?.pendingRewardsWei || 0,
-                  rewardsToken?.decimals || 0
+                  standardStakingReward?.rewardsToken.decimals || 0
                 )
               )}{' '}
+              {standardStakingReward?.rewardsToken.symbol}
               <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>

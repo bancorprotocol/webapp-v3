@@ -30,11 +30,8 @@ export const V3ClaimBonuses = () => {
             </Button>
           </div>
         ) : (
-          <div className="flex items-center justify-between text-[30px] text-black-disabled dark:text-white-disabled mb-44">
+          <div className="flex items-center justify-between text-[30px] text-black-disabled dark:text-white-disabled">
             $0
-            <Button className="w-[120px] h-[33px]" disabled>
-              Claim
-            </Button>
           </div>
         )}
       </section>

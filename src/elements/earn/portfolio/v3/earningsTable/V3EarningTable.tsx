@@ -10,6 +10,12 @@ import {
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { SortingRule } from 'react-table';
+import { Button, ButtonVariant } from 'components/button/Button';
+import { useV3Bonuses } from '../bonuses/useV3Bonuses';
+import { shrinkToken } from 'utils/formulas';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { bntDecimals } from 'services/web3/config';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -17,6 +23,7 @@ export const V3EarningTable = () => {
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
+  const { setBonusModalOpen } = useV3Bonuses();
 
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
@@ -45,17 +52,21 @@ export const V3EarningTable = () => {
         minWidth: 225,
       },
       {
-        id: 'totalGains',
-        Header: 'Lifetime gains',
-        Cell: () => '????',
-        tooltip: 'Tooltip text',
-        minWidth: 130,
-        sortDescFirst: true,
-      },
-      {
         id: 'roi',
-        Header: 'Lifetime Bonuses',
-        Cell: () => <span className="text-primary">????%</span>,
+        Header: 'Bonuses',
+        accessor: 'poolTokenBalance',
+        Cell: ({ cell }) => (
+          <span>
+            {prettifyNumber(
+              shrinkToken(
+                cell.row.original.standardStakingReward?.pendingRewardsWei || 0,
+                cell.row.original.standardStakingReward?.rewardsToken
+                  .decimals || 0
+              )
+            )}{' '}
+            {cell.row.original.standardStakingReward?.rewardsToken.symbol}
+          </span>
+        ),
         tooltip: 'Tooltip text',
         minWidth: 130,
         sortDescFirst: true,
@@ -65,25 +76,42 @@ export const V3EarningTable = () => {
         Header: '',
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
-          <DepositV3Modal
-            pool={cell.row.original.pool}
-            renderButton={(onClick) => (
-              <V3EarningTableMenu
-                holding={cell.row.original}
-                handleDepositClick={onClick}
-                setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                setHoldingToWithdraw={setHoldingToWithdraw}
-              />
-            )}
-          />
+          <div className="flex items-center">
+            <Button
+              onClick={() => {
+                setBonusModalOpen(true);
+              }}
+              className="w-[95px] h-[33px]"
+              variant={ButtonVariant.SECONDARY}
+            >
+              Claim
+            </Button>
+            <DepositV3Modal
+              pool={cell.row.original.pool}
+              renderButton={(onClick) => (
+                <V3EarningTableMenu
+                  holding={cell.row.original}
+                  handleDepositClick={onClick}
+                  setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+                  setHoldingToWithdraw={setHoldingToWithdraw}
+                />
+              )}
+            />
+          </div>
         ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
       },
     ],
-    []
+    [setBonusModalOpen]
   );
+
+  const defaultSort: SortingRule<Holding> = {
+    id: 'balance',
+    desc: true,
+  };
+
   return (
     <section>
       <h2>Holdings</h2>
@@ -94,6 +122,7 @@ export const V3EarningTable = () => {
           columns={columns}
           stickyColumn
           isLoading={isLoadingHoldings}
+          defaultSort={defaultSort}
         />
       </div>
 

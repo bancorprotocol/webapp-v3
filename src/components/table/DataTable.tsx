@@ -89,6 +89,11 @@ export const DataTable = <D extends object>({
           )}
         </table>
       </div>
+
+      {!isLoading && data.length === 0 && (
+        <div className="text-secondary text-center my-50">No record found</div>
+      )}
+
       {isLoading && (
         <div className="space-y-20 p-20">
           {[...Array(3)].map((_, index) => (

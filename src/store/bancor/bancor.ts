@@ -1,15 +1,16 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy } from 'lodash';
-import { TokenList, TokenMinimal } from 'services/observables/tokens';
 import { getAllTokensMap, getTokensV3Map } from 'store/bancor/token';
 import { utils } from 'ethers';
 import {
   RewardsProgramRaw,
   RewardsProgramV3,
 } from 'services/web3/v3/portfolio/standardStaking';
+import { Statistic } from 'services/observables/statistics';
+import { NotificationType } from 'store/notification/notification';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -19,6 +20,7 @@ interface BancorState {
   allTokens: Token[];
   allStandardRewardPrograms: RewardsProgramRaw[];
   isLoadingTokens: boolean;
+  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -29,6 +31,7 @@ export const initialState: BancorState = {
   allTokenListTokens: [],
   allStandardRewardPrograms: [],
   isLoadingTokens: true,
+  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -57,13 +60,16 @@ const bancorSlice = createSlice({
     ) => {
       state.allStandardRewardPrograms = action.payload;
     },
+    setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
+      state.statistics = action.payload;
+    },
   },
 });
 
 export const {
   setTokens,
   setAllTokens,
-  setTokenLists,
+  setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
   setAllStandardRewardPrograms,
@@ -89,6 +95,19 @@ export const getTopMovers = createSelector(
 );
 
 export const bancor = bancorSlice.reducer;
+
+export const getIsAppBusy = createSelector(
+  [
+    (state: RootState) => state.v3Portfolio.isPortfolioLoading,
+    (state: RootState) => state.notification.notifications,
+  ],
+  (isPortfolioLoading, notifications): boolean => {
+    const hasPendingTx = notifications.some(
+      (n) => n.type === NotificationType.pending
+    );
+    return isPortfolioLoading || hasPendingTx;
+  }
+);
 
 export const getAllStandardRewardPrograms = createSelector(
   (state: RootState) => state.bancor.allStandardRewardPrograms,

@@ -138,7 +138,7 @@ export const addLiquidity = async (
       { value, gasLimit }
     );
 
-    // sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
 
     onHash(tx.hash);
 
@@ -239,7 +239,7 @@ export const addLiquidityV2Single = async (
       { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
     );
     onHash(tx.hash);
-    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
 
     await tx.wait();
 

@@ -1,15 +1,20 @@
-import { keeperDaoTokens$ } from 'services/observables/tokens';
+import {
+  allTokensNew$,
+  keeperDaoTokens$,
+  tokensNew$,
+} from 'services/observables/tokens';
 import {
   setAllStandardRewardPrograms,
   setAllTokenListTokens,
   setAllTokens,
   setKeeperDaoTokens,
+  setStatisticsV3,
   setTokens,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
-import { statistics$ } from 'services/observables/statistics';
-import { setv2Pools, setStats, setv3Pools } from 'store/bancor/pool';
+import { statisticsV3$ } from 'services/observables/statistics';
+import { setv2Pools, setv3Pools } from 'store/bancor/pool';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -37,7 +42,6 @@ import {
   portfolioWithdrawals$,
   portfolioWithdrawalSettings$,
 } from 'services/observables/portfolio';
-import { allTokensNew$, tokensNew$ } from 'services/observables/tokens';
 import {
   listOfLists,
   tokenListTokens$,
@@ -78,8 +82,8 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setv2Pools(pools));
   });
 
-  statistics$.subscribe((stats) => {
-    dispatch(setStats(stats));
+  statisticsV3$.subscribe((stats) => {
+    dispatch(setStatisticsV3(stats));
   });
 
   protectedPositions$.subscribe((protectedPositions) => {

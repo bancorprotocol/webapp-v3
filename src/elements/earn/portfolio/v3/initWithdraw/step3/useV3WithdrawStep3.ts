@@ -34,7 +34,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const approveTokens = useMemo(() => {
     const tokensToApprove = [
       {
-        amount: poolTokenAmountWei,
+        amount: shrinkToken(poolTokenAmountWei, 18),
         token: {
           ...reserveToken,
           address: poolTokenDltId,
@@ -44,7 +44,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     ];
     if (reserveToken.address === bntToken) {
       tokensToApprove.push({
-        amount: poolTokenAmountWei,
+        amount: shrinkToken(poolTokenAmountWei, 18),
         token: {
           ...reserveToken,
           address: getNetworkVariables().govToken,
@@ -115,7 +115,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
         reserveToken.symbol
       );
       setStep(4);
-      await updatePortfolioData(dispatch, account);
+      await updatePortfolioData(dispatch);
     } catch (e: any) {
       setTxBusy(false);
       console.error('initWithdraw failed', e);
@@ -148,7 +148,6 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
     token: reserveToken,
     handleButtonClick,
     ModalApprove,
-    approveTokens,
     txBusy,
   };
 };

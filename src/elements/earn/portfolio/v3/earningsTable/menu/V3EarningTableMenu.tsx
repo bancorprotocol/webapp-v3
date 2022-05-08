@@ -1,4 +1,4 @@
-import { Popover, Transition, Portal } from '@headlessui/react';
+import { Popover, Portal, Transition } from '@headlessui/react';
 import { ReactComponent as IconMenuDots } from 'assets/icons/menu-dots.svg';
 import { Fragment, memo, useCallback, useRef, useState } from 'react';
 import { usePopper } from 'react-popper';
@@ -75,7 +75,7 @@ export const V3EarningTableMenu = memo(
           holding.pool.reserveToken.symbol
         );
         await tx.wait();
-        await updatePortfolioData(dispatch, account);
+        await updatePortfolioData(dispatch);
         setTxJoinBusy(false);
       } catch (e: any) {
         console.error('handleJoinClick', e);

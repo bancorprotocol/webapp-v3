@@ -1,43 +1,42 @@
 @import 'tailwindcss/utilities';
 
 @layer utilities {
-    .text-secondary {
-        @apply text-charcoal text-opacity-50 dark:text-light dark:text-opacity-50;
-    }
+  .text-secondary {
+    @apply text-charcoal text-opacity-50 dark:text-light dark:text-opacity-50;
+  }
 
-    .bg-secondary {
-        @apply bg-fog dark:bg-grey;
-    }
+  .bg-secondary {
+    @apply bg-fog dark:bg-grey;
+  }
 
-    .page {
-        @apply pt-[100px] pb-[80px] px-10  md:px-20 max-w-[1140px] mx-auto bg-fog dark:bg-black;
-    }
+  .page {
+    @apply pt-[100px] pb-[80px] px-10 md:px-0 max-w-[1140px] mx-auto bg-fog dark:bg-black;
+  }
 
-    .page h1 {
-        @apply text-[36px] font-normal m-0 p-0;
-    }
+  .page h1 {
+    @apply text-[36px] font-normal m-0 p-0;
+  }
 
+  .loading-skeleton {
+    @apply bg-silver bg-opacity-30 animate-pulse rounded-10;
+  }
 
-    .loading-skeleton {
-        @apply bg-silver bg-opacity-30 animate-pulse rounded-10;
-    }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .hide-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .hide-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;  /* Firefox */
-    }
+  .legal ul {
+    @apply list-disc list-outside ml-20;
+  }
 
-    .legal ul {
-        @apply list-disc list-outside ml-20;
-    }
-
-    .legal ul li {
-        @apply py-10;
-    }
+  .legal ul li {
+    @apply py-10;
+  }
 }

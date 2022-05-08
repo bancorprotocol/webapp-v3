@@ -13,8 +13,8 @@ export interface EthNetworkVariables {
   govToken: string;
 }
 
-export const systemStore: string = '0xc4C5634De585d43DaEC8fA2a6Fb6286cd9B87131';
 export const bntToken: string = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+export const systemStore: string = '0xc4C5634De585d43DaEC8fA2a6Fb6286cd9B87131';
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
