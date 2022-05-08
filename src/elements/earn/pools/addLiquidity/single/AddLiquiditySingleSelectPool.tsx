@@ -1,19 +1,19 @@
 import { useAppSelector } from 'store';
 import { getPools } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
-import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
-  const { pushAddLiquidityByID } = useNavigation();
+  const { goToPage } = useNavigation();
   const pools = useAppSelector<Pool[]>(getPools);
 
   const onSelect = (pool: Pool) => {
-    pushAddLiquidityByID(pool.pool_dlt_id);
+    goToPage.addLiquidityV2(pool.pool_dlt_id);
   };
 
   return (

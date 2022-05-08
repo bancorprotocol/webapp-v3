@@ -2,12 +2,11 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
 import { useAppSelector } from 'store';
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { portfolioRewardsClaim } from 'services/router';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { StakeRewardsBtn } from './StakeRewardsBtn';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
@@ -34,7 +33,7 @@ export const MyRewards = () => {
                 className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
                 static
               >
-                <NavLink to={portfolioRewardsClaim}>Claim</NavLink>
+                <Link to={BancorURL.portfolioV2RewardsClaim}>Claim</Link>
               </Popover.Panel>
             </DropdownTransition>
           </Popover>
