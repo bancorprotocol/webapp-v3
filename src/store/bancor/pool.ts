@@ -111,6 +111,13 @@ export const getTopPoolsV3 = createSelector(
   }
 );
 
+export const getIsV3Exist = createSelector(
+  [(state: RootState) => getPoolsV3Map(state), (_: any, id: string) => id],
+  (pools: Map<string, PoolV3>, id): boolean => {
+    return !!pools.get(id);
+  }
+);
+
 export interface SelectedPool {
   status: 'loading' | 'ready';
   pool?: Pool;

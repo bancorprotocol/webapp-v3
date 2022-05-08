@@ -158,6 +158,7 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
     const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
     const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
+
     const poolsV3 = allTokens.map((tkn) => {
       const apiPool = apiPoolsMap.get(tkn.address);
       const reserveToken = allTokensMap.get(tkn.address);

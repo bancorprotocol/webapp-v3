@@ -1,7 +1,7 @@
 import {
   allTokensNew$,
   keeperDaoTokens$,
-  tokensNew$,
+  tokensV2$,
 } from 'services/observables/tokens';
 import {
   setAllStandardRewardPrograms,
@@ -10,11 +10,12 @@ import {
   setKeeperDaoTokens,
   setStatisticsV3,
   setTokens,
+  setTokenLists,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
-import { statistics$, statisticsV3$ } from 'services/observables/statistics';
-import { setStats, setv2Pools, setv3Pools } from 'store/bancor/pool';
+import { statisticsV3$ } from 'services/observables/statistics';
+import { setv2Pools, setv3Pools } from 'store/bancor/pool';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -44,6 +45,7 @@ import {
 } from 'services/observables/portfolio';
 import {
   listOfLists,
+  tokenListsNew$,
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
@@ -59,11 +61,16 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setAllTokens(tokens));
   });
 
-  tokensNew$.subscribe((tokens) => {
+  tokensV2$.subscribe((tokens) => {
     dispatch(setTokens(tokens));
   });
 
   const userListIds = getTokenListLS();
+
+  tokenListsNew$.subscribe((tokenLists) => {
+    dispatch(setTokenLists(tokenLists));
+  });
+
   if (userListIds.length === 0) {
     const twoLists = [listOfLists[0].name, listOfLists[1].name];
     setTokenListLS(twoLists);
@@ -80,10 +87,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   poolsNew$.subscribe((pools) => {
     dispatch(setv2Pools(pools));
-  });
-
-  statistics$.subscribe((stats) => {
-    dispatch(setStats(stats));
   });
 
   statisticsV3$.subscribe((stats) => {

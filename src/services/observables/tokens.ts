@@ -5,7 +5,12 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
+import {
+  bntToken,
+  ethToken,
+  ropstenImage,
+  wethToken,
+} from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -30,6 +35,7 @@ import {
   APIToken,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
+import { fifteenSeconds$ } from 'services/observables/timers';
 
 export interface TokenMinimal {
   address: string;
@@ -181,6 +187,7 @@ export const userBalancesInWei$ = combineLatest([
   apiTokens$,
   user$,
   userBalancesReceiver$,
+  fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
@@ -204,6 +211,7 @@ export const userBalancesInWeiV3$ = combineLatest([
   apiTokensV3$,
   user$,
   userBalancesReceiver$,
+  fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
     if (!user) {
@@ -238,7 +246,7 @@ const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const tokensNew$ = combineLatest([
+export const tokensV2$ = combineLatest([
   apiTokens$,
   apiPools$,
   tokenListTokens$,
@@ -256,7 +264,13 @@ export const tokensNew$ = combineLatest([
       const userPreferredTokenListTokensMap = new Map(
         tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      return apiTokens
+      const weth = apiTokens.find((t) => t.dlt_id === ethToken);
+      const wethTkn: APIToken = {
+        ...weth!,
+        dlt_id: wethToken,
+        symbol: 'WETH',
+      };
+      return [...apiTokens, wethTkn]
         .map((apiToken) => {
           const tokenListToken = userPreferredTokenListTokensMap.get(
             apiToken.dlt_id

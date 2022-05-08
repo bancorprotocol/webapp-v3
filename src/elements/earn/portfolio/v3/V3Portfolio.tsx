@@ -1,5 +1,4 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
-import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
@@ -10,9 +9,12 @@ import { memo } from 'react';
 import { useAppSelector } from 'store';
 import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
 import { WhatsNew } from './WhatsNew';
+import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
+import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
+  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
   const dispatch = useDispatch();
 
   const handleLoginClick = () => {
@@ -25,6 +27,17 @@ const V3Portfolio = () => {
       <div className="col-span-12 md:col-span-6 xl:col-span-8 space-y-40">
         {hasHoldings ? (
           <>
+            <div className="hidden md:flex items-center justify-center relative">
+              <div className="absolute z-10 text-20 text-center">
+                Personal Chart
+                <div className="text-primary text-16">Coming Soon</div>
+              </div>
+              {darkMode ? (
+                <HoldingsDark className="blur-[3px]" />
+              ) : (
+                <HoldingsLight className="blur-[3px]" />
+              )}
+            </div>
             <V3EarningTable />
           </>
         ) : (
@@ -32,7 +45,7 @@ const V3Portfolio = () => {
         )}
         <V3AvailableToStake />
       </div>
-      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40 md:mt-[44px]">
+      <div className="col-span-12 md:col-span-6 xl:col-span-4 space-y-40 mt-[44px] md:mt-0">
         <div>
           <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
             Claim Bonuses

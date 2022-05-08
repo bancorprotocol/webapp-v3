@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
 import { AddLiquidityDualTokenPrices } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualTokenPrices';
 import BigNumber from 'bignumber.js';
-import { useNavigation } from 'services/router';
 import { Pool } from 'services/observables/pools';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;
@@ -24,7 +24,8 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, bntReserve.address)
   );
-  const { pushLiquidityError, pushPools } = useNavigation();
+
+  const { goToPage } = useNavigation();
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');
   const [errorBalanceBnt, setErrorBalanceBnt] = useState('');
@@ -48,12 +49,12 @@ export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   };
 
   if (!tkn || !bnt) {
-    pushLiquidityError();
+    goToPage.notFound();
     return <></>;
   }
 
   return (
-    <Widget title="Add Liquidity" goBack={pushPools}>
+    <Widget title="Add Liquidity" goBack={goToPage.earnV2}>
       <AddLiquidityDualStakeAmount
         tkn={tknWithUsd()}
         bnt={bnt}

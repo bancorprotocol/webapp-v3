@@ -100,10 +100,15 @@ export interface APITokenV3 {
 }
 
 export interface APIStatsV3 {
-  totalTradingLiquidity: Omit<PriceDictionary, 'tkn'>;
-  totalTradingLiquidity24hAgo: Omit<PriceDictionary, 'tkn'>;
+  tradingLiquidityBNT: Omit<PriceDictionary, 'tkn'>;
+  tradingLiquidityBNT24hAgo: Omit<PriceDictionary, 'tkn'>;
+  tradingLiquidityTKN: Omit<PriceDictionary, 'tkn'>;
+  tradingLiquidityTKN24hAgo: Omit<PriceDictionary, 'tkn'>;
   totalVolume24h: Omit<PriceDictionary, 'tkn'>;
+  totalVolume24hAgo: Omit<PriceDictionary, 'tkn'>;
   totalFees24h: Omit<PriceDictionary, 'tkn'>;
-  bntRate: Pick<PriceDictionary, 'usd'>;
-  bntRate24hAgo: Pick<PriceDictionary, 'usd'>;
+  totalFees24hAgo: Omit<PriceDictionary, 'tkn'>;
+  stakedBalanceBNT: Omit<PriceDictionary, 'tkn'>;
+  bntRate: string;
+  bntRate24hAgo: string;
 }

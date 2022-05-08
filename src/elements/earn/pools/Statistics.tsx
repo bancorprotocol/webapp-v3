@@ -2,7 +2,7 @@ import { useAppSelector } from 'store';
 import './Statistics.css';
 
 export const Statistics = () => {
-  const stats = useAppSelector((state) => state.bancor.statisticsV3);
+  const stats = useAppSelector((state) => state.bancor.statistics);
 
   return (
     <section className="content-block p-20">

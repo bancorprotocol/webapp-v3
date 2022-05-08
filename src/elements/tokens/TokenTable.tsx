@@ -7,12 +7,12 @@ import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { NavLink } from 'react-router-dom';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
-import { swapByfrom } from 'services/router';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getTokenTableData } from 'store/bancor/token';
+import { Navigate } from 'components/navigate/Navigate';
+import { BancorURL } from 'router/bancorURL.service';
 
 interface Props {
   searchInput: string;
@@ -135,12 +135,12 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         accessor: 'symbol',
         Cell: (cellData) => {
           return (
-            <NavLink
-              to={swapByfrom(cellData.row.original.address)}
+            <Navigate
+              to={BancorURL.trade({ to: cellData.row.original.address })}
               className="btn btn-secondary btn-xs"
             >
               Trade
-            </NavLink>
+            </Navigate>
           );
         },
         width: 50,

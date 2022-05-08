@@ -4,17 +4,21 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { NavLink } from 'react-router-dom';
-import { earn, portfolio, trade, tokens, vote } from 'services/router';
 import { Popover } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
 import 'elements/layoutHeader/LayoutHeader.css';
+import { useAppSelector } from 'store/index';
+import { getIsAppBusy } from 'store/bancor/bancor';
+import { BancorURL } from 'router/bancorURL.service';
+import { Navigate } from 'components/navigate/Navigate';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
   const [isTop, setIsTop] = useState(true);
+
+  const isLoading = useAppSelector(getIsAppBusy);
 
   useEffect(() => {
     const listener = () => setIsTop(window.pageYOffset === 0);
@@ -36,39 +40,47 @@ export const LayoutHeader = () => {
       >
         <div className="flex items-center justify-between w-full mx-20">
           <div className="hidden md:flex items-center gap-30">
-            <NavLink to={earn}>
+            <Navigate to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
-            </NavLink>
+            </Navigate>
             <TopMenuDropdown
               items={[
-                { title: 'Trade', link: trade },
-                { title: 'Tokens', link: tokens },
+                { title: 'Trade', link: BancorURL.trade() },
+                { title: 'Tokens', link: BancorURL.tokens },
               ]}
               className="w-[115px]"
             />
 
-            <NavLink to={earn} exact strict>
-              Earn
-            </NavLink>
+            <Navigate to={BancorURL.earn}>Earn</Navigate>
             <TopMenuDropdown
               items={[
-                { title: 'Vote', link: vote },
+                { title: 'Vote', link: BancorURL.vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
-              className="w-[125px]"
+              className="w-[135px]"
             />
 
-            <NavLink to={portfolio} exact strict>
-              Portfolio
-            </NavLink>
+            <Navigate to={BancorURL.portfolio}>Portfolio</Navigate>
             {isForkAvailable && <NetworkIndicator />}
           </div>
           <div className="md:hidden">
-            <NavLink to={earn}>
+            <Navigate to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
-            </NavLink>
+            </Navigate>
           </div>
           <div className="flex items-center gap-20">
+            {isLoading && (
+              <div className="h-[20px] w-[20px]">
+                <span className="absolute flex items-center justify-center h-[20px] w-[20px]">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75">
+                    &nbsp;
+                  </span>
+                  <span className="relative inline-flex rounded-full h-[12px] w-[12px] bg-primary/60">
+                    &nbsp;
+                  </span>
+                </span>
+              </div>
+            )}
             {wallet.account && <NotificationsMenu />}
             <SettingsMenu />
             <WalletConnectButton {...wallet} />
@@ -133,16 +145,5 @@ const TopMenuDropdown = ({
 };
 
 const TopMenuDropdownItem = ({ item }: { item: TopMenu }) => {
-  const href = item.link.startsWith('http');
-  return (
-    <NavLink
-      exact
-      strict
-      to={{ pathname: item.link }}
-      target={href ? '_blank' : undefined}
-      rel={href ? 'noopener' : undefined}
-    >
-      {item.title}
-    </NavLink>
-  );
+  return <Navigate to={item.link}>{item.title}</Navigate>;
 };

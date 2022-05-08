@@ -10,6 +10,7 @@ import {
   RewardsProgramV3,
 } from 'services/web3/v3/portfolio/standardStaking';
 import { Statistic } from 'services/observables/statistics';
+import { NotificationType } from 'store/notification/notification';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -19,7 +20,7 @@ interface BancorState {
   allTokens: Token[];
   allStandardRewardPrograms: RewardsProgramRaw[];
   isLoadingTokens: boolean;
-  statisticsV3: Statistic[];
+  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -30,7 +31,7 @@ export const initialState: BancorState = {
   allTokenListTokens: [],
   allStandardRewardPrograms: [],
   isLoadingTokens: true,
-  statisticsV3: [],
+  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -60,13 +61,14 @@ const bancorSlice = createSlice({
       state.allStandardRewardPrograms = action.payload;
     },
     setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
-      state.statisticsV3 = action.payload;
+      state.statistics = action.payload;
     },
   },
 });
 
 export const {
   setTokens,
+  setTokenLists,
   setAllTokens,
   setStatisticsV3,
   setAllTokenListTokens,
@@ -94,6 +96,19 @@ export const getTopMovers = createSelector(
 );
 
 export const bancor = bancorSlice.reducer;
+
+export const getIsAppBusy = createSelector(
+  [
+    (state: RootState) => state.v3Portfolio.isPortfolioLoading,
+    (state: RootState) => state.notification.notifications,
+  ],
+  (isPortfolioLoading, notifications): boolean => {
+    const hasPendingTx = notifications.some(
+      (n) => n.type === NotificationType.pending
+    );
+    return isPortfolioLoading || hasPendingTx;
+  }
+);
 
 export const getAllStandardRewardPrograms = createSelector(
   (state: RootState) => state.bancor.allStandardRewardPrograms,

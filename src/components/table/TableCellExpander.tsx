@@ -1,51 +1,73 @@
 import { CellProps } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { PropsWithChildren } from 'react';
+import { classNameGenerator } from 'utils/pureFunctions';
+import { Popover } from '@headlessui/react';
+import { DropdownTransition } from 'components/transitions/DropdownTransition';
 
 interface Props {
-  getExpandedContent?: () => JSX.Element;
-  getCollapsedContent?: () => JSX.Element;
-  getCannotExpandContent?: () => JSX.Element | string;
+  singleContent: JSX.Element;
+  groupContent: JSX.Element;
   cellData: PropsWithChildren<CellProps<any>>;
   canExpandMultiple?: boolean;
+  subMenu?: Function;
 }
 
-const getDefaultExpandedContent = () => (
-  <button className="rounded-[12px] w-[35px] h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14 mx-auto rotate-180" />
-  </button>
+const Expander = (isExpanded: boolean) => (
+  <IconChevronDown
+    className={`mx-auto w-14 ${classNameGenerator({
+      'rotate-180': isExpanded,
+    })}`}
+  />
 );
-const getDefaultCollapsedContent = () => (
-  <button className="rounded-[12px] w-[35px] h-[35px] p-0 border shadow-header">
-    <IconChevronDown className="w-14 mx-auto" />
-  </button>
-);
-const getDefaultCannotExpandContent = () => '';
 
 export const TableCellExpander = ({
   cellData,
   canExpandMultiple = false,
-  getExpandedContent = getDefaultExpandedContent,
-  getCollapsedContent = getDefaultCollapsedContent,
-  getCannotExpandContent = getDefaultCannotExpandContent,
+  singleContent,
+  groupContent,
+  subMenu,
 }: Props) => {
   const {
-    row: { canExpand, isExpanded, toggleRowExpanded },
+    row: { canExpand, isExpanded, toggleRowExpanded, original },
     toggleAllRowsExpanded,
   } = cellData;
 
   const handleClick = () => {
-    if (!canExpandMultiple && !isExpanded) {
-      toggleAllRowsExpanded(false);
-    }
+    if (!canExpandMultiple && !isExpanded) toggleAllRowsExpanded(false);
+
     toggleRowExpanded(!isExpanded);
   };
 
-  return canExpand ? (
-    <span onClick={() => handleClick()}>
-      {isExpanded ? getExpandedContent() : getCollapsedContent()}
-    </span>
-  ) : (
-    getCannotExpandContent()
+  return (
+    <div className="flex items-center">
+      {canExpand ? groupContent : original.groupId && singleContent}
+      <div className="flex items-center ml-auto gap-5">
+        {canExpand && (
+          <button
+            className="w-[35px] h-[35px] border border-primary rounded-[12px]"
+            onClick={() => handleClick()}
+          >
+            {Expander(isExpanded)}
+          </button>
+        )}
+        {subMenu && (
+          <Popover className="block relative">
+            <Popover.Button>
+              <IconMore className="rotate-90 w-16" />
+            </Popover.Button>
+            <DropdownTransition>
+              <Popover.Panel
+                className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
+                static
+              >
+                <button onClick={() => subMenu()}>Withdraw</button>
+              </Popover.Panel>
+            </DropdownTransition>
+          </Popover>
+        )}
+      </div>
+    </div>
   );
 };
