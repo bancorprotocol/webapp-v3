@@ -68,6 +68,7 @@ const bancorSlice = createSlice({
 
 export const {
   setTokens,
+  setTokenLists,
   setAllTokens,
   setStatisticsV3,
   setAllTokenListTokens,
