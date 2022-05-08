@@ -21,7 +21,6 @@ import { setProtectedPositions } from 'store/liquidity/liquidity';
 import { Pool } from 'services/observables/pools';
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
-import { useNavigation } from 'hooks/useNavigation';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -37,7 +36,6 @@ export const ProtectedPositionTableCellActions = (
   const isPoolExistV3 = useAppSelector<boolean>((state) =>
     getIsV3Exist(state, position.reserveToken.address)
   );
-  const { goToPage } = useNavigation();
   const dispatch = useDispatch();
 
   const migrate = useCallback(
@@ -51,13 +49,12 @@ export const ProtectedPositionTableCellActions = (
           async () => {
             const positions = await fetchProtectedPositions(pools, account!);
             dispatch(setProtectedPositions(positions));
-            goToPage.portfolio();
           },
           () => rejectNotification(dispatch),
           () => migrateFailedNotification(dispatch)
         );
     },
-    [dispatch, account, pools, goToPage]
+    [dispatch, account, pools]
   );
 
   const singleContent = useMemo(

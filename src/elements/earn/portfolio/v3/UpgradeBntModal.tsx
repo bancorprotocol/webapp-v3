@@ -8,7 +8,7 @@ import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
   getAllBntPositionsAndAmount,
@@ -21,12 +21,6 @@ import {
 } from 'services/notifications/notifications';
 import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
-import { useApproveModal } from 'hooks/useApproveModal';
-import { Token } from 'services/observables/tokens';
-import { getTokenById } from 'store/bancor/bancor';
-import { getNetworkVariables } from 'services/web3/config';
-import { ApprovalContract } from 'services/web3/approval';
-import { useNavigation } from 'hooks/useNavigation';
 import { Pool } from 'services/observables/pools';
 
 export const UpgradeBntModal = ({
@@ -39,15 +33,9 @@ export const UpgradeBntModal = ({
   setIsOpen: Function;
 }) => {
   const dispatch = useDispatch();
-  const [useAll, setUseAll] = useState(true);
-  const { goToPage } = useNavigation();
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
-
-  const vBNT = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, getNetworkVariables().govToken)
-  );
 
   const totalBNT = useAppSelector<{
     usdAmount: number;
@@ -76,7 +64,6 @@ export const UpgradeBntModal = ({
       async () => {
         const positions = await fetchProtectedPositions(pools, account!);
         dispatch(setProtectedPositions(positions));
-        goToPage.portfolio();
       },
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
