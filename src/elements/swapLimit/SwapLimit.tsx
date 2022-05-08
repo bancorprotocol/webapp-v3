@@ -464,14 +464,16 @@ export const SwapLimit = ({
               )}
               <div className="flex justify-end space-x-8 mt-15">
                 {percentages.map((slip, index) => (
-                  <button
+                  <Button
+                    variant={
+                      selPercentage !== index
+                        ? ButtonVariant.SECONDARY
+                        : ButtonVariant.PRIMARY
+                    }
                     key={'slippage' + slip}
-                    className={`btn-sm rounded-10 h-[34px] text-14 ${classNameGenerator(
-                      {
-                        'btn-outline-secondary': selPercentage !== index,
-                        'btn-primary': selPercentage === index,
-                      }
-                    )} bg-opacity-0`}
+                    className={`w-[70px] h-[34px] rounded-[12px] ${classNameGenerator(
+                      { border: selPercentage !== index }
+                    )} border-graphite dark:border-white-low`}
                     onClick={() => {
                       calculateRateByMarket(marketRate, index, '');
                       setSelPercentage(index);
@@ -479,7 +481,7 @@ export const SwapLimit = ({
                     }}
                   >
                     +{slip}%
-                  </button>
+                  </Button>
                 ))}
                 <div className="w-[70px]">
                   <InputField
@@ -503,7 +505,7 @@ export const SwapLimit = ({
                     }}
                     format
                     placeholder="Custom"
-                    customClass="text-14 py-6 rounded-10 bg-opacity-0 border border-graphite p-6"
+                    customClass="text-14 py-6 rounded-[12px] border border-graphite dark:border-white-low dark:bg-grey p-6"
                   />
                 </div>
               </div>
