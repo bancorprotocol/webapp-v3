@@ -43,7 +43,7 @@ export const TableCellExpander = ({
   return (
     <div className="flex items-center">
       {canExpand ? groupContent : original.groupId && singleContent}
-      <div className="flex items-center justify-end gap-5">
+      <div className="flex items-center ml-auto gap-5">
         {canExpand && (
           <button
             className="w-[35px] h-[35px] border border-primary rounded-[12px]"
