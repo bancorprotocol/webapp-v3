@@ -1,62 +1,109 @@
 import {
+  fetchProtectedPositions,
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
 import { CellProps } from 'react-table';
-import { ReactComponent as IconWithdraw } from 'assets/icons/withdraw.svg';
 import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
-import { WithdrawLiquidityWidget } from 'elements/earn/portfolio/withdrawLiquidity/WithdrawLiquidityWidget';
 import { TableCellExpander } from 'components/table/TableCellExpander';
-import { StakeRewardsBtn } from '../rewards/StakeRewardsBtn';
-import BigNumber from 'bignumber.js';
-import { ButtonIcon } from '../../../../../components/button/ButtonIcon';
+import { Button } from 'components/button/Button';
+import { migrateV2Positions } from 'services/web3/protection/migration';
+import {
+  migrateFailedNotification,
+  migrateNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
+import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
+import { bntToken } from 'services/web3/config';
+import { setProtectedPositions } from 'store/liquidity/liquidity';
+import { Pool } from 'services/observables/pools';
+import { useAppSelector } from 'store';
+import { getIsV3Exist } from 'store/bancor/pool';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
     CellProps<ProtectedPositionGrouped, ProtectedPosition[]>
   >
 ) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
+  const [isOpenBnt, setIsOpenBnt] = useState(false);
+  const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const account = useAppSelector((state) => state.user.account);
   const { row } = cellData;
   const position = row.original;
-  const canStakeRewards = useMemo(
-    () => new BigNumber(position.rewardsAmount).gt(0) && position.groupId,
-    [position.groupId, position.rewardsAmount]
+  const isPoolExistV3 = useAppSelector<boolean>((state) =>
+    getIsV3Exist(state, position.reserveToken.address)
+  );
+  const dispatch = useDispatch();
+
+  const migrate = useCallback(
+    (positions: ProtectedPosition[]) => {
+      const isBnt = positions[0].reserveToken.address === bntToken;
+      if (isBnt) setIsOpenBnt(true);
+      else
+        migrateV2Positions(
+          positions,
+          (txHash: string) => migrateNotification(dispatch, txHash),
+          async () => {
+            const positions = await fetchProtectedPositions(pools, account!);
+            dispatch(setProtectedPositions(positions));
+          },
+          () => rejectNotification(dispatch),
+          () => migrateFailedNotification(dispatch)
+        );
+    },
+    [dispatch, account, pools]
   );
 
-  const getCannotExpandContent = useCallback(
-    () => (
-      <>
-        <WithdrawLiquidityWidget
-          protectedPosition={position}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
-        <ButtonIcon
-          onClick={() => setIsModalOpen(true)}
-          secondary
-          className="shadow-header"
+  const singleContent = useMemo(
+    () =>
+      isPoolExistV3 ? (
+        <Button
+          onClick={() => migrate([position])}
+          className="text-12 w-[165px] h-[32px]"
         >
-          <IconWithdraw className="w-14" />
-        </ButtonIcon>
-      </>
-    ),
-    [isModalOpen, position]
+          Upgrade To V3
+        </Button>
+      ) : (
+        <></>
+      ),
+    [position, migrate, isPoolExistV3]
   );
 
+  const groupContent = useMemo(
+    () =>
+      isPoolExistV3 ? (
+        <Button
+          onClick={() => migrate(position.subRows)}
+          className="text-12 w-[145px] h-[32px]"
+        >
+          Upgrade All To V3
+        </Button>
+      ) : (
+        <></>
+      ),
+    [position, migrate, isPoolExistV3]
+  );
   return (
-    <div className="flex justify-end">
-      {canStakeRewards && (
-        <StakeRewardsBtn
-          buttonLabel="Stake Rewards"
-          buttonClass="btn btn-primary btn-sm !h-[35px] mr-10"
-          posGroupId={position.groupId}
-        />
-      )}
+    <div>
       {TableCellExpander({
         cellData,
-        getCannotExpandContent,
+        singleContent,
+        groupContent,
+        subMenu: () => setIsOpenWithdraw(true),
       })}
+      <WithdrawLiquidityWidget
+        protectedPosition={position}
+        isModalOpen={isOpenWithdraw}
+        setIsModalOpen={setIsOpenWithdraw}
+      />
+      <UpgradeBntModal
+        isOpen={isOpenBnt}
+        setIsOpen={setIsOpenBnt}
+        position={position}
+      />
     </div>
   );
 };
