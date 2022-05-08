@@ -31,58 +31,51 @@ const BonusGroupItems = ({
   };
 
   return (
-    <div className="mb-10 mt-20">
+    <div className="mb-10 mt-20 px-20">
+      <div className="flex items-center justify-between text-black-low mb-16">
+        <span>Bonus</span>
+        From
+      </div>
       {rewardsGroup.rewards.map((reward) => {
         const isSelected = selectedIds.includes(reward.id);
         return (
           <button
             key={reward.id}
-            className={`${
-              isSelected ? 'dark:bg-black' : ''
-            } rounded px-20 w-full`}
+            className={`${isSelected ? 'dark:bg-black' : ''} rounded w-full`}
             onClick={() => addOrRemove(reward.id)}
           >
             <div className="flex items-center justify-between text-16">
-              <div>
-                <div className="flex flex-start text-14 text-black-low mb-16">
-                  Bonus
+              <div className="flex items-center">
+                <div
+                  className={`${
+                    isSelected
+                      ? 'bg-primary'
+                      : 'border border-black-low dark:bg-black'
+                  } rounded-[4px] w-16 h-16 flex items-center justify-center`}
+                >
+                  {isSelected && <IconCheck className="w-10 text-white" />}
                 </div>
-                <div className="flex items-center">
-                  <div
-                    className={`${
-                      isSelected
-                        ? 'bg-primary'
-                        : 'border border-black-low dark:bg-black'
-                    } rounded-[4px] w-16 h-16 flex items-center justify-center`}
-                  >
-                    {isSelected && <IconCheck className="w-10 text-white" />}
-                  </div>
-                  <Image
-                    alt={'Token Logo'}
-                    className="w-30 h-30 rounded-full mx-20"
-                    src={reward.rewardsToken.logoURI}
-                  />
-                  {prettifyNumber(
-                    shrinkToken(
-                      reward.pendingRewardsWei,
-                      rewardsGroup.groupPool.decimals
-                    )
-                  )}{' '}
-                  <div>{reward.rewardsToken.symbol}</div>
-                </div>
+                <Image
+                  alt={'Token Logo'}
+                  className="w-30 h-30 rounded-full mx-20"
+                  src={reward.rewardsToken.logoURI}
+                />
+                {prettifyNumber(
+                  shrinkToken(
+                    reward.pendingRewardsWei,
+                    rewardsGroup.groupPool.decimals
+                  )
+                )}{' '}
+                {reward.rewardsToken.symbol}
               </div>
-              <div>
-                <div className="flex flex-start text-14 text-black-low mb-16">
-                  From
-                </div>
-                <div className="flex items-center gap-10">
-                  <Image
-                    alt={'Token Logo'}
-                    className="w-30 h-30 rounded-full"
-                    src={reward.programPool.reserveToken.logoURI}
-                  />
-                  {rewardsGroup.groupPool.reserveToken.symbol}
-                </div>
+
+              <div className="flex items-center gap-10">
+                <Image
+                  alt={'Token Logo'}
+                  className="w-30 h-30 rounded-full"
+                  src={reward.programPool.reserveToken.logoURI}
+                />
+                {reward.programPool.reserveToken.symbol}
               </div>
             </div>
           </button>
