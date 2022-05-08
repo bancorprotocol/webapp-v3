@@ -7,7 +7,6 @@ import {
 import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
-import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { useAppSelector } from 'store';
 import { useMemo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -70,9 +69,9 @@ export const UpgradeBntModal = ({
     [withdrawalFee]
   );
 
-  const migrate = () => {
+  const migrate = (positions: ProtectedPosition[]) => {
     migrateV2Positions(
-      useAll ? totalBNT.bntPositions : [position],
+      positions,
       (txHash: string) => migrateNotification(dispatch, txHash),
       async () => {
         const positions = await fetchProtectedPositions(pools, account!);
@@ -85,77 +84,58 @@ export const UpgradeBntModal = ({
     setIsOpen(false);
   };
 
-  const [checkApprove, ModalApprove] = useApproveModal(
-    [
-      {
-        amount: useAll
-          ? totalBNT.tknAmount.toString()
-          : position.protectedAmount.tknAmount,
-        token: vBNT!,
-      },
-    ],
-    migrate,
-    ApprovalContract.LiquidityProtection
-  );
-
   return (
-    <>
-      <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
-        <div className="flex flex-col items-center gap-20 p-20 text-center">
-          <Image
-            alt="Token"
-            src={position.reserveToken.logoURI}
-            className="bg-silver rounded-full h-50 w-50"
-          />
-          <div>Upgrade BNT</div>
-          <div>
-            Move all BNT to a single pool and earn from all trades in the
-            network
+    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
+      <div className="flex flex-col items-center gap-20 p-20 text-center">
+        <Image
+          alt="Token"
+          src={position.reserveToken.logoURI}
+          className="bg-silver rounded-full h-50 w-50"
+        />
+        <div>Upgrade BNT</div>
+        <div>
+          Move all BNT to a single pool and earn from all trades in the network
+        </div>
+        <div className="w-full bg-fog rounded-20 p-20">
+          <div className="flex items-center justify-between text-18 mb-15">
+            <div>Upgrade all BNT</div>
+            {`${prettifyNumber(totalBNT.tknAmount)} ${
+              position.reserveToken.symbol
+            } (~${prettifyNumber(totalBNT.usdAmount, true)})`}
           </div>
-          <div className="w-full bg-fog rounded-20 p-20">
-            <div className="flex items-center justify-between text-18 mb-15">
-              <div>Upgrade all BNT</div>
-              {`${prettifyNumber(totalBNT.tknAmount)} ${
-                position.reserveToken.symbol
-              } (~${prettifyNumber(totalBNT.usdAmount, true)})`}
-            </div>
-            <div className="flex items-center gap-5">
-              <IconCheck className="w-10 text-primary" />
-              Single BNT pool
-            </div>
-            <div className="flex items-center gap-5">
-              <IconCheck className="w-10 text-primary" />
-              Auto-compounding
-            </div>
-            <div className="flex items-center gap-5">
-              <IconCheck className="w-10 text-primary" />
-              Fully upgrade paritialy protected holdings
-            </div>
+          <div className="flex items-center gap-5">
+            <IconCheck className="w-10 text-primary" />
+            Single BNT pool
           </div>
-          <Button
-            onClick={() => {
-              setUseAll(true);
-              checkApprove();
-            }}
-            className="w-full h-[50px]"
-          >
-            Upgrade All
-          </Button>
-          <button
-            onClick={() => {
-              setUseAll(false);
-              checkApprove();
-            }}
-            className="text-primary"
-          >
-            No Thanks, just BNT from the {position.pool.name}
-          </button>
-          <div className="text-12 text-black-low font-semibold mt-30">
-            {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+          <div className="flex items-center gap-5">
+            <IconCheck className="w-10 text-primary" />
+            Auto-compounding
+          </div>
+          <div className="flex items-center gap-5">
+            <IconCheck className="w-10 text-primary" />
+            Fully upgrade paritialy protected holdings
           </div>
         </div>
-      </Modal>
-      {ModalApprove}
-    </>
+        <Button
+          onClick={() => migrate(totalBNT.bntPositions)}
+          className="w-full h-[50px]"
+        >
+          Upgrade All
+        </Button>
+        <button
+          onClick={() =>
+            migrate(
+              position.subRows.length === 0 ? [position] : position.subRows
+            )
+          }
+          className="text-primary"
+        >
+          No Thanks, just BNT from the {position.pool.name}
+        </button>
+        <div className="text-12 text-black-low font-semibold mt-30">
+          {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+        </div>
+      </div>
+    </Modal>
   );
 };
