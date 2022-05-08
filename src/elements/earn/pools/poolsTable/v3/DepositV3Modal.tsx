@@ -44,7 +44,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
   const isFiat = useAppSelector((state) => state.user.usdToggle);
-  const [accessFullEarnings, setAccessFullEarnings] = useState(false);
+  const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const rewardProgram = useAppSelector(
     getAllStandardRewardProgramsByPoolId
@@ -57,7 +57,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     setAmount('');
     setInputFiat('');
     setExtraGasNeeded('0');
-    setAccessFullEarnings(false);
+    setAccessFullEarnings(true);
   };
 
   const isInputError = useMemo(
