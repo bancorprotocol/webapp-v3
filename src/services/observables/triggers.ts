@@ -10,6 +10,7 @@ import {
   setKeeperDaoTokens,
   setStatisticsV3,
   setTokens,
+  setTokenLists,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
@@ -44,6 +45,7 @@ import {
 } from 'services/observables/portfolio';
 import {
   listOfLists,
+  tokenListsNew$,
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
@@ -64,6 +66,11 @@ export const subscribeToObservables = (dispatch: any) => {
   });
 
   const userListIds = getTokenListLS();
+
+  tokenListsNew$.subscribe((tokenLists) => {
+    dispatch(setTokenLists(tokenLists));
+  });
+
   if (userListIds.length === 0) {
     const twoLists = [listOfLists[0].name, listOfLists[1].name];
     setTokenListLS(twoLists);
