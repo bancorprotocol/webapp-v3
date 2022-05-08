@@ -10,8 +10,9 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { wethToken } from 'services/web3/config';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { sortNumbersByKey } from 'utils/pureFunctions';
-import { BancorURL } from 'router/bancorURL.service';
+import { getTokenTableData } from 'store/bancor/token';
 import { Navigate } from 'components/navigate/Navigate';
+import { BancorURL } from 'router/bancorURL.service';
 
 interface Props {
   searchInput: string;
@@ -19,7 +20,7 @@ interface Props {
 }
 
 export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector(getTokenTableData);
 
   const data = useMemo<Token[]>(() => {
     return tokens.filter(
