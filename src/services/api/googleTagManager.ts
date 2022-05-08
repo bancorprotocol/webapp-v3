@@ -125,14 +125,17 @@ export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
   sendGTM(gtmData);
 };
 
-export const sendConversionSuccessEvent = (fromTokenPrice: string | null) => {
+export const sendConversionSuccessEvent = (
+  fromTokenPrice: string | null,
+  transaction_hash?: string
+) => {
   const gtmData = {
     event: 'CE Conversion ' + eventTxtMap.get(ConversionEvents.success),
     wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
       conversion_market_token_rate: fromTokenPrice,
-      transaction_category: 'Conversion',
+      transaction_hash,
     },
     ga_event: {
       category: 'Conversion',
@@ -156,12 +159,18 @@ export const sendConversionFailEvent = (errorMsg: string) => {
   sendGTM(gtmData);
 };
 
-export const sendConversionEvent = (event: ConversionEvents) => {
+export const sendConversionEvent = (
+  event: ConversionEvents,
+  transaction_hash?: string
+) => {
   const eventClickPrefix = event === ConversionEvents.click ? 'Swap ' : '';
   const gtmData = {
     event: `CE Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
     wallet_properties: undefined,
-    event_properties: currentConversion,
+    event_properties: {
+      ...currentConversion,
+      transaction_hash,
+    },
     ga_event: {
       category: 'Conversion',
     },
@@ -254,6 +263,7 @@ interface CurrentLiquidity {
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
   liquidity_token_amount_usd?: number | string;
+  liquidity_token_portion_percent: string;
   liquidity_bnt_amount?: string;
   liquidity_bnt_amount_usd?: string;
   liquidity_input_type?: 'Fiat' | 'Token';
@@ -266,10 +276,11 @@ export const setCurrentLiquidity = (
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
-  tokenAmountUsd: string | undefined,
-  bntAmount: string | undefined,
-  bntAmountUsd: string | undefined,
-  usdToggle: boolean | undefined
+  tokenAmountUsd?: string,
+  bntAmount?: string,
+  bntAmountUsd?: string,
+  usdToggle?: boolean,
+  withdrawl_percentage?: string
 ) => {
   currentLiquidity = {
     liquidity_type: type,
@@ -280,6 +291,9 @@ export const setCurrentLiquidity = (
     liquidity_token_amount: tokenAmount,
     liquidity_token_amount_usd: tokenAmountUsd,
     liquidity_bnt_amount: bntAmount,
+    liquidity_token_portion_percent: withdrawl_percentage
+      ? withdrawl_percentage
+      : 'N/A',
     liquidity_bnt_amount_usd: bntAmountUsd,
     liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
   };
@@ -293,7 +307,6 @@ const getLiquidityEventLabel = (event: ConversionEvents) => {
 };
 
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
-  console.log(getLiquidityEventLabel(ConversionEvents.approved));
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.approved),
     wallet_properties: undefined,
@@ -308,15 +321,13 @@ export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
   sendGTM(gtmData);
 };
 
-export const sendLiquiditySuccessEvent = (txHash: string) => {
-  console.log(getLiquidityEventLabel(ConversionEvents.success));
+export const sendLiquiditySuccessEvent = (transaction_hash: string) => {
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.success),
     wallet_properties: undefined,
     event_properties: {
       ...currentLiquidity,
-      transaction_id: txHash,
-      transaction_category: 'Liquidity',
+      transaction_hash,
     },
     ga_event: {
       category: 'Liquidity',
@@ -326,7 +337,6 @@ export const sendLiquiditySuccessEvent = (txHash: string) => {
 };
 
 export const sendLiquidityFailEvent = (errorMsg: string) => {
-  console.log(getLiquidityEventLabel(ConversionEvents.fail));
   const gtmData = {
     event: getLiquidityEventLabel(ConversionEvents.fail),
     wallet_properties: undefined,
@@ -361,16 +371,20 @@ export const sendLiquidityPoolClickEvent = (
       category: 'Liquidity',
     },
   };
-  console.log(gtmData);
   sendGTM(gtmData);
 };
 
-export const sendLiquidityEvent = (event: ConversionEvents) => {
-  console.log(getLiquidityEventLabel(event));
+export const sendLiquidityEvent = (
+  event: ConversionEvents,
+  transaction_hash?: string
+) => {
   const gtmData = {
     event: getLiquidityEventLabel(event),
     wallet_properties: undefined,
-    event_properties: currentLiquidity,
+    event_properties: {
+      ...currentLiquidity,
+      transaction_hash,
+    },
     ga_event: {
       category: 'Liquidity',
     },
