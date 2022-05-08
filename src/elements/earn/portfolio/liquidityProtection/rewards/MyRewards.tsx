@@ -1,10 +1,10 @@
 import { prettifyNumber } from 'utils/helperFunctions';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
 import { StakeRewardsBtn } from 'elements/earn/portfolio/liquidityProtection/rewards/StakeRewardsBtn';
 import { useAppSelector } from 'store';
-import { portfolioRewardsClaim } from 'services/router';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const MyRewards = () => {
   const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
@@ -18,14 +18,14 @@ export const MyRewards = () => {
       <div className="flex justify-between items-center">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex mr-[20px] md:mr-[44px] space-x-8">
-          <NavLink to={portfolioRewardsClaim}>
+          <Link to={BancorURL.portfolioV2RewardsClaim}>
             <Button
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.EXTRASMALL}
             >
               Claim
             </Button>
-          </NavLink>
+          </Link>
           <StakeRewardsBtn
             buttonLabel="Stake"
             buttonClass="btn btn-primary btn-xs"

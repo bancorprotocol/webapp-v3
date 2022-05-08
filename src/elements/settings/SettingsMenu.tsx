@@ -11,9 +11,9 @@ import { useDispatch } from 'react-redux';
 import { setSlippageTolerance } from 'store/user/user';
 import { useAppSelector } from 'store';
 import { useState } from 'react';
-import { fiat, privacyPolicy, tos, vote } from 'services/router';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const SettingsMenu = () => {
   return (
@@ -88,7 +88,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           />
         </div>
         {mobile ? (
-          <Navigate to={vote}>
+          <Navigate to={BancorURL.vote}>
             <div className="flex items-center gap-10 text-black dark:text-white">
               <IconVote className="text-black dark:text-white w-20" />
               Vote
@@ -97,7 +97,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         ) : (
           <DarkMode showText />
         )}
-        <Navigate to={fiat}>
+        <Navigate to={BancorURL.fiat}>
           <div className="flex items-center gap-10 text-black dark:text-white">
             <IconFiat className="w-20" />
             Buy crypto with fiat
@@ -105,13 +105,13 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         </Navigate>
         <hr className="border-fog" />
         <Navigate to="https://support.bancor.network">Help Center</Navigate>
-        <Navigate to={fiat}>FAQ</Navigate>
+        <Navigate to={'/'}>FAQ</Navigate>
         <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
           Analytics
         </Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
-        <Navigate to={tos}>Terms Of Use</Navigate>
-        <Navigate to={privacyPolicy}>Privacy Policy</Navigate>
+        <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
+        <Navigate to={BancorURL.privacyPolicy}>Privacy Policy</Navigate>
         <div className="flex justify-between text- dark:black-disabled">
           <Navigate to="https://twitter.com/Bancor">
             <IconTwitter className="h-20" />

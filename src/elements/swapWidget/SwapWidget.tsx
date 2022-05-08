@@ -8,7 +8,7 @@ import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
-import { useNavigation } from 'services/router';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -28,8 +28,6 @@ export const SwapWidget = ({
   refreshLimit,
 }: SwapWidgetProps) => {
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
-  const { replaceLimit, replaceFrom, replaceTo, switchTokens } =
-    useNavigation();
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
@@ -84,6 +82,8 @@ export const SwapWidget = ({
     [toToken]
   );
 
+  const { goToPage } = useNavigation();
+
   return (
     <div className="2xl:space-x-20 flex justify-center mx-auto">
       <div className="flex justify-center w-full md:w-auto mx-auto space-x-30">
@@ -92,7 +92,11 @@ export const SwapWidget = ({
             <SwapHeader
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
-                replaceLimit(fromToken, tokens, limit, toToken)
+                goToPage.trade({
+                  from: fromToken?.address,
+                  to: toToken?.address,
+                  limit,
+                })
               }
             />
             <hr className="widget-separator" />
@@ -100,22 +104,54 @@ export const SwapWidget = ({
               <SwapLimit
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, true, toToken)
+                  goToPage.trade({
+                    from: from.address,
+                    to: toToken?.address,
+                    limit: true,
+                  })
                 }
                 toToken={toToken}
-                setToToken={(to: Token) => replaceTo(fromToken, true, to)}
-                switchTokens={() => switchTokens(fromToken, true, toToken)}
+                setToToken={(to: Token) =>
+                  goToPage.trade({
+                    from: fromToken?.address,
+                    to: to.address,
+                    limit: true,
+                  })
+                }
+                switchTokens={() =>
+                  goToPage.trade({
+                    from: toToken?.address,
+                    to: fromToken?.address,
+                    limit: true,
+                  })
+                }
                 refreshLimit={refreshLimit}
               />
             ) : (
               <SwapMarket
                 fromToken={fromToken}
                 setFromToken={(from: Token) =>
-                  replaceFrom(from, tokens, false, toToken)
+                  goToPage.trade({
+                    from: from.address,
+                    to: toToken?.address,
+                    limit: false,
+                  })
                 }
                 toToken={toToken}
-                setToToken={(to: Token) => replaceTo(fromToken, false, to)}
-                switchTokens={() => switchTokens(fromToken, false, toToken)}
+                setToToken={(to: Token) =>
+                  goToPage.trade({
+                    from: fromToken?.address,
+                    to: to.address,
+                    limit: false,
+                  })
+                }
+                switchTokens={() =>
+                  goToPage.trade({
+                    from: toToken?.address,
+                    to: fromToken?.address,
+                    limit: false,
+                  })
+                }
               />
             )}
           </div>

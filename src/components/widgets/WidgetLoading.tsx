@@ -1,10 +1,10 @@
 import { Widget } from 'components/widgets/Widget';
-import { useNavigation } from 'services/router';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const WidgetLoading = ({ title = 'loading' }) => {
-  const { pushPools } = useNavigation();
+  const { goToPage } = useNavigation();
   return (
-    <Widget title={title} goBack={pushPools}>
+    <Widget title={title} goBack={goToPage.earn}>
       <div className="space-y-10">
         <div className="loading-skeleton !rounded h-[50px]"></div>
         <div className="loading-skeleton !rounded h-[300px]"></div>
