@@ -5,7 +5,12 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
+import {
+  bntToken,
+  ethToken,
+  ropstenImage,
+  wethToken,
+} from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -241,7 +246,7 @@ const minNetworkTokenLiquidityForMinting$ = combineLatest([
   shareReplay(1)
 );
 
-export const tokensNew$ = combineLatest([
+export const tokensV2$ = combineLatest([
   apiTokens$,
   apiPools$,
   tokenListTokens$,
@@ -259,7 +264,13 @@ export const tokensNew$ = combineLatest([
       const userPreferredTokenListTokensMap = new Map(
         tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      return apiTokens
+      const weth = apiTokens.find((t) => t.dlt_id === ethToken);
+      const wethTkn: APIToken = {
+        ...weth!,
+        dlt_id: wethToken,
+        symbol: 'WETH',
+      };
+      return [...apiTokens, wethTkn]
         .map((apiToken) => {
           const tokenListToken = userPreferredTokenListTokensMap.get(
             apiToken.dlt_id

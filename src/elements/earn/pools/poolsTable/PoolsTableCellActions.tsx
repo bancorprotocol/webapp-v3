@@ -1,16 +1,16 @@
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Tooltip } from 'components/tooltip/Tooltip';
-import { addLiquidityByID } from 'services/router';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { BancorURL } from 'router/bancorURL.service';
 
 export const PoolsTableCellActions = (id: string) => {
   return (
-    <NavLink className="w-full" to={addLiquidityByID(id)}>
+    <Link className="w-full" to={BancorURL.addLiquidityV2(id)}>
       <Tooltip content="Stake & Earn">
         <Button variant={ButtonVariant.PRIMARY} size={ButtonSize.EXTRASMALL}>
           Deposit
         </Button>
       </Tooltip>
-    </NavLink>
+    </Link>
   );
 };

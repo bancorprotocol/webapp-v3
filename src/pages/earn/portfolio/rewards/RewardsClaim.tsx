@@ -3,15 +3,15 @@ import { RewardsClaimAmount } from 'elements/earn/portfolio/liquidityProtection/
 import { RewardsClaimInfo } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimInfo';
 import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { RewardsClaimCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimCTA';
-import { useNavigation } from 'services/router';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const RewardsClaim = () => {
   const { claimableRewards, account } = useRewardsClaim({});
-  const { pushPortfolio } = useNavigation();
+  const { goToPage } = useNavigation();
 
   return (
     <div className="pt-40 md:pt-[100px]">
-      <Widget title="Claim Rewards" goBack={pushPortfolio}>
+      <Widget title="Claim Rewards" goBack={goToPage.portfolioV2}>
         <div className="px-10 pb-10">
           <RewardsClaimInfo />
           <RewardsClaimAmount amount={claimableRewards} />

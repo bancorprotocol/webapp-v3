@@ -1,75 +1,44 @@
-import { LiquidityProtection } from 'elements/earn/portfolio/liquidityProtection/LiquidityProtection';
-import { PoolTokens } from 'elements/earn/portfolio/poolTokens/PoolTokens';
-import { useAppSelector } from 'store';
-import V3Portfolio from 'elements/earn/portfolio/v3/V3Portfolio';
-import { Tab } from '@headlessui/react';
-import { classNameGenerator } from 'utils/pureFunctions';
-import { PoolToken } from 'services/observables/pools';
-import { ProtectedPosition } from 'services/web3/protection/positions';
 import { Page } from 'components/Page';
+import { Outlet } from 'react-router-dom';
+import { BancorURL } from 'router/bancorURL.service';
+import { PageNavLink } from 'components/pageNavLink/PageNavLink';
+import { useAppSelector } from 'store/index';
 
 export const Portfolio = () => {
-  const v2 = useAppSelector<ProtectedPosition[]>(
-    (state) => state.liquidity.protectedPositions
-  );
-  const v1 = useAppSelector<PoolToken[]>((state) => state.liquidity.poolTokens);
+  const v1 = useAppSelector((state) => state.liquidity.poolTokens);
 
-  const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
-    classNameGenerator({
-      'px-10 py-5 rounded-10': true,
-      'bg-white dark:bg-charcoal': selected,
-      hidden: hidden,
-    });
+  const v2 = useAppSelector((state) => state.liquidity.protectedPositions);
 
   const title = 'Portfolio';
 
   return (
-    <Page title={title}>
-      <Tab.Group>
-        <div className="flex items-center mb-30">
-          <Tab.List className="space-x-10 ml-[180px] mt-[-25px]">
-            <Tab className={({ selected }) => getTabBtnClasses(selected)}>
-              V3
-            </Tab>
-
-            <Tab
-              className={({ selected }) =>
-                getTabBtnClasses(selected, !v2.length)
-              }
-            >
+    <Page
+      title={title}
+      trailingTitle={
+        <div className="flex items-center space-x-10">
+          <PageNavLink to={BancorURL.portfolio}>V3</PageNavLink>
+          {v2.length > 0 && (
+            <PageNavLink to={BancorURL.portfolioV2}>
               <div className="flex space-x-5">
                 <div>V2</div>
                 <div className="bg-primary rounded-full w-6 h-6" />
               </div>
-            </Tab>
-
-            <Tab
-              className={({ selected }) =>
-                getTabBtnClasses(selected, !v1.length)
-              }
-            >
+            </PageNavLink>
+          )}
+          {v1.length > 0 && (
+            <PageNavLink to={BancorURL.portfolioV1}>
               <div className="flex space-x-5">
                 <div>V1</div>
                 <div className="bg-primary rounded-full w-6 h-6" />
               </div>
-            </Tab>
-          </Tab.List>
+            </PageNavLink>
+          )}
         </div>
-
-        <Tab.Panels>
-          <Tab.Panel>
-            <V3Portfolio />
-          </Tab.Panel>
-
-          <Tab.Panel>
-            <LiquidityProtection />
-          </Tab.Panel>
-
-          <Tab.Panel>
-            <PoolTokens />
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+      }
+    >
+      <div className="mt-40">
+        <Outlet />
+      </div>
     </Page>
   );
 };

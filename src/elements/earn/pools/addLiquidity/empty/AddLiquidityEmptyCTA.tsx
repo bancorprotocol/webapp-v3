@@ -10,10 +10,10 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
-import { useNavigation } from 'services/router';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
+import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;
@@ -34,7 +34,7 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const { pushPortfolio } = useNavigation();
+  const { goToPage } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
     const cleanTkn = prettifyNumber(amountTkn);
@@ -57,7 +57,7 @@ export const AddLiquidityEmptyCTA = ({
         ),
       () => {
         if (window.location.pathname.includes(pool.pool_dlt_id))
-          pushPortfolio();
+          goToPage.portfolioV2();
       },
       () => rejectNotification(dispatch),
       () =>
@@ -70,7 +70,17 @@ export const AddLiquidityEmptyCTA = ({
           pool.name
         )
     );
-  }, [amountTkn, tkn, amountBnt, bnt, pool, pushPortfolio, dispatch]);
+  }, [
+    amountTkn,
+    amountBnt,
+    bnt,
+    tkn,
+    pool.converter_dlt_id,
+    pool.name,
+    pool.pool_dlt_id,
+    dispatch,
+    goToPage,
+  ]);
 
   const [onStart, ModalApprove] = useApproveModal(
     [
