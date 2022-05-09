@@ -9,7 +9,9 @@ export const PoolsTableCellName = (pool: Pool) => {
         alt="Token Logo"
         className="bg-fog rounded-full w-40 h-40"
       />
-      <h3 className="text-14 ml-32">{pool.isProtected ? pool.name.replace('/BNT', '') : pool.name}</h3>
+      <h3 className="text-14 ml-32">
+        {pool.isProtected ? pool.name.replace('/BNT', '') : pool.name}
+      </h3>
     </div>
   );
 };

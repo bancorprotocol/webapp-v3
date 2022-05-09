@@ -11,7 +11,6 @@ import {
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { SortingRule } from 'react-table';
-import { useV3Bonuses } from '../bonuses/useV3Bonuses';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
 
@@ -21,7 +20,6 @@ export const V3EarningTable = () => {
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
-  const { setBonusModalOpen } = useV3Bonuses();
 
   const columns = useMemo<TableColumn<Holding>[]>(
     () => [
@@ -58,7 +56,8 @@ export const V3EarningTable = () => {
             {prettifyNumber(
               shrinkToken(
                 cell.row.original.standardStakingReward?.pendingRewardsWei || 0,
-                cell.row.original.standardStakingReward?.rewardsToken.decimals || 0
+                cell.row.original.standardStakingReward?.rewardsToken
+                  .decimals || 0
               )
             )}{' '}
             {cell.row.original.standardStakingReward?.rewardsToken.symbol}

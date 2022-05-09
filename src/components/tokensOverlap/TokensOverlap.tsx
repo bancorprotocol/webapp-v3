@@ -13,7 +13,7 @@ export const TokensOverlap = ({
 
   return (
     <div className="flex">
-      {tokens.slice(0, maxLogos).map((token, i) => (
+      {tokens.slice(0, maxLogos).map((token) => (
         <Image
           key={token.symbol}
           src={token.logoURI}
