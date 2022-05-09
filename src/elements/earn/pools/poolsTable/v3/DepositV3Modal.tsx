@@ -81,7 +81,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       const tx = accessFullEarnings
         ? await ContractsApi.StandardRewards.write.depositAndJoin(
             rewardProgram.id,
-            amountWei
+            amountWei,
+            { value: isETH ? amountWei : undefined }
           )
         : await ContractsApi.BancorNetwork.write.deposit(
             pool.poolDltId,
