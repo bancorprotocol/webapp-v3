@@ -15,7 +15,6 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { useV3Bonuses } from '../bonuses/useV3Bonuses';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { bntDecimals } from 'services/web3/config';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -60,8 +59,7 @@ export const V3EarningTable = () => {
             {prettifyNumber(
               shrinkToken(
                 cell.row.original.standardStakingReward?.pendingRewardsWei || 0,
-                cell.row.original.standardStakingReward?.rewardsToken
-                  .decimals || 0
+                cell.row.original.standardStakingReward?.rewardsToken.decimals || 0
               )
             )}{' '}
             {cell.row.original.standardStakingReward?.rewardsToken.symbol}
@@ -77,15 +75,6 @@ export const V3EarningTable = () => {
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <div className="flex items-center">
-            <Button
-              onClick={() => {
-                setBonusModalOpen(true);
-              }}
-              className="w-[95px] h-[33px]"
-              variant={ButtonVariant.SECONDARY}
-            >
-              Claim
-            </Button>
             <DepositV3Modal
               pool={cell.row.original.pool}
               renderButton={(onClick) => (
