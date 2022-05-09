@@ -31,6 +31,7 @@ import {
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
 import { fifteenSeconds$ } from 'services/observables/timers';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export interface TokenMinimal {
   address: string;
@@ -51,6 +52,7 @@ export interface Token extends TokenMinimal {
   price_history_7d: { time: UTCTimestamp; value: number }[];
   usd_volume_24: string;
   isProtected: boolean;
+  balanceUsd?: number;
 }
 
 export interface TokenList {
@@ -76,6 +78,12 @@ export const buildTokenObject = (
     ? utils
         .formatUnits(balances.get(apiToken.dlt_id) ?? '0', apiToken.decimals)
         .toString()
+    : undefined;
+
+  const balanceUsd = balance
+    ? toBigNumber(balance || 0)
+        .times(apiToken.rate.usd || 0)
+        .toNumber()
     : undefined;
 
   // Get fallback token and set image and name
@@ -110,6 +118,7 @@ export const buildTokenObject = (
     name,
     logoURI,
     balance,
+    balanceUsd,
     address: apiToken.dlt_id,
     decimals: apiToken.decimals,
     symbol: apiToken.symbol,
@@ -136,6 +145,12 @@ export const buildTokenObjectV3 = (
         .toString()
     : undefined;
 
+  const balanceUsd = balance
+    ? toBigNumber(balance || 0)
+        .times(apiToken.rate.usd)
+        .toNumber()
+    : undefined;
+
   // Get fallback token and set image and name
   const logoURI = tlToken?.logoURI ?? ropstenImage;
   const name = tlToken?.name ?? apiToken.symbol;
@@ -159,6 +174,7 @@ export const buildTokenObjectV3 = (
     name,
     logoURI,
     balance,
+    balanceUsd,
     address: apiToken.dltId,
     decimals: pool.decimals,
     symbol: apiToken.symbol,

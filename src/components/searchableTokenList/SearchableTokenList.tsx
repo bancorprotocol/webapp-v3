@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { InputField } from 'components/inputField/InputField';
+import { useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
@@ -8,13 +7,14 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
-import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
-import { TokenList, TokenMinimal } from 'services/observables/tokens';
+import { TokenList } from 'services/observables/tokens';
 import { userPreferredListIds$ } from 'services/observables/tokenLists';
+import { orderBy } from 'lodash';
+import { SearchInput } from 'components/searchInput/SearchInput';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -22,7 +22,7 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens: string[];
   includedTokens: string[];
-  tokens: (Token | TokenMinimal)[];
+  tokens: Token[];
   limit?: boolean;
 }
 
@@ -115,6 +115,22 @@ export const SearchableTokenList = ({
     return name + '...';
   };
 
+  const sortedTokens = useMemo(() => {
+    const filtered = tokens.filter(
+      (token) =>
+        (includedTokens.length === 0 ||
+          includedTokens.includes(token.address)) &&
+        !excludedTokens.includes(token.address) &&
+        (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
+          (token.name &&
+            token.name.toLowerCase().includes(search.toLowerCase())))
+    );
+    return orderBy(filtered, 'balanceUsd', 'desc').slice(
+      0,
+      limit ? 300 : filtered.length
+    );
+  }, [excludedTokens, includedTokens, limit, search, tokens]);
+
   return (
     <SearchableTokenListLayout
       manage={manage}
@@ -163,19 +179,11 @@ export const SearchableTokenList = ({
       ) : (
         <>
           <div className="mb-10 px-20 relative">
-            <InputField
-              input={search}
-              setInput={setSearch}
-              dataCy="searchToken"
-              placeholder="Search name"
-              borderGrey
+            <SearchInput
+              value={search}
+              setValue={setSearch}
+              className="rounded-full py-10"
             />
-            {search && (
-              <IconTimes
-                className="w-12 absolute top-0 right-[36px]"
-                onClick={() => setSearch('')}
-              />
-            )}
           </div>
           <div
             data-cy="searchableTokensList"
@@ -191,46 +199,45 @@ export const SearchableTokenList = ({
                 }}
               />
             </div>
-            <hr className="border-silver dark:border-black-low" />
-
-            {tokens
-              .filter(
-                (token) =>
-                  (includedTokens.length === 0 ||
-                    includedTokens.includes(token.address)) &&
-                  !excludedTokens.includes(token.address) &&
-                  (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
-                    (token.name &&
-                      token.name.toLowerCase().includes(search.toLowerCase())))
-              )
-              .slice(0, limit ? 300 : tokens.length)
-              .map((token) => {
-                return (
-                  <button
-                    key={token.address}
-                    onClick={() => {
-                      onClick(token);
-                      onClose();
-                    }}
-                    className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
-                  >
-                    <div className="flex items-center">
-                      <Image
-                        src={token.logoURI}
-                        alt={`${token.symbol} Token`}
-                        className="bg-silver rounded-full h-28 w-28"
-                      />
-                      <div className="grid justify-items-start ml-15">
-                        <div className="text-16">{token.symbol}</div>
-                        <div className="text-12 text-graphite">
-                          {tokenName(token.name ?? token.symbol)}
-                        </div>
+            <div className="flex justify-between px-10 mt-20">
+              <div className="text-secondary pb-6">Token</div>
+              <div className="text-secondary pb-6">Balance</div>
+            </div>
+            {sortedTokens.map((token) => {
+              return (
+                <button
+                  key={token.address}
+                  onClick={() => {
+                    onClick(token);
+                    onClose();
+                  }}
+                  className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
+                >
+                  <div className="flex items-center">
+                    <Image
+                      src={token.logoURI}
+                      alt={`${token.symbol} Token`}
+                      className="rounded-full h-32 w-32"
+                    />
+                    <div className="grid justify-items-start ml-15">
+                      <div className="text-16">{token.symbol}</div>
+                      <div className="text-12 text-secondary">
+                        {tokenName(token.name ?? token.symbol)}
                       </div>
                     </div>
-                    <div>{token.balance && prettifyNumber(token.balance)}</div>
-                  </button>
-                );
-              })}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-16">
+                      {token.balance && prettifyNumber(token.balance)}
+                    </div>
+                    <div className="text-secondary">
+                      {token.balanceUsd &&
+                        prettifyNumber(token.balanceUsd, true)}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
           <hr className="border-silver dark:border-black-low" />
           <div className="flex justify-center items-center h-[59px] my-5">
