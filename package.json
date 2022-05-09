@@ -65,12 +65,13 @@
     "@types/numeral": "^2.0.1",
     "@types/react-table": "^7.7.2",
     "autoprefixer": "^9",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-react": "^7.23.2",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "husky": "^8.0.0",
+    "is-ci": "^3.0.1",
+    "lint-staged": "^12.4.1",
     "postcss": "^7",
     "prettier": "^2.3.0",
     "react-redux": "^7.2.6",
@@ -88,25 +89,38 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "build-storybook": "build-storybook -s public",
+    "prepare": "is-ci || husky install"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write"
+      "prettier --write",
+      "eslint --fix"
     ]
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier",
+      "plugin:prettier/recommended"
+    ],
+    "plugins": [
+      "unused-imports"
     ],
     "rules": {
-      "@typescript-eslint/no-unused-vars": 0
+      "@typescript-eslint/no-unused-vars": 0,
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "prettier/prettier": "error"
     },
     "overrides": [
       {
