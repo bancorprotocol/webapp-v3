@@ -192,7 +192,7 @@ const BonusGroup = ({
           disabled={bntDisabled}
         >
           Claim {groupPool.reserveToken.symbol} {'&'} Earn{' '}
-          {groupPool.apr.toFixed(2)}%
+          {groupPool.apr.total.toFixed(2)}%
         </Button>
       </div>
     </div>
