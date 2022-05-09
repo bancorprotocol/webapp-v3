@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { bntToken, getNetworkVariables } from 'services/web3/config';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
@@ -31,8 +30,8 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
 
   const [poolTokenAmountWei, setPoolTokenAmountWei] = useState('0');
 
-  const approveTokens = useMemo(() => {
-    const tokensToApprove = [
+  const approveTokens = useMemo(
+    () => [
       {
         amount: shrinkToken(poolTokenAmountWei, 18),
         token: {
@@ -41,20 +40,9 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
           symbol: `bn${reserveToken.symbol}`,
         },
       },
-    ];
-    if (reserveToken.address === bntToken) {
-      tokensToApprove.push({
-        amount: shrinkToken(poolTokenAmountWei, 18),
-        token: {
-          ...reserveToken,
-          address: getNetworkVariables().govToken,
-          symbol: `vBNT`,
-        },
-      });
-    }
-
-    return tokensToApprove;
-  }, [poolTokenAmountWei, poolTokenDltId, reserveToken]);
+    ],
+    [poolTokenAmountWei, poolTokenDltId, reserveToken]
+  );
 
   const setWithdrawalAmountWei = useCallback(async (): Promise<void> => {
     if (!account) {
