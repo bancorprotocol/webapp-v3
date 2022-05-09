@@ -5,12 +5,7 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import {
-  bntToken,
-  ethToken,
-  ropstenImage,
-  wethToken,
-} from 'services/web3/config';
+import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -280,13 +275,7 @@ export const tokensV2$ = combineLatest([
       const userPreferredTokenListTokensMap = new Map(
         tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      const weth = apiTokens.find((t) => t.dlt_id === ethToken);
-      const wethTkn: APIToken = {
-        ...weth!,
-        dlt_id: wethToken,
-        symbol: 'WETH',
-      };
-      return [...apiTokens, wethTkn]
+      return apiTokens
         .map((apiToken) => {
           const tokenListToken = userPreferredTokenListTokensMap.get(
             apiToken.dlt_id
