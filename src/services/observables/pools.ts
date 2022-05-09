@@ -143,12 +143,12 @@ const buildPoolV3Object = (
   }
   const tradingFeesApr = calcApr(
     apiPool.fees24h.usd,
-    apiPool.tradingLiquidityTKN.usd
+    apiPool.stakedBalance.usd
   );
 
   const autoCompoundingApr = calcApr(
     apiPool.autoCompoundingRewards24h.usd,
-    apiPool.tradingLiquidityTKN.usd
+    apiPool.stakedBalance.usd
   );
 
   const standardRewardsApr = calcApr(
