@@ -12,6 +12,8 @@ import {
   APIPoolV3,
   APIReward,
 } from 'services/api/bancorApi/bancorApi.types';
+import { toBigNumber } from 'utils/helperFunctions';
+import { calcApr } from 'utils/formulas';
 
 export interface Reserve {
   address: string;
@@ -43,7 +45,12 @@ export interface Pool {
 
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr: number;
+  apr: {
+    tradingFees: number;
+    autoCompounding: number;
+    standardRewards: number;
+    total: number;
+  };
 }
 
 export interface PoolToken {
@@ -127,6 +134,45 @@ export const buildPoolObject = (
   };
 };
 
+const buildPoolV3Object = (
+  apiPool?: APIPoolV3,
+  reserveToken?: Token
+): PoolV3 | undefined => {
+  if (!apiPool || !reserveToken) {
+    return undefined;
+  }
+  const tradingFeesApr = calcApr(
+    apiPool.fees24h.usd,
+    apiPool.stakedBalance.usd
+  );
+
+  const autoCompoundingApr = calcApr(
+    apiPool.autoCompoundingRewards24h.usd,
+    apiPool.stakedBalance.usd
+  );
+
+  const standardRewardsApr = calcApr(
+    apiPool.standardRewardsClaimed24h.usd,
+    apiPool.standardRewardsStaked.usd
+  );
+
+  const totalApr = toBigNumber(tradingFeesApr)
+    .plus(autoCompoundingApr)
+    .plus(standardRewardsApr)
+    .toNumber();
+
+  return {
+    ...apiPool,
+    apr: {
+      tradingFees: tradingFeesApr,
+      standardRewards: standardRewardsApr,
+      autoCompounding: autoCompoundingApr,
+      total: totalApr,
+    },
+    reserveToken,
+  };
+};
+
 export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
     const bnt = allTokens.find((t) => t.address === bntToken);
@@ -156,29 +202,11 @@ export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
 
 export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
-    const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
-    const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
-    const poolsV3 = allTokens.map((tkn) => {
-      const apiPool = apiPoolsMap.get(tkn.address);
-      const reserveToken = allTokensMap.get(tkn.address);
-      if (!apiPool || !reserveToken) {
-        return undefined;
-      }
-      let apr = new BigNumber(apiPool.fees24h.usd)
-        .times(365)
-        .div(apiPool.tradingLiquidityBNT.usd)
-        .times(100)
-        .toNumber();
-
-      const pool: PoolV3 = {
-        ...apiPool,
-        apr,
-        reserveToken,
-      };
-      return pool;
-    });
-    return poolsV3.filter((pool) => !!pool) as PoolV3[];
+    return apiPoolsV3
+      .map((pool) => buildPoolV3Object(pool, tokensMap.get(pool.poolDltId)))
+      .filter((pool) => !!pool) as PoolV3[];
   }),
   distinctUntilChanged<PoolV3[]>(isEqual),
   shareReplay(1)

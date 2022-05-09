@@ -31,7 +31,7 @@ export const PoolsTable = () => {
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr > 0.15)
+        (lowEarnRate || p.apr.total > 0.15)
     );
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
@@ -86,7 +86,7 @@ export const PoolsTable = () => {
         accessor: 'apr',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-20 text-primary">
-            {cellData.value.toFixed(2)}%
+            {cellData.value.total.toFixed(2)}%
             <IconGift className="w-14 h-14" />
           </div>
         ),

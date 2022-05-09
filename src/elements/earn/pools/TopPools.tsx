@@ -31,7 +31,7 @@ export const TopPools = () => {
                       </div>
                       <div className="text-16">
                         <span className="text-primary text-20 font-semibold">
-                          {pool.apr.toFixed(0)}%
+                          {pool.apr.total.toFixed(0)}%
                         </span>{' '}
                         APR
                       </div>

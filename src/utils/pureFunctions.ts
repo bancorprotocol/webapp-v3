@@ -1,5 +1,4 @@
 import { Token } from 'services/observables/tokens';
-import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { get as _get } from 'lodash';
 
 export const shortenString = (
