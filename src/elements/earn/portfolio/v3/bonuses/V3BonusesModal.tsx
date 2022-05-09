@@ -7,7 +7,6 @@ import { shrinkToken } from 'utils/formulas';
 import { Modal } from 'components/modal/Modal';
 import { useCallback, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
-import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 
@@ -32,41 +31,51 @@ const BonusGroupItems = ({
   };
 
   return (
-    <div className="space-y-10 mt-20">
+    <div className="mb-10 mt-20 px-20 space-y-10">
+      <div className="flex items-center justify-between text-black-low">
+        Bonus
+        <span className="flex start w-[80px]">From</span>
+      </div>
       {rewardsGroup.rewards.map((reward) => {
         const isSelected = selectedIds.includes(reward.id);
         return (
           <button
             key={reward.id}
-            className={`${
-              isSelected ? 'bg-white dark:bg-black' : ''
-            } rounded py-10 px-20 w-full`}
+            className={`${isSelected ? 'dark:bg-black' : ''} rounded w-full`}
             onClick={() => addOrRemove(reward.id)}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between text-16">
               <div className="flex items-center">
                 <div
                   className={`${
-                    isSelected ? 'bg-primary' : 'bg-white dark:bg-black'
-                  } rounded-full w-20 h-20 flex items-center justify-center`}
+                    isSelected
+                      ? 'bg-primary'
+                      : 'border border-black-low dark:bg-black'
+                  } rounded-[4px] w-16 h-16 flex items-center justify-center`}
                 >
                   {isSelected && <IconCheck className="w-10 text-white" />}
                 </div>
                 <Image
                   alt={'Token Logo'}
                   className="w-30 h-30 rounded-full mx-20"
-                  src={reward.programPool.reserveToken.logoURI}
+                  src={reward.rewardsToken.logoURI}
                 />
-                <div>{reward.programPool.reserveToken.symbol}</div>
-              </div>
-              <div>
                 {prettifyNumber(
                   shrinkToken(
                     reward.pendingRewardsWei,
                     rewardsGroup.groupPool.decimals
                   )
                 )}{' '}
-                {rewardsGroup.groupPool.reserveToken.symbol}
+                {reward.rewardsToken.symbol}
+              </div>
+
+              <div className="flex items-center gap-10 w-[80px]">
+                <Image
+                  alt={'Token Logo'}
+                  className="w-30 h-30 rounded-full"
+                  src={reward.programPool.reserveToken.logoURI}
+                />
+                {reward.programPool.reserveToken.symbol}
               </div>
             </div>
           </button>
@@ -108,21 +117,41 @@ const BonusGroup = ({
   return (
     <div>
       <div>
-        <TokenBalanceLarge
-          symbol={groupPool.reserveToken.symbol}
-          amount={shrinkToken(
-            rewardsGroup.totalPendingRewards,
-            groupPool.decimals
-          )}
-          usdPrice={rewardsGroup.groupPool.reserveToken.usdPrice}
-          logoURI={groupPool.reserveToken.logoURI}
-        />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <Image
+              alt={'Token'}
+              className="w-40 h-40 rounded-full"
+              src={groupPool.reserveToken.logoURI}
+            />
+            {groupPool.reserveToken.symbol}
+          </div>
+
+          <div>
+            <div className="text-20 text-black">
+              {prettifyNumber(
+                shrinkToken(
+                  rewardsGroup.totalPendingRewards,
+                  groupPool.decimals
+                )
+              )}
+            </div>
+            <div className="flex justify-end text-black-low">
+              ~
+              {prettifyNumber(
+                rewardsGroup.groupPool.reserveToken.usdPrice,
+                true
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className="bg-secondary p-10 rounded mb-30 mt-20">
           <button
             onClick={() => setShowMore((prev) => !prev)}
             className="flex justify-between items-center px-20 h-[40px] w-full"
           >
-            <div className="text-secondary">Explore Bonuses</div>
+            <div className="text-black">Explore Bonuses</div>
             <div className="flex items-center">
               {!showMore && (
                 <div>
@@ -149,20 +178,21 @@ const BonusGroup = ({
       </div>
       <div className="flex space-x-10 mt-20">
         <Button
-          variant={ButtonVariant.DARK}
+          variant={ButtonVariant.SECONDARY}
           onClick={onClaimClick}
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupPool.reserveToken.symbol} to wallet
+          Claim
         </Button>
         <Button
-          variant={ButtonVariant.PRIMARY}
+          variant={ButtonVariant.DARK}
           onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}
         >
-          Claim {groupPool.reserveToken.symbol} and Earn
+          Claim {groupPool.reserveToken.symbol} {'&'} Earn{' '}
+          {groupPool.apr.toFixed(2)}%
         </Button>
       </div>
     </div>
@@ -174,7 +204,7 @@ export const V3BonusesModal = () => {
 
   return (
     <Modal
-      title="Claim Bonus"
+      title="Claim Bonuses"
       isOpen={isBonusModalOpen}
       setIsOpen={setBonusModalOpen}
       large
