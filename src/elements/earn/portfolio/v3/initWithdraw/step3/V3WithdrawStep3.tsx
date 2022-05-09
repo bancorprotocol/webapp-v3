@@ -49,9 +49,9 @@ const V3WithdrawStep3 = ({
               ? 'waiting for confirmation ...'
               : `${
                   isFiat
-                    ? `${prettifyNumber(amount.tkn)} ${token.symbol} -`
+                    ? `${prettifyNumber(amount.tkn)} ${token.symbol} - `
                     : ''
-                } Start cooldown`}
+                }Start cooldown`}
           </Button>
         </div>
       </div>
