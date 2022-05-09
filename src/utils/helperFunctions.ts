@@ -179,5 +179,5 @@ export const calcTknValue = (
     .toFixed(decimals)
     .toString();
 
-export const toBigNumber = (num: BigNumberEther | string): BigNumber =>
+export const toBigNumber = (num: BigNumberEther | string | number): BigNumber =>
   new BigNumber(num.toString());

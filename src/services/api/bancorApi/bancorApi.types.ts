@@ -89,6 +89,9 @@ export interface APIPoolV3 {
   fees24h: PriceDictionary;
   stakedBalance: PriceDictionary;
   tradingFeePPM: string;
+  standardRewardsClaimed24h: PriceDictionary;
+  standardRewardsStaked: PriceDictionary;
+  autoCompoundingRewards24h: PriceDictionary;
 }
 
 export interface APITokenV3 {

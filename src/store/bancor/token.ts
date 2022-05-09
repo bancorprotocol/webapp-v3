@@ -28,14 +28,10 @@ export const getAvailableToStakeTokens = createSelector(
     const poolsWithApr = pools
       .map((pool) => {
         const token = allTokensMap.get(pool.poolDltId);
-        const tknApr = pool.apr;
-        const bntApr = pool.apr;
 
         return {
           token: token!,
           pool,
-          tknApr,
-          bntApr,
         };
       })
       .filter((p) => !!p && !!p.token && !!Number(p.token.balance));

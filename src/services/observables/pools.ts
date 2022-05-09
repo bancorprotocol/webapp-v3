@@ -12,6 +12,7 @@ import {
   APIPoolV3,
   APIReward,
 } from 'services/api/bancorApi/bancorApi.types';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export interface Reserve {
   address: string;
@@ -43,7 +44,12 @@ export interface Pool {
 
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr: number;
+  apr: {
+    tradingFees: number;
+    autoCompounding: number;
+    standardRewards: number;
+    total: number;
+  };
 }
 
 export interface PoolToken {
@@ -165,15 +171,41 @@ export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
       if (!apiPool || !reserveToken) {
         return undefined;
       }
-      let apr = new BigNumber(apiPool.fees24h.usd)
+      const tradingFeesApr = new BigNumber(apiPool.fees24h.usd)
         .times(365)
-        .div(apiPool.tradingLiquidityBNT.usd)
+        .div(apiPool.tradingLiquidityTKN.usd)
         .times(100)
+        .toNumber();
+
+      const autoCompoundingApr = toBigNumber(
+        apiPool.autoCompoundingRewards24h.usd
+      )
+        .times(365)
+        .div(apiPool.tradingLiquidityTKN.usd)
+        .times(100)
+        .toNumber();
+
+      const standardRewardsApr = toBigNumber(
+        apiPool.standardRewardsClaimed24h.usd
+      )
+        .times(365)
+        .div(apiPool.standardRewardsStaked.usd)
+        .times(100)
+        .toNumber();
+
+      const totalApr = toBigNumber(tradingFeesApr)
+        .plus(autoCompoundingApr)
+        .plus(standardRewardsApr)
         .toNumber();
 
       const pool: PoolV3 = {
         ...apiPool,
-        apr,
+        apr: {
+          tradingFees: tradingFeesApr,
+          standardRewards: standardRewardsApr,
+          autoCompounding: autoCompoundingApr,
+          total: totalApr,
+        },
         reserveToken,
       };
       return pool;
