@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { utils } from 'ethers';
-import { WelcomeData } from 'services/api/bancorApi/bancorApi.types';
+import { APIToken, WelcomeData } from 'services/api/bancorApi/bancorApi.types';
+import { ethToken, wethToken } from 'services/web3/config';
 
 const axiosInstance = axios.create({
   baseURL: 'https://api-v2.bancor.network/',
@@ -12,7 +13,13 @@ const axiosInstance = axios.create({
 export abstract class BancorV2Api {
   static getWelcome = async (): Promise<WelcomeData> => {
     const { data } = await axiosInstance.get<WelcomeData>('welcome');
-
+    const weth = data.tokens.find((t) => t.dlt_id === ethToken);
+    const wethTkn: APIToken = {
+      ...weth!,
+      dlt_id: wethToken,
+      symbol: 'WETH',
+    };
+    data.tokens.push(wethTkn);
     return {
       ...data,
       pools: data.pools.map((pool) => ({
