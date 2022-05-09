@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { Token } from 'services/observables/tokens';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export const calcReserve = (from: string, to: string, fee: BigNumber) => {
   return new BigNumber(to)
@@ -57,3 +58,8 @@ export const reduceBySlippage = (
   const one = new BigNumber(1);
   return bigNumValue.times(one.minus(bigNumSlippage)).toString();
 };
+
+export const calcApr = (
+  fees: BigNumber | string | number,
+  liquidity: BigNumber | string | number
+): number => toBigNumber(fees).times(365).div(liquidity).times(100).toNumber();
