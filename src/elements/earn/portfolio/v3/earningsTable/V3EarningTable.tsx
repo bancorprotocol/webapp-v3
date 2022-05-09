@@ -11,7 +11,6 @@ import {
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { SortingRule } from 'react-table';
-import { Button, ButtonVariant } from 'components/button/Button';
 import { useV3Bonuses } from '../bonuses/useV3Bonuses';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -93,7 +92,7 @@ export const V3EarningTable = () => {
         disableSortBy: true,
       },
     ],
-    [setBonusModalOpen]
+    []
   );
 
   const defaultSort: SortingRule<Holding> = {
