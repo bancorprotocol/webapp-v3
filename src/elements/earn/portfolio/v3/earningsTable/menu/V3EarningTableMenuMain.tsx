@@ -6,8 +6,6 @@ import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { shrinkToken } from 'utils/formulas';
-import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -51,7 +49,7 @@ export const V3EarningTableMenuMain = memo(
               variant={ButtonVariant.SECONDARY}
               size={ButtonSize.SMALL}
               className="w-full"
-              textBadge={`${holding.pool.apr.toFixed(2)}%`}
+              textBadge={`${holding.pool.apr.total.toFixed(2)}%`}
               onClick={handleDepositClick}
             >
               Deposit
