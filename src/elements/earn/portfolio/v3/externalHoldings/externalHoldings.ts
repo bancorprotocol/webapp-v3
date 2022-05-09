@@ -16,7 +16,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 const fetchApyVisionUniswap = async (
   user: string
 ): Promise<ApyVisionUniPosition[]> => {
-  // eslint-disable-next-line unused-imports/no-unused-vars
+  // eslint-disable-next-line
   const url = `https://stats.apy.vision/api/v1/uniswapv3/user_positions/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}`;
   try {
     // TODO remove comment when uni v3 is supported - further adjustemnts may be needed

@@ -38,7 +38,7 @@ export const migrateV2Positions = async (
   }
 };
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+// eslint-disable-next-line
 export const migrateV1Positions = (poolToken: PoolToken) => {};
 
 export const claimBntToV3 = async (
