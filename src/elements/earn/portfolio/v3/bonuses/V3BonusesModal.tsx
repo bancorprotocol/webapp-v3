@@ -34,7 +34,7 @@ const BonusGroupItems = ({
     <div className="mb-10 mt-20 px-20 space-y-10">
       <div className="flex items-center justify-between text-black-low">
         Bonus
-        <span className="flex start w-[70px]">From</span>
+        <span className="flex start w-[80px]">From</span>
       </div>
       {rewardsGroup.rewards.map((reward) => {
         const isSelected = selectedIds.includes(reward.id);
@@ -69,7 +69,7 @@ const BonusGroupItems = ({
                 {reward.rewardsToken.symbol}
               </div>
 
-              <div className="flex items-center gap-10">
+              <div className="flex items-center gap-10 w-[80px]">
                 <Image
                   alt={'Token Logo'}
                   className="w-30 h-30 rounded-full"
