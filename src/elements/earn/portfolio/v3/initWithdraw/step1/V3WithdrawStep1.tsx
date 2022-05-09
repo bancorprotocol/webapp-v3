@@ -128,7 +128,9 @@ const V3WithdrawStep1 = ({
           {txBusy
             ? 'waiting for confirmation ...'
             : skipStep2
-            ? 'Start cooldown'
+            ? `${
+                isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol}` : ''
+              } - Start cooldown`
             : `Next ${'->'}`}
         </Button>
       </div>
