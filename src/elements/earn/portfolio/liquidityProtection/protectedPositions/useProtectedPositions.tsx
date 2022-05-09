@@ -140,7 +140,8 @@ export const useProtectedPositions = () => {
         accessor: 'subRows',
         minWidth: 250,
         width: 250,
-        Cell: (cellData) => ProtectedPositionTableCellActions(cellData),
+        // TODO - remove any
+        Cell: (cellData: any) => ProtectedPositionTableCellActions(cellData),
       },
     ],
     []

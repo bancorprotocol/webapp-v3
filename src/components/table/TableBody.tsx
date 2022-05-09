@@ -25,7 +25,7 @@ export const TableBody = <D extends object>({
                     row.isExpanded ? '!bg-fog dark:!bg-grey' : ''
                   } group-hover:bg-fog dark:group-hover:bg-black`}
                 >
-                  {cell.render('Cell')}
+                  <>{cell.render('Cell')}</>
                 </td>
               );
             })}

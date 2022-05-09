@@ -4,9 +4,8 @@ import {
   RfqOrderJson,
   sendOrders,
 } from 'services/api/keeperDao';
-import { NULL_ADDRESS } from '@0x/utils';
 import { ErrorCode, EthNetworks, SignatureType } from 'services/web3/types';
-import { wethToken } from 'services/web3/config';
+import { wethToken, zeroAddress } from 'services/web3/config';
 import { writeWeb3 } from 'services/web3';
 import BigNumber from 'bignumber.js';
 import dayjs from 'utils/dayjs';
@@ -79,7 +78,7 @@ export const createOrder = async (
 
   const order = {
     maker: user.toLowerCase(),
-    taker: NULL_ADDRESS.toLocaleLowerCase(),
+    taker: zeroAddress.toLocaleLowerCase(),
     expiry,
     makerAmount: fromAmountWei.toString(),
     makerToken: fromToken.address.toLowerCase(),

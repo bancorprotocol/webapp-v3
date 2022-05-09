@@ -75,9 +75,11 @@ export const TableHeader = <D extends object>({
                   getColumn(column).headerClassName ?? ''
                 }`}
               >
-                {column.render('Header')}
-                {getTooltip(column)}
-                {getSortBy(column.isSorted, column.isSortedDesc)}
+                <>
+                  {column.render('Header')}
+                  {getTooltip(column)}
+                  {getSortBy(column.isSorted, column.isSortedDesc)}
+                </>
               </div>
             </th>
           ))}

@@ -1,7 +1,7 @@
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js';
-import 'swiper/swiper.min.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import { NavigationOptions } from 'swiper/types';
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
 import { useAppSelector } from 'store';
