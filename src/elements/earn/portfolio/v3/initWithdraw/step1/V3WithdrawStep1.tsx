@@ -79,7 +79,7 @@ const V3WithdrawStep1 = ({
 
       <button
         onClick={() => setBalance(100)}
-        className={`flex items-center mx-auto ${
+        className={`flex items-center mx-auto mb-5 ${
           isInputError ? 'text-error' : 'text-secondary'
         }`}
       >
@@ -104,7 +104,7 @@ const V3WithdrawStep1 = ({
         isFiat={isFiat}
         isError={isInputError}
       />
-      <div className="w-full flex justify-between px-20">
+      <div className="w-full flex justify-between px-20 pt-5">
         <div className="space-x-10 opacity-50">
           <button onClick={() => setBalance(25)}>25%</button>
           <button onClick={() => setBalance(50)}>50%</button>
@@ -128,7 +128,9 @@ const V3WithdrawStep1 = ({
           {txBusy
             ? 'waiting for confirmation ...'
             : skipStep2
-            ? 'Start cooldown'
+            ? `${
+                isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol} - ` : ''
+              }Start cooldown`
             : `Next ${'->'}`}
         </Button>
       </div>

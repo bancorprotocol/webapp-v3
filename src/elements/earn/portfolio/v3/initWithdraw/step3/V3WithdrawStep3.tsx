@@ -45,7 +45,13 @@ const V3WithdrawStep3 = ({
             onClick={handleButtonClick}
             disabled={txBusy}
           >
-            {txBusy ? 'waiting for confirmation ...' : 'Start cooldown'}
+            {txBusy
+              ? 'waiting for confirmation ...'
+              : `${
+                  isFiat
+                    ? `${prettifyNumber(amount.tkn)} ${token.symbol} - `
+                    : ''
+                }Start cooldown`}
           </Button>
         </div>
       </div>
