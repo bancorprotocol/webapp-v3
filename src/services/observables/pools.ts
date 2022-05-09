@@ -202,16 +202,10 @@ export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
 
 export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
   switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
-    const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
-    const allTokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
-    return allTokens
-      .map((tkn) =>
-        buildPoolV3Object(
-          apiPoolsMap.get(tkn.address),
-          allTokensMap.get(tkn.address)
-        )
-      )
+    return apiPoolsV3
+      .map((pool) => buildPoolV3Object(pool, tokensMap.get(pool.poolDltId)))
       .filter((pool) => !!pool) as PoolV3[];
   }),
   distinctUntilChanged<PoolV3[]>(isEqual),

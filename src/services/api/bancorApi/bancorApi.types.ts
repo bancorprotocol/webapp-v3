@@ -115,3 +115,10 @@ export interface APIStatsV3 {
   bntRate: string;
   bntRate24hAgo: string;
 }
+
+export interface APIBntV3 {
+  stakedBalance: Omit<PriceDictionary, 'tkn'>;
+  fees24h: Omit<PriceDictionary, 'tkn'>;
+  volume24h: Omit<PriceDictionary, 'tkn'>;
+  tradingLiquidity: Omit<PriceDictionary, 'tkn'>;
+}
