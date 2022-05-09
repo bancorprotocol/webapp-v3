@@ -24,13 +24,13 @@ export const SuggestedTokens = ({
 
   return (
     <div className="px-10">
-      <h3 className="text-14 mb-10 ml-5">Popular Tokens</h3>
+      <div className="text-secondary pb-14 mt-10">Popular Tokens</div>
       <div className="flex w-full space-x-8">
         {suggestedTokenList.map((token) => (
           <button
             key={token?.address}
             onClick={() => onClick(token!)}
-            className="bg-fog dark:bg-grey border dark:border-grey dark:hover:border-black-disabled pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
+            className="bg-fog dark:bg-grey dark:border dark:border-grey dark:hover:border-black-disabled pt-10 pb-5 w-full flex flex-col items-center rounded-10 hover:shadow-widget transition-all duration-500"
           >
             <Image
               src={token!.logoURI}
