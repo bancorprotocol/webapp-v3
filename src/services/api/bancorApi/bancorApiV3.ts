@@ -24,32 +24,20 @@ export abstract class BancorV3Api {
     const { data } = await axiosInstance.get<APIDataV3<APITokenV3[]>>(
       '/tokens'
     );
-    const mockedTokens = data.data.map((token) => ({
+    return data.data.map((token) => ({
       ...token,
-      rateHistory7d: [],
-    }));
-    return [
-      ...mockedTokens,
-      {
-        symbol: 'BNT',
-        dltId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
+      // TODO remove after Bancor API v3 is updated
+      ...(token.symbol === 'BNT' && {
         rate: {
           bnt: '1',
-          usd: '1',
-          eur: '0.00',
-          eth: '0.00',
+          usd: '2',
+          eur: '2',
+          eth: '0.1',
           tkn: '1',
         },
-        rate24hAgo: {
-          bnt: '1',
-          usd: '0.00',
-          eur: '0.00',
-          eth: '0.00',
-          tkn: '1',
-        },
-        rateHistory7d: [],
-      },
-    ];
+      }),
+      rateHistory7d: [],
+    }));
   };
 
   static getStatistics = async (): Promise<APIStatsV3> => {
