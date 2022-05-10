@@ -21,7 +21,6 @@ import { BancorNetwork__factory, Converter__factory } from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { utils } from 'ethers';
 import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
 

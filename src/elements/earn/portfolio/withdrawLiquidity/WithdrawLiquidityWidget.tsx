@@ -10,7 +10,7 @@ import {
   fetchProtectedPositions,
   getWithdrawBreakdown,
   ProtectedPosition,
-  withdrawProtection
+  withdrawProtection,
 } from 'services/web3/protection/positions';
 import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import {
   rejectNotification,
   withdrawProtectedPosition,
-  withdrawProtectedPositionFailed
+  withdrawProtectedPositionFailed,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
@@ -34,7 +34,7 @@ import {
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
-  setCurrentLiquidity
+  setCurrentLiquidity,
 } from 'services/api/googleTagManager';
 import { Pool } from 'services/observables/pools';
 import { Button, ButtonVariant } from 'components/button/Button';
