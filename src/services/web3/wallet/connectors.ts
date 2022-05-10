@@ -53,5 +53,5 @@ export const portis = new PortisConnector({
 });
 
 export const torus = new TorusConnector({
-  chainId: 1
+  chainId: 1,
 });
