@@ -21,7 +21,8 @@ import {
 import { poolsNew$ } from 'services/observables/pools';
 import { isEqual } from 'lodash';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { bntToken } from 'services/web3/config';
+import { bntDecimals, bntToken } from 'services/web3/config';
+import { shrinkToken } from 'utils/formulas';
 
 export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
@@ -83,13 +84,12 @@ export const lockedAvailableBnt$ = combineLatest([user$]).pipe(
 );
 
 const fetchProtocolBnBNTAmount = async () => {
-  const protocolBnBNTAmount =
-    await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
-      bntToken,
-      '1'
-    );
-  console.log('protocolBnBNTAmount', protocolBnBNTAmount.toString());
-  return protocolBnBNTAmount.toNumber();
+  const bnBNT = await ContractsApi.BancorNetworkInfo.read.poolToken(bntToken);
+  const bntPool = await ContractsApi.BancorNetworkInfo.read.bntPool();
+  const protocolBnBNTAmount = await ContractsApi.Token(bnBNT).read.balanceOf(
+    bntPool
+  );
+  return Number(shrinkToken(protocolBnBNTAmount.toString(), bntDecimals));
 };
 
 export const protocolBnBNTAmount$ = from(fetchProtocolBnBNTAmount()).pipe(
