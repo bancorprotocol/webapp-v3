@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { combineLatest } from 'rxjs';
+import { combineLatest, from } from 'rxjs';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { fetchLockedAvailableBalances } from 'services/web3/lockedbnt/lockedbnt';
 import {
@@ -20,6 +20,8 @@ import {
 } from './user';
 import { poolsNew$ } from 'services/observables/pools';
 import { isEqual } from 'lodash';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { bntToken } from 'services/web3/config';
 
 export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
@@ -77,5 +79,19 @@ export const lockedAvailableBnt$ = combineLatest([user$]).pipe(
     }
     setLoadingLockedBnt(false);
   }),
+  shareReplay(1)
+);
+
+const fetchProtocolBnBNTAmount = async () => {
+  const protocolBnBNTAmount =
+    await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
+      bntToken,
+      '1'
+    );
+  console.log('protocolBnBNTAmount', protocolBnBNTAmount.toString());
+  return protocolBnBNTAmount.toNumber();
+};
+
+export const protocolBnBNTAmount$ = from(fetchProtocolBnBNTAmount()).pipe(
   shareReplay(1)
 );

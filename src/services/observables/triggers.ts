@@ -23,11 +23,13 @@ import {
   setLockedAvailableBNT,
   setPoolTokens,
   setProtectedPositions,
+  setProtocolBnBNTAmount,
   setRewards,
 } from 'store/liquidity/liquidity';
 import {
   lockedAvailableBnt$,
   protectedPositions$,
+  protocolBnBNTAmount$,
   rewards$,
 } from './liquidity';
 import {
@@ -137,5 +139,9 @@ export const subscribeToObservables = (dispatch: any) => {
 
   standardRewardPrograms$.subscribe((rewards) => {
     dispatch(setAllStandardRewardPrograms(rewards));
+  });
+
+  protocolBnBNTAmount$.subscribe((protocolBnBNTAmount) => {
+    dispatch(setProtocolBnBNTAmount(protocolBnBNTAmount));
   });
 };
