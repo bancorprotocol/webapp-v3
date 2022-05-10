@@ -4,13 +4,13 @@ import {
   tokensV2$,
 } from 'services/observables/tokens';
 import {
-  setAllStandardRewardPrograms,
   setAllTokenListTokens,
   setAllTokens,
   setKeeperDaoTokens,
   setStatisticsV3,
   setTokens,
   setTokenLists,
+  setAllStandardRewardPrograms,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
@@ -37,7 +37,6 @@ import {
   setWithdrawalSettings,
 } from 'store/portfolio/v3Portfolio';
 import {
-  portfolioAllStandardRewards$,
   portfolioHoldings$,
   portfolioStandardRewards$,
   portfolioWithdrawals$,
@@ -51,6 +50,7 @@ import {
 } from 'services/observables/tokenLists';
 import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
+import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
@@ -135,7 +135,7 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setWithdrawalSettings(withdrawalSettings));
   });
 
-  portfolioAllStandardRewards$.subscribe((rewards) => {
+  standardRewardPrograms$.subscribe((rewards) => {
     dispatch(setAllStandardRewardPrograms(rewards));
   });
 };

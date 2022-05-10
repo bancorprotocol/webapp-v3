@@ -8,11 +8,7 @@ import {
   fetchPortfolioV3WithdrawalSettings,
 } from 'services/web3/v3/portfolio/withdraw';
 import { WithdrawalSettings } from 'store/portfolio/v3Portfolio.types';
-import {
-  fetchAllStandardRewards,
-  fetchStandardRewardsByUser,
-} from 'services/web3/v3/portfolio/standardStaking';
-import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardRewards';
+import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';
 import { fifteenSeconds$ } from 'services/observables/timers';
 import { apiPoolsV3$ } from 'services/observables/apiData';
 import { tokensV3$ } from './tokens';
@@ -58,15 +54,5 @@ const portfolioWithdrawalSettingsReceiver$ =
 export const portfolioWithdrawalSettings$ =
   portfolioWithdrawalSettingsReceiver$.pipe(
     switchMapIgnoreThrow(() => fetchPortfolioV3WithdrawalSettings()),
-    shareReplay(1)
-  );
-
-const portfolioAllStandardRewardsReceiver$ = new BehaviorSubject<
-  ProgramDataStructOutput[]
->([]);
-
-export const portfolioAllStandardRewards$ =
-  portfolioAllStandardRewardsReceiver$.pipe(
-    switchMapIgnoreThrow(() => fetchAllStandardRewards()),
     shareReplay(1)
   );
