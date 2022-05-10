@@ -105,8 +105,10 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         </Navigate>
         <hr className="border-fog" />
         <Navigate to="https://support.bancor.network">Help Center</Navigate>
-        <Navigate to="https://support.bancor.network">FAQ</Navigate>
-        <Navigate to="https://duneanalytics.com/Bancor/bancor_1">
+        <Navigate to="https://support.bancor.network/hc/en-us/sections/5464658176018-FAQ">
+          FAQ
+        </Navigate>
+        <Navigate to="https://dune.com/Bancor/Bancor-3-Beta">
           Analytics
         </Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
@@ -119,7 +121,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           <Navigate to="https://t.me/bancor">
             <IconTelegram className="h-20" />
           </Navigate>
-          <Navigate to="https://discord.gg/CAm3Ncyrxk">
+          <Navigate to="https://discord.com/invite/aMVTbrmgD7">
             <IconDiscord className="h-20" />
           </Navigate>
           <Navigate to="https://www.reddit.com/r/Bancor">
