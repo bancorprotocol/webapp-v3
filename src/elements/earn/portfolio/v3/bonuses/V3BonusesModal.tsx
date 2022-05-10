@@ -5,11 +5,12 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
 import { Modal } from 'components/modal/Modal';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { useAppSelector } from 'store';
+import BigNumber from 'bignumber.js';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -115,6 +116,15 @@ const BonusGroup = ({
     await handleClaimAndEarn(selectedIds);
     setIsTxClaimBusy(false);
   }, [handleClaimAndEarn, selectedIds]);
+  const amount = shrinkToken(
+    rewardsGroup.totalPendingRewards,
+    groupPool.decimals
+  );
+  const usdAmount = useMemo(
+    () =>
+      new BigNumber(amount).times(rewardsGroup.groupPool.reserveToken.usdPrice),
+    [amount, rewardsGroup.groupPool.reserveToken.usdPrice]
+  );
 
   return (
     <div>
@@ -131,19 +141,10 @@ const BonusGroup = ({
 
           <div>
             <div className="text-20 text-black dark:text-white">
-              {prettifyNumber(
-                shrinkToken(
-                  rewardsGroup.totalPendingRewards,
-                  groupPool.decimals
-                )
-              )}
+              {prettifyNumber(amount)}
             </div>
             <div className="flex justify-end text-black-low dark:text-white-low">
-              ~
-              {prettifyNumber(
-                rewardsGroup.groupPool.reserveToken.usdPrice,
-                true
-              )}
+              ~{prettifyNumber(usdAmount, true)}
             </div>
           </div>
         </div>
