@@ -1,9 +1,6 @@
 import { useAppSelector } from 'store';
 import { useState } from 'react';
-import {
-  getTenderlyRpcLS,
-  setTenderlyRpcLS,
-} from 'utils/localStorage';
+import { getTenderlyRpcLS, setTenderlyRpcLS } from 'utils/localStorage';
 import { setProvider, setSigner } from 'services/web3';
 import { providers } from 'ethers';
 import { Button, ButtonSize } from 'components/button/Button';
