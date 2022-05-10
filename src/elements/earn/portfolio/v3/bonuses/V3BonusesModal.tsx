@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
+import { useAppSelector } from 'store';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -32,7 +33,7 @@ const BonusGroupItems = ({
 
   return (
     <div className="mb-10 mt-20 px-20 space-y-10">
-      <div className="flex items-center justify-between text-black-low">
+      <div className="flex items-center justify-between text-black-low dark:text-white-low">
         Bonus
         <span className="flex start w-[80px]">From</span>
       </div>
@@ -41,7 +42,7 @@ const BonusGroupItems = ({
         return (
           <button
             key={reward.id}
-            className={`${isSelected ? 'dark:bg-black' : ''} rounded w-full`}
+            className="rounded w-full"
             onClick={() => addOrRemove(reward.id)}
           >
             <div className="flex items-center justify-between text-16">
@@ -90,6 +91,7 @@ const BonusGroup = ({
 }: {
   rewardsGroup: GroupedStandardReward;
 }) => {
+  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
   const allTokens = rewardsGroup.rewards.map(
@@ -128,7 +130,7 @@ const BonusGroup = ({
           </div>
 
           <div>
-            <div className="text-20 text-black">
+            <div className="text-20 text-black dark:text-white">
               {prettifyNumber(
                 shrinkToken(
                   rewardsGroup.totalPendingRewards,
@@ -136,7 +138,7 @@ const BonusGroup = ({
                 )
               )}
             </div>
-            <div className="flex justify-end text-black-low">
+            <div className="flex justify-end text-black-low dark:text-white-low">
               ~
               {prettifyNumber(
                 rewardsGroup.groupPool.reserveToken.usdPrice,
@@ -151,7 +153,7 @@ const BonusGroup = ({
             onClick={() => setShowMore((prev) => !prev)}
             className="flex justify-between items-center px-20 h-[40px] w-full"
           >
-            <div className="text-black">Explore Bonuses</div>
+            <div className="text-black dark:text-white">Explore Bonuses</div>
             <div className="flex items-center">
               {!showMore && (
                 <div>
@@ -186,7 +188,7 @@ const BonusGroup = ({
           Claim
         </Button>
         <Button
-          variant={ButtonVariant.DARK}
+          variant={darkMode ? ButtonVariant.LIGHT : ButtonVariant.DARK}
           onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}
