@@ -88,10 +88,23 @@ export interface APIPoolV3 {
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
   stakedBalance: PriceDictionary;
-  tradingFeePPM: string;
+  tradingFeePPM?: string;
   standardRewardsClaimed24h: PriceDictionary;
+  standardRewardsProviderJoined: PriceDictionary;
+  standardRewardsProviderLeft: PriceDictionary;
   standardRewardsStaked: PriceDictionary;
-  autoCompoundingRewards24h: PriceDictionary;
+}
+
+export interface APIBntV3
+  extends Omit<
+    APIPoolV3,
+    | 'tradingFeePPM'
+    | 'tradingLiquidityBNT'
+    | 'tradingLiquidityTKN'
+    | 'standardRewardsProviderJoined'
+    | 'standardRewardsProviderLeft'
+  > {
+  tradingLiquidity: PriceDictionary;
 }
 
 export interface APITokenV3 {
@@ -114,11 +127,4 @@ export interface APIStatsV3 {
   stakedBalanceBNT: Omit<PriceDictionary, 'tkn'>;
   bntRate: string;
   bntRate24hAgo: string;
-}
-
-export interface APIBntV3 {
-  stakedBalance: Omit<PriceDictionary, 'tkn'>;
-  fees24h: Omit<PriceDictionary, 'tkn'>;
-  volume24h: Omit<PriceDictionary, 'tkn'>;
-  tradingLiquidity: Omit<PriceDictionary, 'tkn'>;
 }

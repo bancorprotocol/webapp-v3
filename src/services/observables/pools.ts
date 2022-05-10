@@ -47,7 +47,6 @@ export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
   apr: {
     tradingFees: number;
-    autoCompounding: number;
     standardRewards: number;
     total: number;
   };
@@ -146,18 +145,12 @@ const buildPoolV3Object = (
     apiPool.stakedBalance.usd
   );
 
-  const autoCompoundingApr = calcApr(
-    apiPool.autoCompoundingRewards24h.usd,
-    apiPool.stakedBalance.usd
-  );
-
   const standardRewardsApr = calcApr(
     apiPool.standardRewardsClaimed24h.usd,
     apiPool.standardRewardsStaked.usd
   );
 
   const totalApr = toBigNumber(tradingFeesApr)
-    .plus(autoCompoundingApr)
     .plus(standardRewardsApr)
     .toNumber();
 
@@ -166,7 +159,6 @@ const buildPoolV3Object = (
     apr: {
       tradingFees: tradingFeesApr,
       standardRewards: standardRewardsApr,
-      autoCompounding: autoCompoundingApr,
       total: totalApr,
     },
     reserveToken,

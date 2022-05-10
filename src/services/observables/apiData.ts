@@ -44,42 +44,45 @@ export const apiBntV3$ = combineLatest([fifteenSeconds$]).pipe(
 export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
   switchMapIgnoreThrow(async ([apiBnt]) => {
     const bntPool: APIPoolV3 = {
-      poolDltId: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
-      poolTokenDltId: '0xAB05Cf7C6c3a288cd36326e4f7b8600e7268E344',
-      name: 'BNT',
-      decimals: 18,
+      poolDltId: apiBnt.poolDltId,
+      poolTokenDltId: apiBnt.poolTokenDltId,
+      name: apiBnt.name,
+      decimals: apiBnt.decimals,
       tradingLiquidityTKN: {
         ...apiBnt.tradingLiquidity,
         tkn: apiBnt.tradingLiquidity.bnt,
       },
       tradingLiquidityBNT: {
-        ...apiBnt.tradingLiquidity,
-        tkn: apiBnt.tradingLiquidity.bnt,
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
       },
       volume24h: { ...apiBnt.volume24h, tkn: apiBnt.volume24h.bnt },
       fees24h: { ...apiBnt.fees24h, tkn: apiBnt.fees24h.bnt },
       stakedBalance: { ...apiBnt.stakedBalance, tkn: apiBnt.stakedBalance.bnt },
-      tradingFeePPM: '20000',
       standardRewardsClaimed24h: {
-        bnt: '3.496860052282084843',
-        usd: '7.081141',
-        eur: '6.720965',
-        eth: '0.002493610903282354',
-        tkn: '3.499374188239432901',
+        ...apiBnt.standardRewardsClaimed24h,
+        tkn: apiBnt.standardRewardsClaimed24h.bnt,
       },
       standardRewardsStaked: {
-        bnt: '3.496860052282084843',
-        usd: '7.081141',
-        eur: '6.720965',
-        eth: '0.002493610903282354',
-        tkn: '3.499374188239432901',
+        ...apiBnt.standardRewardsStaked,
+        tkn: apiBnt.standardRewardsStaked.bnt,
       },
-      autoCompoundingRewards24h: {
-        bnt: '3.496860052282084843',
-        usd: '7.081141',
-        eur: '6.720965',
-        eth: '0.002493610903282354',
-        tkn: '3.499374188239432901',
+      standardRewardsProviderJoined: {
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
+      },
+      standardRewardsProviderLeft: {
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
       },
     };
     return [...(await BancorApi.v3.getPools()), bntPool];
