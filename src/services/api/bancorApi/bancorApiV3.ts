@@ -27,6 +27,15 @@ export abstract class BancorV3Api {
     return data.data.map((token) => ({
       ...token,
       // TODO remove after Bancor API v3 is updated
+      ...(token.symbol === 'BNT' && {
+        rate: {
+          bnt: '1',
+          usd: '2',
+          eur: '2',
+          eth: '0.1',
+          tkn: '1',
+        },
+      }),
       rateHistory7d: [],
     }));
   };
