@@ -149,7 +149,7 @@ export const Vote = () => {
             footer={
               <div className="flex items-end h-[48px]">
                 <a
-                  href="https://blog.bancor.network/gasless-voting-is-live-on-bancor-governance-82d232da16b9"
+                  href="https://support.bancor.network/hc/en-us/articles/5476957904914-Guide-Bancor-Governance-Voting"
                   target="_blank"
                   className="flex items-center text-primary dark:text-primary-light font-medium"
                   rel="noreferrer"

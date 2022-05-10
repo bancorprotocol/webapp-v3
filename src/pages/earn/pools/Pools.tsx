@@ -3,33 +3,45 @@ import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
+import { Tooltip } from 'components/tooltip/Tooltip';
 
 export const Pools = () => {
   const title = 'Earn';
   const subtitle =
-    'Your tokens were never exposed to Impermanent Loss during the cooldown period. Whether or not you withdraw, you’re always fully protected.';
+    'Deposit a single token and maintain 100% upside exposure while earning fees and rewards';
 
   return (
     <Page
       title={title}
       subtitle={subtitle}
-      trailingSubtitle={
-        <a
-          href="https://newsletter.banklesshq.com/p/how-to-protect-yourself-from-impermanent"
-          className="hover:underline text-primary"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Learn More
-        </a>
-      }
       trailingTitle={
         <div className="flex items-center space-x-10">
           <PageNavLink to={BancorURL.earn}>
-            <IconProtected className="text-primary" />
+            <Tooltip
+              content={
+                <>
+                  "All V3 tokens are eligible for Single-Sided Staking and 100%
+                  Instant Impermanent Loss Protection.{' '}
+                  <a
+                    href="https://support.bancor.network/hc/en-us/articles/5478576660242-What-is-a-whitelisted-pool"
+                    className="hover:underline text-primary"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Read more
+                  </a>
+                </>
+              }
+              button={<IconProtected className="text-primary" />}
+            />
             V3
           </PageNavLink>
-          <PageNavLink to={BancorURL.earnV2}>V2</PageNavLink>
+          <PageNavLink to={BancorURL.earnV2}>
+            <Tooltip
+              content="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
+              button={'V2'}
+            />
+          </PageNavLink>
         </div>
       }
     >

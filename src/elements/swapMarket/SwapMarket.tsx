@@ -387,9 +387,14 @@ export const SwapMarket = ({
                 <div className="flex justify-between items-center mt-15">
                   <div className="flex items-center">
                     Best Rate
-                    <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
-                      {isSwapV3 ? 'V3' : 'V2'}
-                    </div>
+                    <Tooltip
+                      content="Version routing to ensure you get the best rate possible for your trade"
+                      button={
+                        <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
+                          {isSwapV3 ? 'V3' : 'V2'}
+                        </div>
+                      }
+                    />
                   </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[140px]"></div>
