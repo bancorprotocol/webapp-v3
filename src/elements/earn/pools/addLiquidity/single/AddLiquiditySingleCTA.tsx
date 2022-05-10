@@ -18,7 +18,11 @@ export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
       return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
     }
     if (!amount) {
-      return { label: 'Enter amount', disabled: true, variant: ButtonVariant.PRIMARY };
+      return {
+        label: 'Enter amount',
+        disabled: true,
+        variant: ButtonVariant.PRIMARY,
+      };
     } else {
       return {
         label: 'Stake and Protect',
@@ -36,7 +40,7 @@ export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
     }
   };
 
-  const btn = button()
+  const btn = button();
 
   return (
     <Button

@@ -13,11 +13,17 @@ export const MobileBottomNav = () => {
 
   return (
     <div className="md:hidden fixed bottom-0 flex items-center justify-between px-30 w-full h-60 z-30 bg-white dark:bg-black shadow-header text-10 text-black dark:text-white-low dark:text-white-low">
-      <Navigate to={BancorURL.trade()} className="flex flex-col items-center gap-4">
+      <Navigate
+        to={BancorURL.trade()}
+        className="flex flex-col items-center gap-4"
+      >
         <IconTrade className="w-16 text-black dark:text-white" />
         Trade
       </Navigate>
-      <Navigate to={BancorURL.earn} className="flex flex-col items-center gap-4">
+      <Navigate
+        to={BancorURL.earn}
+        className="flex flex-col items-center gap-4"
+      >
         <IconEarn className="w-18 text-black dark:text-white" />
         Earn
       </Navigate>
