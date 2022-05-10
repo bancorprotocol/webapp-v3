@@ -87,10 +87,25 @@ export const PoolsTable = () => {
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-20 text-primary">
             {cellData.value.total.toFixed(2)}%
-            <IconGift className="w-14 h-14" />
+            <Tooltip
+              content={
+                <>
+                  Rewards enabled on this token.{' '}
+                  <a
+                    href="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
+                    className="hover:underline text-primary"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Read about the rewards here
+                  </a>
+                </>
+              }
+              button={<IconGift className="w-14 h-14" />}
+            />
           </div>
         ),
-        tooltip: '????',
+        tooltip: 'Rewards enabled on this token. Read about the rewards here',
         minWidth: 130,
         sortDescFirst: true,
       },

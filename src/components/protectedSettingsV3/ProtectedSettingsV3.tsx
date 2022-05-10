@@ -32,8 +32,14 @@ export const ProtectedSettingsV3 = ({
     return <div className={textClass}>{text}</div>;
   }
   return (
-    // TODO add link to something
-    <a href={'/'} target="_blank" className={`${textClass}`} rel="noreferrer">
+    <a
+      href={
+        'https://support.bancor.network/hc/en-us/articles/4676348348818-Why-is-there-a-withdrawal-fee-and-cooldown'
+      }
+      target="_blank"
+      className={`${textClass}`}
+      rel="noreferrer"
+    >
       {text}
       <IconLink className="w-14 ml-6" />
     </a>
