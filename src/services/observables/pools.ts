@@ -13,7 +13,9 @@ import {
   APIReward,
 } from 'services/api/bancorApi/bancorApi.types';
 import { toBigNumber } from 'utils/helperFunctions';
-import { calcApr } from 'utils/formulas';
+import { calcApr, shrinkToken } from 'utils/formulas';
+import { standardRewardPrograms$ } from 'services/observables/standardRewards';
+import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 
 export interface Reserve {
   address: string;
@@ -50,6 +52,7 @@ export interface PoolV3 extends APIPoolV3 {
     standardRewards: number;
     total: number;
   };
+  programs: RewardsProgramRaw[];
 }
 
 export interface PoolToken {
@@ -135,20 +138,35 @@ export const buildPoolObject = (
 
 const buildPoolV3Object = (
   apiPool?: APIPoolV3,
-  reserveToken?: Token
+  reserveToken?: Token,
+  rewardsPrograms?: RewardsProgramRaw[]
 ): PoolV3 | undefined => {
   if (!apiPool || !reserveToken) {
     return undefined;
   }
+
   const tradingFeesApr = calcApr(
     apiPool.fees24h.usd,
     apiPool.stakedBalance.usd
   );
 
-  const standardRewardsApr = calcApr(
-    apiPool.standardRewardsClaimed24h.usd,
-    apiPool.standardRewardsStaked.usd
+  let standardRewardsApr = 0;
+  const filteredPrograms = rewardsPrograms?.filter(
+    (p) => p.pool === apiPool.poolDltId
   );
+
+  if (filteredPrograms && filteredPrograms.length) {
+    // TODO - Currently taking the only first rewardRate for APR
+    const rewardRate = shrinkToken(filteredPrograms[0].rewardRate ?? 0, 18);
+    const rewardRate24h = toBigNumber(rewardRate)
+      .times(60 * 60)
+      .times(24);
+
+    standardRewardsApr = calcApr(
+      rewardRate24h,
+      apiPool.standardRewardsStaked.bnt
+    );
+  }
 
   const totalApr = toBigNumber(tradingFeesApr)
     .plus(standardRewardsApr)
@@ -162,6 +180,7 @@ const buildPoolV3Object = (
       total: totalApr,
     },
     reserveToken,
+    programs: filteredPrograms ?? [],
   };
 };
 
@@ -192,14 +211,26 @@ export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
   shareReplay(1)
 );
 
-export const poolsV3$ = combineLatest([apiPoolsV3$, tokensV3$]).pipe(
-  switchMapIgnoreThrow(async ([apiPoolsV3, allTokens]) => {
-    const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+export const poolsV3$ = combineLatest([
+  apiPoolsV3$,
+  tokensV3$,
+  standardRewardPrograms$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
+      const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
-    return apiPoolsV3
-      .map((pool) => buildPoolV3Object(pool, tokensMap.get(pool.poolDltId)))
-      .filter((pool) => !!pool) as PoolV3[];
-  }),
+      return apiPoolsV3
+        .map((pool) =>
+          buildPoolV3Object(
+            pool,
+            tokensMap.get(pool.poolDltId),
+            standardRewardPrograms
+          )
+        )
+        .filter((pool) => !!pool) as PoolV3[];
+    }
+  ),
   distinctUntilChanged<PoolV3[]>(isEqual),
   shareReplay(1)
 );
