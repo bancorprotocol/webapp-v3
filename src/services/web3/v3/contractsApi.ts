@@ -18,7 +18,6 @@ import {
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
-import { getBancorV3Contracts } from 'utils/localStorage';
 import { address as bancorNetworkAddress } from 'services/web3/abis/v3/BancorNetworkV3_Proxy.json';
 import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/BancorNetworkInfo_Proxy.json';
 import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings_Proxy.json';
@@ -68,37 +67,37 @@ class BancorContract<T> {
 
 export abstract class ContractsApi {
   static BancorNetwork = new BancorContract<BancorNetworkV3>(
-    getBancorV3Contracts()?.bancorNetwork || bancorNetworkAddress,
+    bancorNetworkAddress,
     BancorNetworkV3__factory
   );
 
   static BancorNetworkInfo = new BancorContract<BancorNetworkInfo>(
-    getBancorV3Contracts()?.bancorNetworkInfo || bancorNetworkInfoAddress,
+    bancorNetworkInfoAddress,
     BancorNetworkInfo__factory
   );
 
   static NetworkSettings = new BancorContract<NetworkSettings>(
-    getBancorV3Contracts()?.networkSettings || networkSettingsAddress,
+    networkSettingsAddress,
     NetworkSettings__factory
   );
 
   static StandardRewards = new BancorContract<StandardRewards>(
-    getBancorV3Contracts()?.standardRewards || standardRewardsAddress,
+    standardRewardsAddress,
     StandardRewards__factory
   );
 
   static PoolCollection = new BancorContract<PoolCollectionType1>(
-    getBancorV3Contracts()?.poolCollectionType1 || poolCollectionType1Address,
+    poolCollectionType1Address,
     PoolCollectionType1__factory
   );
 
   static PendingWithdrawals = new BancorContract<PendingWithdrawals>(
-    getBancorV3Contracts()?.pendingWithdrawals || pendingWithdrawalsAddress,
+    pendingWithdrawalsAddress,
     PendingWithdrawals__factory
   );
 
   static BancorPortal = new BancorContract<BancorPortal>(
-    getBancorV3Contracts()?.bancorPortal || bancorPortalAddress,
+    bancorPortalAddress,
     BancorPortal__factory
   );
 
