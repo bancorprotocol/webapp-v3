@@ -1,14 +1,9 @@
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
-import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
-  withdrawRequest: WithdrawalRequest;
   handleCancelClick: () => void;
 }
-export const V3WithdrawConfirmInfo = ({
-  withdrawRequest,
-  handleCancelClick,
-}: Props) => {
+export const V3WithdrawConfirmInfo = ({ handleCancelClick }: Props) => {
   return (
     <div className="bg-secondary p-20 rounded space-y-20">
       <h3 className="text-20">Cancel withdrawal and earn more!</h3>
@@ -20,8 +15,8 @@ export const V3WithdrawConfirmInfo = ({
         <div>
           <h4 className="text-14 font-semibold">Claim cooldown rewards</h4>
           <p>
-            Your tokens kept growing at a ??% rate after cooldown, if you don’t
-            withdraw you will keep those earnings.
+            Your tokens kept earning during the cooldown period. If you don’t
+            withdraw them, you will keep those earnings.
           </p>
         </div>
       </div>
@@ -30,11 +25,8 @@ export const V3WithdrawConfirmInfo = ({
           <IconCheck className="text-green-500 w-18 h-18" />
         </div>
         <div>
-          <h4 className="text-14 font-semibold">Earn 24%</h4>
-          <p>
-            Keep your {withdrawRequest.token.symbol} earning from trading fees
-            and rewards. Thats over $???? earnings Auto-compounding for 5 years*
-          </p>
+          <h4 className="text-14 font-semibold">Keep Earning</h4>
+          <p>Your tokens will continue earning auto-compounding income.</p>
         </div>
       </div>
       <div className="flex space-x-10">
@@ -42,10 +34,13 @@ export const V3WithdrawConfirmInfo = ({
           <IconCheck className="text-green-500 w-18 h-18" />
         </div>
         <div>
-          <h4 className="text-14 font-semibold">Stay 100% protected</h4>
+          <h4 className="text-14 font-semibold">
+            No Matter What You’re Protected
+          </h4>
           <p>
-            From the first seconed you will earn with full protection and no
-            risk from Impermanent loss
+            Your tokens were never exposed to Impermanent Loss during the
+            cooldown period. Whether or not you withdraw, you’re always fully
+            protected.
           </p>
         </div>
       </div>

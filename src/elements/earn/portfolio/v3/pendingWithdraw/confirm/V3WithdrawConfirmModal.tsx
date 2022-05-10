@@ -63,10 +63,7 @@ export const V3WithdrawConfirmModal = memo(
             symbol={token.symbol}
           />
 
-          <V3WithdrawConfirmInfo
-            withdrawRequest={withdrawRequest}
-            handleCancelClick={handleCancelClick}
-          />
+          <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
           {missingGovTokenBalance > 0 ? (
             <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
