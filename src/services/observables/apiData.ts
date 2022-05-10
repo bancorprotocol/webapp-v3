@@ -53,8 +53,11 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         tkn: apiBnt.tradingLiquidity.bnt,
       },
       tradingLiquidityBNT: {
-        ...apiBnt.tradingLiquidity,
-        tkn: apiBnt.tradingLiquidity.bnt,
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
       },
       volume24h: { ...apiBnt.volume24h, tkn: apiBnt.volume24h.bnt },
       fees24h: { ...apiBnt.fees24h, tkn: apiBnt.fees24h.bnt },
