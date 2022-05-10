@@ -1,6 +1,5 @@
 import { initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
-import { BancorV3Contracts } from 'elements/admin/AdminUseFork';
 
 const selected_lists = 'userTokenLists';
 const autoLogin = 'loginAuto';
@@ -9,7 +8,6 @@ const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
-const bancorv3Contracts = 'bancorv3Contracts';
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
@@ -76,19 +74,5 @@ export const setTenderlyRpcLS = (url?: string) => {
     localStorage.setItem(tenderlyRpcUrl, url);
   } else {
     localStorage.removeItem(tenderlyRpcUrl);
-  }
-};
-
-export const getBancorV3Contracts = (): BancorV3Contracts | undefined => {
-  const contracts = localStorage.getItem(bancorv3Contracts);
-  if (!contracts) return undefined;
-  return JSON.parse(contracts);
-};
-
-export const setBancorV3Contracts = (contracts?: BancorV3Contracts) => {
-  if (contracts) {
-    localStorage.setItem(bancorv3Contracts, JSON.stringify(contracts));
-  } else {
-    localStorage.removeItem(bancorv3Contracts);
   }
 };

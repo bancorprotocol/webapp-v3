@@ -1,4 +1,4 @@
-import { setBancorV3Contracts, setTenderlyRpcLS } from 'utils/localStorage';
+import { setTenderlyRpcLS } from 'utils/localStorage';
 import { getProvider, setProvider, setSigner } from 'services/web3';
 import { EthNetworks } from 'services/web3/types';
 import { Web3Provider } from '@ethersproject/providers';
@@ -7,7 +7,6 @@ import { Button, ButtonSize } from 'components/button/Button';
 export const AdminUseMainnet = () => {
   const handleUseMainnet = () => {
     setTenderlyRpcLS();
-    setBancorV3Contracts();
     setProvider(getProvider(EthNetworks.Mainnet, false));
     setSigner(new Web3Provider(window.ethereum).getSigner());
   };
