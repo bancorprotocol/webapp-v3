@@ -3,12 +3,9 @@ import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy } from 'lodash';
-import { getAllTokensMap, getTokensV3Map } from 'store/bancor/token';
+import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
-import {
-  RewardsProgramRaw,
-  RewardsProgramV3,
-} from 'services/web3/v3/portfolio/standardStaking';
+
 import { Statistic } from 'services/observables/statistics';
 import { NotificationType } from 'store/notification/notification';
 
@@ -18,7 +15,6 @@ interface BancorState {
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
-  allStandardRewardPrograms: RewardsProgramRaw[];
   isLoadingTokens: boolean;
   statistics: Statistic[];
 }
@@ -29,7 +25,6 @@ export const initialState: BancorState = {
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
-  allStandardRewardPrograms: [],
   isLoadingTokens: true,
   statistics: [],
 };
@@ -54,12 +49,6 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
-    setAllStandardRewardPrograms: (
-      state,
-      action: PayloadAction<RewardsProgramRaw[]>
-    ) => {
-      state.allStandardRewardPrograms = action.payload;
-    },
     setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
       state.statistics = action.payload;
     },
@@ -73,7 +62,6 @@ export const {
   setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
-  setAllStandardRewardPrograms,
 } = bancorSlice.actions;
 
 export const getTokenById = createSelector(
@@ -107,24 +95,5 @@ export const getIsAppBusy = createSelector(
       (n) => n.type === NotificationType.pending
     );
     return isPortfolioLoading || hasPendingTx;
-  }
-);
-
-export const getAllStandardRewardPrograms = createSelector(
-  (state: RootState) => state.bancor.allStandardRewardPrograms,
-  (state: RootState) => getTokensV3Map(state),
-  (
-    allStandardRewardPrograms: RewardsProgramRaw[],
-    allTokensMap: Map<string, Token>
-  ): RewardsProgramV3[] => {
-    return allStandardRewardPrograms.map((program) => {
-      const rewardsToken = allTokensMap.get(program.rewardsToken);
-      const token = allTokensMap.get(program.pool);
-      return {
-        ...program,
-        token,
-        rewardsToken,
-      };
-    });
   }
 );
