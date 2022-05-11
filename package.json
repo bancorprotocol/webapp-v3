@@ -95,7 +95,7 @@
     "prettier:fix": "prettier --write 'src/**/*.{js,ts,tsx,css,scss,md,json,yml,yaml}'"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "src/**/*.{js,jsx,ts,tsx,css,scss}": [
       "prettier --write",
       "eslint --fix"
     ]
