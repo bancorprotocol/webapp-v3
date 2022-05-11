@@ -14,6 +14,7 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
+import { sortNumbersByKey } from 'utils/pureFunctions';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -105,6 +106,8 @@ export const PoolsTable = () => {
             />
           </div>
         ),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['apr', 'total']),
         tooltip: 'Rewards enabled on this token. Read about the rewards here',
         minWidth: 130,
         sortDescFirst: true,
