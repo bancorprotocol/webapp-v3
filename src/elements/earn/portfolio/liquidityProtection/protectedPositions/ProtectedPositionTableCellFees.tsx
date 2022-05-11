@@ -1,11 +1,11 @@
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { prettifyNumber } from 'utils/helperFunctions';
-import BigNumber from 'bignumber.js';
 
 export const ProtectedPositionTableCellFees = (
   position: ProtectedPositionGrouped
 ) => {
-  const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
+  // const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
+  const hasRewards = false;
   const isSubRow = !position.groupId;
 
   return (

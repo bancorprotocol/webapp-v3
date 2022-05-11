@@ -25,7 +25,7 @@ export const MyRewards = () => {
             buttonClass="btn btn-primary btn-xs"
           />
           <Popover className="block relative">
-            <Popover.Button>
+            <Popover.Button disabled>
               <IconMore className="rotate-90 w-16" />
             </Popover.Button>
             <DropdownTransition>
@@ -41,10 +41,16 @@ export const MyRewards = () => {
       </div>
       <hr className="content-separator my-14 mx-[20px] md:ml-[34px] md:mr-[44px]" />
       <div className="flex justify-between items-center h-44 md:ml-[34px] md:mr-[44px] mx-15">
+        {!loading && (
+          <div className="text-secondary">
+            Rewards were disabled as part of the V3 upgrade and will be
+            available again shortly.
+          </div>
+        )}
         {loading ? (
           <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
         ) : (
-          <div>
+          <div className="hidden">
             <div className="mb-5">Total Rewards to Date</div>
             {totalRewards && totalRewardsUsd ? (
               <div>
@@ -68,7 +74,7 @@ export const MyRewards = () => {
         {loading ? (
           <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
         ) : (
-          <div>
+          <div className="hidden">
             <div className="mb-5">Claimable Rewards</div>
             {claimableRewards && claimableRewardsUsd ? (
               <div>
