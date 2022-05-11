@@ -1,6 +1,5 @@
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
-// import { useAppSelector } from 'store';
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
