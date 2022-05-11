@@ -1,10 +1,10 @@
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
-import BigNumber from 'bignumber.js';
 
 export const ProtectedPositionTableCellRoi = (
   position: ProtectedPositionGrouped
 ) => {
-  const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
+  // const hasRewards = new BigNumber(position.rewardsAmount).isGreaterThan(0);
+  const hasRewards = false;
   const isSubRow = !position.groupId;
   const fees = Number(position.roi.fees);
 

@@ -9,8 +9,7 @@ import { StakeRewardsBtn } from './StakeRewardsBtn';
 import { BancorURL } from 'router/bancorURL.service';
 
 export const MyRewards = () => {
-  const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
-    useMyRewards();
+  const [claimableRewards, claimableRewardsUsd] = useMyRewards();
   const loading = useAppSelector<boolean>(
     (state) => state.liquidity.loadingRewards
   );
@@ -25,7 +24,7 @@ export const MyRewards = () => {
             buttonClass="btn btn-primary btn-xs"
           />
           <Popover className="block relative">
-            <Popover.Button>
+            <Popover.Button disabled>
               <IconMore className="rotate-90 w-16" />
             </Popover.Button>
             <DropdownTransition>
@@ -45,33 +44,13 @@ export const MyRewards = () => {
           <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
         ) : (
           <div>
-            <div className="mb-5">Total Rewards to Date</div>
-            {totalRewards && totalRewardsUsd ? (
-              <div>
-                <span className="md:text-16 font-semibold mr-5">
-                  {prettifyNumber(totalRewards)} BNT
-                </span>
-                <span className="text-12 text-primary dark:text-primary-light">
-                  (~
-                  {prettifyNumber(totalRewardsUsd, true)})
-                </span>
-              </div>
-            ) : (
-              <div>
-                <span className="md:text-16 text-primary dark:text-primary-light font-semibold mr-5">
-                  --
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-        {loading ? (
-          <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
-        ) : (
-          <div>
-            <div className="mb-5">Claimable Rewards</div>
+            <div className="text-secondary">
+              Rewards were disabled as part of the V3 upgrade and will be
+              available again shortly.
+            </div>
+            <div className="mb-5 hidden">Claimable Rewards</div>
             {claimableRewards && claimableRewardsUsd ? (
-              <div>
+              <div className="hidden">
                 <span className="md:text-16 font-semibold mr-5">
                   {prettifyNumber(claimableRewards)} BNT
                 </span>

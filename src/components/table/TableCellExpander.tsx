@@ -54,7 +54,7 @@ export const TableCellExpander = ({
         )}
         {subMenu && (
           <Popover className="block relative">
-            <Popover.Button>
+            <Popover.Button disabled>
               <IconMore className="rotate-90 w-16" />
             </Popover.Button>
             <DropdownTransition>
