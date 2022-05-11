@@ -51,7 +51,7 @@ export const ProtectedPositionTableCellActions = (
 
   const isMigrateDisabled = useCallback(
     (positions: ProtectedPosition[]) => {
-      if (positions.length === 0) return true;
+      if (!positions || positions.length === 0) return true;
 
       const totalAmount = positions
         .map((x) => Number(x.protectedAmount.tknAmount))
