@@ -10,7 +10,6 @@ import {
   setStatisticsV3,
   setTokens,
   setTokenLists,
-  setAllStandardRewardPrograms,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
@@ -52,7 +51,6 @@ import {
 } from 'services/observables/tokenLists';
 import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
-import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
@@ -135,10 +133,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   portfolioWithdrawalSettings$.subscribe((withdrawalSettings) => {
     dispatch(setWithdrawalSettings(withdrawalSettings));
-  });
-
-  standardRewardPrograms$.subscribe((rewards) => {
-    dispatch(setAllStandardRewardPrograms(rewards));
   });
 
   protocolBnBNTAmount$.subscribe((protocolBnBNTAmount) => {

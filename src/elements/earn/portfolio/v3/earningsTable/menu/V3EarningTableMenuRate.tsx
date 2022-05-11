@@ -10,7 +10,6 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { useState } from 'react';
-import { getAllStandardRewardProgramsByPoolId } from 'store/bancor/bancor';
 import { confirmLeaveNotification } from 'services/notifications/notifications';
 
 interface Props {
@@ -27,9 +26,6 @@ export const V3EarningTableMenuRate = ({
   txJoinBusy,
 }: Props) => {
   const { standardStakingReward } = holding;
-  const rewardProgram = useAppSelector(
-    getAllStandardRewardProgramsByPoolId
-  ).get(holding.pool.poolDltId);
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const [txLeaveBusy, setTxLeaveBusy] = useState(false);
@@ -43,7 +39,7 @@ export const V3EarningTableMenuRate = ({
   const btnJoinDisabled =
     txJoinBusy ||
     txLeaveBusy ||
-    !Number(holding.tokenBalance || !rewardProgram);
+    !Number(holding.tokenBalance || !holding.pool.latestProgram);
 
   const handleLeaveClick = async () => {
     if (!standardStakingReward || !account) {
