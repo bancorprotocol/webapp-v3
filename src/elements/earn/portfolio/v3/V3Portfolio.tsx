@@ -11,6 +11,7 @@ import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuse
 import { WhatsNew } from './WhatsNew';
 import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
+import { V3Holdings } from 'elements/earn/portfolio/v3/earningsTable/V3Holdings';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -38,6 +39,8 @@ const V3Portfolio = () => {
                 <HoldingsLight className="blur-[3px]" />
               )}
             </div>
+            <V3Holdings />
+
             <V3EarningTable />
           </>
         ) : (
