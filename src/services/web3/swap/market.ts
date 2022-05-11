@@ -70,12 +70,8 @@ export const getRateAndPriceImapct = async (
     const v2PriceImpact = isNaN(v2PI.toNumber()) ? '0.0000' : v2PI.toFixed(4);
 
     const v3Rate = await getV3Rate(fromToken, toToken, amount);
-    const v3PriceImpact = await getV3PriceImpact(
-      fromToken,
-      toToken,
-      amount,
-      v3Rate
-    );
+    const v3PI = await getV3PriceImpact(fromToken, toToken, amount, v3Rate);
+    const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
     const isV3 = Number(v3Rate) >= Number(v2Rate);
 
@@ -395,7 +391,7 @@ const getV3PriceImpact = async (
       .minus(new BigNumber(rate).div(amount).div(spotPrice))
       .times(100);
 
-    return priceImpact.toFixed(4);
+    return priceImpact;
   }
 
   const fromPool = await ContractsApi.PoolCollection.read.poolData(
@@ -429,5 +425,5 @@ const getV3PriceImpact = async (
     .minus(new BigNumber(rate).div(amount).div(spotPrice))
     .times(100);
 
-  return priceImpact.toFixed(4);
+  return priceImpact;
 };
