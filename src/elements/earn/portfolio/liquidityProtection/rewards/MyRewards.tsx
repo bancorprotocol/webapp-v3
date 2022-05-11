@@ -1,6 +1,6 @@
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
-import { useAppSelector } from 'store';
+// import { useAppSelector } from 'store';
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
@@ -9,11 +9,13 @@ import { StakeRewardsBtn } from './StakeRewardsBtn';
 import { BancorURL } from 'router/bancorURL.service';
 
 export const MyRewards = () => {
-  const [totalRewards, totalRewardsUsd, claimableRewards, claimableRewardsUsd] =
-    useMyRewards();
-  const loading = useAppSelector<boolean>(
-    (state) => state.liquidity.loadingRewards
-  );
+  const {
+    totalRewards,
+    totalRewardsUsd,
+    claimableRewards,
+    claimableRewardsUsd,
+    loading,
+  } = useMyRewards();
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
@@ -41,16 +43,10 @@ export const MyRewards = () => {
       </div>
       <hr className="content-separator my-14 mx-[20px] md:ml-[34px] md:mr-[44px]" />
       <div className="flex justify-between items-center h-44 md:ml-[34px] md:mr-[44px] mx-15">
-        {!loading && (
-          <div className="text-secondary">
-            Rewards were disabled as part of the V3 upgrade and will be
-            available again shortly.
-          </div>
-        )}
         {loading ? (
           <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
         ) : (
-          <div className="hidden">
+          <div>
             <div className="mb-5">Total Rewards to Date</div>
             {totalRewards && totalRewardsUsd ? (
               <div>
@@ -74,7 +70,7 @@ export const MyRewards = () => {
         {loading ? (
           <div className="loading-skeleton h-20 w-[120px] md:w-[200px]"></div>
         ) : (
-          <div className="hidden">
+          <div>
             <div className="mb-5">Claimable Rewards</div>
             {claimableRewards && claimableRewardsUsd ? (
               <div>
