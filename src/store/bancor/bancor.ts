@@ -128,15 +128,3 @@ export const getAllStandardRewardPrograms = createSelector(
     });
   }
 );
-
-export const getAllStandardRewardProgramsByPoolId = createSelector(
-  getAllStandardRewardPrograms,
-  (
-    allStandardRewardPrograms: RewardsProgramV3[]
-  ): Map<string, RewardsProgramV3> => {
-    return allStandardRewardPrograms.reduce((acc, program) => {
-      if (program.token?.address) acc.set(program.token.address, program);
-      return acc;
-    }, new Map());
-  }
-);
