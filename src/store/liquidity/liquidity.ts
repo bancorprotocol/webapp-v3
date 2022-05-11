@@ -16,6 +16,7 @@ interface LiquidityState {
   lockedAvailableBNT: LockedAvailableBnt;
   protectedPositions: ProtectedPosition[];
   rewards?: Rewards;
+  protocolBnBNTAmount: number;
   loadingPositions: boolean;
   loadingRewards: boolean;
   loadingLockedBnt: boolean;
@@ -27,6 +28,7 @@ const initialState: LiquidityState = {
     locked: [],
     available: 0,
   },
+  protocolBnBNTAmount: 0,
   protectedPositions: [],
   rewards: undefined,
   loadingPositions: false,
@@ -58,6 +60,9 @@ const liquiditySlice = createSlice({
     },
     setLoadingLockedBnt: (state, action) => {
       state.loadingLockedBnt = action.payload;
+    },
+    setProtocolBnBNTAmount: (state, action) => {
+      state.protocolBnBNTAmount = action.payload;
     },
   },
 });
@@ -213,6 +218,7 @@ export const {
   setLoadingPositions,
   setLoadingRewards,
   setLoadingLockedBnt,
+  setProtocolBnBNTAmount,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;

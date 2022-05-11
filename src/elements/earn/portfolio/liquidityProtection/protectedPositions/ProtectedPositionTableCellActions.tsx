@@ -17,7 +17,10 @@ import { useDispatch } from 'react-redux';
 import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
 import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
-import { setProtectedPositions } from 'store/liquidity/liquidity';
+import {
+  getAllBntPositionsAndAmount,
+  setProtectedPositions,
+} from 'store/liquidity/liquidity';
 import { Pool } from 'services/observables/pools';
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
@@ -36,12 +39,36 @@ export const ProtectedPositionTableCellActions = (
   const isPoolExistV3 = useAppSelector<boolean>((state) =>
     getIsV3Exist(state, position.reserveToken.address)
   );
+  const totalBNT = useAppSelector<{
+    usdAmount: number;
+    tknAmount: number;
+    bntPositions: ProtectedPosition[];
+  }>(getAllBntPositionsAndAmount);
+  const protocolBnBNTAmount = useAppSelector<number>(
+    (state) => state.liquidity.protocolBnBNTAmount
+  );
   const dispatch = useDispatch();
+
+  const isMigrateDisabled = useCallback(
+    (positions: ProtectedPosition[]) => {
+      if (positions.length === 0) return true;
+
+      const totalAmount = positions
+        .map((x) => Number(x.protectedAmount.tknAmount))
+        .reduce((sum, current) => sum + current, 0);
+
+      return (
+        positions[0].reserveToken.address === bntToken &&
+        protocolBnBNTAmount < totalAmount
+      );
+    },
+    [protocolBnBNTAmount]
+  );
 
   const migrate = useCallback(
     (positions: ProtectedPosition[]) => {
       const isBnt = positions[0].reserveToken.address === bntToken;
-      if (isBnt) setIsOpenBnt(true);
+      if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) setIsOpenBnt(true);
       else
         migrateV2Positions(
           positions,
@@ -54,7 +81,7 @@ export const ProtectedPositionTableCellActions = (
           () => migrateFailedNotification(dispatch)
         );
     },
-    [dispatch, account, pools]
+    [dispatch, account, pools, totalBNT.tknAmount, protocolBnBNTAmount]
   );
 
   const singleContent = useMemo(
@@ -63,13 +90,14 @@ export const ProtectedPositionTableCellActions = (
         <Button
           onClick={() => migrate([position])}
           className="text-12 w-[165px] h-[32px]"
+          disabled={isMigrateDisabled([position])}
         >
           Upgrade To V3
         </Button>
       ) : (
         <></>
       ),
-    [position, migrate, isPoolExistV3]
+    [position, migrate, isPoolExistV3, isMigrateDisabled]
   );
 
   const groupContent = useMemo(
@@ -78,13 +106,14 @@ export const ProtectedPositionTableCellActions = (
         <Button
           onClick={() => migrate(position.subRows)}
           className="text-12 w-[145px] h-[32px]"
+          disabled={isMigrateDisabled(position.subRows)}
         >
           Upgrade All To V3
         </Button>
       ) : (
         <></>
       ),
-    [position, migrate, isPoolExistV3]
+    [position, migrate, isPoolExistV3, isMigrateDisabled]
   );
   return (
     <div>
