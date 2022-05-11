@@ -170,16 +170,14 @@ const buildPoolV3Object = async (
   const latestProgram = filteredPrograms?.find((p) => p.id === latestProgramId);
 
   if (filteredPrograms && filteredPrograms.length) {
-    // TODO - Currently taking the only first rewardRate for APR
-    const rewardRate = shrinkToken(filteredPrograms[0].rewardRate ?? 0, 18);
-    const rewardRate24h = toBigNumber(rewardRate)
-      .times(60 * 60)
-      .times(24);
-
-    standardRewardsApr = calcApr(
-      rewardRate24h,
-      apiPool.standardRewardsStaked.bnt
-    );
+    standardRewardsApr = filteredPrograms.reduce((acc, data) => {
+      // TODO - currently assuming reward token to be BNT
+      const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+      const rewardRate24h = toBigNumber(rewardRate)
+        .times(60 * 60)
+        .times(24);
+      return calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+    }, 0);
   }
 
   const totalApr = toBigNumber(tradingFeesApr)
