@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import { bntToken } from 'services/web3/config';
+import dayjs from 'dayjs';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -110,6 +111,7 @@ export interface RewardsProgramRaw {
   startTime: number;
   endTime: number;
   rewardRate: string;
+  isActive: boolean;
 }
 
 export interface RewardsProgramV3
@@ -135,6 +137,10 @@ export const fetchAllStandardRewards = async (): Promise<
       startTime: program.startTime,
       endTime: program.endTime,
       rewardRate: program.rewardRate.toString(),
+      isActive:
+        program.isEnabled &&
+        program.startTime <= dayjs.utc().unix() &&
+        program.endTime >= dayjs.utc().unix(),
     }));
   } catch (e) {
     console.error(e);
