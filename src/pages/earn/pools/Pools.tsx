@@ -8,7 +8,7 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 export const Pools = () => {
   const title = 'Earn';
   const subtitle =
-    'Deposit a single token and maintain 100% upside exposure while earning fees and rewards';
+    'Deposit a single token and maintain 100% upside exposure while earning fees and rewards.';
 
   return (
     <Page
