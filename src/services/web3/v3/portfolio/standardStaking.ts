@@ -3,7 +3,6 @@ import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { bntToken } from 'services/web3/config';
 import dayjs from 'dayjs';
 
 export const buildProviderStakeCall = (
@@ -21,17 +20,12 @@ export const buildProviderStakeCall = (
 };
 
 export interface RewardsProgramStake {
-  rewardRate: string;
+  id: string;
+  poolDltId: string;
   poolTokenAmountWei: string;
   tokenAmountWei: string;
-  isEnabled: boolean;
-  pool: string;
-  poolToken: string;
-  startTime: number;
-  id: string;
   rewardsToken: Token;
   pendingRewardsWei: string;
-  endTime: number;
 }
 
 export const fetchStandardRewardsByUser = async (
@@ -54,12 +48,14 @@ export const fetchStandardRewardsByUser = async (
     if (!res) {
       throw new Error('Multicall Error while fetching provider stake');
     }
+
     const poolTokenStakedWei = new Map(
       res.map((bn, idx) => [
         ids[idx].toString(),
         bn && bn.length ? (bn[0].toString() as string) : '0',
       ])
     );
+
     const programs = allPrograms.filter((p) =>
       ids.find((id) => id.toString() === p.id)
     );
@@ -78,19 +74,13 @@ export const fetchStandardRewardsByUser = async (
             program.id,
           ]);
 
-        // TODO - update once different reward token than BNT
-        const rewardsToken = poolsMap.get(bntToken)?.reserveToken;
+        const rewardsToken = poolsMap.get(program.rewardsToken)?.reserveToken;
 
         return {
-          rewardRate: program.rewardRate.toString(),
-          isEnabled: program.isEnabled,
-          pool: program.pool,
-          poolToken: program.poolToken,
-          startTime: program.startTime,
-          id: program.id.toString(),
+          id: program.id,
+          poolDltId: program.pool,
           rewardsToken: rewardsToken!,
           pendingRewardsWei: pendingRewardsWei.toString(),
-          endTime: program.endTime,
           poolTokenAmountWei,
           tokenAmountWei: tokenAmountWei.toString(),
         };

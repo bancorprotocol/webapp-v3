@@ -55,12 +55,11 @@ export const V3EarningTable = () => {
           <span>
             {prettifyNumber(
               shrinkToken(
-                cell.row.original.standardStakingReward?.pendingRewardsWei || 0,
-                cell.row.original.standardStakingReward?.rewardsToken
-                  .decimals || 0
+                cell.row.original.latestProgram?.pendingRewardsWei || 0,
+                cell.row.original.latestProgram?.rewardsToken.decimals || 0
               )
             )}{' '}
-            {cell.row.original.standardStakingReward?.rewardsToken.symbol}
+            {cell.row.original.latestProgram?.rewardsToken.symbol}
           </span>
         ),
         tooltip: 'Tooltip text',

@@ -25,7 +25,7 @@ export const V3EarningTableMenuRate = ({
   onStartJoin,
   txJoinBusy,
 }: Props) => {
-  const { standardStakingReward } = holding;
+  const { latestProgram } = holding;
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const [txLeaveBusy, setTxLeaveBusy] = useState(false);
@@ -33,8 +33,8 @@ export const V3EarningTableMenuRate = ({
   const btnLeaveDisabled =
     txJoinBusy ||
     txLeaveBusy ||
-    !standardStakingReward ||
-    standardStakingReward?.tokenAmountWei === '0';
+    !latestProgram ||
+    latestProgram?.tokenAmountWei === '0';
 
   const btnJoinDisabled =
     txJoinBusy ||
@@ -42,23 +42,20 @@ export const V3EarningTableMenuRate = ({
     !Number(holding.tokenBalance || !holding.pool.latestProgram);
 
   const handleLeaveClick = async () => {
-    if (!standardStakingReward || !account) {
+    if (!latestProgram || !account) {
       console.error('handleLeaveClick because arguments are not defined');
       return;
     }
     setTxLeaveBusy(true);
     try {
       const tx = await ContractsApi.StandardRewards.write.leave(
-        standardStakingReward.id,
-        standardStakingReward.poolTokenAmountWei
+        latestProgram.id,
+        latestProgram.poolTokenAmountWei
       );
       confirmLeaveNotification(
         dispatch,
         tx.hash,
-        shrinkToken(
-          holding.standardStakingReward?.tokenAmountWei || 0,
-          holding.pool.decimals
-        ),
+        shrinkToken(latestProgram?.tokenAmountWei || 0, holding.pool.decimals),
         holding.pool.reserveToken.symbol
       );
       await tx.wait();
@@ -115,7 +112,7 @@ export const V3EarningTableMenuRate = ({
           >
             {prettifyNumber(
               shrinkToken(
-                holding.standardStakingReward?.tokenAmountWei || 0,
+                holding.latestProgram?.tokenAmountWei || 0,
                 holding.pool.decimals
               )
             )}{' '}
