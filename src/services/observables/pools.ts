@@ -172,7 +172,7 @@ const buildPoolV3Object = async (
 
   if (filteredPrograms && filteredPrograms.length) {
     // TODO - DONT KEEP THE SPLICE - check APR issue on github
-    standardRewardsApr = filteredPrograms.splice(0, 1).reduce((acc, data) => {
+    standardRewardsApr = filteredPrograms.splice(1, 1).reduce((acc, data) => {
       // TODO - currently assuming reward token to be BNT
       const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
       const rewardRate24h = toBigNumber(rewardRate)
