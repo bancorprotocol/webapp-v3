@@ -176,7 +176,8 @@ const buildPoolV3Object = async (
       const rewardRate24h = toBigNumber(rewardRate)
         .times(60 * 60)
         .times(24);
-      return calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+      acc += calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+      return acc;
     }, 0);
   }
 
