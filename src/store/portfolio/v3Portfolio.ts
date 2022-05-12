@@ -94,16 +94,14 @@ export const getPortfolioHoldings = createSelector(
     standardRewards: RewardsProgramStake[],
     allPoolsV3Map: Map<string, PoolV3>
   ): Holding[] => {
-    const standardRewardsMap = new Map(
-      standardRewards.map((reward) => [reward.pool, reward])
-    );
-
     const holdingsRawMap = new Map(
       holdingsRaw.map((holding) => [holding.poolDltId, holding])
     );
 
     const buildHoldingObject = (poolId: string) => {
-      const standardStakingReward = standardRewardsMap.get(poolId);
+      const standardStakingRewards = standardRewards.filter(
+        (p) => p.pool === poolId
+      );
       const holdingRaw = holdingsRawMap.get(poolId);
 
       const pool = allPoolsV3Map.get(poolId);
@@ -120,8 +118,12 @@ export const getPortfolioHoldings = createSelector(
         pool.decimals
       );
 
-      const stakedTokenBalance = shrinkToken(
-        standardStakingReward?.tokenAmountWei || '0',
+      let stakedTokenBalance = shrinkToken(
+        standardStakingRewards.reduce(
+          (acc, data) =>
+            new BigNumber(data.tokenAmountWei).plus(acc).toString(),
+          '0'
+        ),
         pool.decimals
       );
 
@@ -133,7 +135,9 @@ export const getPortfolioHoldings = createSelector(
         pool,
         poolTokenBalance,
         tokenBalance,
-        standardStakingReward,
+        standardStakingReward: standardStakingRewards.find(
+          (p) => p.id === pool.latestProgram?.id
+        ),
         combinedTokenBalance,
       };
 

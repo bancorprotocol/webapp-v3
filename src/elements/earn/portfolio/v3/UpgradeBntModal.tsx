@@ -83,7 +83,7 @@ export const UpgradeBntModal = ({
         <div>
           Move all BNT to a single pool and earn from all trades in the network
         </div>
-        <div className="w-full bg-fog rounded-20 p-20">
+        <div className="w-full bg-fog dark:bg-black rounded-20 p-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all BNT</div>
             {`${prettifyNumber(totalBNT.tknAmount)} ${

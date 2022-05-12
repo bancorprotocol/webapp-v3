@@ -2,6 +2,8 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
+import { PoolV3 } from 'services/observables/pools';
+import { bntToken } from 'services/web3/config';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -33,11 +35,14 @@ export interface RewardsProgramStake {
 
 export const fetchStandardRewardsByUser = async (
   user: string,
-  tokensV3: Token[]
+  pools: PoolV3[]
 ): Promise<RewardsProgramStake[]> => {
   if (!user) {
     throw new Error('no user address found');
   }
+  const poolsMap = new Map(pools.map((pool) => [pool.poolDltId, pool]));
+  const allPrograms = pools.flatMap((p) => p.programs);
+
   try {
     const ids = await ContractsApi.StandardRewards.read.providerProgramIds(
       user
@@ -54,12 +59,13 @@ export const fetchStandardRewardsByUser = async (
         bn && bn.length ? (bn[0].toString() as string) : '0',
       ])
     );
-    const programs = await ContractsApi.StandardRewards.read.programs(ids);
+    const programs = allPrograms.filter((p) =>
+      ids.find((id) => id.toString() === p.id)
+    );
 
     return await Promise.all(
       programs.map(async (program) => {
-        const poolTokenAmountWei =
-          poolTokenStakedWei.get(program.id.toString()) || '0';
+        const poolTokenAmountWei = poolTokenStakedWei.get(program.id) || '0';
         const tokenAmountWei =
           await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
             program.pool,
@@ -71,9 +77,8 @@ export const fetchStandardRewardsByUser = async (
             program.id,
           ]);
 
-        const rewardsToken = tokensV3.find(
-          (token) => token.address === program.rewardsToken
-        );
+        // TODO - update once different reward token than BNT
+        const rewardsToken = poolsMap.get(bntToken)?.reserveToken;
 
         return {
           rewardRate: program.rewardRate.toString(),
