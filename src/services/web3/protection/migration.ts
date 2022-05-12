@@ -1,3 +1,4 @@
+import { groupBy } from 'lodash';
 import { first } from 'rxjs/operators';
 import { liquidityProtection$ } from 'services/observables/contracts';
 import { PoolToken } from 'services/observables/pools';
@@ -23,11 +24,15 @@ export const migrateV2Positions = async (
       writeWeb3.signer
     );
 
-    const posStruct = positions.map((pos) => ({
-      poolToken: pos.pool.pool_dlt_id,
-      reserveToken: pos.reserveToken.address,
-      positionIds: [pos.positionId],
+    const dict = groupBy(positions, (pos) => pos.pool.pool_dlt_id);
+    const grouped = Object.keys(dict);
+
+    const posStruct = grouped.map((poolToken) => ({
+      poolToken,
+      reserveToken: dict[poolToken][0].reserveToken.address,
+      positionIds: dict[poolToken].map((pos) => pos.positionId),
     }));
+
     const tx = await contract.migratePositions(posStruct);
     onHash(tx.hash);
     tx.wait();
