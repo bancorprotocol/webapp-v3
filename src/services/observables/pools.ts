@@ -172,17 +172,19 @@ const buildPoolV3Object = async (
 
   if (filteredPrograms && filteredPrograms.length) {
     // TODO - DONT KEEP THE SPLICE - check APR issue on github
-    standardRewardsApr = filteredPrograms.splice(1, 1).reduce((acc, data) => {
-      // TODO - currently assuming reward token to be BNT
-      const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
-      const rewardRate24h = toBigNumber(rewardRate)
-        .times(60 * 60)
-        .times(24);
-      console.log('program id: ', data.id);
-      console.log('rewardRate24h', rewardRate24h.toString());
-      acc += calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
-      return acc;
-    }, 0);
+    standardRewardsApr = [...filteredPrograms]
+      .splice(1, 1)
+      .reduce((acc, data) => {
+        // TODO - currently assuming reward token to be BNT
+        const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+        const rewardRate24h = toBigNumber(rewardRate)
+          .times(60 * 60)
+          .times(24);
+        console.log('program id: ', data.id);
+        console.log('rewardRate24h', rewardRate24h.toString());
+        acc += calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+        return acc;
+      }, 0);
   }
   console.log('standardRewardsApr', standardRewardsApr);
   console.log('tradingFeesApr', tradingFeesApr);
