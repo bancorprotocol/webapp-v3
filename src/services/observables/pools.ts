@@ -6,7 +6,6 @@ import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
-
 import {
   APIPool,
   APIPoolV3,
@@ -16,6 +15,10 @@ import { toBigNumber } from 'utils/helperFunctions';
 import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 export interface Reserve {
   address: string;
@@ -53,6 +56,7 @@ export interface PoolV3 extends APIPoolV3 {
     total: number;
   };
   programs: RewardsProgramRaw[];
+  latestProgram?: RewardsProgramRaw;
 }
 
 export interface PoolToken {
@@ -136,37 +140,52 @@ export const buildPoolObject = (
   };
 };
 
-const buildPoolV3Object = (
+const buildPoolV3Object = async (
   apiPool?: APIPoolV3,
   reserveToken?: Token,
   rewardsPrograms?: RewardsProgramRaw[]
-): PoolV3 | undefined => {
+): Promise<PoolV3 | undefined> => {
   if (!apiPool || !reserveToken) {
     return undefined;
+  }
+
+  // ALL programs of this pool
+  const programs = rewardsPrograms?.filter((p) => p.pool === apiPool.poolDltId);
+
+  // Fetch ID of the latest program
+  let latestProgramId: string;
+  try {
+    const id = await ContractsApi.StandardRewards.read.latestProgramId(
+      apiPool.poolDltId
+    );
+    latestProgramId = id.toString();
+  } catch (e) {
+    console.error('Failed to read latest program id', e);
+  }
+
+  // The latest program
+  const latestProgram = programs?.find((p) => p.id === latestProgramId);
+
+  // Calculate APR
+  let standardRewardsApr = 0;
+  if (programs && programs.length) {
+    standardRewardsApr = programs
+      // Only use APR from active programs
+      .filter((p) => p.isActive)
+      .reduce((acc, data) => {
+        // TODO - currently assuming reward token to be BNT
+        const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+        const rewardRate24h = toBigNumber(rewardRate)
+          .times(60 * 60)
+          .times(24);
+        return acc + calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+      }, 0);
   }
 
   const tradingFeesApr = calcApr(
     apiPool.fees24h.usd,
     apiPool.stakedBalance.usd
   );
-
-  let standardRewardsApr = 0;
-  const filteredPrograms = rewardsPrograms?.filter(
-    (p) => p.pool === apiPool.poolDltId
-  );
-
-  if (filteredPrograms && filteredPrograms.length) {
-    // TODO - Currently taking the only first rewardRate for APR
-    const rewardRate = shrinkToken(filteredPrograms[0].rewardRate ?? 0, 18);
-    const rewardRate24h = toBigNumber(rewardRate)
-      .times(60 * 60)
-      .times(24);
-
-    standardRewardsApr = calcApr(
-      rewardRate24h,
-      apiPool.standardRewardsStaked.bnt
-    );
-  }
 
   const totalApr = toBigNumber(tradingFeesApr)
     .plus(standardRewardsApr)
@@ -180,7 +199,8 @@ const buildPoolV3Object = (
       total: totalApr,
     },
     reserveToken,
-    programs: filteredPrograms ?? [],
+    programs: programs ?? [],
+    latestProgram,
   };
 };
 
@@ -220,15 +240,17 @@ export const poolsV3$ = combineLatest([
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
-      return apiPoolsV3
-        .map((pool) =>
-          buildPoolV3Object(
-            pool,
-            tokensMap.get(pool.poolDltId),
-            standardRewardPrograms
-          )
+      const pools = await Promise.all(
+        apiPoolsV3.map(
+          async (pool) =>
+            await buildPoolV3Object(
+              pool,
+              tokensMap.get(pool.poolDltId),
+              standardRewardPrograms
+            )
         )
-        .filter((pool) => !!pool) as PoolV3[];
+      );
+      return pools.filter((pool) => !!pool) as PoolV3[];
     }
   ),
   distinctUntilChanged<PoolV3[]>(isEqual),

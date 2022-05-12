@@ -24,7 +24,7 @@ export const V3EarningTableMenuMain = memo(
     handleDepositClick,
   }: Props) => {
     const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
-    const { standardStakingReward } = holding;
+    const { latestProgram } = holding;
 
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
@@ -72,11 +72,11 @@ export const V3EarningTableMenuMain = memo(
             <span className="text-secondary flex items-center">
               {prettifyNumber(
                 shrinkToken(
-                  standardStakingReward?.pendingRewardsWei || 0,
-                  standardStakingReward?.rewardsToken.decimals || 0
+                  latestProgram?.pendingRewardsWei || 0,
+                  latestProgram?.rewardsToken.decimals || 0
                 )
               )}{' '}
-              {standardStakingReward?.rewardsToken.symbol}
+              {latestProgram?.rewardsToken.symbol}
               <IconChevronRight className="w-16 ml-5" />
             </span>
           </button>

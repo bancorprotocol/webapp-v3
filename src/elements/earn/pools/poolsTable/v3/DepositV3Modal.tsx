@@ -11,10 +11,7 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
-import {
-  getAllStandardRewardProgramsByPoolId,
-  getTokenById,
-} from 'store/bancor/bancor';
+import { getTokenById } from 'store/bancor/bancor';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { web3 } from 'services/web3';
@@ -46,9 +43,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
-  const rewardProgram = useAppSelector(
-    getAllStandardRewardProgramsByPoolId
-  ).get(pool.poolDltId);
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
 
   const onClose = async () => {
@@ -69,7 +63,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const { goToPage } = useNavigation();
 
   const deposit = async () => {
-    if (!pool.reserveToken.balance || !account || !rewardProgram) {
+    if (!pool.reserveToken.balance || !account) {
       return;
     }
 
@@ -78,17 +72,18 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
     try {
       setTxBusy(true);
-      const tx = accessFullEarnings
-        ? await ContractsApi.StandardRewards.write.depositAndJoin(
-            rewardProgram.id,
-            amountWei,
-            { value: isETH ? amountWei : undefined }
-          )
-        : await ContractsApi.BancorNetwork.write.deposit(
-            pool.poolDltId,
-            amountWei,
-            { value: isETH ? amountWei : undefined }
-          );
+      const tx =
+        accessFullEarnings && pool.latestProgram
+          ? await ContractsApi.StandardRewards.write.depositAndJoin(
+              pool.latestProgram.id,
+              amountWei,
+              { value: isETH ? amountWei : undefined }
+            )
+          : await ContractsApi.BancorNetwork.write.deposit(
+              pool.poolDltId,
+              amountWei,
+              { value: isETH ? amountWei : undefined }
+            );
       confirmDepositNotification(
         dispatch,
         tx.hash,
@@ -176,7 +171,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             isError={isInputError}
           />
           <div className="w-full px-20 py-10 mt-20 rounded bg-secondary">
-            {rewardProgram ? (
+            {pool.latestProgram ? (
               <>
                 <div className="flex pr-10 mb-4">
                   <span className="mr-20">Access full earnings</span>

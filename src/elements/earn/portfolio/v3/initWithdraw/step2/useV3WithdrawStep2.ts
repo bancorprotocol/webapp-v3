@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
-  const { pool, standardStakingReward } = holding;
+  const { pool, latestProgram } = holding;
   const [txBusy, setTxBusy] = useState(false);
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
@@ -28,7 +28,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
   }, [amount.tkn, holding.tokenBalance, pool.decimals]);
 
   const handleLeave = async () => {
-    if (!standardStakingReward || !account) {
+    if (!latestProgram || !account) {
       console.error('handleLeave: missing data');
       return;
     }
@@ -41,7 +41,7 @@ export const useV3WithdrawStep2 = ({ holding, amount, setStep }: Props) => {
         );
 
       const tx = await ContractsApi.StandardRewards.write.leave(
-        standardStakingReward.id,
+        latestProgram.id,
         poolTokenAmountWei
       );
       await tx.wait();
