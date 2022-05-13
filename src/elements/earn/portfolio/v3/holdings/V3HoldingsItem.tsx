@@ -24,19 +24,18 @@ export const V3HoldingsItem = ({
 
   const rewardTokenAmountUsd = useMemo(
     () =>
-      toBigNumber(programs[0].rewardsToken.usdPrice)
-        .times(
-          programs.reduce(
-            (acc, program) =>
-              toBigNumber(acc).plus(
-                shrinkToken(
-                  program.pendingRewardsWei,
-                  program.rewardsToken.decimals
-                )
-              ),
-            new BigNumber(0)
-          )
+      programs
+        .reduce(
+          (acc, program) =>
+            acc.plus(
+              shrinkToken(
+                program.pendingRewardsWei,
+                program.rewardsToken.decimals
+              )
+            ),
+          new BigNumber(0)
         )
+        .times(programs[0].rewardsToken.usdPrice)
         .toNumber(),
     [programs]
   );
