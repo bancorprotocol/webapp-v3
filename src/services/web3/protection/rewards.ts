@@ -8,7 +8,10 @@ import { multicall, MultiCall } from '../multicall/multicall';
 import { Dictionary, ErrorCode } from '../types';
 import { changeGas } from '../config';
 import axios from 'axios';
+import MerkleTree from 'merkletreejs';
 import { SnapshotRewards } from 'services/observables/liquidity';
+import { keccak256 } from 'ethers/lib/utils';
+import { ethers } from 'ethers';
 
 export const stakeRewards = async ({
   amount,
@@ -216,5 +219,34 @@ export const fetchSnapshotRewards = async () => {
   } catch (e) {
     console.error('failed to fetch rewards snapshots', e);
   }
-  return [];
+};
+
+export const stakeSnapshotRewards = (
+  account: string,
+  amount: string,
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
+) => {
+  try {
+    const leaf: Buffer = generateLeaf(account, amount);
+    const merkleTree = new MerkleTree([leaf], keccak256, { sortPairs: true });
+    const proof: string[] = merkleTree.getHexProof(leaf);
+
+    console.log('proof', proof);
+    //const tx = SomeFunction.claim(account,amount,proof)
+  } catch (e: any) {
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
+  }
+};
+
+const generateLeaf = (address: string, value: string): Buffer => {
+  return Buffer.from(
+    ethers.utils
+      .solidityKeccak256(['address', 'uint256'], [address, value])
+      .slice(2),
+    'hex'
+  );
 };

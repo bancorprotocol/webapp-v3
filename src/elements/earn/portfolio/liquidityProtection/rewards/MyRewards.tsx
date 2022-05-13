@@ -4,8 +4,12 @@ import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
-import { StakeRewardsBtn } from './StakeRewardsBtn';
 import { BancorURL } from 'router/bancorURL.service';
+import { Button, ButtonSize } from 'components/button/Button';
+import { stakeSnapshotRewards } from 'services/web3/protection/rewards';
+import { rejectNotification } from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
 
 export const MyRewards = () => {
   const {
@@ -15,16 +19,30 @@ export const MyRewards = () => {
     claimableRewardsUsd,
     loading,
   } = useMyRewards();
+  const account = useAppSelector((state) => state.user.account);
+  const dispatch = useDispatch();
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex items-center justify-between">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
-          <StakeRewardsBtn
-            buttonLabel="Stake to V3"
-            buttonClass="btn btn-primary btn-xs"
-          />
+          <Button
+            onClick={() => {
+              if (account)
+                stakeSnapshotRewards(
+                  account,
+                  claimableRewards.toString(),
+                  () => {},
+                  () => {},
+                  () => rejectNotification(dispatch),
+                  () => {}
+                );
+            }}
+            size={ButtonSize.SMALL}
+          >
+            Stake to V3
+          </Button>
           <Popover className="relative block">
             <Popover.Button>
               <IconMore className="w-16 rotate-90" />

@@ -8,6 +8,7 @@ import { getUserRewardsFromSnapshot } from 'store/liquidity/liquidity';
 
 export const useMyRewards = () => {
   const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const snapshots = useAppSelector((state) => state.liquidity.snapshots);
   const userRewards = useAppSelector(getUserRewardsFromSnapshot);
 
   const claimable = useMemo(() => {
@@ -39,6 +40,6 @@ export const useMyRewards = () => {
     totalRewardsUsd,
     claimableRewards,
     claimableRewardsUsd,
-    loading: !userRewards,
+    loading: !snapshots,
   };
 };
