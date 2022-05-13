@@ -6,10 +6,19 @@ import {
 import { useState } from 'react';
 
 import { V3HoldingsItem } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItem';
+import { orderBy } from 'lodash';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export const V3Holdings = () => {
   const [selectedId, setSelectedId] = useState('');
-  const holdings = useAppSelector(getPortfolioHoldings);
+  const holdings = orderBy(
+    useAppSelector(getPortfolioHoldings),
+    (h) =>
+      toBigNumber(h.combinedTokenBalance)
+        .times(h.pool.reserveToken.usdPrice)
+        .toNumber(),
+    ['desc']
+  );
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
 
   return (
