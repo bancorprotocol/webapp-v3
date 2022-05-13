@@ -42,7 +42,7 @@ export const PoolsTable = () => {
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.tradingLiquidityTKN.usd, true)}</div>
+          <div>{prettifyNumber(row.stakedBalance.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Volume 24h
