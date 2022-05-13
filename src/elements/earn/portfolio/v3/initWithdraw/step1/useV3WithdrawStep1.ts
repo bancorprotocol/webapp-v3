@@ -19,14 +19,16 @@ export const useV3WithdrawStep1 = ({
 }: Props) => {
   const { pool, combinedTokenBalance, tokenBalance } = holding;
   const isInputError = useMemo(
-    () => new BigNumber(combinedTokenBalance).lt(inputTkn),
-    [combinedTokenBalance, inputTkn]
+    () => new BigNumber(holding.tokenBalance).lt(inputTkn),
+    [holding.tokenBalance, inputTkn]
   );
 
-  const showBreakdown = useMemo(
-    () => new BigNumber(holding.latestProgram?.poolTokenAmountWei || 0).gt(0),
-    [holding.latestProgram?.poolTokenAmountWei]
-  );
+  // const showBreakdown = useMemo(
+  //   () => new BigNumber(holding.latestProgram?.poolTokenAmountWei || 0).gt(0),
+  //   [holding.latestProgram?.poolTokenAmountWei]
+  // );
+
+  const showBreakdown = false;
 
   const percentageUnstaked = useMemo(
     () =>
@@ -38,7 +40,7 @@ export const useV3WithdrawStep1 = ({
   );
 
   const setBalance = (percentage: 25 | 50 | 75 | 100) => {
-    const valueTkn = new BigNumber(combinedTokenBalance)
+    const valueTkn = new BigNumber(holding.tokenBalance)
       .times(percentage / 100)
       .toString();
     const valueFiat = calcFiatValue(valueTkn, pool.reserveToken.usdPrice);

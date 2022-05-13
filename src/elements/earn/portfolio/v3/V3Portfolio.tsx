@@ -1,5 +1,4 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
-import { V3EarningTable } from 'elements/earn/portfolio/v3/earningsTable/V3EarningTable';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
 import { useDispatch } from 'react-redux';
@@ -11,7 +10,7 @@ import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuse
 import { WhatsNew } from './WhatsNew';
 import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
-import { V3Holdings } from 'elements/earn/portfolio/v3/earningsTable/V3Holdings';
+import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -40,8 +39,6 @@ const V3Portfolio = () => {
               )}
             </div>
             <V3Holdings />
-
-            <V3EarningTable />
           </>
         ) : (
           <WhatsNew />
