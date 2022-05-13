@@ -35,7 +35,7 @@ export const V3HoldingsItem = ({
             ),
           new BigNumber(0)
         )
-        .times(programs[0].rewardsToken.usdPrice)
+        .times(programs.length > 0 ? programs[0].rewardsToken.usdPrice : 0)
         .toNumber(),
     [programs]
   );
