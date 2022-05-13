@@ -33,7 +33,7 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
   return (
     <>
       <StakeRewardsBtn
-        buttonLabel="Stake my Rewards"
+        buttonLabel="Stake my Rewards to Bancor V3"
         buttonClass="btn btn-primary btn-lg w-full mt-20"
       />
       <Button

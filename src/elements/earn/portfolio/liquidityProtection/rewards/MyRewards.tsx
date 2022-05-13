@@ -22,11 +22,11 @@ export const MyRewards = () => {
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
           <StakeRewardsBtn
-            buttonLabel="Stake Rewards"
+            buttonLabel="Stake to V3"
             buttonClass="btn btn-primary btn-xs"
           />
           <Popover className="relative block">
-            <Popover.Button disabled>
+            <Popover.Button>
               <IconMore className="w-16 rotate-90" />
             </Popover.Button>
             <DropdownTransition>
