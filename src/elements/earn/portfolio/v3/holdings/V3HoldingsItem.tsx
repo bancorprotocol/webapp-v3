@@ -23,18 +23,17 @@ export const V3HoldingsItem = ({
 
   const rewardTokenAmountUsd = useMemo(
     () =>
-      programs.reduce(
-        (acc, program) =>
-          toBigNumber(acc)
+      toBigNumber(programs[0].rewardsToken.usdPrice).times(
+        programs.reduce((acc, program) => {
+          return toBigNumber(acc)
             .plus(
               shrinkToken(
                 program.pendingRewardsWei,
                 program.rewardsToken.decimals
               )
             )
-            .times(program.rewardsToken.usdPrice)
-            .toNumber(),
-        0
+            .toNumber();
+        }, 0)
       ),
     [programs]
   );
