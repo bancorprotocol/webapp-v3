@@ -18,17 +18,14 @@ export const V3WithdrawStep1Breakdown = ({
     pool: {
       reserveToken: { symbol },
     },
-    standardStakingReward,
+    latestProgram,
     tokenBalance,
   } = holding;
 
   const amount = useMemo(
     () =>
-      shrinkToken(
-        standardStakingReward?.tokenAmountWei || 0,
-        holding.pool.decimals
-      ),
-    [holding.pool.decimals, standardStakingReward?.tokenAmountWei]
+      shrinkToken(latestProgram?.tokenAmountWei || 0, holding.pool.decimals),
+    [holding.pool.decimals, latestProgram?.tokenAmountWei]
   );
 
   const percentageStaked = useMemo(

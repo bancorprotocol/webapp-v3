@@ -24,11 +24,8 @@ export const useV3WithdrawStep1 = ({
   );
 
   const showBreakdown = useMemo(
-    () =>
-      new BigNumber(holding.standardStakingReward?.poolTokenAmountWei || 0).gt(
-        0
-      ),
-    [holding.standardStakingReward?.poolTokenAmountWei]
+    () => new BigNumber(holding.latestProgram?.poolTokenAmountWei || 0).gt(0),
+    [holding.latestProgram?.poolTokenAmountWei]
   );
 
   const percentageUnstaked = useMemo(

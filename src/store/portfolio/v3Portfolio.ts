@@ -15,6 +15,7 @@ import { orderBy, uniqBy } from 'lodash';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { PoolV3 } from 'services/observables/pools';
 import { shrinkToken } from 'utils/formulas';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export const initialState: V3PortfolioState = {
   isPortfolioLoading: false,
@@ -99,15 +100,17 @@ export const getPortfolioHoldings = createSelector(
     );
 
     const buildHoldingObject = (poolId: string) => {
-      const standardStakingRewards = standardRewards.filter(
-        (p) => p.pool === poolId
-      );
+      const programs = standardRewards.filter((p) => p.poolDltId === poolId);
       const holdingRaw = holdingsRawMap.get(poolId);
 
       const pool = allPoolsV3Map.get(poolId);
       if (!pool) {
         return undefined;
       }
+
+      const latestProgram = programs.find(
+        (p) => pool.latestProgram?.id === p.id
+      );
 
       const poolTokenBalance = shrinkToken(
         holdingRaw?.poolTokenBalanceWei || '0',
@@ -119,9 +122,8 @@ export const getPortfolioHoldings = createSelector(
       );
 
       let stakedTokenBalance = shrinkToken(
-        standardStakingRewards.reduce(
-          (acc, data) =>
-            new BigNumber(data.tokenAmountWei).plus(acc).toString(),
+        programs.reduce(
+          (acc, data) => toBigNumber(data.tokenAmountWei).plus(acc).toString(),
           '0'
         ),
         pool.decimals
@@ -135,9 +137,9 @@ export const getPortfolioHoldings = createSelector(
         pool,
         poolTokenBalance,
         tokenBalance,
-        standardStakingReward: standardStakingRewards.find(
-          (p) => p.id === pool.latestProgram?.id
-        ),
+        stakedTokenBalance,
+        latestProgram,
+        programs,
         combinedTokenBalance,
       };
 
@@ -145,7 +147,7 @@ export const getPortfolioHoldings = createSelector(
     };
 
     const allHoldingPools = holdingsRaw.map((holding) => holding.poolDltId);
-    const allStakedPools = standardRewards.map((reward) => reward.pool);
+    const allStakedPools = standardRewards.map((reward) => reward.poolDltId);
     const allPoolsUniq = uniqBy(
       [...allHoldingPools, ...allStakedPools],
       (poolId) => poolId
@@ -275,7 +277,7 @@ export const getStandardRewards = createSelector(
           acc.push(item);
         }
 
-        const programPool = allPoolsMap.get(val.pool);
+        const programPool = allPoolsMap.get(val.poolDltId);
 
         if (!programPool) {
           console.error(
