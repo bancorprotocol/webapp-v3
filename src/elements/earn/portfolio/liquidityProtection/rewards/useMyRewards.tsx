@@ -47,9 +47,12 @@ export const useMyRewards = () => {
 
   useAsyncEffect(async () => {
     try {
-      const res = await axios.get('/rewards-snapshot.min.json', {
-        timeout: 10000,
-      });
+      const res = await axios.get(
+        '/rewards-snapshot.2022-05-13T16.25.43.632Z.min.json',
+        {
+          timeout: 10000,
+        }
+      );
       setSnapshots(res.data);
       setLoading(false);
     } catch (e) {
