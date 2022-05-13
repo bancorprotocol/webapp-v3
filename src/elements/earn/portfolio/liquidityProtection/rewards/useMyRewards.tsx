@@ -1,33 +1,22 @@
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-// import { Rewards } from 'services/observables/liquidity';
 import { getTokenById } from 'store/bancor/bancor';
-import { bntToken } from 'services/web3/config';
-import axios from 'axios';
-import useAsyncEffect from 'use-async-effect';
-import { useMemo, useState } from 'react';
+import { bntDecimals, bntToken } from 'services/web3/config';
+import { useMemo } from 'react';
 import { shrinkToken } from 'utils/formulas';
+import { getUserRewardsFromSnapshot } from 'store/liquidity/liquidity';
 
 export const useMyRewards = () => {
-  const [loading, setLoading] = useState(true);
   const bnt = useAppSelector((state) => getTokenById(state, bntToken));
-  const account = useAppSelector((state) => state.user.account);
-  const [snapshots, setSnapshots] = useState<any>({});
-  // const rewards = useAppSelector<Rewards | undefined>(
-  //   (state) => state.liquidity.rewards
-  // );
-  const userRewards = useMemo(() => {
-    if (!account) return null;
-    return snapshots[account] || null;
-  }, [account, snapshots]);
+  const userRewards = useAppSelector(getUserRewardsFromSnapshot);
 
   const claimable = useMemo(() => {
-    return shrinkToken(userRewards?.claimable ?? 0, bnt?.decimals ?? 18);
-  }, [bnt?.decimals, userRewards?.claimable]);
+    return shrinkToken(userRewards.claimable, bntDecimals);
+  }, [userRewards.claimable]);
 
   const claimed = useMemo(() => {
-    return shrinkToken(userRewards?.totalClaimed ?? 0, bnt?.decimals ?? 18);
-  }, [bnt?.decimals, userRewards?.totalClaimed]);
+    return shrinkToken(userRewards.totalClaimed, bntDecimals);
+  }, [userRewards.totalClaimed]);
 
   const totalRewards = useMemo(() => {
     return new BigNumber(claimable).plus(claimed);
@@ -45,27 +34,11 @@ export const useMyRewards = () => {
     return claimableRewards.times(bnt?.usdPrice ?? 0);
   }, [bnt?.usdPrice, claimableRewards]);
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await axios.get(
-        '/rewards-snapshot.2022-05-13T16.25.43.632Z.min.json',
-        {
-          timeout: 10000,
-        }
-      );
-      setSnapshots(res.data);
-      setLoading(false);
-    } catch (e) {
-      console.log('failed to fetch rewards snapshots', e);
-      setLoading(false);
-    }
-  }, []);
-
   return {
     totalRewards,
     totalRewardsUsd,
     claimableRewards,
     claimableRewardsUsd,
-    loading,
+    loading: !userRewards,
   };
 };

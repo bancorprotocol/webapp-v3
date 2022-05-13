@@ -1,7 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
-import { Rewards } from 'services/observables/liquidity';
+import { Rewards, SnapshotRewards } from 'services/observables/liquidity';
 import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
   ProtectedPosition,
@@ -10,6 +10,7 @@ import {
 import { PoolToken } from 'services/observables/pools';
 import { RootState } from 'store';
 import { bntToken } from 'services/web3/config';
+import { Dictionary } from 'services/web3/types';
 
 interface LiquidityState {
   poolTokens: PoolToken[];
@@ -20,6 +21,7 @@ interface LiquidityState {
   loadingPositions: boolean;
   loadingRewards: boolean;
   loadingLockedBnt: boolean;
+  snapshots?: Dictionary<SnapshotRewards>;
 }
 
 const initialState: LiquidityState = {
@@ -34,6 +36,7 @@ const initialState: LiquidityState = {
   loadingPositions: false,
   loadingRewards: false,
   loadingLockedBnt: false,
+  snapshots: undefined,
 };
 
 const liquiditySlice = createSlice({
@@ -63,6 +66,9 @@ const liquiditySlice = createSlice({
     },
     setProtocolBnBNTAmount: (state, action) => {
       state.protocolBnBNTAmount = action.payload;
+    },
+    setSnapshots: (state, action) => {
+      state.snapshots = action.payload;
     },
   },
 });
@@ -210,6 +216,20 @@ export const getStakeSummary = createSelector(
   }
 );
 
+export const getUserRewardsFromSnapshot = createSelector(
+  (state: RootState) => state.user.account,
+  (state: RootState) => state.liquidity.snapshots,
+  (
+    account: string | null | undefined,
+    snapshots?: Dictionary<SnapshotRewards>
+  ) => {
+    const empty = { claimable: 0, totalClaimed: 0 };
+    if (account && snapshots) return snapshots[account] || empty;
+
+    return empty;
+  }
+);
+
 export const {
   setPoolTokens,
   setLockedAvailableBNT,
@@ -219,6 +239,7 @@ export const {
   setLoadingRewards,
   setLoadingLockedBnt,
   setProtocolBnBNTAmount,
+  setSnapshots,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;

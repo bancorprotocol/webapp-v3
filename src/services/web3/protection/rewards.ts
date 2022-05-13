@@ -5,8 +5,10 @@ import { StakingRewards, StakingRewards__factory } from '../abis/types';
 import { web3, writeWeb3 } from '..';
 import { ProtectedLiquidity } from './positions';
 import { multicall, MultiCall } from '../multicall/multicall';
-import { ErrorCode } from '../types';
+import { Dictionary, ErrorCode } from '../types';
 import { changeGas } from '../config';
+import axios from 'axios';
+import { SnapshotRewards } from 'services/observables/liquidity';
 
 export const stakeRewards = async ({
   amount,
@@ -200,4 +202,19 @@ const buildPnedingRewardsCall = (
     methodName: 'pendingReserveRewards',
     methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
+};
+
+export const fetchSnapshotRewards = async () => {
+  try {
+    const res = await axios.get<Dictionary<SnapshotRewards>>(
+      '/rewards-snapshot.2022-05-13T16.25.43.632Z.min.json',
+      {
+        timeout: 10000,
+      }
+    );
+    return res.data;
+  } catch (e) {
+    console.error('failed to fetch rewards snapshots', e);
+  }
+  return [];
 };
