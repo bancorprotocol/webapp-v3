@@ -30,7 +30,7 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
               disabled={isDisabled}
               onClick={onClick}
             >
-              Unstake
+              Manage
             </Button>
           )}
         />

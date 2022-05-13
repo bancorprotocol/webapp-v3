@@ -3,7 +3,7 @@ import {
   getIsLoadingHoldings,
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { V3HoldingsItem } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItem';
 import { orderBy } from 'lodash';
@@ -11,15 +11,22 @@ import { toBigNumber } from 'utils/helperFunctions';
 
 export const V3Holdings = () => {
   const [selectedId, setSelectedId] = useState('');
-  const holdings = orderBy(
-    useAppSelector(getPortfolioHoldings),
-    (h) =>
-      toBigNumber(h.combinedTokenBalance)
-        .times(h.pool.reserveToken.usdPrice)
-        .toNumber(),
-    ['desc']
-  );
+
+  const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
+
+  const holdingsSorted = useMemo(
+    () =>
+      orderBy(
+        holdings,
+        (h) =>
+          toBigNumber(h.combinedTokenBalance)
+            .times(h.pool.reserveToken.usdPrice)
+            .toNumber(),
+        ['desc']
+      ),
+    [holdings]
+  );
 
   return (
     <div>
@@ -27,7 +34,7 @@ export const V3Holdings = () => {
 
       <div className="space-y-10 mt-20">
         {!isLoadingHoldings
-          ? holdings.map((holding) => (
+          ? holdingsSorted.map((holding) => (
               <V3HoldingsItem
                 key={holding.pool.poolDltId}
                 holding={holding}

@@ -9,6 +9,7 @@ import { V3HoldingsItemWithdraw } from 'elements/earn/portfolio/v3/holdings/V3Ho
 import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemStaked';
 import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
 import { V3HoldingsItemDeposit } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemDeposit';
+import BigNumber from 'bignumber.js';
 
 export const V3HoldingsItem = ({
   holding,
@@ -23,18 +24,20 @@ export const V3HoldingsItem = ({
 
   const rewardTokenAmountUsd = useMemo(
     () =>
-      toBigNumber(programs[0].rewardsToken.usdPrice).times(
-        programs.reduce((acc, program) => {
-          return toBigNumber(acc)
-            .plus(
-              shrinkToken(
-                program.pendingRewardsWei,
-                program.rewardsToken.decimals
-              )
-            )
-            .toNumber();
-        }, 0)
-      ),
+      toBigNumber(programs[0].rewardsToken.usdPrice)
+        .times(
+          programs.reduce(
+            (acc, program) =>
+              toBigNumber(acc).plus(
+                shrinkToken(
+                  program.pendingRewardsWei,
+                  program.rewardsToken.decimals
+                )
+              ),
+            new BigNumber(0)
+          )
+        )
+        .toNumber(),
     [programs]
   );
 
