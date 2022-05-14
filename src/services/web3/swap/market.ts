@@ -336,10 +336,32 @@ const findPoolByToken = async (tkn: string) => {
   if (pool) return pool;
 };
 
-const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
+export const getV3Rate = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
   try {
     const res =
       await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+        fromToken.address,
+        toToken.address,
+        expandToken(amount, fromToken.decimals)
+      );
+    return shrinkToken(res.toString(), fromToken.decimals);
+  } catch (error) {
+    return '0';
+  }
+};
+
+export const getV3RateInverse = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
+  try {
+    const res =
+      await ContractsApi.BancorNetworkInfo.read.tradeInputByTargetAmount(
         fromToken.address,
         toToken.address,
         expandToken(amount, fromToken.decimals)
