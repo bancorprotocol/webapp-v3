@@ -75,7 +75,7 @@ export const RewardsClaimCTA = ({ account }: Props) => {
                   txHash,
                   prettifyNumber(claimableRewards)
                 );
-                goToPage.portfolioV2();
+                goToPage.portfolio();
               },
               () => rejectNotification(dispatch),
               () => {

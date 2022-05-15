@@ -57,7 +57,7 @@ export const MyRewards = () => {
                       txHash,
                       prettifyNumber(claimableRewards)
                     );
-                    goToPage.portfolioV2();
+                    goToPage.portfolio();
                   },
                   () => rejectNotification(dispatch),
                   () => {
