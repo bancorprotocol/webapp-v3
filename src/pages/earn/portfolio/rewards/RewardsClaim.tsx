@@ -7,14 +7,16 @@ import { useAppSelector } from 'store';
 
 export const RewardsClaim = () => {
   const account = useAppSelector((state) => state.user.account);
-  const { claimableRewards } = useMyRewards();
+  const { claimableRewards, hasClaimed } = useMyRewards();
   const { goToPage } = useNavigation();
 
   return (
     <div className="pt-40 md:pt-[100px]">
       <Widget title="Claim Rewards" goBack={goToPage.portfolioV2}>
         <div className="px-10 pb-10">
-          <RewardsClaimAmount amount={claimableRewards.toString()} />
+          <RewardsClaimAmount
+            amount={hasClaimed ? '0' : claimableRewards.toString()}
+          />
           <RewardsClaimCTA account={account} />
         </div>
       </Widget>

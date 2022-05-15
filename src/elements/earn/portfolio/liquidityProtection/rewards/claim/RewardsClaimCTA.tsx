@@ -4,7 +4,7 @@ import {
 } from 'services/web3/protection/rewards';
 import {
   claimRewardsFailedNotification,
-  claimRewardsNotification,
+  rewardsStakedToV3Notification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
@@ -38,7 +38,11 @@ export const RewardsClaimCTA = ({ account }: Props) => {
         },
         (txHash: string) => {
           handleClaimed();
-          claimRewardsNotification(dispatch, txHash, userRewards.claimable);
+          rewardsStakedToV3Notification(
+            dispatch,
+            txHash,
+            userRewards.claimable
+          );
           goToPage.portfolioV2();
         },
         () => rejectNotification(dispatch),
@@ -63,7 +67,7 @@ export const RewardsClaimCTA = ({ account }: Props) => {
               },
               (txHash: string) => {
                 handleClaimed();
-                claimRewardsNotification(
+                rewardsStakedToV3Notification(
                   dispatch,
                   txHash,
                   userRewards.claimable

@@ -9,7 +9,7 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { stakeSnapshotRewards } from 'services/web3/protection/rewards';
 import {
   claimRewardsFailedNotification,
-  claimRewardsNotification,
+  rewardsStakedToV3Notification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
@@ -52,7 +52,7 @@ export const MyRewards = () => {
                   },
                   (txHash: string) => {
                     handleClaimed();
-                    claimRewardsNotification(
+                    rewardsStakedToV3Notification(
                       dispatch,
                       txHash,
                       userRewards.claimable
