@@ -55,7 +55,7 @@ export const MyRewards = () => {
                     rewardsStakedToV3Notification(
                       dispatch,
                       txHash,
-                      userRewards.claimable
+                      prettifyNumber(claimableRewards)
                     );
                     goToPage.portfolioV2();
                   },

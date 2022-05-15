@@ -5,6 +5,7 @@ import {
 import {
   claimRewardsFailedNotification,
   rewardsStakedToV3Notification,
+  rewardsClaimedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
@@ -13,6 +14,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
 import { useAppSelector } from 'store';
 import { getUserRewardsProof } from 'store/liquidity/liquidity';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   claimableRewards?: string;
@@ -22,7 +24,8 @@ interface Props {
 export const RewardsClaimCTA = ({ account }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
-  const { userRewards, hasClaimed, handleClaimed } = useMyRewards();
+  const { userRewards, hasClaimed, handleClaimed, claimableRewards } =
+    useMyRewards();
   const proof = useAppSelector(getUserRewardsProof);
   const canClaim =
     !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
@@ -38,10 +41,10 @@ export const RewardsClaimCTA = ({ account }: Props) => {
         },
         (txHash: string) => {
           handleClaimed();
-          rewardsStakedToV3Notification(
+          rewardsClaimedNotification(
             dispatch,
             txHash,
-            userRewards.claimable
+            prettifyNumber(claimableRewards)
           );
           goToPage.portfolioV2();
         },
@@ -70,7 +73,7 @@ export const RewardsClaimCTA = ({ account }: Props) => {
                 rewardsStakedToV3Notification(
                   dispatch,
                   txHash,
-                  userRewards.claimable
+                  prettifyNumber(claimableRewards)
                 );
                 goToPage.portfolioV2();
               },
