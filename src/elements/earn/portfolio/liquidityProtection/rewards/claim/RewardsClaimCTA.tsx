@@ -1,5 +1,5 @@
 import {
-  claimRewards,
+  claimSnapshotRewards,
   stakeSnapshotRewards,
 } from 'services/web3/protection/rewards';
 import {
@@ -19,7 +19,7 @@ interface Props {
   account?: string | null;
 }
 
-export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
+export const RewardsClaimCTA = ({ account }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
   const { userRewards, hasClaimed, handleClaimed } = useMyRewards();
@@ -28,15 +28,24 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
     !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
 
   const handleClaim = async () => {
-    if (account && claimableRewards) {
-      try {
-        const txHash = await claimRewards();
-        claimRewardsNotification(dispatch, txHash, claimableRewards);
-        goToPage.portfolioV2();
-      } catch (e: any) {
-        console.error('Claiming Rewards failed with msg: ', e.message);
-        claimRewardsFailedNotification(dispatch);
-      }
+    if (canClaim) {
+      claimSnapshotRewards(
+        account,
+        userRewards.claimable,
+        proof,
+        (txHash: string) => {
+          console.log('txHash', txHash);
+        },
+        (txHash: string) => {
+          handleClaimed();
+          claimRewardsNotification(dispatch, txHash, userRewards.claimable);
+          goToPage.portfolioV2();
+        },
+        () => rejectNotification(dispatch),
+        () => {
+          claimRewardsFailedNotification(dispatch);
+        }
+      );
     }
   };
 
@@ -78,7 +87,7 @@ export const RewardsClaimCTA = ({ claimableRewards, account }: Props) => {
         variant={ButtonVariant.SECONDARY}
         onClick={() => handleClaim()}
         className="w-full mt-10"
-        disabled={!account}
+        disabled={!canClaim}
       >
         Withdraw Rewards
       </Button>
