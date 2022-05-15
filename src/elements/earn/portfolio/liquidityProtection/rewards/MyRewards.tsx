@@ -93,7 +93,7 @@ export const MyRewards = () => {
         ) : (
           <div>
             <div className="mb-5">Total Rewards to Date</div>
-            {!hasClaimed && totalRewards && totalRewardsUsd ? (
+            {totalRewards && totalRewardsUsd ? (
               <div>
                 <span className="mr-5 font-semibold md:text-16">
                   {prettifyNumber(totalRewards)} BNT
