@@ -182,7 +182,7 @@ export const fetchedPendingRewards = async (
   );
 
   const calls = positions.map((position) =>
-    buildPnedingRewardsCall(contract, user, position)
+    buildPendingRewardsCall(contract, user, position)
   );
   const res = await multicall(calls);
   if (res)
@@ -194,7 +194,7 @@ export const fetchedPendingRewards = async (
   return [];
 };
 
-const buildPnedingRewardsCall = (
+const buildPendingRewardsCall = (
   contract: StakingRewards,
   user: string,
   position: ProtectedLiquidity
