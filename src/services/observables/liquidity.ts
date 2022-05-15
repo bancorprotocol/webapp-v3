@@ -8,7 +8,7 @@ import {
 } from 'services/web3/protection/positions';
 import {
   fetchPendingRewards,
-  fetchSnapshotReards,
+  fetchSnapshotRewards,
   fetchTotalClaimedRewards,
 } from 'services/web3/protection/rewards';
 import { switchMapIgnoreThrow } from './customOperators';
@@ -101,4 +101,4 @@ export const protocolBnBNTAmount$ = from(fetchProtocolBnBNTAmount()).pipe(
   shareReplay(1)
 );
 
-export const snapshots$ = from(fetchSnapshotReards()).pipe(shareReplay(1));
+export const snapshots$ = from(fetchSnapshotRewards()).pipe(shareReplay(1));
