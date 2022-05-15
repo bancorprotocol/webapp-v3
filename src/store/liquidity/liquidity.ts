@@ -11,6 +11,9 @@ import { PoolToken } from 'services/observables/pools';
 import { RootState } from 'store';
 import { bntToken } from 'services/web3/config';
 import { Dictionary } from 'services/web3/types';
+import MerkleTree from 'merkletreejs';
+import { keccak256 } from 'ethers/lib/utils';
+import { generateLeaf } from 'services/web3/protection/rewards';
 
 interface LiquidityState {
   poolTokens: PoolToken[];
@@ -223,10 +226,39 @@ export const getUserRewardsFromSnapshot = createSelector(
     account: string | null | undefined,
     snapshots?: Dictionary<SnapshotRewards>
   ) => {
-    const empty = { claimable: 0, totalClaimed: 0 };
+    const empty = { claimable: '0', totalClaimed: '0' };
     if (account && snapshots) return snapshots[account] || empty;
 
     return empty;
+  }
+);
+
+export const getMerkleTree = createSelector(
+  (state: RootState) => state.liquidity.snapshots,
+  (snapshots?: Dictionary<SnapshotRewards>) => {
+    if (!snapshots) return null;
+    return new MerkleTree(
+      // Generate leafs
+      Object.entries(snapshots).map(([address, { claimable }]) =>
+        generateLeaf(address, claimable)
+      ),
+      keccak256,
+      { sortPairs: true }
+    );
+  }
+);
+
+export const getUserRewardsProof = createSelector(
+  (state: RootState) => state.user.account,
+  getUserRewardsFromSnapshot,
+  getMerkleTree,
+  (account: string | null | undefined, userRewards, tree) => {
+    console.log('getUserRewardsProof', account, userRewards, tree);
+    if (!account || !tree || userRewards.claimable === '0') return null;
+    const { claimable } = userRewards;
+    const leaf: Buffer = generateLeaf(account, claimable);
+    const proof: string[] = tree.getHexProof(leaf);
+    return proof;
   }
 );
 

@@ -11,9 +11,7 @@ import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { Dictionary, ErrorCode } from 'services/web3/types';
 import { changeGas } from 'services/web3/config';
 import axios from 'axios';
-import MerkleTree from 'merkletreejs';
 import { SnapshotRewards } from 'services/observables/liquidity';
-import { keccak256 } from 'ethers/lib/utils';
 import { ethers } from 'ethers';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 
@@ -225,35 +223,82 @@ export const fetchSnapshotRewards = async () => {
   }
 };
 
-export const stakeSnapshotRewards = async (
+const _handleSnapshotRewards = async (
   account: string,
   amount: string,
+  proof: string[],
+  method: 'claim' | 'stake',
   onHash: (txHash: string) => void,
   onCompleted: Function,
   rejected: Function,
   failed: Function
 ) => {
   try {
-    const leaf: Buffer = generateLeaf(account, amount);
-    const merkleTree = new MerkleTree([leaf], keccak256, { sortPairs: true });
-    const proof: string[] = merkleTree.getHexProof(leaf);
-
-    console.log('proof', proof);
-    const tx = await ContractsApi.StakingRewardsClaim.write.stakeRewards(
-      account,
-      amount,
-      proof
-    );
+    const tx =
+      method === 'stake'
+        ? await ContractsApi.StakingRewardsClaim.write.stakeRewards(
+            account,
+            amount,
+            proof
+          )
+        : await ContractsApi.StakingRewardsClaim.write.claimRewards(
+            account,
+            amount,
+            proof
+          );
     onHash(tx.hash);
     await tx.wait();
     onCompleted();
   } catch (e: any) {
+    console.error(e);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed();
   }
 };
 
-const generateLeaf = (address: string, value: string): Buffer => {
+export const stakeSnapshotRewards = async (
+  account: string,
+  amount: string,
+  proof: string[],
+  onHash: (txHash: string) => void,
+  onCompleted: (txHash: string) => void,
+  rejected: Function,
+  failed: Function
+) => {
+  _handleSnapshotRewards(
+    account,
+    amount,
+    proof,
+    'stake',
+    onHash,
+    onCompleted,
+    rejected,
+    failed
+  );
+};
+
+export const claimSnapshotRewards = async (
+  account: string,
+  amount: string,
+  proof: string[],
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
+) => {
+  _handleSnapshotRewards(
+    account,
+    amount,
+    proof,
+    'claim',
+    onHash,
+    onCompleted,
+    rejected,
+    failed
+  );
+};
+
+export const generateLeaf = (address: string, value: string): Buffer => {
   return Buffer.from(
     ethers.utils
       .solidityKeccak256(['address', 'uint256'], [address, value])

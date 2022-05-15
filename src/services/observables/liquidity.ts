@@ -46,8 +46,8 @@ export interface Rewards {
   totalRewards: string;
 }
 export interface SnapshotRewards {
-  claimable: number;
-  totalClaimed: number;
+  claimable: string;
+  totalClaimed: string;
 }
 
 export const rewards$ = combineLatest([user$, fifteenSeconds$]).pipe(

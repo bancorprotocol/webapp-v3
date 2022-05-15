@@ -25,7 +25,7 @@ import { address as bancorNetworkInfoAddress } from 'services/web3/abis/v3/Banco
 import { address as networkSettingsAddress } from 'services/web3/abis/v3/NetworkSettings_Proxy.json';
 import { address as pendingWithdrawalsAddress } from 'services/web3/abis/v3/PendingWithdrawals_Proxy.json';
 import { address as poolCollectionType1Address } from 'services/web3/abis/v3/PoolCollectionType1.json';
-import { address as stakingRewardsClaimAddress } from 'services/web3/abis/v3/StakingRewardsClaim.json';
+import { address as stakingRewardsClaimAddress } from 'services/web3/abis/StakingRewardsClaim.json';
 import { address as standardRewardsAddress } from 'services/web3/abis/v3/StandardRewards_Proxy.json';
 import { address as bancorPortalAddress } from 'services/web3/abis/v3/BancorPortal_Proxy.json';
 

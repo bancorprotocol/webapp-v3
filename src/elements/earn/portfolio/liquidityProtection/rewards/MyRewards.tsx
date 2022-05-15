@@ -7,9 +7,15 @@ import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { BancorURL } from 'router/bancorURL.service';
 import { Button, ButtonSize } from 'components/button/Button';
 import { stakeSnapshotRewards } from 'services/web3/protection/rewards';
-import { rejectNotification } from 'services/notifications/notifications';
+import {
+  claimRewardsFailedNotification,
+  claimRewardsNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
+import { getUserRewardsProof } from 'store/liquidity/liquidity';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const MyRewards = () => {
   const {
@@ -18,9 +24,16 @@ export const MyRewards = () => {
     claimableRewards,
     claimableRewardsUsd,
     loading,
+    userRewards,
+    hasClaimed,
+    handleClaimed,
   } = useMyRewards();
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
+  const proof = useAppSelector(getUserRewardsProof);
+  const { goToPage } = useNavigation();
+  const canClaim =
+    !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
@@ -29,17 +42,32 @@ export const MyRewards = () => {
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
           <Button
             onClick={() => {
-              if (account)
+              if (canClaim) {
                 stakeSnapshotRewards(
                   account,
-                  claimableRewards.toString(),
-                  () => {},
-                  () => {},
+                  userRewards.claimable,
+                  proof,
+                  (txHash: string) => {
+                    console.log('txHash', txHash);
+                  },
+                  (txHash: string) => {
+                    handleClaimed();
+                    claimRewardsNotification(
+                      dispatch,
+                      txHash,
+                      userRewards.claimable
+                    );
+                    goToPage.portfolioV2();
+                  },
                   () => rejectNotification(dispatch),
-                  () => {}
+                  () => {
+                    claimRewardsFailedNotification(dispatch);
+                  }
                 );
+              }
             }}
             size={ButtonSize.SMALL}
+            disabled={!canClaim}
           >
             Stake to V3
           </Button>
@@ -65,7 +93,7 @@ export const MyRewards = () => {
         ) : (
           <div>
             <div className="mb-5">Total Rewards to Date</div>
-            {totalRewards && totalRewardsUsd ? (
+            {!hasClaimed && totalRewards && totalRewardsUsd ? (
               <div>
                 <span className="mr-5 font-semibold md:text-16">
                   {prettifyNumber(totalRewards)} BNT
@@ -89,7 +117,7 @@ export const MyRewards = () => {
         ) : (
           <div>
             <div className="mb-5">Claimable Rewards</div>
-            {claimableRewards && claimableRewardsUsd ? (
+            {!hasClaimed && claimableRewards && claimableRewardsUsd ? (
               <div>
                 <span className="mr-5 font-semibold md:text-16">
                   {prettifyNumber(claimableRewards)} BNT
