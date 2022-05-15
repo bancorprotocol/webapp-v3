@@ -104,12 +104,12 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           </div>
         </Navigate>
         <hr className="border-fog" />
-        <Navigate to="https://support.bancor.network">Help Center</Navigate>
-        <Navigate to="https://support.bancor.network/hc/en-us/sections/5464658176018-FAQ">
-          FAQ
+        <Navigate to="https://support.bancor.network">Help Center / FAQ</Navigate>
+        <Navigate to="https://dune.com/Bancor/bancor_1">
+          Analytics
         </Navigate>
         <Navigate to="https://dune.com/Bancor/Bancor-3-Beta">
-          Analytics
+          Analytics V3
         </Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
         <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
