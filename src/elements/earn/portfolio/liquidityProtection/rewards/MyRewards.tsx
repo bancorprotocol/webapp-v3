@@ -6,16 +6,8 @@ import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { BancorURL } from 'router/bancorURL.service';
 import { Button, ButtonSize } from 'components/button/Button';
-import { stakeSnapshotRewards } from 'services/web3/protection/rewards';
-import {
-  claimRewardsFailedNotification,
-  rewardsStakedToV3Notification,
-  rejectNotification,
-} from 'services/notifications/notifications';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { getUserRewardsProof } from 'store/liquidity/liquidity';
-import { useNavigation } from 'hooks/useNavigation';
 
 export const MyRewards = () => {
   const {
@@ -26,12 +18,10 @@ export const MyRewards = () => {
     loading,
     userRewards,
     hasClaimed,
-    handleClaimed,
+    stakeRewardsToV3,
   } = useMyRewards();
   const account = useAppSelector((state) => state.user.account);
-  const dispatch = useDispatch();
   const proof = useAppSelector(getUserRewardsProof);
-  const { goToPage } = useNavigation();
   const canClaim =
     !hasClaimed && !!account && userRewards.claimable !== '0' && !!proof;
 
@@ -41,31 +31,7 @@ export const MyRewards = () => {
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
           <Button
-            onClick={() => {
-              if (canClaim) {
-                stakeSnapshotRewards(
-                  account,
-                  userRewards.claimable,
-                  proof,
-                  (txHash: string) => {
-                    console.log('txHash', txHash);
-                  },
-                  (txHash: string) => {
-                    handleClaimed();
-                    rewardsStakedToV3Notification(
-                      dispatch,
-                      txHash,
-                      prettifyNumber(claimableRewards)
-                    );
-                    goToPage.portfolio();
-                  },
-                  () => rejectNotification(dispatch),
-                  () => {
-                    claimRewardsFailedNotification(dispatch);
-                  }
-                );
-              }
-            }}
+            onClick={stakeRewardsToV3}
             size={ButtonSize.SMALL}
             disabled={!canClaim}
           >
