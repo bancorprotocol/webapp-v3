@@ -33,7 +33,7 @@ export const MyRewards = () => {
   const proof = useAppSelector(getUserRewardsProof);
   const { goToPage } = useNavigation();
   const canClaim =
-    !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
+    !hasClaimed && !!account && userRewards.claimable !== '0' && !!proof;
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
@@ -72,7 +72,7 @@ export const MyRewards = () => {
             Stake to V3
           </Button>
           <Popover className="relative block">
-            <Popover.Button>
+            <Popover.Button disabled={!canClaim}>
               <IconMore className="w-16 rotate-90" />
             </Popover.Button>
             <DropdownTransition>
