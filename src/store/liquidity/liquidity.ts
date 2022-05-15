@@ -234,7 +234,7 @@ export const getUserRewardsFromSnapshot = createSelector(
       // fallback to key not found due to casing
       const accAddress = getAddress(account);
       const entry = Object.entries(snapshots).find(
-        ([address]) => address.toUpperCase() === accAddress
+        ([address]) => getAddress(address) === accAddress
       );
       return entry ? entry[1] : empty;
     }
