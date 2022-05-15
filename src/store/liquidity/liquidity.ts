@@ -263,7 +263,6 @@ export const getUserRewardsProof = createSelector(
   getUserRewardsFromSnapshot,
   getMerkleTree,
   (account: string | null | undefined, userRewards, tree) => {
-    console.log('getUserRewardsProof', account, userRewards, tree);
     if (!account || !tree || userRewards.claimable === '0') return null;
     const { claimable } = userRewards;
     const leaf: Buffer = generateLeaf(account, claimable);
