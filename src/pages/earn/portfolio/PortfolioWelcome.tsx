@@ -2,8 +2,8 @@ import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
-import { MigrateProtect } from './MigrateProtect';
-import { useWalletEmpty } from './usePortfolioRedirect';
+import { MigrateProtect } from 'pages/earn/portfolio/MigrateProtect';
+import { useWalletEmpty } from 'pages/earn/portfolio/usePortfolioRedirect';
 import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
 
@@ -11,7 +11,7 @@ export const PortfolioWelcome = () => {
   const walletIsEmpty = useWalletEmpty();
 
   return (
-    <div className="bg-white mb-20 mx-20 pt-10 md:mb-0 md:mx-0 md:pt-0">
+    <div className="pt-10 mx-20 mb-20 bg-white md:mb-0 md:mx-0 md:pt-0">
       {walletIsEmpty ? <GrowYour /> : <MigrateProtect />}
     </div>
   );
@@ -21,9 +21,9 @@ const GrowYour = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="grid md:grid-cols-2 items-center justify-items-center h-screen">
+    <div className="grid items-center h-screen md:grid-cols-2 justify-items-center">
       <div>
-        <div className="flex text-6xl mb-20">
+        <div className="flex mb-20 text-6xl">
           Grow Your
           <div className="ml-10 text-primary">
             <DynamicText texts={['ETH', 'BNT', 'DOT', 'SOL']} />
