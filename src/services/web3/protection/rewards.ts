@@ -12,8 +12,8 @@ import { Dictionary, ErrorCode } from 'services/web3/types';
 import { changeGas } from 'services/web3/config';
 import axios from 'axios';
 import { SnapshotRewards } from 'services/observables/liquidity';
-import { ethers } from 'ethers';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { getAddress, solidityKeccak256 } from 'ethers/lib/utils';
 
 export const stakeRewards = async ({
   amount,
@@ -300,9 +300,10 @@ export const claimSnapshotRewards = async (
 
 export const generateLeaf = (address: string, value: string): Buffer => {
   return Buffer.from(
-    ethers.utils
-      .solidityKeccak256(['address', 'uint256'], [address, value])
-      .slice(2),
+    solidityKeccak256(
+      ['address', 'uint256'],
+      [getAddress(address), value]
+    ).slice(2),
     'hex'
   );
 };

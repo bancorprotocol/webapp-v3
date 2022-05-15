@@ -12,7 +12,7 @@ import { RootState } from 'store';
 import { bntToken } from 'services/web3/config';
 import { Dictionary } from 'services/web3/types';
 import MerkleTree from 'merkletreejs';
-import { keccak256 } from 'ethers/lib/utils';
+import { getAddress, keccak256 } from 'ethers/lib/utils';
 import { generateLeaf } from 'services/web3/protection/rewards';
 
 interface LiquidityState {
@@ -227,7 +227,17 @@ export const getUserRewardsFromSnapshot = createSelector(
     snapshots?: Dictionary<SnapshotRewards>
   ) => {
     const empty = { claimable: '0', totalClaimed: '0' };
-    if (account && snapshots) return snapshots[account] || empty;
+    if (account && snapshots) {
+      if (snapshots[account]) {
+        return snapshots[account];
+      }
+      // fallback to key not found due to casing
+      const accAddress = getAddress(account);
+      const entry = Object.entries(snapshots).find(
+        ([address]) => address.toUpperCase() === accAddress
+      );
+      return entry ? entry[1] : empty;
+    }
 
     return empty;
   }
