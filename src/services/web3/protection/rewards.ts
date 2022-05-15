@@ -1,17 +1,21 @@
 import { stakingRewards$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { StakingRewards, StakingRewards__factory } from '../abis/types';
-import { web3, writeWeb3 } from '..';
-import { ProtectedLiquidity } from './positions';
-import { multicall, MultiCall } from '../multicall/multicall';
-import { Dictionary, ErrorCode } from '../types';
-import { changeGas } from '../config';
+import {
+  StakingRewards,
+  StakingRewards__factory,
+} from 'services/web3/abis/types';
+import { web3, writeWeb3 } from 'services/web3';
+import { ProtectedLiquidity } from 'services/web3/protection/positions';
+import { multicall, MultiCall } from 'services/web3/multicall/multicall';
+import { Dictionary, ErrorCode } from 'services/web3/types';
+import { changeGas } from 'services/web3/config';
 import axios from 'axios';
 import MerkleTree from 'merkletreejs';
 import { SnapshotRewards } from 'services/observables/liquidity';
 import { keccak256 } from 'ethers/lib/utils';
 import { ethers } from 'ethers';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const stakeRewards = async ({
   amount,
@@ -221,7 +225,7 @@ export const fetchSnapshotRewards = async () => {
   }
 };
 
-export const stakeSnapshotRewards = (
+export const stakeSnapshotRewards = async (
   account: string,
   amount: string,
   onHash: (txHash: string) => void,
@@ -235,7 +239,14 @@ export const stakeSnapshotRewards = (
     const proof: string[] = merkleTree.getHexProof(leaf);
 
     console.log('proof', proof);
-    //const tx = SomeFunction.claim(account,amount,proof)
+    const tx = await ContractsApi.StakingRewardsClaim.write.stakeRewards(
+      account,
+      amount,
+      proof
+    );
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed();
