@@ -34,11 +34,7 @@ export const StakeRewardsBtn = ({
         setIsOpen={setIsModalOpen}
         onSelect={onSelect}
       />
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className={buttonClass}
-        disabled
-      >
+      <button onClick={() => setIsModalOpen(true)} className={buttonClass}>
         {buttonLabel}
       </button>
     </>
