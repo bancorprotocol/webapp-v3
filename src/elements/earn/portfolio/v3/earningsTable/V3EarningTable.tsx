@@ -62,7 +62,7 @@ export const V3EarningTable = () => {
             {cell.row.original.latestProgram?.rewardsToken.symbol}
           </span>
         ),
-        tooltip: 'Tooltip text',
+        tooltip: 'External bonuses available to be claimed',
         minWidth: 130,
         sortDescFirst: true,
       },
