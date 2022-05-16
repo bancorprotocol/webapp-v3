@@ -28,8 +28,14 @@ export const setAutoLoginLS = (flag: boolean) => {
 };
 
 export const getDarkModeLS = (): boolean => {
-  const dark = localStorage.getItem(darkMode);
-  return dark && JSON.parse(dark);
+  const systemDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const darkLS = localStorage.getItem(darkMode);
+  if (!darkLS) {
+    setDarkModeLS(systemDark);
+    return systemDark;
+  }
+
+  return JSON.parse(darkLS);
 };
 
 export const setDarkModeLS = (flag: boolean) => {
