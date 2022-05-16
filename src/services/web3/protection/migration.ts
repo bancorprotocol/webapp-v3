@@ -2,10 +2,11 @@ import { groupBy } from 'lodash';
 import { first } from 'rxjs/operators';
 import { liquidityProtection$ } from 'services/observables/contracts';
 import { PoolToken } from 'services/observables/pools';
-import { writeWeb3 } from '..';
-import { LiquidityProtection__factory } from '../abis/types';
-import { ErrorCode } from '../types';
-import { ProtectedPosition } from './positions';
+import { writeWeb3 } from 'services/web3';
+import { LiquidityProtection__factory } from 'services/web3/abis/types';
+import { changeGas } from 'services/web3/config';
+import { ErrorCode } from 'services/web3/types';
+import { ProtectedPosition } from 'services/web3/protection/positions';
 
 export const migrateV2Positions = async (
   positions: ProtectedPosition[],
@@ -33,7 +34,10 @@ export const migrateV2Positions = async (
       positionIds: dict[poolToken].map((pos) => pos.positionId),
     }));
 
-    const tx = await contract.migratePositions(posStruct);
+    const estimate = await contract.estimateGas.migratePositions(posStruct);
+    const gasLimit = changeGas(estimate.toString());
+
+    const tx = await contract.migratePositions(posStruct, { gasLimit });
     onHash(tx.hash);
     tx.wait();
     onCompleted();

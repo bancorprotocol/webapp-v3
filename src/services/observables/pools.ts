@@ -6,7 +6,6 @@ import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
-
 import {
   APIPool,
   APIPoolV3,
@@ -17,6 +16,9 @@ import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 export interface Reserve {
   address: string;
@@ -147,11 +149,10 @@ const buildPoolV3Object = async (
     return undefined;
   }
 
-  const tradingFeesApr = calcApr(
-    apiPool.fees24h.usd,
-    apiPool.stakedBalance.usd
-  );
+  // ALL programs of this pool
+  const programs = rewardsPrograms?.filter((p) => p.pool === apiPool.poolDltId);
 
+  // Fetch ID of the latest program
   let latestProgramId: string;
   try {
     const id = await ContractsApi.StandardRewards.read.latestProgramId(
@@ -162,24 +163,29 @@ const buildPoolV3Object = async (
     console.error('Failed to read latest program id', e);
   }
 
+  // The latest program
+  const latestProgram = programs?.find((p) => p.id === latestProgramId);
+
+  // Calculate APR
   let standardRewardsApr = 0;
-  const filteredPrograms = rewardsPrograms?.filter(
-    (p) => p.pool === apiPool.poolDltId
-  );
-
-  const latestProgram = filteredPrograms?.find((p) => p.id === latestProgramId);
-
-  if (filteredPrograms && filteredPrograms.length) {
-    standardRewardsApr = filteredPrograms.reduce((acc, data) => {
-      // TODO - currently assuming reward token to be BNT
-      const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
-      const rewardRate24h = toBigNumber(rewardRate)
-        .times(60 * 60)
-        .times(24);
-      acc += calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
-      return acc;
-    }, 0);
+  if (programs && programs.length) {
+    standardRewardsApr = programs
+      // Only use APR from active programs
+      .filter((p) => p.isActive)
+      .reduce((acc, data) => {
+        // TODO - currently assuming reward token to be BNT
+        const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+        const rewardRate24h = toBigNumber(rewardRate)
+          .times(60 * 60)
+          .times(24);
+        return acc + calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
+      }, 0);
   }
+
+  const tradingFeesApr = calcApr(
+    apiPool.fees24h.usd,
+    apiPool.stakedBalance.usd
+  );
 
   const totalApr = toBigNumber(tradingFeesApr)
     .plus(standardRewardsApr)
@@ -193,7 +199,7 @@ const buildPoolV3Object = async (
       total: totalApr,
     },
     reserveToken,
-    programs: filteredPrograms ?? [],
+    programs: programs ?? [],
     latestProgram,
   };
 };

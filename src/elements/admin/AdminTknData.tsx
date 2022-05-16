@@ -2,17 +2,13 @@ import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { PoolV3 } from 'services/observables/pools';
-import {
-  getPortfolioHoldings,
-  getStandardRewards,
-} from 'store/portfolio/v3Portfolio';
+import { getStandardRewards } from 'store/portfolio/v3Portfolio';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 
 export const AdminTknData = () => {
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const allV3Pools = useAppSelector<PoolV3[]>((state) => state.pool.v3Pools);
-  const holdings = useAppSelector(getPortfolioHoldings);
   const userStandardRewardPrograms = useAppSelector(getStandardRewards);
 
   return (
@@ -47,35 +43,6 @@ export const AdminTknData = () => {
       </div>
 
       <div className="space-y-20">
-        <h2>Your Pool Token holdings</h2>
-        {holdings.map((holding) => (
-          <div key={holding.pool.poolDltId}>
-            <div>{holding.pool.reserveToken.name}</div>
-            <div>Pool Token Balance: {holding.poolTokenBalance}</div>
-            <div>To underlying Token: {holding.tokenBalance}</div>
-            {holding.standardStakingReward && (
-              <div>
-                <div>Standard Staking:</div>
-                <div>
-                  Pool Token staked:{' '}
-                  {shrinkToken(
-                    holding.standardStakingReward.poolTokenAmountWei,
-                    18
-                  )}
-                </div>
-                <div>
-                  Token value:{' '}
-                  {shrinkToken(
-                    holding.standardStakingReward.tokenAmountWei,
-                    holding.pool.decimals
-                  )}
-                </div>
-                <div>Combined Token Value: {holding.combinedTokenBalance}</div>
-              </div>
-            )}
-          </div>
-        ))}
-
         <h2>Your Joined Standard Reward Programs</h2>
         {userStandardRewardPrograms.map((group) => (
           <div key={group.groupId}>

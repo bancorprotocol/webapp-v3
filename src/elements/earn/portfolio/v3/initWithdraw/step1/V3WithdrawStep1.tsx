@@ -36,20 +36,14 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInTkn,
   amount,
 }: Props) => {
-  const {
-    token,
-    setBalance,
-    isInputError,
-    combinedTokenBalance,
-    percentageUnstaked,
-    showBreakdown,
-  } = useV3WithdrawStep1({
-    holding,
-    setStep,
-    inputTkn,
-    setInputTkn,
-    setInputFiat,
-  });
+  const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
+    useV3WithdrawStep1({
+      holding,
+      setStep,
+      inputTkn,
+      setInputTkn,
+      setInputFiat,
+    });
 
   const skipStep2 = useMemo(
     () => new BigNumber(inputTkn).lte(holding.tokenBalance),
@@ -92,7 +86,7 @@ const V3WithdrawStep1 = ({
             />
           </div>
         )}
-        Available {prettifyNumber(combinedTokenBalance)} {token.symbol}
+        Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
       </button>
 
       <TokenInputV3
