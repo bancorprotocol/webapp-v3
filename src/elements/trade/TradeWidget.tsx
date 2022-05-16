@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigation } from 'hooks/useNavigation';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 
 interface Props {
   from?: string;
@@ -67,7 +68,35 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
             (isLoading && tradeType === 'bySource') || fromInput?.isTyping
           }
         />
-        <Button className="w-full mt-10">Trade</Button>
+        {fromInput && toInput && fromInput.inputTkn !== '' && (
+          <div className="px-10 mt-10">
+            <div className="flex justify-between">
+              <div>Rate</div>
+              <div>
+                1 {fromInput?.token.symbol} ={' '}
+                {prettifyNumber(
+                  toBigNumber(toInput?.inputTkn ?? 0).div(
+                    fromInput?.inputTkn ?? 0
+                  )
+                )}{' '}
+                {toInput?.token.symbol}
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div>Price Impact</div>
+              <div>1 {fromInput?.token.symbol}</div>
+            </div>
+          </div>
+        )}
+
+        <Button
+          className="w-full mt-10"
+          disabled={!toBigNumber(fromInput?.inputTkn ?? 0).gt(0)}
+        >
+          {!toBigNumber(fromInput?.inputTkn ?? 0).gt(0)
+            ? 'Enter Amount'
+            : 'Trade'}
+        </Button>
       </div>
     </div>
   );

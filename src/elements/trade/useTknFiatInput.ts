@@ -45,12 +45,12 @@ export const useTknFiatInput = ({
   const [isTyping, setIsTyping] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedChangeHandler = useCallback(debounce(onDebounce, 200), [
+  const debouncedChangeHandler = useCallback(debounce(onDebounce, 300), [
     token?.address,
     onDebounce,
   ]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSetIsTyping = useCallback(debounce(setIsTyping, 200), [
+  const debouncedSetIsTyping = useCallback(debounce(setIsTyping, 300), [
     token?.address,
   ]);
 

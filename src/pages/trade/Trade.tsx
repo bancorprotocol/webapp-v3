@@ -17,6 +17,8 @@ export const Trade = () => {
     <Page>
       <div className="flex justify-center">
         <div className="content-block p-10 rounded-40">
+          <h2 className="text-[22px] ml-20 mt-20">Trade</h2>
+          <hr className="border-1 border-fog my-20 -mx-10" />
           <TradeWidget from={from} to={to} tokens={tokens} />
         </div>
       </div>

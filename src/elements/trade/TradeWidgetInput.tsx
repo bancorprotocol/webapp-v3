@@ -2,7 +2,7 @@ import { useAppSelector } from 'store/index';
 import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 
@@ -28,6 +28,11 @@ export const TradeWidgetInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
+  const value = useMemo(() => {
+    if (!input) return '';
+    return isFiat ? input.inputFiat : input.inputTkn;
+  }, [input, isFiat]);
+
   const handleFocusChange = (state: boolean) => {
     if (state) {
       onFocus();
@@ -41,7 +46,18 @@ export const TradeWidgetInput = ({
   return (
     <>
       <div>
-        {label && <div className="mb-10 text-secondary">{label}</div>}
+        <div className="mb-10 text-secondary flex justify-between px-10">
+          {label && <div>{label}</div>}
+          {input?.token &&
+            input?.token.balance &&
+            Number(input?.token.balance) > 0 && (
+              <div>
+                Balance: {prettifyNumber(input?.token.balance)} (
+                {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+              </div>
+            )}
+        </div>
+
         {input ? (
           <div>
             <div
@@ -75,7 +91,13 @@ export const TradeWidgetInput = ({
                     <input
                       ref={inputRef}
                       type="text"
-                      value={isFiat ? input.inputFiat : input.inputTkn}
+                      value={
+                        isFocused
+                          ? value
+                          : value
+                          ? prettifyNumber(value, isFiat)
+                          : ''
+                      }
                       className="w-full text-right text-20 outline-none"
                       onChange={input.handleChange}
                       placeholder={'0.00'}

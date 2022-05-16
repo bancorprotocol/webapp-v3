@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getV3Rate, getV3RateInverse } from 'services/web3/swap/market';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
@@ -28,10 +28,13 @@ export const useTradeInputToken = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const tokensMap = new Map(tokens.map((token) => [token.address, token]));
+  const tokensMap = useMemo(
+    () => new Map(tokens.map((token) => [token.address, token])),
+    [tokens]
+  );
 
-  const fromToken = tokensMap.get(from ?? '');
-  const toToken = tokensMap.get(to ?? '');
+  const fromToken = useMemo(() => tokensMap.get(from ?? ''), [from, tokensMap]);
+  const toToken = useMemo(() => tokensMap.get(to ?? ''), [to, tokensMap]);
 
   const onFromDebounce = useCallback(
     async (val: string) => {
