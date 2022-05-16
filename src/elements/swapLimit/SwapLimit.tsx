@@ -279,15 +279,14 @@ export const SwapLimit = ({
   const isSwapDisabled = () => {
     if (isLoadingRate) return true;
     if (fromError !== '') return true;
-    if (
+    const isInputZero =
       fromAmount === '' ||
       toAmount === '' ||
       rate === '' ||
       new BigNumber(fromAmount).eq(0) ||
       new BigNumber(toAmount).eq(0) ||
-      new BigNumber(rate).eq(0)
-    )
-      return true;
+      new BigNumber(rate).eq(0);
+    if (isInputZero && account) return true;
     if (!toToken) return true;
     if (!account) return false;
     if (
@@ -320,6 +319,7 @@ export const SwapLimit = ({
 
   const swapButtonText = () => {
     if (!toToken) return 'Select a token';
+    if (!account) return 'Connect your wallet';
     else if (
       fromToken.address !== ethToken &&
       keeperDaoTokens.findIndex((x) => x.address === fromToken.address) === -1
