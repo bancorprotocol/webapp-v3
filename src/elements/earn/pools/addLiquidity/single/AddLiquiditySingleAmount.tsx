@@ -32,7 +32,7 @@ export const AddLiquiditySingleAmount = ({
   const { goToPage } = useNavigation();
 
   useEffect(() => {
-    if (isBNTSelected) setErrorMsg('Click Here to Deposit for V3');
+    if (isBNTSelected) setErrorMsg('Deposit to V3');
     else if (new BigNumber(amount).gt(token.balance || 0)) {
       setErrorMsg('Insufficient Balance');
     } else {
