@@ -1,33 +1,56 @@
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-// import { Rewards } from 'services/observables/liquidity';
 import { getTokenById } from 'store/bancor/bancor';
-import { bntToken } from 'services/web3/config';
-import axios from 'axios';
-import useAsyncEffect from 'use-async-effect';
-import { useMemo, useState } from 'react';
+import { bntDecimals, bntToken } from 'services/web3/config';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { shrinkToken } from 'utils/formulas';
+import {
+  getUserRewardsFromSnapshot,
+  getUserRewardsProof,
+} from 'store/liquidity/liquidity';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import {
+  claimSnapshotRewards,
+  stakeSnapshotRewards,
+} from 'services/web3/protection/rewards';
+import {
+  claimRewardsFailedNotification,
+  rejectNotification,
+  rewardsClaimedNotification,
+  rewardsStakedToV3Notification,
+} from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { prettifyNumber } from 'utils/helperFunctions';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const useMyRewards = () => {
-  const [loading, setLoading] = useState(true);
   const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const snapshots = useAppSelector((state) => state.liquidity.snapshots);
+  const userRewards = useAppSelector(getUserRewardsFromSnapshot);
   const account = useAppSelector((state) => state.user.account);
-  const [snapshots, setSnapshots] = useState<any>({});
-  // const rewards = useAppSelector<Rewards | undefined>(
-  //   (state) => state.liquidity.rewards
-  // );
-  const userRewards = useMemo(() => {
-    if (!account) return null;
-    return snapshots[account] || null;
-  }, [account, snapshots]);
+  const proof = useAppSelector(getUserRewardsProof);
+  const dispatch = useDispatch();
+  const { goToPage } = useNavigation();
+  const [hasClaimed, setHasClaimed] = useState(true);
+
+  const handleClaimed = useCallback(async () => {
+    const userClaimed = account
+      ? await ContractsApi.StakingRewardsClaim.read.hasClaimed(account)
+      : true;
+    setHasClaimed(userClaimed);
+  }, [account]);
+
+  useEffect(() => {
+    handleClaimed();
+  }, [handleClaimed]);
 
   const claimable = useMemo(() => {
-    return shrinkToken(userRewards?.claimable ?? 0, bnt?.decimals ?? 18);
-  }, [bnt?.decimals, userRewards?.claimable]);
+    return shrinkToken(userRewards.claimable, bntDecimals);
+  }, [userRewards.claimable]);
 
   const claimed = useMemo(() => {
-    return shrinkToken(userRewards?.totalClaimed ?? 0, bnt?.decimals ?? 18);
-  }, [bnt?.decimals, userRewards?.totalClaimed]);
+    return shrinkToken(userRewards.totalClaimed, bntDecimals);
+  }, [userRewards.totalClaimed]);
 
   const totalRewards = useMemo(() => {
     return new BigNumber(claimable).plus(claimed);
@@ -45,27 +68,89 @@ export const useMyRewards = () => {
     return claimableRewards.times(bnt?.usdPrice ?? 0);
   }, [bnt?.usdPrice, claimableRewards]);
 
-  useAsyncEffect(async () => {
-    try {
-      const res = await axios.get(
-        '/rewards-snapshot.2022-05-13T16.25.43.632Z.min.json',
-        {
-          timeout: 10000,
+  const canClaim =
+    !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
+
+  const stakeRewardsToV3 = useCallback(async () => {
+    if (canClaim) {
+      stakeSnapshotRewards(
+        account,
+        userRewards.claimable,
+        proof,
+        (txHash: string) => {
+          console.log('txHash', txHash);
+        },
+        (txHash: string) => {
+          handleClaimed();
+          rewardsStakedToV3Notification(
+            dispatch,
+            txHash,
+            prettifyNumber(claimableRewards)
+          );
+          goToPage.portfolio();
+        },
+        () => rejectNotification(dispatch),
+        () => {
+          claimRewardsFailedNotification(dispatch);
         }
       );
-      setSnapshots(res.data);
-      setLoading(false);
-    } catch (e) {
-      console.log('failed to fetch rewards snapshots', e);
-      setLoading(false);
     }
-  }, []);
+  }, [
+    account,
+    canClaim,
+    claimableRewards,
+    dispatch,
+    goToPage,
+    handleClaimed,
+    proof,
+    userRewards.claimable,
+  ]);
+
+  const claimRewardsToWallet = useCallback(async () => {
+    if (canClaim) {
+      claimSnapshotRewards(
+        account,
+        userRewards.claimable,
+        proof,
+        (txHash: string) => {
+          console.log('txHash', txHash);
+        },
+        (txHash: string) => {
+          handleClaimed();
+          rewardsClaimedNotification(
+            dispatch,
+            txHash,
+            prettifyNumber(claimableRewards)
+          );
+          goToPage.portfolioV2();
+        },
+        () => rejectNotification(dispatch),
+        () => {
+          claimRewardsFailedNotification(dispatch);
+        }
+      );
+    }
+  }, [
+    account,
+    canClaim,
+    claimableRewards,
+    dispatch,
+    goToPage,
+    handleClaimed,
+    proof,
+    userRewards.claimable,
+  ]);
 
   return {
     totalRewards,
     totalRewardsUsd,
     claimableRewards,
     claimableRewardsUsd,
-    loading,
+    loading: !snapshots,
+    userRewards,
+    hasClaimed,
+    handleClaimed,
+    stakeRewardsToV3,
+    claimRewardsToWallet,
   };
 };

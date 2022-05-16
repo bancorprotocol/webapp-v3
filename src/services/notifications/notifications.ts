@@ -631,3 +631,33 @@ export const confirmDepositNotification = (
     },
     dispatch
   );
+
+export const rewardsStakedToV3Notification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.success,
+      title: 'Success!',
+      msg: `${amount} BNT rewards were successfully staked to V3.`,
+      txHash,
+    },
+    dispatch
+  );
+
+export const rewardsClaimedNotification = (
+  dispatch: any,
+  txHash: string,
+  amount: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.success,
+      title: 'Success!',
+      msg: `${amount} BNT rewards were successfully claimed to your wallet.`,
+      txHash,
+    },
+    dispatch
+  );
