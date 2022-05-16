@@ -196,6 +196,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           token={selectedToken}
           setToken={setSelectedToken}
           errorMsg={errorMsg}
+          isBNTSelected={isBNTSelected}
           setErrorMsg={setErrorMsg}
         />
       </div>
@@ -214,6 +215,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         onStart={handleCTAClick}
         amount={amount}
         errorMsg={handleError()}
+        isBNTSelected={isBNTSelected}
       />
       {ModalApprove}
     </Widget>

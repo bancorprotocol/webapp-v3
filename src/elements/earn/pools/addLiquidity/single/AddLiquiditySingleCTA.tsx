@@ -7,13 +7,25 @@ interface Props {
   onStart: Function;
   amount: string;
   errorMsg: string;
+  isBNTSelected: boolean;
 }
 
-export const AddLiquiditySingleCTA = ({ onStart, amount, errorMsg }: Props) => {
+export const AddLiquiditySingleCTA = ({
+  onStart,
+  amount,
+  errorMsg,
+  isBNTSelected,
+}: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
 
   const button = () => {
+    if (isBNTSelected)
+      return {
+        label: 'Deposits are available on V3 pool',
+        disabled: true,
+        variant: ButtonVariant.ERROR,
+      };
     if (errorMsg) {
       return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
     }

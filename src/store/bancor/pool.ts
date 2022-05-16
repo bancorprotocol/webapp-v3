@@ -66,6 +66,19 @@ export const getPoolsV3Map = createSelector(
   }
 );
 
+export const getV2PoolsWithoutV3 = createSelector(
+  (state: RootState) => state.pool.v2Pools,
+  (state: RootState) => state.pool.v3Pools,
+  (poolsV2: Pool[], poolsV3: PoolV3[]) => {
+    return poolsV2.filter(
+      (v2Pool) =>
+        poolsV3.findIndex(
+          (v3Pool) => v2Pool.reserves[0].address === v3Pool.reserveToken.address
+        ) === -1
+    );
+  }
+);
+
 export const getProtectedPools = createSelector(getPools, (pools: Pool[]) =>
   pools.filter((p) => p.isProtected)
 );
