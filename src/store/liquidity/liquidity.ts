@@ -1,7 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { get } from 'lodash';
-import { Rewards } from 'services/observables/liquidity';
+import { Rewards, SnapshotRewards } from 'services/observables/liquidity';
 import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
   ProtectedPosition,
@@ -10,6 +10,10 @@ import {
 import { PoolToken } from 'services/observables/pools';
 import { RootState } from 'store';
 import { bntToken } from 'services/web3/config';
+import { Dictionary } from 'services/web3/types';
+import MerkleTree from 'merkletreejs';
+import { getAddress, keccak256 } from 'ethers/lib/utils';
+import { generateLeaf } from 'services/web3/protection/rewards';
 
 interface LiquidityState {
   poolTokens: PoolToken[];
@@ -20,6 +24,7 @@ interface LiquidityState {
   loadingPositions: boolean;
   loadingRewards: boolean;
   loadingLockedBnt: boolean;
+  snapshots?: Dictionary<SnapshotRewards>;
 }
 
 const initialState: LiquidityState = {
@@ -34,6 +39,7 @@ const initialState: LiquidityState = {
   loadingPositions: false,
   loadingRewards: false,
   loadingLockedBnt: false,
+  snapshots: undefined,
 };
 
 const liquiditySlice = createSlice({
@@ -63,6 +69,9 @@ const liquiditySlice = createSlice({
     },
     setProtocolBnBNTAmount: (state, action) => {
       state.protocolBnBNTAmount = action.payload;
+    },
+    setSnapshots: (state, action) => {
+      state.snapshots = action.payload;
     },
   },
 });
@@ -210,6 +219,58 @@ export const getStakeSummary = createSelector(
   }
 );
 
+export const getUserRewardsFromSnapshot = createSelector(
+  (state: RootState) => state.user.account,
+  (state: RootState) => state.liquidity.snapshots,
+  (
+    account: string | null | undefined,
+    snapshots?: Dictionary<SnapshotRewards>
+  ) => {
+    const empty = { claimable: '0', totalClaimed: '0' };
+    if (account && snapshots) {
+      if (snapshots[account]) {
+        return snapshots[account];
+      }
+      // fallback to key not found due to casing
+      const accAddress = getAddress(account);
+      const entry = Object.entries(snapshots).find(
+        ([address]) => getAddress(address) === accAddress
+      );
+      return entry ? entry[1] : empty;
+    }
+
+    return empty;
+  }
+);
+
+export const getMerkleTree = createSelector(
+  (state: RootState) => state.liquidity.snapshots,
+  (snapshots?: Dictionary<SnapshotRewards>) => {
+    if (!snapshots) return null;
+    return new MerkleTree(
+      // Generate leafs
+      Object.entries(snapshots).map(([address, { claimable }]) =>
+        generateLeaf(address, claimable)
+      ),
+      keccak256,
+      { sortPairs: true }
+    );
+  }
+);
+
+export const getUserRewardsProof = createSelector(
+  (state: RootState) => state.user.account,
+  getUserRewardsFromSnapshot,
+  getMerkleTree,
+  (account: string | null | undefined, userRewards, tree) => {
+    if (!account || !tree || userRewards.claimable === '0') return null;
+    const { claimable } = userRewards;
+    const leaf: Buffer = generateLeaf(account, claimable);
+    const proof: string[] = tree.getHexProof(leaf);
+    return proof;
+  }
+);
+
 export const {
   setPoolTokens,
   setLockedAvailableBNT,
@@ -219,6 +280,7 @@ export const {
   setLoadingRewards,
   setLoadingLockedBnt,
   setProtocolBnBNTAmount,
+  setSnapshots,
 } = liquiditySlice.actions;
 
 export const liquidity = liquiditySlice.reducer;

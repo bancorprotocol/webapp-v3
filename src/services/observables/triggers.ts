@@ -24,12 +24,14 @@ import {
   setProtectedPositions,
   setProtocolBnBNTAmount,
   setRewards,
+  setSnapshots,
 } from 'store/liquidity/liquidity';
 import {
   lockedAvailableBnt$,
   protectedPositions$,
   protocolBnBNTAmount$,
   rewards$,
+  snapshots$,
 } from './liquidity';
 import {
   setHoldingsRaw,
@@ -100,6 +102,8 @@ export const subscribeToObservables = (dispatch: any) => {
   rewards$.subscribe((rewards) => {
     dispatch(setRewards(rewards));
   });
+
+  snapshots$.subscribe((snapshots) => dispatch(setSnapshots(snapshots)));
 
   poolTokens$.subscribe((poolTokens) => dispatch(setPoolTokens(poolTokens)));
 

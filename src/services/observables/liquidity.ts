@@ -8,6 +8,7 @@ import {
 } from 'services/web3/protection/positions';
 import {
   fetchPendingRewards,
+  fetchSnapshotRewards,
   fetchTotalClaimedRewards,
 } from 'services/web3/protection/rewards';
 import { switchMapIgnoreThrow } from './customOperators';
@@ -43,6 +44,10 @@ export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
 export interface Rewards {
   pendingRewards: string;
   totalRewards: string;
+}
+export interface SnapshotRewards {
+  claimable: string;
+  totalClaimed: string;
 }
 
 export const rewards$ = combineLatest([user$, fifteenSeconds$]).pipe(
@@ -95,3 +100,5 @@ const fetchProtocolBnBNTAmount = async () => {
 export const protocolBnBNTAmount$ = from(fetchProtocolBnBNTAmount()).pipe(
   shareReplay(1)
 );
+
+export const snapshots$ = from(fetchSnapshotRewards()).pipe(shareReplay(1));
