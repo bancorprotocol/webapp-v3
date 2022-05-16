@@ -11,7 +11,7 @@ export const Navigate = ({
 }) => {
   const href = to.startsWith('http');
   return href ? (
-    <a href={to} target="_blank" rel="noreferrer">
+    <a className={className} href={to} target="_blank" rel="noreferrer">
       {children}
     </a>
   ) : (
