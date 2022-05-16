@@ -89,7 +89,7 @@ export const PoolsTable = () => {
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-20 text-primary">
             {cellData.value.total.toFixed(2)}%
-            {cellData.row.original.latestProgram?.isEnabled && (
+            {cellData.row.original.latestProgram?.isActive && (
               <Tooltip
                 content={
                   <span className="text-16">
