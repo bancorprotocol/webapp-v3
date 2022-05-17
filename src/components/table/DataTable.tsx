@@ -24,6 +24,7 @@ interface TableProps<D extends object> {
   isLoading?: boolean;
   stickyColumn?: boolean;
   search?: string;
+  noPagination?: boolean;
 }
 
 export const DataTable = <D extends object>({
@@ -33,6 +34,7 @@ export const DataTable = <D extends object>({
   isLoading,
   stickyColumn,
   search,
+  noPagination = data.length <= 6,
 }: TableProps<D>) => {
   const {
     getTableProps,
@@ -76,6 +78,7 @@ export const DataTable = <D extends object>({
       <div
         className={`table-responsive ${classNameGenerator({
           'table-sticky-column': stickyColumn,
+          'rounded-10': noPagination,
         })}`}
       >
         <table {...getTableProps()}>
@@ -104,19 +107,20 @@ export const DataTable = <D extends object>({
           ))}
         </div>
       )}
-
-      <TablePagination
-        pageIndex={pageIndex}
-        pageSize={pageSize}
-        pageCount={pageCount}
-        pageOptions={pageOptions}
-        canPreviousPage={canPreviousPage}
-        canNextPage={canNextPage}
-        gotoPage={gotoPage}
-        previousPage={previousPage}
-        nextPage={nextPage}
-        setPageSize={setPageSize}
-      />
+      {!noPagination && (
+        <TablePagination
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          pageCount={pageCount}
+          pageOptions={pageOptions}
+          canPreviousPage={canPreviousPage}
+          canNextPage={canNextPage}
+          gotoPage={gotoPage}
+          previousPage={previousPage}
+          nextPage={nextPage}
+          setPageSize={setPageSize}
+        />
+      )}
     </>
   );
 };
