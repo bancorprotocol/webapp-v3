@@ -2,6 +2,7 @@ import { Ticker } from 'components/ticker/Ticker';
 import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
+import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 
 export const TopPools = () => {
   const pools = useAppSelector(getTopPoolsV3);
@@ -16,24 +17,22 @@ export const TopPools = () => {
                 return (
                   <div
                     key={`pool-table-key-${index}`}
-                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-graphite dark:border-grey transition-all duration-300"
+                    className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                   >
-                    <div className="flex">
-                      <Image
-                        src={pool.reserveToken.logoURI}
-                        alt="Token Logo"
-                        className="bg-fog rounded-full w-50 h-50"
-                      />
-                    </div>
+                    <Image
+                      src={pool.reserveToken.logoURI}
+                      alt="Token Logo"
+                      className="bg-fog rounded-full w-50 h-50"
+                    />
                     <div className="ml-10 text-12 dark:text-graphite text-left">
                       <div className="font-medium">
                         {pool.reserveToken.symbol}
                       </div>
-                      <div className="text-16">
-                        <span className="text-primary text-20 font-semibold">
-                          {pool.apr.total.toFixed(0)}%
-                        </span>{' '}
-                        APR
+                      <div className="flex items-center gap-5 text-primary text-16">
+                        {pool.apr.total.toFixed(2)}%
+                        {pool.latestProgram?.isActive && (
+                          <IconGift className="w-14 h-14" />
+                        )}
                       </div>
                     </div>
                   </div>
