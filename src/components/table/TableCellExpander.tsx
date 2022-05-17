@@ -52,7 +52,7 @@ export const TableCellExpander = ({
             {Expander(isExpanded)}
           </button>
         )}
-        {subMenu && (
+        {subMenu && !canExpand && (
           <Popover className="block relative">
             <Popover.Button>
               <IconMore className="rotate-90 w-16" />
