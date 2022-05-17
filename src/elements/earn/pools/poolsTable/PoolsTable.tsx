@@ -151,7 +151,7 @@ export const PoolsTable = () => {
                 <SearchInput
                   value={search}
                   setValue={setSearch}
-                  className="w-[300px] rounded-20 h-[35px]"
+                  className="w-[170px] md:w-[300px] rounded-20 h-[35px]"
                 />
               </div>
             </div>

@@ -115,7 +115,7 @@ export const EarnTableV2 = () => {
               <SearchInput
                 value={search}
                 setValue={setSearch}
-                className="max-w-[300px] rounded-20 h-[35px]"
+                className="w-[170px] md:w-[300px] rounded-20 h-[35px]"
               />
             </div>
           </div>

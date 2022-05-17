@@ -23,7 +23,7 @@ export const PoolsTableSort = ({
   setLowEarnRate: Function;
 }) => {
   return (
-    <Popover className="hidden md:block relative">
+    <Popover className="relative">
       <Popover.Button className="flex items-center">
         Filter
         <IconChevronDown className="w-12 ml-10" />
