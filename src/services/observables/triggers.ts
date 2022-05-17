@@ -10,7 +10,6 @@ import {
   setStatisticsV3,
   setTokens,
   setTokenLists,
-  setAllStandardRewardPrograms,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
@@ -25,12 +24,14 @@ import {
   setProtectedPositions,
   setProtocolBnBNTAmount,
   setRewards,
+  setSnapshots,
 } from 'store/liquidity/liquidity';
 import {
   lockedAvailableBnt$,
   protectedPositions$,
   protocolBnBNTAmount$,
   rewards$,
+  snapshots$,
 } from './liquidity';
 import {
   setHoldingsRaw,
@@ -52,7 +53,6 @@ import {
 } from 'services/observables/tokenLists';
 import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
-import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
@@ -103,6 +103,8 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setRewards(rewards));
   });
 
+  snapshots$.subscribe((snapshots) => dispatch(setSnapshots(snapshots)));
+
   poolTokens$.subscribe((poolTokens) => dispatch(setPoolTokens(poolTokens)));
 
   lockedAvailableBnt$.subscribe((lockedAvailableBnt) => {
@@ -135,10 +137,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   portfolioWithdrawalSettings$.subscribe((withdrawalSettings) => {
     dispatch(setWithdrawalSettings(withdrawalSettings));
-  });
-
-  standardRewardPrograms$.subscribe((rewards) => {
-    dispatch(setAllStandardRewardPrograms(rewards));
   });
 
   protocolBnBNTAmount$.subscribe((protocolBnBNTAmount) => {

@@ -1,12 +1,19 @@
 import { stakingRewards$ } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { StakingRewards, StakingRewards__factory } from '../abis/types';
-import { web3, writeWeb3 } from '..';
-import { ProtectedLiquidity } from './positions';
-import { multicall, MultiCall } from '../multicall/multicall';
-import { ErrorCode } from '../types';
-import { changeGas } from '../config';
+import {
+  StakingRewards,
+  StakingRewards__factory,
+} from 'services/web3/abis/types';
+import { web3, writeWeb3 } from 'services/web3';
+import { ProtectedLiquidity } from 'services/web3/protection/positions';
+import { multicall, MultiCall } from 'services/web3/multicall/multicall';
+import { Dictionary, ErrorCode } from 'services/web3/types';
+import { changeGas } from 'services/web3/config';
+import axios from 'axios';
+import { SnapshotRewards } from 'services/observables/liquidity';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { getAddress, solidityKeccak256 } from 'ethers/lib/utils';
 
 export const stakeRewards = async ({
   amount,
@@ -177,7 +184,7 @@ export const fetchedPendingRewards = async (
   );
 
   const calls = positions.map((position) =>
-    buildPnedingRewardsCall(contract, user, position)
+    buildPendingRewardsCall(contract, user, position)
   );
   const res = await multicall(calls);
   if (res)
@@ -189,7 +196,7 @@ export const fetchedPendingRewards = async (
   return [];
 };
 
-const buildPnedingRewardsCall = (
+const buildPendingRewardsCall = (
   contract: StakingRewards,
   user: string,
   position: ProtectedLiquidity
@@ -200,4 +207,103 @@ const buildPnedingRewardsCall = (
     methodName: 'pendingReserveRewards',
     methodParameters: [user, position.poolToken, position.reserveToken.address],
   };
+};
+
+export const fetchSnapshotRewards = async () => {
+  try {
+    const res = await axios.get<Dictionary<SnapshotRewards>>(
+      '/rewards-snapshot.2022-05-13T16.25.43.632Z.min.json',
+      {
+        timeout: 10000,
+      }
+    );
+    return res.data;
+  } catch (e) {
+    console.error('failed to fetch rewards snapshots', e);
+  }
+};
+
+const _handleSnapshotRewards = async (
+  account: string,
+  amount: string,
+  proof: string[],
+  method: 'claim' | 'stake',
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
+) => {
+  try {
+    const tx =
+      method === 'stake'
+        ? await ContractsApi.StakingRewardsClaim.write.stakeRewards(
+            account,
+            amount,
+            proof
+          )
+        : await ContractsApi.StakingRewardsClaim.write.claimRewards(
+            account,
+            amount,
+            proof
+          );
+    onHash(tx.hash);
+    await tx.wait();
+    onCompleted();
+  } catch (e: any) {
+    console.error(e);
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed();
+  }
+};
+
+export const stakeSnapshotRewards = async (
+  account: string,
+  amount: string,
+  proof: string[],
+  onHash: (txHash: string) => void,
+  onCompleted: (txHash: string) => void,
+  rejected: Function,
+  failed: Function
+) => {
+  _handleSnapshotRewards(
+    account,
+    amount,
+    proof,
+    'stake',
+    onHash,
+    onCompleted,
+    rejected,
+    failed
+  );
+};
+
+export const claimSnapshotRewards = async (
+  account: string,
+  amount: string,
+  proof: string[],
+  onHash: (txHash: string) => void,
+  onCompleted: Function,
+  rejected: Function,
+  failed: Function
+) => {
+  _handleSnapshotRewards(
+    account,
+    amount,
+    proof,
+    'claim',
+    onHash,
+    onCompleted,
+    rejected,
+    failed
+  );
+};
+
+export const generateLeaf = (address: string, value: string): Buffer => {
+  return Buffer.from(
+    solidityKeccak256(
+      ['address', 'uint256'],
+      [getAddress(address), value]
+    ).slice(2),
+    'hex'
+  );
 };

@@ -4,8 +4,10 @@ import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
-import { StakeRewardsBtn } from './StakeRewardsBtn';
 import { BancorURL } from 'router/bancorURL.service';
+import { Button, ButtonSize } from 'components/button/Button';
+import { useAppSelector } from 'store';
+import { getUserRewardsProof } from 'store/liquidity/liquidity';
 
 export const MyRewards = () => {
   const {
@@ -14,19 +16,29 @@ export const MyRewards = () => {
     claimableRewards,
     claimableRewardsUsd,
     loading,
+    userRewards,
+    hasClaimed,
+    stakeRewardsToV3,
   } = useMyRewards();
+  const account = useAppSelector((state) => state.user.account);
+  const proof = useAppSelector(getUserRewardsProof);
+  const canClaim =
+    !hasClaimed && !!account && userRewards.claimable !== '0' && !!proof;
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex items-center justify-between">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
-          <StakeRewardsBtn
-            buttonLabel="Stake Rewards"
-            buttonClass="btn btn-primary btn-xs"
-          />
+          <Button
+            onClick={stakeRewardsToV3}
+            size={ButtonSize.SMALL}
+            disabled={!canClaim}
+          >
+            Stake to V3
+          </Button>
           <Popover className="relative block">
-            <Popover.Button disabled>
+            <Popover.Button disabled={!canClaim}>
               <IconMore className="w-16 rotate-90" />
             </Popover.Button>
             <DropdownTransition>
@@ -71,7 +83,7 @@ export const MyRewards = () => {
         ) : (
           <div>
             <div className="mb-5">Claimable Rewards</div>
-            {claimableRewards && claimableRewardsUsd ? (
+            {!hasClaimed && claimableRewards && claimableRewardsUsd ? (
               <div>
                 <span className="mr-5 font-semibold md:text-16">
                   {prettifyNumber(claimableRewards)} BNT

@@ -149,7 +149,7 @@ export const Vote = () => {
             footer={
               <div className="flex items-end h-[48px]">
                 <a
-                  href="https://support.bancor.network/hc/en-us/articles/5476957904914-Guide-Bancor-Governance-Voting"
+                  href="https://support.bancor.network/hc/en-us/articles/4415840089106-What-is-vBNT-and-how-do-I-use-my-vBNT-to-vote-on-chain-on-proposals-"
                   target="_blank"
                   className="flex items-center text-primary dark:text-primary-light font-medium"
                   rel="noreferrer"

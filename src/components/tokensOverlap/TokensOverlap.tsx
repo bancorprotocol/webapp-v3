@@ -13,9 +13,9 @@ export const TokensOverlap = ({
 
   return (
     <div className="flex">
-      {tokens.slice(0, maxLogos).map((token) => (
+      {tokens.slice(0, maxLogos).map((token, idx) => (
         <Image
-          key={token.symbol}
+          key={token.symbol + idx}
           src={token.logoURI}
           alt="Token Logo"
           className={`w-30 h-30 border border-fog dark:border-black rounded-full bg-fog dark:bg-black`}

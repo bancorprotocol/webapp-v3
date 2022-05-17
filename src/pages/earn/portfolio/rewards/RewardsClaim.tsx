@@ -1,24 +1,23 @@
 import { Widget } from 'components/widgets/Widget';
 import { RewardsClaimAmount } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimAmount';
-import { RewardsClaimInfo } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimInfo';
-import { useRewardsClaim } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/useRewardsClaim';
 import { RewardsClaimCTA } from 'elements/earn/portfolio/liquidityProtection/rewards/claim/RewardsClaimCTA';
 import { useNavigation } from 'hooks/useNavigation';
+import { useMyRewards } from 'elements/earn/portfolio/liquidityProtection/rewards/useMyRewards';
+import { useAppSelector } from 'store';
 
 export const RewardsClaim = () => {
-  const { claimableRewards, account } = useRewardsClaim({});
+  const account = useAppSelector((state) => state.user.account);
+  const { claimableRewards, hasClaimed } = useMyRewards();
   const { goToPage } = useNavigation();
 
   return (
     <div className="pt-40 md:pt-[100px]">
       <Widget title="Claim Rewards" goBack={goToPage.portfolioV2}>
         <div className="px-10 pb-10">
-          <RewardsClaimInfo />
-          <RewardsClaimAmount amount={claimableRewards} />
-          <RewardsClaimCTA
-            account={account}
-            claimableRewards={claimableRewards}
+          <RewardsClaimAmount
+            amount={hasClaimed ? '0' : claimableRewards.toString()}
           />
+          <RewardsClaimCTA account={account} />
         </div>
       </Widget>
     </div>

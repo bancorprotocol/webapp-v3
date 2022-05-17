@@ -14,6 +14,8 @@ import { Tooltip } from 'components/tooltip/Tooltip';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
+import { sortNumbersByKey } from 'utils/pureFunctions';
+import { Navigate } from 'components/navigate/Navigate';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -40,7 +42,7 @@ export const PoolsTable = () => {
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.tradingLiquidityTKN.usd, true)}</div>
+          <div>{prettifyNumber(row.stakedBalance.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Volume 24h
@@ -87,24 +89,26 @@ export const PoolsTable = () => {
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-20 text-primary">
             {cellData.value.total.toFixed(2)}%
-            <Tooltip
-              content={
-                <>
-                  Rewards enabled on this token.{' '}
-                  <a
-                    href="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
-                    className="hover:underline text-primary"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Read about the rewards here
-                  </a>
-                </>
-              }
-              button={<IconGift className="w-14 h-14" />}
-            />
+            {cellData.row.original.latestProgram?.isActive && (
+              <Tooltip
+                content={
+                  <span className="text-16">
+                    Rewards enabled on this token.{' '}
+                    <Navigate
+                      to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
+                      className="hover:underline text-primary"
+                    >
+                      Read about the rewards here
+                    </Navigate>
+                  </span>
+                }
+                button={<IconGift className="w-14 h-14" />}
+              />
+            )}
           </div>
         ),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['apr', 'total']),
         tooltip: 'Rewards enabled on this token. Read about the rewards here',
         minWidth: 130,
         sortDescFirst: true,

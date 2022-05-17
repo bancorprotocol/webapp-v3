@@ -2,6 +2,8 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
+import { PoolV3 } from 'services/observables/pools';
+import dayjs from 'dayjs';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -18,26 +20,24 @@ export const buildProviderStakeCall = (
 };
 
 export interface RewardsProgramStake {
-  rewardRate: string;
+  id: string;
+  poolDltId: string;
   poolTokenAmountWei: string;
   tokenAmountWei: string;
-  isEnabled: boolean;
-  pool: string;
-  poolToken: string;
-  startTime: number;
-  id: string;
   rewardsToken: Token;
   pendingRewardsWei: string;
-  endTime: number;
 }
 
 export const fetchStandardRewardsByUser = async (
   user: string,
-  tokensV3: Token[]
+  pools: PoolV3[]
 ): Promise<RewardsProgramStake[]> => {
   if (!user) {
     throw new Error('no user address found');
   }
+  const poolsMap = new Map(pools.map((pool) => [pool.poolDltId, pool]));
+  const allPrograms = pools.flatMap((p) => p.programs);
+
   try {
     const ids = await ContractsApi.StandardRewards.read.providerProgramIds(
       user
@@ -48,18 +48,21 @@ export const fetchStandardRewardsByUser = async (
     if (!res) {
       throw new Error('Multicall Error while fetching provider stake');
     }
+
     const poolTokenStakedWei = new Map(
       res.map((bn, idx) => [
         ids[idx].toString(),
         bn && bn.length ? (bn[0].toString() as string) : '0',
       ])
     );
-    const programs = await ContractsApi.StandardRewards.read.programs(ids);
+
+    const programs = allPrograms.filter((p) =>
+      ids.find((id) => id.toString() === p.id)
+    );
 
     return await Promise.all(
       programs.map(async (program) => {
-        const poolTokenAmountWei =
-          poolTokenStakedWei.get(program.id.toString()) || '0';
+        const poolTokenAmountWei = poolTokenStakedWei.get(program.id) || '0';
         const tokenAmountWei =
           await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
             program.pool,
@@ -71,20 +74,13 @@ export const fetchStandardRewardsByUser = async (
             program.id,
           ]);
 
-        const rewardsToken = tokensV3.find(
-          (token) => token.address === program.rewardsToken
-        );
+        const rewardsToken = poolsMap.get(program.rewardsToken)?.reserveToken;
 
         return {
-          rewardRate: program.rewardRate.toString(),
-          isEnabled: program.isEnabled,
-          pool: program.pool,
-          poolToken: program.poolToken,
-          startTime: program.startTime,
-          id: program.id.toString(),
+          id: program.id,
+          poolDltId: program.pool,
           rewardsToken: rewardsToken!,
           pendingRewardsWei: pendingRewardsWei.toString(),
-          endTime: program.endTime,
           poolTokenAmountWei,
           tokenAmountWei: tokenAmountWei.toString(),
         };
@@ -105,6 +101,7 @@ export interface RewardsProgramRaw {
   startTime: number;
   endTime: number;
   rewardRate: string;
+  isActive: boolean;
 }
 
 export interface RewardsProgramV3
@@ -130,6 +127,10 @@ export const fetchAllStandardRewards = async (): Promise<
       startTime: program.startTime,
       endTime: program.endTime,
       rewardRate: program.rewardRate.toString(),
+      isActive:
+        program.isEnabled &&
+        program.startTime <= dayjs.utc().unix() &&
+        program.endTime >= dayjs.utc().unix(),
     }));
   } catch (e) {
     console.error(e);

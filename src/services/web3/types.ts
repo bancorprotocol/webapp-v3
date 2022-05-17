@@ -18,7 +18,9 @@ export enum ErrorCode {
 export enum SignatureType {
   EIP712 = 2,
 }
-
+export interface Dictionary<T> {
+  [Key: string]: T;
+}
 export interface RegisteredContracts {
   BancorNetwork: string;
   BancorConverterRegistry: string;
