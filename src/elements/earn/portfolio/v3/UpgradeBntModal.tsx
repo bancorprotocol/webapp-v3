@@ -77,13 +77,13 @@ export const UpgradeBntModal = ({
         <Image
           alt="Token"
           src={position.reserveToken.logoURI}
-          className="bg-silver rounded-full h-50 w-50"
+          className="rounded-full bg-silver h-50 w-50"
         />
         <div>Upgrade BNT</div>
         <div>
           Move all BNT to a single pool and earn from all trades in the network
         </div>
-        <div className="w-full bg-fog dark:bg-black rounded-20 p-20">
+        <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all BNT</div>
             {`${prettifyNumber(totalBNT.tknAmount)} ${
@@ -100,7 +100,7 @@ export const UpgradeBntModal = ({
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
-            Fully upgrade paritialy protected holdings
+            Fully upgrade partially protected holdings
           </div>
         </div>
         <Button
@@ -119,7 +119,7 @@ export const UpgradeBntModal = ({
         >
           No Thanks, just BNT from the {position.pool.name}
         </button>
-        <div className="text-12 text-black-low font-semibold mt-30">
+        <div className="font-semibold text-12 text-black-low mt-30">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
