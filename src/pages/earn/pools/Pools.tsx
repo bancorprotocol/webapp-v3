@@ -15,7 +15,7 @@ export const Pools = () => {
       title={title}
       subtitle={subtitle}
       trailingTitle={
-        <div className="flex items-center space-x-10">
+        <div className="flex items-center space-x-10 text-16">
           <PageNavLink to={BancorURL.earn}>
             <Tooltip
               content={
@@ -39,7 +39,7 @@ export const Pools = () => {
           <PageNavLink to={BancorURL.earnV2}>
             <Tooltip
               content="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
-              button={'V2'}
+              button={<div className="px-6">V2</div>}
             />
           </PageNavLink>
         </div>
