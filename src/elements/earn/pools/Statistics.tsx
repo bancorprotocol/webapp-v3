@@ -19,7 +19,7 @@ export const Statistics = () => {
           <div className="flex items-end">
             <div>
               <div className="text-secondary mb-15">{first.label}</div>
-              <div className="text-[30px] text-black-medium uppercase">
+              <div className="text-[30px] text-black-medium dark:text-white-medium uppercase">
                 {first.value}
               </div>
             </div>
@@ -31,7 +31,9 @@ export const Statistics = () => {
                 <div className="flex items-end">
                   <div>
                     <div className="text-secondary">{item.label}</div>
-                    <div className="text-20 uppercase">{item.value}</div>
+                    <div className="text-20 text-black-medium dark:text-white-medium uppercase">
+                      {item.value}
+                    </div>
                   </div>
                 </div>
               </div>
