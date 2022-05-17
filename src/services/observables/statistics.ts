@@ -68,17 +68,12 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
 
     const statistics: Statistic[] = [
       {
-        label: 'BNT Price',
-        value: '$' + numbro(stats.bntRate).format({ mantissa: 2 }),
-        change24h: bnt24hChange,
-      },
-      {
         label: 'Total Liquidity',
         value: '$' + numbro(totalLiquidity).format(averageFormat),
         change24h: 0,
       },
       {
-        label: 'Volume (24h)',
+        label: 'Volume',
         value: '$' + numbro(totalVolume).format(averageFormat),
         change24h: 0,
       },
@@ -88,7 +83,12 @@ export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
         change24h: 0,
       },
       {
-        label: 'Total BNT Staked',
+        label: 'BNT Price',
+        value: '$' + numbro(stats.bntRate).format({ mantissa: 2 }),
+        change24h: bnt24hChange,
+      },
+      {
+        label: 'BNT Staked',
         value: numbro(totalBNTStaked).format({ mantissa: 2 }) + '%',
       },
     ];
