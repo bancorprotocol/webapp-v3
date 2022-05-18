@@ -74,7 +74,7 @@ export const PoolsTable = () => {
                   alt="Pool Logo"
                   className="w-40 h-40 rounded-full mr-10"
                 />
-                <span>{cellData.value}</span>
+                <span className="text-16">{cellData.value}</span>
               </div>
             }
           />
@@ -87,12 +87,12 @@ export const PoolsTable = () => {
         Header: 'Earn',
         accessor: 'apr',
         Cell: (cellData) => (
-          <div className="flex items-center gap-8 text-20 text-primary">
+          <div className="flex items-center gap-8 text-16 text-primary">
             {cellData.value.total.toFixed(2)}%
             {cellData.row.original.latestProgram?.isActive && (
               <Tooltip
                 content={
-                  <span className="text-16">
+                  <>
                     Rewards enabled on this token.{' '}
                     <Navigate
                       to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
@@ -100,9 +100,9 @@ export const PoolsTable = () => {
                     >
                       Read about the rewards here
                     </Navigate>
-                  </span>
+                  </>
                 }
-                button={<IconGift className="w-14 h-14" />}
+                button={<IconGift className="w-16 h-16" />}
               />
             )}
           </div>
