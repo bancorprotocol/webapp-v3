@@ -16,13 +16,13 @@ export const Portfolio = () => {
   const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
     (state) => state.liquidity.lockedAvailableBNT
   );
-  const { claimableRewards } = useMyRewards();
+  const { hasClaimed } = useMyRewards();
 
   const showV2 =
     v2.length > 0 ||
     lockedAvailableBNT.locked.length > 0 ||
     lockedAvailableBNT.available > 0 ||
-    (claimableRewards.lt(0) && userRewards.claimable !== '0');
+    (!hasClaimed && userRewards.claimable !== '0');
 
   const title = 'Portfolio';
 
