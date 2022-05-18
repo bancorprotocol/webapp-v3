@@ -282,7 +282,8 @@ export const SwapMarket = ({
     if (isLoadingRate) return true;
     if (fromError !== '') return true;
     if (rate === '0') return true;
-    if (fromAmount === '' || new BigNumber(fromAmount).eq(0)) return true;
+    const isInputZero = fromAmount === '' || new BigNumber(fromAmount).eq(0);
+    if (isInputZero && account) return true;
     if (!toToken) return true;
     if (toToken.address === wethToken) return true;
     if (!account) return false;
