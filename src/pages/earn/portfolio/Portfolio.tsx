@@ -31,7 +31,9 @@ export const Portfolio = () => {
       title={title}
       trailingTitle={
         <div className="flex items-center space-x-10">
-          <PageNavLink to={BancorURL.portfolio}>V3</PageNavLink>
+          {(showV2 || v1.length > 0) && (
+            <PageNavLink to={BancorURL.portfolio}>V3</PageNavLink>
+          )}
           {showV2 && (
             <PageNavLink to={BancorURL.portfolioV2}>
               <div className="flex space-x-5">

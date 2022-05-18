@@ -114,7 +114,7 @@ export const RewardsStakeCTA = ({
         disabled: true,
         variant: ButtonVariant.ERROR,
       };
-    } else if (!bntAmount) {
+    } else if (!bntAmount || Number(bntAmount) === 0) {
       return {
         label: 'Enter amount',
         disabled: true,

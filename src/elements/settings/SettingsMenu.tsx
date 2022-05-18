@@ -103,7 +103,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
             Buy crypto with fiat
           </div>
         </Navigate>
-        <hr className="border-fog" />
+        <hr className="border-fog dark:border-grey" />
         <Navigate to="https://support.bancor.network">
           Help Center / FAQ
         </Navigate>
