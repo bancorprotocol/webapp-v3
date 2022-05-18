@@ -5,6 +5,7 @@ import { RootState } from 'store';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { Pool, PoolV3 } from 'services/observables/pools';
+import { bntToken } from 'services/web3/config';
 
 interface PoolState {
   v2Pools: Pool[];
@@ -129,6 +130,11 @@ export const getIsV3Exist = createSelector(
   (pools: Map<string, PoolV3>, id): boolean => {
     return !!pools.get(id);
   }
+);
+
+export const getBNTPoolV3 = createSelector(
+  (state: RootState) => getPoolsV3Map(state),
+  (pools: Map<string, PoolV3>): PoolV3 | undefined => pools.get(bntToken)
 );
 
 export interface SelectedPool {

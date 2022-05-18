@@ -3,7 +3,6 @@ import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useEffect } from 'react';
 import BigNumber from 'bignumber.js';
 import { Pool } from 'services/observables/pools';
-import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
   pool: Pool;
@@ -29,11 +28,8 @@ export const AddLiquiditySingleAmount = ({
   setErrorMsg,
   isBNTSelected,
 }: Props) => {
-  const { goToPage } = useNavigation();
-
   useEffect(() => {
-    if (isBNTSelected) setErrorMsg('Deposit to V3');
-    else if (new BigNumber(amount).gt(token.balance || 0)) {
+    if (new BigNumber(amount).gt(token.balance || 0)) {
       setErrorMsg('Insufficient Balance');
     } else {
       setErrorMsg('');
@@ -55,16 +51,7 @@ export const AddLiquiditySingleAmount = ({
         setAmountUsd={setAmountUsd}
         setToken={(token: Token) => setToken(token)}
       />
-      {errorMsg && (
-        <button
-          onClick={() => {
-            if (isBNTSelected) goToPage.earn();
-          }}
-          className="mt-5 pl-[140px] text-error"
-        >
-          {errorMsg}
-        </button>
-      )}
+      {errorMsg && <div className="mt-5 pl-[140px] text-error">{errorMsg}</div>}
     </>
   );
 };
