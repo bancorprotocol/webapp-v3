@@ -13,9 +13,10 @@ import { PoolsTableSort } from './PoolsTableSort';
 import { Pool } from 'services/observables/pools';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
+import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
 
 export const EarnTableV2 = () => {
-  const pools = useAppSelector((state) => state.pool.v2Pools);
+  const pools = useAppSelector(getV2PoolsWithoutV3);
 
   const [rewards, setRewards] = useState(false);
   const [lowVolume, setLowVolume] = useState(false);
