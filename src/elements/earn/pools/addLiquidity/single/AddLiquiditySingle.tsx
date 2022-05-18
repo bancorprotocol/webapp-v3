@@ -30,6 +30,8 @@ import {
 import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
+import { fetchProtectedPositions } from 'services/web3/protection/positions';
+import { setProtectedPositions } from 'store/liquidity/liquidity';
 
 interface Props {
   pool: Pool;
@@ -53,6 +55,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const account = useAppSelector((state) => state.user.account);
 
   const selectedToken = isBNTSelected ? bnt! : tkn!;
   const setSelectedToken = useCallback(
@@ -88,8 +92,10 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
           pool.name
         );
       },
-      () => {
+      async () => {
         sendLiquiditySuccessEvent(transactionId);
+        const positions = await fetchProtectedPositions(pools, account!);
+        dispatch(setProtectedPositions(positions));
         if (window.location.pathname.includes(pool.pool_dlt_id))
           goToPage.portfolioV2();
       },
