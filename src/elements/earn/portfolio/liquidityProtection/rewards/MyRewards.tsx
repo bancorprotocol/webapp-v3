@@ -32,7 +32,7 @@ export const MyRewards = () => {
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
           <Button
             onClick={stakeRewardsToV3}
-            size={ButtonSize.SMALL}
+            size={ButtonSize.Small}
             disabled={!canClaim}
           >
             Stake to V3

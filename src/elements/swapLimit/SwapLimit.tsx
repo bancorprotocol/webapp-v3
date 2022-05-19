@@ -467,8 +467,8 @@ export const SwapLimit = ({
                   <Button
                     variant={
                       selPercentage !== index
-                        ? ButtonVariant.SECONDARY
-                        : ButtonVariant.PRIMARY
+                        ? ButtonVariant.Secondary
+                        : ButtonVariant.Primary
                     }
                     key={'slippage' + slip}
                     className={`w-[70px] h-[34px] rounded-[12px] ${classNameGenerator(
@@ -539,7 +539,7 @@ export const SwapLimit = ({
           onConfirm={() => handleSwap(true)}
         />
         <Button
-          variant={ButtonVariant.PRIMARY}
+          variant={ButtonVariant.Primary}
           className="w-full"
           onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}

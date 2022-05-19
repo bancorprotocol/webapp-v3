@@ -287,7 +287,7 @@ export const WithdrawLiquidityWidget = ({
           <Button
             onClick={handleWithdraw}
             disabled={withdrawDisabled}
-            variant={ButtonVariant.PRIMARY}
+            variant={ButtonVariant.Primary}
             className={`w-full mt-20`}
           >
             {emtpyAmount ? 'Enter Amount' : 'Withdraw'}

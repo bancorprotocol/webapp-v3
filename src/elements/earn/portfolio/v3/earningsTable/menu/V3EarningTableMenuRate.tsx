@@ -75,7 +75,7 @@ export const V3EarningTableMenuRate = ({
 
         {/*<ProgressBar percentage={55} showPercentage />*/}
         <Button
-          variant={ButtonVariant.PRIMARY}
+          variant={ButtonVariant.Primary}
           onClick={() => onStartJoin()}
           disabled={btnJoinDisabled}
           className="rounded flex-col w-full my-10 text-left items-start"
@@ -95,7 +95,7 @@ export const V3EarningTableMenuRate = ({
           </div>
         </Button>
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.Secondary}
           onClick={handleLeaveClick}
           disabled={btnLeaveDisabled}
           className="rounded flex-col w-full mb-10 py-8 text-left items-start"

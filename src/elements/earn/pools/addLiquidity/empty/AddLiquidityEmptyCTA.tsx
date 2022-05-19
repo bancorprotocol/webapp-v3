@@ -93,19 +93,19 @@ export const AddLiquidityEmptyCTA = ({
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
+      return { label: errorMsg, disabled: true, variant: ButtonVariant.Error };
     }
     if (!amountBnt || !amountTkn) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else {
       return {
         label: 'Supply',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     }
   };

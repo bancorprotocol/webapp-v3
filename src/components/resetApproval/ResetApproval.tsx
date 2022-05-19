@@ -67,8 +67,8 @@ export const ResetApproval = ({
   return (
     <Button
       onClick={handleClick}
-      size={ButtonSize.EXTRASMALL}
-      variant={ButtonVariant.DARK}
+      size={ButtonSize.ExtraSmall}
+      variant={ButtonVariant.Tertiary}
       disabled={btn.disabled}
     >
       {btn.text}

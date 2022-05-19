@@ -35,7 +35,7 @@ const GrowYour = () => {
         <Button
           onClick={() => dispatch(openWalletModal(true))}
           className="mb-20"
-          variant={ButtonVariant.PRIMARY}
+          variant={ButtonVariant.Primary}
         >
           Check our rates {'->'}
         </Button>

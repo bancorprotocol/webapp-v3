@@ -177,10 +177,10 @@ export const Vote = () => {
                       !stakeAmount ||
                       Number(stakeAmount) === 0) &&
                     !isUnlocked
-                      ? ButtonVariant.SECONDARY
-                      : ButtonVariant.PRIMARY
+                      ? ButtonVariant.Secondary
+                      : ButtonVariant.Primary
                   }
-                  size={ButtonSize.SMALL}
+                  size={ButtonSize.Small}
                   className={`w-full mt-20 md:mt-0 md:max-w-[190px]`}
                   disabled={
                     (!!unstakeTime ||

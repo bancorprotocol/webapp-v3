@@ -26,22 +26,22 @@ export const AddLiquiditySingleCTA = ({
       return {
         label: 'Deposits are available on V3 pool',
         disabled: false,
-        variant: ButtonVariant.ERROR,
+        variant: ButtonVariant.Error,
       };
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
+      return { label: errorMsg, disabled: true, variant: ButtonVariant.Error };
     }
     if (!amount) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     }
   };

@@ -67,7 +67,7 @@ const V3Portfolio = () => {
         Connect your wallet to see your earnings and impermanent loss
       </h2>
       <div className="flex justify-center mt-20">
-        <Button size={ButtonSize.SMALL} onClick={() => handleLoginClick()}>
+        <Button size={ButtonSize.Small} onClick={() => handleLoginClick()}>
           <IconWallet className="w-20 mr-10" />
           Connect Wallet
         </Button>

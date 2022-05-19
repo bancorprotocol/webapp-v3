@@ -26,8 +26,8 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
         <div className="text-error">{position.rektStatus}</div>
       </div>
       <Button
-        variant={ButtonVariant.SECONDARY}
-        size={ButtonSize.SMALL}
+        variant={ButtonVariant.Secondary}
+        size={ButtonSize.Small}
         className="w-full mt-20"
         onClick={() => setIsOpen(true)}
       >

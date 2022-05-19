@@ -18,7 +18,7 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays }: Props) => {
       </h1>
       <div className="flex justify-center">
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.Secondary}
           className="px-50"
           onClick={() => onClose(false)}
         >

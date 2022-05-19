@@ -11,39 +11,37 @@ export default {
 const options = [
   {
     label: 'DEFAULT',
-    classname: () => '',
-    disabled: false,
-  },
-  {
-    label: 'HOVER',
-    classname: (variant: string) => `btn-${variant}-hover`,
     disabled: false,
   },
   {
     label: 'DISABLED',
-    classname: () => '',
     disabled: true,
   },
 ];
 
 export const Variants: ComponentStory<typeof Button> = (args) => {
+  const vars = Object.values(ButtonVariant).filter(
+    (x) => !isNaN(Number(x))
+  ) as ButtonVariant[];
+  const sizes = Object.values(ButtonSize).filter(
+    (x) => !isNaN(Number(x))
+  ) as ButtonSize[];
   return (
     <div className="space-y-20">
-      {Object.values(ButtonVariant).map((variant) => {
+      {vars.map((variant) => {
         return (
           <div key={variant} className="space-y-10">
             <h2 className="uppercase">{variant}</h2>
             {options.map((option) => (
               <div className="flex items-center space-x-20" key={option.label}>
                 <div className="min-w-[120px]">{option.label}</div>
-                {Object.values(ButtonSize).map((size) => {
+                {sizes.map((size) => {
                   return (
                     <Button
                       key={size}
                       {...args}
                       variant={variant}
                       size={size}
-                      className={option.classname(variant)}
                       disabled={option.disabled}
                     >
                       Click me now
@@ -72,9 +70,8 @@ export const Playground: ComponentStory<typeof Button> = (args) => (
 
 Playground.args = {
   children: 'Primary Button',
-  variant: ButtonVariant.PRIMARY,
-  size: ButtonSize.MEDIUM,
-  outlined: false,
+  variant: ButtonVariant.Primary,
+  size: ButtonSize.Meduim,
   disabled: false,
   className: '',
 };

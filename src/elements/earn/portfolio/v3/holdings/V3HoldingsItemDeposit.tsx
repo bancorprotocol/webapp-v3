@@ -19,8 +19,8 @@ export const V3HoldingsItemDeposit = ({ holding }: { holding: Holding }) => {
           pool={pool}
           renderButton={(onClick) => (
             <Button
-              variant={ButtonVariant.SECONDARY}
-              size={ButtonSize.EXTRASMALL}
+              variant={ButtonVariant.Secondary}
+              size={ButtonSize.ExtraSmall}
               onClick={onClick}
               disabled={isDisabled}
             >

@@ -310,8 +310,8 @@ export const SwapMarket = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return ButtonVariant.ERROR;
-    return ButtonVariant.PRIMARY;
+    if (isHighSlippage) return ButtonVariant.Error;
+    return ButtonVariant.Primary;
   };
 
   const handleSwapClick = () => {

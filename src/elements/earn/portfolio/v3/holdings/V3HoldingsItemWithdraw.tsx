@@ -24,8 +24,8 @@ export const V3HoldingsItemWithdraw = ({ holding }: { holding: Holding }) => {
         </div>
         <div className="flex justify-center">
           <Button
-            variant={ButtonVariant.SECONDARY}
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Secondary}
+            size={ButtonSize.ExtraSmall}
             disabled={isDisabled}
             onClick={() => setIsOpen(true)}
           >

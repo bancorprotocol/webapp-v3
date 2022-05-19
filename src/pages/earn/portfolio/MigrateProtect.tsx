@@ -83,7 +83,7 @@ const Migrate = () => {
           )}
           <div className="flex items-center mt-[70px] gap-10">
             <Button className="w-[170px]">Yes</Button>
-            <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
+            <Button variant={ButtonVariant.Secondary}>No Thanks</Button>
           </div>
         </>
       ) : (
@@ -253,7 +253,7 @@ const Protect = () => {
                 >
                   Yes
                 </Button>
-                <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
+                <Button variant={ButtonVariant.Secondary}>No Thanks</Button>
               </div>
             </>
           )}

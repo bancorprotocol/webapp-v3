@@ -67,11 +67,11 @@ export const TokenInputPercentage = ({
         {percentages.map((slip, index) => (
           <Button
             key={'slippage' + slip}
-            size={ButtonSize.EXTRASMALL}
+            size={ButtonSize.ExtraSmall}
             variant={
               selPercentage === index
-                ? ButtonVariant.PRIMARY
-                : ButtonVariant.SECONDARY
+                ? ButtonVariant.Primary
+                : ButtonVariant.Secondary
             }
             className="rounded-10 w-full"
             onClick={() => {

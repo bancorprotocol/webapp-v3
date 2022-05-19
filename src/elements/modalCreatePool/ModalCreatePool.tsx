@@ -75,8 +75,8 @@ export const ModalCreatePool = () => {
   return (
     <>
       <Button
-        variant={ButtonVariant.SECONDARY}
-        size={ButtonSize.EXTRASMALL}
+        variant={ButtonVariant.Secondary}
+        size={ButtonSize.ExtraSmall}
         className="h-[35px]"
         onClick={() => setIsOpen(true)}
       >

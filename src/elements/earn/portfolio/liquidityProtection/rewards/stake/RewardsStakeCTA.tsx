@@ -100,31 +100,31 @@ export const RewardsStakeCTA = ({
       return {
         label: 'Login',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else if (isBusy) {
       return {
         label: 'Please wait ...',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else if (errorBalance) {
       return {
         label: errorBalance,
         disabled: true,
-        variant: ButtonVariant.ERROR,
+        variant: ButtonVariant.Error,
       };
     } else if (!bntAmount || Number(bntAmount) === 0) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     }
   };

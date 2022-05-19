@@ -1,55 +1,68 @@
 import { ButtonHTMLAttributes, memo } from 'react';
 
 export enum ButtonVariant {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  SUCCESS = 'success',
-  ERROR = 'error',
-  WARNING = 'warning',
-  DARK = 'dark',
-  LIGHT = 'light',
+  Primary,
+  Secondary,
+  Tertiary,
+  Error,
+  Warning,
 }
 
 export enum ButtonSize {
-  LARGE = 'lg',
-  MEDIUM = 'md',
-  SMALL = 'sm',
-  EXTRASMALL = 'xs',
+  ExtraLarge,
+  Large,
+  Meduim,
+  Small,
+  ExtraSmall,
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  outlined?: boolean;
-  onClick?: () => void;
-  textBadge?: string;
 }
+
+const getVariantStyle = (variant: ButtonVariant) => {
+  switch (variant) {
+    case ButtonVariant.Primary:
+      return '';
+    case ButtonVariant.Secondary:
+      return '';
+    case ButtonVariant.Tertiary:
+      return '';
+    case ButtonVariant.Error:
+      return '';
+    case ButtonVariant.Warning:
+      return '';
+  }
+};
+
+const getSizeStyle = (size: ButtonSize) => {
+  switch (size) {
+    case ButtonSize.ExtraLarge:
+      return '';
+    case ButtonSize.Large:
+      return '';
+    case ButtonSize.Meduim:
+      return '';
+    case ButtonSize.Small:
+      return '';
+    case ButtonSize.ExtraSmall:
+      return '';
+  }
+};
 
 export const Button = memo(
   ({
-    variant = ButtonVariant.PRIMARY,
-    size = ButtonSize.LARGE,
-    className = '',
-    outlined = false,
-    textBadge,
+    variant = ButtonVariant.Primary,
+    size = ButtonSize.Large,
     ...props
   }: ButtonProps) => {
-    const btnOutlined = outlined ? 'outline-' : '';
-    const btnVariant = `btn-${btnOutlined}${variant}`;
-    const btnSize = `btn-${size}`;
-
     return (
       <button
-        type="button"
         {...props}
-        className={`btn ${btnVariant} ${btnSize} ${className} relative`}
+        className={`${getVariantStyle(variant)} ${getSizeStyle(size)}`}
       >
         {props.children}
-        {textBadge && (
-          <span className="absolute -top-8 right-0 bg-primary text-white text-10 rounded-full px-6">
-            {textBadge}
-          </span>
-        )}
       </button>
     );
   }

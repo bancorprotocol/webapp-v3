@@ -46,17 +46,16 @@ export const V3EarningTableMenuMain = memo(
         <div className="space-y-20">
           <div className="flex space-x-20">
             <Button
-              variant={ButtonVariant.SECONDARY}
-              size={ButtonSize.SMALL}
+              variant={ButtonVariant.Secondary}
+              size={ButtonSize.Small}
               className="w-full"
-              textBadge={`${holding.pool.apr.total.toFixed(2)}%`}
               onClick={handleDepositClick}
             >
-              Deposit
+              Deposit {holding.pool.apr.total.toFixed(2)}%
             </Button>
             <Button
-              variant={ButtonVariant.SECONDARY}
-              size={ButtonSize.SMALL}
+              variant={ButtonVariant.Secondary}
+              size={ButtonSize.Small}
               onClick={handleWithdrawClick}
               className="w-full"
             >

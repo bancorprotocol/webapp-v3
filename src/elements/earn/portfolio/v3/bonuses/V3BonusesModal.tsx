@@ -9,7 +9,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
-import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 
@@ -93,7 +92,6 @@ const BonusGroup = ({
 }: {
   rewardsGroup: GroupedStandardReward;
 }) => {
-  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
   const allTokens = rewardsGroup.rewards.map(
@@ -176,7 +174,7 @@ const BonusGroup = ({
       </ExpandableSection>
       <div className="flex mt-20 space-x-10">
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.Secondary}
           onClick={onClaimClick}
           className="w-full"
           disabled={bntDisabled}
@@ -184,7 +182,7 @@ const BonusGroup = ({
           Claim
         </Button>
         <Button
-          variant={darkMode ? ButtonVariant.LIGHT : ButtonVariant.DARK}
+          variant={ButtonVariant.Tertiary}
           onClick={onRestakeClick}
           className="w-full"
           disabled={bntDisabled}

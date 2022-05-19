@@ -7,7 +7,7 @@ export const PoolsTableCellActions = (id: string) => {
   return (
     <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
       <Tooltip content="Stake & Earn">
-        <Button variant={ButtonVariant.PRIMARY} size={ButtonSize.EXTRASMALL}>
+        <Button variant={ButtonVariant.Primary} size={ButtonSize.ExtraSmall}>
           Deposit
         </Button>
       </Tooltip>

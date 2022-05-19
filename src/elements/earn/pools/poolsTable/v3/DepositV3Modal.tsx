@@ -192,7 +192,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           <Button
             onClick={handleClick}
             disabled={!amount || txBusy || isInputError}
-            variant={ButtonVariant.PRIMARY}
+            variant={ButtonVariant.Primary}
             className={`w-full mt-20 mb-14`}
           >
             {txBusy
