@@ -539,7 +539,6 @@ export const SwapLimit = ({
           onConfirm={() => handleSwap(true)}
         />
         <Button
-          variant={ButtonVariant.Primary}
           className="w-full"
           onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}

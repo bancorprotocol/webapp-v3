@@ -75,7 +75,6 @@ export const V3EarningTableMenuRate = ({
 
         {/*<ProgressBar percentage={55} showPercentage />*/}
         <Button
-          variant={ButtonVariant.Primary}
           onClick={() => onStartJoin()}
           disabled={btnJoinDisabled}
           className="rounded flex-col w-full my-10 text-left items-start"

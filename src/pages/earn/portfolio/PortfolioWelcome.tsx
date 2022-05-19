@@ -1,6 +1,6 @@
 import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from 'pages/earn/portfolio/MigrateProtect';
 import { useWalletEmpty } from 'pages/earn/portfolio/usePortfolioRedirect';
@@ -35,7 +35,6 @@ const GrowYour = () => {
         <Button
           onClick={() => dispatch(openWalletModal(true))}
           className="mb-20"
-          variant={ButtonVariant.Primary}
         >
           Check our rates {'->'}
         </Button>
