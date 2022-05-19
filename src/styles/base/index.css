@@ -33,7 +33,7 @@
 
   button,
   a {
-    @apply outline-none focus:outline-none;
+    @apply outline-none;
   }
 
   input {

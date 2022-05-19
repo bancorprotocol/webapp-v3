@@ -211,7 +211,7 @@ export const SearchableTokenList = ({
                     onClick(token);
                     onClose();
                   }}
-                  className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary px-14 py-5 my-5 w-full"
+                  className="flex items-center justify-between rounded focus:ring-2 focus:ring-primary px-14 py-5 my-5 w-full"
                 >
                   <div className="flex items-center">
                     <Image
