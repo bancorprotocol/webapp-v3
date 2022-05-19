@@ -1,5 +1,5 @@
 import { useAppSelector } from 'store';
-import { getPools } from 'store/bancor/pool';
+import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
 import { SelectPool } from 'components/selectPool/SelectPool';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
@@ -10,7 +10,7 @@ interface Props {
 
 export const AddLiquiditySingleSelectPool = ({ pool }: Props) => {
   const { goToPage } = useNavigation();
-  const pools = useAppSelector<Pool[]>(getPools);
+  const pools = useAppSelector<Pool[]>(getV2PoolsWithoutV3);
 
   const onSelect = (pool: Pool) => {
     goToPage.addLiquidityV2(pool.pool_dlt_id);
