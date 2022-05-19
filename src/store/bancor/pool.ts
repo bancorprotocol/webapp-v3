@@ -157,6 +157,16 @@ export const getPoolById = (id: string) =>
     }
   );
 
+export const getPoolByIdWithoutV3 = (id: string) =>
+  createDeepEqualSelector(getV2PoolsWithoutV3, (pools: Pool[]) => {
+    if (pools.length === 0) {
+      return { status: 'loading' } as SelectedPool;
+    }
+
+    const pool = pools.find((p) => p.pool_dlt_id === id);
+    return { status: 'ready', pool } as SelectedPool;
+  });
+
 export const { setv2Pools, setv3Pools, setStats } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;
