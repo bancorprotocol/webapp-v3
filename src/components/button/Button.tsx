@@ -21,14 +21,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize;
 }
 
+const disabledText =
+  'disabled:text-black-disabled dark:disabled:text-white-low';
+
 const getVariantStyle = (variant: ButtonVariant) => {
   switch (variant) {
     case ButtonVariant.Primary:
-      return '';
+      return `bg-primary hover:bg-primary-dark disabled:bg-fog dark:disabled:bg-grey ${disabledText}`;
     case ButtonVariant.Secondary:
-      return '';
+      return `bg-black hover:bg-grey disabled:bg-fog  dark:bg-white dark:hover:bg-silver dark:disabled:bg-grey ${disabledText}`;
     case ButtonVariant.Tertiary:
-      return '';
+      return 'bg-fog hover:bg-black disabled:bg-fog disabled:text-black-low disabled:text-black-low dark:disabled:text-white-low';
     case ButtonVariant.Error:
       return '';
     case ButtonVariant.Warning:
@@ -39,15 +42,15 @@ const getVariantStyle = (variant: ButtonVariant) => {
 const getSizeStyle = (size: ButtonSize) => {
   switch (size) {
     case ButtonSize.ExtraLarge:
-      return '';
+      return 'w-[428px] h-[53px]';
     case ButtonSize.Large:
-      return '';
+      return 'w-[335px] h-[53px]';
     case ButtonSize.Meduim:
-      return '';
+      return 'w-[266px] h-[47px]';
     case ButtonSize.Small:
-      return '';
+      return 'w-[142px] h-[39px]';
     case ButtonSize.ExtraSmall:
-      return '';
+      return 'w-[94px] h-[33px]';
   }
 };
 
@@ -60,7 +63,9 @@ export const Button = memo(
     return (
       <button
         {...props}
-        className={`${getVariantStyle(variant)} ${getSizeStyle(size)}`}
+        className={`rounded-40 ${getVariantStyle(variant)} ${getSizeStyle(
+          size
+        )}`}
       >
         {props.children}
       </button>
