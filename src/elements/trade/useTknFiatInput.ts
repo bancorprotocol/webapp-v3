@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
@@ -56,6 +56,8 @@ export const useTknFiatInput = ({
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
+      console.log(e.target.value);
+      console.log(typeof e.target.value);
       setIsTyping(true);
       const value = sanitizeNumberInput(e.target.value);
 
@@ -94,8 +96,12 @@ export const useTknFiatInput = ({
     onDebounce('');
   }, [setInputTkn, setInputFiat, onDebounce]);
 
+  const newRef = useRef(token?.address);
+
   useEffect(() => {
-    if (token?.address) {
+    if (token?.address !== newRef.current) {
+      console.log('reset');
+      newRef.current = token?.address;
       reset();
     }
   }, [reset, token?.address]);

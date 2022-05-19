@@ -2,7 +2,7 @@ import { useAppSelector } from 'store/index';
 import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 
@@ -27,7 +27,7 @@ export const TradeWidgetInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-
+  console.log('render input', input);
   const value = useMemo(() => {
     if (!input) return '';
     return isFiat ? input.inputFiat : input.inputTkn;
@@ -42,6 +42,11 @@ export const TradeWidgetInput = ({
     }
     setIsFocused(state);
   };
+
+  useEffect(() => {
+    console.log('mounted');
+    return () => console.log('unmounted');
+  }, []);
 
   return (
     <>

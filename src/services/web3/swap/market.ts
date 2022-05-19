@@ -118,7 +118,7 @@ export const getRate = async (
   }
 };
 
-const calculateMinimumReturn = (
+export const calculateMinimumReturn = (
   expectedWei: string,
   slippageTolerance: number
 ): string => {

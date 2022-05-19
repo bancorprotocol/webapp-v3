@@ -13,11 +13,7 @@ interface useTradeInputNewProps {
   to?: string;
   tokens: Token[];
 }
-export const useTradeInputToken = ({
-  from,
-  to,
-  tokens,
-}: useTradeInputNewProps) => {
+export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
 
   const [fromInputTkn, setFromInputTkn] = useState('');
@@ -56,8 +52,6 @@ export const useTradeInputToken = ({
                 toToken.decimals
               )
             : '';
-          console.log('from: ', fromToken.symbol);
-          console.log('to: ', toToken.symbol);
           if (isFiat) {
             setToInputTkn(toValueTkn);
             setToInputFiat(toValueFiat);
