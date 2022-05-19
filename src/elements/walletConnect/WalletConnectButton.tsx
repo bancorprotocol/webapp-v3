@@ -2,7 +2,7 @@ import { UseWalletConnect } from './useWalletConnect';
 import { shortenString } from 'utils/pureFunctions';
 import { Image } from 'components/image/Image';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 
 export const WalletConnectButton = ({
   handleWalletButtonClick,
@@ -13,8 +13,8 @@ export const WalletConnectButton = ({
 
   return (
     <Button
-      className="flex items-center bg-white h-40 text-black dark:text-white dark:bg-grey"
-      size={ButtonSize.Small}
+      className="flex items-center justify-center px-5 w-[180px]"
+      variant={ButtonVariant.Tertiary}
       onClick={() => handleWalletButtonClick()}
     >
       {selectedWallet && account ? (
