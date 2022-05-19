@@ -29,11 +29,11 @@ const disabledText =
 const getVariantStyle = (variant: ButtonVariant) => {
   switch (variant) {
     case ButtonVariant.Primary:
-      return `bg-primary hover:bg-primary-dark disabled:bg-fog dark:disabled:bg-grey ${disabledText}`;
+      return `bg-primary hover:bg-primary-dark disabled:bg-fog dark:disabled:bg-grey text-white ${disabledText}`;
     case ButtonVariant.Secondary:
-      return `bg-black hover:bg-grey disabled:bg-fog  dark:bg-white dark:hover:bg-silver dark:disabled:bg-grey ${disabledText}`;
+      return `bg-black hover:bg-grey disabled:bg-fog  dark:bg-white dark:hover:bg-silver dark:disabled:bg-grey text-white dark:text-charcoal ${disabledText}`;
     case ButtonVariant.Tertiary:
-      return 'bg-fog hover:bg-black disabled:bg-fog disabled:text-black-low disabled:text-black-low dark:disabled:text-white-low';
+      return 'bg-fog hover:bg-black disabled:bg-fog text-charcoal hover:text-white dark:text-white dark:hover:text-charcoal disabled:text-black-low disabled:text-black-low dark:disabled:text-white-low';
     case ButtonVariant.Error:
       return '';
     case ButtonVariant.Warning:
@@ -44,7 +44,7 @@ const getVariantStyle = (variant: ButtonVariant) => {
 const getSizeStyle = (size: ButtonSize) => {
   switch (size) {
     case ButtonSize.Full:
-      return 'w-full';
+      return 'w-full h-[53px]';
     case ButtonSize.ExtraLarge:
       return 'w-[428px] h-[53px]';
     case ButtonSize.Large:

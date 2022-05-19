@@ -1,7 +1,7 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { memo, useCallback, useState } from 'react';
 import { Modal } from 'components/modal/Modal';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 
 interface Props {
@@ -52,7 +52,11 @@ export const V3WithdrawCancelModal = memo(
             <div>??%</div>
           </div>
 
-          <Button onClick={handleCTAClick} className="w-full" disabled={txBusy}>
+          <Button
+            onClick={handleCTAClick}
+            size={ButtonSize.Full}
+            disabled={txBusy}
+          >
             Cancel & Earn
           </Button>
         </div>

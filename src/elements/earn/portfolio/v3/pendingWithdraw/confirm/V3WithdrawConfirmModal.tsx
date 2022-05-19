@@ -1,7 +1,7 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { memo } from 'react';
 import { Modal } from 'components/modal/Modal';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { V3WithdrawConfirmOutputBreakdown } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmOutputBreakdown';
 import { useV3WithdrawConfirm } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/useV3WithdrawConfirm';
 import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmInfo';
@@ -75,7 +75,7 @@ export const V3WithdrawConfirmModal = memo(
           ) : (
             <Button
               onClick={() => handleWithdrawClick()}
-              className="w-full"
+              size={ButtonSize.Full}
               disabled={txBusy || missingGovTokenBalance > 0}
             >
               Confirm Withdrawal

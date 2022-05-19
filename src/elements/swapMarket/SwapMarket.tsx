@@ -36,7 +36,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -440,7 +440,7 @@ export const SwapMarket = ({
           <Button
             onClick={() => handleSwapClick()}
             variant={buttonVariant()}
-            className={'w-full'}
+            size={ButtonSize.Full}
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}

@@ -31,7 +31,7 @@ import {
 } from 'services/api/googleTagManager';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 
 enum Field {
@@ -467,7 +467,7 @@ export const SwapLimit = ({
                   <Button
                     variant={
                       selPercentage !== index
-                        ? ButtonVariant.Secondary
+                        ? ButtonVariant.Tertiary
                         : ButtonVariant.Primary
                     }
                     key={'slippage' + slip}
@@ -539,7 +539,7 @@ export const SwapLimit = ({
           onConfirm={() => handleSwap(true)}
         />
         <Button
-          className="w-full"
+          size={ButtonSize.Full}
           onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}
         >

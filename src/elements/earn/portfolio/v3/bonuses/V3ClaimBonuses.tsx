@@ -23,7 +23,6 @@ export const V3ClaimBonuses = () => {
               variant={ButtonVariant.Secondary}
               size={ButtonSize.ExtraSmall}
               onClick={() => setBonusModalOpen(true)}
-              className="px-40"
               disabled={bonusUsdTotal === 0}
             >
               Claim
