@@ -174,7 +174,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             {pool.latestProgram ? (
               <>
                 <div className="flex pr-10 mb-4">
-                  <span className="mr-20">Access full earnings</span>
+                  <span className="mr-20">Join rewards program</span>
                   <Switch
                     selected={accessFullEarnings}
                     onChange={() => setAccessFullEarnings((prev) => !prev)}
