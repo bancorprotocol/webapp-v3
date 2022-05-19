@@ -41,8 +41,6 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
     'bySource'
   );
 
-  console.log('hola');
-
   const [searchParams] = useSearchParams();
   const { goToPage } = useNavigation();
 

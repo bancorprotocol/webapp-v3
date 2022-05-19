@@ -35,7 +35,6 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
   const onFromDebounce = useCallback(
     async (val: string) => {
       if (!fromToken || !toToken) return;
-      console.log('from debounce', val);
       queue.clear();
       await queue.add(async () => {
         if (queue.size !== 0) return;
@@ -81,7 +80,6 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
   const onToDebounce = useCallback(
     async (val: string) => {
       if (!fromToken || !toToken) return;
-      console.log('to debounce', val);
       queue.clear();
       await queue.add(async () => {
         if (queue.size !== 0) return;
@@ -107,7 +105,7 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
             setFromInputFiat(fromValueFiat);
           }
         } catch (e) {
-          console.error('Trade Widget onFromDebounce failed.', e);
+          console.error('Trade Widget onToDebounce failed.', e);
         } finally {
           setIsLoading(false);
         }

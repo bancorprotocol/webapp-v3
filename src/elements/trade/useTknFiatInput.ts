@@ -96,12 +96,12 @@ export const useTknFiatInput = ({
     onDebounce('');
   }, [setInputTkn, setInputFiat, onDebounce]);
 
-  const newRef = useRef(token?.address);
+  const tokenAddressRef = useRef(token?.address);
 
   useEffect(() => {
-    if (token?.address !== newRef.current) {
+    if (token?.address !== tokenAddressRef.current) {
       console.log('reset');
-      newRef.current = token?.address;
+      tokenAddressRef.current = token?.address;
       reset();
     }
   }, [reset, token?.address]);
