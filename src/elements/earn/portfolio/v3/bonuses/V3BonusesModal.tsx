@@ -167,16 +167,13 @@ const BonusGroup = ({
             </div>
           </>
         )}
-        renderExpandedContent={() => (
-          <div>
-            <BonusGroupItems
-              rewardsGroup={rewardsGroup}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-            />
-          </div>
-        )}
-      />
+      >
+        <BonusGroupItems
+          rewardsGroup={rewardsGroup}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+        />
+      </ExpandableSection>
       <div className="flex mt-20 space-x-10">
         <Button
           variant={ButtonVariant.SECONDARY}

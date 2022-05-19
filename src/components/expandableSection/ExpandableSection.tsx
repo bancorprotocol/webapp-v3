@@ -5,7 +5,7 @@ interface Props {
   btnClassName?: string;
   initiallyExpanded?: boolean;
   renderButtonChildren: (isExpanded: boolean) => JSX.Element;
-  renderExpandedContent: () => JSX.Element;
+  children: JSX.Element;
 }
 
 export const ExpandableSection = ({
@@ -13,7 +13,7 @@ export const ExpandableSection = ({
   btnClassName = 'flex justify-between items-center px-20 h-[40px] w-full',
   initiallyExpanded = false,
   renderButtonChildren,
-  renderExpandedContent,
+  children,
 }: Props) => {
   const [expanded, setExpanded] = useState(initiallyExpanded);
   const toggle = () => setExpanded(!expanded);
@@ -22,7 +22,7 @@ export const ExpandableSection = ({
       <button onClick={toggle} className={btnClassName}>
         {renderButtonChildren(expanded)}
       </button>
-      {expanded && <div>{renderExpandedContent()}</div>}
+      {expanded && children}
     </div>
   );
 };

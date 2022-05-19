@@ -20,7 +20,7 @@ Section.args = {
   renderButtonChildren: (isExpanded) => (
     <div>{isExpanded ? 'Hide' : 'Show'}</div>
   ),
-  renderExpandedContent: () => <div>{'TEXT CONTENT'}</div>,
+  children: <div>{'TEXT CONTENT'}</div>,
 };
 
 export const StyledSection = Template.bind({});
@@ -37,7 +37,7 @@ StyledSection.args = {
       </div>
     </>
   ),
-  renderExpandedContent: () => <div>{'TEXT CONTENT'}</div>,
+  children: <div>{'TEXT CONTENT'}</div>,
 };
 
 StyledSection.parameters = Section.parameters = {
