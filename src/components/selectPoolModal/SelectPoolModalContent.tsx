@@ -2,6 +2,7 @@ import { Image } from '../image/Image';
 import { InputField } from '../inputField/InputField';
 import { useState } from 'react';
 import { Pool } from 'services/observables/pools';
+import { Button } from 'components/button/Button';
 
 interface Props {
   pools: Pool[];
@@ -30,7 +31,7 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
           <span>APR</span>
         </div>
         {filteredPools.map((pool) => (
-          <button
+          <Button
             key={pool.pool_dlt_id}
             onClick={() => onSelect(pool)}
             className="flex justify-between items-center w-full"
@@ -49,7 +50,7 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
               <span className="ml-10">{pool.name}</span>
             </span>
             <span className="text-12">{pool.apr.toFixed(2)}%</span>
-          </button>
+          </Button>
         ))}
       </div>
     </>

@@ -4,6 +4,7 @@ import { SearchableTokenList } from 'components/searchableTokenList/SearchableTo
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Image } from 'components/image/Image';
+import { Button } from 'components/button/Button';
 
 interface SelectTokenProps {
   label?: string;
@@ -63,13 +64,13 @@ export const SelectToken = ({
             )}
           </div>
         ) : (
-          <button
+          <Button
             onClick={() => (selectable ? setIsOpen(true) : {})}
-            className="flex items-center text-primary font-medium text-20"
+            className="flex items-center"
           >
             Select a token
             <IconChevronDown className="w-[10px] ml-10" />
-          </button>
+          </Button>
         )}
       </div>
 

@@ -144,7 +144,7 @@ export const TokenInputField = ({
             <button
               onClick={() => setMaxAmount()}
               disabled={disabled}
-              className={`text-12 focus:outline-none ${classNameGenerator({
+              className={`text-12 ${classNameGenerator({
                 'cursor-not-allowed': disabled,
               })}`}
             >

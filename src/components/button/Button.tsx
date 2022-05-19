@@ -14,11 +14,13 @@ export enum ButtonSize {
   Meduim,
   Small,
   ExtraSmall,
+  Full,
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  className?: string;
 }
 
 const disabledText =
@@ -41,6 +43,8 @@ const getVariantStyle = (variant: ButtonVariant) => {
 
 const getSizeStyle = (size: ButtonSize) => {
   switch (size) {
+    case ButtonSize.Full:
+      return 'w-full';
     case ButtonSize.ExtraLarge:
       return 'w-[428px] h-[53px]';
     case ButtonSize.Large:
@@ -58,14 +62,15 @@ export const Button = memo(
   ({
     variant = ButtonVariant.Primary,
     size = ButtonSize.Large,
+    className,
     ...props
   }: ButtonProps) => {
     return (
       <button
         {...props}
-        className={`rounded-40 ${getVariantStyle(variant)} ${getSizeStyle(
-          size
-        )}`}
+        className={`rounded-40 ${className} ${getVariantStyle(
+          variant
+        )} ${getSizeStyle(size)}`}
       >
         {props.children}
       </button>
