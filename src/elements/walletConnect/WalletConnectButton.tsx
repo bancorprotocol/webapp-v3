@@ -13,7 +13,7 @@ export const WalletConnectButton = ({
 
   return (
     <Button
-      className="flex items-center justify-center px-5 w-[180px]"
+      className="flex items-center justify-center px-5 w-[180px] h-40"
       variant={ButtonVariant.Tertiary}
       onClick={() => handleWalletButtonClick()}
     >
