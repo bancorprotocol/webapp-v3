@@ -5,14 +5,24 @@ import { useAppSelector } from 'store/index';
 import { getV3Tokens } from 'store/bancor/token';
 import { ethToken } from 'services/web3/config';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
+import { useEffect } from 'react';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const Trade = () => {
   const [searchParams] = useSearchParams();
 
-  const from = searchParams.get('from') ?? ethToken;
+  const from = searchParams.get('from') ?? undefined;
   const to = searchParams.get('to') ?? undefined;
 
   const tokens = useAppSelector(getV3Tokens);
+
+  const { goToPage } = useNavigation();
+
+  useEffect(() => {
+    if (!from && !to) {
+      goToPage.tradeBeta({ from: ethToken, to }, true);
+    }
+  }, [from, goToPage, to]);
 
   return (
     <Page>

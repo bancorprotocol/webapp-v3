@@ -2,7 +2,7 @@ import { Button } from 'components/button/Button';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTradeWidget } from 'elements/trade/useTradeWidget';
 import { useState } from 'react';
-import { Token } from 'services/observables/tokens';
+import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigation } from 'hooks/useNavigation';
 import {
@@ -62,6 +62,11 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
         account,
         { value: fromIsEth ? fromWei : undefined }
       );
+      await updateUserBalances();
+      fromInput.setInputTkn('');
+      fromInput.setInputFiat('');
+      toInput.setInputTkn('');
+      toInput.setInputFiat('');
     } catch (e) {
       console.error(e);
     } finally {
