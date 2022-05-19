@@ -16,6 +16,7 @@ import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -90,9 +91,15 @@ export const PoolsTable = () => {
           <div className="flex items-center gap-8 text-16 text-primary">
             {cellData.value.total.toFixed(2)}%
             {cellData.row.original.latestProgram?.isActive && (
-              <Tooltip
-                content={
-                  <>
+              <>
+                <PopoverV3
+                  buttonElement={() => (
+                    <button>
+                      <IconGift className="w-16 h-16" />
+                    </button>
+                  )}
+                >
+                  <div>
                     Rewards enabled on this token.{' '}
                     <Navigate
                       to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
@@ -100,10 +107,9 @@ export const PoolsTable = () => {
                     >
                       Read about the rewards here
                     </Navigate>
-                  </>
-                }
-                button={<IconGift className="w-16 h-16" />}
-              />
+                  </div>
+                </PopoverV3>
+              </>
             )}
           </div>
         ),
