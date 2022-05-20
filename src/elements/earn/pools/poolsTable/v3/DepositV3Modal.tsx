@@ -26,6 +26,8 @@ import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 import { useNavigation } from 'hooks/useNavigation';
 import { wait } from 'utils/pureFunctions';
+import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 
 interface Props {
   pool: PoolV3;
@@ -170,24 +172,51 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             isFiat={isFiat}
             isError={isInputError}
           />
-          <div className="w-full px-20 py-10 mt-20 rounded bg-secondary">
-            {pool.latestProgram ? (
-              <>
-                <div className="flex pr-10 mb-4">
-                  <span className="mr-20">Join rewards program</span>
-                  <Switch
-                    selected={accessFullEarnings}
-                    onChange={() => setAccessFullEarnings((prev) => !prev)}
-                  />
+
+          {pool.latestProgram ? (
+            <ExpandableSection
+              renderButtonChildren={(isExpanded) => (
+                <div className="flex flex-col w-full">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <div className="flex justify-between text-black dark:text-white">
+                        <span className="mr-10">Join rewards program</span>
+                        {/* we wrap with this span so that toggling won't expand the whole section */}
+                        <span onClick={(e: any) => e.stopPropagation()}>
+                          <Switch
+                            selected={accessFullEarnings}
+                            onChange={() =>
+                              setAccessFullEarnings((prev) => !prev)
+                            }
+                          />
+                        </span>
+                      </div>
+                    </div>
+                    <IconChevron
+                      className={`w-14 ml-20 ${
+                        isExpanded ? 'transform rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                  <div className="text-12 text-secondary">
+                    Additional gas ~{prettifyNumber(extraGasNeeded, true)}
+                  </div>
                 </div>
-                <div className="text-12 text-secondary">
-                  Additional gas ~{prettifyNumber(extraGasNeeded, true)}
-                </div>
-              </>
-            ) : (
-              <span>Compounding rewards {pool.reserveToken.symbol}</span>
-            )}
-          </div>
+              )}
+            >
+              <div />
+            </ExpandableSection>
+          ) : (
+            <div className="flex justify-between w-full px-20 py-10 mt-20 rounded bg-secondary items-center h-[50px]">
+              <span>
+                <span>Compounding rewards</span>{' '}
+                <span className="text-secondary">
+                  {pool.reserveToken.symbol}
+                </span>
+              </span>
+              <span>{pool.apr.total.toFixed(2)}%</span>
+            </div>
+          )}
 
           <Button
             onClick={handleClick}
