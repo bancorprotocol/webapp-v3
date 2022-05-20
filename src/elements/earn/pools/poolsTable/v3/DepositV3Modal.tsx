@@ -232,7 +232,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     <span>Standard rewards</span>{' '}
                     <span className="text-secondary">BNT</span>
                   </span>
-                  <span>{pool.apr.standardRewards.toFixed(2)}%</span>
+                  <span>
+                    {accessFullEarnings
+                      ? pool.apr.standardRewards.toFixed(2)
+                      : 0}
+                    %
+                  </span>
                 </div>
               </div>
             </ExpandableSection>
