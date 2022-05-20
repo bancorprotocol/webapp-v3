@@ -16,7 +16,7 @@ interface Props {
   }) => ReactNode;
   options?: PopoverOptions;
   hover?: boolean;
-  showArrorw?: boolean;
+  showArrow?: boolean;
 }
 
 let timeout: NodeJS.Timeout;
@@ -28,7 +28,7 @@ const defaultOptions: PopoverOptions = {
     {
       name: 'offset',
       options: {
-        offset: [0, 10],
+        offset: [0, 15],
       },
     },
   ],
@@ -39,7 +39,7 @@ export const PopoverV3 = ({
   buttonElement,
   options = defaultOptions,
   hover = true,
-  showArrorw,
+  showArrow = true,
 }: Props) => {
   const popperElRef = useRef(null);
   const [targetElement, setTargetElement] = useState<HTMLDivElement | null>(
@@ -121,9 +121,7 @@ export const PopoverV3 = ({
               {children}
             </div>
             <div
-              className={`dark:bg-black dark:border-t dark:border-l dark:border-grey popover-arrow ${
-                showArrorw ? '' : 'hidden'
-              }`}
+              className={`popover-arrow ${showArrow ? '' : 'hidden'}`}
               ref={setArrowRef}
               style={{
                 ...styles.arrow,

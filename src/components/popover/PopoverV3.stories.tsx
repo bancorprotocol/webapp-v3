@@ -17,7 +17,7 @@ Popover.args = {
   buttonElement: ({ isOpen, setIsOpen }) => (
     <button onClick={() => setIsOpen(!isOpen)}>Info</button>
   ),
-  showArrorw: false,
+  showArrow: false,
   hover: true,
   options: {
     placement: 'bottom',

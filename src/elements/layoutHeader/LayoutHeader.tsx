@@ -109,6 +109,7 @@ const TopMenuDropdown = ({
       buttonElement={() => (
         <Navigate to={items[0].link}>{items[0].title}</Navigate>
       )}
+      showArrow={false}
       options={{
         placement: 'bottom-start',
         modifiers: [
