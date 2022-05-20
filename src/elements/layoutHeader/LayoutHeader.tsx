@@ -4,7 +4,6 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
-import { Popover } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
@@ -13,6 +12,7 @@ import { useAppSelector } from 'store/index';
 import { getIsAppBusy } from 'store/bancor/bancor';
 import { BancorURL } from 'router/bancorURL.service';
 import { Navigate } from 'components/navigate/Navigate';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
@@ -48,7 +48,7 @@ export const LayoutHeader = () => {
                 { title: 'Trade', link: BancorURL.trade() },
                 { title: 'Tokens', link: BancorURL.tokens },
               ]}
-              className="w-[115px]"
+              className="w-[75px]"
             />
 
             <Navigate to={BancorURL.earn}>Earn</Navigate>
@@ -57,7 +57,7 @@ export const LayoutHeader = () => {
                 { title: 'Vote', link: BancorURL.vote },
                 { title: 'DAO Forum', link: 'https://gov.bancor.network' },
               ]}
-              className="w-[135px]"
+              className="w-[95px]"
             />
 
             <Navigate to={BancorURL.portfolio}>Portfolio</Navigate>
@@ -97,9 +97,6 @@ interface TopMenu {
   link: string;
 }
 
-let timeout: NodeJS.Timeout;
-let prevPopFunc: Function = () => {};
-
 const TopMenuDropdown = ({
   items,
   className,
@@ -107,43 +104,34 @@ const TopMenuDropdown = ({
   items: TopMenu[];
   className: string;
 }) => {
-  const [open, setOpen] = useState(false);
-
-  const openPopover = () => {
-    prevPopFunc();
-    clearInterval(timeout);
-    setOpen(true);
-  };
-
-  const closePopover = (delay: number) => {
-    prevPopFunc = () => setOpen(false);
-    timeout = setTimeout(() => setOpen(false), delay);
-  };
   return (
-    <Popover className="block relative">
-      <Popover.Button
-        onMouseEnter={() => openPopover()}
-        onMouseLeave={() => closePopover(600)}
-      >
-        <TopMenuDropdownItem item={items[0]} />
-      </Popover.Button>
-
-      {open && (
-        <Popover.Panel
-          static
-          onMouseEnter={() => openPopover()}
-          onMouseLeave={() => closePopover(200)}
-          className={`dropdown-menu flex flex-col gap-20 left-[-25px] ${className}`}
-        >
-          {items.map((item) => (
-            <TopMenuDropdownItem key={item.title} item={item} />
-          ))}
-        </Popover.Panel>
+    <PopoverV3
+      buttonElement={() => (
+        <Navigate to={items[0].link}>{items[0].title}</Navigate>
       )}
-    </Popover>
+      options={{
+        placement: 'bottom-start',
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [-30, 20],
+            },
+          },
+        ],
+      }}
+    >
+      <div className={`flex flex-col space-y-15 ${className}`}>
+        {items.map((item) => (
+          <Navigate
+            key={item.title}
+            to={item.link}
+            className="hover:text-primary"
+          >
+            {item.title}
+          </Navigate>
+        ))}
+      </div>
+    </PopoverV3>
   );
-};
-
-const TopMenuDropdownItem = ({ item }: { item: TopMenu }) => {
-  return <Navigate to={item.link}>{item.title}</Navigate>;
 };
