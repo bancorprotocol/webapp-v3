@@ -207,7 +207,24 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 </div>
               )}
             >
-              <div />
+              <div className="flex flex-col w-full">
+                <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[50px]">
+                  <span>
+                    <span>Compounding rewards</span>{' '}
+                    <span className="text-secondary">
+                      {pool.reserveToken.symbol}
+                    </span>
+                  </span>
+                  <span>{pool.apr.standardRewards.toFixed(2)}%</span>
+                </div>
+                <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
+                  <span>
+                    <span>Extra bonus</span>{' '}
+                    <span className="text-secondary">BNT</span>
+                  </span>
+                  <span>{pool.apr.tradingFees.toFixed(2)}%</span>
+                </div>
+              </div>
             </ExpandableSection>
           ) : (
             <div className="flex justify-between w-full px-20 py-10 mt-20 rounded bg-secondary items-center h-[50px]">
