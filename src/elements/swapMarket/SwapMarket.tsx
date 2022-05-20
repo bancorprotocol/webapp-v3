@@ -441,6 +441,7 @@ export const SwapMarket = ({
             onClick={() => handleSwapClick()}
             variant={buttonVariant()}
             size={ButtonSize.Full}
+            className="disabled:bg-silver dark:disabled:bg-charcoal"
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}
