@@ -119,12 +119,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
   const canDeposit = useMemo(
-    () =>
-      !!account &&
-      !!amount &&
-      amount.indexOf('0') !== 0 &&
-      !isInputError &&
-      !txBusy,
+    () => !!account && !!amount && +amount > 0 && !isInputError && !txBusy,
     [account, amount, isInputError, txBusy]
   );
 
@@ -260,9 +255,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
           <Button
             onClick={handleClick}
-            disabled={
-              !amount || amount.indexOf('0') === 0 || txBusy || isInputError
-            }
+            disabled={!amount || +amount === 0 || txBusy || isInputError}
             variant={ButtonVariant.PRIMARY}
             className={`w-full mt-20 mb-14`}
           >
