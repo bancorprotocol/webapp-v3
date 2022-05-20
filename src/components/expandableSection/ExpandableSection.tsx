@@ -19,9 +19,9 @@ export const ExpandableSection = ({
   const toggle = () => setExpanded(!expanded);
   return (
     <div className={className}>
-      <button onClick={toggle} className={btnClassName}>
+      <div onClick={toggle} className={`cursor-pointer ${btnClassName}`}>
         {renderButtonChildren(expanded)}
-      </button>
+      </div>
       {expanded && children}
     </div>
   );
