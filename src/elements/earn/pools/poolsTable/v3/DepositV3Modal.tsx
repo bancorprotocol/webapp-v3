@@ -192,11 +192,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                         </span>
                       </div>
                     </div>
-                    <IconChevron
-                      className={`w-14 ml-20 ${
-                        isExpanded ? 'transform rotate-180' : ''
-                      }`}
-                    />
+                    <div className="flex items-center justify-between">
+                      <span>{pool.apr.total.toFixed(2)}%</span>
+                      <IconChevron
+                        className={`w-14 ml-10 ${
+                          isExpanded ? 'transform rotate-180' : ''
+                        }`}
+                      />
+                    </div>
                   </div>
                   <div className="text-12 text-secondary">
                     Additional gas ~{prettifyNumber(extraGasNeeded, true)}
@@ -214,7 +217,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   {pool.reserveToken.symbol}
                 </span>
               </span>
-              <span>{pool.apr.total.toFixed(2)}%</span>
+              <span>{pool.apr.standardRewards.toFixed(2)}%</span>
             </div>
           )}
 
