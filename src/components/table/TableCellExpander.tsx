@@ -40,9 +40,9 @@ export const TableCellExpander = ({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-end w-full">
       {canExpand ? groupContent : original.groupId && singleContent}
-      <div className="flex items-center ml-auto gap-5">
+      <div>
         {canExpand && (
           <button
             className="w-[35px] h-[35px] border border-primary rounded-[12px]"
@@ -53,8 +53,12 @@ export const TableCellExpander = ({
         )}
         {subMenu && !canExpand && (
           <PopoverV3
-            buttonElement={() => (
-              <button className="w-30 h-30 bg-white dark:bg-black flex items-center justify-center rounded-full ml-10">
+            hover
+            buttonElement={({ isOpen, setIsOpen }) => (
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-32 h-32 bg-white dark:bg-black flex items-center justify-center rounded-full"
+              >
                 <IconMore className="rotate-90 w-16 h-16" />
               </button>
             )}
@@ -64,7 +68,7 @@ export const TableCellExpander = ({
                 {
                   name: 'offset',
                   options: {
-                    offset: [0, 5],
+                    offset: [0, 10],
                   },
                 },
               ],

@@ -1,0 +1,24 @@
+@import 'tailwindcss/components';
+
+@layer components {
+  .popover-arrow {
+    @apply h-10 w-10;
+    @apply bg-white dark:bg-grey;
+  }
+
+  .popover-panel[data-popper-placement^='top'] .popover-arrow {
+    bottom: calc(5px * -1);
+  }
+
+  .popover-panel[data-popper-placement^='bottom'] .popover-arrow {
+    top: calc(5px * -1);
+  }
+
+  .popover-panel[data-popper-placement^='left'] .popover-arrow {
+    right: calc(5px * -1);
+  }
+
+  .popover-panel[data-popper-placement^='right'] .popover-arrow {
+    left: calc(5px * -1);
+  }
+}

@@ -3,7 +3,7 @@ import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
-import { Tooltip } from 'components/tooltip/Tooltip';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const Pools = () => {
   const title = 'Earn';
@@ -17,8 +17,8 @@ export const Pools = () => {
       trailingTitle={
         <div className="flex items-center space-x-10 text-16">
           <PageNavLink to={BancorURL.earn}>
-            <Tooltip
-              content={
+            <PopoverV3
+              children={
                 <>
                   "All V3 tokens are eligible for Single-Sided Staking and 100%
                   Instant Impermanent Loss Protection.{' '}
@@ -32,14 +32,14 @@ export const Pools = () => {
                   </a>
                 </>
               }
-              button={<IconProtected className="text-primary" />}
+              buttonElement={() => <IconProtected className="text-primary" />}
             />
             V3
           </PageNavLink>
           <PageNavLink to={BancorURL.earnV2}>
-            <Tooltip
-              content="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
-              button={<div className="px-6">V2</div>}
+            <PopoverV3
+              children="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
+              buttonElement={() => <div className="px-6">V2</div>}
             />
           </PageNavLink>
         </div>

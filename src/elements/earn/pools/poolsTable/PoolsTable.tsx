@@ -10,7 +10,6 @@ import { PoolV3 } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
@@ -65,10 +64,9 @@ export const PoolsTable = () => {
         Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => (
-          <Tooltip
-            content={toolTip(cellData.row.original)}
-            placement={'bottom'}
-            button={
+          <PopoverV3
+            children={toolTip(cellData.row.original)}
+            buttonElement={() => (
               <div className="flex items-center">
                 <Image
                   src={cellData.row.original.reserveToken.logoURI}
@@ -77,7 +75,7 @@ export const PoolsTable = () => {
                 />
                 <span className="text-16">{cellData.value}</span>
               </div>
-            }
+            )}
           />
         ),
         minWidth: 100,

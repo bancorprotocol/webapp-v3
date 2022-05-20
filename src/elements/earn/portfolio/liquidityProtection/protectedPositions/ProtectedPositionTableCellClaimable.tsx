@@ -2,8 +2,8 @@ import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
 import { Row } from 'react-table';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconClock } from 'assets/icons/clock.svg';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import BigNumber from 'bignumber.js';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const ProtectedPositionTableCellClaimable = (
   row: Row<ProtectedPositionGrouped>
@@ -19,10 +19,11 @@ export const ProtectedPositionTableCellClaimable = (
     <div className="text-center">
       <div className="flex items-center justify-center font-medium h-24">
         {!row.canExpand && (
-          <Tooltip
-            content={`Current protection is ${currentCoveragePercent}%`}
-            button={<IconClock className="w-18 h-20 mr-6" />}
-          />
+          <PopoverV3
+            buttonElement={() => <IconClock className="w-18 h-20 mr-6" />}
+          >
+            Current protection is {currentCoveragePercent}%
+          </PopoverV3>
         )}
         {`${prettifyNumber(tknAmount)} ${symbol}`}
       </div>

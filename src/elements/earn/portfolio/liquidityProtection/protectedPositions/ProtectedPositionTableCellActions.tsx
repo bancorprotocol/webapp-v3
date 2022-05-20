@@ -89,7 +89,7 @@ export const ProtectedPositionTableCellActions = (
       isPoolExistV3 ? (
         <Button
           onClick={() => migrate([position])}
-          className="text-12 w-[165px] h-[32px]"
+          className="text-12 w-[165px] h-[32px] mr-10"
           disabled={isMigrateDisabled([position])}
         >
           Upgrade To V3
@@ -105,7 +105,7 @@ export const ProtectedPositionTableCellActions = (
       isPoolExistV3 ? (
         <Button
           onClick={() => migrate(position.subRows)}
-          className="text-12 w-[145px] h-[32px]"
+          className="text-12 w-[145px] h-[32px] mr-10"
           disabled={isMigrateDisabled(position.subRows)}
         >
           Upgrade All To V3

@@ -9,9 +9,14 @@ type PopoverOptions = Omit<Partial<PopperJS.Options>, 'modifiers'> & {
 };
 
 interface Props {
-  children: ReactNode;
-  buttonElement: (open: boolean) => ReactNode;
+  children: ReactNode | string;
+  buttonElement: (props: {
+    isOpen: boolean;
+    setIsOpen: (open: boolean) => void;
+  }) => ReactNode;
   options?: PopoverOptions;
+  hover?: boolean;
+  showArrorw?: boolean;
 }
 
 let timeout: NodeJS.Timeout;
@@ -23,7 +28,7 @@ const defaultOptions: PopoverOptions = {
     {
       name: 'offset',
       options: {
-        offset: [0, 5],
+        offset: [0, 10],
       },
     },
   ],
@@ -33,45 +38,69 @@ export const PopoverV3 = ({
   children,
   buttonElement,
   options = defaultOptions,
+  hover = true,
+  showArrorw,
 }: Props) => {
   const popperElRef = useRef(null);
-  const [targetElement, setTargetElement] = useState(null);
-  const [popperElement, setPopperElement] = useState(null);
-  const { styles, attributes } = usePopper(
-    targetElement,
-    popperElement,
-    options
+  const [targetElement, setTargetElement] = useState<HTMLDivElement | null>(
+    null
   );
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const [arrowRef, setArrowRef] = useState<HTMLDivElement | null>(null);
+  const { styles, attributes } = usePopper(targetElement, popperElement, {
+    ...options,
+    modifiers: [
+      ...(options.modifiers as Modifier<any>[]),
+      {
+        name: 'arrow',
+        options: {
+          element: arrowRef,
+        },
+      },
+    ],
+  });
 
   const [open, setOpen] = useState(false);
 
-  const openPopover = () => {
+  const handleOnMouseEnter = () => {
+    if (!hover) {
+      return;
+    }
+
     prevPopFunc();
     clearInterval(timeout);
     setOpen(true);
   };
 
-  const closePopover = (delay: number) => {
+  const handleOnMouseLeave = (delay: number) => {
+    if (!hover) {
+      return;
+    }
+
     prevPopFunc = () => setOpen(false);
     timeout = setTimeout(() => setOpen(false), delay);
   };
 
   return (
-    <>
+    <div className="flex">
       <div
-        // @ts-ignore
         ref={setTargetElement}
-        onMouseEnter={() => openPopover()}
-        onMouseLeave={() => closePopover(600)}
+        onMouseEnter={() => handleOnMouseEnter()}
+        onMouseLeave={() => handleOnMouseLeave(600)}
       >
-        {buttonElement(open)}
+        {buttonElement({
+          isOpen: open,
+          setIsOpen: (open: boolean) => setOpen(open),
+        })}
       </div>
       <Portal>
         <div
           ref={popperElRef}
           style={styles.popper}
           {...attributes.popper}
-          className="z-50"
+          className="z-50 popover-panel"
         >
           <Transition
             show={open}
@@ -86,14 +115,24 @@ export const PopoverV3 = ({
           >
             <div
               className="max-w-[300px] bg-white dark:bg-black border border-silver dark:border-grey py-20 px-24 rounded"
-              onMouseEnter={() => openPopover()}
-              onMouseLeave={() => closePopover(200)}
+              onMouseEnter={() => handleOnMouseEnter()}
+              onMouseLeave={() => handleOnMouseLeave(200)}
             >
               {children}
             </div>
+            <div
+              className={`dark:bg-black dark:border-t dark:border-l dark:border-grey popover-arrow ${
+                showArrorw ? '' : 'hidden'
+              }`}
+              ref={setArrowRef}
+              style={{
+                ...styles.arrow,
+                transform: `${styles.arrow.transform} rotate(45deg)`,
+              }}
+            />
           </Transition>
         </div>
       </Portal>
-    </>
+    </div>
   );
 };
