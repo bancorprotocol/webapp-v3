@@ -117,7 +117,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
   const canDeposit = useMemo(
-    () => !!account && !!amount && !isInputError && !txBusy,
+    () =>
+      !!account &&
+      !!amount &&
+      amount.indexOf('0') !== 0 &&
+      !isInputError &&
+      !txBusy,
     [account, amount, isInputError, txBusy]
   );
 
@@ -134,7 +139,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
-    if (accessFullEarnings && eth && amount) {
+    if (accessFullEarnings && eth) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
         gasPrice.times(REWARDS_EXTRA_GAS).times(eth.usdPrice),
@@ -145,7 +150,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     } else {
       setExtraGasNeeded('0');
     }
-  }, [accessFullEarnings, amount, eth]);
+  }, [accessFullEarnings, eth]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
@@ -177,7 +182,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             <ExpandableSection
               renderButtonChildren={(isExpanded) => (
                 <div className="flex flex-col w-full">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between">
                     <div>
                       <div className="flex justify-between text-black dark:text-white">
                         <span className="mr-10">Join rewards program</span>
@@ -193,7 +198,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span>{pool.apr.total.toFixed(2)}%</span>
+                      <span>
+                        {accessFullEarnings
+                          ? pool.apr.total.toFixed(2)
+                          : pool.apr.tradingFees.toFixed(2)}
+                        %
+                      </span>
                       <IconChevron
                         className={`w-14 ml-10 ${
                           isExpanded ? 'transform rotate-180' : ''
@@ -215,14 +225,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                       {pool.reserveToken.symbol}
                     </span>
                   </span>
-                  <span>{pool.apr.standardRewards.toFixed(2)}%</span>
+                  <span>{pool.apr.tradingFees.toFixed(2)}%</span>
                 </div>
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
                   <span>
-                    <span>Extra bonus</span>{' '}
+                    <span>Standard rewards</span>{' '}
                     <span className="text-secondary">BNT</span>
                   </span>
-                  <span>{pool.apr.tradingFees.toFixed(2)}%</span>
+                  <span>{pool.apr.standardRewards.toFixed(2)}%</span>
                 </div>
               </div>
             </ExpandableSection>
@@ -234,13 +244,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   {pool.reserveToken.symbol}
                 </span>
               </span>
-              <span>{pool.apr.standardRewards.toFixed(2)}%</span>
+              <span>{pool.apr.tradingFees.toFixed(2)}%</span>
             </div>
           )}
 
           <Button
             onClick={handleClick}
-            disabled={!amount || txBusy || isInputError}
+            disabled={
+              !amount || amount.indexOf('0') === 0 || txBusy || isInputError
+            }
             variant={ButtonVariant.PRIMARY}
             className={`w-full mt-20 mb-14`}
           >
