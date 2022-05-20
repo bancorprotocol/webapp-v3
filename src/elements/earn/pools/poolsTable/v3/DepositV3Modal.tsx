@@ -28,6 +28,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { wait } from 'utils/pureFunctions';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
+import { getPoolsV3Map } from 'store/bancor/pool';
 
 interface Props {
   pool: PoolV3;
@@ -46,6 +47,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
+  const poolV3Map = useAppSelector(getPoolsV3Map);
 
   const onClose = async () => {
     setIsOpen(false);
@@ -230,7 +232,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
                   <span>
                     <span>Standard rewards</span>{' '}
-                    <span className="text-secondary">BNT</span>
+                    <span className="text-secondary">
+                      {poolV3Map.get(pool.latestProgram.rewardsToken)
+                        ?.reserveToken.symbol ?? ''}
+                    </span>
                   </span>
                   <span>
                     {accessFullEarnings
