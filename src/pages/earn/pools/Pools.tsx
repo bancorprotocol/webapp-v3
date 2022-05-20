@@ -4,6 +4,7 @@ import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { openNewTab } from 'utils/pureFunctions';
 
 export const Pools = () => {
   const title = 'Earn';
@@ -18,22 +19,25 @@ export const Pools = () => {
         <div className="flex items-center space-x-10 text-16">
           <PageNavLink to={BancorURL.earn}>
             <PopoverV3
-              children={
-                <>
-                  "All V3 tokens are eligible for Single-Sided Staking and 100%
-                  Instant Impermanent Loss Protection.{' '}
-                  <a
-                    href="https://support.bancor.network/hc/en-us/articles/5478576660242-What-is-a-whitelisted-pool"
-                    className="hover:underline text-primary"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Read more
-                  </a>
-                </>
-              }
               buttonElement={() => <IconProtected className="text-primary" />}
-            />
+            >
+              <>
+                <div>
+                  All V3 tokens are eligible for Single-Sided Staking and 100%
+                  Instant Impermanent Loss Protection.{' '}
+                </div>
+                <div
+                  onClick={() =>
+                    openNewTab(
+                      'https://support.bancor.network/hc/en-us/articles/5478576660242-What-is-a-whitelisted-pool'
+                    )
+                  }
+                  className="hover:underline text-primary cursor-pointer"
+                >
+                  Read more
+                </div>
+              </>
+            </PopoverV3>
             V3
           </PageNavLink>
           <PageNavLink to={BancorURL.earnV2}>

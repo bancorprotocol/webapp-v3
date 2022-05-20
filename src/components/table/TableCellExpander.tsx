@@ -53,7 +53,7 @@ export const TableCellExpander = ({
         )}
         {subMenu && !canExpand && (
           <PopoverV3
-            hover
+            hover={false}
             buttonElement={({ isOpen, setIsOpen }) => (
               <button
                 onClick={() => setIsOpen(!isOpen)}

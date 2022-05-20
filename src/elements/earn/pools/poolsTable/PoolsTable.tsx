@@ -91,11 +91,7 @@ export const PoolsTable = () => {
             {cellData.row.original.latestProgram?.isActive && (
               <>
                 <PopoverV3
-                  buttonElement={() => (
-                    <button>
-                      <IconGift className="w-16 h-16" />
-                    </button>
-                  )}
+                  buttonElement={() => <IconGift className="w-16 h-16" />}
                 >
                   <div>
                     Rewards enabled on this token.{' '}
