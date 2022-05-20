@@ -62,16 +62,18 @@ const V3Portfolio = () => {
       </div>
     </div>
   ) : (
-    <div className="max-w-[320px] mx-auto">
+    <div className="flex flex-col items-center mx-auto">
       <h2 className="text-20 text-center font-medium">
         Connect your wallet to see your earnings and impermanent loss
       </h2>
-      <div className="flex justify-center mt-20">
-        <Button size={ButtonSize.Small} onClick={() => handleLoginClick()}>
-          <IconWallet className="w-20 mr-10" />
-          Connect Wallet
-        </Button>
-      </div>
+      <Button
+        className="flex items-center justify-center mt-20"
+        size={ButtonSize.Meduim}
+        onClick={() => handleLoginClick()}
+      >
+        <IconWallet className="w-20 mr-10" />
+        Connect Wallet
+      </Button>
     </div>
   );
 };
