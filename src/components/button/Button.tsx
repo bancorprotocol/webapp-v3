@@ -9,12 +9,12 @@ export enum ButtonVariant {
 }
 
 export enum ButtonSize {
+  Full,
   ExtraLarge,
   Large,
   Meduim,
   Small,
   ExtraSmall,
-  Full,
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -68,7 +68,7 @@ export const Button = memo(
     return (
       <button
         {...props}
-        className={`rounded-40 ${className} ${getVariantStyle(
+        className={`rounded-40 disabled:cursor-not-allowed ${className} ${getVariantStyle(
           variant
         )} ${getSizeStyle(size)}`}
       >

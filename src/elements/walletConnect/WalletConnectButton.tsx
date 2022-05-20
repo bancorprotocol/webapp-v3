@@ -11,13 +11,17 @@ export const WalletConnectButton = ({
 }: UseWalletConnect) => {
   const buttonText = account ? shortenString(account) : 'Connect';
 
+  const loggedIn = selectedWallet && account;
+
   return (
     <Button
-      className="flex items-center justify-center px-5 w-[180px] h-40"
+      className={`flex items-center justify-center px-5 h-40 dark:bg-grey dark:hover:bg-white ${
+        loggedIn ? 'w-[180px]' : 'w-[115px]'
+      }`}
       variant={ButtonVariant.Tertiary}
       onClick={() => handleWalletButtonClick()}
     >
-      {selectedWallet && account ? (
+      {loggedIn ? (
         <Image src={selectedWallet.icon} alt="Wallet Logo" className="w-20" />
       ) : (
         <IconWallet className="w-20" />

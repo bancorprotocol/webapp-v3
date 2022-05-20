@@ -1,4 +1,4 @@
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -193,6 +193,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             onClick={handleClick}
             disabled={!amount || txBusy || isInputError}
             variant={ButtonVariant.Primary}
+            size={ButtonSize.Full}
             className={`w-full mt-20 mb-14`}
           >
             {txBusy
