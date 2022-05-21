@@ -64,7 +64,7 @@ const V3Portfolio = () => {
   ) : (
     <div className="max-w-[320px] mx-auto">
       <h2 className="text-20 text-center font-medium">
-        Connect your wallet to see your earnings and impermanent loss
+        Connect your wallet to see your earnings
       </h2>
       <div className="flex justify-center mt-20">
         <Button size={ButtonSize.SMALL} onClick={() => handleLoginClick()}>
