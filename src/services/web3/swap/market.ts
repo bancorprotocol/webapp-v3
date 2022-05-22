@@ -17,10 +17,15 @@ import {
 } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getFutureTime, ppmToDec } from 'utils/helperFunctions';
-import { BancorNetwork__factory, Converter__factory } from '../abis/types';
+import {
+  BancorNetwork__factory,
+  Converter__factory,
+  PoolCollectionType1,
+  PoolCollectionType1__factory,
+} from '../abis/types';
 import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { BancorContract, ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
 
@@ -356,32 +361,44 @@ const getV3PriceImpact = async (
   amount: string,
   rate: string
 ) => {
-  const fromLiqudity = await ContractsApi.PoolCollection.read.poolLiquidity(
-    fromToken.address
-  );
-  const toLiqudity = await ContractsApi.PoolCollection.read.poolLiquidity(
-    toToken.address
-  );
-
   const fromBNT = fromToken.address === bntToken;
   const toBNT = toToken.address === bntToken;
 
+  // temp code before proper implementation - once contracts are deployed we'll change this
+  const fromCollection = await ContractsApi.BancorNetwork.read.collectionByPool(
+    fromToken.address
+  );
+
+  const toCollection = await ContractsApi.BancorNetwork.read.collectionByPool(
+    toToken.address
+  );
+
+  const poolCollectionContractFrom = new BancorContract<PoolCollectionType1>(
+    fromCollection,
+    PoolCollectionType1__factory
+  );
+
+  const poolCollectionContractTo = new BancorContract<PoolCollectionType1>(
+    toCollection,
+    PoolCollectionType1__factory
+  );
+
   if (fromBNT || toBNT) {
-    const pool = await ContractsApi.PoolCollection.read.poolData(
-      fromBNT ? toToken.address : fromToken.address
-    );
+    const pool = fromBNT
+      ? await poolCollectionContractTo.read.poolData(toToken.address)
+      : await poolCollectionContractFrom.read.poolData(fromToken.address);
+
+    const liquidity = toBNT
+      ? await poolCollectionContractFrom.read.poolLiquidity(fromToken.address)
+      : await poolCollectionContractTo.read.poolLiquidity(toToken.address);
 
     const spotPrice = calcReserve(
       shrinkToken(
-        toBNT
-          ? fromLiqudity.baseTokenTradingLiquidity.toString()
-          : toLiqudity.bntTradingLiquidity.toString(),
+        liquidity.baseTokenTradingLiquidity.toString(),
         toBNT ? fromToken.decimals : toToken.decimals
       ),
       shrinkToken(
-        fromBNT
-          ? toLiqudity.baseTokenTradingLiquidity.toString()
-          : fromLiqudity.bntTradingLiquidity.toString(),
+        liquidity.baseTokenTradingLiquidity.toString(),
         fromBNT ? toToken.decimals : fromToken.decimals
       ),
       ppmToDec(pool.tradingFeePPM)
@@ -394,12 +411,18 @@ const getV3PriceImpact = async (
     return priceImpact;
   }
 
-  const fromPool = await ContractsApi.PoolCollection.read.poolData(
+  const fromLiqudity = await poolCollectionContractFrom.read.poolLiquidity(
     fromToken.address
   );
-  const toPool = await ContractsApi.PoolCollection.read.poolData(
+
+  const toLiqudity = await poolCollectionContractTo.read.poolLiquidity(
     toToken.address
   );
+
+  const fromPool = await poolCollectionContractFrom.read.poolData(
+    fromToken.address
+  );
+  const toPool = await poolCollectionContractTo.read.poolData(toToken.address);
 
   const spot1 = calcReserve(
     shrinkToken(
