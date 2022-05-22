@@ -32,7 +32,8 @@ import { apiData$ } from 'services/observables/apiData';
 export const getRateAndPriceImapct = async (
   fromToken: Token,
   toToken: Token,
-  amount: string
+  amount: string,
+  forceV3Routing: boolean
 ) => {
   try {
     const networkContractAddress = await bancorNetwork$
@@ -78,7 +79,8 @@ export const getRateAndPriceImapct = async (
     const v3PI = await getV3PriceImpact(fromToken, toToken, amount, v3Rate);
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
-    const isV3 = Number(v3Rate) >= Number(v2Rate);
+    const isV3 =
+      (v3Rate !== '0' && forceV3Routing) || Number(v3Rate) >= Number(v2Rate);
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
