@@ -94,7 +94,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             disabled={isDisabled || txJoinBusy}
             onClick={onStartJoin}
           >
-            Stake
+            Join
           </Button>
         </div>
       </div>
