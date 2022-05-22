@@ -29,7 +29,7 @@ import { address as stakingRewardsClaimAddress } from 'services/web3/abis/Stakin
 import { address as standardRewardsAddress } from 'services/web3/abis/v3/StandardRewards_Proxy.json';
 import { address as bancorPortalAddress } from 'services/web3/abis/v3/BancorPortal_Proxy.json';
 
-class BancorContract<T> {
+export class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
     this.contractAddress = contractAddress;
     this._contractFactory = contractFactory;
