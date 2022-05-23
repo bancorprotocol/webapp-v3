@@ -8,7 +8,7 @@ import {
 } from 'services/api/bancorApi/bancorApi.types';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api-v3.bancor.network/',
+  baseURL: 'https://v3-staging-ptdczarhfq-nw.a.run.app/v3/',
   headers: {
     'Content-Type': 'application/json',
   },
