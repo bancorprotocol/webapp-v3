@@ -363,92 +363,97 @@ const getV3PriceImpact = async (
   amount: string,
   rate: string
 ) => {
-  const fromBNT = fromToken.address === bntToken;
-  const toBNT = toToken.address === bntToken;
+  try {
+    const fromBNT = fromToken.address === bntToken;
+    const toBNT = toToken.address === bntToken;
 
-  // temp code before proper implementation - once contracts are deployed we'll change this
-  const fromCollection = await ContractsApi.BancorNetwork.read.collectionByPool(
-    fromToken.address
-  );
+    // temp code before proper implementation - once contracts are deployed we'll change this
+    const fromCollection =
+      await ContractsApi.BancorNetwork.read.collectionByPool(fromToken.address);
 
-  const toCollection = await ContractsApi.BancorNetwork.read.collectionByPool(
-    toToken.address
-  );
-
-  const poolCollectionContractFrom = new BancorContract<PoolCollectionType1>(
-    fromCollection,
-    PoolCollectionType1__factory
-  );
-
-  const poolCollectionContractTo = new BancorContract<PoolCollectionType1>(
-    toCollection,
-    PoolCollectionType1__factory
-  );
-
-  if (fromBNT || toBNT) {
-    const pool = fromBNT
-      ? await poolCollectionContractTo.read.poolData(toToken.address)
-      : await poolCollectionContractFrom.read.poolData(fromToken.address);
-
-    const liquidity = toBNT
-      ? await poolCollectionContractFrom.read.poolLiquidity(fromToken.address)
-      : await poolCollectionContractTo.read.poolLiquidity(toToken.address);
-
-    const spotPrice = calcReserve(
-      shrinkToken(
-        liquidity.baseTokenTradingLiquidity.toString(),
-        toBNT ? fromToken.decimals : toToken.decimals
-      ),
-      shrinkToken(
-        liquidity.baseTokenTradingLiquidity.toString(),
-        fromBNT ? toToken.decimals : fromToken.decimals
-      ),
-      ppmToDec(pool.tradingFeePPM)
+    const toCollection = await ContractsApi.BancorNetwork.read.collectionByPool(
+      toToken.address
     );
+
+    const poolCollectionContractFrom = new BancorContract<PoolCollectionType1>(
+      fromCollection,
+      PoolCollectionType1__factory
+    );
+
+    const poolCollectionContractTo = new BancorContract<PoolCollectionType1>(
+      toCollection,
+      PoolCollectionType1__factory
+    );
+
+    if (fromBNT || toBNT) {
+      const pool = fromBNT
+        ? await poolCollectionContractTo.read.poolData(toToken.address)
+        : await poolCollectionContractFrom.read.poolData(fromToken.address);
+
+      const liquidity = toBNT
+        ? await poolCollectionContractFrom.read.poolLiquidity(fromToken.address)
+        : await poolCollectionContractTo.read.poolLiquidity(toToken.address);
+
+      const spotPrice = calcReserve(
+        shrinkToken(
+          liquidity.baseTokenTradingLiquidity.toString(),
+          toBNT ? fromToken.decimals : toToken.decimals
+        ),
+        shrinkToken(
+          liquidity.baseTokenTradingLiquidity.toString(),
+          fromBNT ? toToken.decimals : fromToken.decimals
+        ),
+        ppmToDec(pool.tradingFeePPM)
+      );
+
+      const priceImpact = new BigNumber(1)
+        .minus(new BigNumber(rate).div(amount).div(spotPrice))
+        .times(100);
+
+      return priceImpact;
+    }
+
+    const fromLiqudity = await poolCollectionContractFrom.read.poolLiquidity(
+      fromToken.address
+    );
+
+    const toLiqudity = await poolCollectionContractTo.read.poolLiquidity(
+      toToken.address
+    );
+
+    const fromPool = await poolCollectionContractFrom.read.poolData(
+      fromToken.address
+    );
+    const toPool = await poolCollectionContractTo.read.poolData(
+      toToken.address
+    );
+
+    const spot1 = calcReserve(
+      shrinkToken(
+        fromLiqudity.baseTokenTradingLiquidity.toString(),
+        fromToken.decimals
+      ),
+      shrinkToken(fromLiqudity.bntTradingLiquidity.toString(), bntDecimals),
+      ppmToDec(fromPool.tradingFeePPM)
+    );
+
+    const spot2 = calcReserve(
+      shrinkToken(toLiqudity.bntTradingLiquidity.toString(), bntDecimals),
+      shrinkToken(
+        toLiqudity.baseTokenTradingLiquidity.toString(),
+        toToken.decimals
+      ),
+      ppmToDec(toPool.tradingFeePPM)
+    );
+
+    const spotPrice = spot1.times(spot2);
 
     const priceImpact = new BigNumber(1)
       .minus(new BigNumber(rate).div(amount).div(spotPrice))
       .times(100);
 
     return priceImpact;
+  } catch (error) {
+    return new BigNumber(0);
   }
-
-  const fromLiqudity = await poolCollectionContractFrom.read.poolLiquidity(
-    fromToken.address
-  );
-
-  const toLiqudity = await poolCollectionContractTo.read.poolLiquidity(
-    toToken.address
-  );
-
-  const fromPool = await poolCollectionContractFrom.read.poolData(
-    fromToken.address
-  );
-  const toPool = await poolCollectionContractTo.read.poolData(toToken.address);
-
-  const spot1 = calcReserve(
-    shrinkToken(
-      fromLiqudity.baseTokenTradingLiquidity.toString(),
-      fromToken.decimals
-    ),
-    shrinkToken(fromLiqudity.bntTradingLiquidity.toString(), bntDecimals),
-    ppmToDec(fromPool.tradingFeePPM)
-  );
-
-  const spot2 = calcReserve(
-    shrinkToken(toLiqudity.bntTradingLiquidity.toString(), bntDecimals),
-    shrinkToken(
-      toLiqudity.baseTokenTradingLiquidity.toString(),
-      toToken.decimals
-    ),
-    ppmToDec(toPool.tradingFeePPM)
-  );
-
-  const spotPrice = spot1.times(spot2);
-
-  const priceImpact = new BigNumber(1)
-    .minus(new BigNumber(rate).div(amount).div(spotPrice))
-    .times(100);
-
-  return priceImpact;
 };
