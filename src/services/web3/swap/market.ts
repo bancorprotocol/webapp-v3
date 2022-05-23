@@ -358,14 +358,6 @@ const getV3PriceImpact = async (
   amount: string,
   rate: string
 ) => {
-  const fromLiqudity =
-    await ContractsApi.BancorNetworkInfo.read.tradingLiquidity(
-      fromToken.address
-    );
-  const toLiqudity = await ContractsApi.BancorNetworkInfo.read.tradingLiquidity(
-    toToken.address
-  );
-
   const fromBNT = fromToken.address === bntToken;
   const toBNT = toToken.address === bntToken;
 
@@ -374,18 +366,22 @@ const getV3PriceImpact = async (
       await ContractsApi.BancorNetworkInfo.read.tradingFeePPM(
         fromBNT ? toToken.address : fromToken.address
       );
+    const tradingLiquidity =
+      await ContractsApi.BancorNetworkInfo.read.tradingLiquidity(
+        fromBNT ? toToken.address : fromToken.address
+      );
 
     const spotPrice = calcReserve(
       shrinkToken(
         toBNT
-          ? fromLiqudity.baseTokenTradingLiquidity.toString()
-          : toLiqudity.bntTradingLiquidity.toString(),
+          ? tradingLiquidity.baseTokenTradingLiquidity.toString()
+          : tradingLiquidity.bntTradingLiquidity.toString(),
         toBNT ? fromToken.decimals : toToken.decimals
       ),
       shrinkToken(
         fromBNT
-          ? toLiqudity.baseTokenTradingLiquidity.toString()
-          : fromLiqudity.bntTradingLiquidity.toString(),
+          ? tradingLiquidity.baseTokenTradingLiquidity.toString()
+          : tradingLiquidity.bntTradingLiquidity.toString(),
         fromBNT ? toToken.decimals : fromToken.decimals
       ),
       ppmToDec(tradingFeePPM)
@@ -397,6 +393,14 @@ const getV3PriceImpact = async (
 
     return priceImpact;
   }
+
+  const fromLiqudity =
+    await ContractsApi.BancorNetworkInfo.read.tradingLiquidity(
+      fromToken.address
+    );
+  const toLiqudity = await ContractsApi.BancorNetworkInfo.read.tradingLiquidity(
+    toToken.address
+  );
 
   const fromTradingFeePPM =
     await ContractsApi.BancorNetworkInfo.read.tradingFeePPM(fromToken.address);
