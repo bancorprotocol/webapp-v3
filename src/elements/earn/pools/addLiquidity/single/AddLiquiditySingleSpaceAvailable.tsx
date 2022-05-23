@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { useAppSelector } from 'store';
 import { getTokenById } from 'store/bancor/bancor';
@@ -13,6 +12,7 @@ import {
   getSpaceAvailable,
 } from 'services/web3/liquidity/liquidity';
 import { Pool } from 'services/observables/pools';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface Props {
   pool: Pool;
@@ -109,17 +109,15 @@ export const AddLiquiditySingleSpaceAvailable = ({
                   {prettifyNumber(spaceAvailableBnt)} BNT
                 </button>
               ) : (
-                <div>
-                  <button
-                    onClick={() => setAmount(spaceAvailableTkn)}
-                    className="mr-4"
-                  >
+                <div className="flex items-center space-x-5">
+                  <button onClick={() => setAmount(spaceAvailableTkn)}>
                     {prettifyNumber(spaceAvailableTkn)} {token && token.symbol}
                   </button>
                   {new BigNumber(spaceAvailableTkn).lte(1) && (
-                    <Tooltip
-                      content="Notify me when space opens up"
-                      button={
+                    <PopoverV3
+                      children="Notify me when space opens up"
+                      hover
+                      buttonElement={() => (
                         <a
                           href={`https://9000.hal.xyz/recipes/bancor-pool-liquidity-protocol?pool=${pool.pool_dlt_id}&token=${token.symbol}&value=10000&currency=USD`}
                           target="_blank"
@@ -127,7 +125,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
                         >
                           <IconBell className="w-12" />
                         </a>
-                      }
+                      )}
                     />
                   )}
                 </div>
