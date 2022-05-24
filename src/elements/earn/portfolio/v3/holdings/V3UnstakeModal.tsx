@@ -124,8 +124,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                 You have joined an inactive program!
               </div>
               <div className="text-secondary text-center mb-10">
-                First leave, then join an active program to earn more
-                bonuses.
+                First leave, then join an active program to earn more bonuses.
               </div>
               {inactivePrograms.map((program) => (
                 <div
