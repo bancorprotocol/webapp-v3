@@ -39,7 +39,7 @@ export const AddLiquiditySingleCTA = ({
       };
     } else {
       return {
-        label: 'Stake and Protect',
+        label: 'Deposit and Protect',
         disabled: false,
         variant: ButtonVariant.PRIMARY,
       };

@@ -31,12 +31,8 @@ const fetchPoolTokenToUnderlyingMulticall = async (
 
 export const fetchPortfolioV3Holdings = async (
   apiPools: APIPoolV3[],
-  user?: string
+  user: string
 ): Promise<HoldingRaw[]> => {
-  if (!user) {
-    throw new Error('Please login to fetch portfolio holdings');
-  }
-
   try {
     const poolTokenIdsMap = new Map(
       apiPools.map((pool) => [pool.poolDltId, pool.poolTokenDltId])
