@@ -53,7 +53,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                         />
                         <div className="mr-10">{bnt?.symbol}</div>
                         <div className="mr-10">{prettifyNumber(lock.bnt)}</div>
-                        <div className="text-12 text-primary dark:text-primary-light">{`(~${prettifyNumber(
+                        <div className="text-12 text-primary dark:text-primary-light">{`(${prettifyNumber(
                           bnt && bnt.usdPrice
                             ? Number(bnt.usdPrice) * lock.bnt
                             : 0,

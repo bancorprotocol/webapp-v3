@@ -88,7 +88,7 @@ export const UpgradeBntModal = ({
             <div>Upgrade all BNT</div>
             {`${prettifyNumber(totalBNT.tknAmount)} ${
               position.reserveToken.symbol
-            } (~${prettifyNumber(totalBNT.usdAmount, true)})`}
+            } ${prettifyNumber(totalBNT.usdAmount, true)}`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
