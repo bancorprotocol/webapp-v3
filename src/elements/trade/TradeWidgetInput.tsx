@@ -77,6 +77,12 @@ export const TradeWidgetInput = ({
             errorMsg ? 'border-error' : ''
           } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-grey space-x-20`}
         >
+          {!tokens.length && (
+            <div className="flex items-center space-x-10">
+              <div className="loading-skeleton h-40 w-40 !rounded-full" />
+              <div className="loading-skeleton h-20 w-[80px]" />
+            </div>
+          )}
           <div>
             {input && (
               <button
@@ -96,7 +102,7 @@ export const TradeWidgetInput = ({
               </button>
             )}
 
-            {tokens.length && !input && (
+            {!!tokens.length && !input && (
               <button
                 onClick={() => {
                   setIsOpen(true);
@@ -108,12 +114,12 @@ export const TradeWidgetInput = ({
               </button>
             )}
           </div>
-          {input && (
+          {
             <div
               onClick={() => handleFocusChange(true)}
               className="text-right cursor-text h-full flex-grow flex justify-center flex-col"
             >
-              {!isLoading ? (
+              {!isLoading && input ? (
                 <>
                   <input
                     ref={inputRef}
@@ -144,13 +150,15 @@ export const TradeWidgetInput = ({
                   )}
                 </>
               ) : (
-                <div className="flex flex-col items-end">
-                  <div className="loading-skeleton h-18 mb-4 w-3/4" />
-                  <div className="loading-skeleton h-12 w-1/2" />
-                </div>
+                (!tokens.length || (isLoading && input)) && (
+                  <div className="flex flex-col items-end">
+                    <div className="loading-skeleton h-18 mb-4 w-3/4" />
+                    <div className="loading-skeleton h-12 w-1/2" />
+                  </div>
+                )
               )}
             </div>
-          )}
+          }
         </div>
         {errorMsg && (
           <div className="relative flex justify-end mr-10">
