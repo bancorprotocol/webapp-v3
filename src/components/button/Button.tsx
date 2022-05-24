@@ -68,7 +68,7 @@ export const Button = memo(
     return (
       <button
         {...props}
-        className={`rounded-40 disabled:cursor-not-allowed ${className} ${getVariantStyle(
+        className={`rounded-40 disabled:cursor-not-allowed active:scale-95 disabled:scale-100 transition-all duration-300 ${className} ${getVariantStyle(
           variant
         )} ${getSizeStyle(size)}`}
       >

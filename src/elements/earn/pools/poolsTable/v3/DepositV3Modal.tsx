@@ -1,4 +1,4 @@
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -256,7 +256,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           <Button
             onClick={handleClick}
             disabled={!amount || +amount === 0 || txBusy || isInputError}
-            className={`w-full mt-20 mb-14`}
+            size={ButtonSize.Full}
+            className="mt-20 mb-14"
           >
             {txBusy
               ? '... waiting for confirmation'
