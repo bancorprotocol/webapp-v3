@@ -1,23 +1,11 @@
 import { Button } from 'components/button/Button';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTradeWidget } from 'elements/trade/useTradeWidget';
-import { useMemo, useState } from 'react';
-import { Token, updateUserBalances } from 'services/observables/tokens';
-import { useSearchParams } from 'react-router-dom';
-import { useNavigation } from 'hooks/useNavigation';
-import {
-  getFutureTime,
-  prettifyNumber,
-  toBigNumber,
-} from 'utils/helperFunctions';
+import { useMemo } from 'react';
+import { Token } from 'services/observables/tokens';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
-import { ethToken } from 'services/web3/config';
-import { expandToken } from 'utils/formulas';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
-import dayjs from 'utils/dayjs';
-import { calculateMinimumReturn } from 'services/web3/swap/market';
-import { useAppSelector } from 'store/index';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useTrade } from 'elements/trade/useTrade';
 
 interface Props {
   from?: string;
@@ -31,68 +19,20 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
     to,
     tokens,
   });
-  const slippageTolerance = useAppSelector(
-    (state) => state.user.slippageTolerance
-  );
-  const account = useAppSelector((state) => state.user.account);
 
-  const [isBusy, setIsBusy] = useState(false);
+  const {
+    handleCTAClick,
+    ApproveModal,
+    isBusy,
+    handleSelectFrom,
+    handleSelectTo,
+    handleSelectSwitch,
+    errorInsufficientBalance,
+  } = useTrade(fromInput, toInput);
 
   const filteredTokens = useMemo(
     () => tokens.filter((t) => t.address !== from && t.address !== to),
     [from, to, tokens]
-  );
-
-  const [searchParams] = useSearchParams();
-  const { goToPage } = useNavigation();
-
-  const handleTrade = async () => {
-    if (!fromInput || !toInput || !account) {
-      return;
-    }
-    const fromIsEth = fromInput.token.address === ethToken;
-    const fromWei = expandToken(fromInput.inputTkn, fromInput.token.decimals);
-    const expectedToWei = expandToken(toInput.inputTkn, toInput.token.decimals);
-    const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
-    try {
-      await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
-        fromInput.token.address,
-        toInput.token.address,
-        fromWei,
-        minReturn,
-        getFutureTime(dayjs.duration({ days: 7 })),
-        account,
-        { value: fromIsEth ? fromWei : undefined }
-      );
-      await updateUserBalances();
-      fromInput.setInputTkn('');
-      fromInput.setInputFiat('');
-      toInput.setInputTkn('');
-      toInput.setInputFiat('');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  const handleCTAClick = () => {
-    setIsBusy(true);
-    onStart();
-  };
-
-  const [onStart, ApproveModal] = useApproveModal(
-    fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
-    handleTrade,
-    ContractsApi.BancorNetwork.contractAddress
-  );
-
-  const errorInsufficientBalance = useMemo(
-    () =>
-      toBigNumber(fromInput?.inputTkn || 0).gt(fromInput?.token.balance || 0)
-        ? 'Token balance insufficient'
-        : undefined,
-    [fromInput?.inputTkn, fromInput?.token.balance]
   );
 
   return (
@@ -102,29 +42,13 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
           label={'You pay'}
           tokens={filteredTokens}
           input={fromInput}
-          onTokenSelect={(token: Token) => {
-            goToPage.tradeBeta(
-              {
-                from: token.address,
-                to: searchParams.get('to') ?? undefined,
-              },
-              true
-            );
-          }}
+          onTokenSelect={handleSelectFrom}
           errorMsg={errorInsufficientBalance}
         />
       </div>
       <div className="bg-secondary p-10 rounded-30 pt-30 relative">
         <button
-          onClick={() =>
-            goToPage.tradeBeta(
-              {
-                from: searchParams.get('to') ?? undefined,
-                to: searchParams.get('from') ?? undefined,
-              },
-              true
-            )
-          }
+          onClick={handleSelectSwitch}
           className="transform hover:rotate-180 transition duration-500 rounded-full border-2 border-fog bg-white w-40 h-40 flex items-center justify-center absolute top-[-20px] left-[32px]"
         >
           <IconSync className="w-[25px] text-primary dark:text-primary-light" />
@@ -134,15 +58,7 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
           label={'You receive'}
           tokens={filteredTokens}
           input={toInput}
-          onTokenSelect={(token: Token) => {
-            goToPage.tradeBeta(
-              {
-                from: searchParams.get('from') ?? undefined,
-                to: token.address,
-              },
-              true
-            );
-          }}
+          onTokenSelect={handleSelectTo}
           isLoading={isLoading || fromInput?.isTyping}
         />
 
