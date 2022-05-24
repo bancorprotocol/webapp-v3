@@ -374,7 +374,7 @@ export const getV3RateInverse = async (
   }
 };
 
-const getV3PriceImpact = async (
+export const getV3PriceImpact = async (
   fromToken: Token,
   toToken: Token,
   amount: string,

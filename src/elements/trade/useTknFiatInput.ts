@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
@@ -15,7 +15,7 @@ interface useTokenInputV3Props {
 }
 
 export interface useTokenInputV3Return {
-  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  handleChange: (val: string) => void;
   inputUnit: string;
   oppositeUnit: string;
   inputTkn: string;
@@ -55,11 +55,9 @@ export const useTknFiatInput = ({
   ]);
 
   const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      console.log(e.target.value);
-      console.log(typeof e.target.value);
+    (val: string) => {
       setIsTyping(true);
-      const value = sanitizeNumberInput(e.target.value);
+      const value = sanitizeNumberInput(val);
 
       if (isFiat) {
         const oppositeValue = value

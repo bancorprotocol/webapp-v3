@@ -2,9 +2,14 @@ import PQueue from 'p-queue';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
 import { useCallback, useMemo, useState } from 'react';
-import { getV3Rate, getV3RateInverse } from 'services/web3/swap/market';
+import {
+  getV3PriceImpact,
+  getV3Rate,
+  getV3RateInverse,
+} from 'services/web3/swap/market';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
+import { toBigNumber } from 'utils/helperFunctions';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -22,6 +27,8 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
   const [toInputTkn, setToInputTkn] = useState('');
   const [toInputFiat, setToInputFiat] = useState('');
 
+  const [priceImpact, setPriceImpact] = useState('0.0000');
+
   const [isLoading, setIsLoading] = useState(false);
 
   const tokensMap = useMemo(
@@ -38,11 +45,20 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
       queue.clear();
       await queue.add(async () => {
         if (queue.size !== 0) return;
-        setIsLoading(true);
+        setIsLoading(!!val);
         try {
           const toValueTkn = val
             ? await getV3Rate(fromToken, toToken, val)
             : '';
+
+          const v3PI = !!val
+            ? await getV3PriceImpact(fromToken, toToken, val, toValueTkn)
+            : toBigNumber(0);
+
+          isNaN(v3PI.toNumber())
+            ? setPriceImpact('0.0000')
+            : setPriceImpact(v3PI.toString());
+
           const toValueFiat = toValueTkn
             ? calcOppositeValue(
                 false,
@@ -123,5 +139,5 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
     inputFiat: toInputFiat,
   });
 
-  return { fromInput, toInput, isLoading };
+  return { fromInput, toInput, isLoading, priceImpact };
 };

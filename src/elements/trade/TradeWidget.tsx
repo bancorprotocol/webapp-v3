@@ -1,7 +1,7 @@
 import { Button } from 'components/button/Button';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTradeWidget } from 'elements/trade/useTradeWidget';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigation } from 'hooks/useNavigation';
@@ -26,7 +26,7 @@ interface Props {
 }
 
 export const TradeWidget = ({ from, to, tokens }: Props) => {
-  const { fromInput, toInput, isLoading } = useTradeWidget({
+  const { fromInput, toInput, isLoading, priceImpact } = useTradeWidget({
     from,
     to,
     tokens,
@@ -37,8 +37,10 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
   const account = useAppSelector((state) => state.user.account);
 
   const [isBusy, setIsBusy] = useState(false);
-  const [tradeType, setTradeType] = useState<'byTarget' | 'bySource'>(
-    'bySource'
+
+  const filteredTokens = useMemo(
+    () => tokens.filter((t) => t.address !== from && t.address !== to),
+    [from, to, tokens]
   );
 
   const [searchParams] = useSearchParams();
@@ -85,14 +87,21 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
     ContractsApi.BancorNetwork.contractAddress
   );
 
+  const errorInsufficientBalance = useMemo(
+    () =>
+      toBigNumber(fromInput?.inputTkn || 0).gt(fromInput?.token.balance || 0)
+        ? 'Token balance insufficient'
+        : undefined,
+    [fromInput?.inputTkn, fromInput?.token.balance]
+  );
+
   return (
     <div className="w-full md:min-w-[485px]">
       <div className="px-10 mb-[34px]">
         <TradeWidgetInput
           label={'You pay'}
-          tokens={tokens}
+          tokens={filteredTokens}
           input={fromInput}
-          onFocus={() => setTradeType('bySource')}
           onTokenSelect={(token: Token) => {
             goToPage.tradeBeta(
               {
@@ -102,9 +111,7 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
               true
             );
           }}
-          isLoading={
-            (isLoading && tradeType === 'byTarget') || toInput?.isTyping
-          }
+          errorMsg={errorInsufficientBalance}
         />
       </div>
       <div className="bg-secondary p-10 rounded-30 pt-30 relative">
@@ -123,8 +130,9 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
           <IconSync className="w-[25px] text-primary dark:text-primary-light" />
         </button>
         <TradeWidgetInput
+          disabled
           label={'You receive'}
-          tokens={tokens}
+          tokens={filteredTokens}
           input={toInput}
           onTokenSelect={(token: Token) => {
             goToPage.tradeBeta(
@@ -135,11 +143,9 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
               true
             );
           }}
-          onFocus={() => setTradeType('byTarget')}
-          isLoading={
-            (isLoading && tradeType === 'bySource') || fromInput?.isTyping
-          }
+          isLoading={isLoading || fromInput?.isTyping}
         />
+
         {fromInput && toInput && fromInput.inputTkn !== '' && (
           <div className="px-10 mt-10">
             <div className="flex justify-between">
@@ -160,7 +166,11 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
             </div>
             <div className="flex justify-between">
               <div>Price Impact</div>
-              <div>1 {fromInput.token.symbol}</div>
+              {isLoading || fromInput.isTyping || toInput.isTyping ? (
+                <div className="loading-skeleton h-10 w-[100px] bg-white" />
+              ) : (
+                <div>{prettifyNumber(priceImpact)} %</div>
+              )}
             </div>
           </div>
         )}
@@ -168,7 +178,13 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
         <Button
           className="w-full mt-10"
           onClick={handleCTAClick}
-          disabled={!toBigNumber(fromInput?.inputTkn ?? 0).gt(0) || isBusy}
+          disabled={
+            !fromInput ||
+            !toInput ||
+            !toBigNumber(fromInput?.inputTkn ?? 0).gt(0) ||
+            isBusy ||
+            !!errorInsufficientBalance
+          }
         >
           {!toBigNumber(fromInput?.inputTkn ?? 0).gt(0)
             ? 'Enter Amount'

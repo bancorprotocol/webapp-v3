@@ -5,14 +5,17 @@ import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { useMemo, useRef, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 
 interface Props {
   input?: useTokenInputV3Return;
   isLoading?: boolean;
-  onFocus: () => void;
+  onFocus?: () => void;
   label?: string;
   tokens: Token[];
   onTokenSelect: (token: Token) => void;
+  disabled?: boolean;
+  errorMsg?: string;
 }
 
 export const TradeWidgetInput = ({
@@ -22,6 +25,8 @@ export const TradeWidgetInput = ({
   label,
   tokens,
   onTokenSelect,
+  disabled,
+  errorMsg,
 }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +40,7 @@ export const TradeWidgetInput = ({
 
   const handleFocusChange = (state: boolean) => {
     if (state) {
-      onFocus();
+      onFocus && onFocus();
       inputRef.current?.focus();
     } else {
       inputRef.current?.blur();
@@ -51,98 +56,114 @@ export const TradeWidgetInput = ({
           {input?.token &&
             input?.token.balance &&
             Number(input?.token.balance) > 0 && (
-              <div>
+              <button
+                onClick={() =>
+                  !disabled && input?.handleChange(input?.token.balance ?? '')
+                }
+                className={`${
+                  disabled
+                    ? 'cursor-text'
+                    : 'hover:text-primary transition-colors duration-300'
+                }`}
+              >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
-              </div>
+              </button>
             )}
         </div>
 
-        {input ? (
+        <div
+          className={`border ${isFocused ? 'border-primary' : 'border-fog'} ${
+            errorMsg ? 'border-error' : ''
+          } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-grey space-x-20`}
+        >
           <div>
-            <div
-              className={`grid grid-cols-12 border ${
-                isFocused ? 'border-primary' : 'border-fog'
-              } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-grey`}
-            >
-              <div className="col-span-5">
-                <button
-                  className="flex items-center space-x-10"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsOpen(true);
-                  }}
-                >
-                  {' '}
-                  <Image
-                    alt={'Token Logo'}
-                    className={'w-40 h-40 rounded-full'}
-                    src={input.token.logoURI}
-                  />
-                  <div className="text-20">{input.token.symbol}</div>
-                </button>
-              </div>
-              <div
-                onClick={() => handleFocusChange(true)}
-                className="col-span-7 text-right"
+            {input && (
+              <button
+                className="flex items-center space-x-10 hover:text-primary transition-colors duration-300"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsOpen(true);
+                }}
               >
-                {!isLoading ? (
-                  <>
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={
-                        isFocused
-                          ? value
-                          : value
-                          ? prettifyNumber(value, isFiat)
-                          : ''
-                      }
-                      className="w-full text-right text-20 outline-none"
-                      onChange={input.handleChange}
-                      placeholder={'0.00'}
-                      onFocus={() => handleFocusChange(true)}
-                      onBlur={() => handleFocusChange(false)}
-                    />
-                    {toBigNumber(input.inputTkn)
-                      .plus(input.inputFiat)
-                      .gt(0) && (
-                      <div className="text-secondary text-12">
-                        {prettifyNumber(
-                          !isFiat ? input.inputFiat : input.inputTkn,
-                          !isFiat
-                        )}{' '}
-                        {input.oppositeUnit}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex flex-col items-end">
-                    <div className="loading-skeleton h-18 mb-4 w-full" />
-                    <div className="loading-skeleton h-12 w-1/2" />
-                  </div>
-                )}
-              </div>
-            </div>
+                <Image
+                  alt={'Token Logo'}
+                  className={'w-40 h-40 rounded-full'}
+                  src={input.token.logoURI}
+                />
+                <div className="text-20">{input.token.symbol}</div>
+                <IconChevron className={'w-12'} />
+              </button>
+            )}
+
+            {tokens.length && !input && (
+              <button
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+                className="h-[75px] text-primary text-20 flex uppercase font-medium items-center space-x-10"
+              >
+                <div>Select a Token</div>
+                <IconChevron className={'w-12'} />
+              </button>
+            )}
           </div>
-        ) : (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              setIsOpen(true);
-            }}
-          >
-            select token
-          </button>
+          {input && (
+            <div
+              onClick={() => handleFocusChange(true)}
+              className="text-right cursor-text h-full flex-grow flex justify-center flex-col"
+            >
+              {!isLoading ? (
+                <>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={
+                      isFocused
+                        ? value
+                        : value
+                        ? prettifyNumber(value, isFiat)
+                        : ''
+                    }
+                    className="w-full text-right text-20 outline-none"
+                    onChange={(e) => {
+                      !disabled && input.handleChange(e.target.value);
+                    }}
+                    placeholder={'0.00'}
+                    onFocus={() => handleFocusChange(true)}
+                    onBlur={() => handleFocusChange(false)}
+                  />
+                  {toBigNumber(input.inputTkn).plus(input.inputFiat).gt(0) && (
+                    <div className="text-secondary text-12">
+                      {prettifyNumber(
+                        !isFiat ? input.inputFiat : input.inputTkn,
+                        !isFiat
+                      )}{' '}
+                      {input.oppositeUnit}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col items-end">
+                  <div className="loading-skeleton h-18 mb-4 w-3/4" />
+                  <div className="loading-skeleton h-12 w-1/2" />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        {errorMsg && (
+          <div className="relative flex justify-end mr-10">
+            <div className="absolute text-error mt-5">{errorMsg}</div>
+          </div>
         )}
       </div>
+
       <SearchableTokenList
         onClick={onTokenSelect}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         tokens={tokens}
-        excludedTokens={[input?.token.address ?? '']}
-        includedTokens={[]}
       />
     </>
   );
