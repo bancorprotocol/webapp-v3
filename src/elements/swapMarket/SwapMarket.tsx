@@ -68,6 +68,7 @@ export const SwapMarket = ({
   const [isLoadingRate, setIsLoadingRate] = useState(false);
   const [isSwapV3, setIsSwapV3] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
   const dispatch = useDispatch();
 
@@ -83,7 +84,12 @@ export const SwapMarket = ({
     showAnimation = true
   ) => {
     if (showAnimation) setIsLoadingRate(true);
-    const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    const res = await getRateAndPriceImapct(
+      fromToken,
+      toToken,
+      amount,
+      forceV3Routing
+    );
 
     setIsSwapV3(res.isV3);
     if (showAnimation) setIsLoadingRate(false);
