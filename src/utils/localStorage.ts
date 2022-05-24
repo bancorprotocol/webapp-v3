@@ -1,9 +1,9 @@
-import { initialState as UserState } from 'store/user/user';
+import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
 
 const selected_lists = 'userTokenLists';
 const autoLogin = 'loginAuto';
-const darkMode = 'darkMode';
+const darkMode = 'userDarkMode';
 const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
@@ -27,19 +27,15 @@ export const setAutoLoginLS = (flag: boolean) => {
   localStorage.setItem(autoLogin, JSON.stringify(flag));
 };
 
-export const getDarkModeLS = (): boolean => {
-  const systemDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+export const getDarkModeLS = (): DarkMode => {
   const darkLS = localStorage.getItem(darkMode);
-  if (!darkLS) {
-    setDarkModeLS(systemDark);
-    return systemDark;
-  }
+  if (darkLS) return Number(darkLS);
 
-  return JSON.parse(darkLS);
+  return DarkMode.System;
 };
 
-export const setDarkModeLS = (flag: boolean) => {
-  localStorage.setItem(darkMode, JSON.stringify(flag));
+export const setDarkModeLS = (mode: DarkMode) => {
+  localStorage.setItem(darkMode, Number(mode).toString());
 };
 
 export const getSlippageToleranceLS = (): number => {

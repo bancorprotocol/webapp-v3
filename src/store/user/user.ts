@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from 'store';
 import {
   setDarkModeLS,
   setSlippageToleranceLS,
@@ -6,9 +7,15 @@ import {
 } from 'utils/localStorage';
 import { LocaleType } from '../../i18n';
 
+export enum DarkMode {
+  Dark,
+  Light,
+  System,
+}
+
 export interface UserState {
   account: string | null | undefined;
-  darkMode: boolean;
+  darkMode: DarkMode;
   walletModal: boolean;
   slippageTolerance: number;
   usdToggle: boolean;
@@ -18,7 +25,7 @@ export interface UserState {
 
 export const initialState: UserState = {
   account: undefined,
-  darkMode: false,
+  darkMode: DarkMode.System,
   walletModal: false,
   slippageTolerance: 0.005,
   usdToggle: false,
@@ -33,13 +40,9 @@ const userSlice = createSlice({
     setAccount: (state, action) => {
       state.account = action.payload;
     },
-    setDarkMode: (state, action: PayloadAction<boolean>) => {
+    setDarkMode: (state, action: PayloadAction<DarkMode>) => {
       state.darkMode = action.payload;
-
-      const root = window.document.documentElement;
-      if (action.payload) root.classList.add('dark');
-      else root.classList.remove('dark');
-
+      setDarkModeCss(action.payload);
       setDarkModeLS(action.payload);
     },
     setSlippageTolerance: (state, action) => {
@@ -61,6 +64,28 @@ const userSlice = createSlice({
     },
   },
 });
+
+export const getDarkMode = createSelector(
+  (state: RootState) => state.user.darkMode,
+  (mode: DarkMode): boolean => {
+    return (
+      (mode === DarkMode.System &&
+        window.matchMedia('(prefers-color-scheme:dark)').matches) ||
+      mode === DarkMode.Dark
+    );
+  }
+);
+
+const setDarkModeCss = (mode: DarkMode) => {
+  const root = window.document.documentElement;
+  if (
+    (mode === DarkMode.System &&
+      window.matchMedia('(prefers-color-scheme:dark)').matches) ||
+    mode === DarkMode.Dark
+  )
+    root.classList.add('dark');
+  else root.classList.remove('dark');
+};
 
 export const {
   setAccount,
