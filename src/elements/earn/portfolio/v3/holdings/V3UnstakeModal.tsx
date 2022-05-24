@@ -84,7 +84,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
           <div>
             <IconGift className="text-primary w-40 mx-auto" />
           </div>
-          <h2 className="text-center">Staked to earn Bonus</h2>
+          <h2 className="text-center">Reward program you have joined</h2>
           {activePrograms.map((program) => (
             <div
               key={program.id}
@@ -113,7 +113,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                     )
                   }
                 >
-                  Unstake
+                  Leave
                 </Button>
               </div>
             </div>
@@ -121,11 +121,10 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
           {inactivePrograms.length > 0 && (
             <div>
               <div className="text-warning text-center">
-                You are staked into an inactive program!
+                You have joined an inactive program!
               </div>
               <div className="text-secondary text-center mb-10">
-                First unstake, then stake into an active program to earn more
-                bonuses.
+                First leave, then join an active program to earn more bonuses.
               </div>
               {inactivePrograms.map((program) => (
                 <div
@@ -159,7 +158,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                         )
                       }
                     >
-                      Unstake
+                      Leave
                     </Button>
                   </div>
                 </div>

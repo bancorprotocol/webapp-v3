@@ -44,7 +44,7 @@ export const AddLiquiditySingleAmount = ({
         border
         includedTokens={pool.reserves.map((x) => x.address)}
         input={amount}
-        label="Stake Amount"
+        label="Deposit Amount"
         token={token}
         disabled={isBNTSelected}
         amountUsd={amountUsd}

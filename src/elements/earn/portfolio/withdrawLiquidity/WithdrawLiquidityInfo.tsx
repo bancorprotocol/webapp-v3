@@ -22,7 +22,7 @@ export const WithdrawLiquidityInfo = ({
               <p>
                 You still haven’t reached full protection. There is a risk for
                 impermanent loss and you might receive less than your original
-                stake amount as a result.
+                deposit amount as a result.
               </p>
             )}
             {multiplierWillReset && (
