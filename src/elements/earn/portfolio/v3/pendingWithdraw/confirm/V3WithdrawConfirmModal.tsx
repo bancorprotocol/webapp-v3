@@ -7,6 +7,7 @@ import { useV3WithdrawConfirm } from 'elements/earn/portfolio/v3/pendingWithdraw
 import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmInfo';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 interface Props {
   isModalOpen: boolean;
@@ -69,13 +70,15 @@ export const V3WithdrawConfirmModal = memo(
           <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
           {!isPoolStable && !isLoading && (
-            <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
-              <span className="font-semibold">
+            <div className="bg-warning bg-opacity-10 rounded p-20">
+              <div className="font-semibold text-warning flex items-center">
+                <IconInfo className="w-14 mr-10" />
                 Withdrawal is temporarily paused!
-              </span>{' '}
-              <br />
-              Price in the pool is to volatile, lets wait a few minutes before
-              proceeding.
+              </div>
+              <div className="ml-[24px] text-secondary">
+                Price in the pool is to volatile, lets wait a few minutes before
+                proceeding.
+              </div>
             </div>
           )}
 
