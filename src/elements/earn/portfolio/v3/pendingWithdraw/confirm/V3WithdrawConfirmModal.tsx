@@ -6,6 +6,8 @@ import { V3WithdrawConfirmOutputBreakdown } from 'elements/earn/portfolio/v3/pen
 import { useV3WithdrawConfirm } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/useV3WithdrawConfirm';
 import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmInfo';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
+import { useIsPoolStable } from 'hooks/useIsPoolStable';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 interface Props {
   isModalOpen: boolean;
@@ -39,6 +41,8 @@ export const V3WithdrawConfirmModal = memo(
       isModalOpen,
     });
 
+    const { isPoolStable, isLoading } = useIsPoolStable(token.address);
+
     return (
       <Modal
         title="Withdraw"
@@ -65,6 +69,19 @@ export const V3WithdrawConfirmModal = memo(
 
           <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
+          {!isPoolStable && !isLoading && (
+            <div className="bg-warning bg-opacity-10 rounded p-20">
+              <div className="font-semibold text-warning flex items-center">
+                <IconInfo className="w-14 mr-10" />
+                Withdrawal is temporarily paused!
+              </div>
+              <div className="ml-[24px] text-secondary">
+                Price in the pool is to volatile, lets wait a few minutes before
+                proceeding.
+              </div>
+            </div>
+          )}
+
           {missingGovTokenBalance > 0 ? (
             <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
               <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
@@ -76,7 +93,7 @@ export const V3WithdrawConfirmModal = memo(
             <Button
               onClick={() => handleWithdrawClick()}
               className="w-full"
-              disabled={txBusy || missingGovTokenBalance > 0}
+              disabled={txBusy || missingGovTokenBalance > 0 || !isPoolStable}
             >
               Confirm Withdrawal
             </Button>
