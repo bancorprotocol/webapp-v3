@@ -5,7 +5,6 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCellName';
-import { PoolsTableCellRewards } from 'elements/earn/pools/poolsTable/PoolsTableCellRewards';
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
@@ -73,16 +72,6 @@ export const EarnTableV2 = () => {
         sortDescFirst: true,
       },
       {
-        id: 'rewards',
-        Header: 'Rewards',
-        accessor: 'reward',
-        Cell: (cellData) => PoolsTableCellRewards(cellData.row.original),
-        minWidth: 100,
-        disableSortBy: true,
-        tooltip:
-          'Active indicates a current liquidity mining program on the pool.',
-      },
-      {
         id: 'apr',
         Header: 'APR',
         accessor: 'apr',
@@ -137,6 +126,7 @@ export const EarnTableV2 = () => {
           defaultSort={defaultSort}
           isLoading={!pools.length}
           search={search}
+          stickyColumn
         />
       </div>
     </section>

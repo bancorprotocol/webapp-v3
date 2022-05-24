@@ -80,7 +80,7 @@ export const V3EarningTableMenuRate = ({
           className="rounded flex-col w-full my-10 text-left items-start"
         >
           <div className="py-4">
-            <div>Stake & Earn Bonus</div>
+            <div>Deposit & Earn Bonus</div>
 
             <div className="text-20">
               {prettifyNumber(holding.tokenBalance)}{' '}

@@ -1,5 +1,4 @@
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { useDebounce } from 'hooks/useDebounce';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useEffect, useState } from 'react';
@@ -37,6 +36,8 @@ import {
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -67,6 +68,7 @@ export const SwapMarket = ({
   const [isLoadingRate, setIsLoadingRate] = useState(false);
   const [isSwapV3, setIsSwapV3] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
   const dispatch = useDispatch();
 
@@ -82,7 +84,12 @@ export const SwapMarket = ({
     showAnimation = true
   ) => {
     if (showAnimation) setIsLoadingRate(true);
-    const res = await getRateAndPriceImapct(fromToken, toToken, amount);
+    const res = await getRateAndPriceImapct(
+      fromToken,
+      toToken,
+      amount,
+      forceV3Routing
+    );
 
     setIsSwapV3(res.isV3);
     if (showAnimation) setIsLoadingRate(false);
@@ -388,13 +395,13 @@ export const SwapMarket = ({
                 <div className="flex justify-between items-center mt-15">
                   <div className="flex items-center">
                     Best Rate
-                    <Tooltip
-                      content="Version routing to ensure you get the best rate possible for your trade"
-                      button={
+                    <PopoverV3
+                      children="Version routing to ensure you get the best rate possible for your trade"
+                      buttonElement={() => (
                         <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
                           {isSwapV3 ? 'V3' : 'V2'}
                         </div>
-                      }
+                      )}
                     />
                   </div>
                   {isLoadingRate ? (
@@ -418,7 +425,12 @@ export const SwapMarket = ({
                 <div className="flex justify-between">
                   <div className="flex items-center">
                     <span className="mr-5">Price Impact</span>
-                    <Tooltip content="The difference between market price and estimated price due to trade size" />
+                    <PopoverV3
+                      buttonElement={() => (
+                        <IconInfo className="w-[10px] h-[10px] text-black-low dark:text-white-low" />
+                      )}
+                      children="The difference between market price and estimated price due to trade size"
+                    />
                   </div>
                   {isLoadingRate ? (
                     <div className="loading-skeleton h-10 w-[80px]"></div>

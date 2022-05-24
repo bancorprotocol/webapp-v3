@@ -1,6 +1,7 @@
 import { AdminTknData } from 'elements/admin/AdminTknData';
 import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
 import { AdminUseFork } from 'elements/admin/AdminUseFork';
+import { AdminControls } from 'elements/admin/AdminControls';
 
 export const Admin = () => {
   return (
@@ -12,6 +13,10 @@ export const Admin = () => {
       <hr />
 
       <AdminUseFork />
+
+      <hr />
+
+      <AdminControls />
 
       <hr />
 

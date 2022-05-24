@@ -3,8 +3,7 @@ import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg'
 import { ReactComponent as IconMore } from 'assets/icons/more.svg';
 import { PropsWithChildren } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { Popover } from '@headlessui/react';
-import { DropdownTransition } from 'components/transitions/DropdownTransition';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface Props {
   singleContent: JSX.Element;
@@ -41,9 +40,9 @@ export const TableCellExpander = ({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center justify-end w-full">
       {canExpand ? groupContent : original.groupId && singleContent}
-      <div className="flex items-center ml-auto gap-5">
+      <div>
         {canExpand && (
           <button
             className="w-[35px] h-[35px] border border-primary rounded-[12px]"
@@ -53,19 +52,33 @@ export const TableCellExpander = ({
           </button>
         )}
         {subMenu && !canExpand && (
-          <Popover className="block relative">
-            <Popover.Button>
-              <IconMore className="rotate-90 w-16" />
-            </Popover.Button>
-            <DropdownTransition>
-              <Popover.Panel
-                className="p-10 text-center w-[105px] h-[44px] dropdown-menu"
-                static
+          <PopoverV3
+            hover={false}
+            showArrow={false}
+            buttonElement={({ isOpen, setIsOpen }) => (
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-32 h-32 bg-white dark:bg-black flex items-center justify-center rounded-full"
               >
-                <button onClick={() => subMenu()}>Withdraw</button>
-              </Popover.Panel>
-            </DropdownTransition>
-          </Popover>
+                <IconMore className="rotate-90 w-16 h-16" />
+              </button>
+            )}
+            options={{
+              placement: 'bottom',
+              modifiers: [
+                {
+                  name: 'offset',
+                  options: {
+                    offset: [0, 10],
+                  },
+                },
+              ],
+            }}
+          >
+            <button onClick={() => subMenu()} className="hover:text-primary">
+              Withdraw
+            </button>
+          </PopoverV3>
         )}
       </div>
     </div>

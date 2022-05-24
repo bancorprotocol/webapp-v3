@@ -64,7 +64,7 @@ const V3Portfolio = () => {
   ) : (
     <div className="flex flex-col items-center mx-auto">
       <h2 className="text-20 text-center font-medium">
-        Connect your wallet to see your earnings and impermanent loss
+        Connect your wallet to see your earnings
       </h2>
       <Button
         className="flex items-center justify-center mt-20"

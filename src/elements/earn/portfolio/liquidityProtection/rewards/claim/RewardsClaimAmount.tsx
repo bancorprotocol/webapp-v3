@@ -1,9 +1,10 @@
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { getTokenById } from 'store/bancor/bancor';
 import { bntToken } from 'services/web3/config';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 
 interface Props {
   amount?: string;
@@ -20,7 +21,15 @@ export const RewardsClaimAmount = ({ amount }: Props) => {
           <h3 className="text-14 whitespace-nowrap font-semibold mr-5">
             Claimable Rewards
           </h3>
-          <Tooltip content="Claimable value does not include earned liquidity mining rewards. You can withdraw or re-stake rewards from the Protection screen, by clicking “Withdraw” in the rewards widget." />
+          <PopoverV3
+            buttonElement={() => (
+              <IconInfo className="w-[10px] h-[10px] text-black-low dark:text-white-low" />
+            )}
+          >
+            Claimable value does not include earned liquidity mining rewards.
+            You can withdraw or re-stake rewards from the Protection screen, by
+            clicking “Withdraw” in the rewards widget.
+          </PopoverV3>
         </div>
       </div>
 

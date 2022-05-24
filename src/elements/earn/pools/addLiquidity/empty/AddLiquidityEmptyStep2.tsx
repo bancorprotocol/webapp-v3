@@ -104,7 +104,7 @@ export const AddLiquidityEmptyStep2 = ({
         <div
           className={`ml-10 font-medium ${!tknUsdPrice ? 'text-graphite' : ''}`}
         >
-          Enter stake amount
+          Enter deposit amount
         </div>
       </div>
       <div className="mb-20">
