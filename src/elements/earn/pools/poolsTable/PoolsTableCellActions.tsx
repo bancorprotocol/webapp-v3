@@ -13,7 +13,7 @@ export const PoolsTableCellActions = (id: string) => {
           </Button>
         )}
       >
-        Stake & Earn
+        Deposit & Earn
       </PopoverV3>
     </Navigate>
   );
