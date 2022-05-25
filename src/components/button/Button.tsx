@@ -109,3 +109,33 @@ export const ButtonToggle = ({
     </div>
   );
 };
+
+export const ButtonPercentages = ({
+  percentages,
+  onClick,
+  selected,
+  itemStyle,
+}: {
+  percentages: number[];
+  onClick: (percentage: number) => void;
+  selected: number;
+  itemStyle?: string;
+}) => {
+  return (
+    <>
+      {percentages.map((percentage, index) => (
+        <button
+          key={percentage}
+          className={`w-full rounded-[12px] border ${
+            selected === index
+              ? 'border-primary'
+              : 'border-silver dark:border-grey hover:border-primary dark:hover:border-primary'
+          } ${itemStyle}`}
+          onClick={() => onClick(percentage)}
+        >
+          +{percentage}%
+        </button>
+      ))}
+    </>
+  );
+};
