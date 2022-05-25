@@ -2,7 +2,6 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, memo, ReactNode } from 'react';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
-import { Button } from 'components/button/Button';
 
 interface Props {
   isOpen: boolean;
@@ -45,9 +44,9 @@ const ModalFullscreenV3 = ({
               </h3>
               <div className="flex items-center space-x-20">
                 {titleElement && titleElement}
-                <Button onClick={() => setIsOpen(false)}>
+                <button onClick={() => setIsOpen(false)}>
                   <IconTimes className="w-20" />
-                </Button>
+                </button>
               </div>
             </header>
 

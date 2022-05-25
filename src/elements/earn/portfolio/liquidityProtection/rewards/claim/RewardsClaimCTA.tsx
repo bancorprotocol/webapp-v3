@@ -21,7 +21,7 @@ export const RewardsClaimCTA = ({ account }: Props) => {
         onClick={stakeRewardsToV3}
         size={ButtonSize.Full}
         disabled={!canClaim}
-        className="mt-20 btn btn-primary btn-lg"
+        className="mt-20"
       >
         Stake my Rewards to Bancor V3
       </Button>

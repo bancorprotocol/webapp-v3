@@ -33,7 +33,7 @@ const getVariantStyle = (variant: ButtonVariant) => {
     case ButtonVariant.Secondary:
       return `bg-black hover:bg-grey disabled:bg-fog  dark:bg-white dark:hover:bg-silver dark:disabled:bg-grey text-white dark:text-charcoal ${disabledText}`;
     case ButtonVariant.Tertiary:
-      return 'bg-fog hover:bg-black disabled:bg-fog text-charcoal hover:text-white dark:text-white dark:hover:text-charcoal disabled:text-black-low disabled:text-black-low dark:disabled:text-white-low';
+      return 'bg-fog hover:bg-black disabled:bg-fog text-charcoal hover:text-white dark:bg-grey dark:text-white dark:hover:bg-white dark:hover:text-charcoal disabled:text-black-low dark:disabled:text-white-low dark:disabled:hover:bg-grey';
     case ButtonVariant.Error:
       return '';
     case ButtonVariant.Warning:
