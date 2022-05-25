@@ -10,7 +10,7 @@ import {
 } from 'services/notifications/notifications';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useCallback } from 'react';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
@@ -126,7 +126,8 @@ export const AddLiquidityEmptyCTA = ({
         onClick={() => onClick()}
         variant={btn.variant}
         disabled={btn.disabled}
-        className={`w-full mt-20`}
+        size={ButtonSize.Full}
+        className="mt-20 disabled:bg-silver dark:disabled:bg-charcoal"
       >
         {btn.label}
       </Button>

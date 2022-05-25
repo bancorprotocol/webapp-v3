@@ -1,7 +1,7 @@
 import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useNavigation } from 'hooks/useNavigation';
 
 interface Props {
@@ -61,7 +61,7 @@ export const AddLiquiditySingleCTA = ({
       onClick={() => (isBNTSelected ? goToPage.earn() : onClick())}
       disabled={btn.disabled}
       variant={btn.variant}
-      className={`w-full`}
+      size={ButtonSize.Full}
     >
       {button().label}
     </Button>

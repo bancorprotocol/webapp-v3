@@ -3,7 +3,6 @@ import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Image } from '../image/Image';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Pool } from 'services/observables/pools';
-import { Button } from 'components/button/Button';
 
 interface SelectPoolProps {
   pool: Pool;
@@ -23,7 +22,7 @@ export const SelectPool = ({
   return (
     <div className="flex justify-between items-center">
       <span className="font-medium">{label}</span>
-      <Button
+      <button
         onClick={() => setIsModalOpen(true)}
         className="flex items-center border border-charcoal dark:border-graphite rounded-[16px] px-20 py-6"
       >
@@ -39,7 +38,7 @@ export const SelectPool = ({
         />
         <span className="ml-10">{pool.name}</span>
         <IconChevronDown className="w-12 ml-10" />
-      </Button>
+      </button>
       <SelectPoolModal
         pools={pools}
         isOpen={isModalOpen}

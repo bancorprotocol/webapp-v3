@@ -20,7 +20,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { ApprovalContract } from 'services/web3/approval';
 import { useAppSelector } from 'store';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -131,7 +131,8 @@ export const ModalVbnt = ({
                 else handleStakeUnstake();
               }}
               disabled={stakeDisabled}
-              className={`w-full mt-30 mb-20`}
+              className="mt-30 mb-20"
+              size={ButtonSize.Full}
             >
               {`${stake ? 'Stake' : 'Unstake'} vBNT`}
             </Button>
