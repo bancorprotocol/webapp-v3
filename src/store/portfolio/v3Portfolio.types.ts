@@ -32,7 +32,7 @@ export interface WithdrawalRequest
   lockEndsAt: number;
   poolTokenAmount: string;
   reserveTokenAmount: string;
-  token: Token;
+  pool: PoolV3;
 }
 
 export interface WithdrawalSettings {

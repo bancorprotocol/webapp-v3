@@ -32,7 +32,7 @@ export const AddLiquidityEmptyStep1 = ({
           <input
             type="text"
             className="px-20 py-12 border-2 border-primary dark:border-black-low dark:bg-charcoal text-20 text-right rounded-20 w-full text-graphite"
-            value={`~${prettifyNumber(bnt.usdPrice!, true)}`}
+            value={prettifyNumber(bnt.usdPrice!, true)}
           />
         </div>
         <div>
@@ -41,7 +41,7 @@ export const AddLiquidityEmptyStep1 = ({
             type="text"
             className="px-20 py-12 border-2 border-primary dark:border-black-low dark:bg-charcoal text-20 text-right rounded-20 w-full focus:border-primary"
             placeholder="~$0.00"
-            value={tknUsdPrice ? `~$${tknUsdPrice}` : ''}
+            value={tknUsdPrice ? `$${tknUsdPrice}` : ''}
             onChange={(e) =>
               setTknUsdPrice(sanitizeNumberInput(e.target.value))
             }

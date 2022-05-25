@@ -16,7 +16,8 @@ interface Props {
 export const WithdrawItem = memo(
   ({ withdrawalRequest, openCancelModal, openConfirmModal }: Props) => {
     const dateNow = useDateNow();
-    const { token, lockEndsAt } = withdrawalRequest;
+    const { lockEndsAt } = withdrawalRequest;
+    const token = withdrawalRequest.pool.reserveToken;
     const isLocked = useMemo(
       () => lockEndsAt - dayjs(dateNow).unix() <= 0,
       [dateNow, lockEndsAt]

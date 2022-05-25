@@ -44,7 +44,7 @@ export const useV3Withdraw = () => {
         dispatch,
         tx.hash,
         selected.reserveTokenAmount,
-        selected.token.symbol
+        selected.pool.reserveToken.symbol
       );
       setIsModalCancelOpen(false);
       await updatePortfolioData(dispatch);

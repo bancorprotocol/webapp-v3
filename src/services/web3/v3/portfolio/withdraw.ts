@@ -49,7 +49,7 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
   try {
     const res = await ContractsApi.BancorNetworkInfo.read.withdrawalAmounts(
       req.reserveToken,
-      expandToken(req.poolTokenAmount, req.token.decimals)
+      expandToken(req.poolTokenAmount, req.pool.reserveToken.decimals)
     );
     const tkn = new BigNumber(res.baseTokenAmount.toString())
       .div(res.totalAmount.toString())

@@ -53,6 +53,7 @@ export interface PoolV3 extends APIPoolV3 {
   apr: {
     tradingFees: number;
     standardRewards: number;
+    autoCompounding: number;
     total: number;
   };
   programs: RewardsProgramRaw[];
@@ -187,6 +188,9 @@ const buildPoolV3Object = async (
     apiPool.stakedBalance.usd
   );
 
+  // TODO - add values once available
+  const autoCompoundingApr = 0;
+
   const totalApr = toBigNumber(tradingFeesApr)
     .plus(standardRewardsApr)
     .toNumber();
@@ -196,6 +200,7 @@ const buildPoolV3Object = async (
     apr: {
       tradingFees: tradingFeesApr,
       standardRewards: standardRewardsApr,
+      autoCompounding: autoCompoundingApr,
       total: totalApr,
     },
     reserveToken,

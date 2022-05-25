@@ -64,7 +64,7 @@ export const TokenInputPercentageV3 = ({
           >
             {balanceLabel}: {prettifyNumber(fieldBalance)}{' '}
             <span className="text-secondary">
-              (~
+              (
               {prettifyNumber(
                 calcFiatValue(fieldBalance, token.usdPrice),
                 true

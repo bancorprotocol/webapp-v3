@@ -1,8 +1,9 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Modal } from 'components/modal/Modal';
 import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
+import { toBigNumber } from 'utils/helperFunctions';
 
 interface Props {
   isModalOpen: boolean;
@@ -19,7 +20,8 @@ export const V3WithdrawCancelModal = memo(
     cancelWithdrawal,
   }: Props) => {
     const [txBusy, setTxBusy] = useState(false);
-    const { token } = withdrawRequest;
+    const { pool } = withdrawRequest;
+    const token = pool.reserveToken;
 
     const handleCTAClick = useCallback(async () => {
       setTxBusy(true);
@@ -27,6 +29,14 @@ export const V3WithdrawCancelModal = memo(
       setIsModalOpen(false);
       setTxBusy(false);
     }, [cancelWithdrawal, setIsModalOpen]);
+
+    const compoundingApr = useMemo(
+      () =>
+        toBigNumber(pool.apr.autoCompounding)
+          .plus(pool.apr.tradingFees)
+          .toFixed(2),
+      [pool.apr.autoCompounding, pool.apr.tradingFees]
+    );
 
     return (
       <Modal
@@ -47,9 +57,9 @@ export const V3WithdrawCancelModal = memo(
           <div className="bg-secondary rounded p-20 flex justify-between">
             <div>
               Compounding rewards{' '}
-              <span className="text-secondary">{token.symbol}</span>
+              <span className="text-secondary ml-4">{token.symbol}</span>
             </div>
-            <div>??%</div>
+            <div>{compoundingApr} %</div>
           </div>
 
           <Button
