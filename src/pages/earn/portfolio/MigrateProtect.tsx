@@ -106,7 +106,7 @@ const Migrate = () => {
             <div className="flex items-center justify-between text-black-medium">
               Access full earnings
               <div className="flex items-center gap-10 text-black-low">
-                additional gas ~$????.??
+                additional gas $????.??
                 <Switch selected={true} onChange={() => {}} />
               </div>
             </div>
@@ -284,7 +284,7 @@ const Protect = () => {
             <div className="flex items-center justify-between text-black-medium">
               <div>
                 Access full earnings
-                <div className="text-black-low">additional gas ~$????.??</div>
+                <div className="text-black-low">additional gas $????.??</div>
               </div>
               <div className="flex items-center gap-10">
                 ??%
