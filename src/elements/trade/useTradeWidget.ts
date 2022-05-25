@@ -97,5 +97,10 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
     inputFiat: toInputFiat,
   });
 
-  return { fromInput, toInput, isLoading, priceImpact };
+  const filteredTokens = useMemo(
+    () => tokens.filter((t) => t.address !== from && t.address !== to),
+    [from, to, tokens]
+  );
+
+  return { fromInput, toInput, isLoading, priceImpact, filteredTokens };
 };
