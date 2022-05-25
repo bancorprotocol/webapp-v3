@@ -37,7 +37,7 @@ import {
   setCurrentLiquidity,
 } from 'services/api/googleTagManager';
 import { Pool } from 'services/observables/pools';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -287,7 +287,8 @@ export const WithdrawLiquidityWidget = ({
           <Button
             onClick={handleWithdraw}
             disabled={withdrawDisabled}
-            className={`w-full mt-20`}
+            size={ButtonSize.Full}
+            className="mt-20"
           >
             {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
           </Button>

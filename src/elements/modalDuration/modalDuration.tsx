@@ -6,7 +6,7 @@ import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { formatDuration } from 'utils/helperFunctions';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface ModalDurationProps {
   duration: Duration;
@@ -108,7 +108,8 @@ export const ModalDuration = ({
               setDuration(dayjs.duration({ days, hours, minutes }));
               setIsOpen(false);
             }}
-            className="w-full mt-15"
+            size={ButtonSize.Full}
+            className="mt-15"
           >
             Confirm
           </Button>

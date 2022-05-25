@@ -20,7 +20,7 @@ import {
   setProtectedPositions,
 } from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 
@@ -136,7 +136,8 @@ export const RewardsStakeCTA = ({
       onClick={() => handleClick()}
       disabled={btn.disabled}
       variant={btn.variant}
-      className={`w-full mt-10`}
+      size={ButtonSize.Full}
+      className="mt-10"
     >
       {btn.label}
     </Button>

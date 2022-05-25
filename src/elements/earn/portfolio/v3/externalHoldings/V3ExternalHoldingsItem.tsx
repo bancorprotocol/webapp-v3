@@ -27,8 +27,8 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
       </div>
       <Button
         variant={ButtonVariant.Secondary}
-        size={ButtonSize.Small}
-        className="w-full mt-20"
+        size={ButtonSize.Full}
+        className="mt-20"
         onClick={() => setIsOpen(true)}
       >
         Protect and earn

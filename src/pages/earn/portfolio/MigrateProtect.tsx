@@ -3,7 +3,7 @@ import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { ReactComponent as IconProtectedHeart } from 'assets/icons/protectedHeart.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Rating } from 'components/rating/Rating';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 import { useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
@@ -142,7 +142,9 @@ const Migrate = () => {
               </div>
             ))}
 
-          <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
+          <Button size={ButtonSize.Full} className="md:w-[160px] mt-50">
+            Confirm
+          </Button>
           <ProtectedSettingsV3 />
         </>
       )}

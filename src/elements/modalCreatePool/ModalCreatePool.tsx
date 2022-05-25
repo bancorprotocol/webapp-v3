@@ -119,7 +119,7 @@ export const ModalCreatePool = () => {
           <Button
             onClick={() => confirm()}
             disabled={isCreateDisabled()}
-            className="w-full"
+            size={ButtonSize.Full}
           >
             {errorText() ?? 'Create a Pool'}
           </Button>

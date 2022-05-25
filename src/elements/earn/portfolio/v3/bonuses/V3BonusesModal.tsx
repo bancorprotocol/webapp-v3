@@ -1,6 +1,6 @@
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Image } from 'components/image/Image';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
@@ -176,7 +176,7 @@ const BonusGroup = ({
         <Button
           variant={ButtonVariant.Secondary}
           onClick={onClaimClick}
-          className="w-full"
+          size={ButtonSize.Full}
           disabled={bntDisabled}
         >
           Claim
@@ -184,7 +184,7 @@ const BonusGroup = ({
         <Button
           variant={ButtonVariant.Tertiary}
           onClick={onRestakeClick}
-          className="w-full"
+          size={ButtonSize.Full}
           disabled={bntDisabled}
         >
           Claim {groupPool.reserveToken.symbol} {'&'} Earn{' '}

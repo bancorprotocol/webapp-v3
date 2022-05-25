@@ -180,8 +180,8 @@ export const Vote = () => {
                       ? ButtonVariant.Secondary
                       : ButtonVariant.Primary
                   }
-                  size={ButtonSize.Small}
-                  className={`w-full mt-20 md:mt-0 md:max-w-[190px]`}
+                  size={ButtonSize.Meduim}
+                  className="mt-20 md:mt-0 md:max-w-[190px]"
                   disabled={
                     (!!unstakeTime ||
                       !stakeAmount ||
