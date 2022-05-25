@@ -13,7 +13,7 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays }: Props) => {
       <span className="flex justify-center text-primary items-center text-20">
         <IconCheck className="w-30 mr-10" /> Cooldown began
       </span>
-      <h1 className="text-[36px] font-normal my-50">
+      <h1 className="text-[36px] font-normal my-50 leading-10">
         Remember to come back after {lockDurationInDays} days
       </h1>
       <div className="flex justify-center">

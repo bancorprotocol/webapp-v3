@@ -22,7 +22,7 @@ const V3WithdrawStep2 = ({ setStep, amount, holding, isFiat }: Props) => {
   return (
     <div className="text-center">
       <button onClick={() => setStep(1)}>{'<-'} Change amount</button>
-      <h1 className="text-[36px] font-normal my-50">
+      <h1 className="text-[36px] font-normal my-50 leading-10">
         Remove{' '}
         <span className="text-primary">
           {isFiat
