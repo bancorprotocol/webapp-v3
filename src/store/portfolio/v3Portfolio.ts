@@ -181,10 +181,11 @@ export const getPortfolioWithdrawalRequests = createSelector(
   ): WithdrawalRequest[] => {
     const withdrawalRequests = withdrawalRequestsRaw
       .map((requestRaw) => {
-        const token = allPoolsMap.get(requestRaw.reserveToken)?.reserveToken;
-        if (!token) {
+        const pool = allPoolsMap.get(requestRaw.reserveToken);
+        if (!pool) {
           return undefined;
         }
+        const token = pool.reserveToken;
 
         const lockEndsAt =
           requestRaw.createdAt + withdrawalSettings.lockDuration;
@@ -202,7 +203,7 @@ export const getPortfolioWithdrawalRequests = createSelector(
           lockEndsAt,
           poolTokenAmount,
           reserveTokenAmount,
-          token,
+          pool,
         };
 
         return request;

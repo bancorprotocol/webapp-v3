@@ -44,8 +44,8 @@ export const V3HoldingsItem = ({
 
   return (
     <div
-      className={`content-block p-20 transition-all duration-500 ease-in-out overflow-hidden ${
-        isOpen ? 'h-[250px]' : 'h-[80px]'
+      className={`content-block p-20 overflow-hidden ${
+        isOpen ? '' : 'h-[80px]'
       }`}
     >
       <button
@@ -88,23 +88,22 @@ export const V3HoldingsItem = ({
         </div>
       </button>
 
-      <>
-        <hr className="border-1 mt-20 border-silver dark:border-grey -mx-20" />
-        <div className="grid grid-cols-12 mt-30 text-center mb-10">
-          <div className="col-span-3 flex items-end justify-center">
-            <V3HoldingsItemDeposit holding={holding} />
-          </div>
-          <div className="col-span-3 flex items-end justify-center">
-            <V3HoldingsItemUnstaked holding={holding} />
-          </div>
-          <div className="col-span-3 flex items-end justify-center">
-            <V3HoldingsItemStaked holding={holding} />
-          </div>
-          <div className="col-span-3 flex items-end justify-center">
-            <V3HoldingsItemWithdraw holding={holding} />
-          </div>
+      <hr className="border-1 mt-20 border-silver dark:border-grey -mx-20" />
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 mt-30 text-center mb-10 gap-y-40">
+        <div className="flex items-end justify-center">
+          <V3HoldingsItemDeposit holding={holding} />
         </div>
-      </>
+        <div className="flex items-end justify-center">
+          <V3HoldingsItemUnstaked holding={holding} />
+        </div>
+        <div className="flex items-end justify-center">
+          <V3HoldingsItemStaked holding={holding} />
+        </div>
+        <div className="flex items-end justify-center">
+          <V3HoldingsItemWithdraw holding={holding} />
+        </div>
+      </div>
     </div>
   );
 };
