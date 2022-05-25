@@ -67,7 +67,7 @@ const V3WithdrawStep1 = ({
   return (
     <div className="text-center">
       {ModalApprove}
-      <h1 className="text-[36px] font-normal mb-50">
+      <h1 className="text-[36px] font-normal mb-50 leading-10">
         How much {token.symbol} do you want to withdraw?
       </h1>
 
