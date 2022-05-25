@@ -97,10 +97,11 @@ export const useTrade = (
 
   const errorInsufficientBalance = useMemo(
     () =>
-      toBigNumber(fromInput?.inputTkn || 0).gt(fromInput?.token.balance || 0)
+      toBigNumber(fromInput?.inputTkn || 0).gt(fromInput?.token.balance || 0) &&
+      account
         ? 'Token balance insufficient'
         : undefined,
-    [fromInput?.inputTkn, fromInput?.token.balance]
+    [account, fromInput?.inputTkn, fromInput?.token.balance]
   );
 
   return {

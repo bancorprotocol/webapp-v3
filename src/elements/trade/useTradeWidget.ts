@@ -2,11 +2,7 @@ import PQueue from 'p-queue';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
 import { useCallback, useMemo, useState } from 'react';
-import {
-  getV3PriceImpact,
-  getV3Rate,
-  getV3RateInverse,
-} from 'services/web3/swap/market';
+import { getV3PriceImpact, getV3Rate } from 'services/web3/swap/market';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
@@ -93,48 +89,10 @@ export const useTradeWidget = ({ from, to, tokens }: useTradeInputNewProps) => {
     inputFiat: fromInputFiat,
   });
 
-  const onToDebounce = useCallback(
-    async (val: string) => {
-      if (!fromToken || !toToken) return;
-      queue.clear();
-      await queue.add(async () => {
-        if (queue.size !== 0) return;
-        setIsLoading(true);
-        try {
-          const fromValueTkn = val
-            ? await getV3RateInverse(fromToken, toToken, val)
-            : '';
-          const fromValueFiat = fromValueTkn
-            ? calcOppositeValue(
-                false,
-                fromValueTkn,
-                fromToken.usdPrice,
-                fromToken.decimals
-              )
-            : '';
-
-          if (isFiat) {
-            setFromInputTkn(fromValueTkn);
-            setFromInputFiat(fromValueFiat);
-          } else {
-            setFromInputTkn(fromValueTkn);
-            setFromInputFiat(fromValueFiat);
-          }
-        } catch (e) {
-          console.error('Trade Widget onToDebounce failed.', e);
-        } finally {
-          setIsLoading(false);
-        }
-      });
-    },
-    [fromToken, isFiat, setFromInputFiat, setFromInputTkn, toToken]
-  );
-
   const toInput = useTknFiatInput({
     token: toToken,
     setInputTkn: setToInputTkn,
     setInputFiat: setToInputFiat,
-    onDebounce: onToDebounce,
     inputTkn: toInputTkn,
     inputFiat: toInputFiat,
   });

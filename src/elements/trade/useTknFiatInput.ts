@@ -11,7 +11,7 @@ interface useTokenInputV3Props {
   setInputTkn: (amount: string) => void;
   inputFiat: string;
   setInputFiat: (amount: string) => void;
-  onDebounce: (amount: string) => void;
+  onDebounce?: (amount: string) => void;
 }
 
 export interface useTokenInputV3Return {
@@ -32,7 +32,7 @@ export const useTknFiatInput = ({
   setInputTkn,
   inputFiat,
   setInputFiat,
-  onDebounce,
+  onDebounce = () => {},
 }: useTokenInputV3Props): useTokenInputV3Return | undefined => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const symbol = token?.symbol ?? 'N/A';

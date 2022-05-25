@@ -53,6 +53,7 @@ export const TradeWidget = ({ from, to, tokens }: Props) => {
         >
           <IconSync className="w-[25px] text-primary dark:text-primary-light" />
         </button>
+
         <TradeWidgetInput
           disabled
           label={'You receive'}
