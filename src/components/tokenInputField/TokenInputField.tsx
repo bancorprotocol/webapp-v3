@@ -101,17 +101,16 @@ export const TokenInputField = ({
     if (!toggle && !disabled) return input;
     if (!toggle && disabled) return `${sanitizeNumberInput(input, 6)}`;
     if (!amountUsd) return '';
-    return `~$${sanitizeNumberInput(amountUsd, 6)}`;
+    return `$${sanitizeNumberInput(amountUsd, 6)}`;
   };
 
   const convertedAmount = () => {
-    const prefix = toggle ? '' : '~';
     const tokenAmount = prettifyNumber(input);
     const usdAmount = prettifyNumber(amountUsd ?? 0, true);
     const amount = toggle ? tokenAmount : usdAmount;
 
-    if ((input || amountUsd) && token) return `${prefix}${amount}`;
-    else return `${prefix}${toggle ? '' : '$'}0`;
+    if ((input || amountUsd) && token) return amount;
+    else return `${toggle ? '' : '$'}0`;
   };
 
   const setMaxAmount = () => {
@@ -150,7 +149,7 @@ export const TokenInputField = ({
             >
               {balanceLabel}: {prettifyNumber(balance)}
               <span className="text-primary ml-4">
-                (~{prettifyNumber(balanceUsd, true)})
+                {prettifyNumber(balanceUsd, true)}
               </span>
             </button>
           )
@@ -223,7 +222,7 @@ export const TokenInputField = ({
                 inputMode="decimal"
                 value={inputValue()}
                 disabled={disabled}
-                placeholder={toggle ? '~$0.00' : '0.00'}
+                placeholder={toggle ? '$0.00' : '0.00'}
                 className={inputFieldStyles}
                 onChange={(event) => onInputChange(event.target.value, token)}
               />
