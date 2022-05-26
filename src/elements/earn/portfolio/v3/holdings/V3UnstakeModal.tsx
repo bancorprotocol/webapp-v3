@@ -84,55 +84,47 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
           <div>
             <IconGift className="text-primary w-40 mx-auto" />
           </div>
-          <h2 className="text-center">Staked to earn Bonus</h2>
-          {activePrograms.length > 0 && (
-            <div>
-              {activePrograms.map((program) => (
-                <div
-                  key={program.id}
-                  className="flex items-end justify-between bg-secondary rounded px-20 py-10"
-                >
-                  <div>
-                    <div className="text-20">
-                      {prettifyNumber(
-                        shrinkToken(
-                          program.tokenAmountWei,
-                          holding.pool.decimals
-                        )
-                      )}{' '}
-                      {holding.pool.reserveToken.symbol}
-                    </div>
-                    <div>Program ID: {program.id}</div>
-                    <div>APR: {holding.pool.apr.total.toFixed(2)}%</div>
-                  </div>
-                  <div>
-                    <Button
-                      variant={ButtonVariant.DARK}
-                      size={ButtonSize.EXTRASMALL}
-                      disabled={txBusy}
-                      onClick={() =>
-                        handleLeaveClick(
-                          program.id,
-                          program.poolTokenAmountWei,
-                          program.tokenAmountWei
-                        )
-                      }
-                    >
-                      Unstake
-                    </Button>
-                  </div>
+          <h2 className="text-center">Reward program you have joined</h2>
+          {activePrograms.map((program) => (
+            <div
+              key={program.id}
+              className="flex items-end justify-between bg-secondary rounded px-20 py-10"
+            >
+              <div>
+                <div className="text-20">
+                  {prettifyNumber(
+                    shrinkToken(program.tokenAmountWei, holding.pool.decimals)
+                  )}{' '}
+                  {holding.pool.reserveToken.symbol}
                 </div>
-              ))}
+                <div>Program ID: {program.id}</div>
+                <div>APR: {holding.pool.apr.standardRewards.toFixed(2)}%</div>
+              </div>
+              <div>
+                <Button
+                  variant={ButtonVariant.DARK}
+                  size={ButtonSize.EXTRASMALL}
+                  disabled={txBusy}
+                  onClick={() =>
+                    handleLeaveClick(
+                      program.id,
+                      program.poolTokenAmountWei,
+                      program.tokenAmountWei
+                    )
+                  }
+                >
+                  Leave
+                </Button>
+              </div>
             </div>
-          )}
+          ))}
           {inactivePrograms.length > 0 && (
             <div>
               <div className="text-warning text-center">
-                You are staked into an inactive program!
+                You have joined an inactive program!
               </div>
               <div className="text-secondary text-center mb-10">
-                First unstake, then stake into an active program to earn more
-                bonuses.
+                First leave, then join an active program to earn more bonuses.
               </div>
               {inactivePrograms.map((program) => (
                 <div
@@ -166,7 +158,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                         )
                       }
                     >
-                      Unstake
+                      Leave
                     </Button>
                   </div>
                 </div>

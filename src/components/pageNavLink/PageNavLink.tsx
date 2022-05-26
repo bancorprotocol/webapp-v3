@@ -7,7 +7,7 @@ export const PageNavLink = ({ children, to, ...props }: LinkProps) => {
 
   const getTabBtnClasses = (selected: boolean, hidden?: boolean) =>
     classNameGenerator({
-      'px-10 py-5 rounded-10': true,
+      'px-6 py-[3px] rounded-[12px]': true,
       'bg-white dark:bg-charcoal': selected,
       hidden: hidden,
     });

@@ -30,7 +30,7 @@ export const AddLiquidityDualTokenPrices = ({
         <div key={t.address} className="flex justify-between text-20 mt-5">
           <div>1 {t.symbol} = </div>
           <div className="text-grey dark:text-graphite">
-            ~{prettifyNumber(t.usdPrice!, true)}
+            {prettifyNumber(t.usdPrice!, true)}
           </div>
         </div>
       ))}

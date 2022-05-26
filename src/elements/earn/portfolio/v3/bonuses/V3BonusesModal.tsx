@@ -12,6 +12,7 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
 import { getDarkMode } from 'store/user/user';
+import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -34,7 +35,7 @@ const BonusGroupItems = ({
   };
 
   return (
-    <div className="mb-10 mt-20 px-20 space-y-10">
+    <div className="px-20 mt-20 mb-10 space-y-10">
       <div className="flex items-center justify-between text-black-low dark:text-white-low">
         Bonus
         <span className="flex start w-[80px]">From</span>
@@ -44,7 +45,7 @@ const BonusGroupItems = ({
         return (
           <button
             key={reward.id}
-            className="rounded w-full"
+            className="w-full rounded"
             onClick={() => addOrRemove(reward.id)}
           >
             <div className="flex items-center justify-between text-16">
@@ -60,7 +61,7 @@ const BonusGroupItems = ({
                 </div>
                 <Image
                   alt={'Token Logo'}
-                  className="w-30 h-30 rounded-full mx-20"
+                  className="mx-20 rounded-full w-30 h-30"
                   src={reward.rewardsToken.logoURI}
                 />
                 {prettifyNumber(
@@ -75,7 +76,7 @@ const BonusGroupItems = ({
               <div className="flex items-center gap-10 w-[80px]">
                 <Image
                   alt={'Token Logo'}
-                  className="w-30 h-30 rounded-full"
+                  className="rounded-full w-30 h-30"
                   src={reward.programPool.reserveToken.logoURI}
                 />
                 {reward.programPool.reserveToken.symbol}
@@ -102,7 +103,6 @@ const BonusGroup = ({
   const allIds: string[] = rewardsGroup.rewards.map((reward) => reward.id);
   const [selectedIds, setSelectedIds] = useState(allIds);
   const [isTxClaimBusy, setIsTxClaimBusy] = useState(false);
-  const [showMore, setShowMore] = useState(false);
 
   const bntDisabled = selectedIds.length === 0 || isTxClaimBusy;
 
@@ -141,46 +141,41 @@ const BonusGroup = ({
           </div>
 
           <div>
-            <div className="text-20 text-black dark:text-white">
+            <div className="text-black text-20 dark:text-white">
               {prettifyNumber(amount)}
             </div>
             <div className="flex justify-end text-black-low dark:text-white-low">
-              ~{prettifyNumber(usdAmount, true)}
+              {prettifyNumber(usdAmount, true)}
             </div>
           </div>
         </div>
-
-        <div className="bg-secondary p-10 rounded mb-30 mt-20">
-          <button
-            onClick={() => setShowMore((prev) => !prev)}
-            className="flex justify-between items-center px-20 h-[40px] w-full"
-          >
+      </div>
+      <ExpandableSection
+        renderButtonChildren={(isExpanded) => (
+          <>
             <div className="text-black dark:text-white">Explore Bonuses</div>
             <div className="flex items-center">
-              {!showMore && (
+              {!isExpanded && (
                 <div>
                   <TokensOverlap tokens={allTokens} />
                 </div>
               )}
               <IconChevron
                 className={`w-14 ml-20 ${
-                  showMore ? 'transform rotate-180' : ''
+                  isExpanded ? 'transform rotate-180' : ''
                 }`}
               />
             </div>
-          </button>
-          {showMore && (
-            <div>
-              <BonusGroupItems
-                rewardsGroup={rewardsGroup}
-                selectedIds={selectedIds}
-                setSelectedIds={setSelectedIds}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex space-x-10 mt-20">
+          </>
+        )}
+      >
+        <BonusGroupItems
+          rewardsGroup={rewardsGroup}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+        />
+      </ExpandableSection>
+      <div className="flex mt-20 space-x-10">
         <Button
           variant={ButtonVariant.SECONDARY}
           onClick={onClaimClick}

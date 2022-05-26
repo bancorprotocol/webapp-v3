@@ -37,7 +37,8 @@ export const useV3WithdrawConfirm = ({
     bnt: 0,
   });
   const [txBusy, setTxBusy] = useState(false);
-  const { token, poolTokenAmount } = withdrawRequest;
+  const { pool, poolTokenAmount } = withdrawRequest;
+  const token = pool.reserveToken;
   const govToken = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, getNetworkVariables().govToken)
   );
@@ -79,7 +80,7 @@ export const useV3WithdrawConfirm = ({
         dispatch,
         tx.hash,
         withdrawRequest.reserveTokenAmount,
-        withdrawRequest.token.symbol
+        token.symbol
       );
       onModalClose();
       setTxBusy(false);
@@ -92,7 +93,7 @@ export const useV3WithdrawConfirm = ({
       onModalClose();
       setTxBusy(false);
     }
-  }, [account, dispatch, onModalClose, withdrawRequest]);
+  }, [account, dispatch, onModalClose, token.symbol, withdrawRequest]);
 
   const approveTokens = useMemo(() => {
     const tokensToApprove = [];

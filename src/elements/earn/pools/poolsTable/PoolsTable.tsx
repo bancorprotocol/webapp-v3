@@ -10,12 +10,12 @@ import { PoolV3 } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -64,19 +64,18 @@ export const PoolsTable = () => {
         Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => (
-          <Tooltip
-            content={toolTip(cellData.row.original)}
-            placement={'bottom'}
-            button={
+          <PopoverV3
+            children={toolTip(cellData.row.original)}
+            buttonElement={() => (
               <div className="flex items-center">
                 <Image
                   src={cellData.row.original.reserveToken.logoURI}
                   alt="Pool Logo"
                   className="w-40 h-40 rounded-full mr-10"
                 />
-                <span>{cellData.value}</span>
+                <span className="text-16">{cellData.value}</span>
               </div>
-            }
+            )}
           />
         ),
         minWidth: 100,
@@ -87,12 +86,14 @@ export const PoolsTable = () => {
         Header: 'Earn',
         accessor: 'apr',
         Cell: (cellData) => (
-          <div className="flex items-center gap-8 text-20 text-primary">
+          <div className="flex items-center gap-8 text-16 text-primary">
             {cellData.value.total.toFixed(2)}%
             {cellData.row.original.latestProgram?.isActive && (
-              <Tooltip
-                content={
-                  <span className="text-16">
+              <>
+                <PopoverV3
+                  buttonElement={() => <IconGift className="w-16 h-16" />}
+                >
+                  <div>
                     Rewards enabled on this token.{' '}
                     <Navigate
                       to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
@@ -100,10 +101,9 @@ export const PoolsTable = () => {
                     >
                       Read about the rewards here
                     </Navigate>
-                  </span>
-                }
-                button={<IconGift className="w-14 h-14" />}
-              />
+                  </div>
+                </PopoverV3>
+              </>
             )}
           </div>
         ),
@@ -151,7 +151,7 @@ export const PoolsTable = () => {
                 <SearchInput
                   value={search}
                   setValue={setSearch}
-                  className="max-w-[300px] rounded-20 h-[35px]"
+                  className="w-[170px] md:w-[300px] rounded-20 h-[35px]"
                 />
               </div>
             </div>

@@ -63,7 +63,7 @@ export const ImposterWallet = ({
         value={account}
         placeholder={'0x12345...'}
         onChange={(event) => setAccount(event.target.value)}
-        className="w-full mr-10 focus:outline-none"
+        className="w-full mr-10 focus:outline-none dark:bg-charcoal"
       />
       <button
         style={{ background: 'red' }}

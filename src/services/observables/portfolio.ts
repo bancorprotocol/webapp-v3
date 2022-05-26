@@ -19,6 +19,8 @@ export const portfolioHoldings$ = combineLatest([
   fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiPools, user]) => {
+    if (!user) return [];
+
     return fetchPortfolioV3Holdings(apiPools, user);
   }),
   shareReplay(1)
@@ -40,6 +42,8 @@ export const portfolioWithdrawals$ = combineLatest([
   fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
+    if (!user) return [];
+
     return fetchPortfolioV3Withdrawals(user);
   }),
   shareReplay(1)

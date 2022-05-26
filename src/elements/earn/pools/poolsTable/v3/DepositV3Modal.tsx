@@ -26,6 +26,9 @@ import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 import { useNavigation } from 'hooks/useNavigation';
 import { wait } from 'utils/pureFunctions';
+import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
+import { getPoolsV3Map } from 'store/bancor/pool';
 
 interface Props {
   pool: PoolV3;
@@ -44,6 +47,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
+  const poolV3Map = useAppSelector(getPoolsV3Map);
 
   const onClose = async () => {
     setIsOpen(false);
@@ -115,7 +119,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
   const canDeposit = useMemo(
-    () => !!account && !!amount && !isInputError && !txBusy,
+    () => !!account && !!amount && +amount > 0 && !isInputError && !txBusy,
     [account, amount, isInputError, txBusy]
   );
 
@@ -132,7 +136,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
-    if (accessFullEarnings && eth && amount) {
+    if (accessFullEarnings && eth) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
         gasPrice.times(REWARDS_EXTRA_GAS).times(eth.usdPrice),
@@ -143,7 +147,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     } else {
       setExtraGasNeeded('0');
     }
-  }, [accessFullEarnings, amount, eth]);
+  }, [accessFullEarnings, eth]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
@@ -170,28 +174,88 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             isFiat={isFiat}
             isError={isInputError}
           />
-          <div className="w-full px-20 py-10 mt-20 rounded bg-secondary">
-            {pool.latestProgram ? (
-              <>
-                <div className="flex pr-10 mb-4">
-                  <span className="mr-20">Access full earnings</span>
-                  <Switch
-                    selected={accessFullEarnings}
-                    onChange={() => setAccessFullEarnings((prev) => !prev)}
-                  />
+
+          {pool.latestProgram ? (
+            <ExpandableSection
+              renderButtonChildren={(isExpanded) => (
+                <div className="flex flex-col w-full">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex justify-between text-black dark:text-white">
+                        <span className="mr-10">Join rewards program</span>
+                        {/* we wrap with this span so that toggling won't expand the whole section */}
+                        <span onClick={(e: any) => e.stopPropagation()}>
+                          <Switch
+                            selected={accessFullEarnings}
+                            onChange={() =>
+                              setAccessFullEarnings((prev) => !prev)
+                            }
+                          />
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>
+                        {accessFullEarnings
+                          ? pool.apr.total.toFixed(2)
+                          : pool.apr.tradingFees.toFixed(2)}
+                        %
+                      </span>
+                      <IconChevron
+                        className={`w-14 ml-10 ${
+                          isExpanded ? 'transform rotate-180' : ''
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-12 text-secondary">
+                    Additional gas {prettifyNumber(extraGasNeeded, true)}
+                  </div>
                 </div>
-                <div className="text-12 text-secondary">
-                  Additional gas ~{prettifyNumber(extraGasNeeded, true)}
+              )}
+            >
+              <div className="flex flex-col w-full">
+                <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[50px]">
+                  <span>
+                    <span>Compounding rewards</span>{' '}
+                    <span className="text-secondary">
+                      {pool.reserveToken.symbol}
+                    </span>
+                  </span>
+                  <span>{pool.apr.tradingFees.toFixed(2)}%</span>
                 </div>
-              </>
-            ) : (
-              <span>Compounding rewards {pool.reserveToken.symbol}</span>
-            )}
-          </div>
+                <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
+                  <span>
+                    <span>Standard rewards</span>{' '}
+                    <span className="text-secondary">
+                      {poolV3Map.get(pool.latestProgram.rewardsToken)
+                        ?.reserveToken.symbol ?? ''}
+                    </span>
+                  </span>
+                  <span>
+                    {accessFullEarnings
+                      ? pool.apr.standardRewards.toFixed(2)
+                      : 0}
+                    %
+                  </span>
+                </div>
+              </div>
+            </ExpandableSection>
+          ) : (
+            <div className="flex justify-between w-full px-20 py-10 mt-20 rounded bg-secondary items-center h-[50px]">
+              <span>
+                <span>Compounding rewards</span>{' '}
+                <span className="text-secondary">
+                  {pool.reserveToken.symbol}
+                </span>
+              </span>
+              <span>{pool.apr.tradingFees.toFixed(2)}%</span>
+            </div>
+          )}
 
           <Button
             onClick={handleClick}
-            disabled={!amount || txBusy || isInputError}
+            disabled={!amount || +amount === 0 || txBusy || isInputError}
             variant={ButtonVariant.PRIMARY}
             className={`w-full mt-20 mb-14`}
           >

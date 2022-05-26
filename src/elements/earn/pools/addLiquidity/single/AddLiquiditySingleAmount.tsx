@@ -14,6 +14,7 @@ interface Props {
   setAmountUsd: Function;
   errorMsg: string;
   setErrorMsg: Function;
+  isBNTSelected: boolean;
 }
 export const AddLiquiditySingleAmount = ({
   pool,
@@ -25,6 +26,7 @@ export const AddLiquiditySingleAmount = ({
   setAmountUsd,
   errorMsg,
   setErrorMsg,
+  isBNTSelected,
 }: Props) => {
   useEffect(() => {
     if (new BigNumber(amount).gt(token.balance || 0)) {
@@ -32,7 +34,7 @@ export const AddLiquiditySingleAmount = ({
     } else {
       setErrorMsg('');
     }
-  }, [amount, token.balance, setErrorMsg]);
+  }, [amount, token.balance, setErrorMsg, isBNTSelected]);
 
   return (
     <>
@@ -42,8 +44,9 @@ export const AddLiquiditySingleAmount = ({
         border
         includedTokens={pool.reserves.map((x) => x.address)}
         input={amount}
-        label="Stake Amount"
+        label="Deposit Amount"
         token={token}
+        disabled={isBNTSelected}
         amountUsd={amountUsd}
         setAmountUsd={setAmountUsd}
         setToken={(token: Token) => setToken(token)}

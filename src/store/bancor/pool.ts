@@ -5,6 +5,7 @@ import { RootState } from 'store';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { Pool, PoolV3 } from 'services/observables/pools';
+import { bntToken } from 'services/web3/config';
 
 interface PoolState {
   v2Pools: Pool[];
@@ -66,6 +67,19 @@ export const getPoolsV3Map = createSelector(
   }
 );
 
+export const getV2PoolsWithoutV3 = createSelector(
+  (state: RootState) => state.pool.v2Pools,
+  (state: RootState) => state.pool.v3Pools,
+  (poolsV2: Pool[], poolsV3: PoolV3[]) => {
+    return poolsV2.filter(
+      (v2Pool) =>
+        poolsV3.findIndex(
+          (v3Pool) => v2Pool.reserves[0].address === v3Pool.reserveToken.address
+        ) === -1
+    );
+  }
+);
+
 export const getProtectedPools = createSelector(getPools, (pools: Pool[]) =>
   pools.filter((p) => p.isProtected)
 );
@@ -118,6 +132,11 @@ export const getIsV3Exist = createSelector(
   }
 );
 
+export const getBNTPoolV3 = createSelector(
+  (state: RootState) => getPoolsV3Map(state),
+  (pools: Map<string, PoolV3>): PoolV3 | undefined => pools.get(bntToken)
+);
+
 export interface SelectedPool {
   status: 'loading' | 'ready';
   pool?: Pool;
@@ -137,6 +156,16 @@ export const getPoolById = (id: string) =>
       return { status: 'ready', pool } as SelectedPool;
     }
   );
+
+export const getPoolByIdWithoutV3 = (id: string) =>
+  createDeepEqualSelector(getV2PoolsWithoutV3, (pools: Pool[]) => {
+    if (pools.length === 0) {
+      return { status: 'loading' } as SelectedPool;
+    }
+
+    const pool = pools.find((p) => p.pool_dlt_id === id);
+    return { status: 'ready', pool } as SelectedPool;
+  });
 
 export const { setv2Pools, setv3Pools, setStats } = poolSlice.actions;
 

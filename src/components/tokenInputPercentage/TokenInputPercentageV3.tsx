@@ -63,7 +63,7 @@ export const TokenInputPercentageV3 = ({
           >
             {balanceLabel}: {prettifyNumber(fieldBalance)}{' '}
             <span className="text-secondary">
-              (~
+              (
               {prettifyNumber(
                 calcFiatValue(fieldBalance, token.usdPrice),
                 true
@@ -84,11 +84,11 @@ export const TokenInputPercentageV3 = ({
           isError={isError}
         />
       )}
-      <div className="flex justify-between mt-20">
+      <div className="flex justify-between gap-16 mt-20">
         {percentages.map((percent, index) => (
           <button
             key={'percent' + percent}
-            className={`btn btn-sm rounded-10 border ${
+            className={`btn btn-sm w-full rounded-10 border ${
               selPercentage === index
                 ? 'btn-primary border-primary'
                 : 'border-fog dark:border-grey hover:border-primary'

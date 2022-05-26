@@ -1,4 +1,4 @@
-import { getPoolById, SelectedPool } from 'store/bancor/pool';
+import { getPoolByIdWithoutV3, SelectedPool } from 'store/bancor/pool';
 import { AddLiquiditySingle } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingle';
 import { AddLiquidityDual } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDual';
 import { AddLiquidityEmpty } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmpty';
@@ -12,7 +12,9 @@ import { useParams } from 'react-router-dom';
 
 export const AddLiquidity = React.memo(() => {
   const { id } = useParams();
-  const { status, pool } = useAppSelector<SelectedPool>(getPoolById(id || ''));
+  const { status, pool } = useAppSelector<SelectedPool>(
+    getPoolByIdWithoutV3(id || '')
+  );
   const [isCheckingType, setIsCheckingType] = useState(false);
   const [type, setType] = useState('');
   const [reserveBalances, setReserveBalances] = useState({

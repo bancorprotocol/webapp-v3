@@ -2,7 +2,7 @@ import { HeaderGroup } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { TableColumn } from 'components/table/DataTable';
-import { Tooltip } from 'components/tooltip/Tooltip';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface TableHeaderProps<D extends object> {
   headerGroups: HeaderGroup<D>[];
@@ -36,12 +36,13 @@ export const TableHeader = <D extends object>({
     if (tooltip)
       return (
         <span className="inline-flex ml-5">
-          <Tooltip
-            button={
-              <IconInfo className="w-[15px] h-[15px] text-grey dark:text-graphite" />
-            }
-            content={tooltip}
-          />
+          <PopoverV3
+            buttonElement={() => (
+              <IconInfo className="w-[15px] h-[15px] text-black-low dark:text-white-low" />
+            )}
+          >
+            {tooltip}
+          </PopoverV3>
         </span>
       );
   };

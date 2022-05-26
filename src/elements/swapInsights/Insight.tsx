@@ -6,13 +6,8 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { Token } from 'services/observables/tokens';
 import { sendInsight } from 'services/api/googleTagManager';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { useState } from 'react';
-
-export interface InsightToken extends IntoTheBlock {
-  image: string;
-  price: number;
-}
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface InsightProps {
   fromToken: Token;
@@ -47,14 +42,19 @@ export const Insight = ({
       >
         <div className="flex items-center transition-none">
           {!isExpanded ? (
-            <Tooltip
-              onClick={() => {
-                sendInsight(!isExpanded);
-                setShow(!isExpanded);
-                setIsExpanded(!isExpanded);
-              }}
-              button={<IconLightbulb className="w-[17px] h-[24px]" />}
-              content={'Insight'}
+            <PopoverV3
+              buttonElement={() => (
+                <button
+                  onClick={() => {
+                    sendInsight(!isExpanded);
+                    setShow(!isExpanded);
+                    setIsExpanded(!isExpanded);
+                  }}
+                >
+                  <IconLightbulb className="w-[17px] h-[24px]" />
+                </button>
+              )}
+              children={'Insight'}
             />
           ) : (
             <button

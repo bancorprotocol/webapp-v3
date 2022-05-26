@@ -31,7 +31,7 @@ const V3WithdrawStep3 = ({
   return (
     <>
       <div className="text-center">
-        <h1 className="text-[36px] font-normal my-50">
+        <h1 className="text-[36px] font-normal my-50 leading-10">
           Start {lockDurationInDays} day cooldown of{' '}
           <span className="text-primary">
             {isFiat

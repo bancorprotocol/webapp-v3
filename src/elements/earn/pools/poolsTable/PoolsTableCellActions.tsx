@@ -1,16 +1,20 @@
 import { Navigate } from 'components/navigate/Navigate';
-import { Tooltip } from 'components/tooltip/Tooltip';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { BancorURL } from 'router/bancorURL.service';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const PoolsTableCellActions = (id: string) => {
   return (
     <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
-      <Tooltip content="Stake & Earn">
-        <Button variant={ButtonVariant.PRIMARY} size={ButtonSize.EXTRASMALL}>
-          Deposit
-        </Button>
-      </Tooltip>
+      <PopoverV3
+        buttonElement={() => (
+          <Button variant={ButtonVariant.PRIMARY} size={ButtonSize.EXTRASMALL}>
+            Deposit
+          </Button>
+        )}
+      >
+        Deposit & Earn
+      </PopoverV3>
     </Navigate>
   );
 };

@@ -1,0 +1,28 @@
+@import 'tailwindcss/components';
+
+@layer components {
+  .popover-arrow {
+    @apply bg-white dark:bg-black border-silver dark:border-grey;
+    @apply h-10 w-10;
+  }
+
+  .popover-panel[data-popper-placement^='top'] .popover-arrow {
+    bottom: calc(5px * -1);
+    @apply border-b border-r;
+  }
+
+  .popover-panel[data-popper-placement^='bottom'] .popover-arrow {
+    top: calc(5px * -1);
+    @apply border-t border-l dark:border-t dark:border-l;
+  }
+
+  .popover-panel[data-popper-placement^='left'] .popover-arrow {
+    right: calc(5px * -1);
+    @apply border-t border-l dark:border-t dark:border-l;
+  }
+
+  .popover-panel[data-popper-placement^='right'] .popover-arrow {
+    left: calc(5px * -1);
+    @apply border-t border-l dark:border-t dark:border-l;
+  }
+}
