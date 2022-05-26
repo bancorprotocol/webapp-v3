@@ -1,5 +1,6 @@
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
+import { ReactComponent as IconComputer } from 'assets/icons/computer.svg';
 import { DarkMode as IDarkMode, setDarkMode } from 'store/user/user';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
@@ -19,7 +20,7 @@ export const DarkMode = ({ showText = false }: { showText?: boolean }) => {
       ) : darkMode === IDarkMode.Light ? (
         <DarkModeButton modeToSwitch={IDarkMode.System}>
           <>
-            <IconMoon className="w-20" />
+            <IconComputer className="w-20" />
             {showText && <div>Switch to System Mode</div>}
           </>
         </DarkModeButton>
