@@ -1,32 +1,55 @@
 import { ReactComponent as IconSun } from 'assets/icons/sun.svg';
 import { ReactComponent as IconMoon } from 'assets/icons/moon.svg';
-import { setDarkMode } from 'store/user/user';
+import { ReactComponent as IconComputer } from 'assets/icons/computer.svg';
+import { DarkMode as IDarkMode, setDarkMode } from 'store/user/user';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 
 export const DarkMode = ({ showText = false }: { showText?: boolean }) => {
-  const dispatch = useDispatch();
-  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
+  const darkMode = useAppSelector<IDarkMode>((state) => state.user.darkMode);
 
   return (
     <>
-      {darkMode ? (
-        <button
-          onClick={() => dispatch(setDarkMode(false))}
-          className="flex items-center gap-10 text-white"
-        >
-          <IconSun className="w-20 text-white" />
-          {showText && <div>Switch to light mode</div>}
-        </button>
+      {darkMode === IDarkMode.Dark ? (
+        <DarkModeButton modeToSwitch={IDarkMode.Light}>
+          <>
+            <IconSun className="w-20" />
+            {showText && <div>Switch to Light Mode</div>}
+          </>
+        </DarkModeButton>
+      ) : darkMode === IDarkMode.Light ? (
+        <DarkModeButton modeToSwitch={IDarkMode.System}>
+          <>
+            <IconComputer className="w-20" />
+            {showText && <div>Switch to System Mode</div>}
+          </>
+        </DarkModeButton>
       ) : (
-        <button
-          onClick={() => dispatch(setDarkMode(true))}
-          className="flex items-center gap-10 text-black"
-        >
-          <IconMoon className="w-20" />
-          {showText && <div>Switch to dark mode</div>}
-        </button>
+        <DarkModeButton modeToSwitch={IDarkMode.Dark}>
+          <>
+            <IconMoon className="w-20" />
+            {showText && <div>Switch to Dark Mode</div>}
+          </>
+        </DarkModeButton>
       )}
     </>
+  );
+};
+
+const DarkModeButton = ({
+  modeToSwitch,
+  children,
+}: {
+  modeToSwitch: IDarkMode;
+  children: JSX.Element;
+}) => {
+  const dispatch = useDispatch();
+  return (
+    <button
+      onClick={() => dispatch(setDarkMode(modeToSwitch))}
+      className="flex items-center gap-10 text-black dark:text-white"
+    >
+      {children}
+    </button>
   );
 };
