@@ -3,7 +3,7 @@ import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStak
 import { Button, ButtonSize } from 'components/button/Button';
 import { useDispatch } from 'react-redux';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { openWalletModal } from 'store/user/user';
+import { getDarkMode, openWalletModal } from 'store/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'store';
 import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
@@ -14,7 +14,7 @@ import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
-  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
+  const darkMode = useAppSelector<boolean>(getDarkMode);
   const dispatch = useDispatch();
 
   const handleLoginClick = () => {
