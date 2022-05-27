@@ -19,7 +19,7 @@ export const TradeWidgetDetails = ({
     <>
       {fromInput && toInput && fromInput.inputTkn !== '' && (
         <div className="px-10 mt-15 text-secondary">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center">
             <div className="flex items-center">
               Best Rate
               <PopoverV3
