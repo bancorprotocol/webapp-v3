@@ -95,10 +95,10 @@
     "prepare": "is-ci || husky install",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
-    "prettier:fix": "prettier --write 'src/**/*.{js,ts,tsx,css,scss,md,json,yml,yaml}'"
+    "prettier:fix": "prettier --write 'src/**/*.{js,ts,tsx,scss,md,json,yml,yaml}'"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,css,scss}": [
+    "src/**/*.{js,jsx,ts,tsx,scss}": [
       "prettier --write",
       "eslint --fix"
     ]
