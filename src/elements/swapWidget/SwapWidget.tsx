@@ -130,7 +130,7 @@ export const SwapWidget = ({
             ) : (
               <TradeWidget
                 tokens={tokens}
-                from={fromToken.address}
+                from={fromToken?.address}
                 to={toToken?.address}
               />
             )}
