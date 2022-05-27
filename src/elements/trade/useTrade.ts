@@ -84,7 +84,8 @@ export const useTrade = ({
   const [onStart, ApproveModal] = useApproveModal(
     fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
     handleTrade,
-    ContractsApi.BancorNetwork.contractAddress
+    // TODO handle v2 approve bancor network contract
+    isV3 ? ContractsApi.BancorNetwork.contractAddress : ''
   );
 
   const handleSelectFrom = (token: Token) => {

@@ -1,7 +1,7 @@
 import PQueue from 'p-queue';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getRateAndPriceImapct } from 'services/web3/swap/market';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
 import {
@@ -116,6 +116,30 @@ export const useTradeWidget = ({
     () => tokens.filter((t) => t.address !== from && t.address !== to),
     [from, to, tokens]
   );
+
+  const reset = useCallback(() => {
+    setFromInputTkn('');
+    setFromInputFiat('');
+    setToInputTkn('');
+    setToInputFiat('');
+  }, []);
+
+  const fromTokenAddressRef = useRef(fromToken?.address);
+  const toTokenAddressRef = useRef(toToken?.address);
+
+  useEffect(() => {
+    if (toToken?.address !== toTokenAddressRef.current) {
+      toTokenAddressRef.current = toToken?.address;
+      reset();
+    }
+  }, [reset, toToken?.address]);
+
+  useEffect(() => {
+    if (fromToken?.address !== fromTokenAddressRef.current) {
+      fromTokenAddressRef.current = fromToken?.address;
+      reset();
+    }
+  }, [reset, fromToken?.address]);
 
   return { fromInput, toInput, isLoading, priceImpact, filteredTokens, isV3 };
 };

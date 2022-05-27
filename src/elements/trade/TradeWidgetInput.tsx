@@ -73,9 +73,11 @@ export const TradeWidgetInput = ({
         </div>
 
         <div
-          className={`border ${isFocused ? 'border-primary' : 'border-fog'} ${
+          className={`border ${
+            isFocused ? 'border-primary' : 'border-fog dark:border-grey'
+          } ${
             errorMsg ? 'border-error' : ''
-          } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-grey space-x-20`}
+          } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-charcoal space-x-20`}
         >
           {!tokens.length && (
             <div className="flex items-center space-x-10">
@@ -131,7 +133,7 @@ export const TradeWidgetInput = ({
                         ? prettifyNumber(value, isFiat)
                         : ''
                     }
-                    className="w-full text-right text-20 outline-none"
+                    className="w-full text-right text-20 outline-none bg-white dark:bg-charcoal"
                     onChange={(e) => {
                       !disabled && input.handleChange(e.target.value);
                     }}

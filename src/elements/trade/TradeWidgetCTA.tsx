@@ -69,7 +69,7 @@ export const TradeWidgetCTA = ({
   return (
     <Button
       variant={buttonVariant()}
-      className="w-full mt-10"
+      className="w-full mt-15"
       onClick={handleCTAClick}
       disabled={isSwapDisabled}
     >

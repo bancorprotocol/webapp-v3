@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
@@ -87,22 +87,6 @@ export const useTknFiatInput = ({
       debouncedChangeHandler,
     ]
   );
-
-  const reset = useCallback(() => {
-    setInputTkn('');
-    setInputFiat('');
-    onDebounce('');
-  }, [setInputTkn, setInputFiat, onDebounce]);
-
-  const tokenAddressRef = useRef(token?.address);
-
-  useEffect(() => {
-    if (token?.address !== tokenAddressRef.current) {
-      console.log('reset');
-      tokenAddressRef.current = token?.address;
-      reset();
-    }
-  }, [reset, token?.address]);
 
   if (!token) return undefined;
 
