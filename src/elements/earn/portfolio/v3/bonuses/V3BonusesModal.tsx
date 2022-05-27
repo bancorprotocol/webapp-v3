@@ -11,6 +11,7 @@ import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
+import { getDarkMode } from 'store/user/user';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 
 const BonusGroupItems = ({
@@ -93,7 +94,7 @@ const BonusGroup = ({
 }: {
   rewardsGroup: GroupedStandardReward;
 }) => {
-  const darkMode = useAppSelector<boolean>((state) => state.user.darkMode);
+  const darkMode = useAppSelector<boolean>(getDarkMode);
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
   const allTokens = rewardsGroup.rewards.map(
