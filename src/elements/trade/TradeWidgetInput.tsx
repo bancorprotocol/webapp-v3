@@ -83,7 +83,7 @@ export const TradeWidgetInput = ({
               <div className="loading-skeleton h-20 w-[80px]" />
             </div>
           )}
-          <div>
+          <div className="flex-none">
             {input && (
               <button
                 className="flex items-center space-x-10 hover:text-primary transition-colors duration-300"

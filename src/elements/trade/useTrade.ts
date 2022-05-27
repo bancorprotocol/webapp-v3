@@ -88,7 +88,7 @@ export const useTrade = ({
   );
 
   const handleSelectFrom = (token: Token) => {
-    goToPage.tradeBeta(
+    goToPage.trade(
       {
         from: token.address,
         to: toInput?.token.address,
@@ -98,7 +98,7 @@ export const useTrade = ({
   };
 
   const handleSelectTo = (token: Token) => {
-    goToPage.tradeBeta(
+    goToPage.trade(
       {
         from: fromInput?.token.address,
         to: token.address,
@@ -108,7 +108,7 @@ export const useTrade = ({
   };
 
   const handleSelectSwitch = () => {
-    goToPage.tradeBeta(
+    goToPage.trade(
       {
         from: toInput?.token.address,
         to: fromInput?.token.address,

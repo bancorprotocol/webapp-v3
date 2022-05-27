@@ -17,7 +17,7 @@ export const TradeWidget = (props: Props) => {
   const trade = useTrade(tradeWidget);
 
   return (
-    <div className="w-full md:min-w-[485px]">
+    <div className="w-full">
       <div className="px-10 mb-[34px]">
         <TradeWidgetInput
           label={'You pay'}
