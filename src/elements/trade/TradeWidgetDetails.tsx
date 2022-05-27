@@ -1,26 +1,37 @@
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
-
-interface Props {
-  fromInput?: useTokenInputV3Return;
-  toInput?: useTokenInputV3Return;
-  isLoading: boolean;
-  priceImpact: string;
-}
+import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { useMemo } from 'react';
 
 export const TradeWidgetDetails = ({
   fromInput,
   toInput,
   isLoading,
   priceImpact,
-}: Props) => {
+  isV3,
+}: UseTradeWidgetReturn) => {
+  const loading = useMemo(
+    () => isLoading || fromInput?.isTyping || toInput?.isTyping,
+    [fromInput?.isTyping, isLoading, toInput?.isTyping]
+  );
+
   return (
     <>
       {fromInput && toInput && fromInput.inputTkn !== '' && (
         <div className="px-10 mt-10">
           <div className="flex justify-between">
-            <div>Rate</div>
-            {isLoading || fromInput.isTyping || toInput.isTyping ? (
+            <div className="flex items-center">
+              Best Rate
+              <PopoverV3
+                children="Version routing to ensure you get the best rate possible for your trade"
+                buttonElement={() => (
+                  <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
+                    {isV3 ? 'V3' : 'V2'}
+                  </div>
+                )}
+              />
+            </div>
+            {loading ? (
               <div className="loading-skeleton h-10 w-[180px] bg-white" />
             ) : (
               <div>
@@ -36,10 +47,16 @@ export const TradeWidgetDetails = ({
           </div>
           <div className="flex justify-between">
             <div>Price Impact</div>
-            {isLoading || fromInput.isTyping || toInput.isTyping ? (
+            {loading ? (
               <div className="loading-skeleton h-10 w-[100px] bg-white" />
             ) : (
-              <div>{prettifyNumber(priceImpact)} %</div>
+              <div
+                className={`${
+                  toBigNumber(priceImpact).gte(5) ? 'text-error' : ''
+                }`}
+              >
+                {prettifyNumber(priceImpact)} %
+              </div>
             )}
           </div>
         </div>

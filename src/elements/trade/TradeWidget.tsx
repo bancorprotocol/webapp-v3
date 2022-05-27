@@ -12,62 +12,39 @@ interface Props {
   tokens: Token[];
 }
 
-export const TradeWidget = ({ from, to, tokens }: Props) => {
-  const { fromInput, toInput, isLoading, priceImpact, filteredTokens } =
-    useTradeWidget({
-      from,
-      to,
-      tokens,
-    });
-
-  const {
-    handleCTAClick,
-    ApproveModal,
-    isBusy,
-    handleSelectFrom,
-    handleSelectTo,
-    handleSelectSwitch,
-    errorInsufficientBalance,
-  } = useTrade(fromInput, toInput);
+export const TradeWidget = (props: Props) => {
+  const tradeWidget = useTradeWidget(props);
+  const trade = useTrade(tradeWidget);
 
   return (
     <div className="w-full md:min-w-[485px]">
       <div className="px-10 mb-[34px]">
         <TradeWidgetInput
           label={'You pay'}
-          tokens={filteredTokens}
-          input={fromInput}
-          onTokenSelect={handleSelectFrom}
-          errorMsg={errorInsufficientBalance}
+          tokens={tradeWidget.filteredTokens}
+          input={tradeWidget.fromInput}
+          onTokenSelect={trade.handleSelectFrom}
+          errorMsg={trade.errorInsufficientBalance}
         />
       </div>
 
       <div className="bg-secondary p-10 rounded-30 pt-30 relative">
-        <TradeWidgetSwitchBtn handleSelectSwitch={handleSelectSwitch} />
+        <TradeWidgetSwitchBtn {...trade} />
 
         <TradeWidgetInput
           disabled
           label={'You receive'}
-          tokens={filteredTokens}
-          input={toInput}
-          onTokenSelect={handleSelectTo}
-          isLoading={isLoading || fromInput?.isTyping}
+          tokens={tradeWidget.filteredTokens}
+          input={tradeWidget.toInput}
+          onTokenSelect={trade.handleSelectTo}
+          isLoading={tradeWidget.isLoading || tradeWidget.fromInput?.isTyping}
         />
 
-        <TradeWidgetDetails
-          fromInput={fromInput}
-          toInput={toInput}
-          isLoading={isLoading}
-          priceImpact={priceImpact}
-        />
+        <TradeWidgetDetails {...tradeWidget} />
 
-        <TradeWidgetCTA
-          handleCTAClick={handleCTAClick}
-          isBusy={isBusy}
-          errorInsufficientBalance={errorInsufficientBalance}
-        />
+        <TradeWidgetCTA {...trade} {...tradeWidget} />
       </div>
-      {ApproveModal}
+      {trade.ApproveModal}
     </div>
   );
 };

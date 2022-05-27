@@ -1,20 +1,32 @@
 import { useAppSelector } from 'store/index';
 import { useMemo, useState } from 'react';
 import { useNavigation } from 'hooks/useNavigation';
-import { ethToken } from 'services/web3/config';
-import { expandToken } from 'utils/formulas';
-import { calculateMinimumReturn } from 'services/web3/swap/market';
+import { executeSwapTx } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { getFutureTime, toBigNumber } from 'utils/helperFunctions';
-import dayjs from 'utils/dayjs';
+import { toBigNumber } from 'utils/helperFunctions';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
+import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
+import { swapNotification } from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
+import { openWalletModal } from 'store/user/user';
 
-export const useTrade = (
-  fromInput?: useTokenInputV3Return,
-  toInput?: useTokenInputV3Return
-) => {
+export interface UseTradeReturn {
+  ApproveModal: JSX.Element;
+  isBusy: boolean;
+  handleSelectSwitch: () => void;
+  errorInsufficientBalance: string | undefined;
+  handleSelectTo: (token: Token) => void;
+  handleSelectFrom: (token: Token) => void;
+  handleCTAClick: () => void;
+}
+
+export const useTrade = ({
+  fromInput,
+  toInput,
+  isV3,
+}: UseTradeWidgetReturn): UseTradeReturn => {
+  const dispatch = useDispatch();
   const slippageTolerance = useAppSelector(
     (state) => state.user.slippageTolerance
   );
@@ -28,33 +40,43 @@ export const useTrade = (
     if (!fromInput || !toInput || !account) {
       return;
     }
-    const fromIsEth = fromInput.token.address === ethToken;
-    const fromWei = expandToken(fromInput.inputTkn, fromInput.token.decimals);
-    const expectedToWei = expandToken(toInput.inputTkn, toInput.token.decimals);
-    const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
+
     try {
-      await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
-        fromInput.token.address,
-        toInput.token.address,
-        fromWei,
-        minReturn,
-        getFutureTime(dayjs.duration({ days: 7 })),
+      const tx = await executeSwapTx(
+        isV3,
         account,
-        { value: fromIsEth ? fromWei : undefined }
+        slippageTolerance,
+        fromInput.token,
+        toInput.token,
+        fromInput.inputTkn,
+        toInput.inputTkn
       );
-      await updateUserBalances();
+      swapNotification(
+        dispatch,
+        fromInput.token,
+        toInput.token,
+        fromInput.inputTkn,
+        toInput.inputTkn,
+        tx.hash
+      );
+      setIsBusy(false);
       fromInput.setInputTkn('');
       fromInput.setInputFiat('');
       toInput.setInputTkn('');
       toInput.setInputFiat('');
+      await tx.wait();
+      await updateUserBalances();
     } catch (e) {
       console.error(e);
-    } finally {
       setIsBusy(false);
     }
   };
 
   const handleCTAClick = () => {
+    if (!account) {
+      dispatch(openWalletModal(true));
+      return;
+    }
     setIsBusy(true);
     onStart();
   };

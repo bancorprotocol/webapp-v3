@@ -2,7 +2,6 @@ import { Page } from 'components/Page';
 import { TradeWidget } from 'elements/trade/TradeWidget';
 import { useSearchParams } from 'react-router-dom';
 import { useAppSelector } from 'store/index';
-import { getV3Tokens } from 'store/bancor/token';
 import { ethToken } from 'services/web3/config';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useEffect } from 'react';
@@ -14,7 +13,7 @@ export const Trade = () => {
   const from = searchParams.get('from') ?? undefined;
   const to = searchParams.get('to') ?? undefined;
 
-  const tokens = useAppSelector(getV3Tokens);
+  const tokens = useAppSelector((state) => state.bancor.tokens);
 
   const { goToPage } = useNavigation();
 

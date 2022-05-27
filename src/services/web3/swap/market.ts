@@ -170,7 +170,7 @@ export const swap = async (
   }
 };
 
-const executeSwapTx = async (
+export const executeSwapTx = async (
   isV3: boolean,
   user: string,
   slippageTolerance: number,

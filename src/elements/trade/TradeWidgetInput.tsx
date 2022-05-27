@@ -172,6 +172,7 @@ export const TradeWidgetInput = ({
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         tokens={tokens}
+        limit
       />
     </>
   );
