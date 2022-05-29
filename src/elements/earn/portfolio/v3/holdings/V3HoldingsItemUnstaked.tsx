@@ -12,7 +12,6 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
