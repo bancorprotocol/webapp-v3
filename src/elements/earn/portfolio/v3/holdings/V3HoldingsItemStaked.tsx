@@ -10,16 +10,9 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
 
   return (
     <div>
-      /* <IconGift
-        className={`w-16 ${
-          !isDisabled ? 'text-primary' : 'text-secondary'
-        } mx-auto mb-5`}
-      />
-      */
-
-      <div className="text-secondary">Staked</div>
+      <div className="text-secondary">Joined Rewards</div>
       <div className={`mt-6 mb-10 ${isDisabled ? 'text-secondary' : ''}`}>
-        {prettifyNumber(holding.stakedTokenBalance)} {pool.reserveToken.symbol}
+        {prettifyNumber(holding.stakedPoolTokenBalance)} {pool.poolToken.symbol}
       </div>
       <div className="flex justify-center">
         <V3UnstakeModal
