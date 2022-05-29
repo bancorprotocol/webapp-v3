@@ -1,6 +1,5 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { V3UnstakeModal } from 'elements/earn/portfolio/v3/holdings/V3UnstakeModal';
 
