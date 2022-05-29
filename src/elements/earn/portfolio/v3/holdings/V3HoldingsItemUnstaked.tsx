@@ -77,15 +77,9 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
     <>
       {ApproveModal}
       <div>
-        <IconGift
-          className={`w-16 ${
-            !isDisabled ? 'text-primary' : 'text-secondary'
-          } mx-auto mb-5`}
-        />
-
-        <div className="text-secondary">Unstaked</div>
+        <div className="text-secondary">{pool.reserveToken.symbol} in Wallet (not joined to rewards)</div>
         <div className={`mt-6 mb-10 ${isDisabled ? 'text-secondary' : ''}`}>
-          {prettifyNumber(holding.tokenBalance)} {pool.reserveToken.symbol}
+          {prettifyNumber(holding.poolTokenBalance)} {pool.poolToken.symbol}
         </div>
         <div className="flex justify-center">
           <Button
