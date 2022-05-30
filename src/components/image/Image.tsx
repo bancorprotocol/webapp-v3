@@ -1,6 +1,5 @@
 import { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
 import { useImage } from 'hooks/useImage';
-import { ropstenImage } from 'services/web3/config';
 
 type ImgAttributes = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
@@ -18,10 +17,10 @@ export const Image = ({
   src,
   alt,
   lazy = true,
-  fallbackSrc = ropstenImage,
+  fallbackSrc,
   ...props
 }: ImageProps) => {
-  const { hasLoaded, source } = useImage(src ?? ropstenImage, fallbackSrc);
+  const { hasLoaded, source } = useImage(src, fallbackSrc);
 
   return hasLoaded ? (
     <img {...props} src={source} alt={alt} loading={lazy ? 'lazy' : 'eager'} />
