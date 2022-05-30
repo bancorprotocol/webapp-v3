@@ -2,7 +2,6 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useMemo } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
-import { Image } from 'components/image/Image';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { V3HoldingsItemWithdraw } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemWithdraw';
@@ -10,6 +9,7 @@ import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3Hold
 import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
 import { V3HoldingsItemDeposit } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemDeposit';
 import BigNumber from 'bignumber.js';
+import { TokenImage } from 'components/image/TokenImage';
 
 export const V3HoldingsItem = ({
   holding,
@@ -53,9 +53,9 @@ export const V3HoldingsItem = ({
         className="flex justify-between items-center w-full"
       >
         <div className="flex items-center space-x-10">
-          <Image
+          <TokenImage
             alt={'Token Logo'}
-            className={'w-40 h-40 rounded-full'}
+            className={'w-40 h-40 !rounded-full'}
             src={pool.reserveToken.logoURI}
           />
           <div className="flex items-center space-x-10">

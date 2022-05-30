@@ -5,7 +5,6 @@ import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
-import { Image } from 'components/image/Image';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { isMobile } from 'react-device-detect';
@@ -15,6 +14,7 @@ import { TokenList } from 'services/observables/tokens';
 import { userPreferredListIds$ } from 'services/observables/tokenLists';
 import { orderBy } from 'lodash';
 import { SearchInput } from 'components/searchInput/SearchInput';
+import { TokenImage } from 'components/image/TokenImage';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -153,7 +153,7 @@ export const SearchableTokenList = ({
                   key={tokenList.name}
                 >
                   <div className="flex items-center">
-                    <Image
+                    <TokenImage
                       alt="TokenList"
                       src={tokenList.logoURI}
                       className="bg-silver rounded-full h-28 w-28"
@@ -214,10 +214,10 @@ export const SearchableTokenList = ({
                   className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
                 >
                   <div className="flex items-center">
-                    <Image
+                    <TokenImage
                       src={token.logoURI}
                       alt={`${token.symbol} Token`}
-                      className="rounded-full h-32 w-32"
+                      className="!rounded-full h-32 w-32"
                     />
                     <div className="grid justify-items-start ml-15">
                       <div className="text-16">{token.symbol}</div>

@@ -9,11 +9,11 @@ import { addNotification } from 'store/notification/notification';
 import { useAppSelector } from 'store';
 import { wethToken } from 'services/web3/config';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Image } from 'components/image/Image';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
+import { TokenImage } from 'components/image/TokenImage';
 
 export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
   const account = useAppSelector((state) => state.user.account);
@@ -87,10 +87,10 @@ export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
           const payToken = payAmount.row.original.payToken;
           return (
             <div className={'flex items-center'}>
-              <Image
+              <TokenImage
                 src={payToken.logoURI}
                 alt="Token"
-                className="bg-silver rounded-full h-28 w-28 mr-5"
+                className="!rounded-full h-28 w-28 mr-5"
               />
               {`${payToken.symbol} ${payAmount.value}`}
             </div>
@@ -107,10 +107,10 @@ export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
           const getToken = getAmount.row.original.getToken;
           return (
             <div className={'flex items-center'}>
-              <Image
+              <TokenImage
                 src={getToken.logoURI}
                 alt="Token"
-                className="bg-silver rounded-full h-28 w-28 mr-5"
+                className="!rounded-full h-28 w-28 mr-5"
               />
               {`${getToken.symbol} ${getAmount.value}`}
             </div>

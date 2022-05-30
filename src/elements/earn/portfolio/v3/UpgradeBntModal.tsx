@@ -4,7 +4,6 @@ import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
-import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
@@ -22,6 +21,7 @@ import {
 import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
 import { Pool } from 'services/observables/pools';
+import { TokenImage } from 'components/image/TokenImage';
 
 export const UpgradeBntModal = ({
   position,
@@ -74,10 +74,10 @@ export const UpgradeBntModal = ({
   return (
     <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
       <div className="flex flex-col items-center gap-20 p-20 text-center">
-        <Image
+        <TokenImage
           alt="Token"
           src={position.reserveToken.logoURI}
-          className="rounded-full bg-silver h-50 w-50"
+          className="!rounded-full h-50 w-50"
         />
         <div>Upgrade BNT</div>
         <div>

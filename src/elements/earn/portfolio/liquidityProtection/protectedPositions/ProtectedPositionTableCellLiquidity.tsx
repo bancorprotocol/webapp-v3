@@ -1,5 +1,5 @@
 import { ProtectedPositionGrouped } from 'services/web3/protection/positions';
-import { Image } from 'components/image/Image';
+import { TokenImage } from 'components/image/TokenImage';
 
 export const ProtectedPositionTableCellLiquidity = (
   position: ProtectedPositionGrouped
@@ -8,10 +8,10 @@ export const ProtectedPositionTableCellLiquidity = (
   return (
     <div className={!isGroup ? 'border-l-2 border-primary pl-10' : ''}>
       <div className="flex items-center">
-        <Image
+        <TokenImage
           src={position.reserveToken.logoURI}
           alt="Token Logo"
-          className="rounded-full w-24 h-24 mr-10"
+          className="!rounded-full w-24 h-24 mr-10"
         />
         <div className="font-medium">{position.reserveToken.symbol}</div>
       </div>

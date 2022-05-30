@@ -1,6 +1,6 @@
-import { Image } from 'components/image/Image';
 import BigNumber from 'bignumber.js';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { TokenImage } from 'components/image/TokenImage';
 
 interface Props {
   symbol: string;
@@ -23,7 +23,11 @@ export const TokenBalance = ({
 
   return (
     <div className={`flex ${inverted ? '' : 'items-center'}`}>
-      <Image alt={`${symbol} Logo`} src={imgUrl} className="w-40 h-40 mr-10" />
+      <TokenImage
+        alt={`${symbol} Logo`}
+        src={imgUrl}
+        className="w-40 h-40 mr-10 !rounded-full"
+      />
       <div className={`${inverted ? 'text-right' : ''}`}>
         <div className="text-16">{label}</div>
         <span className="text-secondary">

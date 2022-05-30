@@ -7,8 +7,8 @@ import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
+import { TokenImage } from 'components/image/TokenImage';
 
 interface TokenInputFieldProps {
   label?: string;
@@ -176,10 +176,10 @@ export const TokenInputField = ({
           >
             {token ? (
               <>
-                <Image
+                <TokenImage
                   src={token.logoURI}
                   alt="Token"
-                  className="bg-silver rounded-full h-28 w-28"
+                  className="!rounded-full h-28 w-28"
                 />
                 <span className="text-20 mx-10">{token.symbol}</span>
               </>

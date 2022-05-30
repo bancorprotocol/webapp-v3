@@ -1,4 +1,3 @@
-import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
@@ -13,6 +12,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getTokenTableData } from 'store/bancor/token';
 import { Navigate } from 'components/navigate/Navigate';
 import { BancorURL } from 'router/bancorURL.service';
+import { TokenImage } from 'components/image/TokenImage';
 
 interface Props {
   searchInput: string;
@@ -40,10 +40,10 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
           )}
         </div>
 
-        <Image
+        <TokenImage
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="bg-fog rounded-full h-30 w-30 mr-10 ml-20"
+          className="!rounded-full h-30 w-30 mr-10 ml-20"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>

@@ -1,4 +1,3 @@
-import { Image } from '../../../../../components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { LockedBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { ReactComponent as IconLock } from 'assets/icons/locked.svg';
@@ -6,6 +5,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { UTCTimestamp } from 'lightweight-charts';
 import { isMobile } from 'react-device-detect';
+import { TokenImage } from 'components/image/TokenImage';
 
 interface ClaimLockedProps {
   bnt?: Token;
@@ -31,9 +31,9 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
             {noBntLocked ? (
               <div className="flex items-center">
                 <>
-                  <Image
+                  <TokenImage
                     alt="BNT Logo"
-                    className="w-30 mr-10"
+                    className="w-30 h-30 !rounded-full mr-10"
                     src={bnt?.logoURI}
                   />
                   <span>No BNT locked</span>
@@ -46,9 +46,9 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                     <div className="w-full flex justify-between items-center">
                       <div className="flex items-center">
                         {!isMobile && <IconLock className="h-20 mr-16" />}
-                        <Image
+                        <TokenImage
                           alt="BNT Logo"
-                          className="w-30 mr-10"
+                          className="w-30 h-30 !rounded-full mr-10"
                           src={bnt?.logoURI}
                         />
                         <div className="mr-10">{bnt?.symbol}</div>

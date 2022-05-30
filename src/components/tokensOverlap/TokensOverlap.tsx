@@ -1,6 +1,6 @@
-import { Image } from 'components/image/Image';
 import { Token } from 'services/observables/tokens';
 import { Reserve } from 'services/observables/pools';
+import { TokenImage } from 'components/image/TokenImage';
 
 export const TokensOverlap = ({
   tokens,
@@ -14,11 +14,11 @@ export const TokensOverlap = ({
   return (
     <div className="flex">
       {tokens.slice(0, maxLogos).map((token, idx) => (
-        <Image
+        <TokenImage
           key={token.symbol + idx}
           src={token.logoURI}
           alt="Token Logo"
-          className={`w-30 h-30 border border-fog dark:border-black rounded-full bg-fog dark:bg-black`}
+          className={`w-30 h-30 border border-fog dark:border-black !rounded-full bg-fog dark:bg-black`}
           style={{
             marginLeft: tokens.length > 1 ? `${'-10'}px` : '0px',
           }}
