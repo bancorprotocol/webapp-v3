@@ -76,9 +76,12 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
     <>
       {ApproveModal}
       <div>
-        <div className="text-secondary">{pool.poolToken.symbol} in Wallet (not joined to rewards)</div>
+        <div className="text-secondary">
+          {`bn${pool.reserveToken.symbol}`} in Wallet (not joined to rewards)
+        </div>
         <div className={`mt-6 mb-10 ${isDisabled ? 'text-secondary' : ''}`}>
-          {prettifyNumber(holding.poolTokenBalance)} {pool.poolToken.symbol}
+          {prettifyNumber(holding.poolTokenBalance)}{' '}
+          {`bn${pool.reserveToken.symbol}`}
         </div>
         <div className="flex justify-center">
           <Button
