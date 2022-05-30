@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Pool } from 'services/observables/pools';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface SelectPoolProps {
   pool: Pool;
@@ -26,12 +26,12 @@ export const SelectPool = ({
         onClick={() => setIsModalOpen(true)}
         className="flex items-center border border-charcoal dark:border-graphite rounded-[16px] px-20 py-6"
       >
-        <TokenImage
+        <Image
           src={pool.reserves[0].logoURI.replace('thumb', 'small')}
           alt="Token Logo"
           className="!rounded-full w-24 h-24 z-20"
         />
-        <TokenImage
+        <Image
           src={pool.reserves[1].logoURI.replace('thumb', 'small')}
           alt="Token Logo"
           className="-ml-10 !rounded-full w-24 h-24 z-10"

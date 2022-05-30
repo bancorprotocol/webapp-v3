@@ -12,7 +12,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getTokenTableData } from 'store/bancor/token';
 import { Navigate } from 'components/navigate/Navigate';
 import { BancorURL } from 'router/bancorURL.service';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface Props {
   searchInput: string;
@@ -40,7 +40,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
           )}
         </div>
 
-        <TokenImage
+        <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
           className="!rounded-full h-30 w-30 mr-10 ml-20"

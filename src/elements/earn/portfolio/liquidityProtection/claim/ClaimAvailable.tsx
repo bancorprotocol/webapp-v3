@@ -7,7 +7,7 @@ import { Token } from 'services/observables/tokens';
 import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize } from 'components/button/Button';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface ClaimAvailableProps {
   bnt?: Token;
@@ -46,7 +46,7 @@ export const ClaimAvailable = ({
         <div className="mx-[20px] md:mx-[44px] mt-30 mb-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <TokenImage
+              <Image
                 alt="BNT Logo"
                 className="w-30 mr-10 !rounded-full"
                 src={bnt?.logoURI}

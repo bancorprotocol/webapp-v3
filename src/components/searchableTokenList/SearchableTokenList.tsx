@@ -14,7 +14,7 @@ import { TokenList } from 'services/observables/tokens';
 import { userPreferredListIds$ } from 'services/observables/tokenLists';
 import { orderBy } from 'lodash';
 import { SearchInput } from 'components/searchInput/SearchInput';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -153,7 +153,7 @@ export const SearchableTokenList = ({
                   key={tokenList.name}
                 >
                   <div className="flex items-center">
-                    <TokenImage
+                    <Image
                       alt="TokenList"
                       src={tokenList.logoURI}
                       className="bg-silver rounded-full h-28 w-28"
@@ -214,7 +214,7 @@ export const SearchableTokenList = ({
                   className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
                 >
                   <div className="flex items-center">
-                    <TokenImage
+                    <Image
                       src={token.logoURI}
                       alt={`${token.symbol} Token`}
                       className="!rounded-full h-32 w-32"

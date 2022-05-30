@@ -15,7 +15,7 @@ import { TopPools } from 'elements/earn/pools/TopPools';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -68,7 +68,7 @@ export const PoolsTable = () => {
             children={toolTip(cellData.row.original)}
             buttonElement={() => (
               <div className="flex items-center">
-                <TokenImage
+                <Image
                   src={cellData.row.original.reserveToken.logoURI}
                   alt="Pool Logo"
                   className="w-40 h-40 !rounded-full mr-10"

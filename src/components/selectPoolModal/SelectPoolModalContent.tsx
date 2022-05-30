@@ -1,7 +1,7 @@
 import { InputField } from '../inputField/InputField';
 import { useState } from 'react';
 import { Pool } from 'services/observables/pools';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface Props {
   pools: Pool[];
@@ -36,12 +36,12 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
             className="flex justify-between items-center w-full"
           >
             <span className="flex items-center">
-              <TokenImage
+              <Image
                 src={pool.reserves[0].logoURI.replace('thumb', 'small')}
                 alt="Token Logo"
                 className="!rounded-full w-24 h-24 z-20"
               />
-              <TokenImage
+              <Image
                 src={pool.reserves[1].logoURI.replace('thumb', 'small')}
                 alt="Token Logo"
                 className="-ml-10 !rounded-full w-24 h-24 z-10"

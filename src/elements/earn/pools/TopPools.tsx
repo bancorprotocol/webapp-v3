@@ -2,7 +2,7 @@ import { Ticker } from 'components/ticker/Ticker';
 import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export const TopPools = () => {
   const pools = useAppSelector(getTopPoolsV3);
@@ -19,7 +19,7 @@ export const TopPools = () => {
                     key={`pool-table-key-${index}`}
                     className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                   >
-                    <TokenImage
+                    <Image
                       src={pool.reserveToken.logoURI}
                       alt="Token Logo"
                       className="!rounded-full w-50 h-50"

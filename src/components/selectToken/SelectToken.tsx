@@ -3,7 +3,7 @@ import { classNameGenerator } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface SelectTokenProps {
   label?: string;
@@ -42,7 +42,7 @@ export const SelectToken = ({
           >
             {token ? (
               <>
-                <TokenImage
+                <Image
                   src={token.logoURI}
                   alt="Token"
                   className="!rounded-full h-28 w-28"

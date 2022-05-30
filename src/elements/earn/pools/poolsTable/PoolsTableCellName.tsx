@@ -1,10 +1,10 @@
 import { Pool } from 'services/observables/pools';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export const PoolsTableCellName = (pool: Pool) => {
   return (
     <div className="flex items-center">
-      <TokenImage
+      <Image
         src={pool.reserves[0].logoURI.replace('thumb', 'small')}
         alt="Token Logo"
         className="!rounded-full w-40 h-40"

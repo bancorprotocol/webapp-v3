@@ -5,7 +5,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { UTCTimestamp } from 'lightweight-charts';
 import { isMobile } from 'react-device-detect';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 interface ClaimLockedProps {
   bnt?: Token;
@@ -31,7 +31,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
             {noBntLocked ? (
               <div className="flex items-center">
                 <>
-                  <TokenImage
+                  <Image
                     alt="BNT Logo"
                     className="w-30 h-30 !rounded-full mr-10"
                     src={bnt?.logoURI}
@@ -46,7 +46,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                     <div className="w-full flex justify-between items-center">
                       <div className="flex items-center">
                         {!isMobile && <IconLock className="h-20 mr-16" />}
-                        <TokenImage
+                        <Image
                           alt="BNT Logo"
                           className="w-30 h-30 !rounded-full mr-10"
                           src={bnt?.logoURI}

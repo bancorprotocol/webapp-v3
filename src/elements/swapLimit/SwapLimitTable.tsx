@@ -13,7 +13,7 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
   const account = useAppSelector((state) => state.user.account);
@@ -87,7 +87,7 @@ export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
           const payToken = payAmount.row.original.payToken;
           return (
             <div className={'flex items-center'}>
-              <TokenImage
+              <Image
                 src={payToken.logoURI}
                 alt="Token"
                 className="!rounded-full h-28 w-28 mr-5"
@@ -107,7 +107,7 @@ export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
           const getToken = getAmount.row.original.getToken;
           return (
             <div className={'flex items-center'}>
-              <TokenImage
+              <Image
                 src={getToken.logoURI}
                 alt="Token"
                 className="!rounded-full h-28 w-28 mr-5"

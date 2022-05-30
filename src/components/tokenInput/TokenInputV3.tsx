@@ -4,7 +4,7 @@ import { useResizeTokenInput } from 'components/tokenInput/useResizeTokenInput';
 import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
 import { Token } from 'services/observables/tokens';
 import useDimensions from 'hooks/useDimensions';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export interface TokenInputV3Props {
   token: Token;
@@ -54,7 +54,7 @@ const TokenInputV3 = ({
         isFocused ? 'border-primary' : 'border-fog dark:border-grey'
       } ${isError ? 'border-error text-error' : ''}`}
     >
-      <TokenImage
+      <Image
         src={token.logoURI}
         alt={'Token Logo'}
         className="absolute w-[40px] h-[40px] ml-20 !rounded-full"

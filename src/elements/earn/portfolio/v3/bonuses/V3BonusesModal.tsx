@@ -12,7 +12,7 @@ import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
 import { getDarkMode } from 'store/user/user';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -59,7 +59,7 @@ const BonusGroupItems = ({
                 >
                   {isSelected && <IconCheck className="w-10 text-white" />}
                 </div>
-                <TokenImage
+                <Image
                   alt={'Token Logo'}
                   className="mx-20 !rounded-full w-30 h-30"
                   src={reward.rewardsToken.logoURI}
@@ -74,7 +74,7 @@ const BonusGroupItems = ({
               </div>
 
               <div className="flex items-center gap-10 w-[80px]">
-                <TokenImage
+                <Image
                   alt={'Token Logo'}
                   className="!rounded-full w-30 h-30"
                   src={reward.programPool.reserveToken.logoURI}
@@ -132,7 +132,7 @@ const BonusGroup = ({
       <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-10">
-            <TokenImage
+            <Image
               alt={'Token'}
               className="w-40 h-40 !rounded-full"
               src={groupPool.reserveToken.logoURI}

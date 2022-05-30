@@ -9,7 +9,7 @@ import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3Hold
 import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
 import { V3HoldingsItemDeposit } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemDeposit';
 import BigNumber from 'bignumber.js';
-import { TokenImage } from 'components/image/TokenImage';
+import { Image } from 'components/image/Image';
 
 export const V3HoldingsItem = ({
   holding,
@@ -53,7 +53,7 @@ export const V3HoldingsItem = ({
         className="flex justify-between items-center w-full"
       >
         <div className="flex items-center space-x-10">
-          <TokenImage
+          <Image
             alt={'Token Logo'}
             className={'w-40 h-40 !rounded-full'}
             src={pool.reserveToken.logoURI}
