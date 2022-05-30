@@ -24,6 +24,7 @@ import {
 import { Pool } from 'services/observables/pools';
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -84,37 +85,53 @@ export const ProtectedPositionTableCellActions = (
     [dispatch, account, pools, totalBNT.tknAmount, protocolBnBNTAmount]
   );
 
-  const singleContent = useMemo(
-    () =>
-      isPoolExistV3 ? (
-        <Button
-          onClick={() => migrate([position])}
-          className="text-12 w-[165px] h-[32px] mr-10"
-          disabled={isMigrateDisabled([position])}
-        >
-          Upgrade To V3
-        </Button>
+  const singleContent = useMemo(() => {
+    const disabled = isMigrateDisabled([position]);
+    const button = (
+      <Button
+        onClick={() => migrate([position])}
+        className="text-12 w-[165px] h-[32px] mr-10"
+        disabled={disabled}
+      >
+        Upgrade To V3
+      </Button>
+    );
+    return isPoolExistV3 ? (
+      disabled ? (
+        <PopoverV3 buttonElement={() => button}>
+          Hold tight, migration will be available again shortly
+        </PopoverV3>
       ) : (
-        <></>
-      ),
-    [position, migrate, isPoolExistV3, isMigrateDisabled]
-  );
+        button
+      )
+    ) : (
+      <></>
+    );
+  }, [position, migrate, isPoolExistV3, isMigrateDisabled]);
 
-  const groupContent = useMemo(
-    () =>
-      isPoolExistV3 ? (
-        <Button
-          onClick={() => migrate(position.subRows)}
-          className="text-12 w-[145px] h-[32px] mr-10"
-          disabled={isMigrateDisabled(position.subRows)}
-        >
-          Upgrade All To V3
-        </Button>
+  const groupContent = useMemo(() => {
+    const disabled = isMigrateDisabled(position.subRows);
+    const button = (
+      <Button
+        onClick={() => migrate(position.subRows)}
+        className="text-12 w-[145px] h-[32px] mr-10"
+        disabled={disabled}
+      >
+        Upgrade All To V3
+      </Button>
+    );
+    return isPoolExistV3 ? (
+      disabled ? (
+        <PopoverV3 buttonElement={() => button}>
+          Hold tight, migration will be available again shortly
+        </PopoverV3>
       ) : (
-        <></>
-      ),
-    [position, migrate, isPoolExistV3, isMigrateDisabled]
-  );
+        button
+      )
+    ) : (
+      <></>
+    );
+  }, [position, migrate, isPoolExistV3, isMigrateDisabled]);
   return (
     <div>
       {TableCellExpander({
