@@ -22,6 +22,7 @@ export interface UseWalletConnect {
   handleConnect: (wallet: WalletInfo) => void;
   handleDisconnect: () => void;
   handleOpenModal: () => void;
+  reset: () => void;
   isPending: boolean;
   isError: boolean;
   account?: string | null;
@@ -49,10 +50,14 @@ export const useWalletConnect = (): UseWalletConnect => {
     [dispatch]
   );
 
-  const handleOpenModal = useCallback(() => {
-    sendWalletEvent(WalletEvents.popup);
+  const reset = () => {
     setIsError(false);
     setIsPending(false);
+  };
+
+  const handleOpenModal = useCallback(() => {
+    sendWalletEvent(WalletEvents.popup);
+    reset();
     setIsOpen(true);
   }, [setIsOpen]);
 
@@ -177,6 +182,7 @@ export const useWalletConnect = (): UseWalletConnect => {
     selectedWallet,
     SUPPORTED_WALLETS,
     title,
+    reset,
     handleWalletButtonClick,
   };
 };

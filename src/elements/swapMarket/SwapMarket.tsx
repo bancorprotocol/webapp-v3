@@ -17,7 +17,6 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { openWalletModal } from 'store/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
@@ -38,6 +37,7 @@ import { useAsyncEffect } from 'use-async-effect';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -69,6 +69,7 @@ export const SwapMarket = ({
   const [isSwapV3, setIsSwapV3] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
+  const { handleWalletButtonClick } = useWalletConnect();
 
   const dispatch = useDispatch();
 
@@ -214,7 +215,7 @@ export const SwapMarket = ({
 
   const handleSwap = async (approved: boolean = false) => {
     if (!account) {
-      dispatch(openWalletModal(true));
+      handleWalletButtonClick();
       return;
     }
 

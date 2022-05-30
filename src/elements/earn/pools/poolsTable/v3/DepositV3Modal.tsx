@@ -22,13 +22,13 @@ import {
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
-import { openWalletModal } from 'store/user/user';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 import { useNavigation } from 'hooks/useNavigation';
 import { wait } from 'utils/pureFunctions';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 interface Props {
   pool: PoolV3;
@@ -48,6 +48,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [extraGasNeeded, setExtraGasNeeded] = useState('0');
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
   const poolV3Map = useAppSelector(getPoolsV3Map);
+  const { handleWalletButtonClick } = useWalletConnect();
 
   const onClose = async () => {
     setIsOpen(false);
@@ -127,9 +128,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     if (canDeposit) {
       onStart();
     } else if (shouldConnect) {
-      dispatch(openWalletModal(true));
+      handleWalletButtonClick();
     }
-  }, [canDeposit, dispatch, onStart, shouldConnect]);
+  }, [canDeposit, onStart, shouldConnect, handleWalletButtonClick]);
 
   const shouldPollForGasPrice = useMemo(() => {
     return !!amount && !txBusy && accessFullEarnings && !!eth;

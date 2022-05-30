@@ -4,9 +4,7 @@ import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { openWalletModal } from 'store/user/user';
 import { Token } from 'services/observables/tokens';
 import { getNetworkVariables } from 'services/web3/config';
 import {
@@ -17,6 +15,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { openNewTab } from 'utils/pureFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Page } from 'components/Page';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 interface VoteCardProps {
   title: string;
@@ -60,7 +59,7 @@ export const Vote = () => {
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
-  const dispatch = useDispatch();
+  const { handleWalletButtonClick } = useWalletConnect();
 
   useEffect(() => {
     const networkVars = getNetworkVariables();
@@ -100,7 +99,7 @@ export const Vote = () => {
             button="Stake Tokens"
             onClick={() => {
               if (!account) {
-                dispatch(openWalletModal(true));
+                handleWalletButtonClick();
                 return;
               }
 
