@@ -182,7 +182,7 @@ export const SearchableTokenList = ({
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="rounded-full py-10"
+              className="rounded-full py-10 w-full"
             />
           </div>
           <div
