@@ -65,27 +65,37 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
               +{slippage * 100}%
             </button>
           ))}
-          <input
-            type="text"
-            className={`w-[69px] border border-silver dark:border-grey outline-none text-black dark:text-white text-center text-12 rounded-[12px] ${
+          <span
+            className={`flex items-center border border-silver dark:border-grey rounded-[12px] pr-5 text-12 text-black dark:text-white ${
               currentSlippage === normalizedSlippage &&
               !slippages.includes(currentSlippage)
                 ? 'bg-fog dark:bg-grey'
                 : 'bg-white dark:bg-black'
             }`}
-            value={customSlippage}
-            onChange={(event) => setCustomSlippage(event.target.value)}
-            onBlur={() => {
-              if (
-                customSlippage.trim() !== '' &&
-                !isNaN(Number(customSlippage))
-              )
-                dispatch(setSlippageTolerance(normalizedSlippage));
+          >
+            <input
+              type="text"
+              className={`w-[60px] border-none outline-none text-center ${
+                currentSlippage === normalizedSlippage &&
+                !slippages.includes(currentSlippage)
+                  ? 'bg-fog dark:bg-grey'
+                  : 'bg-white dark:bg-black'
+              }`}
+              value={customSlippage}
+              onChange={(event) => setCustomSlippage(event.target.value)}
+              onBlur={() => {
+                if (
+                  customSlippage.trim() !== '' &&
+                  !isNaN(Number(customSlippage))
+                )
+                  dispatch(setSlippageTolerance(normalizedSlippage));
 
-              slippages.includes(currentSlippage) && setCustomSlippage('');
-            }}
-            placeholder="Custom"
-          />
+                slippages.includes(currentSlippage) && setCustomSlippage('');
+              }}
+              placeholder="Custom"
+            />
+            %
+          </span>
         </div>
         {mobile ? (
           <Navigate to={BancorURL.vote}>
