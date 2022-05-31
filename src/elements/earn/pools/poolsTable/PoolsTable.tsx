@@ -5,7 +5,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableSort';
+import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
