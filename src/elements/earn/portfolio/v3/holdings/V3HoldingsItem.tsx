@@ -8,8 +8,7 @@ import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3Hold
 import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
-import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const V3HoldingsItem = ({
   holding,
@@ -21,7 +20,6 @@ export const V3HoldingsItem = ({
   setSelectedId: (id: string) => void;
 }) => {
   const { pool, programs } = holding;
-  const { setBonusModalOpen } = useV3Bonuses();
 
   const rewardTokenAmountUsd = useMemo(
     () =>
@@ -59,23 +57,29 @@ export const V3HoldingsItem = ({
             className={'w-40 h-40 !rounded-full'}
             src={pool.reserveToken.logoURI}
           />
-          <div className="flex items-center space-x-10">
-            <div className="flex text-20 items-center space-x-10">
-              <div className=" text-secondary">
-                {holding.pool.reserveToken.symbol}
-              </div>
-              <div>{prettifyNumber(holding.combinedTokenBalance)}</div>
-            </div>
+          <PopoverV3
+            buttonElement={() => (
+              <div className="flex items-center space-x-10">
+                <div className="flex text-20 items-center space-x-10">
+                  <div className=" text-secondary">
+                    {holding.pool.reserveToken.symbol}
+                  </div>
+                  <div>{prettifyNumber(holding.combinedTokenBalance)}</div>
+                </div>
 
-            <div className="text-secondary">
-              {prettifyNumber(
-                toBigNumber(holding.pool.reserveToken.usdPrice).times(
-                  holding.combinedTokenBalance
-                ),
-                true
-              )}
-            </div>
-          </div>
+                <div className="text-secondary">
+                  {prettifyNumber(
+                    toBigNumber(holding.pool.reserveToken.usdPrice).times(
+                      holding.combinedTokenBalance
+                    ),
+                    true
+                  )}
+                </div>
+              </div>
+            )}
+          >
+            {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
+          </PopoverV3>
         </div>
         <div className="flex items-center space-x-30">
           <div>
@@ -86,15 +90,6 @@ export const V3HoldingsItem = ({
                 }`}
               />
               <div>+{prettifyNumber(rewardTokenAmountUsd, true)}</div>
-              <Button
-                onClick={() => {
-                  setBonusModalOpen(true);
-                }}
-                variant={ButtonVariant.SECONDARY}
-                size={ButtonSize.EXTRASMALL}
-              >
-                Claim
-              </Button>
             </div>
           </div>
 
