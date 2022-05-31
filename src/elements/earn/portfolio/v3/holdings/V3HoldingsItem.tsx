@@ -8,6 +8,8 @@ import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3Hold
 import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
+import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 export const V3HoldingsItem = ({
   holding,
@@ -19,6 +21,7 @@ export const V3HoldingsItem = ({
   setSelectedId: (id: string) => void;
 }) => {
   const { pool, programs } = holding;
+  const { setBonusModalOpen } = useV3Bonuses();
 
   const rewardTokenAmountUsd = useMemo(
     () =>
@@ -83,6 +86,15 @@ export const V3HoldingsItem = ({
                 }`}
               />
               <div>{prettifyNumber(rewardTokenAmountUsd, true)}</div>
+              <Button
+                onClick={() => {
+                  setBonusModalOpen(true);
+                }}
+                variant={ButtonVariant.SECONDARY}
+                size={ButtonSize.EXTRASMALL}
+              >
+                Claim
+              </Button>
             </div>
           </div>
 
