@@ -22,6 +22,7 @@ interface VoteCardProps {
   title: string;
   step: number;
   content: string;
+  trailingContent?: string;
   button: string;
   onClick: Function;
   footer: JSX.Element;
@@ -30,6 +31,7 @@ const VoteCard = ({
   title,
   step,
   content,
+  trailingContent,
   button,
   onClick,
   footer,
@@ -40,7 +42,10 @@ const VoteCard = ({
         <div className="text-primary dark:text-primary-light mr-12">{`Step ${step}`}</div>
         {title}
       </div>
-      <div className="text-secondary mb-auto">{content}</div>
+      <div className="text-secondary mb-auto">
+        {content}
+        {trailingContent && <div>{trailingContent}</div>}
+      </div>
       <Button className="w-[220px] mt-20" onClick={() => onClick()}>
         {button}
       </Button>
@@ -97,6 +102,7 @@ export const Vote = () => {
             step={1}
             title="Stake your vBNT"
             content="In order to participate in Bancor governance activities, you should first stake your vBNT tokens."
+            trailingContent="Staked vBNT will be locked for the initial 3 days"
             button="Stake Tokens"
             onClick={() => {
               if (!account) {
