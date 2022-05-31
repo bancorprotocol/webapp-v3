@@ -6,8 +6,8 @@ import {
 import { Token } from 'services/observables/tokens';
 import { claimBnt } from 'services/web3/lockedbnt/lockedbnt';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
-import { Button, ButtonSize } from '../../../../../components/button/Button';
 
 interface ClaimAvailableProps {
   bnt?: Token;
@@ -46,7 +46,11 @@ export const ClaimAvailable = ({
         <div className="mx-[20px] md:mx-[44px] mt-30 mb-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Image alt="BNT Logo" className="w-30 mr-10" src={bnt?.logoURI} />
+              <Image
+                alt="BNT Logo"
+                className="w-30 mr-10 !rounded-full"
+                src={bnt?.logoURI}
+              />
               {noBntToClaim ? (
                 <span> No BNT to claim</span>
               ) : (

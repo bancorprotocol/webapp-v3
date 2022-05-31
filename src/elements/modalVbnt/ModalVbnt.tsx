@@ -108,14 +108,8 @@ export const ModalVbnt = ({
         large
       >
         <div className="p-10">
-          <div className="flex flex-col items-center text-12 mx-20">
+          <div className="text-12 mx-20">
             <div className="text-20 font-semibold mb-10"></div>
-            {false && (
-              <div className="text-charcoal text-12 mx-10 text-center">
-                Chose the amount you want to stake. you can decide if you want
-                the amount in Dollars or Token input
-              </div>
-            )}
             <TokenInputPercentage
               label={`${stake ? 'Stake' : 'Unstake'} amount`}
               token={token}

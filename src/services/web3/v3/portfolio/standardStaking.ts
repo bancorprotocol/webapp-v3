@@ -32,9 +32,6 @@ export const fetchStandardRewardsByUser = async (
   user: string,
   pools: PoolV3[]
 ): Promise<RewardsProgramStake[]> => {
-  if (!user) {
-    throw new Error('no user address found');
-  }
   const poolsMap = new Map(pools.map((pool) => [pool.poolDltId, pool]));
   const allPrograms = pools.flatMap((p) => p.programs);
 

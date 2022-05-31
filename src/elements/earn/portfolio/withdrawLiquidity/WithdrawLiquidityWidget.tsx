@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { getTokenById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
@@ -75,10 +75,9 @@ export const WithdrawLiquidityWidget = ({
   const multiplierWillReset = true;
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
   const tokenInsufficent = Number(amount) > Number(tknAmount);
-  const withdrawDisabled = emtpyAmount || tokenInsufficent;
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
-  const showVBNTWarning = useCallback(() => {
+  const showVBNTWarning = useMemo(() => {
     if (token && token.address !== bntToken) {
       return false;
     }
@@ -98,6 +97,8 @@ export const WithdrawLiquidityWidget = ({
     tknAmount,
     token,
   ]);
+
+  const withdrawDisabled = emtpyAmount || tokenInsufficent || showVBNTWarning;
 
   useAsyncEffect(
     async (isMounted) => {
@@ -279,7 +280,7 @@ export const WithdrawLiquidityWidget = ({
               is currently not available. Please try again in a few minutes.
             </div>
           )}
-          {showVBNTWarning() && (
+          {showVBNTWarning && (
             <div className="p-20 rounded bg-error font-medium mt-20 text-white">
               Insufficient vBNT balance.
             </div>

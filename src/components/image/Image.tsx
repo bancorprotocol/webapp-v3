@@ -1,7 +1,5 @@
-import { DetailedHTMLProps, ImgHTMLAttributes, useState } from 'react';
-import { classNameGenerator } from 'utils/pureFunctions';
-import { ropstenImage } from 'services/web3/config';
-import { useFallbackImage } from 'components/image/useFallbackImage';
+import { DetailedHTMLProps, ImgHTMLAttributes } from 'react';
+import { useImage } from 'hooks/useImage';
 
 type ImgAttributes = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
@@ -11,31 +9,22 @@ type ImgAttributes = DetailedHTMLProps<
 interface ImageProps extends ImgAttributes {
   src?: string;
   alt: string;
-  className: string;
   lazy?: boolean;
+  fallbackSrc?: string;
 }
 
 export const Image = ({
   src,
   alt,
-  className,
   lazy = true,
+  fallbackSrc,
   ...props
 }: ImageProps) => {
-  const [loaded, setLoaded] = useState(false);
-  const { source, onError } = useFallbackImage(src, ropstenImage);
+  const { hasLoaded, source } = useImage(src, fallbackSrc);
 
-  return (
-    <img
-      {...props}
-      src={source}
-      alt={alt}
-      className={`${className} ${classNameGenerator({
-        'animate-pulse': !loaded,
-      })}`}
-      onLoad={() => setLoaded(true)}
-      onError={onError}
-      loading={lazy ? 'lazy' : 'eager'}
-    />
+  return hasLoaded ? (
+    <img {...props} src={source} alt={alt} loading={lazy ? 'lazy' : 'eager'} />
+  ) : (
+    <div className={`loading-skeleton ${props.className}`} />
   );
 };

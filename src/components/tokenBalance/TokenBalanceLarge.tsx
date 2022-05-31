@@ -1,7 +1,7 @@
-import { Image } from 'components/image/Image';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
+import { Image } from 'components/image/Image';
 
 interface Props {
   symbol: string;
@@ -29,7 +29,7 @@ export const TokenBalanceLarge = ({
       <div className="flex items-center">
         <Image
           alt={'Token Logo'}
-          className="w-40 h-40 rounded-full mr-10"
+          className="w-40 h-40 !rounded-full mr-10"
           src={logoURI}
         />
         <div className="flex justify-between items-center w-full">

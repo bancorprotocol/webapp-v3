@@ -11,7 +11,7 @@ export const ProtectedPositionTableCellLiquidity = (
         <Image
           src={position.reserveToken.logoURI}
           alt="Token Logo"
-          className="rounded-full w-24 h-24 mr-10"
+          className="!rounded-full w-24 h-24 mr-10"
         />
         <div className="font-medium">{position.reserveToken.symbol}</div>
       </div>

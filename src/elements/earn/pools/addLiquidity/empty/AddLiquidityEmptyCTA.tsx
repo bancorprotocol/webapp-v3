@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { openWalletModal } from 'store/user/user';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
@@ -14,6 +13,7 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 interface Props {
   pool: Pool;
@@ -34,6 +34,7 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
+  const { handleWalletButtonClick } = useWalletConnect();
   const { goToPage } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
@@ -114,7 +115,7 @@ export const AddLiquidityEmptyCTA = ({
 
   const onClick = () => {
     if (!account) {
-      dispatch(openWalletModal(true));
+      handleWalletButtonClick();
     } else {
       onStart();
     }

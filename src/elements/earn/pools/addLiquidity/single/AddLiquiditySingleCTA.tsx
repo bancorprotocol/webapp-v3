@@ -1,8 +1,7 @@
-import { openWalletModal } from 'store/user/user';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useNavigation } from 'hooks/useNavigation';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 interface Props {
   onStart: Function;
@@ -17,8 +16,9 @@ export const AddLiquiditySingleCTA = ({
   errorMsg,
   isBNTSelected,
 }: Props) => {
-  const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
+  const { handleWalletButtonClick } = useWalletConnect();
+
   const { goToPage } = useNavigation();
 
   const button = () => {
@@ -48,7 +48,7 @@ export const AddLiquiditySingleCTA = ({
 
   const onClick = () => {
     if (!account) {
-      dispatch(openWalletModal(true));
+      handleWalletButtonClick();
     } else {
       onStart();
     }
