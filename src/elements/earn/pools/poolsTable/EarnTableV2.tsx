@@ -38,8 +38,7 @@ export const EarnTableV2 = () => {
         Header: 'Name',
         accessor: 'name',
         Cell: (cellData) => PoolsTableCellName(cellData.row.original),
-        minWidth: 150,
-        width: 180,
+        minWidth: 200,
         sortDescFirst: true,
       },
       {
@@ -57,7 +56,8 @@ export const EarnTableV2 = () => {
           ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['isProtected']),
-        minWidth: 160,
+        minWidth: 140,
+        width: 140,
         sortDescFirst: true,
       },
       {
