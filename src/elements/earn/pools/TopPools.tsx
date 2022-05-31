@@ -1,8 +1,8 @@
 import { Ticker } from 'components/ticker/Ticker';
-import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
+import { Image } from 'components/image/Image';
 import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {
@@ -27,7 +27,7 @@ export const TopPools = () => {
                         <Image
                           src={pool.reserveToken.logoURI}
                           alt="Token Logo"
-                          className="bg-fog rounded-full w-50 h-50"
+                          className="!rounded-full w-50 h-50"
                         />
                         <div className="ml-10 text-12 dark:text-graphite text-left">
                           <div className="font-medium">

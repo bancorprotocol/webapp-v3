@@ -1,10 +1,10 @@
 import { memo, useMemo } from 'react';
-import { Image } from 'components/image/Image';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useResizeTokenInput } from 'components/tokenInput/useResizeTokenInput';
 import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
 import { Token } from 'services/observables/tokens';
 import useDimensions from 'hooks/useDimensions';
+import { Image } from 'components/image/Image';
 
 export interface TokenInputV3Props {
   token: Token;
@@ -57,7 +57,7 @@ const TokenInputV3 = ({
       <Image
         src={token.logoURI}
         alt={'Token Logo'}
-        className="absolute w-[40px] h-[40px] ml-20"
+        className="absolute w-[40px] h-[40px] ml-20 !rounded-full"
       />
       <span
         ref={helperRef}

@@ -7,7 +7,6 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableSort';
 import { PoolV3 } from 'services/observables/pools';
-import { Image } from 'components/image/Image';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
@@ -16,6 +15,7 @@ import { TopPools } from 'elements/earn/pools/TopPools';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { Image } from 'components/image/Image';
 
 export const PoolsTable = () => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
@@ -71,7 +71,7 @@ export const PoolsTable = () => {
                 <Image
                   src={cellData.row.original.reserveToken.logoURI}
                   alt="Pool Logo"
-                  className="w-40 h-40 rounded-full mr-10"
+                  className="w-40 h-40 !rounded-full mr-10"
                 />
                 <span className="text-16">{cellData.value}</span>
               </div>

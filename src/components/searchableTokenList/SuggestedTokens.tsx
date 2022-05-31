@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useMemo } from 'react';
-import { Image } from 'components/image/Image';
 import { TokenMinimal } from 'services/observables/tokens';
+import { Image } from 'components/image/Image';
 
 interface SuggestedTokensProps {
   allTokens: (Token | TokenMinimal)[];
@@ -35,7 +35,7 @@ export const SuggestedTokens = ({
             <Image
               src={token!.logoURI}
               alt={`${token!.symbol} Token`}
-              className="bg-silver rounded-full h-28 w-28 mb-5"
+              className="!rounded-full h-28 w-28 mb-5"
             />
             <span className="text-12">{token!.symbol}</span>
           </button>

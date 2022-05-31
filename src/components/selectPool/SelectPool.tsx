@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
-import { Image } from '../image/Image';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Pool } from 'services/observables/pools';
+import { Image } from 'components/image/Image';
 
 interface SelectPoolProps {
   pool: Pool;
@@ -29,12 +29,12 @@ export const SelectPool = ({
         <Image
           src={pool.reserves[0].logoURI.replace('thumb', 'small')}
           alt="Token Logo"
-          className="bg-fog rounded-full w-24 h-24 z-20"
+          className="!rounded-full w-24 h-24 z-20"
         />
         <Image
           src={pool.reserves[1].logoURI.replace('thumb', 'small')}
           alt="Token Logo"
-          className="-ml-10 bg-fog rounded-full w-24 h-24 z-10"
+          className="-ml-10 !rounded-full w-24 h-24 z-10"
         />
         <span className="ml-10">{pool.name}</span>
         <IconChevronDown className="w-12 ml-10" />
