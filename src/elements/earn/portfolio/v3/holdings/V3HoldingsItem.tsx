@@ -84,7 +84,11 @@ export const V3HoldingsItem = ({
             </div>
           </div>
 
-          <IconChevronDown className="w-16" />
+          <IconChevronDown
+            className={`w-16 transition-transform duration-300 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
         </div>
       </button>
 
