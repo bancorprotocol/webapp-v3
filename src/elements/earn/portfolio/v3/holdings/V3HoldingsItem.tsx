@@ -85,7 +85,7 @@ export const V3HoldingsItem = ({
                   holding.hasLegacyStake ? 'text-warning' : 'text-primary'
                 }`}
               />
-              <div>{prettifyNumber(rewardTokenAmountUsd, true)}</div>
+              <div>+{prettifyNumber(rewardTokenAmountUsd, true)}</div>
               <Button
                 onClick={() => {
                   setBonusModalOpen(true);
