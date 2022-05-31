@@ -32,6 +32,8 @@ export const portfolioStandardRewards$ = combineLatest([
   fifteenSeconds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([user, poolsV3]) => {
+    if (!user) return [];
+
     return fetchStandardRewardsByUser(user, poolsV3);
   }),
   shareReplay(1)
