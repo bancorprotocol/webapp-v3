@@ -117,12 +117,17 @@ export const useTradeWidget = ({
     [from, to, tokens]
   );
 
-  const reset = useCallback(() => {
-    setFromInputTkn('');
-    setFromInputFiat('');
-    setToInputTkn('');
-    setToInputFiat('');
-  }, []);
+  const onTokenChange = useCallback(() => {
+    void onFromDebounce(fromInputTkn);
+    setFromInputFiat(
+      calcOppositeValue(
+        false,
+        fromInputTkn,
+        fromToken?.usdPrice ?? '',
+        fromToken?.decimals ?? 0
+      )
+    );
+  }, [fromInputTkn, fromToken?.decimals, fromToken?.usdPrice, onFromDebounce]);
 
   const fromTokenAddressRef = useRef(fromToken?.address);
   const toTokenAddressRef = useRef(toToken?.address);
@@ -130,16 +135,14 @@ export const useTradeWidget = ({
   useEffect(() => {
     if (toToken?.address !== toTokenAddressRef.current) {
       toTokenAddressRef.current = toToken?.address;
-      reset();
+      onTokenChange();
+      return;
     }
-  }, [reset, toToken?.address]);
-
-  useEffect(() => {
     if (fromToken?.address !== fromTokenAddressRef.current) {
       fromTokenAddressRef.current = fromToken?.address;
-      reset();
+      onTokenChange();
     }
-  }, [reset, fromToken?.address]);
+  }, [fromToken?.address, onTokenChange, toToken?.address]);
 
   return { fromInput, toInput, isLoading, priceImpact, filteredTokens, isV3 };
 };
