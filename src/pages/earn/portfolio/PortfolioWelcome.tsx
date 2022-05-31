@@ -4,8 +4,7 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from 'pages/earn/portfolio/MigrateProtect';
 import { useWalletEmpty } from 'pages/earn/portfolio/usePortfolioRedirect';
-import { openWalletModal } from 'store/user/user';
-import { useDispatch } from 'react-redux';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 export const PortfolioWelcome = () => {
   const walletIsEmpty = useWalletEmpty();
@@ -18,7 +17,7 @@ export const PortfolioWelcome = () => {
 };
 
 const GrowYour = () => {
-  const dispatch = useDispatch();
+  const { handleWalletButtonClick } = useWalletConnect();
 
   return (
     <div className="grid items-center h-screen md:grid-cols-2 justify-items-center">
@@ -33,7 +32,7 @@ const GrowYour = () => {
           Earn up to 40% annually on your favorite tokens
         </div>
         <Button
-          onClick={() => dispatch(openWalletModal(true))}
+          onClick={() => handleWalletButtonClick}
           className="mb-20"
           variant={ButtonVariant.PRIMARY}
         >
