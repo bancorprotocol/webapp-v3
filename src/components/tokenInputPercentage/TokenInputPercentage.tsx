@@ -87,7 +87,7 @@ export const TokenInputPercentage = ({
               }
             }}
           >
-            +{slip}%
+            {slip}%
           </Button>
         ))}
       </div>
