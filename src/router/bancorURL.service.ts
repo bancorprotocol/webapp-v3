@@ -33,15 +33,4 @@ export abstract class BancorURL {
 
     return [path, search].filter((x) => !!x).join('?');
   };
-
-  static tradeBeta = (query?: PageTradeQuery) => {
-    const path = '/trade/beta';
-
-    const from = query?.from ? `from=${query.from}` : '';
-    const to = query?.to ? `to=${query.to}` : '';
-    const limit = query?.limit ? 'limit=true' : '';
-    const search = [from, to, limit].filter((x) => !!x).join('&');
-
-    return [path, search].filter((x) => !!x).join('?');
-  };
 }

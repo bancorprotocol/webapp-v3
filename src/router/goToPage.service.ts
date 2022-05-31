@@ -68,11 +68,6 @@ export class GoToPage {
     this.navigate(url, { replace });
   };
 
-  tradeBeta = (query: PageTradeQuery, replace = false) => {
-    const url = BancorURL.tradeBeta(query);
-    this.navigate(url, { replace });
-  };
-
   addLiquidityV2 = (id: string, replace = false) => {
     const url = BancorURL.addLiquidityV2(id);
     this.navigate(url, { replace });
