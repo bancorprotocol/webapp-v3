@@ -19,7 +19,7 @@ export const NotificationAlerts = () => {
   return (
     <div
       aria-live="assertive"
-      className="fixed inset-0 top-[10px] md:top-[85px] md:right-[20px] px-10 md:p-0 flex pointer-events-none items-start z-30"
+      className="fixed inset-0 top-[10px] md:top-[85px] md:right-[20px] px-10 md:p-0 flex pointer-events-none items-start z-50"
     >
       <div className="w-full flex flex-col space-y-15 items-end">
         {notifications

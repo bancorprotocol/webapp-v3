@@ -100,7 +100,7 @@ export const PopoverV3 = ({
           ref={popperElRef}
           style={styles.popper}
           {...attributes.popper}
-          className="z-50 popover-panel"
+          className="z-40 popover-panel"
         >
           <Transition
             show={open}
