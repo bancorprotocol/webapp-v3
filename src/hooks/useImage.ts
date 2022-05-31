@@ -30,8 +30,8 @@ export const useImage = (
       setHasError(false);
     };
 
-    image.onerror = handleError;
-    image.onload = handleLoad;
+    image.addEventListener('error', handleError);
+    image.addEventListener('load', handleLoad);
 
     return () => {
       image.removeEventListener('error', handleError);
