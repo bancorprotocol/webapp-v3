@@ -1,5 +1,5 @@
 import { useAppSelector } from 'store/index';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigation } from 'hooks/useNavigation';
 import { executeSwapTx } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -88,27 +88,33 @@ export const useTrade = ({
     isV3 ? ContractsApi.BancorNetwork.contractAddress : ''
   );
 
-  const handleSelectFrom = (token: Token) => {
-    goToPage.trade(
-      {
-        from: token.address,
-        to: toInput?.token.address,
-      },
-      true
-    );
-  };
+  const handleSelectFrom = useCallback(
+    (token: Token) => {
+      goToPage.trade(
+        {
+          from: token.address,
+          to: toInput?.token.address,
+        },
+        true
+      );
+    },
+    [goToPage, toInput?.token.address]
+  );
 
-  const handleSelectTo = (token: Token) => {
-    goToPage.trade(
-      {
-        from: fromInput?.token.address,
-        to: token.address,
-      },
-      true
-    );
-  };
+  const handleSelectTo = useCallback(
+    (token: Token) => {
+      goToPage.trade(
+        {
+          from: fromInput?.token.address,
+          to: token.address,
+        },
+        true
+      );
+    },
+    [fromInput?.token.address, goToPage]
+  );
 
-  const handleSelectSwitch = () => {
+  const handleSelectSwitch = useCallback(() => {
     goToPage.trade(
       {
         from: toInput?.token.address,
@@ -116,7 +122,7 @@ export const useTrade = ({
       },
       true
     );
-  };
+  }, [fromInput?.token.address, goToPage, toInput?.token.address]);
 
   const errorInsufficientBalance = useMemo(
     () =>
