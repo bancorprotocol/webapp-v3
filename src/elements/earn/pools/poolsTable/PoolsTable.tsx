@@ -17,14 +17,28 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 
-export const PoolsTable = () => {
+export const PoolsTable = ({
+  rewards,
+  setRewards,
+  lowVolume,
+  setLowVolume,
+  lowLiquidity,
+  setLowLiquidity,
+  lowEarnRate,
+  setLowEarnRate,
+}: {
+  rewards: boolean;
+  setRewards: Function;
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
 
-  const [rewards, setRewards] = useState(false);
   const [search, setSearch] = useState('');
-  const [lowVolume, setLowVolume] = useState(true);
-  const [lowLiquidity, setLowLiquidity] = useState(true);
-  const [lowEarnRate, setLowEarnRate] = useState(true);
 
   const data = useMemo<PoolV3[]>(() => {
     return pools.filter(

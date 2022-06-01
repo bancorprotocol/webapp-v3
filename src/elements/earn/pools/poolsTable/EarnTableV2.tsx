@@ -14,12 +14,23 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
 
-export const EarnTableV2 = () => {
+export const EarnTableV2 = ({
+  lowVolume,
+  setLowVolume,
+  lowLiquidity,
+  setLowLiquidity,
+  lowEarnRate,
+  setLowEarnRate,
+}: {
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}) => {
   const pools = useAppSelector(getV2PoolsWithoutV3);
 
-  const [lowVolume, setLowVolume] = useState(false);
-  const [lowLiquidity, setLowLiquidity] = useState(false);
-  const [lowEarnRate, setLowEarnRate] = useState(false);
   const [search, setSearch] = useState('');
 
   const data = useMemo<Pool[]>(() => {
