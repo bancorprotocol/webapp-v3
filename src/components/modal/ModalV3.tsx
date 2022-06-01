@@ -33,7 +33,7 @@ export const ModalV3 = ({
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-50"
+          className="fixed inset-0 z-40"
           onClose={() => (onClose ? onClose() : setIsOpen(false))}
         >
           <div className="min-h-screen px-10 text-center">
