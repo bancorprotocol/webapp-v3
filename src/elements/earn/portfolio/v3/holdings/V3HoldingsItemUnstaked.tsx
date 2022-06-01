@@ -12,8 +12,9 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
+import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const { pool } = holding;
@@ -22,6 +23,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
   const [txJoinBusy, setTxJoinBusy] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleJoinClick = async () => {
     if (!holding.pool.latestProgram || !account) {
@@ -76,25 +78,51 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   return (
     <>
       {ApproveModal}
+      <V3WithdrawModal
+        holding={holding}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
       <div>
-        <IconGift
-          className={`w-16 ${
-            !isDisabled ? 'text-primary' : 'text-secondary'
-          } mx-auto mb-5`}
-        />
+        <div className="text-secondary">Available Balance</div>
+        <div className="flex items-center space-x-10 pt-6">
+          <PopoverV3
+            buttonElement={() => (
+              <div
+                className={`mb-10 text-18 ${
+                  isDisabled ? 'text-secondary' : ''
+                }`}
+              >
+                {prettifyNumber(holding.tokenBalance)}{' '}
+                {pool.reserveToken.symbol}
+              </div>
+            )}
+          >
+            {holding.tokenBalance} {pool.reserveToken.symbol}
+          </PopoverV3>
 
-        <div className="text-secondary">Unstaked</div>
-        <div className={`mt-6 mb-10 ${isDisabled ? 'text-secondary' : ''}`}>
-          {prettifyNumber(holding.tokenBalance)} {pool.reserveToken.symbol}
+          <div className={`mt-6 mb-10 text-secondary`}>
+            ({prettifyNumber(holding.poolTokenBalance)} bn
+            {pool.reserveToken.symbol})
+          </div>
         </div>
-        <div className="flex justify-center">
+
+        <div className="flex space-x-10">
           <Button
             variant={ButtonVariant.SECONDARY}
             size={ButtonSize.EXTRASMALL}
             disabled={isDisabled || txJoinBusy}
             onClick={onStartJoin}
           >
-            Join
+            Join Rewards
+          </Button>
+          <Button
+            variant={ButtonVariant.SECONDARY}
+            size={ButtonSize.EXTRASMALL}
+            disabled={isDisabled}
+            onClick={() => setIsOpen(true)}
+          >
+            Withdraw
           </Button>
         </div>
       </div>
