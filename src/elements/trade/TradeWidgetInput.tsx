@@ -6,6 +6,7 @@ import { useMemo, useRef, useState } from 'react';
 import { Token } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
+import { classNameGenerator } from 'utils/pureFunctions';
 
 interface Props {
   input?: useTokenInputV3Return;
@@ -18,6 +19,7 @@ interface Props {
   errorMsg?: string;
   excludedTokens?: string[];
   includedTokens?: string[];
+  disableSelection?: boolean;
 }
 
 export const TradeWidgetInput = ({
@@ -31,6 +33,7 @@ export const TradeWidgetInput = ({
   errorMsg,
   excludedTokens,
   includedTokens,
+  disableSelection,
 }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -92,10 +95,16 @@ export const TradeWidgetInput = ({
           <div className="flex-none">
             {input && (
               <button
-                className="flex items-center space-x-10 hover:text-primary transition-colors duration-300"
+                className={`flex items-center space-x-10 hover:text-primary transition-colors duration-300 ${classNameGenerator(
+                  {
+                    'cursor-default': disableSelection,
+                  }
+                )}`}
                 onClick={(e) => {
-                  e.preventDefault();
-                  setIsOpen(true);
+                  if (!disableSelection) {
+                    e.preventDefault();
+                    setIsOpen(true);
+                  }
                 }}
               >
                 <Image
@@ -104,7 +113,7 @@ export const TradeWidgetInput = ({
                   src={input.token.logoURI}
                 />
                 <div className="text-20">{input.token.symbol}</div>
-                <IconChevron className={'w-12'} />
+                {!disableSelection && <IconChevron className={'w-12'} />}
               </button>
             )}
 

@@ -37,6 +37,7 @@ export const TradeWidget = (props: Props) => {
           label={'You receive'}
           tokens={tradeWidget.filteredTokens}
           input={tradeWidget.toInput}
+          disableSelection={tradeWidget.fromInput?.token.address === wethToken}
           onTokenSelect={trade.handleSelectTo}
           excludedTokens={[wethToken]}
           isLoading={tradeWidget.isLoading || tradeWidget.fromInput?.isTyping}

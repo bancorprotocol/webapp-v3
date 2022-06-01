@@ -11,7 +11,7 @@ import { swapNotification } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'store/user/user';
 import { ApprovalContract } from 'services/web3/approval';
-import { wethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { addNotification } from 'store/notification/notification';
 
@@ -104,7 +104,7 @@ export const useTrade = ({
       goToPage.trade(
         {
           from: token.address,
-          to: toInput?.token.address,
+          to: token.address === wethToken ? ethToken : toInput?.token.address,
         },
         true
       );
@@ -129,7 +129,11 @@ export const useTrade = ({
     goToPage.trade(
       {
         from: toInput?.token.address,
-        to: fromInput?.token.address,
+        to:
+          (fromInput && fromInput.token.address === wethToken) ||
+          !toInput?.token
+            ? undefined
+            : fromInput?.token.address,
       },
       true
     );
