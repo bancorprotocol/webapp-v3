@@ -130,8 +130,7 @@ export const useTrade = ({
       {
         from: toInput?.token.address,
         to:
-          (fromInput && fromInput.token.address === wethToken) ||
-          !toInput?.token
+          fromInput?.token.address === wethToken || !toInput?.token.address
             ? undefined
             : fromInput?.token.address,
       },
