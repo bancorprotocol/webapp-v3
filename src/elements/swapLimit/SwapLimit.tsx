@@ -17,7 +17,6 @@ import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
-import { openWalletModal } from 'store/user/user';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import {
   ApprovalContract,
@@ -33,6 +32,7 @@ import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 import { Button, ButtonVariant } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 enum Field {
   from,
@@ -76,6 +76,7 @@ export const SwapLimit = ({
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
+  const { handleWalletButtonClick } = useWalletConnect();
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
@@ -251,7 +252,7 @@ export const SwapLimit = ({
     showETHtoWETHModal: boolean = false
   ) => {
     if (!account) {
-      dispatch(openWalletModal(true));
+      handleWalletButtonClick();
       return;
     }
 

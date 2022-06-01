@@ -1,9 +1,8 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
 import { Button, ButtonSize } from 'components/button/Button';
-import { useDispatch } from 'react-redux';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
-import { getDarkMode, openWalletModal } from 'store/user/user';
+import { getDarkMode } from 'store/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'store';
 import { V3ClaimBonuses } from 'elements/earn/portfolio/v3/bonuses/V3ClaimBonuses';
@@ -11,15 +10,12 @@ import { WhatsNew } from './WhatsNew';
 import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
+import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
   const darkMode = useAppSelector<boolean>(getDarkMode);
-  const dispatch = useDispatch();
-
-  const handleLoginClick = () => {
-    dispatch(openWalletModal(true));
-  };
+  const { handleWalletButtonClick } = useWalletConnect();
   const hasHoldings = true;
 
   return account ? (
@@ -67,7 +63,10 @@ const V3Portfolio = () => {
         Connect your wallet to see your earnings
       </h2>
       <div className="flex justify-center mt-20">
-        <Button size={ButtonSize.SMALL} onClick={() => handleLoginClick()}>
+        <Button
+          size={ButtonSize.SMALL}
+          onClick={() => handleWalletButtonClick()}
+        >
           <IconWallet className="w-20 mr-10" />
           Connect Wallet
         </Button>

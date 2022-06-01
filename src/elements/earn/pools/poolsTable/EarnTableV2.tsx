@@ -8,28 +8,43 @@ import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCel
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
-import { PoolsTableSort } from './PoolsTableSort';
+import { PoolsTableSort } from './PoolsTableFilter';
 import { Pool } from 'services/observables/pools';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
 
-export const EarnTableV2 = () => {
+export const EarnTableV2 = ({
+  lowVolume,
+  setLowVolume,
+  lowLiquidity,
+  setLowLiquidity,
+  lowEarnRate,
+  setLowEarnRate,
+}: {
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}) => {
   const pools = useAppSelector(getV2PoolsWithoutV3);
 
-  const [rewards, setRewards] = useState(false);
-  const [lowVolume, setLowVolume] = useState(false);
-  const [lowLiquidity, setLowLiquidity] = useState(false);
-  const [lowEarnRate, setLowEarnRate] = useState(false);
   const [search, setSearch] = useState('');
 
   const data = useMemo<Pool[]>(() => {
     return pools
       .filter((p) => p.version >= 28)
       .filter(
-        (p) => p.name && p.name.toLowerCase().includes(search.toLowerCase())
+        (p) =>
+          p.name &&
+          p.name.toLowerCase().includes(search.toLowerCase()) &&
+          (lowVolume || p.volume_24h > 5000) &&
+          (lowLiquidity || p.liquidity > 50000) &&
+          (lowEarnRate || p.apr > 0.15)
       );
-  }, [pools, search]);
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
   const columns = useMemo<TableColumn<Pool>[]>(
     () => [
@@ -110,8 +125,6 @@ export const EarnTableV2 = () => {
             </div>
           </div>
           <PoolsTableSort
-            rewards={rewards}
-            setRewards={setRewards}
             lowVolume={lowVolume}
             setLowVolume={setLowVolume}
             lowLiquidity={lowLiquidity}

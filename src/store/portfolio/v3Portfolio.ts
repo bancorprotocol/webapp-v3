@@ -129,15 +129,40 @@ export const getPortfolioHoldings = createSelector(
         pool.decimals
       );
 
+      let stakedPoolTokenBalance = shrinkToken(
+        programs.reduce(
+          (acc, data) =>
+            toBigNumber(data.poolTokenAmountWei).plus(acc).toString(),
+          '0'
+        ),
+        18
+      );
+
       const combinedTokenBalance = new BigNumber(tokenBalance)
         .plus(stakedTokenBalance)
         .toString();
+
+      const hasLegacyStake = toBigNumber(
+        programs
+          .filter(
+            (p) =>
+              toBigNumber(p.poolTokenAmountWei).gt(0) &&
+              !pool.programs.find((pp) => pp.id === p.id)?.isActive
+          )
+          .reduce(
+            (acc, data) =>
+              toBigNumber(data.poolTokenAmountWei).plus(acc).toString(),
+            '0'
+          )
+      ).gt(0);
 
       const holding: Holding = {
         pool,
         poolTokenBalance,
         tokenBalance,
         stakedTokenBalance,
+        stakedPoolTokenBalance,
+        hasLegacyStake,
         latestProgram,
         programs,
         combinedTokenBalance,

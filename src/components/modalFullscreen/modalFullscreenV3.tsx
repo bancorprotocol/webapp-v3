@@ -33,7 +33,7 @@ const ModalFullscreenV3 = ({
       >
         <Dialog
           as="div"
-          className="fixed inset-0 z-50 overflow-y-auto min-w-full max-h-screen bg-white dark:bg-black"
+          className="fixed inset-0 z-40 overflow-y-auto min-w-full max-h-screen bg-white dark:bg-black"
           onClose={() => setIsOpen(false)}
         >
           <div className="inline-block w-full">

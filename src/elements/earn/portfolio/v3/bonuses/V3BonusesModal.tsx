@@ -153,7 +153,7 @@ const BonusGroup = ({
       <ExpandableSection
         renderButtonChildren={(isExpanded) => (
           <>
-            <div className="text-black dark:text-white">Explore Bonuses</div>
+            <div className="text-black dark:text-white">Explore Rewards</div>
             <div className="flex items-center">
               {!isExpanded && (
                 <div>
@@ -203,7 +203,7 @@ export const V3BonusesModal = () => {
 
   return (
     <Modal
-      title="Claim Bonuses"
+      title="Claim Rewards"
       isOpen={isBonusModalOpen}
       setIsOpen={setBonusModalOpen}
       large

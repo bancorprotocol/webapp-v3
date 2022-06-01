@@ -24,7 +24,7 @@ export const MobileSidebar = ({
       <Dialog
         as="div"
         static
-        className="fixed inset-0 overflow-hidden z-50"
+        className="fixed inset-0 overflow-hidden z-40"
         open={show}
         onClose={() => setShow(false)}
       >

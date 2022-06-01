@@ -52,7 +52,7 @@ export const V3AvailableToStake = () => {
     <section>
       <div className="flex justify-between mb-20 pr-10">
         <h2>
-          Available to stake{' '}
+          Deposit & Earn{' '}
           <span className="text-12 ml-4 text-secondary">
             ({availabelToStake.length})
           </span>

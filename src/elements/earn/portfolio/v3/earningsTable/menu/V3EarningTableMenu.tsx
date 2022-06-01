@@ -124,7 +124,7 @@ export const V3EarningTableMenu = memo(
                   ref={popperElRef}
                   style={styles.popper}
                   {...attributes.popper}
-                  className="z-50"
+                  className="z-40"
                 >
                   <Transition
                     as={Fragment}

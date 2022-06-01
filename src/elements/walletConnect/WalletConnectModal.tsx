@@ -8,7 +8,13 @@ export const WalletConnectModal = (props: UseWalletConnect) => {
   const { isPending, isError } = props;
 
   return (
-    <Modal {...props}>
+    <Modal
+      {...props}
+      onClose={() => {
+        props.setIsOpen(false);
+        props.reset();
+      }}
+    >
       <div className="max-h-[calc(70vh-60px)] overflow-auto px-20">
         {isError ? (
           <WalletConnectModalError {...props} />
