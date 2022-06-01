@@ -16,6 +16,8 @@ interface Props {
   onTokenSelect: (token: Token) => void;
   disabled?: boolean;
   errorMsg?: string;
+  excludedTokens?: string[];
+  includedTokens?: string[];
 }
 
 export const TradeWidgetInput = ({
@@ -27,6 +29,8 @@ export const TradeWidgetInput = ({
   onTokenSelect,
   disabled,
   errorMsg,
+  excludedTokens,
+  includedTokens,
 }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -175,6 +179,8 @@ export const TradeWidgetInput = ({
         setIsOpen={setIsOpen}
         tokens={tokens}
         limit
+        excludedTokens={excludedTokens}
+        includedTokens={includedTokens}
       />
     </>
   );

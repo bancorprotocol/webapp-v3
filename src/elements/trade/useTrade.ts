@@ -10,6 +10,7 @@ import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
 import { swapNotification } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'store/user/user';
+import { ApprovalContract } from 'services/web3/approval';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
@@ -84,8 +85,9 @@ export const useTrade = ({
   const [onStart, ApproveModal] = useApproveModal(
     fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
     handleTrade,
-    // TODO handle v2 approve bancor network contract
-    isV3 ? ContractsApi.BancorNetwork.contractAddress : ''
+    isV3
+      ? ContractsApi.BancorNetwork.contractAddress
+      : ApprovalContract.BancorNetwork
   );
 
   const handleSelectFrom = useCallback(

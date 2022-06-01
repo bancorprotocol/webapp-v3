@@ -1,7 +1,7 @@
 import { toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
-import { wethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'store/index';
 import { useMemo } from 'react';
@@ -29,7 +29,11 @@ export const TradeWidgetCTA = ({
 
   const swapButtonText = () => {
     if (!toInput || !fromInput) return 'Select a token';
-    if (toInput.token.address === wethToken) return 'Please change WETH to ETH';
+    if (
+      toInput.token.address === wethToken &&
+      fromInput.token.address !== ethToken
+    )
+      return 'Please change WETH to ETH';
     if (fromInput.token.balance) {
       const isInsufficientBalance = new BigNumber(fromInput.token.balance).lt(
         fromInput.inputTkn
@@ -39,8 +43,7 @@ export const TradeWidgetCTA = ({
     const isInputZero =
       fromInput.inputTkn === '' || new BigNumber(fromInput.inputTkn).eq(0);
     if (isInputZero) return 'Enter Amount';
-    // TODO handle rate 0
-    // if (!rate) return 'Insufficient liquidity';
+    if (!toInput?.inputTkn) return 'Insufficient liquidity';
     if (!account) return 'Connect your wallet';
     const isHighSlippage = new BigNumber(priceImpact).gte(5);
     if (isHighSlippage) return 'Trade with high price impact';
@@ -54,10 +57,10 @@ export const TradeWidgetCTA = ({
   };
 
   const isSwapDisabled = useMemo(() => {
-    // if (rate === '0') return true;
     return (
       !fromInput ||
       !toInput ||
+      !toInput?.inputTkn ||
       !toBigNumber(fromInput?.inputTkn ?? 0).gt(0) ||
       isBusy ||
       !!errorInsufficientBalance ||

@@ -5,6 +5,7 @@ import { useTrade } from 'elements/trade/useTrade';
 import { TradeWidgetDetails } from 'elements/trade/TradeWidgetDetails';
 import { TradeWidgetCTA } from 'elements/trade/TradeWidgetCTA';
 import { TradeWidgetSwitchBtn } from 'elements/trade/TradeWidgetSwitchBtn';
+import { wethToken } from 'services/web3/config';
 
 interface Props {
   from?: string;
@@ -37,6 +38,7 @@ export const TradeWidget = (props: Props) => {
           tokens={tradeWidget.filteredTokens}
           input={tradeWidget.toInput}
           onTokenSelect={trade.handleSelectTo}
+          excludedTokens={[wethToken]}
           isLoading={tradeWidget.isLoading || tradeWidget.fromInput?.isTyping}
         />
 

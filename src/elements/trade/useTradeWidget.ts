@@ -9,6 +9,7 @@ import {
   useTokenInputV3Return,
 } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
+import { wethToken } from 'services/web3/config';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -61,9 +62,12 @@ export const useTradeWidget = ({
         if (queue.size !== 0) return;
         setIsLoading(!!val);
         try {
-          const { rate, priceImpact, isV3 } = val
-            ? await getRateAndPriceImapct(fromToken, toToken, val, false)
-            : { rate: '', priceImpact: '', isV3: false };
+          const { rate, priceImpact, isV3 } =
+            fromToken.address === wethToken
+              ? { rate: val, priceImpact: '0', isV3: true }
+              : val
+              ? await getRateAndPriceImapct(fromToken, toToken, val, false)
+              : { rate: '', priceImpact: '', isV3: true };
 
           setPriceImpact(priceImpact);
           setIsV3(isV3);
