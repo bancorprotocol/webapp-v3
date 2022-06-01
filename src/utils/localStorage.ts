@@ -8,6 +8,8 @@ const slippageTolerance = 'slippageTolerance';
 const usdToggle = 'usdToggle';
 const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
+const v3ApiUrl = 'v3ApiUrl';
+const v2ApiUrl = 'v2ApiUrl';
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
@@ -76,5 +78,32 @@ export const setTenderlyRpcLS = (url?: string) => {
     localStorage.setItem(tenderlyRpcUrl, url);
   } else {
     localStorage.removeItem(tenderlyRpcUrl);
+  }
+};
+
+export const getV3ApiUrlLS = (): string => {
+  return (
+    localStorage.getItem(v3ApiUrl) ||
+    'https://v3-staging-ptdczarhfq-nw.a.run.app/v3/'
+  );
+};
+
+export const setV3ApiUrlLS = (url?: string) => {
+  if (url) {
+    localStorage.setItem(v3ApiUrl, url);
+  } else {
+    localStorage.removeItem(v3ApiUrl);
+  }
+};
+
+export const getV2ApiUrlLS = (): string => {
+  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network/';
+};
+
+export const setV2ApiUrlLS = (url?: string) => {
+  if (url) {
+    localStorage.setItem(v2ApiUrl, url);
+  } else {
+    localStorage.removeItem(v2ApiUrl);
   }
 };

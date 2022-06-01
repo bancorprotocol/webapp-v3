@@ -5,7 +5,7 @@ export abstract class BancorURL {
   static termsOfUse = '/terms-of-use';
   static privacyPolicy = '/privacy-policy';
   static notFound = '/404';
-  static admin = '/admin';
+  static admin = '/debug';
   static welcome = '/welcome';
   static earn = '/earn';
   static earnV2 = this.earn + '/v2';
