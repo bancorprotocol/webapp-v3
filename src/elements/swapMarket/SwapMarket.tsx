@@ -318,7 +318,7 @@ export const SwapMarket = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return ButtonVariant.Error;
+    if (isHighSlippage || !account) return ButtonVariant.Secondary;
     return ButtonVariant.Primary;
   };
 

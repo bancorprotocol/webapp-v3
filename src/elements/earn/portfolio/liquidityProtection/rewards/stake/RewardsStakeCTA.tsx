@@ -112,7 +112,7 @@ export const RewardsStakeCTA = ({
       return {
         label: errorBalance,
         disabled: true,
-        variant: ButtonVariant.Error,
+        variant: ButtonVariant.Secondary,
       };
     } else if (!bntAmount || Number(bntAmount) === 0) {
       return {

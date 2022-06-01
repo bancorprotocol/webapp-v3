@@ -147,7 +147,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
 
                   <div>
                     <Button
-                      variant={ButtonVariant.Warning}
+                      variant={ButtonVariant.Secondary}
                       size={ButtonSize.ExtraSmall}
                       disabled={txBusy}
                       onClick={() =>

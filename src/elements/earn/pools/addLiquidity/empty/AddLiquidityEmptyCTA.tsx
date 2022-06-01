@@ -94,7 +94,11 @@ export const AddLiquidityEmptyCTA = ({
 
   const button = () => {
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: ButtonVariant.Error };
+      return {
+        label: errorMsg,
+        disabled: true,
+        variant: ButtonVariant.Secondary,
+      };
     }
     if (!amountBnt || !amountTkn) {
       return {
