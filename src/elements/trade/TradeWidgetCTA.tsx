@@ -27,13 +27,15 @@ export const TradeWidgetCTA = ({
 }: Props) => {
   const account = useAppSelector((state) => state.user.account);
 
+  const usingWeth =
+    (toInput?.token.address === wethToken &&
+      fromInput?.token.address !== ethToken) ||
+    (fromInput?.token.address === wethToken &&
+      toInput?.token.address !== ethToken);
+
   const swapButtonText = () => {
     if (!toInput || !fromInput) return 'Select a token';
-    if (
-      toInput.token.address === wethToken &&
-      fromInput.token.address !== ethToken
-    )
-      return 'Please change WETH to ETH';
+    if (usingWeth) return 'Please change WETH to ETH';
     if (fromInput.token.balance) {
       const isInsufficientBalance = new BigNumber(fromInput.token.balance).lt(
         fromInput.inputTkn
@@ -61,13 +63,21 @@ export const TradeWidgetCTA = ({
       !fromInput ||
       !toInput ||
       !toInput?.inputTkn ||
+      usingWeth ||
       !toBigNumber(fromInput?.inputTkn ?? 0).gt(0) ||
       isBusy ||
       !!errorInsufficientBalance ||
       isLoading ||
       fromInput?.isTyping
     );
-  }, [errorInsufficientBalance, fromInput, isBusy, isLoading, toInput]);
+  }, [
+    errorInsufficientBalance,
+    fromInput,
+    isBusy,
+    isLoading,
+    toInput,
+    usingWeth,
+  ]);
 
   return (
     <Button

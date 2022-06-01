@@ -11,6 +11,9 @@ import { swapNotification } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'store/user/user';
 import { ApprovalContract } from 'services/web3/approval';
+import { wethToken } from 'services/web3/config';
+import { withdrawWeth } from 'services/web3/swap/limit';
+import { addNotification } from 'store/notification/notification';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
@@ -39,6 +42,12 @@ export const useTrade = ({
 
   const handleTrade = async () => {
     if (!fromInput || !toInput || !account) {
+      return;
+    }
+
+    if (fromInput.token.address === wethToken) {
+      dispatch(addNotification(await withdrawWeth(fromInput.inputTkn)));
+      setIsBusy(false);
       return;
     }
 

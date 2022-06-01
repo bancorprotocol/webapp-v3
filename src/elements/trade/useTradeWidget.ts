@@ -72,7 +72,8 @@ export const useTradeWidget = ({
           setPriceImpact(priceImpact);
           setIsV3(isV3);
 
-          const toValue = toBigNumber(rate).isZero() ? '' : rate;
+          const toValue =
+            toBigNumber(rate).isZero() || isNaN(Number(rate)) ? '' : rate;
 
           const toValueFiat = toValue
             ? calcOppositeValue(
