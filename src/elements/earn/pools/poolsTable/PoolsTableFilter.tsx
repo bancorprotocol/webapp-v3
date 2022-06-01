@@ -13,8 +13,8 @@ export const PoolsTableSort = ({
   lowEarnRate,
   setLowEarnRate,
 }: {
-  rewards: boolean;
-  setRewards: Function;
+  rewards?: boolean;
+  setRewards?: Function;
   lowVolume: boolean;
   setLowVolume: Function;
   lowLiquidity: boolean;
@@ -32,13 +32,15 @@ export const PoolsTableSort = ({
         <Popover.Panel className="dropdown-menu w-[240px]">
           <div className="space-y-15">
             <div className="space-y-24">
-              <div className="flex items-center justify-between">
-                Rewards only
-                <Switch
-                  selected={rewards}
-                  onChange={() => setRewards(!rewards)}
-                />
-              </div>
+              {setRewards && (
+                <div className="flex items-center justify-between">
+                  Rewards only
+                  <Switch
+                    selected={rewards!}
+                    onChange={() => setRewards(!rewards)}
+                  />
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 Show Low Volume
                 <Switch
