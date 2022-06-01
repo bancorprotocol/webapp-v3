@@ -103,7 +103,7 @@ export const V3HoldingsItem = ({
 
       <hr className="border-1 mt-20 border-silver dark:border-grey -mx-20" />
 
-      <div className="flex justify-between mt-20">
+      <div className="flex justify-between mt-20 flex-col md:flex-row md:space-x-30 space-y-30 md:space-y-0">
         <V3HoldingsItemUnstaked holding={holding} />
         <V3HoldingsItemStaked holding={holding} />
       </div>

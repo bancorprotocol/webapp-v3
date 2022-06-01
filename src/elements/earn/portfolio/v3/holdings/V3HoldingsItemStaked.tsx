@@ -55,7 +55,7 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
             size={ButtonSize.EXTRASMALL}
             disabled={isDisabled}
             onClick={onClick}
-            className="w-full"
+            className="md:w-full"
           >
             Manage Rewards
           </Button>
