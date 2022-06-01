@@ -5,7 +5,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableSort';
+import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -17,14 +17,28 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 
-export const PoolsTable = () => {
+export const PoolsTable = ({
+  rewards,
+  setRewards,
+  lowVolume,
+  setLowVolume,
+  lowLiquidity,
+  setLowLiquidity,
+  lowEarnRate,
+  setLowEarnRate,
+}: {
+  rewards: boolean;
+  setRewards: Function;
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
 
-  const [rewards, setRewards] = useState(false);
   const [search, setSearch] = useState('');
-  const [lowVolume, setLowVolume] = useState(true);
-  const [lowLiquidity, setLowLiquidity] = useState(true);
-  const [lowEarnRate, setLowEarnRate] = useState(true);
 
   const data = useMemo<PoolV3[]>(() => {
     return pools.filter(

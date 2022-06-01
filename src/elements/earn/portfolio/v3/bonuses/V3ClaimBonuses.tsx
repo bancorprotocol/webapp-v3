@@ -10,7 +10,7 @@ export const V3ClaimBonuses = () => {
     <>
       <section className="content-block p-14">
         <div className="text-secondary text-12 hidden md:block mb-14">
-          Claim Bonuses
+          Claim Rewards
         </div>
         {isLoading ? (
           <div className="loading-skeleton h-30"></div>

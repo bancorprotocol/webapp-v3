@@ -58,7 +58,9 @@ export interface Holding {
   poolTokenBalance: string;
   tokenBalance: string;
   stakedTokenBalance: string;
+  stakedPoolTokenBalance: string;
   programs: RewardsProgramStake[];
   latestProgram?: RewardsProgramStake;
+  hasLegacyStake: boolean;
   combinedTokenBalance: string;
 }
