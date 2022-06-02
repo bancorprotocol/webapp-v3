@@ -37,7 +37,7 @@ jobs:
 
             ${{join(github.event.commits.*.message, ', * ') }}
 
-            # diff: 
+            ## diff: 
             ${{ github.event.compare }}
 
             Repository: ${{ github.repository }}
