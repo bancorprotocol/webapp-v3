@@ -33,7 +33,7 @@ const fetchApyVisionUniswap = async (
 const fetchApyVisionNonUniswap = async (
   user: string
 ): Promise<ApyVisionNonUniPosition[]> => {
-  const url = `https://api.apy.vision/portfolio/1/core/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}`;
+  const url = `https://api.apy.vision/portfolio/1/core/${user}?accessToken=${process.env.REACT_APP_APY_VISION_TOKEN}&isInWallet=true`;
   try {
     const { data } = await axios.get<ApyVisionNonUniResponse>(url);
     return data.userPools;
@@ -128,7 +128,7 @@ export const getExternalHoldingsNonUni = (
   return (
     positions
       // TODO Remove this filter once we support more than 2 reseves
-      .filter((pos) => pos.tokens.length === 2)
+      .filter((pos) => pos.tokens.length)
       .map((pos) => {
         const tokens = pos.tokens
           .map((token) => {

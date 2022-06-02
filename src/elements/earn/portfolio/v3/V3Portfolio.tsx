@@ -11,6 +11,7 @@ import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import V3ExternalHoldings from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldings';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -54,6 +55,13 @@ const V3Portfolio = () => {
             Pendings Withdrawals
           </h2>
           <V3Withdraw />
+        </div>
+
+        <div>
+          <h2 className="md:hidden max-w-[300px] rounded-20 h-[35px] mb-10">
+            External Holdings
+          </h2>
+          <V3ExternalHoldings />
         </div>
       </div>
     </div>
