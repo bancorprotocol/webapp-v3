@@ -101,7 +101,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             {holding.tokenBalance} {pool.reserveToken.symbol}
           </PopoverV3>
 
-          <div className={`mt-6 mb-10 text-secondary`}>
+          <div className={`mb-10 text-secondary`}>
             ({prettifyNumber(holding.poolTokenBalance)} bn
             {pool.reserveToken.symbol})
           </div>
