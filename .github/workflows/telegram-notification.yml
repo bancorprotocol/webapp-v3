@@ -39,8 +39,4 @@ jobs:
 
             *links:*
 
-            [diff](${{ github.event.compare }})
-
-            [repository](${{ github.repository }})
-
-            [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
+            [diff](${{ github.event.compare }}), [repository](${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
