@@ -31,17 +31,16 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            # ${{ github.event.pusher }} pushed into main branch:
+            *${{ github.actor }} pushed into main branch*:
 
-            ## Commit messages:
+            *Commit messages:*
 
-            ${{join(github.event.commits.*.message, ', * ') }}
+            ${{join(github.event.commits.*.message, ' * ') }}
 
-            ## diff: 
-            ${{ github.event.compare }}
+            *links:*
 
-            ## links:
+            [diff](${{ github.event.compare }})
 
-            Repository: ${{ github.repository }}
+            [repository](${{ github.repository }})
 
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+            [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
