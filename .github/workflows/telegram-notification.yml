@@ -40,6 +40,8 @@ jobs:
             ## diff: 
             ${{ github.event.compare }}
 
+            ## links:
+
             Repository: ${{ github.repository }}
 
             See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
