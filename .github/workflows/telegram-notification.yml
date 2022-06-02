@@ -31,12 +31,12 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            *${{ github.actor }} pushed into main branch*:
+            ${{ github.actor }} pushed into main branch:
 
-            *Commit messages:*
+            Commit messages:
 
-            ${{join(github.event.commits.*.message, ' * ') }}
+            ${{join(github.event.commits.*.message, ' •  ') }}
 
-            *links:*
+            links:
 
             [diff](${{ github.event.compare }}), [repository](${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
