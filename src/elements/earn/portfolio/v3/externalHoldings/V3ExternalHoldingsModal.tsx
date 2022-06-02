@@ -12,6 +12,7 @@ import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   position: ExternalHolding;
@@ -60,8 +61,8 @@ export const V3ExternalHoldingsModal = ({
         position.tokens[1]?.address ?? position.nonBancorTokens[0].tokenAddress,
         position.poolTokenBalanceWei
       );
-      await res.wait();
       setIsOpen(false);
+      await res.wait();
       await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
@@ -83,7 +84,7 @@ export const V3ExternalHoldingsModal = ({
 
   return (
     <Modal title={'Migrate'} setIsOpen={setIsOpen} isOpen={isOpen} large>
-      <div className="p-30 pt-0">
+      <div className="px-30 pb-10">
         <h2 className="text-[24px] leading-9">
           Protect this {position.ammName} holding from impermanent loss
         </h2>
@@ -109,19 +110,22 @@ export const V3ExternalHoldingsModal = ({
             </div>
           ))}
         </div>
-
-        <h3 className="mb-10">Exit risky position and move to your wallet</h3>
-        <div className="space-y-20">
-          {position.nonBancorTokens.map((t) => (
-            <div key={t.tokenAddress}>
-              {t.tokenCurrentBalance} {t.tokenName}
+        {position.nonBancorTokens.length > 0 && (
+          <>
+            <h3 className="mb-10 mt-20">Moving to your Wallet</h3>
+            <div className="space-y-20">
+              {position.nonBancorTokens.map((t) => (
+                <div key={t.tokenAddress}>
+                  {prettifyNumber(t.tokenCurrentBalance)} {t.tokenName}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
 
         <Button
           onClick={handleButtonClick}
-          className="w-full mt-20"
+          className="w-full mt-20 mb-10"
           disabled={txBusy}
         >
           {txBusy ? '... waiting for confirmation' : 'Migrate and Protect'}
