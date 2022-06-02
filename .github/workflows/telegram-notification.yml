@@ -33,7 +33,7 @@ jobs:
           message: |
             ${{ github.event.pusher }} pushed into main branch:
 
-            Commit messages: ${{join(github.event.commits.\*.message, ', * ') }}
+            Commit messages: ${{join(github.event.commits.*.message, ', * ') }}
 
             diff: ${{ github.event.compare }}
             
