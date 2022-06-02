@@ -94,7 +94,7 @@ export const DataTable = <D extends object>({
       </div>
 
       {!isLoading && data.length === 0 && (
-        <div className="text-secondary text-center my-50">No record found</div>
+        <div className="text-secondary text-center py-50">No record found</div>
       )}
 
       {isLoading && (
