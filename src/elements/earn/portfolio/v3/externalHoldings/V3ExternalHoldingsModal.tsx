@@ -11,6 +11,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
+import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
 
 interface Props {
   position: ExternalHolding;
@@ -26,20 +27,6 @@ export const V3ExternalHoldingsModal = ({
   const [txBusy, setTxBusy] = useState(false);
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
-
-  const { withdrawalFee, lockDuration } = useAppSelector(
-    (state) => state.v3Portfolio.withdrawalSettings
-  );
-
-  const lockDurationInDays = useMemo(
-    () => lockDuration / 60 / 60 / 24,
-    [lockDuration]
-  );
-
-  const withdrawalFeeInPercent = useMemo(
-    () => (withdrawalFee * 100).toFixed(2),
-    [withdrawalFee]
-  );
 
   const tokensToApprove = useMemo(
     () => [
@@ -70,7 +57,7 @@ export const V3ExternalHoldingsModal = ({
     try {
       const res = await migrateFn(
         position.tokens[0].address,
-        position.tokens[1].address,
+        position.tokens[1]?.address ?? position.nonBancorTokens[0].tokenAddress,
         position.poolTokenBalanceWei
       );
       await res.wait();
@@ -123,6 +110,15 @@ export const V3ExternalHoldingsModal = ({
           ))}
         </div>
 
+        <h3 className="mb-10">Exit risky position and move to your wallet</h3>
+        <div className="space-y-20">
+          {position.nonBancorTokens.map((t) => (
+            <div key={t.tokenAddress}>
+              {t.tokenCurrentBalance} {t.tokenName}
+            </div>
+          ))}
+        </div>
+
         <Button
           onClick={handleButtonClick}
           className="w-full mt-20"
@@ -131,10 +127,7 @@ export const V3ExternalHoldingsModal = ({
           {txBusy ? '... waiting for confirmation' : 'Migrate and Protect'}
         </Button>
 
-        <p className="text-secondary text-center mt-10">
-          100% Protected • {lockDurationInDays} day cooldown •{' '}
-          {withdrawalFeeInPercent}% withdrawal fee
-        </p>
+        <ProtectedSettingsV3 />
 
         {ApproveModal}
       </div>

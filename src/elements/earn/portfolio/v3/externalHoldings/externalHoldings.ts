@@ -5,6 +5,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import {
   ApyVisionData,
   ApyVisionNonUniPosition,
+  ApyVisionNonUniPositionToken,
   ApyVisionNonUniResponse,
   ApyVisionUniPosition,
   ExternalHolding,
@@ -115,6 +116,7 @@ export const getExternalHoldingsUni = (
         // TODO add poolTokenAddress
         poolTokenAddress: '',
         poolTokenBalanceWei: '',
+        nonBancorTokens: [],
       };
       return externalHolding;
     })
@@ -128,14 +130,16 @@ export const getExternalHoldingsNonUni = (
   return (
     positions
       // TODO Remove this filter once we support more than 2 reseves
-      .filter((pos) => pos.tokens.length)
+      .filter((pos) => pos.tokens.length === 2)
       .map((pos) => {
+        const nonBancorTokens: ApyVisionNonUniPositionToken[] = [];
         const tokens = pos.tokens
           .map((token) => {
             const address = utils.getAddress(token.tokenAddress);
             const isETH = address === utils.getAddress(wethToken);
             const tkn = tokensMap.get(isETH ? ethToken : address);
             if (!tkn) {
+              nonBancorTokens.push(token);
               return undefined;
             }
             if (isETH) {
@@ -152,8 +156,7 @@ export const getExternalHoldingsNonUni = (
           })
           .filter((t) => !!t) as Token[];
 
-        // TODO once we support pools with more than 2 reserve tokens we need to update this
-        if (tokens.length !== 2) {
+        if (tokens.length === 0) {
           return undefined;
         }
 
@@ -172,6 +175,7 @@ export const getExternalHoldingsNonUni = (
           ammKey: pos.poolProviderKey,
           ammName,
           tokens,
+          nonBancorTokens,
           rektStatus,
           usdValue,
           poolTokenAddress: pos.address,
