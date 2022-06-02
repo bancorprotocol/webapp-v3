@@ -6,9 +6,10 @@ import {
   APIStatsV3,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
+import { getV3ApiUrlLS } from 'utils/localStorage';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://v3-staging-ptdczarhfq-nw.a.run.app/v3/',
+  baseURL: getV3ApiUrlLS(),
   headers: {
     'Content-Type': 'application/json',
   },
