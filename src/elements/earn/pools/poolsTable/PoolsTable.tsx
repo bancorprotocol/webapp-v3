@@ -9,7 +9,7 @@ import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
 import { sortNumbersByKey } from 'utils/pureFunctions';
@@ -135,7 +135,11 @@ export const PoolsTable = ({
           <DepositV3Modal
             pool={cellData.row.original}
             renderButton={(onClick) => (
-              <Button onClick={onClick} size={ButtonSize.ExtraSmall}>
+              <Button
+                onClick={onClick}
+                variant={ButtonVariant.Tertiary}
+                size={ButtonSize.ExtraSmall}
+              >
                 Deposit
               </Button>
             )}
