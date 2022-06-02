@@ -31,4 +31,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: markdown
           message: |
-            A new PR is raised [View all PR's](https://github.com/bancorprotocol/webapp-v3/pulls)
+            ${{ github.actor }} merged into main branch:
+            Commit message: ${{ github.event.commits[0].message }}
+            
+            Repository: ${{ github.repository }}
+            
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
