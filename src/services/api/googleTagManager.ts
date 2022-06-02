@@ -392,15 +392,18 @@ export const sendLiquidityEvent = (
   };
   sendGTM(gtmData);
 };
+
 enum PoolEvent {
   VersionSwitch,
   PoolsFilter,
   PoolSearch,
   PoolClick,
 }
-const getPoolEventLabel = (event: PoolEvent) => {
-  return poolEventTxtMap.get(event);
-};
+
+export enum PoolLocation {
+  MainTable,
+  TopPerforming,
+}
 
 const poolEventTxtMap = new Map([
   [PoolEvent.VersionSwitch, 'Pools Version Switch'],
@@ -409,12 +412,83 @@ const poolEventTxtMap = new Map([
   [PoolEvent.PoolClick, 'Pool Click'],
 ]);
 
-export const sendPoolEvent = (event: PoolEvent, event_properties: any) => {
+export const poolClickLocationTxtMap = new Map([
+  [PoolLocation.MainTable, 'Main Table'],
+  [PoolLocation.TopPerforming, 'Top Performing'],
+]);
+
+interface PoolFilterEP {
+  pools_bancor_version_selection: string;
+  pools_filter_reward_only: string;
+  pools_filter_low_volume: string;
+  pools_filter_low_popularity: boolean;
+  pools_low_earn_rate: boolean;
+}
+
+interface PoolClickEP {
+  pool: string;
+  pool_click_location: 'Main Table' | 'Top Performing';
+}
+
+export const sendPoolEvent = (
+  event: PoolEvent,
+  event_properties:
+    | PoolFilterEP
+    | PoolClickEP
+    | { pools_bancor_version_selection: string }
+    | { pools_search_term: string }
+) => {
   const data = {
-    event: getPoolEventLabel(event),
+    event: poolEventTxtMap.get(event),
     event_properties,
     ga_event: {
       category: 'Pools Page',
+    },
+  };
+  sendGTM(data);
+};
+
+enum DepositEvent {
+  DepositPoolClick,
+  DepositClick,
+  DepositUnlimitedPopupView,
+  DepositUnlimitedPopupSelect,
+  DepositUnlimitedPopupRequest,
+  DepositUnlimitedPopupConfirm,
+  DepositWalletRequest,
+  DepositWalletConfirm,
+  DepositSuccess,
+  DepositFailed,
+}
+
+const depositTxtMap = new Map([
+  [DepositEvent.DepositPoolClick, 'Deposit Pool Click'],
+  [DepositEvent.DepositClick, 'Deposit Click'],
+  [DepositEvent.DepositUnlimitedPopupView, 'Deposit Unlimited Popup View'],
+  [DepositEvent.DepositUnlimitedPopupSelect, 'Deposit Unlimited Popup Select'],
+  [
+    DepositEvent.DepositUnlimitedPopupRequest,
+    'Deposit Unlimited Popup Request',
+  ],
+  [
+    DepositEvent.DepositUnlimitedPopupConfirm,
+    'Deposit Unlimited Popup Confirm',
+  ],
+  [DepositEvent.DepositWalletRequest, 'Deposit Wallet Request'],
+  [DepositEvent.DepositWalletConfirm, 'Deposit Wallet Confirm'],
+  [DepositEvent.DepositSuccess, 'Deposit Success'],
+  [DepositEvent.DepositFailed, 'Deposit Failed'],
+]);
+
+export const sendDepositEvent = (
+  event: DepositEvent,
+  event_properties: any
+) => {
+  const data = {
+    event: depositTxtMap.get(event),
+    event_properties,
+    ga_event: {
+      category: 'Deposit',
     },
   };
   sendGTM(data);
