@@ -392,3 +392,30 @@ export const sendLiquidityEvent = (
   };
   sendGTM(gtmData);
 };
+enum PoolEvent {
+  VersionSwitch,
+  PoolsFilter,
+  PoolSearch,
+  PoolClick,
+}
+const getPoolEventLabel = (event: PoolEvent) => {
+  return poolEventTxtMap.get(event);
+};
+
+const poolEventTxtMap = new Map([
+  [PoolEvent.VersionSwitch, 'Pools Version Switch'],
+  [PoolEvent.PoolsFilter, 'Pools Filter'],
+  [PoolEvent.PoolSearch, 'Pools Search'],
+  [PoolEvent.PoolClick, 'Pool Click'],
+]);
+
+export const sendPoolEvent = (event: PoolEvent, event_properties: any) => {
+  const data = {
+    event: getPoolEventLabel(event),
+    event_properties,
+    ga_event: {
+      category: 'Pools Page',
+    },
+  };
+  sendGTM(data);
+};
