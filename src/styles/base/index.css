@@ -31,12 +31,12 @@
     @apply text-base;
   }
 
-  button,
-  a {
-    @apply outline-none focus:outline-none;
+  button {
+    @apply focus:outline-none;
   }
 
   input {
     @apply appearance-none;
+    @apply focus:outline-none;
   }
 }

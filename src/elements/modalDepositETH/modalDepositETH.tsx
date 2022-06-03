@@ -1,6 +1,6 @@
 import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface ModalDepositETHProps {
   amount: string;
@@ -36,7 +36,7 @@ export const ModalDepositETH = ({
           token standard
         </div>
         <Button
-          className="w-full"
+          size={ButtonSize.Full}
           onClick={() => {
             setIsOpen(false);
             onConfirm();

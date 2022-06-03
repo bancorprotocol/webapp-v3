@@ -1,5 +1,5 @@
 import { useAppSelector } from 'store';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useNavigation } from 'hooks/useNavigation';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
@@ -26,22 +26,26 @@ export const AddLiquiditySingleCTA = ({
       return {
         label: 'Deposits are available on V3 pool',
         disabled: false,
-        variant: ButtonVariant.ERROR,
+        variant: ButtonVariant.Secondary,
       };
     if (errorMsg) {
-      return { label: errorMsg, disabled: true, variant: ButtonVariant.ERROR };
+      return {
+        label: errorMsg,
+        disabled: true,
+        variant: ButtonVariant.Secondary,
+      };
     }
     if (!amount) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else {
       return {
         label: 'Deposit and Protect',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     }
   };
@@ -61,7 +65,7 @@ export const AddLiquiditySingleCTA = ({
       onClick={() => (isBNTSelected ? goToPage.earn() : onClick())}
       disabled={btn.disabled}
       variant={btn.variant}
-      className={`w-full`}
+      size={ButtonSize.Full}
     >
       {button().label}
     </Button>

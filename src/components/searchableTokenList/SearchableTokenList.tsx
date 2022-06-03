@@ -182,7 +182,7 @@ export const SearchableTokenList = ({
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="rounded-full py-10"
+              className="rounded-full py-10 w-full"
             />
           </div>
           <div
@@ -211,7 +211,7 @@ export const SearchableTokenList = ({
                     onClick(token);
                     onClose();
                   }}
-                  className="flex items-center justify-between rounded focus:outline-none focus:ring-2 focus:ring-primary w-full px-14 py-5 my-5"
+                  className="flex items-center justify-between rounded focus:ring-2 focus:ring-primary px-14 py-5 my-5 w-full"
                 >
                   <div className="flex items-center">
                     <Image

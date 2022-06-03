@@ -2,10 +2,6 @@
   @apply flex justify-between items-center text-graphite text-[22px] py-16 px-20;
 }
 
-.swap-header button {
-  @apply focus:outline-none;
-}
-
 .swap-header-active {
   @apply text-charcoal;
   @apply dark:text-white;
