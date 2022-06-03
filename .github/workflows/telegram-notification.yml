@@ -32,9 +32,10 @@ jobs:
           disable_web_page_preview: true
           format: markdown
           message: |
+            ============= 👾 🤖 🎃 =============
             *${{ github.event.pusher.name }} pushed into main branch:*
 
             *Commit messages:*
-            *commit*: ${{join(github.event.commits.*.message, '  , *commit*: ') }}
+            ⚡️ *commit*: ${{join(github.event.commits.*.message, ', ⚡️ *commit*: ') }}
             
             *links:* [diff](${{ github.event.compare }}), [repository](https://github.com/${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
