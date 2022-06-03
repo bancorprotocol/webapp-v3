@@ -39,11 +39,11 @@ jobs:
             aaa\nbbb
             test3:
             <pre>
-            aaa%0Abbb
+            aaa %0A bbb
             </pre>
             test4:
             <pre>
-            aaa\nAbbb
+            aaa \n Abbb
             </pre>
             <b>Commit messages:</b>
             ${{join(github.event.commits.*.message, '%0A  ') }}
