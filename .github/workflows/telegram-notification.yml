@@ -33,21 +33,13 @@ jobs:
           format: html
           message: |
             <u><b>${{ github.event.pusher.name }} pushed into main branch:</b></u>
-            test1:
-            aaa%0Abbb
-            test2:
-            aaa\nbbb
-            test3:
-            <pre>
-            aaa %0A bbb
-            </pre>
-            test4:
-            <pre>
-            aaa \n Abbb
-            </pre>
-            <b>Commit messages:</b>
-            ${{join(github.event.commits.*.message, '%0A  ') }}
 
+            <b>Commit messages:</b>
+            ${{join(github.event.commits.*.message, ' | ') }}
+
+            ${{github.event.commits[0].message}}
+
+            ${{github.event.commits[1].message}}
             <b>links:</b>
             <a href="${{ github.event.compare }}">diff</a>
             <a href="https://github.com/${{ github.repository }}">repository</a>
