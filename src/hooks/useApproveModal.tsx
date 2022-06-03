@@ -26,7 +26,8 @@ export const useApproveModal = (
   onComplete: Function,
   contract: ApprovalContract | string = ApprovalContract.BancorNetwork,
   gtmPopupEvent?: (event: ConversionEvents) => void,
-  gtmSelectEvent?: (isUnlimited: boolean) => void
+  gtmSelectEvent?: (isUnlimited: boolean) => void,
+  onClose?: Function
 ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
@@ -162,6 +163,7 @@ export const useApproveModal = (
     setApproval,
     token: tokens[tokenIndex].token,
     isLoading,
+    onClose,
   });
 
   return [onStart, ModalApprove] as [Function, JSX.Element];

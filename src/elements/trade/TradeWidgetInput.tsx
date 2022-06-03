@@ -64,9 +64,13 @@ export const TradeWidgetInput = ({
             input?.token.balance &&
             Number(input?.token.balance) > 0 && (
               <button
-                onClick={() =>
-                  !disabled && input?.handleChange(input?.token.balance ?? '')
-                }
+                onClick={() => {
+                  if (!disabled && input)
+                    if (input.token.balanceUsd && isFiat)
+                      input.handleChange(input.token.balanceUsd.toString());
+                    else if (input.token.balance && !isFiat)
+                      input.handleChange(input.token.balance.toString());
+                }}
                 className={`${
                   disabled
                     ? 'cursor-text'

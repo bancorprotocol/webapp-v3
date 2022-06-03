@@ -96,7 +96,18 @@ export const useTrade = ({
     handleTrade,
     isV3
       ? ContractsApi.BancorNetwork.contractAddress
-      : ApprovalContract.BancorNetwork
+      : ApprovalContract.BancorNetwork,
+    undefined,
+    undefined,
+    () => {
+      setIsBusy(false);
+      if (fromInput && toInput) {
+        fromInput.setInputTkn('');
+        fromInput.setInputFiat('');
+        toInput.setInputTkn('');
+        toInput.setInputFiat('');
+      }
+    }
   );
 
   const handleSelectFrom = useCallback(
