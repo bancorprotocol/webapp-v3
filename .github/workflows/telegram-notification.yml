@@ -37,7 +37,4 @@ jobs:
             *Commit messages:*
             *commit*: ${{join(github.event.commits.*.message, '  , *commit*: ') }}
             
-            *links:*
-            - [diff](${{ github.event.compare }})
-            - [repository](https://github.com/${{ github.repository }})
-            - [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
+            *links:* [diff](${{ github.event.compare }}), [repository](https://github.com/${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
