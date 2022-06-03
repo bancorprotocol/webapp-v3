@@ -15,6 +15,11 @@ import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSet
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { TokenMinimal } from 'services/observables/tokens';
 import { Image } from 'components/image/Image';
+import {
+  confirmMigrateExtHoldingNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
+import { ErrorCode } from 'services/web3/types';
 
 interface Props {
   position: ExternalHolding;
@@ -60,16 +65,20 @@ export const V3ExternalHoldingsModal = ({
     }
 
     try {
-      const res = await migrateFn(
+      const tx = await migrateFn(
         position.tokens[0].address,
         position.tokens[1]?.address ?? position.nonBancorToken?.tokenAddress,
         position.poolTokenBalanceWei
       );
       setIsOpen(false);
-      await res.wait();
+      confirmMigrateExtHoldingNotification(dispatch, tx.hash, position.name);
+      await tx.wait();
       await updatePortfolioData(dispatch);
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error('failed to migrate position', e);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      }
     } finally {
       setTxBusy(false);
     }

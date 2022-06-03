@@ -661,3 +661,24 @@ export const rewardsClaimedNotification = (
     },
     dispatch
   );
+
+export const confirmMigrateExtHoldingNotification = (
+  dispatch: any,
+  txHash: string,
+  name: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `${name} migration is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success',
+        successMsg: `Your ${name} migration has been successfully completed.`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Your ${name} migration has failed.`,
+      },
+    },
+    dispatch
+  );
