@@ -31,10 +31,12 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           disable_web_page_preview: true
           message: |
-            *${{ github.event.pusher.name }} pushed into main branch:*
+            <u><b>${{ github.event.pusher.name }} pushed into main branch:</b></u>
 
-            *Commit messages:*
-            ${{join(github.event.commits.*.message, '&nbsp;&nbsp;') }}
+            <b>Commit messages:</b>
+            ${{join(github.event.commits.*.message, '<br />') }}
 
             links:
-            [diff](${{ github.event.compare }}), [repository](https://github.com/${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
+            <a href="${{ github.event.compare }}">diff</a>
+            <a href="https://github.com/${{ github.repository }}">repository</a>
+            <a href="https://github.com/${{ github.repository }}/commit/${{github.sha}}">commit</a>
