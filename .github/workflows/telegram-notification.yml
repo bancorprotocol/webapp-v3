@@ -35,7 +35,7 @@ jobs:
             <u><b>${{ github.event.pusher.name }} pushed into main branch:</b></u>
 
             <b>Commit messages:</b>
-            ${{join(github.event.commits.*.message, ` `) }}
+            ${{join(github.event.commits.*.message, '\n') }}
 
             <b>links:</b>
             <a href="${{ github.event.compare }}">diff</a>
