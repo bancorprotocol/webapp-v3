@@ -35,6 +35,7 @@ jobs:
             *${{ github.event.pusher.name }} pushed into main branch:*
 
             *Commit messages:*
+            
             ${{join(github.event.commits.*.message, '&nbsp;&nbsp;') }}
 
             links:
