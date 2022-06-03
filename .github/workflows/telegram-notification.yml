@@ -32,16 +32,14 @@ jobs:
           disable_web_page_preview: true
           format: markdown
           message: |
-            *__${{ github.event.pusher.name }} pushed into main branch:__*
+            *${{ github.event.pusher.name }} pushed into main branch:*
 
             *Commit messages:*
-            ```
             ${{github.event.commits[0].message}}
             ${{github.event.commits[1].message}}
             ${{github.event.commits[2].message}}
             ${{github.event.commits[3].message}}
             ${{github.event.commits[5].message}}
-            ```
             
             *links:*
             - [diff](${{ github.event.compare }})
