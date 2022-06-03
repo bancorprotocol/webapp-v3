@@ -27,7 +27,7 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
       : undefined;
 
   return (
-    <div className="rounded-20 border border-fog p-20">
+    <div className="rounded-20 border border-fog dark:border-grey p-20">
       <div className="h-30">
         <TokensOverlap
           tokens={

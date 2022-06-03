@@ -19,7 +19,7 @@ const V3ExternalHoldings = () => {
   return positions.length ? (
     <section className="content-block p-20">
       <h2>External Holdings at risk</h2>
-      <p className="mb-10 text-secondary">
+      <p className="mt-10 mb-20 text-secondary">
         Your holdings on other platforms are vulnerable to impermanent loss
       </p>
       <Swiper
