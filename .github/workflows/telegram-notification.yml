@@ -41,4 +41,3 @@ jobs:
             <a href="${{ github.event.compare }}">diff</a>
             <a href="https://github.com/${{ github.repository }}">repository</a>
             <a href="https://github.com/${{ github.repository }}/commit/${{github.sha}}">commit</a>
-
