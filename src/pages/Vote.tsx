@@ -25,6 +25,7 @@ interface VoteCardProps {
   button: string;
   onClick: Function;
   footer: JSX.Element;
+  variant: ButtonVariant;
 }
 const VoteCard = ({
   title,
@@ -34,6 +35,7 @@ const VoteCard = ({
   button,
   onClick,
   footer,
+  variant,
 }: VoteCardProps) => {
   return (
     <div className="content-block flex flex-col max-w-[535px] min-h-[325px] px-30 pt-30 pb-[22px] md:hover:shadow-lg">
@@ -45,7 +47,12 @@ const VoteCard = ({
         {content}
         {trailingContent && <div>{trailingContent}</div>}
       </div>
-      <Button className="w-[220px] mt-20" onClick={() => onClick()}>
+      <Button
+        variant={variant}
+        size={ButtonSize.Meduim}
+        className="mt-20"
+        onClick={() => onClick()}
+      >
         {button}
       </Button>
       <hr className="widget-separator mb-15 mt-50" />
@@ -92,6 +99,7 @@ export const Vote = () => {
   const title = 'Vote';
   const subtitle =
     'Bancor is a DAO managed by vBNT stakers who determine the future of the protocol with their proposals.';
+  const stakedVBNT = Number(stakeAmount) !== 0;
 
   return (
     <Page title={title} subtitle={subtitle}>
@@ -103,6 +111,9 @@ export const Vote = () => {
             content="In order to participate in Bancor governance activities, you should first stake your vBNT tokens."
             trailingContent="Staked vBNT will be locked for the initial 3 days"
             button="Stake Tokens"
+            variant={
+              stakedVBNT ? ButtonVariant.Secondary : ButtonVariant.Primary
+            }
             onClick={() => {
               if (!account) {
                 handleWalletButtonClick();
@@ -148,6 +159,9 @@ export const Vote = () => {
             title="Make a Difference"
             content="Voting on Bancor DAO is free as it is using the Snapshot off-chain infrastructure. Every user can vote on every available proposal and help shape the future of the Bancor Protocol."
             button="Vote on Snapshot"
+            variant={
+              stakedVBNT ? ButtonVariant.Primary : ButtonVariant.Secondary
+            }
             onClick={() => {
               openNewTab('https://vote.bancor.network/');
             }}

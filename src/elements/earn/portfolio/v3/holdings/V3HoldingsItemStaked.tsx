@@ -47,7 +47,7 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         holding={holding}
         renderButton={(onClick) => (
           <Button
-            variant={ButtonVariant.Secondary}
+            variant={ButtonVariant.Tertiary}
             size={ButtonSize.Full}
             disabled={isDisabled}
             onClick={onClick}

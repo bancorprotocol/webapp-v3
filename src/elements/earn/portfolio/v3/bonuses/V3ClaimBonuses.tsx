@@ -20,7 +20,7 @@ export const V3ClaimBonuses = () => {
               {prettifyNumber(bonusUsdTotal, true)}
             </span>
             <Button
-              variant={ButtonVariant.Secondary}
+              variant={ButtonVariant.Tertiary}
               size={ButtonSize.ExtraSmall}
               onClick={() => setBonusModalOpen(true)}
               disabled={bonusUsdTotal === 0}

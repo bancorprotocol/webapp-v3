@@ -175,7 +175,7 @@ const BonusGroup = ({
       </ExpandableSection>
       <div className="flex mt-20 space-x-10">
         <Button
-          variant={ButtonVariant.Secondary}
+          variant={ButtonVariant.Tertiary}
           onClick={onClaimClick}
           size={ButtonSize.Full}
           disabled={bntDisabled}
@@ -183,7 +183,7 @@ const BonusGroup = ({
           Claim
         </Button>
         <Button
-          variant={ButtonVariant.Tertiary}
+          variant={ButtonVariant.Secondary}
           onClick={onRestakeClick}
           size={ButtonSize.Full}
           disabled={bntDisabled}

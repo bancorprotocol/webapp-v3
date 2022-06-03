@@ -109,7 +109,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
 
         <div className="flex space-x-10">
           <Button
-            variant={ButtonVariant.Secondary}
+            variant={ButtonVariant.Tertiary}
             size={ButtonSize.Small}
             disabled={isDisabled || txJoinBusy}
             onClick={onStartJoin}
@@ -117,7 +117,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             Join Rewards
           </Button>
           <Button
-            variant={ButtonVariant.Secondary}
+            variant={ButtonVariant.Tertiary}
             size={ButtonSize.Small}
             disabled={isDisabled}
             onClick={() => setIsOpen(true)}

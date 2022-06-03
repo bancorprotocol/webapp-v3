@@ -1,5 +1,5 @@
 import { Navigate } from 'components/navigate/Navigate';
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { BancorURL } from 'router/bancorURL.service';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 
@@ -8,7 +8,9 @@ export const PoolsTableCellActions = (id: string) => {
     <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
       <PopoverV3
         buttonElement={() => (
-          <Button size={ButtonSize.ExtraSmall}>Deposit</Button>
+          <Button variant={ButtonVariant.Tertiary} size={ButtonSize.ExtraSmall}>
+            Deposit
+          </Button>
         )}
       >
         Deposit & Earn
