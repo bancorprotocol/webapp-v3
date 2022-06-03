@@ -29,7 +29,6 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          format: markdown
           disable_web_page_preview: true
           message: |
             *${{ github.event.pusher.name }} pushed into main branch:*
