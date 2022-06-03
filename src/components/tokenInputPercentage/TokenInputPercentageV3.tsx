@@ -1,4 +1,5 @@
 import { BigNumber } from 'bignumber.js';
+import { ButtonPercentages } from 'components/button/Button';
 import TokenInputV3, {
   TokenInputV3Props,
 } from 'components/tokenInput/TokenInputV3';
@@ -84,20 +85,14 @@ export const TokenInputPercentageV3 = ({
           isError={isError}
         />
       )}
-      <div className="flex justify-between gap-16 mt-20">
-        {percentages.map((percent, index) => (
-          <button
-            key={'percent' + percent}
-            className={`btn btn-sm w-full rounded-10 border ${
-              selPercentage === index
-                ? 'btn-primary border-primary'
-                : 'border-fog dark:border-grey hover:border-primary'
-            }`}
-            onClick={() => handleSetPercentage(percent)}
-          >
-            {percent}%
-          </button>
-        ))}
+      <div className="flex justify-between gap-16 mt-20 h-[42px]">
+        <ButtonPercentages
+          percentages={percentages}
+          selected={selPercentage}
+          onClick={(percentage: number) => {
+            handleSetPercentage(percentage);
+          }}
+        />
       </div>
     </div>
   );

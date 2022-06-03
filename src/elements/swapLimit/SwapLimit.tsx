@@ -30,7 +30,11 @@ import {
 } from 'services/api/googleTagManager';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
-import { Button, ButtonVariant } from 'components/button/Button';
+import {
+  Button,
+  ButtonPercentages,
+  ButtonSize,
+} from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
@@ -464,26 +468,17 @@ export const SwapLimit = ({
                 </div>
               )}
               <div className="flex justify-end space-x-8 mt-15">
-                {percentages.map((slip, index) => (
-                  <Button
-                    variant={
-                      selPercentage !== index
-                        ? ButtonVariant.SECONDARY
-                        : ButtonVariant.PRIMARY
-                    }
-                    key={'slippage' + slip}
-                    className={`w-[70px] h-[34px] rounded-[12px] ${classNameGenerator(
-                      { border: selPercentage !== index }
-                    )} border-graphite dark:border-white-low`}
-                    onClick={() => {
-                      calculateRateByMarket(marketRate, index, '');
-                      setSelPercentage(index);
-                      setPercentage('');
-                    }}
-                  >
-                    +{slip}%
-                  </Button>
-                ))}
+                <ButtonPercentages
+                  percentages={percentages}
+                  selected={selPercentage}
+                  onClick={(percentage: number) => {
+                    const index = percentages.indexOf(percentage);
+                    calculateRateByMarket(marketRate, index, '');
+                    setSelPercentage(index);
+                    setPercentage('');
+                  }}
+                  itemStyle="w-[70px]"
+                />
                 <div className="w-[70px]">
                   <InputField
                     input={percentage}
@@ -540,10 +535,10 @@ export const SwapLimit = ({
           onConfirm={() => handleSwap(true)}
         />
         <Button
-          variant={ButtonVariant.PRIMARY}
-          className="w-full"
+          size={ButtonSize.Full}
           onClick={() => handleSwapClick()}
           disabled={isSwapDisabled()}
+          className="disabled:bg-silver dark:disabled:bg-charcoal"
         >
           {swapButtonText()}
         </Button>

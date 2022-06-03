@@ -14,9 +14,12 @@ interface Props {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
   }) => ReactNode;
+  isOpen?: boolean;
+  setIsOpen?: (open: boolean) => void;
   options?: PopoverOptions;
   hover?: boolean;
   showArrow?: boolean;
+  className?: string;
 }
 
 let timeout: NodeJS.Timeout;
@@ -37,9 +40,12 @@ const defaultOptions: PopoverOptions = {
 export const PopoverV3 = ({
   children,
   buttonElement,
+  isOpen,
+  setIsOpen,
   options = defaultOptions,
   hover = true,
   showArrow = true,
+  className,
 }: Props) => {
   const popperElRef = useRef(null);
   const [targetElement, setTargetElement] = useState<HTMLDivElement | null>(
@@ -62,7 +68,14 @@ export const PopoverV3 = ({
     ],
   });
 
-  const [open, setOpen] = useState(false);
+  const [localOpen, setLocalOpen] = useState(false);
+
+  const useLocalState = !setIsOpen;
+
+  const handleOpen = (open: boolean) => {
+    if (useLocalState) setLocalOpen(open);
+    else setIsOpen(open);
+  };
 
   const handleOnMouseEnter = () => {
     if (!hover) {
@@ -71,7 +84,7 @@ export const PopoverV3 = ({
 
     prevPopFunc();
     clearInterval(timeout);
-    setOpen(true);
+    handleOpen(true);
   };
 
   const handleOnMouseLeave = (delay: number) => {
@@ -79,8 +92,8 @@ export const PopoverV3 = ({
       return;
     }
 
-    prevPopFunc = () => setOpen(false);
-    timeout = setTimeout(() => setOpen(false), delay);
+    prevPopFunc = () => handleOpen(false);
+    timeout = setTimeout(() => handleOpen(false), delay);
   };
 
   return (
@@ -91,8 +104,8 @@ export const PopoverV3 = ({
         onMouseLeave={() => handleOnMouseLeave(600)}
       >
         {buttonElement({
-          isOpen: open,
-          setIsOpen: (open: boolean) => setOpen(open),
+          isOpen: useLocalState ? localOpen : !!isOpen,
+          setIsOpen: (open: boolean) => handleOpen(open),
         })}
       </div>
       <Portal>
@@ -103,7 +116,7 @@ export const PopoverV3 = ({
           className="z-40 popover-panel"
         >
           <Transition
-            show={open}
+            show={useLocalState ? localOpen : isOpen}
             enter="transition ease-out duration-200"
             enterFrom="opacity-0 translate-y-1"
             enterTo="opacity-100 translate-y-0"
@@ -114,7 +127,7 @@ export const PopoverV3 = ({
             afterLeave={() => setPopperElement(null)}
           >
             <div
-              className="max-w-[300px] bg-white dark:bg-black border border-silver dark:border-grey py-20 px-24 rounded"
+              className={`max-w-[300px] bg-white dark:bg-black border border-silver dark:border-grey py-20 px-24 rounded ${className}`}
               onMouseEnter={() => handleOnMouseEnter()}
               onMouseLeave={() => handleOnMouseLeave(200)}
             >

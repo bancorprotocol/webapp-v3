@@ -47,15 +47,11 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         holding={holding}
         renderButton={(onClick) => (
           <Button
-            variant={
-              holding.hasLegacyStake
-                ? ButtonVariant.WARNING
-                : ButtonVariant.SECONDARY
-            }
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Full}
             disabled={isDisabled}
             onClick={onClick}
-            className="md:w-full"
+            className="h-[39px]"
           >
             Manage Rewards
           </Button>

@@ -8,7 +8,7 @@ interface Props {
 }
 
 const defaultClassName =
-  'block border border-silver pl-[38px] pr-[38px] dark:placeholder-white-disabled dark:bg-charcoal dark:border-grey focus:outline-none';
+  'block border border-silver pl-[38px] pr-[38px] dark:placeholder-white-disabled dark:bg-charcoal dark:border-grey';
 
 export const SearchInput = ({ value, setValue, className }: Props) => {
   return (

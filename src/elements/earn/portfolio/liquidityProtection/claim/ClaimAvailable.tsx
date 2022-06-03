@@ -69,7 +69,7 @@ export const ClaimAvailable = ({
               )}
             </div>
             <Button
-              size={ButtonSize.EXTRASMALL}
+              size={ButtonSize.ExtraSmall}
               onClick={() => handleButtonClick()}
               disabled={noBntToClaim}
             >

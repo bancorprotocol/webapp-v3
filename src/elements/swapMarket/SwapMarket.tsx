@@ -34,7 +34,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useAsyncEffect } from 'use-async-effect';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
@@ -318,8 +318,8 @@ export const SwapMarket = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return ButtonVariant.ERROR;
-    return ButtonVariant.PRIMARY;
+    if (isHighSlippage || !account) return ButtonVariant.Secondary;
+    return ButtonVariant.Primary;
   };
 
   const handleSwapClick = () => {
@@ -453,7 +453,8 @@ export const SwapMarket = ({
           <Button
             onClick={() => handleSwapClick()}
             variant={buttonVariant()}
-            className={'w-full'}
+            size={ButtonSize.Full}
+            className="disabled:bg-silver dark:disabled:bg-charcoal"
             disabled={isSwapDisabled()}
           >
             {swapButtonText()}

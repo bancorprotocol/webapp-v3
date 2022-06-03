@@ -102,8 +102,8 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
               </div>
               <div>
                 <Button
-                  variant={ButtonVariant.DARK}
-                  size={ButtonSize.EXTRASMALL}
+                  variant={ButtonVariant.Tertiary}
+                  size={ButtonSize.ExtraSmall}
                   disabled={txBusy}
                   onClick={() =>
                     handleLeaveClick(
@@ -147,8 +147,8 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
 
                   <div>
                     <Button
-                      variant={ButtonVariant.WARNING}
-                      size={ButtonSize.EXTRASMALL}
+                      variant={ButtonVariant.Secondary}
+                      size={ButtonSize.ExtraSmall}
                       disabled={txBusy}
                       onClick={() =>
                         handleLeaveClick(

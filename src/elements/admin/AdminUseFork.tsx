@@ -74,7 +74,7 @@ export const AdminUseFork = () => {
 
       <Button
         onClick={handleSave}
-        size={ButtonSize.EXTRASMALL}
+        size={ButtonSize.ExtraSmall}
         className="mx-auto mt-20"
       >
         Save

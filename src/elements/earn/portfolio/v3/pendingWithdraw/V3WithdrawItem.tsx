@@ -35,8 +35,8 @@ export const WithdrawItem = memo(
           {isLocked && (
             <Button
               onClick={() => openConfirmModal(withdrawalRequest)}
-              size={ButtonSize.EXTRASMALL}
-              variant={ButtonVariant.SECONDARY}
+              size={ButtonSize.ExtraSmall}
+              variant={ButtonVariant.Secondary}
             >
               Withdraw
             </Button>

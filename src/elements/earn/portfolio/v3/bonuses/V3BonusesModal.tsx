@@ -1,4 +1,5 @@
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
+import { ButtonSize } from 'components/button/Button';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
@@ -8,9 +9,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
-import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { getDarkMode } from 'store/user/user';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { Image } from 'components/image/Image';
 
@@ -94,7 +93,6 @@ const BonusGroup = ({
 }: {
   rewardsGroup: GroupedStandardReward;
 }) => {
-  const darkMode = useAppSelector<boolean>(getDarkMode);
   const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
   const allTokens = rewardsGroup.rewards.map(
@@ -177,17 +175,17 @@ const BonusGroup = ({
       </ExpandableSection>
       <div className="flex mt-20 space-x-10">
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.Tertiary}
           onClick={onClaimClick}
-          className="w-full"
+          size={ButtonSize.Full}
           disabled={bntDisabled}
         >
           Claim
         </Button>
         <Button
-          variant={darkMode ? ButtonVariant.LIGHT : ButtonVariant.DARK}
+          variant={ButtonVariant.Secondary}
           onClick={onRestakeClick}
-          className="w-full"
+          size={ButtonSize.Full}
           disabled={bntDisabled}
         >
           Claim {groupPool.reserveToken.symbol} {'&'} Earn{' '}
