@@ -4,7 +4,7 @@ import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.sv
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useDispatch } from 'react-redux';
@@ -75,10 +75,10 @@ export const V3EarningTableMenuRate = ({
 
         {/*<ProgressBar percentage={55} showPercentage />*/}
         <Button
-          variant={ButtonVariant.PRIMARY}
           onClick={() => onStartJoin()}
           disabled={btnJoinDisabled}
-          className="rounded flex-col w-full my-10 text-left items-start"
+          size={ButtonSize.Full}
+          className="rounded flex-col my-10 text-left items-start"
         >
           <div className="py-4">
             <div>Deposit & Earn Bonus</div>
@@ -95,10 +95,11 @@ export const V3EarningTableMenuRate = ({
           </div>
         </Button>
         <Button
-          variant={ButtonVariant.SECONDARY}
+          variant={ButtonVariant.Secondary}
           onClick={handleLeaveClick}
           disabled={btnLeaveDisabled}
-          className="rounded flex-col w-full mb-10 py-8 text-left items-start"
+          size={ButtonSize.Full}
+          className="rounded flex-col mb-10 py-8 text-left items-start"
         >
           <div
             className={`${btnLeaveDisabled ? 'text-secondary' : 'text-error'}`}

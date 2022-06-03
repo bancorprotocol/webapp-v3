@@ -4,18 +4,14 @@ import { getProtectedPools } from 'store/bancor/pool';
 import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
+import { Button } from 'components/button/Button';
 
 interface Props {
   buttonLabel: string;
-  buttonClass: string;
   posGroupId?: string;
 }
 
-export const StakeRewardsBtn = ({
-  buttonClass,
-  buttonLabel,
-  posGroupId,
-}: Props) => {
+export const StakeRewardsBtn = ({ buttonLabel, posGroupId }: Props) => {
   const { goToPage } = useNavigation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const pools = useAppSelector<Pool[]>(getProtectedPools);
@@ -34,9 +30,7 @@ export const StakeRewardsBtn = ({
         setIsOpen={setIsModalOpen}
         onSelect={onSelect}
       />
-      <button onClick={() => setIsModalOpen(true)} className={buttonClass}>
-        {buttonLabel}
-      </button>
+      <Button onClick={() => setIsModalOpen(true)}>{buttonLabel}</Button>
     </>
   );
 };

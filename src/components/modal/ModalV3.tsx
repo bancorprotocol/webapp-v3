@@ -71,10 +71,7 @@ export const ModalV3 = ({
                 <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30 mb-20">
                   <div className="flex items-center text-20">
                     {showBackButton && (
-                      <button
-                        onClick={() => onBackClick && onBackClick()}
-                        className="rounded-10 focus:outline-none focus:ring-2 focus:ring-primary"
-                      >
+                      <button onClick={() => onBackClick && onBackClick()}>
                         <IconChevron className="w-24 transform rotate-180" />
                       </button>
                     )}
@@ -84,7 +81,7 @@ export const ModalV3 = ({
                     {titleElement && titleElement}
                     <button
                       onClick={() => setIsOpen(false)}
-                      className="rounded-10 px-5 py-2 focus:outline-none"
+                      className="px-5 py-2"
                     >
                       <IconTimes className="w-14" />
                     </button>

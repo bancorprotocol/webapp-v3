@@ -101,7 +101,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             {holding.tokenBalance} {pool.reserveToken.symbol}
           </PopoverV3>
 
-          <div className={`mt-6 mb-10 text-secondary`}>
+          <div className={`mb-10 text-secondary`}>
             ({prettifyNumber(holding.poolTokenBalance)} bn
             {pool.reserveToken.symbol})
           </div>
@@ -109,16 +109,16 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
 
         <div className="flex space-x-10">
           <Button
-            variant={ButtonVariant.SECONDARY}
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Small}
             disabled={isDisabled || txJoinBusy}
             onClick={onStartJoin}
           >
             Join Rewards
           </Button>
           <Button
-            variant={ButtonVariant.SECONDARY}
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Small}
             disabled={isDisabled}
             onClick={() => setIsOpen(true)}
           >

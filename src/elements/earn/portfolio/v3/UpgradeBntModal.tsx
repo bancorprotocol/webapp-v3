@@ -4,7 +4,7 @@ import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
 import { useMemo } from 'react';
@@ -105,7 +105,7 @@ export const UpgradeBntModal = ({
         </div>
         <Button
           onClick={() => migrate(totalBNT.bntPositions)}
-          className="w-full h-[50px]"
+          size={ButtonSize.Full}
         >
           Upgrade All
         </Button>

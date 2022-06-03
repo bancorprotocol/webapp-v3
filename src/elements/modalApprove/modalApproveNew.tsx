@@ -1,7 +1,7 @@
 import { ReactComponent as IconLock } from '../../assets/icons/lock.svg';
 import { Modal } from 'components/modal/Modal';
 import { Token } from 'services/observables/tokens';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface Props {
   isOpen: boolean;
@@ -43,7 +43,8 @@ export const ModalApproveNew = ({
           </p>
           <Button
             onClick={() => setApproval()}
-            className={'w-full my-15'}
+            size={ButtonSize.Full}
+            className="my-15"
             disabled={isLoading}
           >
             {isLoading ? 'waiting for confirmation' : 'Approve'}

@@ -2,6 +2,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { ModalFullscreen } from './ModalFullscreen';
 import { useState } from 'react';
 import { withDesign } from 'storybook-addon-designs';
+import { Button } from 'components/button/Button';
 
 export default {
   title: 'Components/Modal/Fullscreen',
@@ -14,9 +15,7 @@ const Template: ComponentStory<typeof ModalFullscreen> = (args) => {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="btn btn-primary">
-        Open Modal
-      </button>
+      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
       <ModalFullscreen {...args} isOpen={isOpen} setIsOpen={setIsOpen}>
         <p>some content</p>
       </ModalFullscreen>

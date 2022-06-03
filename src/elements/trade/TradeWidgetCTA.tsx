@@ -54,8 +54,8 @@ export const TradeWidgetCTA = ({
 
   const buttonVariant = () => {
     const isHighSlippage = new BigNumber(priceImpact).gte(10);
-    if (isHighSlippage) return ButtonVariant.ERROR;
-    return ButtonVariant.PRIMARY;
+    if (isHighSlippage || !account) return ButtonVariant.Secondary;
+    return ButtonVariant.Primary;
   };
 
   const isSwapDisabled = useMemo(() => {

@@ -2,9 +2,9 @@ import axios from 'axios';
 import { utils } from 'ethers';
 import { APIToken, WelcomeData } from 'services/api/bancorApi/bancorApi.types';
 import { ethToken, wethToken } from 'services/web3/config';
-
+import { getV2ApiUrlLS } from 'utils/localStorage';
 const axiosInstance = axios.create({
-  baseURL: 'https://api-v2.bancor.network/',
+  baseURL: getV2ApiUrlLS(),
   headers: {
     'Content-Type': 'application/json',
   },

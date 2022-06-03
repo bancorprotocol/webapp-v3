@@ -137,8 +137,8 @@ export const PoolsTable = ({
             renderButton={(onClick) => (
               <Button
                 onClick={onClick}
-                variant={ButtonVariant.PRIMARY}
-                size={ButtonSize.EXTRASMALL}
+                variant={ButtonVariant.Tertiary}
+                size={ButtonSize.ExtraSmall}
               >
                 Deposit
               </Button>
