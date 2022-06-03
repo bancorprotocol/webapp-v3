@@ -30,6 +30,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           disable_web_page_preview: true
+          format: html
           message: |
             <u><b>${{ github.event.pusher.name }} pushed into main branch:</b></u>
 
