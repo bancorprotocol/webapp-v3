@@ -682,3 +682,17 @@ export const confirmMigrateExtHoldingNotification = (
     },
     dispatch
   );
+
+export const failedNotification = (
+  dispatch: any,
+  title = 'Unknown Error',
+  msg = `Something went wrong. Please try again or contact support.`
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title,
+      msg,
+    },
+    dispatch
+  );

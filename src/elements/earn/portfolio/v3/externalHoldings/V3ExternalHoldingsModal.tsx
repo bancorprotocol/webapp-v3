@@ -17,6 +17,7 @@ import { TokenMinimal } from 'services/observables/tokens';
 import { Image } from 'components/image/Image';
 import {
   confirmMigrateExtHoldingNotification,
+  failedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
@@ -78,7 +79,10 @@ export const V3ExternalHoldingsModal = ({
       console.error('failed to migrate position', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        failedNotification(dispatch, 'Migration Failed');
       }
+      setIsOpen(false);
     } finally {
       setTxBusy(false);
     }

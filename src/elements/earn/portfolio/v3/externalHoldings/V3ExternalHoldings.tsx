@@ -19,7 +19,7 @@ const V3ExternalHoldings = () => {
   return positions.length ? (
     <section className="content-block p-20">
       <h2>External Holdings at risk</h2>
-      <p className="mb-10 text-graphite">
+      <p className="mb-10 text-secondary">
         Your holdings on other platforms are vulnerable to impermanent loss
       </p>
       <Swiper
@@ -39,17 +39,19 @@ const V3ExternalHoldings = () => {
         ))}
       </Swiper>
 
-      <div className="space-x-10 flex items-center mt-10">
-        <button className="external-holding-swiper-prev-btn hover:text-primary">
-          {'<--'}
-        </button>
-        <button className="external-holding-swiper-next-btn hover:text-primary">
-          {'-->'}
-        </button>
-        <div>
-          {activeIndex} of {positions.length}
+      {positions.length > 1 && (
+        <div className="space-x-10 flex items-center mt-10">
+          <button className="external-holding-swiper-prev-btn hover:text-primary">
+            {'<-'}
+          </button>
+          <button className="external-holding-swiper-next-btn hover:text-primary">
+            {'->'}
+          </button>
+          <div>
+            {activeIndex} of {positions.length}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   ) : (
     <div className="hidden" />
