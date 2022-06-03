@@ -35,7 +35,7 @@ jobs:
             ${{ github.event.pusher.name }} pushed into main branch:
 
             Commit messages:
-            ${{join(github.event.commits.*.message, '  ') }}
+            ${{join(github.event.commits.*.message, '') }}
 
             links:
             [diff](${{ github.event.compare }}), [repository](https://github.com/${{ github.repository }}), [commit](https://github.com/${{ github.repository }}/commit/${{github.sha}})
