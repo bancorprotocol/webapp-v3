@@ -32,7 +32,7 @@ jobs:
           format: markdown
           disable_web_page_preview: true
           message: |
-            ${{ github.event.pusher.name }} pushed into main branch:
+            # ${{ github.event.pusher.name }} pushed into main branch:
 
             Commit messages:
             ${{join(github.event.commits.*.message, "%0A") }}
