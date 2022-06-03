@@ -1,5 +1,5 @@
 import { toBigNumber } from 'utils/helperFunctions';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { ethToken, wethToken } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
@@ -82,9 +82,10 @@ export const TradeWidgetCTA = ({
   return (
     <Button
       variant={buttonVariant()}
-      className="w-full mt-15"
+      className="mt-15 disabled:bg-silver dark:disabled:bg-charcoal"
       onClick={handleCTAClick}
       disabled={isSwapDisabled}
+      size={ButtonSize.Full}
     >
       {isLoading || fromInput?.isTyping ? (
         <div>please wait</div>
