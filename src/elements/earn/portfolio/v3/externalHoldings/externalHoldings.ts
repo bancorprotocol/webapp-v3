@@ -116,7 +116,7 @@ export const getExternalHoldingsUni = (
         // TODO add poolTokenAddress
         poolTokenAddress: '',
         poolTokenBalanceWei: '',
-        nonBancorTokens: [],
+        name: '',
       };
       return externalHolding;
     })
@@ -132,14 +132,15 @@ export const getExternalHoldingsNonUni = (
       // TODO Remove this filter once we support more than 2 reseves
       .filter((pos) => pos.tokens.length === 2)
       .map((pos) => {
-        const nonBancorTokens: ApyVisionNonUniPositionToken[] = [];
+        let nonBancorToken: ApyVisionNonUniPositionToken | undefined =
+          undefined;
         const tokens = pos.tokens
           .map((token) => {
             const address = utils.getAddress(token.tokenAddress);
             const isETH = address === utils.getAddress(wethToken);
             const tkn = tokensMap.get(isETH ? ethToken : address);
             if (!tkn) {
-              nonBancorTokens.push(token);
+              nonBancorToken = token;
               return undefined;
             }
             if (isETH) {
@@ -175,11 +176,12 @@ export const getExternalHoldingsNonUni = (
           ammKey: pos.poolProviderKey,
           ammName,
           tokens,
-          nonBancorTokens,
+          nonBancorToken,
           rektStatus,
           usdValue,
           poolTokenAddress: pos.address,
           poolTokenBalanceWei,
+          name: pos.name,
         };
         return newPos;
       })

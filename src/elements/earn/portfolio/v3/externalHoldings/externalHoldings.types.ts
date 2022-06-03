@@ -116,11 +116,12 @@ export interface ExternalHolding {
   ammKey: AMMProvider;
   ammName: string;
   tokens: Token[];
-  nonBancorTokens: ApyVisionNonUniPositionToken[];
+  nonBancorToken?: ApyVisionNonUniPositionToken;
   usdValue: number;
   rektStatus: string;
   poolTokenAddress: string;
   poolTokenBalanceWei: string;
+  name: string;
 }
 
 export interface ApyVisionData {

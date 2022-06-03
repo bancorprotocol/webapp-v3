@@ -12,18 +12,22 @@ import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
 import { ProtectedSettingsV3 } from 'components/protectedSettingsV3/ProtectedSettingsV3';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
+import { TokenMinimal } from 'services/observables/tokens';
+import { Image } from 'components/image/Image';
 
 interface Props {
   position: ExternalHolding;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  nonBancorToken?: TokenMinimal;
 }
 
 export const V3ExternalHoldingsModal = ({
   position,
   isOpen,
   setIsOpen,
+  nonBancorToken,
 }: Props) => {
   const [txBusy, setTxBusy] = useState(false);
   const account = useAppSelector((state) => state.user.account);
@@ -35,12 +39,12 @@ export const V3ExternalHoldingsModal = ({
         token: {
           ...mockToken,
           address: position.poolTokenAddress,
-          symbol: 'lpTKN',
+          symbol: position.name,
         },
         amount: shrinkToken(position.poolTokenBalanceWei, 18),
       },
     ],
-    [position.poolTokenAddress, position.poolTokenBalanceWei]
+    [position.name, position.poolTokenAddress, position.poolTokenBalanceWei]
   );
 
   const migrate = async () => {
@@ -58,7 +62,7 @@ export const V3ExternalHoldingsModal = ({
     try {
       const res = await migrateFn(
         position.tokens[0].address,
-        position.tokens[1]?.address ?? position.nonBancorTokens[0].tokenAddress,
+        position.tokens[1]?.address ?? position.nonBancorToken?.tokenAddress,
         position.poolTokenBalanceWei
       );
       setIsOpen(false);
@@ -84,19 +88,21 @@ export const V3ExternalHoldingsModal = ({
 
   return (
     <Modal title={'Migrate'} setIsOpen={setIsOpen} isOpen={isOpen} large>
-      <div className="px-30 pb-10">
-        <h2 className="text-[24px] leading-9">
-          Protect this {position.ammName} holding from impermanent loss
-        </h2>
+      <div className="px-20 pb-10">
+        <div className="px-20">
+          <h2 className="text-[24px] leading-9">
+            Protect this {position.ammName} holding from impermanent loss
+          </h2>
 
-        <p className="mt-16 mb-20 text-secondary">
-          {position.rektStatus === 'At risk'
-            ? 'Your position is at risk of impermanent loss'
-            : `You’ve lost ${position.rektStatus} in impermanent loss so far`}
-          , get 100% protected on Bancor.
-        </p>
+          <p className="mt-16 mb-20 text-secondary">
+            {position.rektStatus === 'At risk'
+              ? 'Your position is at risk of impermanent loss'
+              : `You’ve lost ${position.rektStatus} in impermanent loss so far`}
+            , get 100% protected on Bancor.
+          </p>
 
-        <h3 className="mb-10">Moving to Bancor</h3>
+          <h3 className="mb-10">Moving to Bancor</h3>
+        </div>
 
         <div className="bg-fog dark:bg-grey p-20 rounded space-y-20">
           {position.tokens.map((t) => (
@@ -110,17 +116,30 @@ export const V3ExternalHoldingsModal = ({
             </div>
           ))}
         </div>
-        {position.nonBancorTokens.length > 0 && (
-          <>
-            <h3 className="mb-10 mt-20">Moving to your Wallet</h3>
-            <div className="space-y-20">
-              {position.nonBancorTokens.map((t) => (
-                <div key={t.tokenAddress}>
-                  {prettifyNumber(t.tokenCurrentBalance)} {t.tokenName}
-                </div>
-              ))}
+        {!!position.nonBancorToken && (
+          <div className="px-20">
+            <h3 className="mb-10 mt-20 text-secondary">Exit risky position</h3>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Image
+                  alt={'Token Logo'}
+                  src={nonBancorToken?.logoURI}
+                  className="w-20 h-20 !rounded-full mr-10"
+                />
+                {prettifyNumber(position.nonBancorToken.tokenCurrentBalance)}{' '}
+                {position.nonBancorToken.tokenName}
+              </div>
+              <div className="text-secondary">HODL in your wallet</div>
             </div>
-          </>
+            <div className="text-secondary ml-30">
+              {prettifyNumber(
+                toBigNumber(position.nonBancorToken.tokenCurrentPrice).times(
+                  position.nonBancorToken.tokenCurrentBalance
+                ),
+                true
+              )}
+            </div>
+          </div>
         )}
 
         <Button
