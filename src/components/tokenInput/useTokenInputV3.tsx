@@ -9,11 +9,11 @@ export const calcOppositeValue = (
   usdPrice: string | null,
   decimals: number
 ) => {
-  if (isFiat) {
-    return calcTknValue(amount, usdPrice, decimals);
-  } else {
-    return calcFiatValue(amount, usdPrice);
-  }
+  if (amount === '') return '';
+
+  if (isFiat) return calcTknValue(amount, usdPrice, decimals);
+
+  return calcFiatValue(amount, usdPrice);
 };
 
 export interface useTokenInputV3Props {
