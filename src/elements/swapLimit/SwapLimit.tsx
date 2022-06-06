@@ -24,15 +24,15 @@ import {
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
-  ConversionEvents,
   sendConversionEvent,
   setCurrentConversion,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/conversion';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 import { Button, ButtonVariant } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { Events } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -223,7 +223,7 @@ export const SwapLimit = ({
         fromAmount
       );
       if (isApprovalReq) {
-        sendConversionEvent(ConversionEvents.approvePop);
+        sendConversionEvent(Events.approvePop);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
     } catch (e: any) {
@@ -352,7 +352,7 @@ export const SwapLimit = ({
       percentage,
       duration.asSeconds().toString()
     );
-    sendConversionEvent(ConversionEvents.click);
+    sendConversionEvent(Events.click);
     handleSwap(false, false, fromToken.address === ethToken);
   };
 

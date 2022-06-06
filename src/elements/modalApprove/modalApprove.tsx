@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
-import { sendConversionApprovedEvent } from 'services/api/googleTagManager';
+import { sendConversionApprovedEvent } from 'services/api/googleTagManager/conversion';
 import { ErrorCode } from 'services/web3/types';
 import { Button } from 'components/button/Button';
 

@@ -11,10 +11,7 @@ import {
 } from 'services/web3/config';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import {
-  ConversionEvents,
-  sendConversionEvent,
-} from 'services/api/googleTagManager';
+import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getFutureTime, ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
@@ -23,6 +20,7 @@ import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
 import { apiData$ } from 'services/observables/apiData';
+import { Events } from 'services/api/googleTagManager';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -145,7 +143,7 @@ export const swap = async (
   failed: (error: string) => void
 ) => {
   try {
-    sendConversionEvent(ConversionEvents.wallet_req);
+    sendConversionEvent(Events.wallet_req);
 
     const tx = await executeSwapTx(
       isV3,
@@ -157,7 +155,7 @@ export const swap = async (
       toAmount
     );
 
-    sendConversionEvent(ConversionEvents.wallet_confirm, tx.hash);
+    sendConversionEvent(Events.wallet_confirm, tx.hash);
 
     onHash(tx.hash);
     await tx.wait();

@@ -6,15 +6,15 @@ import {
 } from 'services/notifications/notifications';
 import { removeLiquidity } from 'services/web3/liquidity/liquidity';
 import {
-  ConversionEvents,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/liquidity';
 import { useWeb3React } from '@web3-react/core';
 import { PoolToken } from 'services/observables/pools';
 import { Button } from 'components/button/Button';
+import { Events } from 'services/api/googleTagManager';
 
 export const PoolTokensCellActions = (poolToken: PoolToken) => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export const PoolTokensCellActions = (poolToken: PoolToken) => {
       undefined,
       undefined
     );
-    sendLiquidityEvent(ConversionEvents.click);
+    sendLiquidityEvent(Events.click);
     let transactionId: string;
     removeLiquidity(
       poolToken,

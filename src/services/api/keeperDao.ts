@@ -12,16 +12,16 @@ import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
-  ConversionEvents,
   sendConversionEvent,
   sendConversionFailEvent,
   sendConversionSuccessEvent,
-} from './googleTagManager';
+} from './googleTagManager/conversion';
 import { utils } from 'ethers';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
 import { exchangeProxy$ } from 'services/observables/contracts';
+import { Events } from './googleTagManager';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -92,7 +92,7 @@ export const swapLimit = async (
         };
       }
     } else {
-      sendConversionEvent(ConversionEvents.wallet_req);
+      sendConversionEvent(Events.wallet_req);
       await createOrder(
         fromToken,
         toToken,

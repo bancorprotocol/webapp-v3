@@ -20,12 +20,11 @@ import BigNumber from 'bignumber.js';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import {
-  ConversionEvents,
   sendConversionEvent,
   sendConversionFailEvent,
   sendConversionSuccessEvent,
   setCurrentConversion,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/conversion';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { useInterval } from 'hooks/useInterval';
 import {
@@ -38,6 +37,7 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { Events } from 'services/api/googleTagManager';
 
 interface SwapMarketProps {
   fromToken: Token;
@@ -191,7 +191,7 @@ export const SwapMarket = ({
         fromAmount
       );
       if (isApprovalReq) {
-        sendConversionEvent(ConversionEvents.approvePop);
+        sendConversionEvent(Events.approvePop);
         setShowModal(true);
       } else await handleSwap(true);
     } catch (e: any) {
@@ -342,7 +342,7 @@ export const SwapMarket = ({
       undefined,
       conversionSettings
     );
-    sendConversionEvent(ConversionEvents.click);
+    sendConversionEvent(Events.click);
     handleSwap();
   };
 

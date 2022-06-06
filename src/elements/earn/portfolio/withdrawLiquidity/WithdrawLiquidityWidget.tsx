@@ -29,15 +29,15 @@ import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
 import {
-  ConversionEvents,
   sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/liquidity';
 import { Pool } from 'services/observables/pools';
 import { Button, ButtonVariant } from 'components/button/Button';
+import { Events } from 'services/api/googleTagManager';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -199,7 +199,7 @@ export const WithdrawLiquidityWidget = ({
       fiatToggle,
       userSelectedPercentage ? percentage : undefined
     );
-    sendLiquidityEvent(ConversionEvents.click);
+    sendLiquidityEvent(Events.click);
     if (withdrawingBNT) {
       setIsModalOpen(false);
       await wait(1000);

@@ -20,18 +20,18 @@ import {
 } from 'services/notifications/notifications';
 import { ApprovalContract } from 'services/web3/approval';
 import {
-  ConversionEvents,
   sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/liquidity';
 import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { fetchProtectedPositions } from 'services/web3/protection/positions';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
+import { Events } from 'services/api/googleTagManager';
 
 interface Props {
   pool: Pool;
@@ -167,7 +167,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       undefined,
       fiatToggle
     );
-    sendLiquidityEvent(ConversionEvents.click);
+    sendLiquidityEvent(Events.click);
     onStart();
   }, [
     amount,
