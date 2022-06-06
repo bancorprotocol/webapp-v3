@@ -153,7 +153,10 @@ export const PoolsTable = ({
     [toolTip]
   );
 
-  const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
+  const defaultSort: SortingRule<Token> = {
+    id: 'apr',
+    desc: true,
+  };
 
   return (
     <section className="lg:grid lg:grid-cols-12 lg:gap-40">

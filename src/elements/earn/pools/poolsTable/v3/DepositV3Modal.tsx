@@ -85,7 +85,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               { value: isETH ? amountWei : undefined }
             )
           : await ContractsApi.BancorNetwork.write.deposit(
-              pool.poolDltId,
+              pool.reserveToken.address,
               amountWei,
               { value: isETH ? amountWei : undefined }
             );
@@ -113,7 +113,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: amount || '0', token: pool.reserveToken }],
     deposit,
-    accessFullEarnings
+    accessFullEarnings && pool.latestProgram
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress
   );
