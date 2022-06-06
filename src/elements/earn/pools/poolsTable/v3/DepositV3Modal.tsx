@@ -77,17 +77,18 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
     try {
       setTxBusy(true);
-      const tx = pool.latestProgram
-        ? await ContractsApi.StandardRewards.write.depositAndJoin(
-            pool.latestProgram.id,
-            amountWei,
-            { value: isETH ? amountWei : undefined }
-          )
-        : await ContractsApi.BancorNetwork.write.deposit(
-            pool.reserveToken.address,
-            amountWei,
-            { value: isETH ? amountWei : undefined }
-          );
+      const tx =
+        accessFullEarnings && pool.latestProgram
+          ? await ContractsApi.StandardRewards.write.depositAndJoin(
+              pool.latestProgram.id,
+              amountWei,
+              { value: isETH ? amountWei : undefined }
+            )
+          : await ContractsApi.BancorNetwork.write.deposit(
+              pool.reserveToken.address,
+              amountWei,
+              { value: isETH ? amountWei : undefined }
+            );
       confirmDepositNotification(
         dispatch,
         tx.hash,
