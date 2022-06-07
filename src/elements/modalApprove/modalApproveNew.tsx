@@ -10,6 +10,7 @@ interface Props {
   token: Token;
   amount: string;
   isLoading: boolean;
+  onClose?: Function;
 }
 
 export const ModalApproveNew = ({
@@ -19,9 +20,18 @@ export const ModalApproveNew = ({
   token,
   amount,
   isLoading,
+  onClose,
 }: Props) => {
   return (
-    <Modal title={'Set Allowance'} setIsOpen={setIsOpen} isOpen={isOpen}>
+    <Modal
+      onClose={() => {
+        if (onClose) onClose();
+        setIsOpen(false);
+      }}
+      title={'Set Allowance'}
+      setIsOpen={setIsOpen}
+      isOpen={isOpen}
+    >
       <div className="px-30 py-10">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">

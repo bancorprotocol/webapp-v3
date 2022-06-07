@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
-import { SwapMarket } from 'elements/swapMarket/SwapMarket';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
@@ -9,6 +8,7 @@ import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNavigation } from 'hooks/useNavigation';
+import { TradeWidget } from 'elements/trade/TradeWidget';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -88,7 +88,7 @@ export const SwapWidget = ({
     <div className="2xl:space-x-20 flex justify-center mx-auto">
       <div className="flex justify-center w-full md:w-auto mx-auto space-x-30">
         <div className="w-full md:w-auto">
-          <div className="widget">
+          <div className="widget md:min-w-[485px] rounded-40">
             <SwapHeader
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
@@ -128,30 +128,10 @@ export const SwapWidget = ({
                 refreshLimit={refreshLimit}
               />
             ) : (
-              <SwapMarket
-                fromToken={fromToken}
-                setFromToken={(from: Token) =>
-                  goToPage.trade({
-                    from: from.address,
-                    to: toToken?.address,
-                    limit: false,
-                  })
-                }
-                toToken={toToken}
-                setToToken={(to: Token) =>
-                  goToPage.trade({
-                    from: fromToken?.address,
-                    to: to.address,
-                    limit: false,
-                  })
-                }
-                switchTokens={() =>
-                  goToPage.trade({
-                    from: toToken?.address,
-                    to: fromToken?.address,
-                    limit: false,
-                  })
-                }
+              <TradeWidget
+                tokens={tokens}
+                from={fromToken?.address}
+                to={toToken?.address}
               />
             )}
           </div>
