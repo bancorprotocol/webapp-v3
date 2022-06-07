@@ -11,6 +11,7 @@ export const useIsPoolStable = (
 
   const checkPoolStatus = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
+    setIsPoolStable(null);
     try {
       const res = await ContractsApi.BancorNetworkInfo.read.isPoolStable(
         poolId
