@@ -3,20 +3,20 @@ import { calcFiatValue, calcTknValue } from 'utils/helperFunctions';
 import { Token } from 'services/observables/tokens';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 
-const calcOppositeValue = (
+export const calcOppositeValue = (
   isFiat: boolean,
   amount: string,
   usdPrice: string | null,
   decimals: number
 ) => {
-  if (isFiat) {
-    return calcTknValue(amount, usdPrice, decimals);
-  } else {
-    return calcFiatValue(amount, usdPrice);
-  }
+  if (amount === '') return '';
+
+  if (isFiat) return calcTknValue(amount, usdPrice, decimals);
+
+  return calcFiatValue(amount, usdPrice);
 };
 
-interface useTokenInputV3Props {
+export interface useTokenInputV3Props {
   token: Token;
   setInputTkn: (amount: string) => void;
   setInputFiat: (amount: string) => void;
