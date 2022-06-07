@@ -111,19 +111,22 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
           <Button
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.Small}
-            disabled={isDisabled || txJoinBusy}
-            onClick={onStartJoin}
-          >
-            Join Rewards
-          </Button>
-          <Button
-            variant={ButtonVariant.Tertiary}
-            size={ButtonSize.Small}
             disabled={isDisabled}
             onClick={() => setIsOpen(true)}
           >
             Withdraw
           </Button>
+
+          {holding.pool.latestProgram?.isActive && (
+            <Button
+              variant={ButtonVariant.Tertiary}
+              size={ButtonSize.Small}
+              disabled={isDisabled || txJoinBusy}
+              onClick={onStartJoin}
+            >
+              Join Rewards
+            </Button>
+          )}
         </div>
       </div>
     </>

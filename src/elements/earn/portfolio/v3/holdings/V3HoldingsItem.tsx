@@ -82,7 +82,7 @@ export const V3HoldingsItem = ({
           </PopoverV3>
         </div>
         <div className="flex items-center space-x-30">
-          <div>
+          {toBigNumber(rewardTokenAmountUsd).gt(0) && (
             <div className="flex items-center space-x-10">
               <IconGift
                 className={`w-16 text-primary ${
@@ -91,7 +91,7 @@ export const V3HoldingsItem = ({
               />
               <div>+{prettifyNumber(rewardTokenAmountUsd, true)}</div>
             </div>
-          </div>
+          )}
 
           <IconChevronDown
             className={`w-16 transition-transform duration-300 ${
