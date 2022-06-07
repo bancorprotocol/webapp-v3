@@ -14,8 +14,10 @@ import {
 import { toBigNumber } from 'utils/helperFunctions';
 import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
-import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
+import {
+  fetchLatestProgramIdsMulticall,
+  RewardsProgramRaw,
+} from 'services/web3/v3/portfolio/standardStaking';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -144,6 +146,7 @@ export const buildPoolObject = (
 const buildPoolV3Object = async (
   apiPool?: APIPoolV3,
   reserveToken?: Token,
+  latestProgramIdMap?: Map<string, string>,
   rewardsPrograms?: RewardsProgramRaw[]
 ): Promise<PoolV3 | undefined> => {
   if (!apiPool || !reserveToken) {
@@ -153,19 +156,10 @@ const buildPoolV3Object = async (
   // ALL programs of this pool
   const programs = rewardsPrograms?.filter((p) => p.pool === apiPool.poolDltId);
 
-  // Fetch ID of the latest program
-  let latestProgramId: string;
-  try {
-    const id = await ContractsApi.StandardRewards.read.latestProgramId(
-      apiPool.poolDltId
-    );
-    latestProgramId = id.toString();
-  } catch (e) {
-    console.error('Failed to read latest program id', e);
-  }
-
   // The latest program
-  const latestProgram = programs?.find((p) => p.id === latestProgramId);
+  const latestProgram = programs?.find(
+    (p) => p.id === latestProgramIdMap?.get(apiPool.poolDltId)
+  );
 
   // Calculate APR
   let standardRewardsApr = 0;
@@ -245,12 +239,15 @@ export const poolsV3$ = combineLatest([
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
+      const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
+
       const pools = await Promise.all(
         apiPoolsV3.map(
           async (pool) =>
             await buildPoolV3Object(
               pool,
               tokensMap.get(pool.poolDltId),
+              latestProgramIds,
               standardRewardPrograms
             )
         )
