@@ -73,7 +73,7 @@ export const ImposterWallet = ({
             setSelectedWallet(wallet);
             setUser(account, dispatch);
             setSigner(
-              new providers.JsonRpcProvider(
+              new providers.StaticJsonRpcProvider(
                 getTenderlyRpcLS()
               ).getUncheckedSigner(account)
             );
