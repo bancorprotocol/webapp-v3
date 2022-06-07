@@ -137,6 +137,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
+    if (!isOpen) return;
     if (accessFullEarnings && eth) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
@@ -148,7 +149,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     } else {
       setExtraGasNeeded('0');
     }
-  }, [accessFullEarnings, eth]);
+  }, [accessFullEarnings, eth, isOpen]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
