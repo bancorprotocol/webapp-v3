@@ -20,8 +20,8 @@ interface SearchableTokenListProps {
   onClick: Function;
   isOpen: boolean;
   setIsOpen: Function;
-  excludedTokens: string[];
-  includedTokens: string[];
+  excludedTokens?: string[];
+  includedTokens?: string[];
   tokens: Token[];
   limit?: boolean;
 }
