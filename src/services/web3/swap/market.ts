@@ -345,11 +345,8 @@ const findPoolByToken = async (tkn: string) => {
 
 export const v3PoolTradingEnabled = async (tkn: string) => {
   const pools = await apiPoolsV3$.pipe(take(1)).toPromise();
-  return (
-    pools.findIndex(
-      (pool) => pool.poolTokenDltId === tkn && pool.tradingEnabled
-    ) !== -1
-  );
+  const pool = pools.find((pool) => pool.poolDltId === tkn);
+  return pool && pool.tradingEnabled;
 };
 
 export const getV3Rate = async (
