@@ -9,6 +9,10 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
   const { pool } = holding;
   const isDisabled = toBigNumber(holding.stakedTokenBalance).isZero();
 
+  if (!holding.hasLegacyStake && !pool.latestProgram?.isActive) {
+    return null;
+  }
+
   return (
     <div>
       <div className="text-secondary flex">
