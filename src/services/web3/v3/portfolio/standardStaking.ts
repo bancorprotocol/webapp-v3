@@ -147,10 +147,11 @@ export const fetchLatestProgramIdsMulticall = async (apiPools: APIPoolV3[]) => {
   );
   const res = await multicall(calls);
   if (!res) {
-    throw new Error('Multicall Error in fetchLatestProgramIdsMulticall');
+    console.error('Multicall Error in fetchLatestProgramIdsMulticall');
+    return undefined;
   }
 
-  return new Map(
+  return new Map<string, string | undefined>(
     res.map((bn, idx) => [
       apiPools[idx].poolDltId,
       bn && bn.length ? bn[0].toString() : undefined,

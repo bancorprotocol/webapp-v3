@@ -146,7 +146,7 @@ export const buildPoolObject = (
 const buildPoolV3Object = async (
   apiPool?: APIPoolV3,
   reserveToken?: Token,
-  latestProgramIdMap?: Map<string, string>,
+  latestProgramIdMap?: Map<string, string | undefined>,
   rewardsPrograms?: RewardsProgramRaw[]
 ): Promise<PoolV3 | undefined> => {
   if (!apiPool || !reserveToken) {
