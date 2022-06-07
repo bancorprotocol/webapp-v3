@@ -1,5 +1,5 @@
 import { combineLatest } from 'rxjs';
-import { fifteenSeconds$ } from 'services/observables/timers';
+import { oneMinute$ } from 'services/observables/timers';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { distinctUntilChanged, pluck, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
@@ -11,7 +11,7 @@ import {
   WelcomeData,
 } from 'services/api/bancorApi/bancorApi.types';
 
-export const apiData$ = combineLatest([fifteenSeconds$]).pipe(
+export const apiData$ = combineLatest([oneMinute$]).pipe(
   switchMapIgnoreThrow(() => BancorApi.v2.getWelcome()),
   distinctUntilChanged<WelcomeData>(isEqual),
   shareReplay(1)
@@ -29,13 +29,13 @@ export const apiPools$ = apiData$.pipe(
   shareReplay(1)
 );
 
-export const apiTokensV3$ = combineLatest([fifteenSeconds$]).pipe(
+export const apiTokensV3$ = combineLatest([oneMinute$]).pipe(
   switchMapIgnoreThrow(() => BancorApi.v3.getTokens()),
   distinctUntilChanged<APITokenV3[]>(isEqual),
   shareReplay(1)
 );
 
-export const apiBntV3$ = combineLatest([fifteenSeconds$]).pipe(
+export const apiBntV3$ = combineLatest([oneMinute$]).pipe(
   switchMapIgnoreThrow(() => BancorApi.v3.getBnt()),
   distinctUntilChanged<APIBntV3>(isEqual),
   shareReplay(1)
