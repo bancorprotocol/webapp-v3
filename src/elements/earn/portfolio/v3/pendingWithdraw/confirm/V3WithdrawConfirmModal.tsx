@@ -1,5 +1,5 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Modal } from 'components/modal/Modal';
 import { Button, ButtonSize } from 'components/button/Button';
 import { V3WithdrawConfirmOutputBreakdown } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmOutputBreakdown';
@@ -43,6 +43,19 @@ export const V3WithdrawConfirmModal = memo(
 
     const { isPoolStable, isLoading } = useIsPoolStable(token.address);
 
+    const isWithdrawDisabled = useMemo(
+      () =>
+        txBusy ||
+        missingGovTokenBalance > 0 ||
+        (!isPoolStable && withdrawRequest.pool.tradingEnabled),
+      [
+        isPoolStable,
+        missingGovTokenBalance,
+        txBusy,
+        withdrawRequest.pool.tradingEnabled,
+      ]
+    );
+
     return (
       <Modal
         title="Withdraw"
@@ -69,7 +82,7 @@ export const V3WithdrawConfirmModal = memo(
 
           <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
-          {!isPoolStable && !isLoading && (
+          {!isPoolStable && !isLoading && withdrawRequest.pool.tradingEnabled && (
             <div className="bg-warning bg-opacity-10 rounded p-20">
               <div className="font-semibold text-warning flex items-center">
                 <IconInfo className="w-14 mr-10" />
@@ -93,7 +106,7 @@ export const V3WithdrawConfirmModal = memo(
             <Button
               onClick={() => handleWithdrawClick()}
               size={ButtonSize.Full}
-              disabled={txBusy || missingGovTokenBalance > 0 || !isPoolStable}
+              disabled={isWithdrawDisabled}
             >
               Confirm Withdrawal
             </Button>
