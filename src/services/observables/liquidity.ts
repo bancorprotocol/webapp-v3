@@ -12,7 +12,7 @@ import {
   fetchTotalClaimedRewards,
 } from 'services/web3/protection/rewards';
 import { switchMapIgnoreThrow } from './customOperators';
-import { fifteenSeconds$ } from './timers';
+import { oneMinute$ } from './timers';
 import {
   setLoadingPositions,
   setLoadingRewards,
@@ -50,7 +50,7 @@ export interface SnapshotRewards {
   totalClaimed: string;
 }
 
-export const rewards$ = combineLatest([user$, fifteenSeconds$]).pipe(
+export const rewards$ = combineLatest([user$, oneMinute$]).pipe(
   switchMapIgnoreThrow(async ([user, _]) => {
     if (user) {
       const pendingRewards = await fetchPendingRewards(user);

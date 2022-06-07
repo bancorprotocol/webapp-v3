@@ -129,7 +129,7 @@ export const ButtonPercentages = ({
           } ${itemStyle}`}
           onClick={() => onClick(percentage)}
         >
-          +{percentage}%
+          {percentage}%
         </button>
       ))}
     </>

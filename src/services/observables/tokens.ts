@@ -30,7 +30,7 @@ import {
   APIToken,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
-import { fifteenSeconds$ } from 'services/observables/timers';
+import { oneMinute$ } from 'services/observables/timers';
 import { toBigNumber } from 'utils/helperFunctions';
 
 export interface TokenMinimal {
@@ -198,7 +198,7 @@ export const userBalancesInWei$ = combineLatest([
   apiTokens$,
   user$,
   userBalancesReceiver$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
@@ -222,7 +222,7 @@ export const userBalancesInWeiV3$ = combineLatest([
   apiTokensV3$,
   user$,
   userBalancesReceiver$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
     if (!user) {
