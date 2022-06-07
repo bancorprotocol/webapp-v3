@@ -16,7 +16,6 @@ export const useIsPoolStable = (
       const res = await ContractsApi.BancorNetworkInfo.read.isPoolStable(
         poolId
       );
-      console.log('res pool stable', res);
       setIsPoolStable(res);
       return res;
     } catch (e) {
