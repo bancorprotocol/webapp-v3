@@ -10,7 +10,7 @@ export const getProvider = (
   useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork) {
-    return new providers.JsonRpcProvider(getTenderlyRpcLS());
+    return new providers.StaticJsonRpcProvider(getTenderlyRpcLS());
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
     return new providers.WebSocketProvider(buildAlchemyUrl(network));
@@ -71,7 +71,7 @@ export const setSigner = (
   account?: string | null
 ) => {
   if (account)
-    writeWeb3.signer = new providers.JsonRpcProvider(
+    writeWeb3.signer = new providers.StaticJsonRpcProvider(
       getTenderlyRpcLS()
     ).getUncheckedSigner(account);
   else if (signer) writeWeb3.signer = signer;
