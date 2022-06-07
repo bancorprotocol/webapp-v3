@@ -22,7 +22,7 @@ import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
-import { apiData$ } from 'services/observables/apiData';
+import { apiData$, apiPoolsV3$ } from 'services/observables/apiData';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -70,8 +70,13 @@ export const getRateAndPriceImapct = async (
       .times(100);
     const v2PriceImpact = isNaN(v2PI.toNumber()) ? '0.0000' : v2PI.toFixed(4);
 
-    const v3Rate = await getV3Rate(fromToken, toToken, amount);
-    const v3PI = await getV3PriceImpact(fromToken, toToken, amount, v3Rate);
+    const tradingEnabled = await v3PoolTradingEnabled(fromToken.address);
+    const v3Rate = tradingEnabled
+      ? await getV3Rate(fromToken, toToken, amount)
+      : '0';
+    const v3PI = tradingEnabled
+      ? await getV3PriceImpact(fromToken, toToken, amount, v3Rate)
+      : new BigNumber(0);
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
     const isV3 =
@@ -120,7 +125,7 @@ export const getRate = async (
   }
 };
 
-const calculateMinimumReturn = (
+export const calculateMinimumReturn = (
   expectedWei: string,
   slippageTolerance: number
 ): string => {
@@ -170,7 +175,7 @@ export const swap = async (
   }
 };
 
-const executeSwapTx = async (
+export const executeSwapTx = async (
   isV3: boolean,
   user: string,
   slippageTolerance: number,
@@ -338,7 +343,17 @@ const findPoolByToken = async (tkn: string) => {
   if (pool) return pool;
 };
 
-const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
+export const v3PoolTradingEnabled = async (tkn: string) => {
+  const pools = await apiPoolsV3$.pipe(take(1)).toPromise();
+  const pool = pools.find((pool) => pool.poolDltId === tkn);
+  return pool && pool.tradingEnabled;
+};
+
+export const getV3Rate = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
   try {
     const res =
       await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
@@ -352,7 +367,25 @@ const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
   }
 };
 
-const getV3PriceImpact = async (
+export const getV3RateInverse = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
+  try {
+    const res =
+      await ContractsApi.BancorNetworkInfo.read.tradeInputByTargetAmount(
+        fromToken.address,
+        toToken.address,
+        expandToken(amount, fromToken.decimals)
+      );
+    return shrinkToken(res.toString(), fromToken.decimals);
+  } catch (error) {
+    return '0';
+  }
+};
+
+export const getV3PriceImpact = async (
   fromToken: Token,
   toToken: Token,
   amount: string,
