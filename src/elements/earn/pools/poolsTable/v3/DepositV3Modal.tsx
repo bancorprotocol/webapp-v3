@@ -178,6 +178,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
           {pool.latestProgram ? (
             <ExpandableSection
+              className="p-10 rounded bg-secondary mt-20"
               renderButtonChildren={(isExpanded) => (
                 <div className="flex flex-col w-full">
                   <div className="flex items-center justify-between">
