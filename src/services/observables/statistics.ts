@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import numbro from 'numbro';
 import { apiData$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
-import { fifteenSeconds$ } from 'services/observables/timers';
+import { oneMinute$ } from 'services/observables/timers';
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { toBigNumber } from 'utils/helperFunctions';
@@ -23,7 +23,7 @@ const averageFormat = {
   lowPrecision: false,
 };
 
-export const statisticsV3$ = combineLatest([apiData$, fifteenSeconds$]).pipe(
+export const statisticsV3$ = combineLatest([apiData$, oneMinute$]).pipe(
   switchMapIgnoreThrow(async ([apiDataV2]) => {
     const stats = await BancorApi.v3.getStatistics();
 

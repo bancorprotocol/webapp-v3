@@ -9,14 +9,14 @@ import {
 } from 'services/web3/v3/portfolio/withdraw';
 import { WithdrawalSettings } from 'store/portfolio/v3Portfolio.types';
 import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';
-import { fifteenSeconds$ } from 'services/observables/timers';
+import { oneMinute$ } from 'services/observables/timers';
 import { apiPoolsV3$ } from 'services/observables/apiData';
 import { poolsV3$ } from 'services/observables/pools';
 
 export const portfolioHoldings$ = combineLatest([
   apiPoolsV3$,
   user$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiPools, user]) => {
     if (!user) return [];
@@ -29,7 +29,7 @@ export const portfolioHoldings$ = combineLatest([
 export const portfolioStandardRewards$ = combineLatest([
   user$,
   poolsV3$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([user, poolsV3]) => {
     if (!user) return [];
@@ -39,10 +39,7 @@ export const portfolioStandardRewards$ = combineLatest([
   shareReplay(1)
 );
 
-export const portfolioWithdrawals$ = combineLatest([
-  user$,
-  fifteenSeconds$,
-]).pipe(
+export const portfolioWithdrawals$ = combineLatest([user$, oneMinute$]).pipe(
   switchMapIgnoreThrow(async ([user]) => {
     if (!user) return [];
 
