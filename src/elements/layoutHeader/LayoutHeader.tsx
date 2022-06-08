@@ -116,7 +116,7 @@ const TopMenuDropdown = ({
           {
             name: 'offset',
             options: {
-              offset: [-30, 20],
+              offset: [-25, 20],
             },
           },
         ],
