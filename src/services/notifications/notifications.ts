@@ -547,17 +547,17 @@ export const confirmJoinNotification = (
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: `Stake in bonus program is pending confirmation`,
+      msg: `Stake in rewards program is pending confirmation`,
       txHash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: `${prettifyNumber(
           amount
-        )} ${symbol} successfully staked in bonus program.`,
+        )} ${symbol} successfully staked in rewards program.`,
         errorTitle: 'Transaction Failed',
         errorMsg: `Stake ${prettifyNumber(
           amount
-        )} ${symbol} in bonus program failed. Please try again or contact support.`,
+        )} ${symbol} in rewards program failed. Please try again or contact support.`,
       },
     },
     dispatch
@@ -573,17 +573,17 @@ export const confirmLeaveNotification = (
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: `Unstake from bonus program is pending confirmation`,
+      msg: `Unstake from rewards program is pending confirmation`,
       txHash,
       updatedInfo: {
         successTitle: 'Success!',
         successMsg: `${prettifyNumber(
           amount
-        )} ${symbol} successfully unstaked from bonus program.`,
+        )} ${symbol} successfully unstaked from rewards program.`,
         errorTitle: 'Transaction Failed',
         errorMsg: `Unstake ${prettifyNumber(
           amount
-        )} ${symbol} from bonus program failed. Please try again or contact support.`,
+        )} ${symbol} from rewards program failed. Please try again or contact support.`,
       },
     },
     dispatch
@@ -598,9 +598,9 @@ export const confirmClaimNotification = (dispatch: any, txHash: string) =>
       txHash,
       updatedInfo: {
         successTitle: 'Success!',
-        successMsg: `Successfully claimed from bonus program.`,
+        successMsg: `Successfully claimed from rewards program.`,
         errorTitle: 'Transaction Failed',
-        errorMsg: `Claim from bonus program failed. Please try again or contact support.`,
+        errorMsg: `Claim from rewards program failed. Please try again or contact support.`,
       },
     },
     dispatch
