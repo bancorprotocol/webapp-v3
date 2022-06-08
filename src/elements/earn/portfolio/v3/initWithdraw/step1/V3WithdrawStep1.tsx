@@ -131,7 +131,7 @@ const V3WithdrawStep1 = ({
 
       <div className="opacity-50 space-y-10">
         <p>USD value will likely change during the cooldown period</p>
-        <span>Coverage cost {withdrawalFeeInPercent}%</span>
+        <span>Withdrawal fee {withdrawalFeeInPercent}%</span>
         {Number(withdrawalFeeInTkn) > 0 && (
           <>
             <span className="px-10">-</span>
