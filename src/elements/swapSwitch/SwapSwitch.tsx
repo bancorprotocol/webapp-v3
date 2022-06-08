@@ -6,7 +6,13 @@ import { useDispatch } from 'react-redux';
 import { setUsdToggle } from 'store/user/user';
 import { ButtonToggle } from 'components/button/Button';
 
-export const SwapSwitch = ({ disabled }: { disabled?: boolean }) => {
+export const SwapSwitch = ({
+  disabled,
+  overrideIsUSD,
+}: {
+  disabled?: boolean;
+  overrideIsUSD?: boolean;
+}) => {
   const dispatch = useDispatch();
   const isEnabled = useAppSelector<boolean>((state) => state.user.usdToggle);
   const setIsEnabled = (state: boolean) => {
@@ -22,7 +28,7 @@ export const SwapSwitch = ({ disabled }: { disabled?: boolean }) => {
         ]}
         onClass="bg-white text-black dark:bg-charcoal dark:text-white"
         disabled={disabled}
-        toggle={isEnabled}
+        toggle={overrideIsUSD === undefined ? isEnabled : overrideIsUSD}
         setToggle={() => setIsEnabled(!isEnabled)}
       />
     </div>

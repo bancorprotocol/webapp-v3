@@ -161,7 +161,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         title={'Deposit & Earn'}
         setIsOpen={onClose}
         isOpen={isOpen}
-        titleElement={<SwapSwitch disabled={forceTKN} />}
+        titleElement={
+          <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
+        }
         separator
         large
       >

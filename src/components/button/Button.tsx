@@ -90,11 +90,11 @@ export const ButtonToggle = ({
   disabled?: boolean;
 }) => {
   return (
-    <div className="w-full h-full bg-fog p-5 rounded-[14px] flex items-center dark:bg-black disabled:cursor-not-allowed">
+    <div className="w-full h-full bg-fog p-5 rounded-[14px] flex items-center dark:bg-black">
       {labels.map((label, index) => (
         <button
           key={label.key}
-          className={`rounded-10 ${
+          className={`disabled:cursor-not-allowed rounded-10 ${disabledText} ${
             (toggle && index === 0) || (!toggle && index !== 0)
               ? offClass
               : onClass
