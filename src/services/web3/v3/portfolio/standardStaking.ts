@@ -5,6 +5,7 @@ import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import dayjs from 'dayjs';
 import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -61,11 +62,12 @@ export const fetchStandardRewardsByUser = async (
     return await Promise.all(
       programs.map(async (program) => {
         const poolTokenAmountWei = poolTokenStakedWei.get(program.id) || '0';
-        const tokenAmountWei =
-          await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
-            program.pool,
-            poolTokenAmountWei
-          );
+        const tokenAmountWei = toBigNumber(poolTokenAmountWei).gt(0)
+          ? await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
+              program.pool,
+              poolTokenAmountWei
+            )
+          : '0';
 
         const pendingRewardsWei =
           await ContractsApi.StandardRewards.read.pendingRewards(user, [

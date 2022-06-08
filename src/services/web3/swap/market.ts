@@ -80,7 +80,7 @@ export const getRateAndPriceImapct = async (
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
     const isV3 =
-      (v3Rate !== '0' && forceV3Routing) || Number(v3Rate) >= Number(v2Rate);
+      forceV3Routing || v3Rate !== '0' || Number(v3Rate) >= Number(v2Rate);
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);

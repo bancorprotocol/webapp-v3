@@ -69,18 +69,20 @@ export const V3WithdrawConfirmModal = memo(
 
           <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
-          {!isPoolStable && !isLoading && (
-            <div className="bg-warning bg-opacity-10 rounded p-20">
-              <div className="font-semibold text-warning flex items-center">
-                <IconInfo className="w-14 mr-10" />
-                Withdrawal is temporarily paused!
+          {isPoolStable === false &&
+            !isLoading &&
+            withdrawRequest.pool.tradingEnabled && (
+              <div className="bg-warning bg-opacity-10 rounded p-20">
+                <div className="font-semibold text-warning flex items-center">
+                  <IconInfo className="w-14 mr-10" />
+                  Withdrawal is temporarily paused!
+                </div>
+                <div className="ml-[24px] text-secondary">
+                  Price in the pool is to volatile, lets wait a few minutes
+                  before proceeding.
+                </div>
               </div>
-              <div className="ml-[24px] text-secondary">
-                Price in the pool is to volatile, lets wait a few minutes before
-                proceeding.
-              </div>
-            </div>
-          )}
+            )}
 
           {missingGovTokenBalance > 0 ? (
             <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
@@ -93,7 +95,13 @@ export const V3WithdrawConfirmModal = memo(
             <Button
               onClick={() => handleWithdrawClick()}
               size={ButtonSize.Full}
-              disabled={txBusy || missingGovTokenBalance > 0 || !isPoolStable}
+              disabled={
+                txBusy ||
+                missingGovTokenBalance > 0 ||
+                (isPoolStable === false &&
+                  withdrawRequest.pool.tradingEnabled) ||
+                isLoading
+              }
             >
               Confirm Withdrawal
             </Button>

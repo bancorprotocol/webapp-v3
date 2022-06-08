@@ -34,6 +34,7 @@ export const useTradeWidget = ({
   tokens,
 }: UseTradeWidgetProps): UseTradeWidgetReturn => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
   const [fromInputTkn, setFromInputTkn] = useState('');
   const [fromInputFiat, setFromInputFiat] = useState('');
@@ -66,7 +67,12 @@ export const useTradeWidget = ({
             fromToken.address === wethToken
               ? { rate: val, priceImpact: '0', isV3: true }
               : val
-              ? await getRateAndPriceImapct(fromToken, toToken, val, false)
+              ? await getRateAndPriceImapct(
+                  fromToken,
+                  toToken,
+                  val,
+                  forceV3Routing
+                )
               : { rate: '', priceImpact: '', isV3: true };
 
           setPriceImpact(priceImpact);
@@ -97,7 +103,7 @@ export const useTradeWidget = ({
         }
       });
     },
-    [fromToken, isFiat, setToInputFiat, setToInputTkn, toToken]
+    [forceV3Routing, fromToken, isFiat, toToken]
   );
 
   const fromInput = useTknFiatInput({
