@@ -62,7 +62,7 @@ export const V3EarningTableMenu = memo(
       try {
         const tx = await ContractsApi.StandardRewards.write.join(
           holding.pool.latestProgram.id,
-          expandToken(holding.poolTokenBalance, 18)
+          expandToken(holding.poolTokenBalance, holding.pool.decimals)
         );
         confirmJoinNotification(
           dispatch,

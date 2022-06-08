@@ -26,15 +26,15 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleJoinClick = async () => {
-    if (!holding.pool.latestProgram || !account) {
+    if (!pool.latestProgram || !account) {
       console.error('rewardProgram is not defined');
       return;
     }
 
     try {
       const tx = await ContractsApi.StandardRewards.write.join(
-        holding.pool.latestProgram.id,
-        expandToken(holding.poolTokenBalance, 18)
+        pool.latestProgram.id,
+        expandToken(holding.poolTokenBalance, pool.decimals)
       );
       confirmJoinNotification(
         dispatch,
