@@ -61,7 +61,6 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
         token: {
           ...holding.pool.reserveToken,
           address: holding.pool.poolTokenDltId,
-          decimals: 18,
           symbol: `bn${holding.pool.reserveToken.symbol}`,
         },
       },
