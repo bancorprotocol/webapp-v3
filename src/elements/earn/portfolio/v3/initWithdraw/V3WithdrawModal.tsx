@@ -30,12 +30,17 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
     lockDurationInDays,
   } = useV3WithdrawModal({ setIsOpen });
 
+  const forceTKN = holding.pool.reserveToken.usdPrice === '0';
+  const fiat = forceTKN ? false : isFiat;
+
   return (
     <ModalFullscreenV3
       title="Begin 7 day cooldown"
       isOpen={isOpen}
       setIsOpen={onClose}
-      titleElement={<SwapSwitch />}
+      titleElement={
+        <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
+      }
     >
       {step === 1 && (
         <V3WithdrawStep1
@@ -44,7 +49,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           setInputTkn={setInputTkn}
           inputFiat={inputFiat}
           setInputFiat={setInputFiat}
-          isFiat={isFiat}
+          isFiat={fiat}
           holding={holding}
           withdrawalFeeInPercent={withdrawalFeeInPercent}
           withdrawalFeeInTkn={withdrawalFeeInTkn}
@@ -56,7 +61,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           setStep={setStep}
           amount={amount}
           holding={holding}
-          isFiat={isFiat}
+          isFiat={fiat}
         />
       )}
       {step === 3 && (
@@ -65,7 +70,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           lockDurationInDays={lockDurationInDays}
           holding={holding}
           setStep={setStep}
-          isFiat={isFiat}
+          isFiat={fiat}
         />
       )}
       {step === 4 && (
