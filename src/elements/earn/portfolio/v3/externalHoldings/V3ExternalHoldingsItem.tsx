@@ -43,7 +43,10 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
       </div>
       <div className="mt-6 flex justify-between">
         <div>Rekt Status: </div>
-        <div className="text-error">{position.rektStatus}</div>
+        <div className="text-error">
+          {position.rektStatus !== 'At risk' && '-'}
+          {position.rektStatus}
+        </div>
       </div>
       <Button
         variant={ButtonVariant.Secondary}

@@ -155,6 +155,10 @@ export const V3ExternalHoldingsModal = ({
           </div>
         )}
 
+        <div className="mt-20 text-secondary text-center">
+          Amounts might vary on execution
+        </div>
+
         <Button
           onClick={handleButtonClick}
           size={ButtonSize.Full}
