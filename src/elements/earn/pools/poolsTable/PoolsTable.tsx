@@ -92,7 +92,7 @@ export const PoolsTable = ({
             )}
           />
         ),
-        minWidth: 100,
+        minWidth: 185,
         sortDescFirst: true,
       },
       {
@@ -124,7 +124,7 @@ export const PoolsTable = ({
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr', 'total']),
         tooltip: 'Rewards enabled on this token. Read about the rewards here',
-        minWidth: 130,
+        minWidth: 100,
         sortDescFirst: true,
       },
       {
