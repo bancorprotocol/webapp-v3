@@ -81,9 +81,12 @@ const TokenInputV3 = ({
       <span ref={symbolRef} className="text-16 ml-5">
         {inputUnit}
       </span>
-      <span ref={oppositeRef} className="absolute text-12 right-[10px]">
-        {prettifyNumber(isFiat ? inputTkn : inputFiat, !isFiat)} {oppositeUnit}
-      </span>
+      {token.usdPrice !== '0' && (
+        <span ref={oppositeRef} className="absolute text-12 right-[10px]">
+          {prettifyNumber(isFiat ? inputTkn : inputFiat, !isFiat)}{' '}
+          {oppositeUnit}
+        </span>
+      )}
     </div>
   );
 };

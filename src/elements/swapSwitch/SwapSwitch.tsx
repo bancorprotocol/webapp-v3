@@ -6,7 +6,13 @@ import { useDispatch } from 'react-redux';
 import { setUsdToggle } from 'store/user/user';
 import { ButtonToggle } from 'components/button/Button';
 
-export const SwapSwitch = () => {
+export const SwapSwitch = ({
+  disabled,
+  overrideIsUSD,
+}: {
+  disabled?: boolean;
+  overrideIsUSD?: boolean;
+}) => {
   const dispatch = useDispatch();
   const isEnabled = useAppSelector<boolean>((state) => state.user.usdToggle);
   const setIsEnabled = (state: boolean) => {
@@ -21,7 +27,8 @@ export const SwapSwitch = () => {
           <IconDollar key="dollar" className="w-[20px] h-[17px] m-8" />,
         ]}
         onClass="bg-white text-black dark:bg-charcoal dark:text-white"
-        toggle={isEnabled}
+        disabled={disabled}
+        toggle={overrideIsUSD === undefined ? isEnabled : overrideIsUSD}
         setToggle={() => setIsEnabled(!isEnabled)}
       />
     </div>

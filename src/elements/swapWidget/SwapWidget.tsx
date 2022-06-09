@@ -84,12 +84,15 @@ export const SwapWidget = ({
 
   const { goToPage } = useNavigation();
 
+  const forceTKN = fromToken.usdPrice === '0';
+
   return (
     <div className="2xl:space-x-20 flex justify-center mx-auto">
       <div className="flex justify-center w-full md:w-auto mx-auto space-x-30">
         <div className="w-full md:w-auto">
           <div className="widget md:min-w-[485px] rounded-40">
             <SwapHeader
+              forceTKN={forceTKN}
               isLimit={isLimit}
               setIsLimit={(limit: boolean) =>
                 goToPage.trade({
