@@ -22,7 +22,7 @@ const generateCalendarEvent = (
 
   const event: CalendarOptions = {
     title: 'Bancor Withdrawal',
-    description: 'Bancor Withdrawal cooldown ended.',
+    description: 'Bancor withdrawal cooldown ended.',
     start,
     end,
   };
