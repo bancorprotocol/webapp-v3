@@ -137,6 +137,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
+    if (!isOpen) return;
     if (accessFullEarnings && eth) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
@@ -148,9 +149,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     } else {
       setExtraGasNeeded('0');
     }
-  }, [accessFullEarnings, eth]);
-
-  const forceTKN = pool.reserveToken.usdPrice === '0';
+  }, [accessFullEarnings, eth, isOpen]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
@@ -161,9 +160,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         title={'Deposit & Earn'}
         setIsOpen={onClose}
         isOpen={isOpen}
-        titleElement={
-          <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
-        }
+        titleElement={<SwapSwitch />}
         separator
         large
       >
@@ -176,7 +173,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             inputFiat={inputFiat}
             setInputFiat={setInputFiat}
             setInputTkn={setAmount}
-            isFiat={forceTKN ? false : isFiat}
+            isFiat={isFiat}
             isError={isInputError}
           />
 

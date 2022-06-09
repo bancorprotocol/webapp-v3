@@ -8,7 +8,7 @@ import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
@@ -92,7 +92,7 @@ export const PoolsTable = ({
             )}
           />
         ),
-        minWidth: 100,
+        minWidth: 185,
         sortDescFirst: true,
       },
       {
@@ -101,7 +101,11 @@ export const PoolsTable = ({
         accessor: 'apr',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
-            {cellData.value.total.toFixed(2)}%
+            {toBigNumber(cellData.value.total).isZero() &&
+            cellData.row.original.tradingEnabled === false
+              ? 'New'
+              : `${cellData.value.total.toFixed(2)}%`}
+
             {cellData.row.original.latestProgram?.isActive && (
               <>
                 <PopoverV3
@@ -123,8 +127,9 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr', 'total']),
-        tooltip: 'Rewards enabled on this token. Read about the rewards here',
-        minWidth: 130,
+        tooltip:
+          'Estimated APR based last 24h trading fees, auto compounding and standard rewards',
+        minWidth: 100,
         sortDescFirst: true,
       },
       {

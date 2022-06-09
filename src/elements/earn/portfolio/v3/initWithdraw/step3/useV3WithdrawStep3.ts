@@ -33,7 +33,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const approveTokens = useMemo(
     () => [
       {
-        amount: shrinkToken(poolTokenAmountWei, 18),
+        amount: shrinkToken(poolTokenAmountWei, reserveToken.decimals),
         token: {
           ...reserveToken,
           address: poolTokenDltId,

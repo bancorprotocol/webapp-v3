@@ -114,7 +114,7 @@ export const getPortfolioHoldings = createSelector(
 
       const poolTokenBalance = shrinkToken(
         holdingRaw?.poolTokenBalanceWei || '0',
-        18
+        pool.decimals
       );
       const tokenBalance = shrinkToken(
         holdingRaw?.tokenBalanceWei || '0',
@@ -135,7 +135,7 @@ export const getPortfolioHoldings = createSelector(
             toBigNumber(data.poolTokenAmountWei).plus(acc).toString(),
           '0'
         ),
-        18
+        pool.decimals
       );
 
       const combinedTokenBalance = new BigNumber(tokenBalance)
