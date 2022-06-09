@@ -60,10 +60,9 @@ export const TradeWidgetInput = ({
       <div>
         <div className="mb-10 text-secondary flex justify-between px-10">
           {label && <div>{label}</div>}
-          {input &&
-            input.token &&
-            input.token.balance &&
-            Number(input.token.balance) > 0 && (
+          {input?.token &&
+            input?.token.balance &&
+            Number(input?.token.balance) > 0 && (
               <button
                 onClick={() => {
                   if (!disabled && input)
@@ -78,11 +77,8 @@ export const TradeWidgetInput = ({
                     : 'hover:text-primary transition-colors duration-300'
                 }`}
               >
-                Balance: {prettifyNumber(input.token.balance)} (
-                {input.token.usdPrice === '0'
-                  ? 'No $ rate'
-                  : prettifyNumber(input.token.balanceUsd ?? 0, true)}
-                )
+                Balance: {prettifyNumber(input?.token.balance)} (
+                {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
               </button>
             )}
         </div>

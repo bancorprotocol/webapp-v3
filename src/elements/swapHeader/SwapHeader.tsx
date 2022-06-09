@@ -5,14 +5,9 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 interface SwapHeaderProps {
   isLimit: boolean;
   setIsLimit: Function;
-  forceTKN?: boolean;
 }
 
-export const SwapHeader = ({
-  isLimit,
-  setIsLimit,
-  forceTKN,
-}: SwapHeaderProps) => {
+export const SwapHeader = ({ isLimit, setIsLimit }: SwapHeaderProps) => {
   const marketActive = classNameGenerator({
     'swap-header-active': !isLimit,
   });
@@ -37,7 +32,7 @@ export const SwapHeader = ({
           </button>
         </div>
 
-        <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
+        <SwapSwitch />
       </div>
     </div>
   );
