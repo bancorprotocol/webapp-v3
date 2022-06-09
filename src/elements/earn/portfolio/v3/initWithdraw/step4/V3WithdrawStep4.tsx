@@ -12,6 +12,7 @@ import {
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { openNewTab } from 'utils/pureFunctions';
 import dayjs from 'dayjs';
+import { Navigate } from 'components/navigate/Navigate';
 
 const generateCalendarEvent = (
   type: 'ical' | 'google' | 'outlook',
@@ -96,15 +97,13 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays, requestId }: Props) => {
             </div>
           </PopoverV3>
 
-          <a
+          <Navigate
             className="flex items-center"
-            href={`https://app.hal.xyz/recipes/bancor-v3-track-ready-withdrawals?withdrawalId=${requestId}`}
-            target="_blank"
-            rel="noreferrer"
+            to={`https://app.hal.xyz/recipes/bancor-v3-track-ready-withdrawals?withdrawalId=${requestId}`}
           >
             <IconBell className="w-20 mr-20" />
             Set a hal.xyz reminder
-          </a>
+          </Navigate>
         </div>
       </div>
     </div>
