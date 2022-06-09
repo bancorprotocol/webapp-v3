@@ -100,9 +100,6 @@ export const WithdrawLiquidityWidget = ({
 
   const withdrawDisabled = emtpyAmount || tokenInsufficent || showVBNTWarning;
 
-  const forceTKN = token?.usdPrice === '0';
-  const isFiat = forceTKN ? false : fiatToggle;
-
   useAsyncEffect(
     async (isMounted) => {
       const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
@@ -199,7 +196,7 @@ export const WithdrawLiquidityWidget = ({
       amountUsd,
       undefined,
       undefined,
-      isFiat,
+      fiatToggle,
       userSelectedPercentage ? percentage : undefined
     );
     sendLiquidityEvent(ConversionEvents.click);
@@ -210,7 +207,7 @@ export const WithdrawLiquidityWidget = ({
     } else withdraw();
   }, [
     amount,
-    isFiat,
+    fiatToggle,
     onStart,
     pool.name,
     setIsModalOpen,
@@ -227,9 +224,7 @@ export const WithdrawLiquidityWidget = ({
         isOpen={isModalOpen}
         title="Withdraw"
         large
-        titleElement={
-          <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
-        }
+        titleElement={<SwapSwitch />}
       >
         <div className="px-20 pb-20">
           <WithdrawLiquidityInfo

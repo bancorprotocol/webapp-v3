@@ -151,8 +151,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     }
   }, [accessFullEarnings, eth, isOpen]);
 
-  const forceTKN = pool.reserveToken.usdPrice === '0';
-
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
   return (
@@ -162,9 +160,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         title={'Deposit & Earn'}
         setIsOpen={onClose}
         isOpen={isOpen}
-        titleElement={
-          <SwapSwitch disabled={forceTKN} overrideIsUSD={!forceTKN} />
-        }
+        titleElement={<SwapSwitch />}
         separator
         large
       >
@@ -177,7 +173,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             inputFiat={inputFiat}
             setInputFiat={setInputFiat}
             setInputTkn={setAmount}
-            isFiat={forceTKN ? false : isFiat}
+            isFiat={isFiat}
             isError={isInputError}
           />
 
