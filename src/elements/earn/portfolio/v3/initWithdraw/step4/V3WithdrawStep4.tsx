@@ -3,19 +3,39 @@ import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { ReactComponent as IconCalendar } from 'assets/icons/calendar.svg';
 import { memo } from 'react';
-import { CalendarOptions } from 'datebook';
+import {
+  CalendarOptions,
+  GoogleCalendar,
+  ICalendar,
+  OutlookCalendar,
+} from 'datebook';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { openNewTab } from 'utils/pureFunctions';
+import dayjs from 'dayjs';
 
-const getCalendarOptions = (): CalendarOptions => {
-  return {
+const generateCalendarEvent = (
+  type: 'ical' | 'google' | 'outlook',
+  days: number
+) => {
+  const start = dayjs().add(days, 'day').toDate();
+  const end = dayjs(start).add(15, 'minute').toDate();
+
+  const event: CalendarOptions = {
     title: 'Bancor Withdrawal',
     description: 'Bancor Withdrawal cooldown ended.',
-    start: new Date('2020-07-04T19:00:00'),
-    end: new Date('2020-07-04T23:30:00'),
+    start,
+    end,
   };
-};
 
-const generateICalendarEvent = () => {};
+  switch (type) {
+    case 'google':
+      return openNewTab(new GoogleCalendar(event).render());
+    case 'outlook':
+      return openNewTab(new OutlookCalendar(event).render());
+    default:
+      return new ICalendar(event).download();
+  }
+};
 
 interface Props {
   onClose: (state: boolean) => void;
@@ -52,9 +72,27 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays, requestId }: Props) => {
             )}
           >
             <div className="flex flex-col text-left items-start space-y-10">
-              <button>Google Web</button>
-              <button>Outlook Web</button>
-              <button>iCalendar / ICS</button>
+              <button
+                onClick={() =>
+                  generateCalendarEvent('google', lockDurationInDays)
+                }
+              >
+                Google Web
+              </button>
+              <button
+                onClick={() =>
+                  generateCalendarEvent('outlook', lockDurationInDays)
+                }
+              >
+                Outlook Web
+              </button>
+              <button
+                onClick={() =>
+                  generateCalendarEvent('ical', lockDurationInDays)
+                }
+              >
+                iCalendar / ICS
+              </button>
             </div>
           </PopoverV3>
 
