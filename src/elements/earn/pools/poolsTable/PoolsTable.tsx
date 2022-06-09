@@ -123,7 +123,7 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr', 'total']),
-        tooltip: 'Rewards enabled on this token. Read about the rewards here',
+        tooltip: 'Estimated APR based last 24h trading fees, auto compounding and standard rewards',
         minWidth: 100,
         sortDescFirst: true,
       },
