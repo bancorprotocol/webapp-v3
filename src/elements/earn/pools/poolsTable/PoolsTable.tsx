@@ -56,15 +56,27 @@ export const PoolsTable = ({
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.stakedBalance.usd, true)}</div>
+          <div>
+            {toBigNumber(row.stakedBalance.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.stakedBalance.usd, true)}
+          </div>
         </div>
         <div className="flex items-center justify-between">
           Volume 24h
-          <div>{prettifyNumber(row.volume24h.usd, true)}</div>
+          <div>
+            {toBigNumber(row.volume24h.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.volume24h.usd, true)}
+          </div>
         </div>
         <div className="flex items-center justify-between">
           Fees 24h
-          <div>{prettifyNumber(row.fees24h.usd, true)}</div>
+          <div>
+            {toBigNumber(row.fees24h.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.fees24h.usd, true)}
+          </div>
         </div>
       </div>
     ),
