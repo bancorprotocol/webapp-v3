@@ -90,7 +90,7 @@ export const V3EarningTableMenuRate = ({
           </div>
 
           <div className="text-12 flex mt-10 opacity-70">
-            <span>Join the bonus program</span>
+            <span>Join the rewards program</span>
             <IconChevronRight className="w-16 ml-5" />
           </div>
         </Button>
@@ -121,7 +121,7 @@ export const V3EarningTableMenuRate = ({
           </div>
 
           <div className="text-12 flex mt-10 text-secondary">
-            <span>Leave the bonus program</span>
+            <span>Leave the rewards program</span>
             <IconChevronRight className="w-16 ml-5" />
           </div>
         </Button>

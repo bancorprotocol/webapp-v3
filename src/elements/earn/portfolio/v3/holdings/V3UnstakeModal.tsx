@@ -74,7 +74,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
     <>
       {renderButton(() => setIsOpen(true))}
       <ModalV3
-        title={'Bonus Program'}
+        title={'Rewards'}
         setIsOpen={onClose}
         isOpen={isOpen}
         separator
