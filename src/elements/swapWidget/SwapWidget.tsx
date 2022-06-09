@@ -84,7 +84,7 @@ export const SwapWidget = ({
 
   const { goToPage } = useNavigation();
 
-  const forceTKN = fromToken.usdPrice === '0';
+  const forceTKN = fromToken?.usdPrice === '0';
 
   return (
     <div className="2xl:space-x-20 flex justify-center mx-auto">

@@ -28,7 +28,7 @@ export const SwapSwitch = ({
         ]}
         onClass="bg-white text-black dark:bg-charcoal dark:text-white"
         disabled={disabled}
-        toggle={overrideIsUSD === undefined ? isEnabled : overrideIsUSD}
+        toggle={disabled ? !!overrideIsUSD : isEnabled}
         setToggle={() => setIsEnabled(!isEnabled)}
       />
     </div>
