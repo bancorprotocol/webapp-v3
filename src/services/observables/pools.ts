@@ -161,6 +161,16 @@ const buildPoolV3Object = async (
     (p) => p.id === latestProgramIdMap?.get(apiPool.poolDltId)
   );
 
+  // FIXES STAKEDBALANCE = 0 WHEN TRADING ENABLED = FALSE
+  if (
+    apiPool.tradingEnabled === false &&
+    toBigNumber(apiPool.stakedBalance.usd).isZero()
+  ) {
+    apiPool.stakedBalance.usd = toBigNumber(apiPool.stakedBalance.tkn)
+      .times(reserveToken.usdPrice)
+      .toString();
+  }
+
   // Calculate APR
   let standardRewardsApr = 0;
   if (programs && programs.length) {
