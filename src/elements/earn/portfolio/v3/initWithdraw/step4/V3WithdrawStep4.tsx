@@ -88,6 +88,7 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays, requestId }: Props) => {
                 Outlook Web
               </button>
               <button
+                className="hidden md:block"
                 onClick={() =>
                   generateCalendarEvent('ical', lockDurationInDays)
                 }
