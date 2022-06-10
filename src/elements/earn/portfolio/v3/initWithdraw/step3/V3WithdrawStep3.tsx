@@ -10,6 +10,7 @@ interface Props {
   lockDurationInDays: number;
   holding: Holding;
   setStep: (step: number) => void;
+  setRequestId: (val: string) => void;
   isFiat: boolean;
 }
 
@@ -19,12 +20,14 @@ const V3WithdrawStep3 = ({
   holding,
   setStep,
   isFiat,
+  setRequestId,
 }: Props) => {
   const { token, handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3(
     {
       holding,
       amount,
       setStep,
+      setRequestId,
     }
   );
 
