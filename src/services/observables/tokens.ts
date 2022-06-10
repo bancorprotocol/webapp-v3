@@ -338,9 +338,6 @@ export const tokensV3$ = combineLatest([
           const tokenListToken = userPreferredTokenListTokensMap.get(
             apiToken.dltId
           );
-          if (!tokenListToken) {
-            return undefined;
-          }
           const apiPool = apiPoolsMap.get(apiToken.dltId);
           if (!apiPool) {
             return undefined;

@@ -143,12 +143,12 @@ export const buildPoolObject = (
   };
 };
 
-const buildPoolV3Object = async (
+const buildPoolV3Object = (
   apiPool?: APIPoolV3,
   reserveToken?: Token,
   latestProgramIdMap?: Map<string, string | undefined>,
   rewardsPrograms?: RewardsProgramRaw[]
-): Promise<PoolV3 | undefined> => {
+): PoolV3 | undefined => {
   if (!apiPool || !reserveToken) {
     return undefined;
   }
@@ -241,17 +241,15 @@ export const poolsV3$ = combineLatest([
 
       const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
 
-      const pools = await Promise.all(
-        apiPoolsV3.map(
-          async (pool) =>
-            await buildPoolV3Object(
-              pool,
-              tokensMap.get(pool.poolDltId),
-              latestProgramIds,
-              standardRewardPrograms
-            )
+      const pools = apiPoolsV3.map((pool) =>
+        buildPoolV3Object(
+          pool,
+          tokensMap.get(pool.poolDltId),
+          latestProgramIds,
+          standardRewardPrograms
         )
       );
+
       return pools.filter((pool) => !!pool) as PoolV3[];
     }
   ),
