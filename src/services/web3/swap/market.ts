@@ -79,8 +79,7 @@ export const getRateAndPriceImapct = async (
       : new BigNumber(0);
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
-    const isV3 =
-      forceV3Routing || v3Rate !== '0' || Number(v3Rate) >= Number(v2Rate);
+    const isV3 = forceV3Routing || Number(v3Rate) >= Number(v2Rate);
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
@@ -361,8 +360,9 @@ export const getV3Rate = async (
         toToken.address,
         expandToken(amount, fromToken.decimals)
       );
-    return shrinkToken(res.toString(), fromToken.decimals);
+    return shrinkToken(res.toString(), toToken.decimals);
   } catch (error) {
+    console.error('failed to get v3 rate', error);
     return '0';
   }
 };
