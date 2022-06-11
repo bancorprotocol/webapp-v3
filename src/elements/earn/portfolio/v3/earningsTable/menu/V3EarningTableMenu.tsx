@@ -54,8 +54,8 @@ export const V3EarningTableMenu = memo(
     const [txJoinBusy, setTxJoinBusy] = useState(false);
 
     const handleJoinClick = async () => {
-      if (!holding.pool.latestProgram || !account) {
-        console.error('rewardProgram is not defined');
+      if (!holding.pool.latestProgram?.isActive || !account) {
+        console.error('rewardProgram is not defined or inactive');
         return;
       }
 
