@@ -70,7 +70,10 @@ export const getRateAndPriceImapct = async (
       .times(100);
     const v2PriceImpact = isNaN(v2PI.toNumber()) ? '0.0000' : v2PI.toFixed(4);
 
-    const tradingEnabled = await v3PoolTradingEnabled(fromToken.address);
+    const fromTradingEnabled = await v3PoolTradingEnabled(fromToken.address);
+    const toTradingEnabled = await v3PoolTradingEnabled(toToken.address);
+    const tradingEnabled = fromTradingEnabled && toTradingEnabled;
+    console.log('tradingEnabled', tradingEnabled);
     const v3Rate = tradingEnabled
       ? await getV3Rate(fromToken, toToken, amount)
       : '0';
@@ -360,6 +363,7 @@ export const getV3Rate = async (
         toToken.address,
         expandToken(amount, fromToken.decimals)
       );
+    console.log('res', res.toString());
     return shrinkToken(res.toString(), toToken.decimals);
   } catch (error) {
     console.error('failed to get v3 rate', error);
