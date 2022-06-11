@@ -67,12 +67,7 @@ export const useTradeWidget = ({
             fromToken.address === wethToken
               ? { rate: val, priceImpact: '0', isV3: true }
               : val
-              ? await getRateAndPriceImapct(
-                  fromToken,
-                  toToken,
-                  val,
-                  forceV3Routing
-                )
+              ? await getRateAndPriceImapct(fromToken, toToken, val, false)
               : { rate: '', priceImpact: '', isV3: true };
 
           setPriceImpact(priceImpact);
@@ -103,7 +98,7 @@ export const useTradeWidget = ({
         }
       });
     },
-    [forceV3Routing, fromToken, isFiat, toToken]
+    [fromToken, isFiat, toToken]
   );
 
   const fromInput = useTknFiatInput({
