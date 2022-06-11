@@ -162,7 +162,7 @@ const buildPoolV3Object = async (
   );
 
   // FIXES STAKED BALANCE = 0 WHEN TRADING ENABLED = FALSE
-  const stakedBalance = apiPool.stakedBalance;
+  const stakedBalance = { ...apiPool.stakedBalance };
   if (
     apiPool.tradingEnabled === false &&
     toBigNumber(stakedBalance.usd).isZero()
