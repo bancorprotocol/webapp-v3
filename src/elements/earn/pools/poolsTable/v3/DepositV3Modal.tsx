@@ -78,7 +78,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     try {
       setTxBusy(true);
       const tx =
-        accessFullEarnings && pool.latestProgram
+        accessFullEarnings && pool.latestProgram?.isActive
           ? await ContractsApi.StandardRewards.write.depositAndJoin(
               pool.latestProgram.id,
               amountWei,
@@ -113,7 +113,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: amount || '0', token: pool.reserveToken }],
     deposit,
-    accessFullEarnings && pool.latestProgram
+    accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress
   );
@@ -177,9 +177,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             isError={isInputError}
           />
 
-          {pool.latestProgram ? (
+          {pool.latestProgram?.isActive ? (
             <ExpandableSection
-              className="p-10 rounded bg-secondary mt-20"
+              className="p-10 mt-20 rounded bg-secondary"
               renderButtonChildren={(isExpanded) => (
                 <div className="flex flex-col w-full">
                   <div className="flex items-center justify-between">
