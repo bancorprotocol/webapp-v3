@@ -363,7 +363,6 @@ export const getV3Rate = async (
         toToken.address,
         expandToken(amount, fromToken.decimals)
       );
-    console.log('res', res.toString());
     return shrinkToken(res.toString(), toToken.decimals);
   } catch (error) {
     console.error('failed to get v3 rate', error);
