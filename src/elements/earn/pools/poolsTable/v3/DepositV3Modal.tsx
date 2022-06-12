@@ -200,8 +200,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     <div className="flex items-center justify-between">
                       <span>
                         {accessFullEarnings
-                          ? pool.apr24h.total.toFixed(2)
-                          : pool.apr24h.tradingFees.toFixed(2)}
+                          ? pool.apr7d.total.toFixed(2)
+                          : pool.apr7d.tradingFees.toFixed(2)}
                         %
                       </span>
                       <IconChevron
@@ -225,7 +225,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                       {pool.reserveToken.symbol}
                     </span>
                   </span>
-                  <span>{pool.apr24h.tradingFees.toFixed(2)}%</span>
+                  <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
                 </div>
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
                   <span>
@@ -237,7 +237,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   </span>
                   <span>
                     {accessFullEarnings
-                      ? pool.apr24h.standardRewards.toFixed(2)
+                      ? pool.apr7d.standardRewards.toFixed(2)
                       : 0}
                     %
                   </span>
@@ -252,7 +252,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   {pool.reserveToken.symbol}
                 </span>
               </span>
-              <span>{pool.apr24h.tradingFees.toFixed(2)}%</span>
+              <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
             </div>
           )}
 

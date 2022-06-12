@@ -47,7 +47,7 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr24h.total > 0.15)
+        (lowEarnRate || p.apr7d.total > 0.15)
     );
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
