@@ -94,6 +94,8 @@ export interface APIPoolV3 {
   standardRewardsProviderJoined: PriceDictionary;
   standardRewardsProviderLeft: PriceDictionary;
   standardRewardsStaked: PriceDictionary;
+  volume7d: PriceDictionary;
+  fees7d: PriceDictionary;
 }
 
 export interface APIBntV3

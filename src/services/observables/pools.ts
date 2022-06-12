@@ -52,7 +52,13 @@ export interface Pool {
 
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr: {
+  apr24h: {
+    tradingFees: number;
+    standardRewards: number;
+    autoCompounding: number;
+    total: number;
+  };
+  apr7d: {
     tradingFees: number;
     standardRewards: number;
     autoCompounding: number;
@@ -173,43 +179,70 @@ const buildPoolV3Object = async (
   }
 
   // Calculate APR
-  let standardRewardsApr = 0;
-  if (programs && programs.length) {
-    standardRewardsApr = programs
-      // Only use APR from active programs
-      .filter((p) => p.isActive)
-      .reduce((acc, data) => {
-        // TODO - currently assuming reward token to be BNT
-        const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
-        const rewardRate24h = toBigNumber(rewardRate)
-          .times(60 * 60)
-          .times(24);
-        return acc + calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
-      }, 0);
-  }
+  const standardRewardsApr24H = standardsRewardsAPR(apiPool, programs);
+  const standardRewardsApr7d = standardsRewardsAPR(apiPool, programs);
 
-  const tradingFeesApr = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
+  const tradingFeesApr24h = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
+  const tradingFeesApr7d = calcApr(apiPool.fees7d.usd, stakedBalance.usd);
 
   // TODO - add values once available
-  const autoCompoundingApr = 0;
+  const autoCompoundingApr24H = 0;
+  const autoCompoundingApr7d = 0;
 
-  const totalApr = toBigNumber(tradingFeesApr)
-    .plus(standardRewardsApr)
+  const totalApr24H = toBigNumber(tradingFeesApr24h)
+    .plus(standardRewardsApr24H)
+    .toNumber();
+
+  const totalApr7d = toBigNumber(tradingFeesApr7d)
+    .plus(standardRewardsApr7d)
     .toNumber();
 
   return {
     ...apiPool,
     stakedBalance,
-    apr: {
-      tradingFees: tradingFeesApr,
-      standardRewards: standardRewardsApr,
-      autoCompounding: autoCompoundingApr,
-      total: totalApr,
+    apr24h: {
+      tradingFees: tradingFeesApr24h,
+      standardRewards: standardRewardsApr24H,
+      autoCompounding: autoCompoundingApr24H,
+      total: totalApr24H,
+    },
+    apr7d: {
+      tradingFees: tradingFeesApr7d,
+      standardRewards: standardRewardsApr7d,
+      autoCompounding: autoCompoundingApr7d,
+      total: totalApr7d,
     },
     reserveToken,
     programs: programs ?? [],
     latestProgram,
   };
+};
+
+export const standardsRewardsAPR = (
+  apiPool: APIPoolV3,
+  programs?: RewardsProgramRaw[],
+  seven_days?: boolean
+) => {
+  if (programs && programs.length) {
+    return (
+      programs
+        // Only use APR from active programs
+        .filter((p) => p.isActive)
+        .reduce((acc, data) => {
+          // TODO - currently assuming reward token to be BNT
+          const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+          const rewardRateTime = toBigNumber(rewardRate)
+            .times(60 * 60)
+            .times(24)
+            .times(seven_days ? 7 : 1);
+          return (
+            acc + calcApr(rewardRateTime, apiPool.standardRewardsStaked.bnt)
+          );
+        }, 0)
+    );
+  }
+
+  return 0;
 };
 
 export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(

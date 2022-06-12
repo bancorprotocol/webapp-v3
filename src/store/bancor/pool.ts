@@ -122,8 +122,8 @@ export const getTopPoolsV3 = createSelector(
   (state: RootState) => state.pool.v3Pools,
   (pools: PoolV3[]) => {
     return orderBy(
-      pools.filter((p) => p.apr.total > 0),
-      'apr.total',
+      pools.filter((p) => p.apr7d.total > 0),
+      'apr7d.total',
       'desc'
     ).slice(0, 20);
   }

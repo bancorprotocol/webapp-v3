@@ -47,7 +47,7 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr.total > 0.15)
+        (lowEarnRate || p.apr24h.total > 0.15)
     );
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
@@ -63,19 +63,19 @@ export const PoolsTable = ({
           </div>
         </div>
         <div className="flex items-center justify-between">
-          Volume 24h
+          Volume 7d
           <div>
-            {toBigNumber(row.volume24h.usd).isZero()
+            {toBigNumber(row.volume7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.volume24h.usd, true)}
+              : prettifyNumber(row.volume7d.usd, true)}
           </div>
         </div>
         <div className="flex items-center justify-between">
-          Fees 24h
+          Fees 7d
           <div>
-            {toBigNumber(row.fees24h.usd).isZero()
+            {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.fees24h.usd, true)}
+              : prettifyNumber(row.fees7d.usd, true)}
           </div>
         </div>
       </div>
@@ -110,7 +110,7 @@ export const PoolsTable = ({
       {
         id: 'apr',
         Header: 'Earn',
-        accessor: 'apr',
+        accessor: 'apr7d',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
             {toBigNumber(cellData.value.total).isZero() &&
@@ -138,9 +138,9 @@ export const PoolsTable = ({
           </div>
         ),
         sortType: (a, b) =>
-          sortNumbersByKey(a.original, b.original, ['apr', 'total']),
+          sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
         tooltip:
-          'Estimated APR based last 24h trading fees, auto compounding and standard rewards',
+          'Estimated APR based last 7d trading fees, auto compounding and standard rewards',
         minWidth: 100,
         sortDescFirst: true,
       },

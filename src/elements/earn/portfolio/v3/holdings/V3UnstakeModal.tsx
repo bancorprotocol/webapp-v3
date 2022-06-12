@@ -98,7 +98,9 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                   {holding.pool.reserveToken.symbol}
                 </div>
                 <div>Program ID: {program.id}</div>
-                <div>APR: {holding.pool.apr.standardRewards.toFixed(2)}%</div>
+                <div>
+                  APR: {holding.pool.apr24h.standardRewards.toFixed(2)}%
+                </div>
               </div>
               <div>
                 <Button

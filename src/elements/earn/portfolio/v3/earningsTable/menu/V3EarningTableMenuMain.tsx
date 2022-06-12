@@ -50,7 +50,7 @@ export const V3EarningTableMenuMain = memo(
               size={ButtonSize.Full}
               onClick={handleDepositClick}
             >
-              Deposit {holding.pool.apr.total.toFixed(2)}%
+              Deposit {holding.pool.apr24h.total.toFixed(2)}%
             </Button>
             <Button
               variant={ButtonVariant.Secondary}
