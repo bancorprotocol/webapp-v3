@@ -36,7 +36,16 @@ export const getAvailableToStakeTokens = createSelector(
       })
       .filter((p) => !!p && !!p.token && !!Number(p.token.balance));
 
-    return orderBy(poolsWithApr, 'tknApr', 'desc');
+    return orderBy(
+      poolsWithApr,
+      (x) =>
+        x.token.balanceUsd
+          ? x.token.balanceUsd
+          : x.token.balance
+          ? x.token.balance
+          : x.token.symbol,
+      'desc'
+    );
   }
 );
 
