@@ -9,6 +9,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'store';
 import { Image } from 'components/image/Image';
+import { getV2AndV3Tokens } from 'store/bancor/bancor';
 
 interface TokenInputFieldProps {
   label?: string;
@@ -31,6 +32,8 @@ interface TokenInputFieldProps {
   excludedTokens?: string[];
   includedTokens?: string[];
   isLoading?: boolean;
+  v3?: boolean;
+  v3AndV2?: boolean;
   balanceLabel?: string;
 }
 
@@ -55,6 +58,8 @@ export const TokenInputField = ({
   excludedTokens = [],
   includedTokens = [],
   isLoading,
+  v3,
+  v3AndV2,
   balanceLabel = 'Balance',
 }: TokenInputFieldProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +74,13 @@ export const TokenInputField = ({
   const loadingBalances = useAppSelector<boolean>(
     (state) => state.user.loadingBalances
   );
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector<Token[]>((state) =>
+    v3AndV2
+      ? getV2AndV3Tokens(state)
+      : v3
+      ? state.bancor.tokensV3
+      : state.bancor.tokensV2
+  );
 
   const onInputChange = (text: string, token?: Token) => {
     text = sanitizeNumberInput(text);

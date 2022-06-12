@@ -24,7 +24,7 @@ export const ModalCreatePool = () => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
