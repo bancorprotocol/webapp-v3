@@ -9,6 +9,7 @@ import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNavigation } from 'hooks/useNavigation';
 import { TradeWidget } from 'elements/trade/TradeWidget';
+import { getV2AndV3Tokens } from 'store/bancor/bancor';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -27,7 +28,7 @@ export const SwapWidget = ({
   limit,
   refreshLimit,
 }: SwapWidgetProps) => {
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector<Token[]>(getV2AndV3Tokens);
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
