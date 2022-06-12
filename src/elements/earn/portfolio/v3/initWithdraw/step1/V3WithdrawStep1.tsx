@@ -22,6 +22,7 @@ interface Props {
   withdrawalFeeInPercent: string;
   withdrawalFeeInTkn: string;
   amount: AmountTknFiat;
+  setRequestId: (val: string) => void;
 }
 
 const V3WithdrawStep1 = ({
@@ -35,6 +36,7 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
   amount,
+  setRequestId,
 }: Props) => {
   const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
     useV3WithdrawStep1({
@@ -62,6 +64,7 @@ const V3WithdrawStep1 = ({
     holding,
     amount,
     setStep,
+    setRequestId,
   });
 
   return (

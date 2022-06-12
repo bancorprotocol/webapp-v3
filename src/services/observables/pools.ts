@@ -161,6 +161,17 @@ const buildPoolV3Object = async (
     (p) => p.id === latestProgramIdMap?.get(apiPool.poolDltId)
   );
 
+  // FIXES STAKED BALANCE = 0 WHEN TRADING ENABLED = FALSE
+  const stakedBalance = { ...apiPool.stakedBalance };
+  if (
+    apiPool.tradingEnabled === false &&
+    toBigNumber(stakedBalance.usd).isZero()
+  ) {
+    stakedBalance.usd = toBigNumber(apiPool.stakedBalance.tkn)
+      .times(reserveToken.usdPrice)
+      .toString();
+  }
+
   // Calculate APR
   let standardRewardsApr = 0;
   if (programs && programs.length) {
@@ -177,10 +188,7 @@ const buildPoolV3Object = async (
       }, 0);
   }
 
-  const tradingFeesApr = calcApr(
-    apiPool.fees24h.usd,
-    apiPool.stakedBalance.usd
-  );
+  const tradingFeesApr = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
 
   // TODO - add values once available
   const autoCompoundingApr = 0;
@@ -191,6 +199,7 @@ const buildPoolV3Object = async (
 
   return {
     ...apiPool,
+    stakedBalance,
     apr: {
       tradingFees: tradingFeesApr,
       standardRewards: standardRewardsApr,

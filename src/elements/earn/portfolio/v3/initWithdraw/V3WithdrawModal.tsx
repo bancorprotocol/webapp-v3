@@ -28,6 +28,8 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
     withdrawalFeeInTkn,
     withdrawalFeeInPercent,
     lockDurationInDays,
+    requestId,
+    setRequestId,
   } = useV3WithdrawModal({ setIsOpen });
 
   return (
@@ -49,6 +51,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           withdrawalFeeInPercent={withdrawalFeeInPercent}
           withdrawalFeeInTkn={withdrawalFeeInTkn}
           amount={amount}
+          setRequestId={setRequestId}
         />
       )}
       {step === 2 && (
@@ -65,6 +68,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           lockDurationInDays={lockDurationInDays}
           holding={holding}
           setStep={setStep}
+          setRequestId={setRequestId}
           isFiat={isFiat}
         />
       )}
@@ -72,6 +76,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
         <V3WithdrawStep4
           onClose={onClose}
           lockDurationInDays={lockDurationInDays}
+          requestId={requestId}
         />
       )}
     </ModalFullscreenV3>

@@ -101,7 +101,7 @@ export const PopoverV3 = ({
       <div
         ref={setTargetElement}
         onMouseEnter={() => handleOnMouseEnter()}
-        onMouseLeave={() => handleOnMouseLeave(600)}
+        onMouseLeave={() => handleOnMouseLeave(300)}
       >
         {buttonElement({
           isOpen: useLocalState ? localOpen : !!isOpen,

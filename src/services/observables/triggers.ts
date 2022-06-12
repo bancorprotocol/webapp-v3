@@ -2,14 +2,16 @@ import {
   allTokensNew$,
   keeperDaoTokens$,
   tokensV2$,
+  tokensV3$,
 } from 'services/observables/tokens';
 import {
   setAllTokenListTokens,
-  setAllTokens,
+  setAllTokensV2,
   setKeeperDaoTokens,
   setStatisticsV3,
-  setTokens,
   setTokenLists,
+  setTokensV2,
+  setTokensV3,
 } from 'store/bancor/bancor';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
@@ -60,11 +62,15 @@ export const subscribeToObservables = (dispatch: any) => {
   });
 
   allTokensNew$.subscribe((tokens) => {
-    dispatch(setAllTokens(tokens));
+    dispatch(setAllTokensV2(tokens));
   });
 
-  tokensV2$.subscribe((tokens) => {
-    dispatch(setTokens(tokens));
+  tokensV2$.subscribe((tokensV2) => {
+    dispatch(setTokensV2(tokensV2));
+  });
+
+  tokensV3$.subscribe((tokensV3) => {
+    dispatch(setTokensV3(tokensV3));
   });
 
   const userListIds = getTokenListLS();
