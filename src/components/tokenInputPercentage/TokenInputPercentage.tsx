@@ -44,7 +44,6 @@ export const TokenInputPercentage = ({
       if (debounce) debounce(amount);
     }
   }, [amount, token, fieldBalance, debounce]);
-
   return (
     <>
       {token && (

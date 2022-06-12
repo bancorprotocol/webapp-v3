@@ -14,6 +14,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { SortingRule } from 'react-table';
 import dayjs from 'dayjs';
 import { Image } from 'components/image/Image';
+import { getV2AndV3Tokens } from 'store/bancor/bancor';
 
 export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
   const account = useAppSelector((state) => state.user.account);
@@ -21,7 +22,7 @@ export const useSwapLimitTable = (): [JSX.Element | null, Function] => {
   const [weth, setWeth] = useState<Token>();
   const [search, setSearch] = useState('');
   const dispatch = useDispatch();
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector<Token[]>(getV2AndV3Tokens);
 
   const refreshOrders = useCallback(async () => {
     if (account) setOrders(await getOrders(account));

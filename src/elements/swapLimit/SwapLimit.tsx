@@ -374,6 +374,7 @@ export const SwapLimit = ({
             setFromAmount(val);
             handleFieldChanged(Field.from, val, toAmount, rate);
           }}
+          v3AndV2
           border
           selectable
           excludedTokens={
@@ -411,6 +412,7 @@ export const SwapLimit = ({
               setToAmount(val);
               handleFieldChanged(Field.to, fromAmount, val, rate);
             }}
+            v3AndV2
             selectable
             startEmpty
             excludedTokens={

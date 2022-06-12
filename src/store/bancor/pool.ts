@@ -47,7 +47,7 @@ export interface TopPool {
 
 export const getPools = createSelector(
   (state: RootState) => state.pool.v2Pools,
-  (state: RootState) => state.bancor.tokens,
+  (state: RootState) => state.bancor.tokensV2,
   (pools: Pool[], tokens: Token[]) => {
     const pools_token_list = pools.filter((pool) => {
       return (
