@@ -61,11 +61,11 @@ export const ProtectedPositionTableCellActions = (
       const isBnt = positions[0].reserveToken.address === bntToken;
       if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) setIsOpenBnt(true);
       else {
-        setSelectedPositions(position.subRows);
+        setSelectedPositions(positions);
         setIsOpenTkn(true);
       }
     },
-    [totalBNT.tknAmount, protocolBnBNTAmount, position.subRows]
+    [totalBNT.tknAmount, protocolBnBNTAmount]
   );
 
   const singleContent = useMemo(() => {

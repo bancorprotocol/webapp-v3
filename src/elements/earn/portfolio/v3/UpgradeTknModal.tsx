@@ -66,6 +66,7 @@ export const UpgradeTknModal = ({
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
     );
+    setIsOpen(false);
   };
 
   if (!position || !token) return null;
