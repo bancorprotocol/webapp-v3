@@ -79,15 +79,17 @@ export const UpgradeTknModal = ({
           src={token?.logoURI}
           className="!rounded-full h-50 w-50"
         />
-        <div>Upgrade {token.symbol}</div>
-        <div>Move all {token.symbol} to Bancor V3</div>
+        <div className="text-20">Upgrade {token.symbol}</div>
+        <div className="text-black-low dark:text-white-low">
+          Move all {token.symbol} to Bancor V3
+        </div>
         <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all {token.symbol}</div>
-            {`${prettifyNumber(tknAmount)} ${token?.symbol} ${prettifyNumber(
+            {`${prettifyNumber(tknAmount)} ${token?.symbol} (${prettifyNumber(
               usdAmount,
               true
-            )}`}
+            )})`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
@@ -105,7 +107,7 @@ export const UpgradeTknModal = ({
         <Button onClick={() => migrate()} size={ButtonSize.Full}>
           Upgrade All
         </Button>
-        <div className="font-semibold text-12 text-black-low mt-30">
+        <div className="font-semibold text-12 text-black-low dark:text-white-low">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
