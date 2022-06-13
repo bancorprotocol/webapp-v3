@@ -52,7 +52,7 @@ const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
 export const listOfLists = [
   {
-    uri: 'https://storage.googleapis.com/token-list/tokens.json',
+    uri: 'https://bancor-tokens-list.s3.amazonaws.com/ethereum/tokens.json',
     name: 'Bancor',
   },
   {
