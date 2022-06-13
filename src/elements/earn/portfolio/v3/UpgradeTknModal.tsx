@@ -34,6 +34,13 @@ export const UpgradeTknModal = ({
   const position = positions.length !== 0 ? positions[0] : undefined;
   const token = position?.reserveToken;
 
+  const tknAmount = positions
+    .map((x) => Number(x.protectedAmount.tknAmount))
+    .reduce((sum, current) => sum + current, 0);
+  const usdAmount = positions
+    .map((x) => Number(x.protectedAmount.usdAmount))
+    .reduce((sum, current) => sum + current, 0);
+
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
@@ -76,9 +83,10 @@ export const UpgradeTknModal = ({
         <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all {token.symbol}</div>
-            {`${prettifyNumber(position.claimableAmount.tknAmount)} ${
-              token?.symbol
-            } ${prettifyNumber(position.claimableAmount.usdAmount, true)}`}
+            {`${prettifyNumber(tknAmount)} ${token?.symbol} ${prettifyNumber(
+              usdAmount,
+              true
+            )}`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
