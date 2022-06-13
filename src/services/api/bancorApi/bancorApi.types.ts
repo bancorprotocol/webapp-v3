@@ -45,6 +45,7 @@ export interface APIPool {
   liquidity: USDPrice;
   volume_24h: USDPrice;
   fees_24h: USDPrice;
+  fees_7d: USDPrice;
   fee: string;
   version: number;
   supply: string;

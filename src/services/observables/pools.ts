@@ -45,7 +45,8 @@ export interface Pool {
   version: number;
   supply: number;
   decimals: number;
-  apr: number;
+  apr_24h: number;
+  apr_7d: number;
   reward?: APIReward;
   isProtected: boolean;
 }
@@ -92,14 +93,9 @@ export const buildPoolObject = (
 ): Pool | undefined => {
   const liquidity = Number(apiPool.liquidity.usd ?? 0);
   const fees_24h = Number(apiPool.fees_24h.usd ?? 0);
-  let apr = 0;
-  if (liquidity && fees_24h) {
-    apr = new BigNumber(fees_24h)
-      .times(52.1429)
-      .div(liquidity)
-      .times(100)
-      .toNumber();
-  }
+  const fees_7d = Number(apiPool.fees_7d.usd ?? 0);
+  const apr_7d = liquidity && fees_24h ? calcApr(fees_7d, liquidity) : 0;
+  const apr_24h = liquidity && fees_24h ? calcApr(fees_24h, liquidity) : 0;
 
   const reserveTkn = apiPool.reserves.find((r) => r.address === tkn.address);
   if (!reserveTkn) {
@@ -143,10 +139,19 @@ export const buildPoolObject = (
     version: apiPool.version,
     supply: Number(apiPool.supply),
     decimals: apiPool.decimals,
-    apr,
+    apr_7d,
+    apr_24h,
     reward: apiPool.reward,
     isProtected,
   };
+};
+
+export const calculateAPR = (fees: string, liquidity: string) => {
+  return new BigNumber(fees)
+    .times(52.1429)
+    .div(liquidity)
+    .times(100)
+    .toNumber();
 };
 
 const buildPoolV3Object = async (
@@ -183,7 +188,7 @@ const buildPoolV3Object = async (
   const standardRewardsApr7d = standardsRewardsAPR(apiPool, programs);
 
   const tradingFeesApr24h = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
-  const tradingFeesApr7d = calcApr(apiPool.fees7d.usd, stakedBalance.usd);
+  const tradingFeesApr7d = calcApr(apiPool.fees7d.usd, stakedBalance.usd, true);
 
   // TODO - add values once available
   const autoCompoundingApr24H = 0;
@@ -191,9 +196,11 @@ const buildPoolV3Object = async (
 
   const totalApr24H = toBigNumber(tradingFeesApr24h)
     .plus(standardRewardsApr24H)
+    .plus(autoCompoundingApr24H)
     .toNumber();
 
   const totalApr7d = toBigNumber(tradingFeesApr7d)
+    .plus(autoCompoundingApr7d)
     .plus(standardRewardsApr7d)
     .toNumber();
 

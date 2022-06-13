@@ -91,10 +91,10 @@ export const getTopPools = createSelector(getPools, (pools: Pool[]) => {
       return {
         tknSymbol: p.reserves[0].symbol,
         tknLogoURI: p.reserves[0].logoURI,
-        tknApr: p.apr + (p.reserves[0].rewardApr || 0),
+        tknApr: p.apr_7d + (p.reserves[0].rewardApr || 0),
         bntSymbol: p.reserves[1].symbol,
         bntLogoURI: p.reserves[1].logoURI,
-        bntApr: p.apr + (p.reserves[1].rewardApr || 0),
+        bntApr: p.apr_7d + (p.reserves[1].rewardApr || 0),
         poolName: p.name,
       };
     });
