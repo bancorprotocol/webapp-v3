@@ -1,7 +1,7 @@
 import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
 
-const selected_lists = 'userTokenLists';
+const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
 const darkMode = 'userDarkMode';
 const slippageTolerance = 'slippageTolerance';
@@ -10,6 +10,10 @@ const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
+
+const deprecated_cleanup = ['userTokenLists'];
+
+deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
