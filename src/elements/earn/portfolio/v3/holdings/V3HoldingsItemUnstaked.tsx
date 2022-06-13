@@ -26,8 +26,8 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleJoinClick = async () => {
-    if (!pool.latestProgram || !account) {
-      console.error('rewardProgram is not defined');
+    if (!pool.latestProgram?.isActive || !account) {
+      console.error('rewardProgram is not defined or active');
       return;
     }
 
@@ -84,7 +84,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
       />
       <div>
         <div className="text-secondary">Available Balance</div>
-        <div className="flex items-center space-x-10 pt-6">
+        <div className="flex items-center pt-6 space-x-10">
           <PopoverV3
             buttonElement={() => (
               <div

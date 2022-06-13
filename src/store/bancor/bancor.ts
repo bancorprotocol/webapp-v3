@@ -2,7 +2,7 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
-import { orderBy } from 'lodash';
+import { orderBy, uniqBy } from 'lodash';
 import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
 
@@ -11,7 +11,8 @@ import { NotificationType } from 'store/notification/notification';
 
 interface BancorState {
   tokenLists: TokenList[];
-  tokens: Token[];
+  tokensV2: Token[];
+  tokensV3: Token[];
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
@@ -21,7 +22,8 @@ interface BancorState {
 
 export const initialState: BancorState = {
   tokenLists: [],
-  tokens: [],
+  tokensV2: [],
+  tokensV3: [],
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
@@ -33,10 +35,13 @@ const bancorSlice = createSlice({
   name: 'bancor',
   initialState,
   reducers: {
-    setTokens: (state, action) => {
-      state.tokens = action.payload;
+    setTokensV2: (state, action) => {
+      state.tokensV2 = action.payload;
     },
-    setAllTokens: (state, action) => {
+    setTokensV3: (state, action) => {
+      state.tokensV3 = action.payload;
+    },
+    setAllTokensV2: (state, action) => {
       state.allTokens = action.payload;
       state.isLoadingTokens = false;
     },
@@ -56,9 +61,10 @@ const bancorSlice = createSlice({
 });
 
 export const {
-  setTokens,
+  setTokensV2,
+  setTokensV3,
   setTokenLists,
-  setAllTokens,
+  setAllTokensV2,
   setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
@@ -74,12 +80,20 @@ export const getTokenById = createSelector(
 );
 
 export const getTopMovers = createSelector(
-  (state: RootState) => state.bancor.tokens,
-  (tokens: Token[]) => {
-    const filtered = tokens.filter(
+  (state: RootState) => state.bancor.tokensV2,
+  (tokensV2: Token[]) => {
+    const filtered = tokensV2.filter(
       (t) => t.isProtected && Number(t.liquidity ?? 0) > 100000
     );
     return orderBy(filtered, 'price_change_24', 'desc').slice(0, 20);
+  }
+);
+
+export const getV2AndV3Tokens = createSelector(
+  (state: RootState) => state.bancor.tokensV2,
+  (state: RootState) => state.bancor.tokensV3,
+  (tokensV2, tokensV3): Token[] => {
+    return uniqBy([...tokensV3, ...tokensV2], (x) => x.address);
   }
 );
 
