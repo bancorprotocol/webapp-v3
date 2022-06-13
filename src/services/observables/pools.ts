@@ -95,7 +95,7 @@ export const buildPoolObject = (
   let apr = 0;
   if (liquidity && fees_24h) {
     apr = new BigNumber(fees_24h)
-      .times(365)
+      .times(52.1429)
       .div(liquidity)
       .times(100)
       .toNumber();
