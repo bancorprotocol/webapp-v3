@@ -107,7 +107,7 @@ export const UpgradeTknModal = ({
         <Button onClick={() => migrate()} size={ButtonSize.Full}>
           Upgrade All
         </Button>
-        <div className="font-semibold text-12 text-black-low dark:text-white-low">
+        <div className="text-secondary text-[13px]">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
