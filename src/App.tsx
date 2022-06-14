@@ -41,6 +41,13 @@ export const App = () => {
   );
 
   useEffect(() => {
+    // reload the app every 2 hours
+    setTimeout(() => {
+      window.location.reload();
+    }, 2 * 60 * 60 * 1000);
+  }, []);
+
+  useEffect(() => {
     const usd = getUsdToggleLS();
     if (usd) dispatch(setUsdToggle(usd));
 
