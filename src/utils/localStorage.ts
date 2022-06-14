@@ -35,7 +35,7 @@ export const setAutoLoginLS = (flag: boolean) => {
 
 export const getDarkModeLS = (): DarkMode => {
   const darkLS = localStorage.getItem(darkMode);
-  if (darkLS) return Number(darkLS);
+  if (darkLS !== null) return Number(darkLS);
 
   return DarkMode.System;
 };

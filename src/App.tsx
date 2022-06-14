@@ -61,7 +61,7 @@ export const App = () => {
     keepWSOpen();
 
     const dark = getDarkModeLS();
-    if (dark) dispatch(setDarkMode(dark));
+    dispatch(setDarkMode(dark));
   }, [dispatch]);
 
   useEffect(() => {
