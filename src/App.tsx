@@ -5,6 +5,7 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { useDispatch } from 'react-redux';
 import {
+  DarkMode,
   setDarkMode,
   setSlippageTolerance,
   setUsdToggle,
@@ -13,7 +14,7 @@ import {
   Notification,
   setNotifications,
 } from 'store/notification/notification';
-import { useAppSelector } from 'store';
+import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
   getDarkModeLS,
@@ -31,6 +32,15 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 
+// eslint-disable-next-line unused-imports/no-unused-vars
+const handleModeChange = (event: MediaQueryListEvent) => {
+  const darkMode = store.getState().user.darkMode;
+
+  if (darkMode === DarkMode.System) {
+    store.dispatch(setDarkMode(darkMode));
+  }
+};
+
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
@@ -39,6 +49,19 @@ export const App = () => {
   const notifications = useAppSelector<Notification[]>(
     (state) => state.notification.notifications
   );
+
+  // handle dark mode system change
+  useEffect(() => {
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', handleModeChange);
+
+    return () => {
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .removeEventListener('change', handleModeChange);
+    };
+  }, []);
 
   useEffect(() => {
     // reload the app every 2 hours
