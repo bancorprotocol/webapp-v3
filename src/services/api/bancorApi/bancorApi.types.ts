@@ -45,6 +45,7 @@ export interface APIPool {
   liquidity: USDPrice;
   volume_24h: USDPrice;
   fees_24h: USDPrice;
+  fees_7d: USDPrice;
   fee: string;
   version: number;
   supply: string;
@@ -94,6 +95,8 @@ export interface APIPoolV3 {
   standardRewardsProviderJoined: PriceDictionary;
   standardRewardsProviderLeft: PriceDictionary;
   standardRewardsStaked: PriceDictionary;
+  volume7d: PriceDictionary;
+  fees7d: PriceDictionary;
 }
 
 export interface APIBntV3

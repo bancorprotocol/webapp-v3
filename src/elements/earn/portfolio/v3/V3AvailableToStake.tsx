@@ -28,7 +28,9 @@ const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
           <div>
             <div className="text-secondary mb-5">Earn</div>
             <div className="flex">
-              <span className="text-[22px]">{pool.apr.total.toFixed(2)}%</span>
+              <span className="text-[22px]">
+                {pool.apr7d.total.toFixed(2)}%
+              </span>
               <IconArrow className="w-10 rotate-[90deg] ml-10" />
             </div>
           </div>
