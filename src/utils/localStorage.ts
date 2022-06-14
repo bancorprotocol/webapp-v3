@@ -98,7 +98,7 @@ export const setV3ApiUrlLS = (url?: string) => {
 };
 
 export const getV2ApiUrlLS = (): string => {
-  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network/';
+  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
 };
 
 export const setV2ApiUrlLS = (url?: string) => {
