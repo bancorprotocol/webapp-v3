@@ -86,10 +86,7 @@ export const setTenderlyRpcLS = (url?: string) => {
 };
 
 export const getV3ApiUrlLS = (): string => {
-  return (
-    localStorage.getItem(v3ApiUrl) ||
-    'https://v3-staging-ptdczarhfq-nw.a.run.app/v3/'
-  );
+  return localStorage.getItem(v3ApiUrl) || 'https://api-v3.bancor.network';
 };
 
 export const setV3ApiUrlLS = (url?: string) => {
@@ -101,10 +98,7 @@ export const setV3ApiUrlLS = (url?: string) => {
 };
 
 export const getV2ApiUrlLS = (): string => {
-  return (
-    localStorage.getItem(v2ApiUrl) ||
-    'https://v3-staging-ptdczarhfq-nw.a.run.app/'
-  );
+  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
 };
 
 export const setV2ApiUrlLS = (url?: string) => {
