@@ -52,8 +52,8 @@ const buildIpfsUri = (ipfsHash: string) => `https://ipfs.io/ipfs/${ipfsHash}`;
 
 export const listOfLists = [
   {
-    uri: 'https://tokens.1inch.eth.link',
-    name: '1inch',
+    uri: 'https://bancor-tokens-list.s3.amazonaws.com/ethereum/tokens.json',
+    name: 'Bancor',
   },
   {
     uri: 'https://tokens.coingecko.com/ethereum/all.json',
@@ -70,10 +70,6 @@ export const listOfLists = [
   {
     uri: 'https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json',
     name: 'Compound',
-  },
-  {
-    uri: 'https://yearn.science/static/tokenlist.json',
-    name: 'Yearn',
   },
   {
     uri: 'https://uniswap.mycryptoapi.com',
