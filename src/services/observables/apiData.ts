@@ -70,6 +70,8 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         ...apiBnt.standardRewardsStaked,
         tkn: apiBnt.standardRewardsStaked.bnt,
       },
+      volume7d: apiBnt.volume7d,
+      fees7d: apiBnt.fees7d,
       standardRewardsProviderJoined: {
         bnt: '0',
         usd: '0',

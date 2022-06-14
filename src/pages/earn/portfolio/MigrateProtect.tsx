@@ -226,7 +226,7 @@ const Protect = () => {
                         imgUrl={stake.token.logoURI}
                       />
                       <div className="flex items-center gap-10 text-primary">
-                        Earn {prettifyNumber(stake.pool.apr.total)}%
+                        Earn {prettifyNumber(stake.pool.apr7d.total)}%
                       </div>
                     </button>
                   );
@@ -238,7 +238,7 @@ const Protect = () => {
               {topStake ? (
                 <div className="text-4xl mb-20 text-silver">
                   Would you like to earn{' '}
-                  {prettifyNumber(topStake.pool.apr.total)}% on your{' '}
+                  {prettifyNumber(topStake.pool.apr7d.total)}% on your{' '}
                   {prettifyNumber(topStake.token.balance!)}{' '}
                   {topStake.token.symbol}?
                 </div>

@@ -32,10 +32,10 @@ export const V3WithdrawCancelModal = memo(
 
     const compoundingApr = useMemo(
       () =>
-        toBigNumber(pool.apr.autoCompounding)
-          .plus(pool.apr.tradingFees)
+        toBigNumber(pool.apr7d.autoCompounding)
+          .plus(pool.apr7d.tradingFees)
           .toFixed(2),
-      [pool.apr.autoCompounding, pool.apr.tradingFees]
+      [pool.apr7d.autoCompounding, pool.apr7d.tradingFees]
     );
 
     return (
