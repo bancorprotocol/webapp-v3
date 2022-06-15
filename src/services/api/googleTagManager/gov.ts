@@ -1,3 +1,5 @@
+import { sendGTM } from '.';
+
 enum GovEvent {
   StartClick,
   Click,
@@ -7,6 +9,12 @@ enum GovEvent {
   WalletConfirm,
   Success,
   Failed,
+}
+
+interface GovProperties {
+  stake_input_type: 'Fiat' | 'USD';
+  stake_token_amount_usd: string;
+  stake_token_portion_percent: string;
 }
 
 const govTxtMap = new Map([
@@ -23,4 +31,17 @@ const govTxtMap = new Map([
 const getGovText = (event: GovEvent, stake?: boolean) =>
   stake ? 'Stake' : 'Unstake' + ' ' + govTxtMap.get(event);
 
-export const sendGovEvent = () => {};
+export const sendGovEvent = (
+  event: GovEvent,
+  event_properties: GovProperties,
+  stake?: boolean
+) => {
+  const data = {
+    event: getGovText(event, stake),
+    event_properties,
+    ga_event: {
+      category: 'Gov ' + stake ? 'Stake' : 'Unstake',
+    },
+  };
+  sendGTM(data);
+};
