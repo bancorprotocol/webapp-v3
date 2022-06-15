@@ -104,6 +104,54 @@ export const sendWithdrawEvent = (
   sendGTM(data);
 };
 
+enum WithdrawACEvent {
+  CTAClick,
+  ApproveClick,
+  WalletUnlimitedRequest,
+  WalletUnlimitedConfirm,
+  WalletRequest,
+  WalletConfirm,
+  Success,
+  Failed,
+}
+
+const withdrawACTxtMap = new Map([
+  [WithdrawACEvent.CTAClick, 'CTA Click'],
+  [WithdrawACEvent.ApproveClick, 'Approve Click'],
+  [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited Request'],
+  [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Confirm'],
+  [WithdrawACEvent.WalletRequest, 'Wallet Request'],
+  [WithdrawACEvent.WalletConfirm, 'Wallet Confirm'],
+  [WithdrawACEvent.Success, 'Success'],
+  [WithdrawACEvent.Success, 'Failed'],
+]);
+
+const getWithdrawACText = (event: WithdrawACEvent) =>
+  'Withdraw AC ' + withdrawACTxtMap.get(event);
+
 export const sendWithdrawACEvent = () => {};
+
+enum WithdrawBonusEvent {
+  CTAClick,
+  ClaimClick,
+  ClaimEarnClick,
+  WalletRequest,
+  WalletConfirm,
+  Success,
+  Failed,
+}
+
+const withdrawBonusTxtMap = new Map([
+  [WithdrawBonusEvent.CTAClick, 'CTA Click'],
+  [WithdrawBonusEvent.ClaimClick, 'Claim Click'],
+  [WithdrawBonusEvent.ClaimEarnClick, 'Claim & Earn Click'],
+  [WithdrawBonusEvent.WalletRequest, 'Wallet Request'],
+  [WithdrawBonusEvent.WalletConfirm, 'Wallet Confirm'],
+  [WithdrawBonusEvent.Success, 'Success'],
+  [WithdrawBonusEvent.Success, 'Failed'],
+]);
+
+const getWithdrawBonusText = (event: WithdrawBonusEvent) =>
+  'Withdraw Bonus ' + withdrawBonusTxtMap.get(event);
 
 export const sendWithdrawBonusEvent = () => {};
