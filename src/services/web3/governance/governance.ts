@@ -24,8 +24,8 @@ export const stakeAmount = async (
   govToken: Token,
   onHash: (txHash: string) => void,
   onCompleted: Function,
-  rejected: Function,
-  failed: Function
+  rejected: (error: string) => void,
+  failed: (error: string) => void
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -41,8 +41,8 @@ export const stakeAmount = async (
     await tx.wait();
     onCompleted();
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed();
+    if (e.code === ErrorCode.DeniedTx) rejected(e.message);
+    else failed(e.message);
   }
 };
 
@@ -51,8 +51,8 @@ export const unstakeAmount = async (
   govToken: Token,
   onHash: (txHash: string) => void,
   onCompleted: Function,
-  rejected: Function,
-  failed: Function
+  rejected: (error: string) => void,
+  failed: (error: string) => void
 ) => {
   try {
     const expandedAmount = expandToken(amount, govToken.decimals);
@@ -68,8 +68,8 @@ export const unstakeAmount = async (
     await tx.wait();
     onCompleted();
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed();
+    if (e.code === ErrorCode.DeniedTx) rejected(e.message);
+    else failed(e.message);
   }
 };
 

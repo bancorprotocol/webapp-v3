@@ -16,6 +16,7 @@ import { openNewTab } from 'utils/pureFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Page } from 'components/Page';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { GovEvent, sendGovEvent } from 'services/api/googleTagManager/gov';
 
 interface VoteCardProps {
   title: string;
@@ -120,6 +121,7 @@ export const Vote = () => {
                 return;
               }
 
+              sendGovEvent(GovEvent.StartClick, undefined, true);
               setIsStake(true);
               setStakeModal(true);
             }}
@@ -208,6 +210,7 @@ export const Vote = () => {
                     !isUnlocked
                   }
                   onClick={() => {
+                    sendGovEvent(GovEvent.StartClick, undefined, false);
                     setIsStake(false);
                     setStakeModal(true);
                   }}

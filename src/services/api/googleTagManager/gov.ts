@@ -1,6 +1,6 @@
 import { sendGTM } from '.';
 
-enum GovEvent {
+export enum GovEvent {
   StartClick,
   Click,
   UnlimitedPopup,
@@ -11,8 +11,8 @@ enum GovEvent {
   Failed,
 }
 
-interface GovProperties {
-  stake_input_type: 'Fiat' | 'USD';
+export interface GovProperties {
+  stake_input_type: string;
   stake_token_amount_usd: string;
   stake_token_portion_percent: string;
 }
@@ -29,16 +29,22 @@ const govTxtMap = new Map([
 ]);
 
 const getGovText = (event: GovEvent, stake?: boolean) =>
-  stake ? 'Stake' : 'Unstake' + ' ' + govTxtMap.get(event);
+  `${stake ? 'Stake' : 'Unstake'} ${govTxtMap.get(event)}`;
 
 export const sendGovEvent = (
   event: GovEvent,
-  event_properties: GovProperties,
-  stake?: boolean
+  event_properties?: GovProperties,
+  stake?: boolean,
+  unlimitied_selection?: boolean,
+  error?: string
 ) => {
   const data = {
     event: getGovText(event, stake),
-    event_properties,
+    event_properties: {
+      ...event_properties,
+      unlimitied_selection,
+      error,
+    },
     ga_event: {
       category: 'Gov ' + stake ? 'Stake' : 'Unstake',
     },
