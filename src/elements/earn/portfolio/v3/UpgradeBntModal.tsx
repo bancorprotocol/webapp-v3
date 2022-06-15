@@ -4,7 +4,7 @@ import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
 import { useMemo } from 'react';
@@ -88,7 +88,7 @@ export const UpgradeBntModal = ({
             <div>Upgrade all BNT</div>
             {`${prettifyNumber(totalBNT.tknAmount)} ${
               position.reserveToken.symbol
-            } ${prettifyNumber(totalBNT.usdAmount, true)}`}
+            } (${prettifyNumber(totalBNT.usdAmount, true)})`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
@@ -105,7 +105,7 @@ export const UpgradeBntModal = ({
         </div>
         <Button
           onClick={() => migrate(totalBNT.bntPositions)}
-          className="w-full h-[50px]"
+          size={ButtonSize.Full}
         >
           Upgrade All
         </Button>
@@ -119,7 +119,7 @@ export const UpgradeBntModal = ({
         >
           No Thanks, just BNT from the {position.pool.name}
         </button>
-        <div className="font-semibold text-12 text-black-low mt-30">
+        <div className="text-secondary text-[13px]">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>

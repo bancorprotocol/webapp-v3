@@ -8,7 +8,7 @@ import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
@@ -47,7 +47,7 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr.total > 0.15)
+        (lowEarnRate || p.apr7d.total > 0.15)
     );
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
@@ -56,15 +56,27 @@ export const PoolsTable = ({
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>{prettifyNumber(row.stakedBalance.usd, true)}</div>
+          <div>
+            {toBigNumber(row.stakedBalance.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.stakedBalance.usd, true)}
+          </div>
         </div>
         <div className="flex items-center justify-between">
-          Volume 24h
-          <div>{prettifyNumber(row.volume24h.usd, true)}</div>
+          Volume 7d
+          <div>
+            {toBigNumber(row.volume7d.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.volume7d.usd, true)}
+          </div>
         </div>
         <div className="flex items-center justify-between">
-          Fees 24h
-          <div>{prettifyNumber(row.fees24h.usd, true)}</div>
+          Fees 7d
+          <div>
+            {toBigNumber(row.fees7d.usd).isZero()
+              ? 'New'
+              : prettifyNumber(row.fees7d.usd, true)}
+          </div>
         </div>
       </div>
     ),
@@ -92,16 +104,20 @@ export const PoolsTable = ({
             )}
           />
         ),
-        minWidth: 100,
+        minWidth: 185,
         sortDescFirst: true,
       },
       {
         id: 'apr',
         Header: 'Earn',
-        accessor: 'apr',
+        accessor: 'apr7d',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
-            {cellData.value.total.toFixed(2)}%
+            {toBigNumber(cellData.value.total).isZero() &&
+            cellData.row.original.tradingEnabled === false
+              ? 'New'
+              : `${cellData.value.total.toFixed(2)}%`}
+
             {cellData.row.original.latestProgram?.isActive && (
               <>
                 <PopoverV3
@@ -122,9 +138,10 @@ export const PoolsTable = ({
           </div>
         ),
         sortType: (a, b) =>
-          sortNumbersByKey(a.original, b.original, ['apr', 'total']),
-        tooltip: 'Rewards enabled on this token. Read about the rewards here',
-        minWidth: 130,
+          sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
+        tooltip:
+          'Estimated APR based on the last 7d trading fees, auto compounding and standard rewards',
+        minWidth: 100,
         sortDescFirst: true,
       },
       {
@@ -137,8 +154,8 @@ export const PoolsTable = ({
             renderButton={(onClick) => (
               <Button
                 onClick={onClick}
-                variant={ButtonVariant.PRIMARY}
-                size={ButtonSize.EXTRASMALL}
+                variant={ButtonVariant.Tertiary}
+                size={ButtonSize.ExtraSmall}
               >
                 Deposit
               </Button>
@@ -153,7 +170,10 @@ export const PoolsTable = ({
     [toolTip]
   );
 
-  const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
+  const defaultSort: SortingRule<Token> = {
+    id: 'apr',
+    desc: true,
+  };
 
   return (
     <section className="lg:grid lg:grid-cols-12 lg:gap-40">

@@ -4,6 +4,8 @@ import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import dayjs from 'dayjs';
+import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
+import { toBigNumber } from 'utils/helperFunctions';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -60,11 +62,12 @@ export const fetchStandardRewardsByUser = async (
     return await Promise.all(
       programs.map(async (program) => {
         const poolTokenAmountWei = poolTokenStakedWei.get(program.id) || '0';
-        const tokenAmountWei =
-          await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
-            program.pool,
-            poolTokenAmountWei
-          );
+        const tokenAmountWei = toBigNumber(poolTokenAmountWei).gt(0)
+          ? await ContractsApi.BancorNetworkInfo.read.poolTokenToUnderlying(
+              program.pool,
+              poolTokenAmountWei
+            )
+          : '0';
 
         const pendingRewardsWei =
           await ContractsApi.StandardRewards.read.pendingRewards(user, [
@@ -101,12 +104,6 @@ export interface RewardsProgramRaw {
   isActive: boolean;
 }
 
-export interface RewardsProgramV3
-  extends Omit<RewardsProgramRaw, 'rewardsToken'> {
-  token?: Token;
-  rewardsToken?: Token;
-}
-
 export const fetchAllStandardRewards = async (): Promise<
   RewardsProgramRaw[]
 > => {
@@ -133,4 +130,33 @@ export const fetchAllStandardRewards = async (): Promise<
     console.error(e);
     throw e;
   }
+};
+
+const buildLatestProgramIdCall = (poolId: string): MultiCall => {
+  const contract = ContractsApi.StandardRewards.read;
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'latestProgramId',
+    methodParameters: [poolId],
+  };
+};
+
+export const fetchLatestProgramIdsMulticall = async (apiPools: APIPoolV3[]) => {
+  const calls = apiPools.map(({ poolDltId }) =>
+    buildLatestProgramIdCall(poolDltId)
+  );
+  const res = await multicall(calls);
+  if (!res) {
+    console.error('Multicall Error in fetchLatestProgramIdsMulticall');
+    return undefined;
+  }
+
+  return new Map<string, string | undefined>(
+    res.map((bn, idx) => [
+      apiPools[idx].poolDltId,
+      bn && bn.length ? bn[0].toString() : undefined,
+    ])
+  );
 };

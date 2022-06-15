@@ -1,7 +1,7 @@
 import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
 
-const selected_lists = 'userTokenLists';
+const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
 const darkMode = 'userDarkMode';
 const slippageTolerance = 'slippageTolerance';
@@ -10,6 +10,10 @@ const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
+
+const deprecated_cleanup = ['userTokenLists'];
+
+deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
 
 export const getTokenListLS = (): string[] => {
   const list = localStorage.getItem(selected_lists);
@@ -82,10 +86,7 @@ export const setTenderlyRpcLS = (url?: string) => {
 };
 
 export const getV3ApiUrlLS = (): string => {
-  return (
-    localStorage.getItem(v3ApiUrl) ||
-    'https://v3-staging-ptdczarhfq-nw.a.run.app/v3/'
-  );
+  return localStorage.getItem(v3ApiUrl) || 'https://api-v3.bancor.network';
 };
 
 export const setV3ApiUrlLS = (url?: string) => {
@@ -97,7 +98,7 @@ export const setV3ApiUrlLS = (url?: string) => {
 };
 
 export const getV2ApiUrlLS = (): string => {
-  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network/';
+  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
 };
 
 export const setV2ApiUrlLS = (url?: string) => {

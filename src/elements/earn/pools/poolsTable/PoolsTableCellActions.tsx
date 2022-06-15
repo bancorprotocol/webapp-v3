@@ -8,7 +8,7 @@ export const PoolsTableCellActions = (id: string) => {
     <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
       <PopoverV3
         buttonElement={() => (
-          <Button variant={ButtonVariant.PRIMARY} size={ButtonSize.EXTRASMALL}>
+          <Button variant={ButtonVariant.Tertiary} size={ButtonSize.ExtraSmall}>
             Deposit
           </Button>
         )}

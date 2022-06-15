@@ -42,7 +42,7 @@ export const EarnTableV2 = ({
           p.name.toLowerCase().includes(search.toLowerCase()) &&
           (lowVolume || p.volume_24h > 5000) &&
           (lowLiquidity || p.liquidity > 50000) &&
-          (lowEarnRate || p.apr > 0.15)
+          (lowEarnRate || p.apr_7d > 0.15)
       );
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
@@ -89,7 +89,7 @@ export const EarnTableV2 = ({
       {
         id: 'apr',
         Header: 'APR',
-        accessor: 'apr',
+        accessor: 'apr_7d',
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
         minWidth: 180,
         disableSortBy: true,

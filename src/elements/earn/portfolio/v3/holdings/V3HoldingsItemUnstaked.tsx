@@ -26,15 +26,15 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleJoinClick = async () => {
-    if (!holding.pool.latestProgram || !account) {
-      console.error('rewardProgram is not defined');
+    if (!pool.latestProgram?.isActive || !account) {
+      console.error('rewardProgram is not defined or active');
       return;
     }
 
     try {
       const tx = await ContractsApi.StandardRewards.write.join(
-        holding.pool.latestProgram.id,
-        expandToken(holding.poolTokenBalance, 18)
+        pool.latestProgram.id,
+        expandToken(holding.poolTokenBalance, pool.decimals)
       );
       confirmJoinNotification(
         dispatch,
@@ -61,7 +61,6 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
         token: {
           ...holding.pool.reserveToken,
           address: holding.pool.poolTokenDltId,
-          decimals: 18,
           symbol: `bn${holding.pool.reserveToken.symbol}`,
         },
       },
@@ -85,7 +84,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
       />
       <div>
         <div className="text-secondary">Available Balance</div>
-        <div className="flex items-center space-x-10 pt-6">
+        <div className="flex items-center pt-6 space-x-10">
           <PopoverV3
             buttonElement={() => (
               <div
@@ -101,7 +100,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             {holding.tokenBalance} {pool.reserveToken.symbol}
           </PopoverV3>
 
-          <div className={`mt-6 mb-10 text-secondary`}>
+          <div className={`mb-10 text-secondary`}>
             ({prettifyNumber(holding.poolTokenBalance)} bn
             {pool.reserveToken.symbol})
           </div>
@@ -109,21 +108,24 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
 
         <div className="flex space-x-10">
           <Button
-            variant={ButtonVariant.SECONDARY}
-            size={ButtonSize.EXTRASMALL}
-            disabled={isDisabled || txJoinBusy}
-            onClick={onStartJoin}
-          >
-            Join Rewards
-          </Button>
-          <Button
-            variant={ButtonVariant.SECONDARY}
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Small}
             disabled={isDisabled}
             onClick={() => setIsOpen(true)}
           >
             Withdraw
           </Button>
+
+          {holding.pool.latestProgram?.isActive && (
+            <Button
+              variant={ButtonVariant.Tertiary}
+              size={ButtonSize.Small}
+              disabled={isDisabled || txJoinBusy}
+              onClick={onStartJoin}
+            >
+              Join Rewards
+            </Button>
+          )}
         </div>
       </div>
     </>

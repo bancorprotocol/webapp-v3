@@ -18,9 +18,15 @@ interface Props {
   holding: Holding;
   amount: AmountTknFiat;
   setStep: (step: number) => void;
+  setRequestId: (val: string) => void;
 }
 
-export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
+export const useV3WithdrawStep3 = ({
+  holding,
+  amount,
+  setStep,
+  setRequestId,
+}: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
@@ -33,7 +39,7 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
   const approveTokens = useMemo(
     () => [
       {
-        amount: shrinkToken(poolTokenAmountWei, 18),
+        amount: shrinkToken(poolTokenAmountWei, reserveToken.decimals),
         token: {
           ...reserveToken,
           address: poolTokenDltId,
@@ -90,20 +96,27 @@ export const useV3WithdrawStep3 = ({ holding, amount, setStep }: Props) => {
       console.error('No account, please connect wallet');
       return;
     }
+
     try {
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         poolTokenDltId,
         poolTokenAmountWei
       );
-      await tx.wait();
+      ContractsApi.PendingWithdrawals.read.once(
+        'WithdrawalInitiated',
+        async (pool, provider, requestId) => {
+          setRequestId(requestId.toString());
+          setStep(4);
+          await updatePortfolioData(dispatch);
+        }
+      );
       initWithdrawNotification(
         dispatch,
         tx.hash,
         amount.tkn,
         reserveToken.symbol
       );
-      setStep(4);
-      await updatePortfolioData(dispatch);
+      await tx.wait();
     } catch (e: any) {
       setTxBusy(false);
       console.error('initWithdraw failed', e);

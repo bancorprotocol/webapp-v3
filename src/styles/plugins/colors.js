@@ -3,7 +3,6 @@ module.exports = {
     DEFAULT: '#10BBD5',
     light: '#DBF5F9',
     dark: '#08A2C3',
-    hover: '#08A2C3',
   },
   success: {
     DEFAULT: '#67D79F',

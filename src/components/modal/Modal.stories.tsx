@@ -2,6 +2,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Modal } from './Modal';
 import { useState } from 'react';
 import { withDesign } from 'storybook-addon-designs';
+import { Button } from 'components/button/Button';
 
 export default {
   title: 'Components/Modal/Normal',
@@ -14,9 +15,7 @@ const Template: ComponentStory<typeof Modal> = (args) => {
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="btn btn-primary">
-        Open Modal
-      </button>
+      <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
       <Modal {...args} isOpen={isOpen} setIsOpen={setIsOpen}>
         <p>some content</p>
       </Modal>

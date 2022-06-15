@@ -24,7 +24,7 @@ export const ModalCreatePool = () => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokens);
+  const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
   const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
@@ -75,8 +75,8 @@ export const ModalCreatePool = () => {
   return (
     <>
       <Button
-        variant={ButtonVariant.SECONDARY}
-        size={ButtonSize.EXTRASMALL}
+        variant={ButtonVariant.Secondary}
+        size={ButtonSize.ExtraSmall}
         className="h-[35px]"
         onClick={() => setIsOpen(true)}
       >
@@ -119,7 +119,7 @@ export const ModalCreatePool = () => {
           <Button
             onClick={() => confirm()}
             disabled={isCreateDisabled()}
-            className="w-full"
+            size={ButtonSize.Full}
           >
             {errorText() ?? 'Create a Pool'}
           </Button>

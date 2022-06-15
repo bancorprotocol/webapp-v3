@@ -48,7 +48,7 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
               />
               <span className="ml-10">{pool.name}</span>
             </span>
-            <span className="text-12">{pool.apr.toFixed(2)}%</span>
+            <span className="text-12">{pool.apr_7d.toFixed(2)}%</span>
           </button>
         ))}
       </div>

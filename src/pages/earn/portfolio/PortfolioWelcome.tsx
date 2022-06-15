@@ -1,6 +1,6 @@
 import { ReactComponent as GrowCoins } from 'assets/icons/growCoins.svg';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from 'pages/earn/portfolio/MigrateProtect';
 import { useWalletEmpty } from 'pages/earn/portfolio/usePortfolioRedirect';
@@ -31,11 +31,7 @@ const GrowYour = () => {
         <div className="text-20 text-graphite mb-[100px]">
           Earn up to 40% annually on your favorite tokens
         </div>
-        <Button
-          onClick={() => handleWalletButtonClick}
-          className="mb-20"
-          variant={ButtonVariant.PRIMARY}
-        >
+        <Button onClick={() => handleWalletButtonClick} className="mb-20">
           Check our rates {'->'}
         </Button>
 

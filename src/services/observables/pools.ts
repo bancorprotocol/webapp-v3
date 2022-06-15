@@ -14,8 +14,10 @@ import {
 import { toBigNumber } from 'utils/helperFunctions';
 import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
-import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
-import { ContractsApi } from 'services/web3/v3/contractsApi';
+import {
+  fetchLatestProgramIdsMulticall,
+  RewardsProgramRaw,
+} from 'services/web3/v3/portfolio/standardStaking';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -43,14 +45,21 @@ export interface Pool {
   version: number;
   supply: number;
   decimals: number;
-  apr: number;
+  apr_24h: number;
+  apr_7d: number;
   reward?: APIReward;
   isProtected: boolean;
 }
 
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr: {
+  apr24h: {
+    tradingFees: number;
+    standardRewards: number;
+    autoCompounding: number;
+    total: number;
+  };
+  apr7d: {
     tradingFees: number;
     standardRewards: number;
     autoCompounding: number;
@@ -84,14 +93,9 @@ export const buildPoolObject = (
 ): Pool | undefined => {
   const liquidity = Number(apiPool.liquidity.usd ?? 0);
   const fees_24h = Number(apiPool.fees_24h.usd ?? 0);
-  let apr = 0;
-  if (liquidity && fees_24h) {
-    apr = new BigNumber(fees_24h)
-      .times(365)
-      .div(liquidity)
-      .times(100)
-      .toNumber();
-  }
+  const fees_7d = Number(apiPool.fees_7d.usd ?? 0);
+  const apr_7d = liquidity && fees_24h ? calcApr(fees_7d, liquidity) : 0;
+  const apr_24h = liquidity && fees_24h ? calcApr(fees_24h, liquidity) : 0;
 
   const reserveTkn = apiPool.reserves.find((r) => r.address === tkn.address);
   if (!reserveTkn) {
@@ -135,15 +139,25 @@ export const buildPoolObject = (
     version: apiPool.version,
     supply: Number(apiPool.supply),
     decimals: apiPool.decimals,
-    apr,
+    apr_7d,
+    apr_24h,
     reward: apiPool.reward,
     isProtected,
   };
 };
 
+export const calculateAPR = (fees: string, liquidity: string) => {
+  return new BigNumber(fees)
+    .times(52.1429)
+    .div(liquidity)
+    .times(100)
+    .toNumber();
+};
+
 const buildPoolV3Object = async (
   apiPool?: APIPoolV3,
   reserveToken?: Token,
+  latestProgramIdMap?: Map<string, string | undefined>,
   rewardsPrograms?: RewardsProgramRaw[]
 ): Promise<PoolV3 | undefined> => {
   if (!apiPool || !reserveToken) {
@@ -153,60 +167,89 @@ const buildPoolV3Object = async (
   // ALL programs of this pool
   const programs = rewardsPrograms?.filter((p) => p.pool === apiPool.poolDltId);
 
-  // Fetch ID of the latest program
-  let latestProgramId: string;
-  try {
-    const id = await ContractsApi.StandardRewards.read.latestProgramId(
-      apiPool.poolDltId
-    );
-    latestProgramId = id.toString();
-  } catch (e) {
-    console.error('Failed to read latest program id', e);
-  }
-
   // The latest program
-  const latestProgram = programs?.find((p) => p.id === latestProgramId);
-
-  // Calculate APR
-  let standardRewardsApr = 0;
-  if (programs && programs.length) {
-    standardRewardsApr = programs
-      // Only use APR from active programs
-      .filter((p) => p.isActive)
-      .reduce((acc, data) => {
-        // TODO - currently assuming reward token to be BNT
-        const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
-        const rewardRate24h = toBigNumber(rewardRate)
-          .times(60 * 60)
-          .times(24);
-        return acc + calcApr(rewardRate24h, apiPool.standardRewardsStaked.bnt);
-      }, 0);
-  }
-
-  const tradingFeesApr = calcApr(
-    apiPool.fees24h.usd,
-    apiPool.stakedBalance.usd
+  const latestProgram = programs?.find(
+    (p) => p.id === latestProgramIdMap?.get(apiPool.poolDltId)
   );
 
-  // TODO - add values once available
-  const autoCompoundingApr = 0;
+  // FIXES STAKED BALANCE = 0 WHEN TRADING ENABLED = FALSE
+  const stakedBalance = { ...apiPool.stakedBalance };
+  if (
+    apiPool.tradingEnabled === false &&
+    toBigNumber(stakedBalance.usd).isZero()
+  ) {
+    stakedBalance.usd = toBigNumber(apiPool.stakedBalance.tkn)
+      .times(reserveToken.usdPrice)
+      .toString();
+  }
 
-  const totalApr = toBigNumber(tradingFeesApr)
-    .plus(standardRewardsApr)
+  // Calculate APR
+  const standardRewardsApr24H = standardsRewardsAPR(apiPool, programs);
+  const standardRewardsApr7d = standardsRewardsAPR(apiPool, programs);
+
+  const tradingFeesApr24h = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
+  const tradingFeesApr7d = calcApr(apiPool.fees7d.usd, stakedBalance.usd, true);
+
+  // TODO - add values once available
+  const autoCompoundingApr24H = 0;
+  const autoCompoundingApr7d = 0;
+
+  const totalApr24H = toBigNumber(tradingFeesApr24h)
+    .plus(standardRewardsApr24H)
+    .plus(autoCompoundingApr24H)
+    .toNumber();
+
+  const totalApr7d = toBigNumber(tradingFeesApr7d)
+    .plus(autoCompoundingApr7d)
+    .plus(standardRewardsApr7d)
     .toNumber();
 
   return {
     ...apiPool,
-    apr: {
-      tradingFees: tradingFeesApr,
-      standardRewards: standardRewardsApr,
-      autoCompounding: autoCompoundingApr,
-      total: totalApr,
+    stakedBalance,
+    apr24h: {
+      tradingFees: tradingFeesApr24h,
+      standardRewards: standardRewardsApr24H,
+      autoCompounding: autoCompoundingApr24H,
+      total: totalApr24H,
+    },
+    apr7d: {
+      tradingFees: tradingFeesApr7d,
+      standardRewards: standardRewardsApr7d,
+      autoCompounding: autoCompoundingApr7d,
+      total: totalApr7d,
     },
     reserveToken,
     programs: programs ?? [],
     latestProgram,
   };
+};
+
+export const standardsRewardsAPR = (
+  apiPool: APIPoolV3,
+  programs?: RewardsProgramRaw[],
+  seven_days?: boolean
+) => {
+  if (programs && programs.length) {
+    return (
+      programs
+        // Only use APR from active programs
+        .filter((p) => p.isActive)
+        .reduce((acc, data) => {
+          // TODO - currently assuming reward token to be BNT
+          const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+          const rewardRateTime = toBigNumber(rewardRate)
+            .times(60 * 60)
+            .times(24)
+            .times(seven_days ? 7 : 1);
+          return (
+            acc + calcApr(rewardRateTime, apiPool.standardRewardsStaked.bnt)
+          );
+        }, 0)
+    );
+  }
+
+  return 0;
 };
 
 export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
@@ -245,12 +288,15 @@ export const poolsV3$ = combineLatest([
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
+      const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
+
       const pools = await Promise.all(
         apiPoolsV3.map(
           async (pool) =>
             await buildPoolV3Object(
               pool,
               tokensMap.get(pool.poolDltId),
+              latestProgramIds,
               standardRewardPrograms
             )
         )

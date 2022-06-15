@@ -47,7 +47,7 @@ export interface TopPool {
 
 export const getPools = createSelector(
   (state: RootState) => state.pool.v2Pools,
-  (state: RootState) => state.bancor.tokens,
+  (state: RootState) => state.bancor.tokensV2,
   (pools: Pool[], tokens: Token[]) => {
     const pools_token_list = pools.filter((pool) => {
       return (
@@ -91,10 +91,10 @@ export const getTopPools = createSelector(getPools, (pools: Pool[]) => {
       return {
         tknSymbol: p.reserves[0].symbol,
         tknLogoURI: p.reserves[0].logoURI,
-        tknApr: p.apr + (p.reserves[0].rewardApr || 0),
+        tknApr: p.apr_24h + (p.reserves[0].rewardApr || 0),
         bntSymbol: p.reserves[1].symbol,
         bntLogoURI: p.reserves[1].logoURI,
-        bntApr: p.apr + (p.reserves[1].rewardApr || 0),
+        bntApr: p.apr_24h + (p.reserves[1].rewardApr || 0),
         poolName: p.name,
       };
     });
@@ -121,7 +121,11 @@ export const getTopPools = createSelector(getPools, (pools: Pool[]) => {
 export const getTopPoolsV3 = createSelector(
   (state: RootState) => state.pool.v3Pools,
   (pools: PoolV3[]) => {
-    return orderBy(pools, 'apr', 'desc').slice(0, 20);
+    return orderBy(
+      pools.filter((p) => p.apr7d.total > 0),
+      'apr7d.total',
+      'desc'
+    ).slice(0, 20);
   }
 );
 

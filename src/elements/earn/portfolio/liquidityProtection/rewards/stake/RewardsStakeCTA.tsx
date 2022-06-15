@@ -20,7 +20,7 @@ import {
   setProtectedPositions,
 } from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 
@@ -100,31 +100,31 @@ export const RewardsStakeCTA = ({
       return {
         label: 'Login',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else if (isBusy) {
       return {
         label: 'Please wait ...',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else if (errorBalance) {
       return {
         label: errorBalance,
         disabled: true,
-        variant: ButtonVariant.ERROR,
+        variant: ButtonVariant.Secondary,
       };
     } else if (!bntAmount || Number(bntAmount) === 0) {
       return {
         label: 'Enter amount',
         disabled: true,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     } else {
       return {
         label: 'Stake and Protect',
         disabled: false,
-        variant: ButtonVariant.PRIMARY,
+        variant: ButtonVariant.Primary,
       };
     }
   };
@@ -136,7 +136,8 @@ export const RewardsStakeCTA = ({
       onClick={() => handleClick()}
       disabled={btn.disabled}
       variant={btn.variant}
-      className={`w-full mt-10`}
+      size={ButtonSize.Full}
+      className="mt-10"
     >
       {btn.label}
     </Button>

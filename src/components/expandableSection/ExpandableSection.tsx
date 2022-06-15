@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const ExpandableSection = ({
-  className = 'p-10 mt-20 rounded bg-secondary mb-30',
+  className = 'p-10 rounded bg-secondary',
   btnClassName = 'flex justify-between items-center px-20 h-[40px] w-full',
   initiallyExpanded = false,
   renderButtonChildren,

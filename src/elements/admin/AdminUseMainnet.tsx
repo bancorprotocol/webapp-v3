@@ -15,7 +15,7 @@ export const AdminUseMainnet = () => {
     <Button
       onClick={handleUseMainnet}
       className="mx-auto"
-      size={ButtonSize.EXTRASMALL}
+      size={ButtonSize.ExtraSmall}
     >
       Use Mainnet
     </Button>

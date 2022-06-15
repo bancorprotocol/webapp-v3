@@ -30,7 +30,7 @@ import {
   APIToken,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
-import { fifteenSeconds$ } from 'services/observables/timers';
+import { oneMinute$ } from 'services/observables/timers';
 import { toBigNumber } from 'utils/helperFunctions';
 
 export interface TokenMinimal {
@@ -136,7 +136,8 @@ export const buildTokenObjectV3 = (
   apiToken: APITokenV3,
   pool: APIPoolV3,
   balances?: Map<string, string>,
-  tlToken?: TokenMinimal
+  tlToken?: TokenMinimal,
+  v2Token?: APIToken
 ): Token => {
   // Set balance; if user is NOT logged in set null
   const balance = balances
@@ -170,6 +171,19 @@ export const buildTokenObjectV3 = (
     }));
 
   const usd_volume_24 = pool ? pool.volume24h.usd : null;
+
+  const usdPrice = toBigNumber(apiToken.rate.usd).gt(0)
+    ? apiToken.rate.usd
+    : toBigNumber(v2Token?.rate.usd ?? '0').gt(0)
+    ? v2Token?.rate.usd ?? '0'
+    : '0';
+
+  const usd_24h_ago = toBigNumber(apiToken.rate24hAgo.usd).gt(0)
+    ? apiToken.rate24hAgo.usd
+    : toBigNumber(v2Token?.rate_24h_ago.usd ?? '0').gt(0)
+    ? v2Token?.rate_24h_ago.usd ?? '0'
+    : '0';
+
   return {
     name,
     logoURI,
@@ -179,8 +193,8 @@ export const buildTokenObjectV3 = (
     decimals: pool.decimals,
     symbol: apiToken.symbol,
     liquidity: pool.tradingLiquidityTKN.usd,
-    usdPrice: apiToken.rate.usd,
-    usd_24h_ago: apiToken.rate24hAgo.usd,
+    usdPrice,
+    usd_24h_ago,
     price_change_24,
     price_history_7d,
     usd_volume_24: usd_volume_24 ?? '0',
@@ -198,7 +212,7 @@ export const userBalancesInWei$ = combineLatest([
   apiTokens$,
   user$,
   userBalancesReceiver$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokens, user]) => {
     if (!user) {
@@ -222,7 +236,7 @@ export const userBalancesInWeiV3$ = combineLatest([
   apiTokensV3$,
   user$,
   userBalancesReceiver$,
-  fifteenSeconds$,
+  oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
     if (!user) {
@@ -299,18 +313,27 @@ export const tokensV2$ = combineLatest([
 );
 
 export const tokensV3$ = combineLatest([
+  apiTokens$,
   apiTokensV3$,
   apiPoolsV3$,
   tokenListTokens$,
   userBalancesInWeiV3$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([apiTokens, apiPools, tokenListTokens, balances]) => {
+    async ([
+      apiTokensV2,
+      apiTokensV3,
+      apiPoolsV3,
+      tokenListTokens,
+      balances,
+    ]) => {
       const userPreferredTokenListTokensMap = new Map(
         tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      const apiPoolsMap = new Map(apiPools.map((p) => [p.poolDltId, p]));
-      return apiTokens
+      const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
+      const apiTokensV2Map = new Map(apiTokensV2.map((t) => [t.dlt_id, t]));
+
+      return apiTokensV3
         .map((apiToken) => {
           const tokenListToken = userPreferredTokenListTokensMap.get(
             apiToken.dltId
@@ -322,11 +345,13 @@ export const tokensV3$ = combineLatest([
           if (!apiPool) {
             return undefined;
           }
+          const v2Token = apiTokensV2Map.get(apiToken.dltId);
           return buildTokenObjectV3(
             apiToken,
             apiPool,
             balances,
-            tokenListToken
+            tokenListToken,
+            v2Token
           );
         })
         .filter((token) => !!token) as Token[];

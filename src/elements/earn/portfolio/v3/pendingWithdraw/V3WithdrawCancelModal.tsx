@@ -1,7 +1,7 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { Modal } from 'components/modal/Modal';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { toBigNumber } from 'utils/helperFunctions';
 
@@ -32,10 +32,10 @@ export const V3WithdrawCancelModal = memo(
 
     const compoundingApr = useMemo(
       () =>
-        toBigNumber(pool.apr.autoCompounding)
-          .plus(pool.apr.tradingFees)
+        toBigNumber(pool.apr7d.autoCompounding)
+          .plus(pool.apr7d.tradingFees)
           .toFixed(2),
-      [pool.apr.autoCompounding, pool.apr.tradingFees]
+      [pool.apr7d.autoCompounding, pool.apr7d.tradingFees]
     );
 
     return (
@@ -62,7 +62,11 @@ export const V3WithdrawCancelModal = memo(
             <div>{compoundingApr} %</div>
           </div>
 
-          <Button onClick={handleCTAClick} className="w-full" disabled={txBusy}>
+          <Button
+            onClick={handleCTAClick}
+            size={ButtonSize.Full}
+            disabled={txBusy}
+          >
             Cancel & Earn
           </Button>
         </div>

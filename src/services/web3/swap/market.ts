@@ -11,7 +11,7 @@ import {
 } from 'services/web3/config';
 import { take } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import { Events } from 'services/api/googleTagManager';
 import { calcReserve, expandToken, shrinkToken } from 'utils/formulas';
 import { getFutureTime, ppmToDec } from 'utils/helperFunctions';
 import { BancorNetwork__factory, Converter__factory } from '../abis/types';
@@ -19,8 +19,8 @@ import { MultiCall as MCInterface, multicall } from '../multicall/multicall';
 import { ErrorCode } from '../types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
-import { apiData$ } from 'services/observables/apiData';
-import { Events } from 'services/api/googleTagManager';
+import { apiData$, apiPoolsV3$ } from 'services/observables/apiData';
+import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
 
 export const getRateAndPriceImapct = async (
   fromToken: Token,
@@ -68,12 +68,19 @@ export const getRateAndPriceImapct = async (
       .times(100);
     const v2PriceImpact = isNaN(v2PI.toNumber()) ? '0.0000' : v2PI.toFixed(4);
 
-    const v3Rate = await getV3Rate(fromToken, toToken, amount);
-    const v3PI = await getV3PriceImpact(fromToken, toToken, amount, v3Rate);
+    const fromTradingEnabled = await v3PoolTradingEnabled(fromToken.address);
+    const toTradingEnabled = await v3PoolTradingEnabled(toToken.address);
+    const tradingEnabled = fromTradingEnabled && toTradingEnabled;
+    console.log('tradingEnabled', tradingEnabled);
+    const v3Rate = tradingEnabled
+      ? await getV3Rate(fromToken, toToken, amount)
+      : '0';
+    const v3PI = tradingEnabled
+      ? await getV3PriceImpact(fromToken, toToken, amount, v3Rate)
+      : new BigNumber(0);
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
-    const isV3 =
-      (v3Rate !== '0' && forceV3Routing) || Number(v3Rate) >= Number(v2Rate);
+    const isV3 = forceV3Routing || Number(v3Rate) >= Number(v2Rate);
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
@@ -118,7 +125,7 @@ export const getRate = async (
   }
 };
 
-const calculateMinimumReturn = (
+export const calculateMinimumReturn = (
   expectedWei: string,
   slippageTolerance: number
 ): string => {
@@ -168,7 +175,7 @@ export const swap = async (
   }
 };
 
-const executeSwapTx = async (
+export const executeSwapTx = async (
   isV3: boolean,
   user: string,
   slippageTolerance: number,
@@ -336,10 +343,39 @@ const findPoolByToken = async (tkn: string) => {
   if (pool) return pool;
 };
 
-const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
+export const v3PoolTradingEnabled = async (tkn: string) => {
+  const pools = await apiPoolsV3$.pipe(take(1)).toPromise();
+  const pool = pools.find((pool) => pool.poolDltId === tkn);
+  return pool && pool.tradingEnabled;
+};
+
+export const getV3Rate = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
   try {
     const res =
       await ContractsApi.BancorNetworkInfo.read.tradeOutputBySourceAmount(
+        fromToken.address,
+        toToken.address,
+        expandToken(amount, fromToken.decimals)
+      );
+    return shrinkToken(res.toString(), toToken.decimals);
+  } catch (error) {
+    console.error('failed to get v3 rate', error);
+    return '0';
+  }
+};
+
+export const getV3RateInverse = async (
+  fromToken: Token,
+  toToken: Token,
+  amount: string
+) => {
+  try {
+    const res =
+      await ContractsApi.BancorNetworkInfo.read.tradeInputByTargetAmount(
         fromToken.address,
         toToken.address,
         expandToken(amount, fromToken.decimals)
@@ -350,7 +386,7 @@ const getV3Rate = async (fromToken: Token, toToken: Token, amount: string) => {
   }
 };
 
-const getV3PriceImpact = async (
+export const getV3PriceImpact = async (
   fromToken: Token,
   toToken: Token,
   amount: string,

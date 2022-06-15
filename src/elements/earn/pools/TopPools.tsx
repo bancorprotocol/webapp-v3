@@ -34,7 +34,7 @@ export const TopPools = () => {
                             {pool.reserveToken.symbol}
                           </div>
                           <div className="flex items-center gap-5 text-primary text-16">
-                            {pool.apr.total.toFixed(2)}%
+                            {pool.apr7d.total.toFixed(2)}%
                             {pool.latestProgram?.isActive && (
                               <IconGift className="w-14 h-14" />
                             )}

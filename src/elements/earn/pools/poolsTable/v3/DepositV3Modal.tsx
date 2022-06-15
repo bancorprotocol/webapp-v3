@@ -1,4 +1,4 @@
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
 import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -78,14 +78,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     try {
       setTxBusy(true);
       const tx =
-        accessFullEarnings && pool.latestProgram
+        accessFullEarnings && pool.latestProgram?.isActive
           ? await ContractsApi.StandardRewards.write.depositAndJoin(
               pool.latestProgram.id,
               amountWei,
               { value: isETH ? amountWei : undefined }
             )
           : await ContractsApi.BancorNetwork.write.deposit(
-              pool.poolDltId,
+              pool.reserveToken.address,
               amountWei,
               { value: isETH ? amountWei : undefined }
             );
@@ -113,7 +113,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: amount || '0', token: pool.reserveToken }],
     deposit,
-    accessFullEarnings
+    accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress
   );
@@ -137,6 +137,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, amount, eth, txBusy]);
 
   const updateExtraGasCost = useCallback(async () => {
+    if (!isOpen) return;
     if (accessFullEarnings && eth) {
       const gasPrice = toBigNumber(await web3.provider.getGasPrice());
       const extraGasCostUSD = shrinkToken(
@@ -148,7 +149,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     } else {
       setExtraGasNeeded('0');
     }
-  }, [accessFullEarnings, eth]);
+  }, [accessFullEarnings, eth, isOpen]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
@@ -176,8 +177,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             isError={isInputError}
           />
 
-          {pool.latestProgram ? (
+          {pool.latestProgram?.isActive ? (
             <ExpandableSection
+              className="p-10 mt-20 rounded bg-secondary"
               renderButtonChildren={(isExpanded) => (
                 <div className="flex flex-col w-full">
                   <div className="flex items-center justify-between">
@@ -198,8 +200,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     <div className="flex items-center justify-between">
                       <span>
                         {accessFullEarnings
-                          ? pool.apr.total.toFixed(2)
-                          : pool.apr.tradingFees.toFixed(2)}
+                          ? pool.apr7d.total.toFixed(2)
+                          : pool.apr7d.tradingFees.toFixed(2)}
                         %
                       </span>
                       <IconChevron
@@ -223,7 +225,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                       {pool.reserveToken.symbol}
                     </span>
                   </span>
-                  <span>{pool.apr.tradingFees.toFixed(2)}%</span>
+                  <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
                 </div>
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
                   <span>
@@ -235,7 +237,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   </span>
                   <span>
                     {accessFullEarnings
-                      ? pool.apr.standardRewards.toFixed(2)
+                      ? pool.apr7d.standardRewards.toFixed(2)
                       : 0}
                     %
                   </span>
@@ -250,15 +252,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   {pool.reserveToken.symbol}
                 </span>
               </span>
-              <span>{pool.apr.tradingFees.toFixed(2)}%</span>
+              <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
             </div>
           )}
 
           <Button
             onClick={handleClick}
             disabled={!amount || +amount === 0 || txBusy || isInputError}
-            variant={ButtonVariant.PRIMARY}
-            className={`w-full mt-20 mb-14`}
+            size={ButtonSize.Full}
+            className="mt-20 mb-14"
           >
             {txBusy
               ? '... waiting for confirmation'

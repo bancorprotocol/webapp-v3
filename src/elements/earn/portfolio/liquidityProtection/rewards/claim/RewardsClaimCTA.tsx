@@ -19,16 +19,17 @@ export const RewardsClaimCTA = ({ account }: Props) => {
     <>
       <Button
         onClick={stakeRewardsToV3}
-        size={ButtonSize.SMALL}
+        size={ButtonSize.Full}
         disabled={!canClaim}
-        className="w-full mt-20 btn btn-primary btn-lg"
+        className="mt-20"
       >
         Stake my Rewards to Bancor V3
       </Button>
       <Button
-        variant={ButtonVariant.SECONDARY}
+        variant={ButtonVariant.Secondary}
         onClick={claimRewardsToWallet}
-        className="w-full mt-10"
+        size={ButtonSize.Full}
+        className="mt-10"
         disabled={!canClaim}
       >
         Withdraw Rewards

@@ -5,7 +5,7 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
@@ -125,7 +125,8 @@ export const V3ExternalHoldingsModal = ({
 
         <Button
           onClick={handleButtonClick}
-          className="w-full mt-20"
+          size={ButtonSize.Full}
+          className="mt-20"
           disabled={txBusy}
         >
           {txBusy ? '... waiting for confirmation' : 'Migrate and Protect'}

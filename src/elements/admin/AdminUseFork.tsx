@@ -33,7 +33,7 @@ export const AdminUseFork = () => {
     setV3ApiUrlLS(inputV3ApiUrl);
     setV2ApiUrlLS(inputV2ApiUrl);
     setTenderlyRpcLS(inputRpcUrl);
-    const rpc = new providers.JsonRpcProvider(inputRpcUrl);
+    const rpc = new providers.StaticJsonRpcProvider(inputRpcUrl);
 
     setProvider(rpc);
     if (account && inputRpcUrl) {
@@ -74,7 +74,7 @@ export const AdminUseFork = () => {
 
       <Button
         onClick={handleSave}
-        size={ButtonSize.EXTRASMALL}
+        size={ButtonSize.ExtraSmall}
         className="mx-auto mt-20"
       >
         Save

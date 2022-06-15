@@ -18,6 +18,7 @@ export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
   );
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [step, setStep] = useState(1);
+  const [requestId, setRequestId] = useState('');
   const [inputTkn, setInputTkn] = useState('');
   const [inputFiat, setInputFiat] = useState('');
 
@@ -66,5 +67,7 @@ export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
     withdrawalFeeInPercent,
     withdrawalFee,
     withdrawalFeeInTkn,
+    requestId,
+    setRequestId,
   };
 };

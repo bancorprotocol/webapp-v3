@@ -74,7 +74,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
     <>
       {renderButton(() => setIsOpen(true))}
       <ModalV3
-        title={'Bonus Program'}
+        title={'Rewards'}
         setIsOpen={onClose}
         isOpen={isOpen}
         separator
@@ -98,12 +98,12 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
                   {holding.pool.reserveToken.symbol}
                 </div>
                 <div>Program ID: {program.id}</div>
-                <div>APR: {holding.pool.apr.standardRewards.toFixed(2)}%</div>
+                <div>APR: {holding.pool.apr7d.standardRewards.toFixed(2)}%</div>
               </div>
               <div>
                 <Button
-                  variant={ButtonVariant.DARK}
-                  size={ButtonSize.EXTRASMALL}
+                  variant={ButtonVariant.Tertiary}
+                  size={ButtonSize.ExtraSmall}
                   disabled={txBusy}
                   onClick={() =>
                     handleLeaveClick(
@@ -147,8 +147,8 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
 
                   <div>
                     <Button
-                      variant={ButtonVariant.WARNING}
-                      size={ButtonSize.EXTRASMALL}
+                      variant={ButtonVariant.Secondary}
+                      size={ButtonSize.ExtraSmall}
                       disabled={txBusy}
                       onClick={() =>
                         handleLeaveClick(

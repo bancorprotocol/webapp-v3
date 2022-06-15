@@ -14,7 +14,7 @@ import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import { sendConversionApprovedEvent } from 'services/api/googleTagManager/conversion';
 import { ErrorCode } from 'services/web3/types';
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -107,7 +107,11 @@ export const ModalApprove = ({
             Before you can proceed, you need to approve {fromToken.symbol}{' '}
             spending.
           </p>
-          <Button onClick={() => approve()} className={'w-full my-15'}>
+          <Button
+            size={ButtonSize.Full}
+            onClick={() => approve()}
+            className="my-15"
+          >
             Approve
           </Button>
           <p className="text-center text-graphite">

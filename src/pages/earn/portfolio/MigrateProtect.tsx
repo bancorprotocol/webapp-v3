@@ -3,7 +3,7 @@ import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { ReactComponent as IconProtectedHeart } from 'assets/icons/protectedHeart.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Rating } from 'components/rating/Rating';
-import { Button, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 import { useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
@@ -83,7 +83,7 @@ const Migrate = () => {
           )}
           <div className="flex items-center mt-[70px] gap-10">
             <Button className="w-[170px]">Yes</Button>
-            <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
+            <Button variant={ButtonVariant.Secondary}>No Thanks</Button>
           </div>
         </>
       ) : (
@@ -142,7 +142,9 @@ const Migrate = () => {
               </div>
             ))}
 
-          <Button className="w-full md:w-[160px] mt-50">Confirm</Button>
+          <Button size={ButtonSize.Full} className="md:w-[160px] mt-50">
+            Confirm
+          </Button>
           <ProtectedSettingsV3 />
         </>
       )}
@@ -224,7 +226,7 @@ const Protect = () => {
                         imgUrl={stake.token.logoURI}
                       />
                       <div className="flex items-center gap-10 text-primary">
-                        Earn {prettifyNumber(stake.pool.apr.total)}%
+                        Earn {prettifyNumber(stake.pool.apr7d.total)}%
                       </div>
                     </button>
                   );
@@ -236,7 +238,7 @@ const Protect = () => {
               {topStake ? (
                 <div className="text-4xl mb-20 text-silver">
                   Would you like to earn{' '}
-                  {prettifyNumber(topStake.pool.apr.total)}% on your{' '}
+                  {prettifyNumber(topStake.pool.apr7d.total)}% on your{' '}
                   {prettifyNumber(topStake.token.balance!)}{' '}
                   {topStake.token.symbol}?
                 </div>
@@ -253,7 +255,7 @@ const Protect = () => {
                 >
                   Yes
                 </Button>
-                <Button variant={ButtonVariant.SECONDARY}>No Thanks</Button>
+                <Button variant={ButtonVariant.Secondary}>No Thanks</Button>
               </div>
             </>
           )}

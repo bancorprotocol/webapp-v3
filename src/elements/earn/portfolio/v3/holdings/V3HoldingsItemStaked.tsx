@@ -9,6 +9,10 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
   const { pool } = holding;
   const isDisabled = toBigNumber(holding.stakedTokenBalance).isZero();
 
+  if (!holding.hasLegacyStake && !pool.latestProgram?.isActive) {
+    return null;
+  }
+
   return (
     <div>
       <div className="text-secondary flex">
@@ -37,7 +41,7 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
           {holding.stakedTokenBalance} {pool.reserveToken.symbol}
         </PopoverV3>
 
-        <div className={`mt-6 mb-10 text-secondary`}>
+        <div className={`mb-10 text-secondary`}>
           ({prettifyNumber(holding.stakedPoolTokenBalance)} bn
           {pool.reserveToken.symbol})
         </div>
@@ -47,15 +51,11 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         holding={holding}
         renderButton={(onClick) => (
           <Button
-            variant={
-              holding.hasLegacyStake
-                ? ButtonVariant.WARNING
-                : ButtonVariant.SECONDARY
-            }
-            size={ButtonSize.EXTRASMALL}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Full}
             disabled={isDisabled}
             onClick={onClick}
-            className="md:w-full"
+            className="h-[39px]"
           >
             Manage Rewards
           </Button>

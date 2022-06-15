@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { ButtonPercentages } from 'components/button/Button';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { useEffect, useState } from 'react';
 import { Token } from 'services/observables/tokens';
@@ -44,7 +44,6 @@ export const TokenInputPercentage = ({
       if (debounce) debounce(amount);
     }
   }, [amount, token, fieldBalance, debounce]);
-
   return (
     <>
       {token && (
@@ -63,33 +62,23 @@ export const TokenInputPercentage = ({
           balanceLabel={balanceLabel}
         />
       )}
-      <div className="flex justify-end space-x-5 mt-10">
-        {percentages.map((slip, index) => (
-          <Button
-            key={'slippage' + slip}
-            size={ButtonSize.EXTRASMALL}
-            variant={
-              selPercentage === index
-                ? ButtonVariant.PRIMARY
-                : ButtonVariant.SECONDARY
+      <div className="flex justify-end space-x-5 mt-10 w-full h-[42px]">
+        <ButtonPercentages
+          percentages={percentages}
+          selected={selPercentage}
+          onClick={(percentage: number) => {
+            setSelPercentage(percentages.indexOf(percentage));
+            if (token && fieldBalance) {
+              const amount = new BigNumber(fieldBalance).times(
+                new BigNumber(percentage / 100)
+              );
+              setAmount(amount.toString());
+              setAmountUSD(
+                (amount.toNumber() * Number(token.usdPrice)).toString()
+              );
             }
-            className="rounded-10 w-full"
-            onClick={() => {
-              setSelPercentage(index);
-              if (token && fieldBalance) {
-                const amount = new BigNumber(fieldBalance).times(
-                  new BigNumber(slip / 100)
-                );
-                setAmount(amount.toString());
-                setAmountUSD(
-                  (amount.toNumber() * Number(token.usdPrice)).toString()
-                );
-              }
-            }}
-          >
-            {slip}%
-          </Button>
-        ))}
+          }}
+        />
       </div>
     </>
   );

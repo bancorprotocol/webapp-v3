@@ -61,5 +61,13 @@ export const reduceBySlippage = (
 
 export const calcApr = (
   fees: BigNumber | string | number,
-  liquidity: BigNumber | string | number
-): number => toBigNumber(fees).times(365).div(liquidity).times(100).toNumber();
+  liquidity: BigNumber | string | number,
+  seven_days?: boolean
+): number =>
+  Number(liquidity) === 0
+    ? 0
+    : toBigNumber(fees)
+        .times(seven_days ? 52.1429 : 365)
+        .div(liquidity)
+        .times(100)
+        .toNumber();

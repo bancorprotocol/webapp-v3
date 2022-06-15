@@ -22,6 +22,7 @@ interface Props {
   withdrawalFeeInPercent: string;
   withdrawalFeeInTkn: string;
   amount: AmountTknFiat;
+  setRequestId: (val: string) => void;
 }
 
 const V3WithdrawStep1 = ({
@@ -35,6 +36,7 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInPercent,
   withdrawalFeeInTkn,
   amount,
+  setRequestId,
 }: Props) => {
   const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
     useV3WithdrawStep1({
@@ -62,6 +64,7 @@ const V3WithdrawStep1 = ({
     holding,
     amount,
     setStep,
+    setRequestId,
   });
 
   return (
@@ -131,7 +134,7 @@ const V3WithdrawStep1 = ({
 
       <div className="opacity-50 space-y-10">
         <p>USD value will likely change during the cooldown period</p>
-        <span>Coverage cost {withdrawalFeeInPercent}%</span>
+        <span>Withdrawal fee {withdrawalFeeInPercent}%</span>
         {Number(withdrawalFeeInTkn) > 0 && (
           <>
             <span className="px-10">-</span>
