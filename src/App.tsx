@@ -5,8 +5,8 @@ import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
 import { NotificationAlerts } from 'elements/notifications/NotificationAlerts';
 import { useDispatch } from 'react-redux';
 import {
-  DarkMode,
   setDarkMode,
+  setDarkModeCss,
   setSlippageTolerance,
   setUsdToggle,
 } from 'store/user/user';
@@ -32,13 +32,9 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const handleModeChange = (event: MediaQueryListEvent) => {
+const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
-
-  if (darkMode === DarkMode.System) {
-    store.dispatch(setDarkMode(darkMode));
-  }
+  setDarkModeCss(darkMode);
 };
 
 export const App = () => {
