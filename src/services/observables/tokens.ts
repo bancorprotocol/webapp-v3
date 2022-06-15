@@ -80,11 +80,11 @@ export const buildTokenObject = (
         .toString()
     : undefined;
 
-  const balanceUsd = balance
-    ? toBigNumber(balance || 0)
-        .times(apiToken.rate.usd || 0)
-        .toNumber()
-    : undefined;
+  const usdPrice = apiToken.rate.usd ?? '0';
+  const balanceUsd =
+    balance && Number(balance) !== 0
+      ? Number(toBigNumber(balance).times(usdPrice).toString())
+      : undefined;
 
   // Get fallback token and set image and name
   const logoURI = tlToken?.logoURI ?? ropstenImage;
@@ -123,7 +123,7 @@ export const buildTokenObject = (
     decimals: apiToken.decimals,
     symbol: apiToken.symbol,
     liquidity: apiToken.liquidity.usd ?? '0',
-    usdPrice: apiToken.rate.usd ?? '0',
+    usdPrice,
     usd_24h_ago: apiToken.rate_24h_ago.usd ?? '0',
     price_change_24,
     price_history_7d,
@@ -146,11 +146,16 @@ export const buildTokenObjectV3 = (
         .toString()
     : undefined;
 
-  const balanceUsd = balance
-    ? toBigNumber(balance || 0)
-        .times(apiToken.rate.usd)
-        .toNumber()
-    : undefined;
+  const usdPrice = toBigNumber(apiToken.rate.usd).gt(0)
+    ? apiToken.rate.usd
+    : toBigNumber(v2Token?.rate.usd ?? '0').gt(0)
+    ? v2Token?.rate.usd ?? '0'
+    : '0';
+
+  const balanceUsd =
+    balance && v2Token && Number(balance) !== 0
+      ? Number(toBigNumber(balance).times(usdPrice).toString())
+      : undefined;
 
   // Get fallback token and set image and name
   const logoURI = tlToken?.logoURI ?? ropstenImage;
@@ -171,12 +176,6 @@ export const buildTokenObjectV3 = (
     }));
 
   const usd_volume_24 = pool ? pool.volume24h.usd : null;
-
-  const usdPrice = toBigNumber(apiToken.rate.usd).gt(0)
-    ? apiToken.rate.usd
-    : toBigNumber(v2Token?.rate.usd ?? '0').gt(0)
-    ? v2Token?.rate.usd ?? '0'
-    : '0';
 
   const usd_24h_ago = toBigNumber(apiToken.rate24hAgo.usd).gt(0)
     ? apiToken.rate24hAgo.usd
