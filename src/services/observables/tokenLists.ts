@@ -12,7 +12,26 @@ const buildTokenListTokens = (
   tokenLists: TokenList[],
   userPreferredListIds?: string[]
 ): TokenMinimal[] => {
-  const tokenListTokensMerged: TokenMinimal[] = tokenLists
+  const tokens: TokenMinimal[] = [
+    {
+      symbol: 'ETH',
+      address: ethToken,
+      logoURI:
+        'https://bancor-tokens-list.s3.amazonaws.com/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
+      decimals: 18,
+      name: 'Ethereum',
+    },
+    {
+      symbol: 'WETH',
+      address: wethToken,
+      logoURI:
+        'https://bancor-tokens-list.s3.amazonaws.com/ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.svg',
+      decimals: 18,
+      name: 'Wrapped Ethereum',
+    },
+  ];
+
+  const tokenListTokensMerged = tokenLists
     .filter((list) =>
       userPreferredListIds
         ? userPreferredListIds.some((id) => id === list.name)
@@ -25,25 +44,9 @@ const buildTokenListTokens = (
       address: utils.getAddress(token.address),
     }));
 
-  tokenListTokensMerged.push(
-    {
-      symbol: 'ETH',
-      address: ethToken,
-      logoURI:
-        'https://bancor-tokens-list.s3.amazonaws.com/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
-      decimals: 18,
-      name: 'Ethereum',
-    },
-    {
-      symbol: 'WETH',
-      address: wethToken,
-      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
-      decimals: 18,
-      name: 'Wrapped Ethereum',
-    }
-  );
+  tokens.push(...tokenListTokensMerged);
 
-  return uniqBy(tokenListTokensMerged, (x) => x.address);
+  return uniqBy(tokens, (x) => x.address);
 };
 
 export const getLogoByURI = (uri: string | undefined) =>
