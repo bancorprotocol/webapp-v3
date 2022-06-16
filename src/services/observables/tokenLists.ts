@@ -29,7 +29,8 @@ const buildTokenListTokens = (
     {
       symbol: 'ETH',
       address: ethToken,
-      logoURI: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg',
+      logoURI:
+        'https://bancor-tokens-list.s3.amazonaws.com/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
       decimals: 18,
       name: 'Ethereum',
     },
