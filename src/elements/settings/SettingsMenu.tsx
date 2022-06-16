@@ -98,12 +98,26 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           </span>
         </div>
         {mobile ? (
-          <Navigate to={BancorURL.vote}>
-            <div className="flex items-center gap-10 text-black dark:text-white">
-              <IconVote className="text-black dark:text-white w-20" />
-              Vote
-            </div>
-          </Navigate>
+          <>
+            <Navigate to={BancorURL.tokens}>
+              <div className="flex items-center gap-10 text-black dark:text-white">
+                <IconVote className="text-black dark:text-white w-20" />
+                Tokens
+              </div>
+            </Navigate>
+            <Navigate to={BancorURL.vote}>
+              <div className="flex items-center gap-10 text-black dark:text-white">
+                <IconVote className="text-black dark:text-white w-20" />
+                Vote
+              </div>
+            </Navigate>
+            <Navigate to={'https://gov.bancor.network'}>
+              <div className="flex items-center gap-10 text-black dark:text-white">
+                <IconVote className="text-black dark:text-white w-20" />
+                DAO Forum
+              </div>
+            </Navigate>
+          </>
         ) : (
           <DarkMode showText />
         )}
