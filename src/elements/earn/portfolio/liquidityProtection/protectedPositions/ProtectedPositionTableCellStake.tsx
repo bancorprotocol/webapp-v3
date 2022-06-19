@@ -11,12 +11,14 @@ export const ProtectedPositionTableCellAmount = ({
 }: Props) => {
   return (
     <div className="text-center">
-      <div className="flex items-center justify-center font-medium h-24">
-        {`${prettifyNumber(tknAmount)} ${symbol}`}
+      <div className="flex items-center justify-center h-24 font-medium">
+        {tknAmount === '0' ? 'N/A' : `${prettifyNumber(tknAmount)} ${symbol}`}
       </div>
-      <div className="text-12 text-black-low dark:text-white-low mt-4">
-        {prettifyNumber(usdAmount, true)} USD
-      </div>
+      {usdAmount !== '0' && (
+        <div className="mt-4 text-12 text-black-low dark:text-white-low">
+          {prettifyNumber(usdAmount, true)} USD
+        </div>
+      )}
     </div>
   );
 };
