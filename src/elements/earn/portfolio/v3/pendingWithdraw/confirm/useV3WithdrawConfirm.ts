@@ -17,6 +17,10 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
+import {
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 interface Props {
   isModalOpen: boolean;
@@ -73,9 +77,11 @@ export const useV3WithdrawConfirm = ({
     }
 
     try {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownRequest);
       const tx = await ContractsApi.BancorNetwork.write.withdraw(
         withdrawRequest.id
       );
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownConfirm);
       confirmWithdrawNotification(
         dispatch,
         tx.hash,
@@ -84,8 +90,10 @@ export const useV3WithdrawConfirm = ({
       );
       onModalClose();
       setTxBusy(false);
+      sendWithdrawEvent(WithdrawEvent.WithdrawSuccess);
       await updatePortfolioData(dispatch);
     } catch (e: any) {
+      sendWithdrawEvent(WithdrawEvent.WithdrawFailed, undefined, e.message);
       console.error('withdraw request failed', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
