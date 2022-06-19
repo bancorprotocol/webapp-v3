@@ -64,7 +64,7 @@ export const V3WithdrawConfirmModal = memo(
             }
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
-            label={'Amount'}
+            label={'Final amount'}
           />
 
           <V3WithdrawConfirmOutputBreakdown
