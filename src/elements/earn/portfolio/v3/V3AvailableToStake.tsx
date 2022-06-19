@@ -8,16 +8,16 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
   return (
-    <DepositV3Modal
-      pool={pool}
+    <DepositDisabledModal
       renderButton={(onClick) => (
         <button
           onClick={onClick}
-          className="content-block w-full flex items-start space-y-20 flex-col p-14 text-left"
+          className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
         >
           <TokenBalance
             symbol={token.symbol}
@@ -26,7 +26,7 @@ const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
             imgUrl={token.logoURI}
           />
           <div>
-            <div className="text-secondary mb-5">Earn</div>
+            <div className="mb-5 text-secondary">Earn</div>
             <div className="flex">
               <span className="text-[22px]">
                 {pool.apr7d.total.toFixed(2)}%
@@ -52,14 +52,14 @@ export const V3AvailableToStake = () => {
 
   return (
     <section>
-      <div className="flex justify-between mb-20 pr-10">
+      <div className="flex justify-between pr-10 mb-20">
         <h2>
           Deposit & Earn{' '}
-          <span className="text-12 ml-4 text-secondary">
+          <span className="ml-4 text-12 text-secondary">
             ({availabelToStake.length})
           </span>
         </h2>
-        <div className="space-x-20 flex items-center">
+        <div className="flex items-center space-x-20">
           <button className="swiper-prev-btn hover:text-primary">
             <IconArrow className="w-10 rotate-[-90deg]" />
           </button>

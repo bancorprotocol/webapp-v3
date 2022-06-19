@@ -9,7 +9,8 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -72,8 +73,7 @@ export const V3EarningTable = () => {
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <div className="flex items-center">
-            <DepositV3Modal
-              pool={cell.row.original.pool}
+            <DepositDisabledModal
               renderButton={(onClick) => (
                 <V3EarningTableMenu
                   holding={cell.row.original}
@@ -102,7 +102,7 @@ export const V3EarningTable = () => {
     <section>
       <h2>Holdings</h2>
 
-      <div className="content-block pt-10 mt-20">
+      <div className="pt-10 mt-20 content-block">
         <DataTable<Holding>
           data={holdings}
           columns={columns}

@@ -22,6 +22,8 @@ import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
 import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { EmergencyInfo } from 'components/EmergencyInfo';
 
 export const UpgradeBntModal = ({
   position,
@@ -82,6 +84,17 @@ export const UpgradeBntModal = ({
         <div>Upgrade BNT</div>
         <div>
           Move all BNT to a single pool and earn from all trades in the network
+        </div>
+        <div className="flex flex-col items-center justify-center font-bold text-center text-error">
+          <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
+          <div>Please note that IL protection is temporarily paused.</div>
+          <PopoverV3
+            children={<EmergencyInfo />}
+            hover
+            buttonElement={() => (
+              <span className="underline cursor-pointer">More info</span>
+            )}
+          />
         </div>
         <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">

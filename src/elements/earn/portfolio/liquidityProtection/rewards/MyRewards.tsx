@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { BancorURL } from 'router/bancorURL.service';
-import { Button, ButtonSize } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { getUserRewardsProof } from 'store/liquidity/liquidity';
 
@@ -18,7 +17,6 @@ export const MyRewards = () => {
     loading,
     userRewards,
     hasClaimed,
-    stakeRewardsToV3,
   } = useMyRewards();
   const account = useAppSelector((state) => state.user.account);
   const proof = useAppSelector(getUserRewardsProof);
@@ -30,13 +28,6 @@ export const MyRewards = () => {
       <div className="flex items-center justify-between">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
-          <Button
-            onClick={stakeRewardsToV3}
-            size={ButtonSize.Small}
-            disabled={!canClaim}
-          >
-            Stake to V3
-          </Button>
           <Popover className="relative block">
             <Popover.Button disabled={!canClaim}>
               <IconMore className="w-16 rotate-90" />

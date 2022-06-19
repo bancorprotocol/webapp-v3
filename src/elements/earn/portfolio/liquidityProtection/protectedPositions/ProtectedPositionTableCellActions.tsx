@@ -124,7 +124,6 @@ export const ProtectedPositionTableCellActions = (
         subMenu: () => setIsOpenWithdraw(true),
       })}
       <WithdrawLiquidityWidget
-        protectedPosition={position}
         isModalOpen={isOpenWithdraw}
         setIsModalOpen={setIsOpenWithdraw}
       />
