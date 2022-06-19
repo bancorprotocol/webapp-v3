@@ -9,7 +9,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
-import { ethToken } from 'services/web3/config';
+import { ethToken, isForkAvailable } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import { getTokenById } from 'store/bancor/bancor';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -29,6 +29,11 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import {
+  DepositEvent,
+  sendDepositEvent,
+  setCurrentDeposit,
+} from 'services/api/googleTagManager/deposit';
 
 interface Props {
   pool: PoolV3;
@@ -67,6 +72,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
 
+  sendDepositEvent(DepositEvent.DepositWalletRequest);
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account) {
       return;
@@ -89,6 +95,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               amountWei,
               { value: isETH ? amountWei : undefined }
             );
+      sendDepositEvent(DepositEvent.DepositWalletConfirm);
       confirmDepositNotification(
         dispatch,
         tx.hash,
@@ -99,9 +106,11 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       onClose();
       goToPage.portfolio();
       await tx.wait();
+      sendDepositEvent(DepositEvent.DepositSuccess);
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('failed to deposit', e);
+      sendDepositEvent(DepositEvent.DepositFailed, undefined, e.message);
       onClose();
       setTxBusy(false);
       if (e.code === ErrorCode.DeniedTx) {
@@ -115,7 +124,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     deposit,
     accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
-      : ContractsApi.BancorNetwork.contractAddress
+      : ContractsApi.BancorNetwork.contractAddress,
+    () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
+    (isUnlimited: boolean) =>
+      sendDepositEvent(DepositEvent.DepositUnlimitedPopupConfirm, isUnlimited)
   );
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
@@ -126,11 +138,49 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const handleClick = useCallback(() => {
     if (canDeposit) {
+      const portion =
+        pool.reserveToken.balance &&
+        new BigNumber(amount)
+          .div(pool.reserveToken.balance)
+          .times(100)
+          .toFixed(0);
+      const deposit_portion =
+        portion &&
+        (portion === '25' ||
+          portion === '50' ||
+          portion === '75' ||
+          portion === '100')
+          ? portion
+          : 'N/A';
+      setCurrentDeposit({
+        deposit_pool: pool.name,
+        deposit_blockchain: 'Ethereum',
+        deposit_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
+        deposit_input_type: isFiat ? 'Fiat' : 'Token',
+        deposit_token_symbol: pool.name,
+        deposit_token_amount: amount,
+        deposit_token_amount_usd: inputFiat,
+        deposit_portion,
+        deposit_access_full_earning: accessFullEarnings ? 'On' : 'Off',
+        deposit_display_currency: 'USD',
+      });
+      sendDepositEvent(DepositEvent.DepositClick);
       onStart();
     } else if (shouldConnect) {
       handleWalletButtonClick();
     }
-  }, [canDeposit, onStart, shouldConnect, handleWalletButtonClick]);
+  }, [
+    canDeposit,
+    onStart,
+    shouldConnect,
+    handleWalletButtonClick,
+    accessFullEarnings,
+    amount,
+    inputFiat,
+    isFiat,
+    pool.name,
+    pool.reserveToken.balance,
+  ]);
 
   const shouldPollForGasPrice = useMemo(() => {
     return !!amount && !txBusy && accessFullEarnings && !!eth;
@@ -155,7 +205,22 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   return (
     <>
-      {renderButton(() => setIsOpen(true))}
+      {renderButton(() => {
+        setCurrentDeposit({
+          deposit_pool: pool.name,
+          deposit_blockchain: 'Ethereum',
+          deposit_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
+          deposit_input_type: isFiat ? 'Fiat' : 'Token',
+          deposit_token_symbol: pool.name,
+          deposit_token_amount: undefined,
+          deposit_token_amount_usd: undefined,
+          deposit_portion: undefined,
+          deposit_access_full_earning: accessFullEarnings ? 'On' : 'Off',
+          deposit_display_currency: 'USD',
+        });
+        sendDepositEvent(DepositEvent.DepositPoolClick);
+        setIsOpen(true);
+      })}
       <ModalV3
         title={'Deposit & Earn'}
         setIsOpen={onClose}
