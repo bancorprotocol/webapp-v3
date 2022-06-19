@@ -5,7 +5,7 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
+import { bntToken, ethToken, genericToken } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -87,7 +87,7 @@ export const buildTokenObject = (
       : undefined;
 
   // Get fallback token and set image and name
-  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const logoURI = tlToken?.logoURI ?? genericToken;
   const name = tlToken?.name ?? apiToken.symbol;
 
   const price_change_24 =
@@ -158,7 +158,7 @@ export const buildTokenObjectV3 = (
       : undefined;
 
   // Get fallback token and set image and name
-  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const logoURI = tlToken?.logoURI ?? genericToken;
   const name = tlToken?.name ?? apiToken.symbol;
 
   const price_change_24 =

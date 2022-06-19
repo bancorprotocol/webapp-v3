@@ -1,6 +1,6 @@
 import { EthNetworks } from './types';
 import { BigNumber } from 'bignumber.js';
-import emptyTokenLogo from 'assets/logos/empty-token.webp';
+import generic_token from 'assets/logos/generic_token.svg';
 import { getTenderlyRpcLS } from 'utils/localStorage';
 
 export interface EthNetworkVariables {
@@ -20,7 +20,7 @@ export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
 export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
-export const ropstenImage: string = emptyTokenLogo;
+export const genericToken: string = generic_token;
 
 export const bntDecimals: number = 18;
 const gasBuffer = 1.05;
