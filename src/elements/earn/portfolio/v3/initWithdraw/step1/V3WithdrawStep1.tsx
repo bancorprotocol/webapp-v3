@@ -1,6 +1,6 @@
 import { Button } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
@@ -10,6 +10,9 @@ import { V3WithdrawStep1Breakdown } from 'elements/earn/portfolio/v3/initWithdra
 import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import BigNumber from 'bignumber.js';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { EmergencyInfo } from 'components/EmergencyInfo';
+import { Switch } from 'components/switch/Switch';
 
 interface Props {
   inputTkn: string;
@@ -23,6 +26,7 @@ interface Props {
   withdrawalFeeInTkn: string;
   amount: AmountTknFiat;
   setRequestId: (val: string) => void;
+  lockDurationInDays: number;
 }
 
 const V3WithdrawStep1 = ({
@@ -37,6 +41,7 @@ const V3WithdrawStep1 = ({
   withdrawalFeeInTkn,
   amount,
   setRequestId,
+  lockDurationInDays,
 }: Props) => {
   const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
     useV3WithdrawStep1({
@@ -60,6 +65,8 @@ const V3WithdrawStep1 = ({
     }
   };
 
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
   const { handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3({
     holding,
     amount,
@@ -73,6 +80,20 @@ const V3WithdrawStep1 = ({
       <h1 className="text-[36px] font-normal mb-50 leading-10">
         How much {token.symbol} do you want to withdraw?
       </h1>
+
+      <div className="w-full p-20 mb-20 bg-fog dark:bg-black rounded-20">
+        <div className="flex flex-col items-center justify-between font-bold text-18 mb-15 text-error">
+          <div>Withdrawals involve a {lockDurationInDays}-day cool-down.</div>
+          <div>Please note that IL protection is temporarily paused.</div>
+          <PopoverV3
+            children={<EmergencyInfo />}
+            hover
+            buttonElement={() => (
+              <span className="underline cursor-pointer">More info</span>
+            )}
+          />
+        </div>
+      </div>
 
       <button
         onClick={() => setBalance(100)}
@@ -101,7 +122,7 @@ const V3WithdrawStep1 = ({
         isFiat={isFiat}
         isError={isInputError}
       />
-      <div className="w-full flex justify-between px-20 pt-5">
+      <div className="flex justify-between w-full px-20 pt-5">
         <div className="space-x-10 opacity-50">
           <button onClick={() => setBalance(25)}>25%</button>
           <button onClick={() => setBalance(50)}>50%</button>
@@ -116,11 +137,19 @@ const V3WithdrawStep1 = ({
         )}
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center justify-center my-40">
+        <div className="flex items-center gap-10 mx-10">
+          I understand that the withdrawal amount does not include any
+          impermanent loss compensation
+          <Switch
+            selected={isConfirmed}
+            onChange={() => setIsConfirmed(!isConfirmed)}
+          />
+        </div>
         <Button
-          className="px-50 my-40"
+          className="mt-20 px-50"
           onClick={handleNextStep}
-          disabled={!inputTkn || isInputError || txBusy}
+          disabled={!isConfirmed || !inputTkn || isInputError || txBusy}
         >
           {txBusy
             ? 'waiting for confirmation ...'
@@ -132,7 +161,7 @@ const V3WithdrawStep1 = ({
         </Button>
       </div>
 
-      <div className="opacity-50 space-y-10">
+      <div className="space-y-10 opacity-50">
         <p>USD value will likely change during the cooldown period</p>
         <span>Withdrawal fee {withdrawalFeeInPercent}%</span>
         {Number(withdrawalFeeInTkn) > 0 && (

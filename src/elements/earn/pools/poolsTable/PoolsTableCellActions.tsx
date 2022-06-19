@@ -1,20 +1,25 @@
-import { Navigate } from 'components/navigate/Navigate';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { BancorURL } from 'router/bancorURL.service';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 
-export const PoolsTableCellActions = (id: string) => {
+export const PoolsTableCellActions = (_id: string) => {
   return (
-    <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
-      <PopoverV3
-        buttonElement={() => (
-          <Button variant={ButtonVariant.Tertiary} size={ButtonSize.ExtraSmall}>
-            Deposit
-          </Button>
-        )}
-      >
-        Deposit & Earn
-      </PopoverV3>
-    </Navigate>
+    <DepositDisabledModal
+      renderButton={(onClick) => (
+        <PopoverV3
+          buttonElement={() => (
+            <Button
+              onClick={onClick}
+              variant={ButtonVariant.Tertiary}
+              size={ButtonSize.ExtraSmall}
+            >
+              Deposit
+            </Button>
+          )}
+        >
+          Deposit & Earn
+        </PopoverV3>
+      )}
+    />
   );
 };

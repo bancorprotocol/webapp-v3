@@ -52,6 +52,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           withdrawalFeeInTkn={withdrawalFeeInTkn}
           amount={amount}
           setRequestId={setRequestId}
+          lockDurationInDays={lockDurationInDays}
         />
       )}
       {step === 2 && (

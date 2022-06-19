@@ -69,5 +69,9 @@ export const useRoutesRedirect = (): RouteObject[] => {
       path: '/eth/fiat',
       element: <Navigate to={BancorURL.fiat} replace />,
     },
+    {
+      path: '/earn/v2/add-liquidity/:id',
+      element: <Navigate to={BancorURL.earnV2} replace />,
+    },
   ];
 };

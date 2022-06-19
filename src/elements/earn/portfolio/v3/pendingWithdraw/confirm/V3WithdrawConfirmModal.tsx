@@ -1,15 +1,18 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
-import { memo } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Modal } from 'components/modal/Modal';
 import { Button, ButtonSize } from 'components/button/Button';
-import { V3WithdrawConfirmOutputBreakdown } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmOutputBreakdown';
 import { useV3WithdrawConfirm } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/useV3WithdrawConfirm';
 import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmInfo';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { EmergencyInfo } from 'components/EmergencyInfo';
+import { useAppSelector } from 'store';
 import { shrinkToken } from 'utils/formulas';
 import { bntDecimals } from 'services/web3/config';
+import { Switch } from 'components/switch/Switch';
 
 interface Props {
   isModalOpen: boolean;
@@ -43,7 +46,22 @@ export const V3WithdrawConfirmModal = memo(
       isModalOpen,
     });
 
+    const [isConfirmed, setIsConfirmed] = useState(false);
+
+    useEffect(() => {
+      setIsConfirmed(false);
+    }, [isModalOpen]);
+
     const { isPoolStable, isLoading } = useIsPoolStable(token.address);
+
+    const { lockDuration } = useAppSelector(
+      (state) => state.v3Portfolio.withdrawalSettings
+    );
+
+    const lockDurationInDays = useMemo(
+      () => lockDuration / 60 / 60 / 24,
+      [lockDuration]
+    );
 
     return (
       <Modal
@@ -67,11 +85,17 @@ export const V3WithdrawConfirmModal = memo(
             label={'Final amount'}
           />
 
-          <V3WithdrawConfirmOutputBreakdown
-            outputBreakdown={outputBreakdown}
-            isBntToken={isBntToken}
-            symbol={token.symbol}
-          />
+          <div className="flex flex-col items-center font-bold text-center text-error text-16">
+            Withdrawals involve a {lockDurationInDays}-day cool-down. Please
+            note that IL protection is temporarily paused.
+            <PopoverV3
+              children={<EmergencyInfo />}
+              hover
+              buttonElement={() => (
+                <span className="underline cursor-pointer">More info</span>
+              )}
+            />
+          </div>
 
           <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
 
@@ -90,6 +114,15 @@ export const V3WithdrawConfirmModal = memo(
               </div>
             )}
 
+          <div className="flex items-center gap-10 mx-10">
+            I understand that the withdrawal amount does not include any
+            impermanent loss compensation
+            <Switch
+              selected={isConfirmed}
+              onChange={() => setIsConfirmed(!isConfirmed)}
+            />
+          </div>
+
           {missingGovTokenBalance > 0 ? (
             <div className="p-20 text-center rounded text-error bg-error bg-opacity-30">
               <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
@@ -102,6 +135,7 @@ export const V3WithdrawConfirmModal = memo(
               onClick={() => handleWithdrawClick()}
               size={ButtonSize.Full}
               disabled={
+                !isConfirmed ||
                 txBusy ||
                 missingGovTokenBalance > 0 ||
                 (isPoolStable === false &&
