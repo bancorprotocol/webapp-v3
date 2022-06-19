@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ropstenImage } from 'services/web3/config';
+import { genericToken } from 'services/web3/config';
 
 export const useImage = (
-  src: string = ropstenImage,
-  fallbackSrc: string = ropstenImage
+  src: string = genericToken,
+  fallbackSrc: string = genericToken
 ) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
