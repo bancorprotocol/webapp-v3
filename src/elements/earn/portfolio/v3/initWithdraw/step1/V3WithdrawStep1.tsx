@@ -10,6 +10,12 @@ import { V3WithdrawStep1Breakdown } from 'elements/earn/portfolio/v3/initWithdra
 import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step3/useV3WithdrawStep3';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import BigNumber from 'bignumber.js';
+import {
+  setCurrentWithdraw,
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
+import { isForkAvailable } from 'services/web3/config';
 
 interface Props {
   inputTkn: string;
@@ -53,6 +59,29 @@ const V3WithdrawStep1 = ({
   );
 
   const handleNextStep = () => {
+    const portion = new BigNumber(inputTkn)
+      .div(holding.tokenBalance)
+      .times(100)
+      .toFixed(0);
+    const withdraw_portion =
+      portion === '25' ||
+      portion === '50' ||
+      portion === '75' ||
+      portion === '100'
+        ? portion
+        : 'N/A';
+    setCurrentWithdraw({
+      withdraw_pool: holding.pool.name,
+      withdraw_blockchain: 'Ethereum',
+      withdraw_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
+      withdraw_input_type: isFiat ? 'Fiat' : 'Token',
+      withdraw_token_symbol: holding.pool.name,
+      withdraw_token_amount: inputTkn,
+      withdraw_token_amount_usd: inputFiat,
+      withdraw_portion,
+      withdraw_display_currency: 'USD',
+    });
+    sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
     if (skipStep2) {
       void handleButtonClick();
     } else {

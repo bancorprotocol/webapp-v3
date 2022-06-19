@@ -13,6 +13,10 @@ import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+import {
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 interface Props {
   holding: Holding;
@@ -129,7 +133,13 @@ export const useV3WithdrawStep3 = ({
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
     initWithdraw,
-    ContractsApi.BancorNetwork.contractAddress
+    ContractsApi.BancorNetwork.contractAddress,
+    () => sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView),
+    (isUnlimited: boolean) =>
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawUnlimitedTokenContinue,
+        isUnlimited
+      )
   );
 
   const handleButtonClick = useCallback(async () => {

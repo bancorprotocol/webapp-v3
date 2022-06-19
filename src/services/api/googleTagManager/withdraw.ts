@@ -1,6 +1,6 @@
 import { sendGTM } from 'services/api/googleTagManager';
 
-enum WithdrawEvent {
+export enum WithdrawEvent {
   WithdrawPoolClick,
   WithdrawAmountView,
   WithdrawAmountContinue,
@@ -89,14 +89,35 @@ const getWithdrawText = (event: WithdrawEvent, reward?: boolean) => {
   return txt?.replace('XX', reward ? 'FR' : 'FW');
 };
 
+interface CurrentWithdraw {
+  withdraw_pool: string;
+  withdraw_blockchain: string;
+  withdraw_blockchain_network: string;
+  withdraw_input_type: string;
+  withdraw_token_symbol: string;
+  withdraw_token_amount?: string;
+  withdraw_token_amount_usd?: string;
+  withdraw_portion?: string;
+  withdraw_display_currency?: string;
+}
+
+let currentWithdraw: CurrentWithdraw;
+export const setCurrentWithdraw = (currWithdraw: CurrentWithdraw) =>
+  (currentWithdraw = currWithdraw);
+
 export const sendWithdrawEvent = (
   event: WithdrawEvent,
-  event_properties: any,
+  unlimitied_selection?: boolean,
+  error?: string,
   reward?: boolean
 ) => {
   const data = {
     event: getWithdrawText(event, reward),
-    event_properties,
+    event_properties: {
+      ...currentWithdraw,
+      unlimitied_selection,
+      error,
+    },
     ga_event: {
       category: 'Withdraw',
     },
