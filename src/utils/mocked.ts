@@ -1,9 +1,9 @@
 import { Token } from 'services/observables/tokens';
-import { ropstenImage, zeroAddress } from 'services/web3/config';
+import { genericToken, zeroAddress } from 'services/web3/config';
 
 export const mockToken: Token = {
   address: zeroAddress,
-  logoURI: ropstenImage,
+  logoURI: genericToken,
   name: 'Ethereum',
   balance: '1.085561228177686039',
   symbol: 'MOCK',
