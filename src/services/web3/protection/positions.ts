@@ -147,8 +147,8 @@ const fetchROI = async (
       const { decimals, usdPrice } = position.reserveToken;
       const index = i * 2;
 
-      const currentTargetAmount = res[index][0].toString();
-      const fullTargetAmount = res[index + 1][0].toString();
+      const currentTargetAmount = res[index][0]?.toString() ?? '0';
+      const fullTargetAmount = res[index + 1][0]?.toString() ?? '0';
 
       const protectedAmount = {
         tknAmount: shrinkToken(fullTargetAmount, decimals),

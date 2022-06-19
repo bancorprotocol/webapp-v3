@@ -35,6 +35,9 @@ export const useV3WithdrawConfirm = ({
   const [outputBreakdown, setOutputBreakdown] = useState({
     tkn: 0,
     bnt: 0,
+    totalAmount: '0',
+    baseTokenAmount: '0',
+    bntAmount: '0',
   });
   const [txBusy, setTxBusy] = useState(false);
   const { pool, poolTokenAmount } = withdrawRequest;
@@ -64,7 +67,13 @@ export const useV3WithdrawConfirm = ({
 
   const onModalClose = useCallback(() => {
     setIsModalOpen(false);
-    setOutputBreakdown({ tkn: 0, bnt: 0 });
+    setOutputBreakdown({
+      tkn: 0,
+      bnt: 0,
+      totalAmount: '0',
+      baseTokenAmount: '0',
+      bntAmount: '0',
+    });
   }, [setIsModalOpen]);
 
   const withdraw = useCallback(async () => {
