@@ -8,6 +8,8 @@ import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdra
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { shrinkToken } from 'utils/formulas';
+import { bntDecimals } from 'services/web3/config';
 
 interface Props {
   isModalOpen: boolean;
@@ -50,15 +52,19 @@ export const V3WithdrawConfirmModal = memo(
         setIsOpen={onModalClose}
         large
       >
-        <div className="p-20 md:p-30 space-y-20">
+        <div className="p-20 space-y-20 md:p-30">
           {ModalApprove}
 
           <TokenBalanceLarge
             symbol={token.symbol}
-            amount={withdrawRequest.reserveTokenAmount}
+            amount={
+              isBntToken
+                ? shrinkToken(outputBreakdown.bntAmount, bntDecimals)
+                : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals)
+            }
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
-            label={'Amount'}
+            label={'Final amount'}
           />
 
           <V3WithdrawConfirmOutputBreakdown
@@ -72,9 +78,9 @@ export const V3WithdrawConfirmModal = memo(
           {isPoolStable === false &&
             !isLoading &&
             withdrawRequest.pool.tradingEnabled && (
-              <div className="bg-warning bg-opacity-10 rounded p-20">
-                <div className="font-semibold text-warning flex items-center">
-                  <IconInfo className="w-14 mr-10" />
+              <div className="p-20 rounded bg-warning bg-opacity-10">
+                <div className="flex items-center font-semibold text-warning">
+                  <IconInfo className="mr-10 w-14" />
                   Withdrawal is temporarily paused!
                 </div>
                 <div className="ml-[24px] text-secondary">
@@ -85,7 +91,7 @@ export const V3WithdrawConfirmModal = memo(
             )}
 
           {missingGovTokenBalance > 0 ? (
-            <div className="text-error text-center bg-error bg-opacity-30 rounded p-20">
+            <div className="p-20 text-center rounded text-error bg-error bg-opacity-30">
               <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
               <br />
               To proceed, add {missingGovTokenBalance} {govToken?.symbol} to
