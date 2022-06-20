@@ -54,6 +54,17 @@ export interface ApyVisionUniPosition {
   };
 }
 
+export interface ApyVisionNonUniPositionToken {
+  tokenAddress: string;
+  tokenName: string;
+  tokenStartingBalance: number;
+  tokenCurrentBalance: number;
+  tokenCurrentPrice: number;
+  tokenUsdGain: number;
+  weight: number;
+  averageWeightedExecutedPrice: number;
+}
+
 export interface ApyVisionNonUniPosition {
   poolProviderKey: AMMProvider;
   networkId: number;
@@ -71,16 +82,7 @@ export interface ApyVisionNonUniPosition {
   initialCapitalValueUsd: number;
   totalFeeUsd: number;
   hasPartialSessions: boolean;
-  tokens: {
-    tokenAddress: string;
-    tokenName: string;
-    tokenStartingBalance: number;
-    tokenCurrentBalance: number;
-    tokenCurrentPrice: number;
-    tokenUsdGain: number;
-    weight: number;
-    averageWeightedExecutedPrice: number;
-  }[];
+  tokens: ApyVisionNonUniPositionToken[];
   netGainUsd: number;
   netGainPct: number;
 }
@@ -114,10 +116,12 @@ export interface ExternalHolding {
   ammKey: AMMProvider;
   ammName: string;
   tokens: Token[];
+  nonBancorToken?: ApyVisionNonUniPositionToken;
   usdValue: number;
   rektStatus: string;
   poolTokenAddress: string;
   poolTokenBalanceWei: string;
+  name: string;
 }
 
 export interface ApyVisionData {

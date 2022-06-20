@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { Reserve } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 
@@ -6,7 +6,7 @@ export const TokensOverlap = ({
   tokens,
   maxLogos = 4,
 }: {
-  tokens: Token[] | Reserve[];
+  tokens: Token[] | Reserve[] | TokenMinimal[];
   maxLogos?: number;
 }) => {
   const tokenCount = tokens.length;

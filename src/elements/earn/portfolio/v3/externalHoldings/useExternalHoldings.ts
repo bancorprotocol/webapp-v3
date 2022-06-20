@@ -12,6 +12,7 @@ import {
   ExternalHolding,
 } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 import { getV3Tokens } from 'store/bancor/token';
+import { orderBy } from 'lodash';
 
 const initialApyVisionData: ApyVisionData = {
   positionsUni: [],
@@ -40,7 +41,7 @@ export const useExternalHoldings = () => {
   );
 
   const positions: ExternalHolding[] = useMemo(
-    () => [...positionsUni, ...positionsNonUni],
+    () => orderBy([...positionsUni, ...positionsNonUni], 'usdValue', 'desc'),
     [positionsUni, positionsNonUni]
   );
 
