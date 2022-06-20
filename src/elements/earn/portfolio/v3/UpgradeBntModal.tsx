@@ -8,7 +8,6 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
 import { useMemo } from 'react';
-import { prettifyNumber } from 'utils/helperFunctions';
 import {
   getAllBntPositionsAndAmount,
   setProtectedPositions,
@@ -99,9 +98,6 @@ export const UpgradeBntModal = ({
         <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">
             <div>Upgrade all BNT</div>
-            {`${prettifyNumber(totalBNT.tknAmount)} ${
-              position.reserveToken.symbol
-            } (${prettifyNumber(totalBNT.usdAmount, true)})`}
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
