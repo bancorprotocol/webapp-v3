@@ -30,7 +30,8 @@ export const useProtectedPositions = () => {
           ProtectedPositionTableCellLiquidity(cellData.row.original),
         sortType: (a, b) =>
           sorAlphaByKey(a.original, b.original, ['reserveToken', 'symbol']),
-        minWidth: 130,
+        minWidth: 200,
+        width: 200,
         sortDescFirst: true,
       },
       {
@@ -50,7 +51,6 @@ export const useProtectedPositions = () => {
           ]),
         minWidth: 130,
         sortDescFirst: true,
-        headerClassName: 'justify-center',
         tooltip: 'Amount of tokens you originally staked in the pool',
       },
       {
