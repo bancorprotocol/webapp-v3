@@ -10,8 +10,8 @@ export const ProtectedPositionTableCellAmount = ({
   usdAmount,
 }: Props) => {
   return (
-    <div className="text-center">
-      <div className="flex items-center justify-center h-24 font-medium">
+    <div>
+      <div className="flex items-center h-24 font-medium">
         {tknAmount === '0' ? 'N/A' : `${prettifyNumber(tknAmount)} ${symbol}`}
       </div>
       {usdAmount !== '0' && (
