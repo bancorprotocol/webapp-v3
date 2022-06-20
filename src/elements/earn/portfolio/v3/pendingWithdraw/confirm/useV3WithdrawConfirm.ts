@@ -12,6 +12,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import {
   confirmWithdrawNotification,
+  genericFailedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -98,6 +99,8 @@ export const useV3WithdrawConfirm = ({
       console.error('withdraw request failed', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Confirm withdrawal failed');
       }
       onModalClose();
       setTxBusy(false);
