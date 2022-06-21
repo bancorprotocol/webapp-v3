@@ -7,13 +7,18 @@ import { toBigNumber } from 'utils/helperFunctions';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
-import { swapNotification } from 'services/notifications/notifications';
+import {
+  rejectNotification,
+  swapFailedNotification,
+  swapNotification,
+} from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { openWalletModal } from 'store/user/user';
 import { ApprovalContract } from 'services/web3/approval';
 import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { addNotification } from 'store/notification/notification';
+import { ErrorCode } from 'services/web3/types';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
@@ -76,8 +81,19 @@ export const useTrade = ({
       toInput.setInputFiat('');
       await tx.wait();
       await updateUserBalances();
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error('trade failed', e);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      } else {
+        swapFailedNotification(
+          dispatch,
+          fromInput.token,
+          toInput.token,
+          fromInput.inputTkn,
+          toInput.inputTkn
+        );
+      }
       setIsBusy(false);
     }
   };

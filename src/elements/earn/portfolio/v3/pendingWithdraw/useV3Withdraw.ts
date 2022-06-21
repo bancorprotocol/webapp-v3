@@ -8,6 +8,7 @@ import { useCallback, useState } from 'react';
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import {
+  genericFailedNotification,
   rejectNotification,
   withdrawCancelNotification,
 } from 'services/notifications/notifications';
@@ -53,6 +54,8 @@ export const useV3Withdraw = () => {
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Cancel withdrawal failed');
       }
     }
   }, [account, dispatch, selected]);

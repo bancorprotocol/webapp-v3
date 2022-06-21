@@ -93,12 +93,20 @@ export const swapNotification = (
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: `Trading ${fromAmount} ${fromToken.symbol} is Pending Confirmation`,
+      msg: `Trading ${prettifyNumber(fromAmount)} ${
+        fromToken.symbol
+      } is Pending Confirmation`,
       updatedInfo: {
         successTitle: 'Success!',
-        successMsg: `Your trade ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} has been confirmed`,
+        successMsg: `Your trade ${prettifyNumber(fromAmount)} ${
+          fromToken.symbol
+        } for ${prettifyNumber(toAmount)} ${toToken.symbol} has been confirmed`,
         errorTitle: 'Transaction Failed',
-        errorMsg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+        errorMsg: `Trading ${prettifyNumber(fromAmount)} ${
+          fromToken.symbol
+        } for ${prettifyNumber(toAmount)} ${
+          toToken.symbol
+        } had failed. Please try again or contact support`,
       },
       txHash,
     },
@@ -116,7 +124,11 @@ export const swapFailedNotification = (
     {
       type: NotificationType.error,
       title: 'Transaction Failed',
-      msg: `Trading ${fromAmount} ${fromToken.symbol} for ${toAmount} ${toToken.symbol} had failed. Please try again or contact support`,
+      msg: `Trading ${prettifyNumber(fromAmount)} ${
+        fromToken.symbol
+      } for ${prettifyNumber(toAmount)} ${
+        toToken.symbol
+      } had failed. Please try again or contact support`,
     },
     dispatch
   );
@@ -658,6 +670,19 @@ export const rewardsClaimedNotification = (
       title: 'Success!',
       msg: `${amount} BNT rewards were successfully claimed to your wallet.`,
       txHash,
+    },
+    dispatch
+  );
+
+export const genericFailedNotification = (
+  dispatch: any,
+  msg = 'Unknown error occurred'
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `${msg} - Please try again or contact support`,
     },
     dispatch
   );
