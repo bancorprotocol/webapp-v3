@@ -18,7 +18,7 @@ import {
 } from 'services/observables/apiData';
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
-import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, shareReplay, switchMap } from 'rxjs/operators';
 import { isEqual, uniqueId } from 'lodash';
 import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
@@ -258,13 +258,17 @@ export const userBalancesInWeiV3$ = combineLatest([
 const minNetworkTokenLiquidityForMinting$ = combineLatest([
   settingsContractAddress$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([liquidityProtectionSettingsContract]) => {
-    const contract = LiquidityProtectionSettings__factory.connect(
-      liquidityProtectionSettingsContract,
-      web3.provider
-    );
-    const res = await contract.minNetworkTokenLiquidityForMinting();
-    return shrinkToken(res.toString(), 18);
+  switchMap(async ([liquidityProtectionSettingsContract]) => {
+    try {
+      const contract = LiquidityProtectionSettings__factory.connect(
+        liquidityProtectionSettingsContract,
+        web3.provider
+      );
+      const res = await contract.minNetworkTokenLiquidityForMinting();
+      return shrinkToken(res.toString(), 18);
+    } catch (error) {}
+
+    return '';
   }),
   distinctUntilChanged<string>(isEqual),
   shareReplay(1)
