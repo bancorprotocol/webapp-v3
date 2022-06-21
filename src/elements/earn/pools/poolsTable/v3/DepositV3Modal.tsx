@@ -19,6 +19,7 @@ import { useConditionalInterval } from 'hooks/useConditionalInterval';
 import BigNumber from 'bignumber.js';
 import {
   confirmDepositNotification,
+  genericFailedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
@@ -106,6 +107,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       setTxBusy(false);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Deposit failed');
       }
     }
   };

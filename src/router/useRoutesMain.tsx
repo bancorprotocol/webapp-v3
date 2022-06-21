@@ -8,6 +8,16 @@ import { NotFound } from 'pages/NotFound';
 import { BancorURL } from 'router/bancorURL.service';
 import { Admin } from 'pages/Admin';
 
+const debugMode: RouteObject[] =
+  process.env.REACT_APP_DEBUG_MODE === 'true'
+    ? [
+        {
+          path: BancorURL.admin,
+          element: <Admin />,
+        },
+      ]
+    : [];
+
 export const useRoutesMain = (): RouteObject[] => {
   return [
     {
@@ -34,10 +44,7 @@ export const useRoutesMain = (): RouteObject[] => {
       path: BancorURL.privacyPolicy,
       element: <PrivacyPolicy />,
     },
-    {
-      path: BancorURL.admin,
-      element: <Admin />,
-    },
+    ...debugMode,
     {
       path: '*',
       element: <NotFound />,

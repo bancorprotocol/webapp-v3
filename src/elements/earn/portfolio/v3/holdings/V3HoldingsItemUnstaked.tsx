@@ -7,6 +7,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { expandToken } from 'utils/formulas';
 import {
   confirmJoinNotification,
+  genericFailedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -50,6 +51,8 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
       setTxJoinBusy(false);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Joining rewards failed');
       }
     }
   };

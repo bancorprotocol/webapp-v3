@@ -8,8 +8,13 @@ import { shrinkToken } from 'utils/formulas';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { confirmLeaveNotification } from 'services/notifications/notifications';
+import {
+  confirmLeaveNotification,
+  genericFailedNotification,
+  rejectNotification,
+} from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
+import { ErrorCode } from 'services/web3/types';
 
 interface Props {
   holding: Holding;
@@ -63,10 +68,15 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
       setTxBusy(false);
       await tx.wait();
       await updatePortfolioData(dispatch);
-    } catch (e) {
+    } catch (e: any) {
       console.error('handleLeaveClick', e);
       onClose();
       setTxBusy(false);
+      if (e.code === ErrorCode.DeniedTx) {
+        rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Leave rewards failed');
+      }
     }
   };
 
