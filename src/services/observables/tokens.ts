@@ -80,11 +80,11 @@ export const buildTokenObject = (
         .toString()
     : undefined;
 
-  const usdPrice = apiToken.rate.usd ?? '0';
-  const balanceUsd =
-    balance && Number(balance) !== 0
-      ? Number(toBigNumber(balance).times(usdPrice).toString())
-      : undefined;
+  const balanceUsd = balance
+    ? toBigNumber(balance || 0)
+        .times(apiToken.rate.usd || 0)
+        .toNumber()
+    : undefined;
 
   // Get fallback token and set image and name
   const logoURI = tlToken?.logoURI ?? genericToken;
@@ -123,7 +123,7 @@ export const buildTokenObject = (
     decimals: apiToken.decimals,
     symbol: apiToken.symbol,
     liquidity: apiToken.liquidity.usd ?? '0',
-    usdPrice,
+    usdPrice: apiToken.rate.usd ?? '0',
     usd_24h_ago: apiToken.rate_24h_ago.usd ?? '0',
     price_change_24,
     price_history_7d,
@@ -152,10 +152,11 @@ export const buildTokenObjectV3 = (
     ? v2Token?.rate.usd ?? '0'
     : '0';
 
-  const balanceUsd =
-    balance && v2Token && Number(balance) !== 0
-      ? Number(toBigNumber(balance).times(usdPrice).toString())
-      : undefined;
+  const balanceUsd = balance
+    ? toBigNumber(balance || 0)
+        .times(usdPrice)
+        .toNumber()
+    : undefined;
 
   // Get fallback token and set image and name
   const logoURI = tlToken?.logoURI ?? genericToken;
