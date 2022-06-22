@@ -8,17 +8,22 @@ import { I18nProvider } from 'i18n/i18nProvider';
 import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+const queryClient = new QueryClient();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <I18nProvider>
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <StrictMode>
-          <App />
-        </StrictMode>
-      </Web3ReactProvider>
-    </I18nProvider>
-  </Provider>,
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <I18nProvider>
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <StrictMode>
+            <App />
+          </StrictMode>
+        </Web3ReactProvider>
+      </I18nProvider>
+    </Provider>
+  </QueryClientProvider>,
   document.getElementById('root')
 );
 
