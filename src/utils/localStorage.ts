@@ -76,7 +76,7 @@ export const setNotificationsLS = (notify: Notification[]) => {
 
 export const getTenderlyRpcLS = (): string => {
   // if production ENV remove tenderly locale storage
-  if (!isProduction) {
+  if (isProduction) {
     setTenderlyRpcLS();
   }
   return localStorage.getItem(tenderlyRpcUrl) || '';
@@ -92,7 +92,7 @@ export const setTenderlyRpcLS = (url?: string) => {
 
 export const getV3ApiUrlLS = (): string => {
   // if production ENV remove tenderly locale storage
-  if (!isProduction) {
+  if (isProduction) {
     setV3ApiUrlLS();
   }
   return localStorage.getItem(v3ApiUrl) || 'https://api-v3.bancor.network';
@@ -108,7 +108,7 @@ export const setV3ApiUrlLS = (url?: string) => {
 
 export const getV2ApiUrlLS = (): string => {
   // if production ENV remove tenderly locale storage
-  if (!isProduction) {
+  if (isProduction) {
     setV2ApiUrlLS();
   }
   return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
