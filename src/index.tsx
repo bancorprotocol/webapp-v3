@@ -9,9 +9,9 @@ import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const queryClient = new QueryClient();
-
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
@@ -23,6 +23,7 @@ ReactDOM.render(
         </Web3ReactProvider>
       </I18nProvider>
     </Provider>
+    <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>,
   document.getElementById('root')
 );

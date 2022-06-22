@@ -1,6 +1,5 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { Token } from 'services/observables/tokens';
-import { Statistic } from 'services/observables/statistics';
 import { RootState } from 'store';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
@@ -11,14 +10,12 @@ interface PoolState {
   v2Pools: Pool[];
   v3Pools: PoolV3[];
   isLoadingV3Pools: boolean;
-  statistics: Statistic[];
 }
 
 const initialState: PoolState = {
   v2Pools: [],
   v3Pools: [],
   isLoadingV3Pools: true,
-  statistics: [],
 };
 
 const poolSlice = createSlice({
@@ -31,9 +28,6 @@ const poolSlice = createSlice({
     setv3Pools: (state, action) => {
       state.v3Pools = action.payload;
       state.isLoadingV3Pools = false;
-    },
-    setStats: (state, action) => {
-      state.statistics = action.payload;
     },
   },
 });
@@ -171,6 +165,6 @@ export const getPoolByIdWithoutV3 = (id: string) =>
     return { status: 'ready', pool } as SelectedPool;
   });
 
-export const { setv2Pools, setv3Pools, setStats } = poolSlice.actions;
+export const { setv2Pools, setv3Pools } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;

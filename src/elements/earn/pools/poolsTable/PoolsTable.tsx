@@ -210,7 +210,9 @@ export const PoolsTable = ({
         </div>
       </div>
       <div className="hidden col-span-4 space-y-40 lg:block">
-        <Statistics />
+        <section className="content-block p-20">
+          <Statistics />
+        </section>
         <TopPools />
       </div>
     </section>

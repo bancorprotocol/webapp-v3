@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
@@ -6,7 +6,6 @@ import { orderBy, uniqBy } from 'lodash';
 import { getAllTokensMap } from 'store/bancor/token';
 import { utils } from 'ethers';
 
-import { Statistic } from 'services/observables/statistics';
 import { NotificationType } from 'store/notification/notification';
 
 interface BancorState {
@@ -17,7 +16,6 @@ interface BancorState {
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
   isLoadingTokens: boolean;
-  statistics: Statistic[];
 }
 
 export const initialState: BancorState = {
@@ -28,7 +26,6 @@ export const initialState: BancorState = {
   keeperDaoTokens: [],
   allTokenListTokens: [],
   isLoadingTokens: true,
-  statistics: [],
 };
 
 const bancorSlice = createSlice({
@@ -54,9 +51,6 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
-    setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
-      state.statistics = action.payload;
-    },
   },
 });
 
@@ -65,7 +59,6 @@ export const {
   setTokensV3,
   setTokenLists,
   setAllTokensV2,
-  setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
 } = bancorSlice.actions;
