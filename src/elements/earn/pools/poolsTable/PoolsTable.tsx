@@ -17,6 +17,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import ErrorBoundary from 'components/ErrorBoundary/ErrorBoundary';
 
 export const PoolsTable = ({
   rewards,
@@ -211,7 +212,9 @@ export const PoolsTable = ({
       </div>
       <div className="hidden col-span-4 space-y-40 lg:block">
         <section className="content-block p-20">
-          <Statistics />
+          <ErrorBoundary errorMsg={'Stats failed to load.'}>
+            <Statistics />
+          </ErrorBoundary>
         </section>
         <TopPools />
       </div>

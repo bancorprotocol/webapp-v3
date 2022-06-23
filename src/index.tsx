@@ -10,15 +10,27 @@ import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import ErrorBoundary from 'components/ErrorBoundary/ErrorBoundary';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchInterval: 60000,
+      staleTime: 30000,
+      useErrorBoundary: true,
+    },
+  },
+});
+
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <I18nProvider>
         <Web3ReactProvider getLibrary={getLibrary}>
           <StrictMode>
-            <App />
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
           </StrictMode>
         </Web3ReactProvider>
       </I18nProvider>

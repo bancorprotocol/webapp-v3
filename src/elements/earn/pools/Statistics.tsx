@@ -2,9 +2,9 @@ import './Statistics.css';
 import { useStatistics } from 'queries/useStatistics';
 
 export const Statistics = () => {
-  const { data: stats, isError, isLoading, isIdle } = useStatistics();
+  const { data: stats } = useStatistics();
 
-  if (isLoading || isIdle) {
+  if (!stats) {
     return (
       <>
         {[...Array(4)].map((_, i) => (
@@ -17,10 +17,6 @@ export const Statistics = () => {
     );
   }
 
-  if (!stats || isError) {
-    return <div>Error loading stats</div>;
-  }
-  console.log('muh', stats);
   const first = stats[0];
 
   return (
