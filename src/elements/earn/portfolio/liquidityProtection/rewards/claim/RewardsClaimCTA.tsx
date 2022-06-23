@@ -9,22 +9,13 @@ interface Props {
 }
 
 export const RewardsClaimCTA = ({ account }: Props) => {
-  const { userRewards, hasClaimed, stakeRewardsToV3, claimRewardsToWallet } =
-    useMyRewards();
+  const { userRewards, hasClaimed, claimRewardsToWallet } = useMyRewards();
   const proof = useAppSelector(getUserRewardsProof);
   const canClaim =
     !hasClaimed && !!account && userRewards.claimable !== '0' && proof;
 
   return (
     <>
-      <Button
-        onClick={stakeRewardsToV3}
-        size={ButtonSize.Full}
-        disabled={!canClaim}
-        className="mt-20"
-      >
-        Stake my Rewards to Bancor V3
-      </Button>
       <Button
         variant={ButtonVariant.Secondary}
         onClick={claimRewardsToWallet}

@@ -45,7 +45,13 @@ export const fetchPortfolioV3Withdrawals = async (
 
 export const fetchWithdrawalRequestOutputBreakdown = async (
   req: WithdrawalRequest
-): Promise<{ tkn: number; bnt: number }> => {
+): Promise<{
+  tkn: number;
+  bnt: number;
+  totalAmount: string;
+  baseTokenAmount: string;
+  bntAmount: string;
+}> => {
   try {
     const res = await ContractsApi.BancorNetworkInfo.read.withdrawalAmounts(
       req.reserveToken,
@@ -59,6 +65,9 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
     return {
       tkn,
       bnt,
+      totalAmount: res.totalAmount.toString(),
+      baseTokenAmount: res.baseTokenAmount.toString(),
+      bntAmount: res.bntAmount.toString(),
     };
   } catch (e) {
     console.error('failed to fetch output distribution: ', e);

@@ -81,7 +81,7 @@ export const getDarkMode = createSelector(
   }
 );
 
-const setDarkModeCss = (mode: DarkMode) => {
+export const setDarkModeCss = (mode: DarkMode) => {
   const root = window.document.documentElement;
   if (
     (mode === DarkMode.System &&

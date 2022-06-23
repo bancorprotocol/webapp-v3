@@ -17,19 +17,25 @@ export const ProtectedPositionTableCellClaimable = (
     .toFixed(0);
   return (
     <div className="text-center">
-      <div className="flex items-center justify-center font-medium h-24">
-        {!row.canExpand && (
-          <PopoverV3
-            buttonElement={() => <IconClock className="w-18 h-20 mr-6" />}
-          >
-            Current protection is {currentCoveragePercent}%
-          </PopoverV3>
-        )}
-        {`${prettifyNumber(tknAmount)} ${symbol}`}
-      </div>
-      <div className="text-12 text-black-low dark:text-white-low mt-4">
-        {prettifyNumber(usdAmount, true)} USD
-      </div>
+      {tknAmount === '0' ? (
+        'N/A'
+      ) : (
+        <>
+          <div className="flex items-center justify-center h-24 font-medium">
+            {!row.canExpand && (
+              <PopoverV3
+                buttonElement={() => <IconClock className="h-20 mr-6 w-18" />}
+              >
+                Current protection is {currentCoveragePercent}%
+              </PopoverV3>
+            )}
+            {`${prettifyNumber(tknAmount)} ${symbol}`}
+          </div>
+          <div className="mt-4 text-12 text-black-low dark:text-white-low">
+            {prettifyNumber(usdAmount, true)} USD
+          </div>
+        </>
+      )}
     </div>
   );
 };

@@ -5,7 +5,7 @@ import {
   fetchETH,
   fetchTokenBalanceMulticall,
 } from 'services/web3/token/token';
-import { bntToken, ethToken, ropstenImage } from 'services/web3/config';
+import { bntToken, ethToken, genericToken } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -87,7 +87,7 @@ export const buildTokenObject = (
     : undefined;
 
   // Get fallback token and set image and name
-  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const logoURI = tlToken?.logoURI ?? genericToken;
   const name = tlToken?.name ?? apiToken.symbol;
 
   const price_change_24 =
@@ -146,14 +146,20 @@ export const buildTokenObjectV3 = (
         .toString()
     : undefined;
 
+  const usdPrice = toBigNumber(apiToken.rate.usd).gt(0)
+    ? apiToken.rate.usd
+    : toBigNumber(v2Token?.rate.usd ?? '0').gt(0)
+    ? v2Token?.rate.usd ?? '0'
+    : '0';
+
   const balanceUsd = balance
     ? toBigNumber(balance || 0)
-        .times(apiToken.rate.usd)
+        .times(usdPrice)
         .toNumber()
     : undefined;
 
   // Get fallback token and set image and name
-  const logoURI = tlToken?.logoURI ?? ropstenImage;
+  const logoURI = tlToken?.logoURI ?? genericToken;
   const name = tlToken?.name ?? apiToken.symbol;
 
   const price_change_24 =
@@ -171,12 +177,6 @@ export const buildTokenObjectV3 = (
     }));
 
   const usd_volume_24 = pool ? pool.volume24h.usd : null;
-
-  const usdPrice = toBigNumber(apiToken.rate.usd).gt(0)
-    ? apiToken.rate.usd
-    : toBigNumber(v2Token?.rate.usd ?? '0').gt(0)
-    ? v2Token?.rate.usd ?? '0'
-    : '0';
 
   const usd_24h_ago = toBigNumber(apiToken.rate24hAgo.usd).gt(0)
     ? apiToken.rate24hAgo.usd

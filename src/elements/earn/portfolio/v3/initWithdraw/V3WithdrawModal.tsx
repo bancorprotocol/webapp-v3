@@ -55,7 +55,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
 
   return (
     <ModalFullscreenV3
-      title="Begin 7 day cooldown"
+      title={`Begin ${lockDurationInDays} day cooldown`}
       isOpen={isOpen}
       setIsOpen={onClose}
       titleElement={<SwapSwitch />}
@@ -73,6 +73,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           withdrawalFeeInTkn={withdrawalFeeInTkn}
           amount={amount}
           setRequestId={setRequestId}
+          lockDurationInDays={lockDurationInDays}
         />
       )}
       {step === 2 && (

@@ -12,6 +12,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import {
   confirmClaimNotification,
+  genericFailedNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
@@ -60,6 +61,8 @@ export const useV3Bonuses = () => {
         console.error('failed to claim rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
           rejectNotification(dispatch);
+        } else {
+          genericFailedNotification(dispatch, 'Claim rewards failed');
         }
         setBonusModalOpen(false);
       }
@@ -83,6 +86,8 @@ export const useV3Bonuses = () => {
         console.error('failed to restake rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
           rejectNotification(dispatch);
+        } else {
+          genericFailedNotification(dispatch, 'Restake rewards failed');
         }
         setBonusModalOpen(false);
       }

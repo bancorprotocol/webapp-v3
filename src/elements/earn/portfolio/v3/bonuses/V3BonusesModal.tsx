@@ -93,7 +93,7 @@ const BonusGroup = ({
 }: {
   rewardsGroup: GroupedStandardReward;
 }) => {
-  const { handleClaim, handleClaimAndEarn } = useV3Bonuses();
+  const { handleClaim } = useV3Bonuses();
   const { groupPool } = rewardsGroup;
   const allTokens = rewardsGroup.rewards.map(
     (reward) => reward.programPool.reserveToken
@@ -110,11 +110,6 @@ const BonusGroup = ({
     setIsTxClaimBusy(false);
   }, [handleClaim, selectedIds]);
 
-  const onRestakeClick = useCallback(async () => {
-    setIsTxClaimBusy(true);
-    await handleClaimAndEarn(selectedIds);
-    setIsTxClaimBusy(false);
-  }, [handleClaimAndEarn, selectedIds]);
   const amount = shrinkToken(
     rewardsGroup.totalPendingRewards,
     groupPool.decimals
@@ -181,15 +176,6 @@ const BonusGroup = ({
           disabled={bntDisabled}
         >
           Claim
-        </Button>
-        <Button
-          variant={ButtonVariant.Secondary}
-          onClick={onRestakeClick}
-          size={ButtonSize.Full}
-          disabled={bntDisabled}
-        >
-          Deposit {groupPool.reserveToken.symbol} {'&'} earn{' '}
-          {groupPool.apr7d.total.toFixed(2)}%
         </Button>
       </div>
     </div>

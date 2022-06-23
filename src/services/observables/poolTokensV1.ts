@@ -13,7 +13,7 @@ import { poolsNew$, PoolToken } from 'services/observables/pools';
 import { findPoolByConverter } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
-import { ropstenImage } from 'services/web3/config';
+import { genericToken } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import { apiPools$ } from 'services/observables/apiData';
 import {
@@ -154,7 +154,7 @@ export const poolTokens$ = combineLatest([
           bnt: {
             token: {
               symbol: 'BNT',
-              logoURI: ropstenImage,
+              logoURI: genericToken,
               usdPrice: '0',
               decimals: 0,
               ...bnt,
@@ -164,7 +164,7 @@ export const poolTokens$ = combineLatest([
           tkn: {
             token: {
               symbol: pool.name.replace('/BNT', ''),
-              logoURI: ropstenImage,
+              logoURI: genericToken,
               usdPrice: '0',
               decimals: 0,
               ...tkn,

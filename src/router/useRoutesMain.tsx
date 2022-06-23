@@ -7,6 +7,16 @@ import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
 import { BancorURL } from 'router/bancorURL.service';
 import { Admin } from 'pages/Admin';
+import { isProduction } from 'utils/constants';
+
+const debugMode: RouteObject[] = !isProduction
+  ? [
+      {
+        path: BancorURL.admin,
+        element: <Admin />,
+      },
+    ]
+  : [];
 
 export const useRoutesMain = (): RouteObject[] => {
   return [
@@ -34,10 +44,7 @@ export const useRoutesMain = (): RouteObject[] => {
       path: BancorURL.privacyPolicy,
       element: <PrivacyPolicy />,
     },
-    {
-      path: BancorURL.admin,
-      element: <Admin />,
-    },
+    ...debugMode,
     {
       path: '*',
       element: <NotFound />,

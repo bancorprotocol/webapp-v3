@@ -1,5 +1,6 @@
 import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
+import { isProduction } from 'utils/constants';
 
 const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
@@ -35,7 +36,7 @@ export const setAutoLoginLS = (flag: boolean) => {
 
 export const getDarkModeLS = (): DarkMode => {
   const darkLS = localStorage.getItem(darkMode);
-  if (darkLS) return Number(darkLS);
+  if (darkLS !== null) return Number(darkLS);
 
   return DarkMode.System;
 };
@@ -74,6 +75,10 @@ export const setNotificationsLS = (notify: Notification[]) => {
 };
 
 export const getTenderlyRpcLS = (): string => {
+  // if production ENV remove tenderly locale storage
+  if (isProduction) {
+    setTenderlyRpcLS();
+  }
   return localStorage.getItem(tenderlyRpcUrl) || '';
 };
 
@@ -86,6 +91,10 @@ export const setTenderlyRpcLS = (url?: string) => {
 };
 
 export const getV3ApiUrlLS = (): string => {
+  // if production ENV remove tenderly locale storage
+  if (isProduction) {
+    setV3ApiUrlLS();
+  }
   return localStorage.getItem(v3ApiUrl) || 'https://api-v3.bancor.network';
 };
 
@@ -98,6 +107,10 @@ export const setV3ApiUrlLS = (url?: string) => {
 };
 
 export const getV2ApiUrlLS = (): string => {
+  // if production ENV remove tenderly locale storage
+  if (isProduction) {
+    setV2ApiUrlLS();
+  }
   return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
 };
 

@@ -3,22 +3,22 @@ import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Image } from 'components/image/Image';
-import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
+import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+// import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {
   const pools = useAppSelector(getTopPoolsV3);
 
   return (
-    <section className="content-block pt-20 pb-10">
+    <section className="pt-20 pb-10 content-block">
       <h2 className="ml-[20px]">Top Performing</h2>
       <Ticker id="top-tokens">
-        <div className="flex space-x-16 mt-20">
+        <div className="flex mt-20 space-x-16">
           {pools.length
             ? pools.map((pool, index) => {
                 return (
-                  <DepositV3Modal
+                  <DepositDisabledModal
                     key={`pool-table-key-${index}`}
-                    pool={pool}
                     renderButton={(onClick) => (
                       <button
                         onClick={onClick}
@@ -29,7 +29,7 @@ export const TopPools = () => {
                           alt="Token Logo"
                           className="!rounded-full w-50 h-50"
                         />
-                        <div className="ml-10 text-12 dark:text-graphite text-left">
+                        <div className="ml-10 text-left text-12 dark:text-graphite">
                           <div className="font-medium">
                             {pool.reserveToken.symbol}
                           </div>

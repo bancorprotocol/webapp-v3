@@ -12,16 +12,6 @@ import { setProvider, setSigner } from 'services/web3';
 import { providers } from 'ethers';
 import { Button, ButtonSize } from 'components/button/Button';
 
-export interface BancorV3Contracts {
-  bancorNetwork: string;
-  bancorNetworkInfo: string;
-  networkSettings: string;
-  pendingWithdrawals: string;
-  poolCollectionType1: string;
-  standardRewards: string;
-  bancorPortal: string;
-}
-
 export const AdminUseFork = () => {
   const account = useAppSelector((state) => state.user.account);
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());

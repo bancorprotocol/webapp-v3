@@ -5,6 +5,7 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import {
+  genericFailedNotification,
   initWithdrawNotification,
   rejectNotification,
 } from 'services/notifications/notifications';
@@ -126,6 +127,8 @@ export const useV3WithdrawStep3 = ({
       console.error('initWithdraw failed', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
+      } else {
+        genericFailedNotification(dispatch, 'Initiate Withdrawal Failed');
       }
     }
   };

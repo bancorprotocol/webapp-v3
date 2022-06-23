@@ -15,7 +15,7 @@ export const V3WithdrawConfirmOutputBreakdown = ({
     <>
       {outputBreakdown.bnt > 0 && !isBntToken && (
         <div>
-          <div className="text-12 font-semibold">Output Breakdown</div>
+          <div className="font-semibold text-12">Output Breakdown</div>
           <ProgressBar
             percentage={outputBreakdown.tkn}
             className="text-primary"

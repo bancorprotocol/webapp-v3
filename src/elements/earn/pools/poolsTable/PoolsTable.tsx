@@ -7,7 +7,8 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -148,9 +149,8 @@ export const PoolsTable = ({
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (cellData) => (
-          <DepositV3Modal
-            pool={cellData.row.original}
+        Cell: (_) => (
+          <DepositDisabledModal
             renderButton={(onClick) => (
               <Button
                 onClick={onClick}
@@ -178,7 +178,7 @@ export const PoolsTable = ({
   return (
     <section className="lg:grid lg:grid-cols-12 lg:gap-40">
       <div className={'col-span-8'}>
-        <div className="content-block pt-20">
+        <div className="pt-20 content-block">
           <div className="flex justify-between items-center mb-20 mx-[20px]">
             <div className="flex items-center gap-x-10">
               <div className="mr-16">
@@ -209,7 +209,7 @@ export const PoolsTable = ({
           />
         </div>
       </div>
-      <div className="hidden lg:block col-span-4 space-y-40">
+      <div className="hidden col-span-4 space-y-40 lg:block">
         <Statistics />
         <TopPools />
       </div>
