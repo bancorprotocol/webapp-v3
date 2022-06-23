@@ -17,7 +17,7 @@ const buildTokenListTokens = (
       symbol: 'ETH',
       address: ethToken,
       logoURI:
-        'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
+        'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
       decimals: 18,
       name: 'Ethereum',
     },
@@ -25,7 +25,7 @@ const buildTokenListTokens = (
       symbol: 'WETH',
       address: wethToken,
       logoURI:
-        'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.svg',
+        'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.svg',
       decimals: 18,
       name: 'Wrapped Ethereum',
     },
