@@ -13,7 +13,7 @@ export const getProvider = (
     return new providers.StaticJsonRpcProvider(getTenderlyRpcLS());
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
-    return new providers.JsonRpcProvider(buildAlchemyUrl(network, false));
+    return new providers.StaticJsonRpcProvider(buildAlchemyUrl(network, false));
   }
 
   return providers.getDefaultProvider(network);
@@ -55,7 +55,7 @@ export const web3 = {
 export const writeWeb3 = {
   signer: window.ethereum
     ? new Web3Provider(window.ethereum).getSigner()
-    : new providers.JsonRpcProvider(
+    : new providers.StaticJsonRpcProvider(
         buildAlchemyUrl(EthNetworks.Mainnet, false)
       ).getSigner(),
 };
