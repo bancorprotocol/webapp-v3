@@ -16,7 +16,8 @@ import { openNewTab } from 'utils/pureFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Page } from 'components/Page';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { GovEvent, sendGovEvent } from 'services/api/googleTagManager/gov';
+import { useDispatch } from 'react-redux';
+import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
 
 interface VoteCardProps {
   title: string;
@@ -64,11 +65,16 @@ const VoteCard = ({
 
 export const Vote = () => {
   const { chainId } = useWeb3React();
+  const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
+  const stakeAmount = useAppSelector<string | undefined>(
+    (state) => state.gov.stakedAmount
+  );
+  const unstakeTime = useAppSelector<number | undefined>(
+    (state) => state.gov.unstakeTimer
+  );
   const [govToken, setGovToken] = useState<Token | undefined>();
-  const [stakeAmount, setStakeAmount] = useState<string | undefined>();
-  const [unstakeTime, setUnstakeTime] = useState<number | undefined>();
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [stakeModal, setStakeModal] = useState<boolean>(false);
   const [isStake, setIsStake] = useState<boolean>(false);
@@ -80,18 +86,19 @@ export const Vote = () => {
   }, [tokens, chainId]);
 
   const refresh = useCallback(async () => {
-    if (account && govToken) {
+    if (account) {
       const [unstakeTimer, stakedAmount] = await Promise.all([
         getUnstakeTimer(account),
-        getStakedAmount(account, govToken),
+        getStakedAmount(account),
       ]);
-      setUnstakeTime(unstakeTimer);
-      setStakeAmount(stakedAmount);
+
+      dispatch(setUnstakeTimer(unstakeTimer));
+      dispatch(setStakedAmount(stakedAmount));
     } else {
-      setUnstakeTime(undefined);
-      setStakeAmount(undefined);
+      dispatch(setUnstakeTimer(undefined));
+      dispatch(setStakedAmount(undefined));
     }
-  }, [account, govToken]);
+  }, [account, dispatch]);
 
   useEffect(() => {
     refresh();
@@ -121,7 +128,6 @@ export const Vote = () => {
                 return;
               }
 
-              sendGovEvent(GovEvent.StartClick, undefined, true);
               setIsStake(true);
               setStakeModal(true);
             }}
@@ -210,7 +216,6 @@ export const Vote = () => {
                     !isUnlocked
                   }
                   onClick={() => {
-                    sendGovEvent(GovEvent.StartClick, undefined, false);
                     setIsStake(false);
                     setStakeModal(true);
                   }}

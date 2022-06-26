@@ -4,20 +4,7 @@ import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';
 import dayjs from 'utils/dayjs';
-import { getNetworkVariables } from 'services/web3/config';
-
-export const getStakedAmount = async (
-  user: string,
-  govToken: Token
-): Promise<string> => {
-  const networkVars = getNetworkVariables();
-  const govContract = Governance__factory.connect(
-    networkVars.governanceContractAddress,
-    web3.provider
-  );
-  const amount = await govContract.votesOf(user);
-  return shrinkToken(amount.toString(), govToken.decimals);
-};
+import { getNetworkVariables, vBntDecimals } from 'services/web3/config';
 
 export const stakeAmount = async (
   amount: string,
@@ -71,6 +58,16 @@ export const unstakeAmount = async (
     if (e.code === ErrorCode.DeniedTx) rejected(e.message);
     else failed(e.message);
   }
+};
+
+export const getStakedAmount = async (user: string): Promise<string> => {
+  const networkVars = getNetworkVariables();
+  const govContract = Governance__factory.connect(
+    networkVars.governanceContractAddress,
+    web3.provider
+  );
+  const amount = await govContract.votesOf(user);
+  return shrinkToken(amount.toString(), vBntDecimals);
 };
 
 export const getUnstakeTimer = async (user: string) => {
