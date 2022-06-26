@@ -21,7 +21,17 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install Dependencies
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            **/node_modules
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - if: ${{ steps.cache-npm.outputs.cache-hit == 'false' }}
+        name: Install Dependencies
         run: yarn
       - name: Build
         env:
