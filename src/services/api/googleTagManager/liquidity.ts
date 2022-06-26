@@ -52,7 +52,7 @@ const getLiquidityEventLabel = (event: Events) => {
   const type = currentLiquidity.liquidity_type
     .replace(' Dual', '')
     .replace(' Single', '');
-  return `CE Liquidity ${type} ${eventTxtMap.get(event)}`;
+  return `Liquidity ${type} ${eventTxtMap.get(event)}`;
 };
 
 export const sendLiquidityApprovedEvent = (isUnlimited: boolean) => {
@@ -107,7 +107,7 @@ export const sendLiquidityPoolClickEvent = (
   network: EthNetworks = EthNetworks.Mainnet
 ) => {
   const gtmData = {
-    event: `CE Liquidity ${type} Pool Click`,
+    event: `Liquidity ${type} Pool Click`,
     wallet_properties: undefined,
     event_properties: {
       liquidity_type: 'Withdraw Single',

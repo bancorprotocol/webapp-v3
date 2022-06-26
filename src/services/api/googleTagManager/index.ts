@@ -31,9 +31,19 @@ const init = (w: any, d: any, s: any, l: any, i: any) => {
   f.parentNode.insertBefore(j, f);
 };
 
-export const sendGTM = (data: {}) => {
+interface GTMData {
+  event?: string;
+  event_properties?: any;
+  ga_event?: {
+    category: string;
+  };
+  wallet_properties?: { wallet_id: string; wallet_name: string };
+  page?: any;
+}
+
+export const sendGTM = (data: GTMData) => {
   const dataLayer = window.dataLayer as {}[];
-  if (dataLayer) dataLayer.push(data);
+  if (dataLayer) dataLayer.push({ ...data, event: 'CE ' + data.event });
 };
 
 export enum Events {
@@ -58,7 +68,7 @@ export const eventTxtMap = new Map([
 
 export const sendInsight = (open: boolean) => {
   sendGTM({
-    event: `CE Conversion Insights ${open ? 'Open' : 'Closed'}`,
+    event: `Conversion Insights ${open ? 'Open' : 'Closed'}`,
     event_properties: undefined,
     wallet_properties: undefined,
     ga_event: {

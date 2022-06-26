@@ -56,7 +56,7 @@ export const setCurrentConversion = (
 
 export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
   const gtmData = {
-    event: 'CE Conversion ' + eventTxtMap.get(Events.approved),
+    event: 'Conversion ' + eventTxtMap.get(Events.approved),
     wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
@@ -74,7 +74,7 @@ export const sendConversionSuccessEvent = (
   transaction_hash?: string
 ) => {
   const gtmData = {
-    event: 'CE Conversion ' + eventTxtMap.get(Events.success),
+    event: 'Conversion ' + eventTxtMap.get(Events.success),
     wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
@@ -90,7 +90,7 @@ export const sendConversionSuccessEvent = (
 
 export const sendConversionFailEvent = (errorMsg: string) => {
   const gtmData = {
-    event: 'CE Conversion ' + eventTxtMap.get(Events.fail),
+    event: 'Conversion ' + eventTxtMap.get(Events.fail),
     wallet_properties: undefined,
     event_properties: {
       ...currentConversion,
@@ -109,7 +109,7 @@ export const sendConversionEvent = (
 ) => {
   const eventClickPrefix = event === Events.click ? 'Swap ' : '';
   const gtmData = {
-    event: `CE Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
+    event: `Conversion ${eventClickPrefix}${eventTxtMap.get(event)}`,
     wallet_properties: undefined,
     event_properties: {
       ...currentConversion,

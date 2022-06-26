@@ -21,7 +21,7 @@ export const sendWalletEvent = (
   const event = walletTxtMap.get(walletEvent);
   if (id && name)
     sendGTM({
-      event: 'CE ' + event,
+      event: event,
       ga_event: {
         category: wallet,
       },
@@ -32,7 +32,7 @@ export const sendWalletEvent = (
     });
   else
     sendGTM({
-      event: 'CE ' + event,
+      event: event,
       event_properties: event_properties,
       wallet_properties: undefined,
       ga_event: {
