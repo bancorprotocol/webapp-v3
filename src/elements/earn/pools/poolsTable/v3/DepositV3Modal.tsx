@@ -73,12 +73,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
 
-  sendDepositEvent(DepositEvent.DepositWalletRequest);
   const deposit = async () => {
     if (!pool.reserveToken.balance || !account) {
       return;
     }
 
+    sendDepositEvent(DepositEvent.DepositWalletRequest);
     const amountWei = expandToken(amount, pool.reserveToken.decimals);
     const isETH = pool.reserveToken.address === ethToken;
 
