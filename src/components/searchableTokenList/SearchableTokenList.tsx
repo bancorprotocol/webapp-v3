@@ -185,10 +185,7 @@ export const SearchableTokenList = ({
               className="rounded-full py-10 w-full"
             />
           </div>
-          <div
-            data-cy="searchableTokensList"
-            className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10"
-          >
+          <div className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10">
             <div className="pb-12">
               <SuggestedTokens
                 allTokens={tokens}
