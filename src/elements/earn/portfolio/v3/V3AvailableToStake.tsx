@@ -1,14 +1,12 @@
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
 import { Navigation } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react/swiper-react.js';
-import 'swiper/swiper.min.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { NavigationOptions } from 'swiper/types';
 import { ReactComponent as IconArrow } from 'assets/icons/arrow.svg';
 import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
