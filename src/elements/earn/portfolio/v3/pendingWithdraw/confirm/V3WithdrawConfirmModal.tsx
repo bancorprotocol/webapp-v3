@@ -87,7 +87,7 @@ export const V3WithdrawConfirmModal = memo(
 
           <div className="flex flex-col items-center font-bold text-center text-error text-16">
             Withdrawals involve a {lockDurationInDays}-day cool-down. Please
-            note that IL protection is temporarily paused.
+            note that the IL protection mechanism is temporarily paused.
             <PopoverV3
               children={<EmergencyInfo />}
               hover
