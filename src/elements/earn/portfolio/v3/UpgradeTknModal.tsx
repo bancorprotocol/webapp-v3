@@ -79,7 +79,9 @@ export const UpgradeTknModal = ({
         </div>
         <div className="flex flex-col items-center justify-center font-bold text-center text-error">
           <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
-          <div>Please note that IL protection is temporarily paused.</div>
+          <div>
+            Please note that the IL protection mechanism is temporarily paused.
+          </div>
           <PopoverV3
             children={<EmergencyInfo />}
             hover
