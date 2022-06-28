@@ -79,7 +79,7 @@ export const EarnTableV2 = ({
         id: 'liquidity',
         Header: 'Liquidity',
         accessor: 'liquidity',
-        Cell: (cellData) => prettifyNumber(cellData.value, true),
+        Cell: (cellData) => <>{prettifyNumber(cellData.value, true)}</>,
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['liquidity']),
         tooltip: 'The value of tokens staked in the pool.',
