@@ -108,7 +108,7 @@ export const V3WithdrawConfirmModal = memo(
                   Withdrawal is temporarily paused!
                 </div>
                 <div className="ml-[24px] text-secondary">
-                  Price in the pool is to volatile, lets wait a few minutes
+                  Price in the pool is too volatile, lets wait a few minutes
                   before proceeding.
                 </div>
               </div>
