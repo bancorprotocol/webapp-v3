@@ -6,6 +6,7 @@ import { pool } from 'store/bancor/pool';
 import { notification } from 'store/notification/notification';
 import { liquidity } from './liquidity/liquidity';
 import { v3Portfolio } from 'store/portfolio/v3Portfolio';
+import { gov } from './gov/gov';
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -25,6 +26,7 @@ export const store = configureStore({
     pool,
     liquidity,
     v3Portfolio,
+    gov,
   },
 });
 

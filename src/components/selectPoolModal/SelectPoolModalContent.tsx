@@ -19,7 +19,6 @@ export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
         <InputField
           input={search}
           setInput={setSearch}
-          dataCy="searchToken"
           placeholder="Search name"
           borderGrey
         />

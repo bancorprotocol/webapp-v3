@@ -23,6 +23,7 @@ export const multiCallContract: string =
 export const genericToken: string = generic_token;
 
 export const bntDecimals: number = 18;
+export const vBntDecimals: number = 18;
 const gasBuffer = 1.05;
 
 export const changeGas = (gasEstimation: string) =>
