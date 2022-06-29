@@ -62,6 +62,7 @@ export const getRateAndPriceImapct = async (
       to,
       rateShape
     );
+
     const v2Rate = shrinkToken(v2SpotRate.rate, toToken.decimals);
     const v2PI = new BigNumber(1)
       .minus(new BigNumber(v2Rate).div(amount).div(v2SpotRate.spotPrice))
@@ -258,6 +259,7 @@ const calculateSpotPriceAndRate = async (
   to: Token,
   rateShape: MCInterface
 ) => {
+  const empty = { rate: '0', spotPrice: new BigNumber(0) };
   let pool;
   if (from.address === bntToken) pool = await findPoolByToken(to.address);
   if (to.address === bntToken) pool = await findPoolByToken(from.address);
@@ -270,17 +272,20 @@ const calculateSpotPriceAndRate = async (
     const res = await multicall(mCall);
 
     if (res && res.length === mCall.length) {
+      const rate = res[2].toString();
       return {
         spotPrice: calcReserve(
           shrinkToken(res[0].toString(), from.decimals),
           shrinkToken(res[1].toString(), to.decimals),
           ppmToDec(pool.fee)
         ),
-        rate: res[2].toString(),
+        rate: rate === '' ? '0' : rate,
       };
     }
+
+    return empty;
   }
-  const empty = { rate: '0', spotPrice: new BigNumber(0) };
+
   //First hop
   const fromPool = await findPoolByToken(from.address);
   if (!fromPool) return empty;
@@ -314,7 +319,12 @@ const calculateSpotPriceAndRate = async (
       ppmToDec(toPool.fee)
     );
 
-    return { spotPrice: spot1.times(spot2), rate: res[4].toString() };
+    const rate = res[4].toString();
+
+    return {
+      spotPrice: spot1.times(spot2),
+      rate: rate === '' ? '0' : rate,
+    };
   }
 
   return empty;

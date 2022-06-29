@@ -27,7 +27,6 @@ interface TokenInputFieldProps {
   startEmpty?: boolean;
   errorMsg?: string;
   usdSlippage?: number;
-  dataCy?: string;
   fieldBalance?: string;
   excludedTokens?: string[];
   includedTokens?: string[];
@@ -38,7 +37,6 @@ interface TokenInputFieldProps {
 }
 
 export const TokenInputField = ({
-  dataCy,
   label,
   border,
   selectable,
@@ -168,7 +166,6 @@ export const TokenInputField = ({
       </div>
       {startEmpty && !token ? (
         <button
-          data-cy="selectTokenButton"
           onClick={() => (selectable ? setIsOpen(true) : {})}
           className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
         >
@@ -228,7 +225,6 @@ export const TokenInputField = ({
                 )}
               </div>
               <input
-                data-cy={dataCy}
                 type="text"
                 inputMode="decimal"
                 value={inputValue()}
