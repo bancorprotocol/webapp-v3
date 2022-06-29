@@ -22,7 +22,9 @@ export abstract class BancorV3Api {
         '/pools'
       );
       return data.data;
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
 
     return [];
   };
@@ -37,7 +39,9 @@ export abstract class BancorV3Api {
         // TODO remove after Bancor API v3 is updated
         rateHistory7d: [],
       }));
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
 
     return [];
   };
