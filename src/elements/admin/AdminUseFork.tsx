@@ -23,7 +23,10 @@ export const AdminUseFork = () => {
     setV3ApiUrlLS(inputV3ApiUrl);
     setV2ApiUrlLS(inputV2ApiUrl);
     setTenderlyRpcLS(inputRpcUrl);
-    const rpc = new providers.StaticJsonRpcProvider(inputRpcUrl);
+    const rpc = new providers.StaticJsonRpcProvider({
+      url: inputRpcUrl,
+      skipFetchSetup: true,
+    });
 
     setProvider(rpc);
     if (account && inputRpcUrl) {

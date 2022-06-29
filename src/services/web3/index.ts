@@ -10,13 +10,21 @@ export const getProvider = (
   useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork) {
-    return new providers.StaticJsonRpcProvider(getTenderlyRpcLS());
+    return new providers.StaticJsonRpcProvider({
+      url: getTenderlyRpcLS(),
+      skipFetchSetup: true,
+    });
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
-    return new providers.StaticJsonRpcProvider(buildAlchemyUrl(network, false));
+    return new providers.StaticJsonRpcProvider({
+      url: buildAlchemyUrl(network, false),
+      skipFetchSetup: true,
+    });
   }
 
-  return providers.getDefaultProvider(network);
+  return providers.getDefaultProvider(network, {
+    skipFetchSetup: true,
+  });
 };
 
 export const web3 = {
@@ -55,9 +63,10 @@ export const web3 = {
 export const writeWeb3 = {
   signer: window.ethereum
     ? new Web3Provider(window.ethereum).getSigner()
-    : new providers.StaticJsonRpcProvider(
-        buildAlchemyUrl(EthNetworks.Mainnet, false)
-      ).getSigner(),
+    : new providers.StaticJsonRpcProvider({
+        url: buildAlchemyUrl(EthNetworks.Mainnet, false),
+        skipFetchSetup: true,
+      }).getSigner(),
 };
 
 export const setProvider = (
@@ -71,8 +80,9 @@ export const setSigner = (
   account?: string | null
 ) => {
   if (account)
-    writeWeb3.signer = new providers.StaticJsonRpcProvider(
-      getTenderlyRpcLS()
-    ).getUncheckedSigner(account);
+    writeWeb3.signer = new providers.StaticJsonRpcProvider({
+      url: getTenderlyRpcLS(),
+      skipFetchSetup: true,
+    }).getUncheckedSigner(account);
   else if (signer) writeWeb3.signer = signer;
 };
