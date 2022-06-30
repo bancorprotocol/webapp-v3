@@ -26,7 +26,6 @@ import {
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
 } from 'services/api/googleTagManager/liquidity';
-import { useWeb3React } from '@web3-react/core';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { fetchProtectedPositions } from 'services/web3/protection/positions';
@@ -38,7 +37,6 @@ interface Props {
 }
 
 export const AddLiquiditySingle = ({ pool }: Props) => {
-  const { chainId } = useWeb3React();
   const dispatch = useDispatch();
   const tkn = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, pool.reserves[0].address)
@@ -168,15 +166,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     );
     sendLiquidityEvent(Events.click);
     onStart();
-  }, [
-    amount,
-    amountUsd,
-    chainId,
-    fiatToggle,
-    onStart,
-    pool.name,
-    selectedToken.symbol,
-  ]);
+  }, [amount, amountUsd, fiatToggle, onStart, pool.name, selectedToken.symbol]);
 
   if (!tkn) {
     goToPage.notFound();
