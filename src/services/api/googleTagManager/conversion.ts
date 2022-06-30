@@ -57,58 +57,11 @@ export const setCurrentConversion = (
   };
 };
 
-export const sendConversionApprovedEvent = (isUnlimited: boolean) => {
-  const gtmData = {
-    event: 'Conversion ' + eventTxtMap.get(Events.approved),
-    wallet_properties: undefined,
-    event_properties: {
-      ...currentConversion,
-      conversion_unlimited: isUnlimited ? 'Unlimited' : 'Limited',
-    },
-    ga_event: {
-      category: 'Conversion',
-    },
-  };
-  sendGTM(gtmData);
-};
-
-export const sendConversionSuccessEvent = (
-  fromTokenPrice: string | null,
-  transaction_hash?: string
-) => {
-  const gtmData = {
-    event: 'Conversion ' + eventTxtMap.get(Events.success),
-    wallet_properties: undefined,
-    event_properties: {
-      ...currentConversion,
-      conversion_market_token_rate: fromTokenPrice,
-      transaction_hash,
-    },
-    ga_event: {
-      category: 'Conversion',
-    },
-  };
-  sendGTM(gtmData);
-};
-
-export const sendConversionFailEvent = (errorMsg: string) => {
-  const gtmData = {
-    event: 'Conversion ' + eventTxtMap.get(Events.fail),
-    wallet_properties: undefined,
-    event_properties: {
-      ...currentConversion,
-      error: errorMsg,
-    },
-    ga_event: {
-      category: 'Conversion',
-    },
-  };
-  sendGTM(gtmData);
-};
-
 export const sendConversionEvent = (
   event: Events,
-  transaction_hash?: string
+  transaction_hash?: string,
+  unlimitied_selection?: boolean,
+  error?: string
 ) => {
   const eventClickPrefix = event === Events.click ? 'Swap ' : '';
   const gtmData = {
@@ -117,6 +70,8 @@ export const sendConversionEvent = (
     event_properties: {
       ...currentConversion,
       transaction_hash,
+      unlimitied_selection,
+      error,
     },
     ga_event: {
       category: 'Conversion',

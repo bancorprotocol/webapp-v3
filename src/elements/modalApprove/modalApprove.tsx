@@ -12,9 +12,10 @@ import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
-import { sendConversionApprovedEvent } from 'services/api/googleTagManager/conversion';
 import { ErrorCode } from 'services/web3/types';
 import { Button, ButtonSize } from 'components/button/Button';
+import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import { Events } from 'services/api/googleTagManager';
 
 interface ModalApproveProps {
   setIsOpen: Function;
@@ -45,7 +46,7 @@ export const ModalApprove = ({
     try {
       setIsOpen(false);
       const isUnlimited = amount === undefined;
-      sendConversionApprovedEvent(isUnlimited);
+      sendConversionEvent(Events.approved, undefined, isUnlimited);
       const txHash = await setNetworkContractApproval(
         fromToken,
         contract,
