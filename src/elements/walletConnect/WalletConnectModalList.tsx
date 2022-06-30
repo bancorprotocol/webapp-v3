@@ -73,10 +73,9 @@ export const ImposterWallet = ({
             setSelectedWallet(wallet);
             setUser(account, dispatch);
             setSigner(
-              new providers.StaticJsonRpcProvider({
-                url: getTenderlyRpcLS(),
-                skipFetchSetup: true,
-              }).getUncheckedSigner(account)
+              new providers.StaticJsonRpcProvider(
+                getTenderlyRpcLS()
+              ).getUncheckedSigner(account)
             );
           }
         }}
