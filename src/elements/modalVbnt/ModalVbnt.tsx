@@ -26,6 +26,7 @@ import {
   GovProperties,
   sendGovEvent,
 } from 'services/api/googleTagManager/gov';
+import { getFiat } from 'services/api/googleTagManager';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -60,7 +61,7 @@ export const ModalVbnt = ({
     : stakeBalance;
 
   const govProperties: GovProperties = {
-    stake_input_type: isFiat ? 'Fiat' : 'Token',
+    stake_input_type: getFiat(isFiat),
     stake_token_amount_usd: amount,
     stake_token_portion_percent:
       selPercentage !== -1 ? percentages[selPercentage].toFixed(0) : 'N/A',

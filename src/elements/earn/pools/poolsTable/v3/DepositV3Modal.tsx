@@ -9,7 +9,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
-import { ethToken, isForkAvailable } from 'services/web3/config';
+import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import { getTokenById } from 'store/bancor/bancor';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -35,6 +35,13 @@ import {
   sendDepositEvent,
   setCurrentDeposit,
 } from 'services/api/googleTagManager/deposit';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+  getFiat,
+  getOnOff,
+} from 'services/api/googleTagManager';
 
 interface Props {
   pool: PoolV3;
@@ -157,15 +164,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           : 'N/A';
       setCurrentDeposit({
         deposit_pool: pool.name,
-        deposit_blockchain: 'Ethereum',
-        deposit_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
-        deposit_input_type: isFiat ? 'Fiat' : 'Token',
+        deposit_blockchain: getBlockchain(),
+        deposit_blockchain_network: getBlockchainNetwork(),
+        deposit_input_type: getFiat(isFiat),
         deposit_token: pool.name,
         deposit_token_amount: amount,
         deposit_token_amount_usd: inputFiat,
         deposit_portion,
-        deposit_access_full_earning: accessFullEarnings ? 'On' : 'Off',
-        deposit_display_currency: 'USD',
+        deposit_access_full_earning: getOnOff(accessFullEarnings),
+        deposit_display_currency: getCurrency(),
       });
       sendDepositEvent(DepositEvent.DepositClick);
       onStart();
@@ -211,15 +218,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       {renderButton(() => {
         setCurrentDeposit({
           deposit_pool: pool.name,
-          deposit_blockchain: 'Ethereum',
-          deposit_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
-          deposit_input_type: isFiat ? 'Fiat' : 'Token',
+          deposit_blockchain: getBlockchain(),
+          deposit_blockchain_network: getBlockchainNetwork(),
+          deposit_input_type: getFiat(isFiat),
           deposit_token: pool.name,
           deposit_token_amount: undefined,
           deposit_token_amount_usd: undefined,
           deposit_portion: undefined,
-          deposit_access_full_earning: accessFullEarnings ? 'On' : 'Off',
-          deposit_display_currency: 'USD',
+          deposit_access_full_earning: getOnOff(accessFullEarnings),
+          deposit_display_currency: getCurrency(),
         });
         sendDepositEvent(DepositEvent.DepositPoolClick);
         setIsOpen(true);

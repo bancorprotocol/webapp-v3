@@ -1,4 +1,5 @@
 import { BancorURL } from 'router/bancorURL.service';
+import { isForkAvailable } from 'services/web3/config';
 
 declare global {
   interface Window {
@@ -69,13 +70,13 @@ export const eventTxtMap = new Map([
 
 export const sendInsight = (open: boolean) => {
   sendGTM({
-    event: `Conversion Insights ${open ? 'Open' : 'Closed'}`,
+    event: `Conversion Insights ${getOpenClosed(open)}`,
     event_properties: undefined,
     wallet_properties: undefined,
     ga_event: {
       category: 'Conversion',
     },
-    page: { swap_insights: open ? 'Open' : 'Closed' },
+    page: { swap_insights: getOpenClosed(open) },
   });
 };
 
@@ -92,10 +93,10 @@ export const sendGTMPath = (
       page: {
         from_path: from,
         to_path: to,
-        theme: darkMode ? 'Dark' : 'Light',
-        currency: 'USD',
+        theme: getDarkMode(darkMode),
+        currency: getCurrency(),
         swap_insights:
-          to === BancorURL.trade() ? (open ? 'Open' : 'Closed') : undefined,
+          to === BancorURL.trade() ? getOpenClosed(open) : undefined,
       },
       wallet_properties: undefined,
       ga_event: undefined,
@@ -103,3 +104,20 @@ export const sendGTMPath = (
     'VP'
   );
 };
+
+export const getBlockchain = () => 'Ethereum';
+
+export const getBlockchainNetwork = () =>
+  isForkAvailable ? 'Tenderly' : 'MainNet';
+
+export const getFiat = (isFiat?: boolean) => (isFiat ? 'Fiat' : 'Token');
+
+export const getCurrency = () => 'USD';
+
+const getDarkMode = (darkMode: boolean) => (darkMode ? 'Dark' : 'Light');
+
+const getOpenClosed = (open: boolean) => (open ? 'Open' : 'Closed');
+
+export const getOnOff = (on: boolean) => (on ? 'On' : 'Off');
+
+export const getLimitMarket = (limit: boolean) => (limit ? 'Limit' : 'Market');

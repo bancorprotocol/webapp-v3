@@ -158,7 +158,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const handleCTAClick = useCallback(() => {
     setCurrentLiquidity(
       'Deposit Single',
-      chainId,
       pool.name,
       selectedToken.symbol,
       amount,

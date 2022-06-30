@@ -1,5 +1,10 @@
-import { EthNetworks } from 'services/web3/types';
-import { Events, eventTxtMap, sendGTM } from 'services/api/googleTagManager';
+import {
+  Events,
+  eventTxtMap,
+  getBlockchainNetwork,
+  getFiat,
+  sendGTM,
+} from 'services/api/googleTagManager';
 
 interface CurrentLiquidity {
   liquidity_type:
@@ -7,7 +12,7 @@ interface CurrentLiquidity {
     | 'Withdraw Dual'
     | 'Deposit Single'
     | 'Withdraw Single';
-  liquidity_blockchain_network: 'Ropsten' | 'MainNet';
+  liquidity_blockchain_network: string;
   liquidity_pool: string;
   liquidity_token_symbol: string;
   liquidity_token_amount: string;
@@ -21,7 +26,6 @@ interface CurrentLiquidity {
 let currentLiquidity: CurrentLiquidity;
 export const setCurrentLiquidity = (
   type: 'Deposit Dual' | 'Withdraw Dual' | 'Deposit Single' | 'Withdraw Single',
-  network: EthNetworks = EthNetworks.Mainnet,
   pool: string,
   tokenSymbol: string,
   tokenAmount: string,
@@ -33,8 +37,7 @@ export const setCurrentLiquidity = (
 ) => {
   currentLiquidity = {
     liquidity_type: type,
-    liquidity_blockchain_network:
-      network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+    liquidity_blockchain_network: getBlockchainNetwork(),
     liquidity_pool: pool,
     liquidity_token_symbol: tokenSymbol,
     liquidity_token_amount: tokenAmount,
@@ -44,7 +47,7 @@ export const setCurrentLiquidity = (
       ? withdrawl_percentage
       : 'N/A',
     liquidity_bnt_amount_usd: bntAmountUsd,
-    liquidity_input_type: usdToggle ? 'Fiat' : 'Token',
+    liquidity_input_type: getFiat(usdToggle),
   };
 };
 
@@ -103,16 +106,14 @@ export const sendLiquidityFailEvent = (errorMsg: string) => {
 export const sendLiquidityPoolClickEvent = (
   type: 'Withdraw' | 'Deposit',
   pool: string,
-  tokenSymbol: string | undefined,
-  network: EthNetworks = EthNetworks.Mainnet
+  tokenSymbol: string | undefined
 ) => {
   const gtmData = {
     event: `Liquidity ${type} Pool Click`,
     wallet_properties: undefined,
     event_properties: {
       liquidity_type: 'Withdraw Single',
-      liquidity_blockchain_network:
-        network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+      liquidity_blockchain_network: getBlockchainNetwork(),
       liquidity_pool: pool,
       liquidity_token_symbol: tokenSymbol,
     },

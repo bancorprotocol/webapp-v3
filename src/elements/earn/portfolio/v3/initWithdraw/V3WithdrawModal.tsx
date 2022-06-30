@@ -12,7 +12,12 @@ import {
   setCurrentWithdraw,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
-import { isForkAvailable } from 'services/web3/config';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+  getFiat,
+} from 'services/api/googleTagManager';
 
 interface Props {
   isOpen: boolean;
@@ -42,11 +47,11 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
     if (isOpen) {
       setCurrentWithdraw({
         withdraw_pool: holding.pool.name,
-        withdraw_blockchain: 'Ethereum',
-        withdraw_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
-        withdraw_input_type: isFiat ? 'Fiat' : 'Token',
+        withdraw_blockchain: getBlockchain(),
+        withdraw_blockchain_network: getBlockchainNetwork(),
+        withdraw_input_type: getFiat(isFiat),
         withdraw_token: holding.pool.name,
-        withdraw_display_currency: 'USD',
+        withdraw_display_currency: getCurrency(),
       });
       sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
       sendWithdrawEvent(WithdrawEvent.WithdrawAmountView);

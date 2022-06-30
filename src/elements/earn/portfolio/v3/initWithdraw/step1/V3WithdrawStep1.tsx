@@ -15,10 +15,15 @@ import {
   sendWithdrawEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
-import { isForkAvailable } from 'services/web3/config';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { Switch } from 'components/switch/Switch';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+  getFiat,
+} from 'services/api/googleTagManager';
 
 interface Props {
   inputTkn: string;
@@ -77,14 +82,14 @@ const V3WithdrawStep1 = ({
         : 'N/A';
     setCurrentWithdraw({
       withdraw_pool: holding.pool.name,
-      withdraw_blockchain: 'Ethereum',
-      withdraw_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
-      withdraw_input_type: isFiat ? 'Fiat' : 'Token',
+      withdraw_blockchain: getBlockchain(),
+      withdraw_blockchain_network: getBlockchainNetwork(),
+      withdraw_input_type: getFiat(isFiat),
       withdraw_token: holding.pool.name,
       withdraw_token_amount: inputTkn,
       withdraw_token_amount_usd: inputFiat,
       withdraw_portion,
-      withdraw_display_currency: 'USD',
+      withdraw_display_currency: getCurrency(),
     });
     sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
     if (skipStep2) {

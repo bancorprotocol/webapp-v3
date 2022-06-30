@@ -14,7 +14,6 @@ import {
   NotificationType,
 } from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
@@ -36,7 +35,7 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { Events } from 'services/api/googleTagManager';
+import { Events, getLimitMarket } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -62,7 +61,6 @@ export const SwapLimit = ({
   refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { chainId } = useWeb3React();
   const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -342,8 +340,7 @@ export const SwapLimit = ({
   const handleSwapClick = () => {
     const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
     setCurrentConversion(
-      'Limit',
-      chainId,
+      getLimitMarket(true),
       tokenPair,
       fromToken.symbol,
       toToken?.symbol,

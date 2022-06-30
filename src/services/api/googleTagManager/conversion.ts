@@ -1,9 +1,14 @@
-import { EthNetworks } from 'services/web3/types';
-import { Events, eventTxtMap, sendGTM } from 'services/api/googleTagManager';
+import {
+  Events,
+  eventTxtMap,
+  getBlockchainNetwork,
+  getFiat,
+  sendGTM,
+} from 'services/api/googleTagManager';
 
 interface CurrentConversion {
   conversion_type: 'Limit' | 'Market';
-  conversion_blockchain_network: 'Ropsten' | 'MainNet';
+  conversion_blockchain_network: string;
   conversion_token_pair: string;
   conversion_from_token: string;
   conversion_to_token: string;
@@ -21,7 +26,6 @@ interface CurrentConversion {
 let currentConversion: CurrentConversion;
 export const setCurrentConversion = (
   type: 'Limit' | 'Market',
-  network: EthNetworks = EthNetworks.Mainnet,
   tokenPair: string,
   fromToken: string,
   toToken: string = '',
@@ -37,8 +41,7 @@ export const setCurrentConversion = (
 ) => {
   currentConversion = {
     conversion_type: type,
-    conversion_blockchain_network:
-      network === EthNetworks.Ropsten ? 'Ropsten' : 'MainNet',
+    conversion_blockchain_network: getBlockchainNetwork(),
     conversion_token_pair: tokenPair,
     conversion_from_token: fromToken,
     conversion_to_token: toToken,
@@ -46,7 +49,7 @@ export const setCurrentConversion = (
     conversion_from_amount_usd: fromAmountUsd,
     conversion_to_amount: toAmount,
     conversion_to_amount_usd: toAmountUsd,
-    conversion_input_type: usdToggle ? 'Fiat' : 'Token',
+    conversion_input_type: getFiat(usdToggle),
     conversion_rate: rate,
     conversion_rate_percentage: ratePercentage,
     conversion_experation: expiration,
