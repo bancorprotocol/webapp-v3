@@ -10,7 +10,10 @@ export const getProvider = (
   useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
   if (useFork) {
-    return new providers.StaticJsonRpcProvider(getTenderlyRpcLS());
+    return new providers.StaticJsonRpcProvider({
+      url: getTenderlyRpcLS(),
+      skipFetchSetup: true,
+    });
   }
   if (process.env.REACT_APP_ALCHEMY_MAINNET) {
     return new providers.StaticJsonRpcProvider({
