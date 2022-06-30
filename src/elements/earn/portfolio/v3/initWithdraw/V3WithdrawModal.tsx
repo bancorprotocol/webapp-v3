@@ -45,7 +45,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
         withdraw_blockchain: 'Ethereum',
         withdraw_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
         withdraw_input_type: isFiat ? 'Fiat' : 'Token',
-        withdraw_token_symbol: holding.pool.name,
+        withdraw_token: holding.pool.name,
         withdraw_display_currency: 'USD',
       });
       sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);

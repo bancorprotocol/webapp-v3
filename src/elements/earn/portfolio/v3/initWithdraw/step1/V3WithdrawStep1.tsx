@@ -80,7 +80,7 @@ const V3WithdrawStep1 = ({
       withdraw_blockchain: 'Ethereum',
       withdraw_blockchain_network: isForkAvailable ? 'Tenderly' : 'MainNet',
       withdraw_input_type: isFiat ? 'Fiat' : 'Token',
-      withdraw_token_symbol: holding.pool.name,
+      withdraw_token: holding.pool.name,
       withdraw_token_amount: inputTkn,
       withdraw_token_amount_usd: inputFiat,
       withdraw_portion,

@@ -33,7 +33,7 @@ interface CurrentDeposit {
   deposit_blockchain: string;
   deposit_blockchain_network: string;
   deposit_input_type: string;
-  deposit_token_symbol: string;
+  deposit_token: string;
   deposit_token_amount?: string;
   deposit_token_amount_usd?: string;
   deposit_portion?: string;

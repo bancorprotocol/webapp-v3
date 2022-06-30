@@ -94,7 +94,7 @@ interface CurrentWithdraw {
   withdraw_blockchain: string;
   withdraw_blockchain_network: string;
   withdraw_input_type: string;
-  withdraw_token_symbol: string;
+  withdraw_token: string;
   withdraw_token_amount?: string;
   withdraw_token_amount_usd?: string;
   withdraw_portion?: string;

@@ -42,9 +42,9 @@ interface GTMData {
   page?: any;
 }
 
-export const sendGTM = (data: GTMData) => {
+export const sendGTM = (data: GTMData, prefix: string = 'CE') => {
   const dataLayer = window.dataLayer as {}[];
-  if (dataLayer) dataLayer.push({ ...data, event: 'CE ' + data.event });
+  if (dataLayer) dataLayer.push({ ...data, event: prefix + ' ' + data.event });
 };
 
 export enum Events {
@@ -86,17 +86,20 @@ export const sendGTMPath = (
 ) => {
   const item = localStorage.getItem('insightsExpanded');
   const open = item ? (JSON.parse(item) as boolean) : false;
-  sendGTM({
-    event: 'VP ' + to,
-    page: {
-      from_path: from,
-      to_path: to,
-      theme: darkMode ? 'Dark' : 'Light',
-      currency: 'USD',
-      swap_insights:
-        to === BancorURL.trade() ? (open ? 'Open' : 'Closed') : undefined,
+  sendGTM(
+    {
+      event: to,
+      page: {
+        from_path: from,
+        to_path: to,
+        theme: darkMode ? 'Dark' : 'Light',
+        currency: 'USD',
+        swap_insights:
+          to === BancorURL.trade() ? (open ? 'Open' : 'Closed') : undefined,
+      },
+      wallet_properties: undefined,
+      ga_event: undefined,
     },
-    wallet_properties: undefined,
-    ga_event: undefined,
-  });
+    'VP'
+  );
 };
