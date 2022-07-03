@@ -1,4 +1,7 @@
 module.exports = {
+  core: {
+    builder: 'webpack5',
+  },
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
@@ -8,6 +11,13 @@ module.exports = {
   ],
   framework: '@storybook/react',
   webpackFinal: async (config) => {
+    config.resolve.fallback = {
+      os: false,
+      http: false,
+      https: false,
+      stream: false,
+      crypto: false,
+    };
     config.module.rules.push({
       test: /\.css$/,
       use: [

@@ -1,5 +1,5 @@
 import { Token } from 'services/observables/tokens';
-import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
+//import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
@@ -56,25 +56,25 @@ export const EarnTableV2 = ({
         minWidth: 200,
         sortDescFirst: true,
       },
-      {
-        id: 'isProtected',
-        Header: 'Protected',
-        accessor: 'isProtected',
-        headerClassName: 'justify-center',
-        Cell: (cellData) =>
-          cellData.value ? (
-            <div className="flex justify-center">
-              <IconProtected className="w-18 h-20 text-primary" />
-            </div>
-          ) : (
-            <div />
-          ),
-        sortType: (a, b) =>
-          sortNumbersByKey(a.original, b.original, ['isProtected']),
-        minWidth: 140,
-        width: 140,
-        sortDescFirst: true,
-      },
+      // {
+      //   id: 'isProtected',
+      //   Header: 'Protected',
+      //   accessor: 'isProtected',
+      //   headerClassName: 'justify-center',
+      //   Cell: (cellData) =>
+      //     cellData.value ? (
+      //       <div className="flex justify-center">
+      //         <IconProtected className="w-18 h-20 text-primary" />
+      //       </div>
+      //     ) : (
+      //       <div />
+      //     ),
+      //   sortType: (a, b) =>
+      //     sortNumbersByKey(a.original, b.original, ['isProtected']),
+      //   minWidth: 140,
+      //   width: 140,
+      //   sortDescFirst: true,
+      // },
       {
         id: 'liquidity',
         Header: 'Liquidity',

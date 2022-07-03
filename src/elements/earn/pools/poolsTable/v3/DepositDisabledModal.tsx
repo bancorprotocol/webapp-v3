@@ -17,9 +17,7 @@ export const DepositDisabledModal = ({ renderButton }: Props) => {
       {renderButton(() => setIsOpen(true))}
       <ModalV3 setIsOpen={onClose} isOpen={isOpen} large>
         <div className="flex flex-col items-center gap-20 p-20 pb-40 text-center">
-          <div className="text-3xl mb-30">
-            Due to extreme market conditions, deposits are temporarily paused.
-          </div>
+          <div className="text-3xl mb-30">Deposits are temporarily paused.</div>
         </div>
       </ModalV3>
     </>
