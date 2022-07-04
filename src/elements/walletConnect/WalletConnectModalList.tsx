@@ -16,7 +16,7 @@ export const WalletConnectModalList = ({
   const className =
     'flex items-center w-full px-16 py-10 border-2 border-silver dark:border-grey rounded-20 hover:border-primary dark:hover:border-primary focus:border-primary dark:focus:border-primary';
   return (
-    <div className="flex flex-col mb-20 mt-10 space-y-15">
+    <div className="flex flex-col mt-10 mb-20 space-y-15">
       {SUPPORTED_WALLETS.map((wallet) => {
         return wallet.name === 'Imposter' ? (
           <ImposterWallet

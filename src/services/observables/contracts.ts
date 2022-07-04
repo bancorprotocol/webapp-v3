@@ -117,9 +117,7 @@ export const settingsContractAddress$ = liquidityProtection$.pipe(
 
     try {
       return utils.getAddress(await contract.settings());
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
 
     return '';
   }),

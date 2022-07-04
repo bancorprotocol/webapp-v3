@@ -53,6 +53,8 @@ import {
 } from 'services/observables/tokenLists';
 import { poolsNew$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
+import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
+import { stakedAmount$, unstakeTimer$ } from './gov';
 
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
@@ -141,5 +143,12 @@ export const subscribeToObservables = (dispatch: any) => {
 
   protocolBnBNTAmount$.subscribe((protocolBnBNTAmount) => {
     dispatch(setProtocolBnBNTAmount(protocolBnBNTAmount));
+  });
+
+  stakedAmount$.subscribe((stakedAmount) => {
+    dispatch(setStakedAmount(stakedAmount));
+  });
+  unstakeTimer$.subscribe((unstakeTimer) => {
+    dispatch(setUnstakeTimer(unstakeTimer));
   });
 };

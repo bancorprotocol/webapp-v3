@@ -2,9 +2,9 @@ import { Page } from 'components/Page';
 import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
-import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { openNewTab } from 'utils/pureFunctions';
+//import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
+//import { openNewTab } from 'utils/pureFunctions';
 
 export const Pools = () => {
   const title = 'Earn';
@@ -18,7 +18,7 @@ export const Pools = () => {
       trailingTitle={
         <div className="flex items-center space-x-10 text-16">
           <PageNavLink to={BancorURL.earn}>
-            <PopoverV3
+            {/* <PopoverV3
               buttonElement={() => <IconProtected className="text-primary" />}
             >
               <>
@@ -37,7 +37,7 @@ export const Pools = () => {
                   Read more
                 </div>
               </>
-            </PopoverV3>
+            </PopoverV3> */}
             V3
           </PageNavLink>
           <PageNavLink to={BancorURL.earnV2}>
