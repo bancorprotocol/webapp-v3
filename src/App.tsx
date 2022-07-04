@@ -25,7 +25,6 @@ import {
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
-import { keepWSOpen } from 'services/web3';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
@@ -77,7 +76,6 @@ export const App = () => {
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
     subscribeToObservables(dispatch);
-    keepWSOpen();
 
     const dark = getDarkModeLS();
     dispatch(setDarkMode(dark));
