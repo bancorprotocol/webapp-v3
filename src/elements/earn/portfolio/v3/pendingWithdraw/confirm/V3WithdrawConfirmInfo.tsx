@@ -14,19 +14,9 @@ export const V3WithdrawConfirmInfo = ({ handleCancelClick }: Props) => {
         <div>
           <h4 className="font-semibold text-14">Claim cooldown rewards</h4>
           <p className="text-secondary">
-            Your tokens kept earning during the cooldown period. If you don’t
-            withdraw them, you will keep those earnings.
-          </p>
-        </div>
-      </div>
-      <div className="flex space-x-10">
-        <div>
-          <IconCheck className="w-18 h-18" />
-        </div>
-        <div>
-          <h4 className="font-semibold text-14">Keep Earning</h4>
-          <p className="text-secondary">
-            Your tokens will continue earning auto-compounding income.
+            Your tokens kept earning fees and auto-compounding rewards during
+            the cooldown period. If you cancel the withdrawal, you will keep
+            those earnings.
           </p>
         </div>
       </div>

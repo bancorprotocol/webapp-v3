@@ -1,7 +1,7 @@
-import { ReactComponent as IconLock } from '../../assets/icons/lock.svg';
 import { Modal } from 'components/modal/Modal';
 import { Token } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
+import { Image } from 'components/image/Image';
 
 interface Props {
   isOpen: boolean;
@@ -28,14 +28,17 @@ export const ModalApproveNew = ({
         if (onClose) onClose();
         setIsOpen(false);
       }}
-      title={'Set Allowance'}
       setIsOpen={setIsOpen}
       isOpen={isOpen}
     >
       <div className="px-30 py-10">
         <div className="flex flex-col items-center text-12 mb-20">
-          <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
-            <IconLock className="w-[22px] text-white" />
+          <div className="flex justify-center items-center mb-14">
+            <Image
+              alt={'Token Logo'}
+              src={token.logoURI}
+              className={'w-[52px] h-[52px] rounded-full'}
+            />
           </div>
           <h2 className="text-20 mb-8">Approve {token.symbol}</h2>
           <p className="text-center text-graphite">
