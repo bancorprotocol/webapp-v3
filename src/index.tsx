@@ -10,7 +10,6 @@ import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import ErrorBoundary from 'components/ErrorBoundary/ErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,9 +27,7 @@ ReactDOM.render(
       <I18nProvider>
         <Web3ReactProvider getLibrary={getLibrary}>
           <StrictMode>
-            <ErrorBoundary>
-              <App />
-            </ErrorBoundary>
+            <App />
           </StrictMode>
         </Web3ReactProvider>
       </I18nProvider>
