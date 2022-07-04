@@ -2,7 +2,7 @@ import { bancorConverterRegistry$ } from 'services/observables/contracts';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { ConverterRegistry__factory } from 'services/web3/abis/types';
 import { web3 } from 'services/web3';
-import { shareReplay, startWith } from 'rxjs/operators';
+import { shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 import { ConverterAndAnchor } from 'services/web3/types';
 import { user$ } from 'services/observables/user';
@@ -22,12 +22,16 @@ import {
 } from 'services/web3/token/token';
 
 const trueAnchors$ = bancorConverterRegistry$.pipe(
-  switchMapIgnoreThrow(async (converterRegistry) => {
-    const contract = ConverterRegistry__factory.connect(
-      converterRegistry,
-      web3.provider
-    );
-    return await contract.getAnchors();
+  switchMap(async (converterRegistry) => {
+    try {
+      const contract = ConverterRegistry__factory.connect(
+        converterRegistry,
+        web3.provider
+      );
+      return await contract.getAnchors();
+    } catch (error) {}
+
+    return [];
   }),
   shareReplay(1)
 );
@@ -37,13 +41,19 @@ const anchorAndConverters$ = combineLatest([
   bancorConverterRegistry$,
 ]).pipe(
   switchMapIgnoreThrow(async ([anchorAddresses, converterRegistryAddress]) => {
-    const contract = ConverterRegistry__factory.connect(
-      converterRegistryAddress,
-      web3.provider
-    );
+    if (anchorAddresses.length === 0) return [];
 
-    const converters = await contract.getConvertersByAnchors(anchorAddresses);
-    return zipAnchorAndConverters(anchorAddresses, converters);
+    try {
+      const contract = ConverterRegistry__factory.connect(
+        converterRegistryAddress,
+        web3.provider
+      );
+
+      const converters = await contract.getConvertersByAnchors(anchorAddresses);
+      return zipAnchorAndConverters(anchorAddresses, converters);
+    } catch (error) {}
+
+    return [];
   }),
   startWith([] as ConverterAndAnchor[]),
   shareReplay(1)

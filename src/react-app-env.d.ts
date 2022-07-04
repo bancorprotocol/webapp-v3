@@ -3,7 +3,6 @@
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production' | 'test';
-    REACT_APP_DEBUG_MODE: 'true' | 'false';
     REACT_APP_ALCHEMY_MAINNET: string;
     REACT_APP_ALCHEMY_ROPSTEN: string;
     REACT_APP_FORTMATIC_API_KEY: string;

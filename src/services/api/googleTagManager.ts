@@ -5,6 +5,7 @@ declare global {
   interface Window {
     dataLayer: any;
     ethereum: any;
+    Buffer: any;
   }
 }
 

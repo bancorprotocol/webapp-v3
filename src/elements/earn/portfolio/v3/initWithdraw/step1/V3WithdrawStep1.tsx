@@ -84,7 +84,9 @@ const V3WithdrawStep1 = ({
       <div className="w-full p-20 mb-20 bg-fog dark:bg-black rounded-20">
         <div className="flex flex-col items-center justify-between font-bold text-18 mb-15 text-error">
           <div>Withdrawals involve a {lockDurationInDays}-day cool-down.</div>
-          <div>Please note that IL protection is temporarily paused.</div>
+          <div>
+            Please note that the IL protection mechanism is temporarily paused.
+          </div>
           <PopoverV3
             children={<EmergencyInfo />}
             hover

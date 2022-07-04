@@ -6,21 +6,10 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { TorusConnector } from '@web3-react/torus-connector';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
-import { EthNetworks } from 'services/web3/types';
 
-export const buildAlchemyUrl = (network: EthNetworks, wss: boolean = true) => {
-  const net = EthNetworks.Mainnet === network ? 'mainnet' : 'ropsten';
-  const id =
-    network === EthNetworks.Mainnet
-      ? (process.env.REACT_APP_ALCHEMY_MAINNET as string)
-      : (process.env.REACT_APP_ALCHEMY_ROPSTEN as string);
-  return `${wss ? 'wss' : 'https'}://eth-${net}.alchemyapi.io/v2/${id}`;
-};
-
-const RPC_URLS: { [chainId: number]: string } = {
-  1: buildAlchemyUrl(EthNetworks.Mainnet, false),
-  3: buildAlchemyUrl(EthNetworks.Ropsten, false),
-};
+export const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${
+  process.env.REACT_APP_ALCHEMY_MAINNET as string
+}`;
 
 const appName = 'bancor';
 
@@ -31,12 +20,12 @@ export const injected = new InjectedConnector({
 export const gnosisSafe = new SafeAppConnector();
 
 export const walletconnect = new WalletConnectConnector({
-  rpc: { 1: RPC_URLS[1], 3: RPC_URLS[3] },
+  rpc: { 1: ALCHEMY_URL },
   qrcode: true,
 });
 
 export const walletlink = new WalletLinkConnector({
-  url: RPC_URLS[1],
+  url: ALCHEMY_URL,
   appName: appName,
 });
 
