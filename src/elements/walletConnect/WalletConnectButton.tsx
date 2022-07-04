@@ -20,7 +20,7 @@ export const WalletConnectButton = ({
   return (
     <PopoverV3
       className="w-[240px]"
-      hover={false}
+      hover={!!loggedIn}
       showArrow={false}
       isOpen={isOpen}
       setIsOpen={setIsOpen}
@@ -47,7 +47,7 @@ export const WalletConnectButton = ({
         </Button>
       )}
       options={{
-        placement: 'bottom',
+        placement: 'bottom-end',
         modifiers: [
           {
             name: 'offset',
@@ -66,7 +66,7 @@ export const WalletConnectButton = ({
             handleWalletButtonClick();
             setIsOpen(false);
           }}
-          className="flex items-center gap-10"
+          className="flex items-center gap-10 hover:text-primary"
         >
           <IconDisconnect className="w-20 h-20" />
           Disconnect
