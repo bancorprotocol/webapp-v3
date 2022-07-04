@@ -79,12 +79,6 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
 
   return (
     <>
-      {ApproveModal}
-      <V3WithdrawModal
-        holding={holding}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
       <div>
         <div className="text-secondary">Available Balance</div>
         <div className="flex items-center pt-6 space-x-10">
@@ -131,6 +125,12 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
           )}
         </div>
       </div>
+      {ApproveModal}
+      <V3WithdrawModal
+        holding={holding}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   );
 };
