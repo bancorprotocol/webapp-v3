@@ -3,6 +3,8 @@ import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { PoolEvent, sendPoolEvent } from 'services/api/googleTagManager/pool';
+import { getV2V3 } from 'services/api/googleTagManager';
 //import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 //import { openNewTab } from 'utils/pureFunctions';
 
@@ -17,7 +19,14 @@ export const Pools = () => {
       subtitle={subtitle}
       trailingTitle={
         <div className="flex items-center space-x-10 text-16">
-          <PageNavLink to={BancorURL.earn}>
+          <PageNavLink
+            to={BancorURL.earn}
+            onClick={() =>
+              sendPoolEvent(PoolEvent.PoolClick, {
+                pools_bancor_version_selection: getV2V3(false),
+              })
+            }
+          >
             {/* <PopoverV3
               buttonElement={() => <IconProtected className="text-primary" />}
             >
@@ -40,7 +49,14 @@ export const Pools = () => {
             </PopoverV3> */}
             V3
           </PageNavLink>
-          <PageNavLink to={BancorURL.earnV2}>
+          <PageNavLink
+            to={BancorURL.earnV2}
+            onClick={() =>
+              sendPoolEvent(PoolEvent.PoolClick, {
+                pools_bancor_version_selection: getV2V3(true),
+              })
+            }
+          >
             <PopoverV3
               children="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
               buttonElement={() => <div className="px-6">V2</div>}

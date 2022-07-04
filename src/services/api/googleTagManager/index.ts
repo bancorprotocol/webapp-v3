@@ -121,3 +121,5 @@ const getOpenClosed = (open: boolean) => (open ? 'Open' : 'Closed');
 export const getOnOff = (on: boolean) => (on ? 'On' : 'Off');
 
 export const getLimitMarket = (limit: boolean) => (limit ? 'Limit' : 'Market');
+
+export const getV2V3 = (v2: boolean) => (v2 ? 'V2' : 'V3');

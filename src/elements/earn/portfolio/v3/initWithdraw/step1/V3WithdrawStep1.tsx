@@ -91,7 +91,7 @@ const V3WithdrawStep1 = ({
       withdraw_portion,
       withdraw_display_currency: getCurrency(),
     });
-    sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
+    sendWithdrawEvent(WithdrawEvent.WithdrawAmountContinue);
     if (skipStep2) {
       void handleButtonClick();
     } else {

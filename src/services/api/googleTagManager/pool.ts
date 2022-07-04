@@ -1,8 +1,8 @@
 import { sendGTM } from 'services/api/googleTagManager';
 
-enum PoolEvent {
+export enum PoolEvent {
   VersionSwitch,
-  PoolsOpen,
+  PoolsFilterOpen,
   PoolsFilter,
   PoolSearch,
   PoolClick,
@@ -15,7 +15,7 @@ enum PoolLocation {
 
 const poolEventTxtMap = new Map([
   [PoolEvent.VersionSwitch, 'Pools Version Switch'],
-  [PoolEvent.PoolsOpen, 'Pools Filter Open'],
+  [PoolEvent.PoolsFilterOpen, 'Pools Filter Open'],
   [PoolEvent.PoolsFilter, 'Pools Filter Change'],
   [PoolEvent.PoolSearch, 'Pools Search'],
   [PoolEvent.PoolClick, 'Pool Click'],
@@ -27,7 +27,6 @@ export const poolClickLocationTxtMap = new Map([
 ]);
 
 interface PoolFilterEP {
-  pools_bancor_version_selection: string;
   pools_filter_reward_only: string;
   pools_filter_low_volume: string;
   pools_filter_low_popularity: string;
@@ -41,7 +40,7 @@ interface PoolClickEP {
 
 export const sendPoolEvent = (
   event: PoolEvent,
-  event_properties:
+  event_properties?:
     | PoolFilterEP
     | PoolClickEP
     | { pools_bancor_version_selection: string }
