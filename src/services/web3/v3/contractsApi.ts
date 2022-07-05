@@ -17,6 +17,8 @@ import {
   PendingWithdrawals__factory,
   BancorPortal,
   BancorPortal__factory,
+  Multicall,
+  Multicall__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
@@ -28,6 +30,7 @@ import poolCollectionType1Address from 'services/web3/abis/v3/PoolCollectionType
 import stakingRewardsClaimAddress from 'services/web3/abis/StakingRewardsClaim.json';
 import standardRewardsAddress from 'services/web3/abis/v3/StandardRewards_Proxy.json';
 import bancorPortalAddress from 'services/web3/abis/v3/BancorPortal_Proxy.json';
+import { multiCallContract } from 'services/web3/config';
 
 export class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -107,6 +110,11 @@ export abstract class ContractsApi {
   static BancorPortal = new BancorContract<BancorPortal>(
     bancorPortalAddress.address,
     BancorPortal__factory
+  );
+
+  static Multicall = new BancorContract<Multicall>(
+    multiCallContract,
+    Multicall__factory
   );
 
   static Token = (tokenAddress: string) => {

@@ -97,7 +97,7 @@ export const useStatistics = () => {
   const { data: apiDataV2 } = useApiDataV2();
 
   return useQuery<Statistic[]>(
-    ['v3', 'statistics'],
+    ['api', 'v3', 'statistics'],
     () => fetchStatistics(apiDataV2!),
     { enabled: !!apiDataV2 }
   );

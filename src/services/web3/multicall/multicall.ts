@@ -1,7 +1,5 @@
-import { web3 } from 'services/web3';
-import { Multicall__factory } from 'services/web3/abis/types';
-import { multiCallContract } from 'services/web3/config';
 import { Interface } from '@ethersproject/abi';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export interface MultiCall {
   contractAddress: string;
@@ -11,11 +9,6 @@ export interface MultiCall {
 }
 
 export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
-  const multicallContract = Multicall__factory.connect(
-    multiCallContract,
-    web3.provider
-  );
-
   try {
     const encoded = calls.map((call) => ({
       target: call.contractAddress.toLocaleLowerCase(),
@@ -24,9 +17,13 @@ export const multicall = async (calls: MultiCall[], blockHeight?: number) => {
         call.methodParameters
       ),
     }));
-    const encodedRes = await multicallContract.tryAggregate(false, encoded, {
-      blockTag: blockHeight,
-    });
+    const encodedRes = await ContractsApi.Multicall.read.tryAggregate(
+      false,
+      encoded,
+      {
+        blockTag: blockHeight,
+      }
+    );
 
     return encodedRes.map((call, i) => {
       if (!call.success) return [];

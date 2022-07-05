@@ -3,5 +3,8 @@ import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { WelcomeData } from 'services/api/bancorApi/bancorApi.types';
 
 export const useApiDataV2 = () => {
-  return useQuery<WelcomeData>(['v2', 'api'], BancorApi.v2.getWelcome);
+  return useQuery<WelcomeData>(
+    ['api', 'v2', 'welcome'],
+    BancorApi.v2.getWelcome
+  );
 };

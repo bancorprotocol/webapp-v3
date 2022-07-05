@@ -1,14 +1,28 @@
 import { useQuery } from 'react-query';
 import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
-import { useApiPoolsV3 } from 'queries/useApiPoolsV3';
+import { useAppSelector } from 'store/index';
+import { useV3ChainData } from 'queries/useV3ChainData';
+import { ethToken } from 'services/web3/config';
 
-export const useTokenBalances = (user?: string) => {
-  const { data: pools } = useApiPoolsV3();
-  const ids = pools ? pools.map((p) => p.poolDltId) : [];
+export const useBalances = () => {
+  const user = useAppSelector((state) => state.user.account);
+  const { data: pools } = useV3ChainData();
+  const tknIds: string[] = [];
+  const bnTknIds: string[] = [];
 
-  return useQuery<Map<string, string>>(
-    ['v3', 'token', 'balances', user],
-    () => fetchTokenBalanceMulticall(ids, user!),
-    { enabled: !!user && !!pools }
+  !!pools &&
+    pools.forEach((p) => {
+      tknIds.push(p.poolDltId);
+      bnTknIds.push(p.poolTokenDltId);
+    });
+
+  return useQuery<Map<string, string> | undefined>(
+    ['chain', 'v3', 'balances', user],
+    () =>
+      fetchTokenBalanceMulticall(
+        [...tknIds, ...bnTknIds].filter((id) => id !== ethToken),
+        user!
+      ),
+    { enabled: !!user && !!pools, useErrorBoundary: true }
   );
 };

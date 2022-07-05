@@ -3,8 +3,9 @@ import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
 
 export const useApiPoolsV3 = () => {
-  return useQuery<APIPoolV3[], Error>(
-    ['v3', 'api', 'pools'],
-    BancorApi.v3.getPools
-  );
+  const queryKey = ['api', 'v3', 'pools'];
+  return useQuery<APIPoolV3[], Error>(queryKey, BancorApi.v3.getPools, {
+    useErrorBoundary: true,
+    onError: (err) => console.error('query failed', queryKey, err),
+  });
 };

@@ -30,6 +30,16 @@ import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+
+function ErrorFallback({ error }: FallbackProps) {
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
+  );
+}
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -91,17 +101,20 @@ export const App = () => {
   }, [account, dispatch]);
 
   return (
-    <BrowserRouter>
-      <LayoutHeader />
-      {unsupportedNetwork ? (
-        <UnsupportedNetwork />
-      ) : (
-        <main>
-          <BancorRouter />
-        </main>
-      )}
-      <MobileBottomNav />
-      <NotificationAlerts />
-    </BrowserRouter>
+    // @ts-ignore
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <BrowserRouter>
+        <LayoutHeader />
+        {unsupportedNetwork ? (
+          <UnsupportedNetwork />
+        ) : (
+          <main>
+            <BancorRouter />
+          </main>
+        )}
+        <MobileBottomNav />
+        <NotificationAlerts />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };
