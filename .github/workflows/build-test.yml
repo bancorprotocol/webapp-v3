@@ -40,3 +40,5 @@ jobs:
           PORTIS_DAPP_ID: ${{ secrets.PORTIS_DAPP_ID }}
           FORTMATIC_API_KEY: ${{ secrets.FORTMATIC_API_KEY }}
         run: yarn build
+      - name: Bundle Watch
+        run: yarn bundlewatch
