@@ -136,7 +136,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         Cell: (cellData) => {
           return (
             <Navigate
-              to={BancorURL.trade({ to: cellData.row.original.address })}
+              to={BancorURL.trade({ from: cellData.row.original.address })}
               className="btn btn-secondary btn-xs"
             >
               Trade

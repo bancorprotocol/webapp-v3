@@ -48,6 +48,7 @@ const navOptions: NavigationOptions = {
 
 export const V3AvailableToStake = () => {
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
+  if (availabelToStake.length === 0) return null;
 
   return (
     <section>
@@ -58,14 +59,16 @@ export const V3AvailableToStake = () => {
             ({availabelToStake.length})
           </span>
         </h2>
-        <div className="flex items-center space-x-20">
-          <button className="swiper-prev-btn hover:text-primary">
-            <IconArrow className="w-10 rotate-[-90deg]" />
-          </button>
-          <button className="swiper-next-btn hover:text-primary">
-            <IconArrow className="w-10 rotate-[90deg]" />
-          </button>
-        </div>
+        {availabelToStake.length > 3 && (
+          <div className="flex items-center space-x-20">
+            <button className="swiper-prev-btn hover:text-primary">
+              <IconArrow className="w-10 rotate-[-90deg]" />
+            </button>
+            <button className="swiper-next-btn hover:text-primary">
+              <IconArrow className="w-10 rotate-[90deg]" />
+            </button>
+          </div>
+        )}
       </div>
 
       <Swiper
