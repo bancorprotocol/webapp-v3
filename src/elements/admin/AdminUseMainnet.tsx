@@ -9,14 +9,11 @@ export const AdminUseMainnet = () => {
     setTenderlyRpcLS();
     setProvider(getProvider(EthNetworks.Mainnet, false));
     setSigner(new Web3Provider(window.ethereum).getSigner());
+    window.location.reload();
   };
 
   return (
-    <Button
-      onClick={handleUseMainnet}
-      className="mx-auto"
-      size={ButtonSize.ExtraSmall}
-    >
+    <Button onClick={handleUseMainnet} size={ButtonSize.Small}>
       Use Mainnet
     </Button>
   );
