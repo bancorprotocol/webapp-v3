@@ -162,11 +162,6 @@
         "path": "build/static/**/*.{js,css,svg}",
         "maxSize": "750kB"
       }
-    ],
-    "ci": {
-      "trackBranches": [
-        "main"
-      ]
-    }
+    ]
   }
 }
