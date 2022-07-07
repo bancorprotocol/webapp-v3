@@ -1,18 +1,15 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
-import { memo, useEffect, useMemo, useState } from 'react';
-import { Modal } from 'components/modal/Modal';
-import { Button, ButtonSize } from 'components/button/Button';
+import { memo, useEffect, useState } from 'react';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useV3WithdrawConfirm } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/useV3WithdrawConfirm';
 import { V3WithdrawConfirmInfo } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmInfo';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
-import { PopoverV3 } from 'components/popover/PopoverV3';
-import { EmergencyInfo } from 'components/EmergencyInfo';
-import { useAppSelector } from 'store';
 import { shrinkToken } from 'utils/formulas';
 import { bntDecimals } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
 interface Props {
   isModalOpen: boolean;
@@ -54,23 +51,13 @@ export const V3WithdrawConfirmModal = memo(
 
     const { isPoolStable, isLoading } = useIsPoolStable(token.address);
 
-    const { lockDuration } = useAppSelector(
-      (state) => state.v3Portfolio.withdrawalSettings
-    );
-
-    const lockDurationInDays = useMemo(
-      () => lockDuration / 60 / 60 / 24,
-      [lockDuration]
-    );
-
     return (
-      <Modal
-        title="Withdraw"
+      <ModalFullscreenV3
+        title="Complete Withdraw"
         isOpen={isModalOpen}
         setIsOpen={onModalClose}
-        large
       >
-        <div className="p-20 space-y-20 md:p-30">
+        <div className="w-[520px] p-20 space-y-20 md:p-30">
           {ModalApprove}
 
           <TokenBalanceLarge
@@ -82,45 +69,25 @@ export const V3WithdrawConfirmModal = memo(
             }
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
-            label={'Final amount'}
+            label="Amount"
+            defecitAmount="????"
           />
 
-          <div className="flex flex-col items-center font-bold text-center text-error text-16">
-            Withdrawals involve a {lockDurationInDays}-day cool-down. Please
-            note that the IL protection mechanism is temporarily paused.
-            <PopoverV3
-              children={<EmergencyInfo />}
-              hover
-              buttonElement={() => (
-                <span className="underline cursor-pointer">More info</span>
-              )}
-            />
-          </div>
-
-          <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
-
-          {isPoolStable === false &&
-            !isLoading &&
-            withdrawRequest.pool.tradingEnabled && (
-              <div className="p-20 rounded bg-warning bg-opacity-10">
-                <div className="flex items-center font-semibold text-warning">
-                  <IconInfo className="mr-10 w-14" />
-                  Withdrawal is temporarily paused!
-                </div>
-                <div className="ml-[24px] text-secondary">
-                  Price in the pool is too volatile, lets wait a few minutes
-                  before proceeding.
-                </div>
-              </div>
-            )}
-
-          <div className="flex items-center gap-10 mx-10">
-            I understand that the withdrawal amount does not include any
-            impermanent loss compensation
+          <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
             <Switch
               selected={isConfirmed}
               onChange={() => setIsConfirmed(!isConfirmed)}
             />
+            <div>
+              <div className="text-bg-error-hover">
+                BNT distribution is currently disabled.
+              </div>
+              <div>
+                If I withdraw now, I expect to receive the amount shown above. I
+                understand I may be withdrawing at a loss if the ETH vault is in
+                deficit.
+              </div>
+            </div>
           </div>
 
           {missingGovTokenBalance > 0 ? (
@@ -142,12 +109,30 @@ export const V3WithdrawConfirmModal = memo(
                   withdrawRequest.pool.tradingEnabled) ||
                 isLoading
               }
+              variant={ButtonVariant.Secondary}
             >
-              Confirm Withdrawal
+              Withdraw
             </Button>
           )}
+
+          <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
+
+          {isPoolStable === false &&
+            !isLoading &&
+            withdrawRequest.pool.tradingEnabled && (
+              <div className="p-20 rounded bg-warning bg-opacity-10">
+                <div className="flex items-center font-semibold text-warning">
+                  <IconInfo className="mr-10 w-14" />
+                  Withdrawal is temporarily paused!
+                </div>
+                <div className="ml-[24px] text-secondary">
+                  Price in the pool is too volatile, lets wait a few minutes
+                  before proceeding.
+                </div>
+              </div>
+            )}
         </div>
-      </Modal>
+      </ModalFullscreenV3>
     );
   }
 );

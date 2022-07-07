@@ -95,7 +95,9 @@ const V3WithdrawStep1 = ({
         )}
         <div className="flex items-center gap-10">
           Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
-          <PopoverV3 buttonElement={() => <IconWarning />}>
+          <PopoverV3
+            buttonElement={() => <IconWarning className="text-error" />}
+          >
             <span className="text-secondary">
               Due to vault deficit, current value is {'????'} {token.symbol}
             </span>
