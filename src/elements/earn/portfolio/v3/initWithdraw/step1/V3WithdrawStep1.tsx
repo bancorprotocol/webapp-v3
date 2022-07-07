@@ -1,4 +1,4 @@
-import { Button } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { memo, useMemo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -11,8 +11,8 @@ import { useV3WithdrawStep3 } from 'elements/earn/portfolio/v3/initWithdraw/step
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import BigNumber from 'bignumber.js';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { EmergencyInfo } from 'components/EmergencyInfo';
 import { Switch } from 'components/switch/Switch';
+import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 
 interface Props {
   inputTkn: string;
@@ -37,11 +37,8 @@ const V3WithdrawStep1 = ({
   inputFiat,
   setInputFiat,
   isFiat,
-  withdrawalFeeInPercent,
-  withdrawalFeeInTkn,
   amount,
   setRequestId,
-  lockDurationInDays,
 }: Props) => {
   const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
     useV3WithdrawStep1({
@@ -81,22 +78,6 @@ const V3WithdrawStep1 = ({
         How much {token.symbol} do you want to withdraw?
       </h1>
 
-      <div className="w-full p-20 mb-20 bg-fog dark:bg-black rounded-20">
-        <div className="flex flex-col items-center justify-between font-bold text-18 mb-15 text-error">
-          <div>Withdrawals involve a {lockDurationInDays}-day cool-down.</div>
-          <div>
-            Please note that the IL protection mechanism is temporarily paused.
-          </div>
-          <PopoverV3
-            children={<EmergencyInfo />}
-            hover
-            buttonElement={() => (
-              <span className="underline cursor-pointer">More info</span>
-            )}
-          />
-        </div>
-      </div>
-
       <button
         onClick={() => setBalance(100)}
         className={`flex items-center mx-auto mb-5 ${
@@ -112,7 +93,14 @@ const V3WithdrawStep1 = ({
             />
           </div>
         )}
-        Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
+        <div className="flex items-center gap-10">
+          Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
+          <PopoverV3 buttonElement={() => <IconWarning />}>
+            <span className="text-secondary">
+              Due to vault deficit, current value is {'????'} {token.symbol}
+            </span>
+          </PopoverV3>
+        </div>
       </button>
 
       <TokenInputV3
@@ -124,6 +112,7 @@ const V3WithdrawStep1 = ({
         isFiat={isFiat}
         isError={isInputError}
       />
+
       <div className="flex justify-between w-full px-20 pt-5">
         <div className="space-x-10 opacity-50">
           <button onClick={() => setBalance(25)}>25%</button>
@@ -139,17 +128,29 @@ const V3WithdrawStep1 = ({
         )}
       </div>
 
+      <span className="text-secondary">
+        Due to vault deficit, current value is {'????'} {token.symbol}
+      </span>
+
       <div className="flex flex-col items-center justify-center my-40">
-        <div className="flex items-center gap-10 mx-10">
-          I understand that the withdrawal amount does not include any
-          impermanent loss compensation
+        <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 h-[100px] w-[460px] p-20">
           <Switch
             selected={isConfirmed}
             onChange={() => setIsConfirmed(!isConfirmed)}
           />
+          <div>
+            <div className="text-bg-error-hover">
+              BNT distribution is currently disabled.
+            </div>
+            <div>
+              I understand I may be withdrawing at a loss if the ETH vault is in
+              deficit.
+            </div>
+          </div>
         </div>
         <Button
           className="mt-20 px-50"
+          size={ButtonSize.ExtraLarge}
           onClick={handleNextStep}
           disabled={!isConfirmed || !inputTkn || isInputError || txBusy}
         >
@@ -159,21 +160,13 @@ const V3WithdrawStep1 = ({
             ? `${
                 isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol} - ` : ''
               }Start cooldown`
-            : `Next ${'->'}`}
+            : `Start cooldown and move to withdraw`}
         </Button>
       </div>
 
       <div className="space-y-10 opacity-50">
-        <p>USD value will likely change during the cooldown period</p>
-        <span>Withdrawal fee {withdrawalFeeInPercent}%</span>
-        {Number(withdrawalFeeInTkn) > 0 && (
-          <>
-            <span className="px-10">-</span>
-            <span>
-              {prettifyNumber(withdrawalFeeInTkn)} {token.symbol}
-            </span>
-          </>
-        )}
+        <div>USD value is subject to change at time of withdrawal. </div>
+        <div>Withdrawal fee set to 0%. Cooldown set to 0 days. </div>
       </div>
     </div>
   );

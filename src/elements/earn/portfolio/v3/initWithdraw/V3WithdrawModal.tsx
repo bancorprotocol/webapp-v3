@@ -34,7 +34,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
 
   return (
     <ModalFullscreenV3
-      title={`Begin ${lockDurationInDays} day cooldown`}
+      title={`Begin instant cooldown`}
       isOpen={isOpen}
       setIsOpen={onClose}
       titleElement={<SwapSwitch />}
