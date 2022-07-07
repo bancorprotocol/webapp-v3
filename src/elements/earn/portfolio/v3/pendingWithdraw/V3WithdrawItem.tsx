@@ -30,6 +30,7 @@ export const WithdrawItem = memo(
           amount={withdrawalRequest.reserveTokenAmount}
           usdPrice={token.usdPrice ?? '0'}
           imgUrl={token.logoURI}
+          defecitAmount={'????'}
         />
         <div className="flex items-center space-x-14">
           {isLocked && (

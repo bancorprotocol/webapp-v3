@@ -1,4 +1,4 @@
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
 import { memo, useMemo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -141,7 +141,7 @@ const V3WithdrawStep1 = ({
             onChange={() => setIsConfirmed(!isConfirmed)}
           />
           <div>
-            <div className="text-bg-error-hover">
+            <div className="text-error-hover">
               BNT distribution is currently disabled.
             </div>
             <div>
@@ -154,6 +154,7 @@ const V3WithdrawStep1 = ({
           className="mt-20 px-50"
           size={ButtonSize.ExtraLarge}
           onClick={handleNextStep}
+          variant={ButtonVariant.Secondary}
           disabled={!isConfirmed || !inputTkn || isInputError || txBusy}
         >
           {txBusy

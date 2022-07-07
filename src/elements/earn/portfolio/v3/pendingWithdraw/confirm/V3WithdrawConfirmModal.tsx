@@ -79,7 +79,7 @@ export const V3WithdrawConfirmModal = memo(
               onChange={() => setIsConfirmed(!isConfirmed)}
             />
             <div>
-              <div className="text-bg-error-hover">
+              <div className="text-error-hover">
                 BNT distribution is currently disabled.
               </div>
               <div>
