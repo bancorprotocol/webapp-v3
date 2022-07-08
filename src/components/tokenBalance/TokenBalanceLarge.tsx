@@ -11,6 +11,7 @@ interface Props {
   usdPrice: string;
   logoURI: string;
   label?: string;
+  showWarning?: boolean;
   defecitAmount?: string;
 }
 
@@ -20,6 +21,7 @@ export const TokenBalanceLarge = ({
   usdPrice,
   logoURI,
   label,
+  showWarning,
   defecitAmount,
 }: Props) => {
   const usdAmount = useMemo(
@@ -40,13 +42,16 @@ export const TokenBalanceLarge = ({
           <div className="flex items-center">
             <div className="text-[36px]">{prettifyNumber(amount)}</div>
             <span className="mx-10">{symbol}</span>
+            {showWarning && !defecitAmount && (
+              <IconWarning className="text-error" />
+            )}
             {defecitAmount && (
               <PopoverV3
                 buttonElement={() => <IconWarning className="text-error" />}
               >
                 <span className="text-secondary">
-                  Due to vault deficit, current value is {defecitAmount}{' '}
-                  {symbol}
+                  Due to vault deficit, current value is{' '}
+                  {prettifyNumber(defecitAmount)} {symbol}
                 </span>
               </PopoverV3>
             )}

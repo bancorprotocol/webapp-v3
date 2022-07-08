@@ -18,6 +18,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
+import { expandToken } from 'utils/formulas';
 
 interface Props {
   isModalOpen: boolean;
@@ -62,7 +63,13 @@ export const useV3WithdrawConfirm = ({
       return;
     }
 
-    const res = await fetchWithdrawalRequestOutputBreakdown(withdrawRequest);
+    const res = await fetchWithdrawalRequestOutputBreakdown(
+      withdrawRequest.reserveToken,
+      expandToken(
+        withdrawRequest.poolTokenAmount,
+        withdrawRequest.pool.reserveToken.decimals
+      )
+    );
     setOutputBreakdown(res);
   }, [withdrawRequest, isModalOpen]);
 

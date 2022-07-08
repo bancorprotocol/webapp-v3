@@ -1,6 +1,6 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import TokenInputV3 from 'components/tokenInput/TokenInputV3';
-import { memo, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useV3WithdrawStep1 } from 'elements/earn/portfolio/v3/initWithdraw/step1/useV3WithdrawStep1';
@@ -13,6 +13,9 @@ import BigNumber from 'bignumber.js';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Switch } from 'components/switch/Switch';
 import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
+import { shrinkToken } from 'utils/formulas';
+import useAsyncEffect from 'use-async-effect';
+import { debounce } from 'lodash';
 
 interface Props {
   inputTkn: string;
@@ -40,14 +43,23 @@ const V3WithdrawStep1 = ({
   amount,
   setRequestId,
 }: Props) => {
-  const { token, setBalance, isInputError, percentageUnstaked, showBreakdown } =
-    useV3WithdrawStep1({
-      holding,
-      setStep,
-      inputTkn,
-      setInputTkn,
-      setInputFiat,
-    });
+  const {
+    token,
+    setBalance,
+    isInputError,
+    percentageUnstaked,
+    showBreakdown,
+    withdrawAmounts,
+    fetchWithdrawAmounts,
+    isLoadingWithdrawAmounts,
+    setIsLoadingWithdrawAmounts,
+  } = useV3WithdrawStep1({
+    holding,
+    setStep,
+    inputTkn,
+    setInputTkn,
+    setInputFiat,
+  });
 
   const skipStep2 = useMemo(
     () => new BigNumber(inputTkn).lte(holding.tokenBalance),
@@ -70,6 +82,29 @@ const V3WithdrawStep1 = ({
     setStep,
     setRequestId,
   });
+
+  const [withdrawAmountsInput, setWithdrawAmountsInput] = useState<{
+    tkn: number;
+    bnt: number;
+    totalAmount: string;
+    baseTokenAmount: string;
+    bntAmount: string;
+  }>();
+
+  const onInputChange = useCallback(
+    debounce(async () => {
+      const res = await fetchWithdrawAmounts(inputTkn);
+      setWithdrawAmountsInput(res);
+    }, 300),
+    [fetchWithdrawAmounts, inputTkn]
+  );
+
+  useAsyncEffect(async () => {
+    if (Number(inputTkn) > 0) {
+      setIsLoadingWithdrawAmounts(true);
+      onInputChange();
+    }
+  }, [inputTkn]);
 
   return (
     <div className="text-center">
@@ -99,7 +134,20 @@ const V3WithdrawStep1 = ({
             buttonElement={() => <IconWarning className="text-error" />}
           >
             <span className="text-secondary">
-              Due to vault deficit, current value is {'????'} {token.symbol}
+              {isLoadingWithdrawAmounts ? (
+                '... loading'
+              ) : (
+                <>
+                  Due to vault deficit, current value is{' '}
+                  {prettifyNumber(
+                    shrinkToken(
+                      withdrawAmounts?.baseTokenAmount.toString() || '0',
+                      holding.pool.decimals
+                    )
+                  )}{' '}
+                  {token.symbol}
+                </>
+              )}
             </span>
           </PopoverV3>
         </div>
@@ -115,7 +163,7 @@ const V3WithdrawStep1 = ({
         isError={isInputError}
       />
 
-      <div className="flex justify-between w-full px-20 pt-5">
+      <div className="flex justify-between w-full px-20 pt-5 mb-20">
         <div className="space-x-10 opacity-50">
           <button onClick={() => setBalance(25)}>25%</button>
           <button onClick={() => setBalance(50)}>50%</button>
@@ -129,12 +177,26 @@ const V3WithdrawStep1 = ({
           />
         )}
       </div>
+      {Number(inputTkn) > 0 && (
+        <span className="text-secondary">
+          Due to vault deficit, current value is{' '}
+          {isLoadingWithdrawAmounts ? (
+            '... loading'
+          ) : (
+            <>
+              {prettifyNumber(
+                shrinkToken(
+                  withdrawAmountsInput?.baseTokenAmount || 0,
+                  holding.pool.decimals
+                )
+              )}{' '}
+              {token.symbol}
+            </>
+          )}
+        </span>
+      )}
 
-      <span className="text-secondary">
-        Due to vault deficit, current value is {'????'} {token.symbol}
-      </span>
-
-      <div className="flex flex-col items-center justify-center my-40">
+      <div className="flex flex-col items-center justify-center mb-40 mt-20">
         <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 h-[100px] w-[460px] p-20">
           <Switch
             selected={isConfirmed}

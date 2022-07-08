@@ -39,7 +39,8 @@ export const TokenBalance = ({
               buttonElement={() => <IconWarning className="text-error" />}
             >
               <span className="text-secondary">
-                Due to vault deficit, current value is {defecitAmount} {symbol}
+                Due to vault deficit, current value is{' '}
+                {prettifyNumber(defecitAmount)} {symbol}
               </span>
             </PopoverV3>
           )}

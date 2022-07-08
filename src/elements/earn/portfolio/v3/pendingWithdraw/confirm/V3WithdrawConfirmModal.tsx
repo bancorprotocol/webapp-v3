@@ -70,7 +70,7 @@ export const V3WithdrawConfirmModal = memo(
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
             label="Amount"
-            defecitAmount="????"
+            showWarning
           />
 
           <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
