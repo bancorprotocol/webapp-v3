@@ -74,23 +74,24 @@ export const V3WithdrawConfirmModal = memo(
             label="Amount"
             showWarning={!isBNT}
           />
-
-          <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
-            <Switch
-              selected={isConfirmed}
-              onChange={() => setIsConfirmed(!isConfirmed)}
-            />
-            <div>
-              <div className="text-error-hover">
-                BNT distribution is currently disabled.
-              </div>
+          {!isBNT && (
+            <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
+              <Switch
+                selected={isConfirmed}
+                onChange={() => setIsConfirmed(!isConfirmed)}
+              />
               <div>
-                If I withdraw now, I expect to receive the amount shown above. I
-                understand I may be withdrawing at a loss if the ETH vault is in
-                deficit.
+                <div className="text-error-hover">
+                  BNT distribution is currently disabled.
+                </div>
+                <div>
+                  If I withdraw now, I expect to receive the amount shown above.
+                  I understand I may be withdrawing at a loss if the ETH vault
+                  is in deficit.
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {missingGovTokenBalance > 0 ? (
             <div className="p-20 text-center rounded text-error bg-error bg-opacity-30">
@@ -104,7 +105,7 @@ export const V3WithdrawConfirmModal = memo(
               onClick={() => handleWithdrawClick()}
               size={ButtonSize.Full}
               disabled={
-                !isConfirmed ||
+                (!isConfirmed && !isBNT) ||
                 txBusy ||
                 missingGovTokenBalance > 0 ||
                 (isPoolStable === false &&

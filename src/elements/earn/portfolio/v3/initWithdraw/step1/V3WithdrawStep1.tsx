@@ -202,27 +202,32 @@ const V3WithdrawStep1 = ({
       )}
 
       <div className="flex flex-col items-center justify-center mb-40 mt-20">
-        <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 h-[100px] w-[460px] p-20">
-          <Switch
-            selected={isConfirmed}
-            onChange={() => setIsConfirmed(!isConfirmed)}
-          />
-          <div>
-            <div className="text-error-hover">
-              BNT distribution is currently disabled.
-            </div>
+        {!isBNT && (
+          <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 h-[100px] w-[460px] p-20">
+            <Switch
+              selected={isConfirmed}
+              onChange={() => setIsConfirmed(!isConfirmed)}
+            />
             <div>
-              I understand I may be withdrawing at a loss if the ETH vault is in
-              deficit.
+              <div className="text-error-hover">
+                BNT distribution is currently disabled.
+              </div>
+              <div>
+                I understand I may be withdrawing at a loss if the ETH vault is
+                in deficit.
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
         <Button
           className="mt-20 px-50"
           size={ButtonSize.ExtraLarge}
           onClick={handleNextStep}
           variant={ButtonVariant.Secondary}
-          disabled={!isConfirmed || !inputTkn || isInputError || txBusy}
+          disabled={
+            (!isConfirmed && !isBNT) || !inputTkn || isInputError || txBusy
+          }
         >
           {txBusy
             ? 'waiting for confirmation ...'
