@@ -9,6 +9,7 @@ import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import { expandToken, shrinkToken } from 'utils/formulas';
+import { bntToken } from 'services/web3/config';
 
 interface Props {
   withdrawalRequest: WithdrawalRequest;
@@ -44,6 +45,12 @@ export const WithdrawItem = memo(
       setOutputBreakdown(res);
     }, [withdrawalRequest]);
 
+    const isBNT = withdrawalRequest.pool.poolDltId === bntToken;
+
+    const defecitAmount = isBNT
+      ? undefined
+      : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
+
     return (
       <div className="flex justify-between items-center">
         <TokenBalance
@@ -51,10 +58,7 @@ export const WithdrawItem = memo(
           amount={withdrawalRequest.reserveTokenAmount}
           usdPrice={token.usdPrice ?? '0'}
           imgUrl={token.logoURI}
-          defecitAmount={shrinkToken(
-            outputBreakdown.baseTokenAmount,
-            token.decimals
-          )}
+          defecitAmount={defecitAmount}
         />
         <div className="flex items-center space-x-5">
           {isLocked && (

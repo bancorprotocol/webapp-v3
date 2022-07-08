@@ -16,6 +16,7 @@ import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 import { shrinkToken } from 'utils/formulas';
 import useAsyncEffect from 'use-async-effect';
 import { debounce } from 'lodash';
+import { bntToken } from 'services/web3/config';
 
 interface Props {
   inputTkn: string;
@@ -106,6 +107,8 @@ const V3WithdrawStep1 = ({
     }
   }, [inputTkn]);
 
+  const isBNT = token.address === bntToken;
+
   return (
     <div className="text-center">
       {ModalApprove}
@@ -130,26 +133,28 @@ const V3WithdrawStep1 = ({
         )}
         <div className="flex items-center gap-10">
           Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
-          <PopoverV3
-            buttonElement={() => <IconWarning className="text-error" />}
-          >
-            <span className="text-secondary">
-              {isLoadingWithdrawAmounts ? (
-                '... loading'
-              ) : (
-                <>
-                  Due to vault deficit, current value is{' '}
-                  {prettifyNumber(
-                    shrinkToken(
-                      withdrawAmounts?.baseTokenAmount.toString() || '0',
-                      holding.pool.decimals
-                    )
-                  )}{' '}
-                  {token.symbol}
-                </>
-              )}
-            </span>
-          </PopoverV3>
+          {!isBNT && (
+            <PopoverV3
+              buttonElement={() => <IconWarning className="text-error" />}
+            >
+              <span className="text-secondary">
+                {isLoadingWithdrawAmounts ? (
+                  '... loading'
+                ) : (
+                  <>
+                    Due to vault deficit, current value is{' '}
+                    {prettifyNumber(
+                      shrinkToken(
+                        withdrawAmounts?.baseTokenAmount.toString() || '0',
+                        holding.pool.decimals
+                      )
+                    )}{' '}
+                    {token.symbol}
+                  </>
+                )}
+              </span>
+            </PopoverV3>
+          )}
         </div>
       </button>
 
@@ -177,7 +182,7 @@ const V3WithdrawStep1 = ({
           />
         )}
       </div>
-      {Number(inputTkn) > 0 && (
+      {Number(inputTkn) > 0 && !isBNT && (
         <span className="text-secondary">
           Due to vault deficit, current value is{' '}
           {isLoadingWithdrawAmounts ? (

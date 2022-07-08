@@ -7,7 +7,7 @@ import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { shrinkToken } from 'utils/formulas';
-import { bntDecimals } from 'services/web3/config';
+import { bntDecimals, bntToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
@@ -51,6 +51,8 @@ export const V3WithdrawConfirmModal = memo(
 
     const { isPoolStable, isLoading } = useIsPoolStable(token.address);
 
+    const isBNT = withdrawRequest.pool.poolDltId === bntToken;
+
     return (
       <ModalFullscreenV3
         title="Complete Withdraw"
@@ -70,7 +72,7 @@ export const V3WithdrawConfirmModal = memo(
             usdPrice={token.usdPrice}
             logoURI={token.logoURI}
             label="Amount"
-            showWarning
+            showWarning={!isBNT}
           />
 
           <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
