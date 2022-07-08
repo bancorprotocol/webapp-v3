@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { MultiCall } from 'services/web3/multicall/multicall';
+import { fetchMulticall, MultiCall } from 'services/web3/multicall/multicall';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { ethToken } from 'services/web3/config';
 import { BigNumber, utils } from 'ethers';
@@ -14,6 +14,13 @@ export interface PriceDictionaryV3 {
   tkn: string;
 }
 
+export interface PoolApr {
+  tradingFees: number;
+  standardRewards: number;
+  autoCompounding: number;
+  total: number;
+}
+
 export interface PoolV3Chain {
   poolDltId: string;
   poolTokenDltId: string;
@@ -22,77 +29,26 @@ export interface PoolV3Chain {
   decimals: number;
   tradingLiquidityBNT: PriceDictionaryV3;
   tradingLiquidityTKN: PriceDictionaryV3;
-  volume24h?: PriceDictionaryV3;
-  fees24h?: PriceDictionaryV3;
   stakedBalance: PriceDictionaryV3;
-  tradingFeePPM: string;
+  tradingFeePPM: number;
   tradingEnabled: boolean;
   depositingEnabled: boolean;
+  programs: RewardsProgramRaw[];
+  logoURI: string;
+  latestProgram?: RewardsProgramRaw;
+  tknBalance?: string;
+  bnTknBalance?: string;
+  volume24h?: PriceDictionaryV3;
+  fees24h?: PriceDictionaryV3;
+  volume7d?: PriceDictionaryV3;
+  fees7d?: PriceDictionaryV3;
+  apr24h?: PoolApr;
+  apr7d?: PoolApr;
   standardRewardsClaimed24h?: PriceDictionaryV3;
   standardRewardsProviderJoined?: PriceDictionaryV3;
   standardRewardsProviderLeft?: PriceDictionaryV3;
   standardRewardsStaked?: PriceDictionaryV3;
-  volume7d?: PriceDictionaryV3;
-  fees7d?: PriceDictionaryV3;
-  apr24h?: {
-    tradingFees: number;
-    standardRewards: number;
-    autoCompounding: number;
-    total: number;
-  };
-  apr7d?: {
-    tradingFees: number;
-    standardRewards: number;
-    autoCompounding: number;
-    total: number;
-  };
-  programs: RewardsProgramRaw[];
-  latestProgram?: RewardsProgramRaw;
-  logoURI: string;
-  tknBalance?: string;
-  bnTknBalance?: string;
 }
-
-const fetchMulticall = async (
-  calls: MultiCall[],
-  toUtf8String = false,
-  blockHeight?: number
-) => {
-  try {
-    const encoded = calls.map((call) => ({
-      target: call.contractAddress,
-      callData: call.interface.encodeFunctionData(
-        call.methodName,
-        call.methodParameters
-      ),
-    }));
-
-    const encodedRes = await ContractsApi.Multicall.read.tryAggregate(
-      false,
-      encoded,
-      {
-        blockTag: blockHeight,
-      }
-    );
-
-    return encodedRes.map((call, i) => {
-      if (!call.success) {
-        console.log(calls[i]);
-        throw new Error('multicall failed');
-      }
-      if (toUtf8String) {
-        return utils.toUtf8String(call.returnData).replace(/[^a-zA-Z0-9]/g, '');
-      }
-      const res = calls[i].interface.decodeFunctionResult(
-        calls[i].methodName,
-        call.returnData
-      );
-      return res[0];
-    });
-  } catch (error) {
-    throw error;
-  }
-};
 
 const fetchEthData = async (): Promise<PoolV3Chain> => {
   const ethDataCalls: MultiCall[] = [
@@ -138,14 +94,8 @@ const fetchEthData = async (): Promise<PoolV3Chain> => {
       methodName: 'latestProgramId',
       methodParameters: [ethToken],
     },
-    {
-      contractAddress: ContractsApi.StandardRewards.contractAddress,
-      interface: ContractsApi.StandardRewards.read.interface,
-      methodName: 'latestProgramId',
-      methodParameters: [ethToken],
-    },
   ];
-  const res = await fetchMulticall(ethDataCalls);
+  const res = await fetchMulticall<any>(ethDataCalls);
 
   return {
     poolDltId: ethToken,
@@ -291,16 +241,16 @@ const fetchV3ChainData = async (): Promise<PoolV3Chain[]> => {
     ethData,
     programs,
   ] = await Promise.all([
-    fetchMulticall(poolTokensCalls),
-    fetchMulticall(tokenDecimalsCalls),
-    fetchMulticall(tokenNamesCalls, true),
-    fetchMulticall(tokenSymbolCalls, true),
-    fetchMulticall(tradingEnabledCalls),
-    fetchMulticall(tradingLiquidityCalls),
-    fetchMulticall(depositingEnabledCalls),
-    fetchMulticall(stakedBalanceCalls),
-    fetchMulticall(tradingFeePPMCalls),
-    fetchMulticall(latestProgramIdCalls),
+    fetchMulticall<string>(poolTokensCalls),
+    fetchMulticall<number>(tokenDecimalsCalls),
+    fetchMulticall<string>(tokenNamesCalls, true),
+    fetchMulticall<string>(tokenSymbolCalls, true),
+    fetchMulticall<boolean>(tradingEnabledCalls),
+    fetchMulticall<any>(tradingLiquidityCalls),
+    fetchMulticall<boolean>(depositingEnabledCalls),
+    fetchMulticall<string>(stakedBalanceCalls),
+    fetchMulticall<number>(tradingFeePPMCalls),
+    fetchMulticall<number>(latestProgramIdCalls),
     fetchEthData(),
     fetchChainV3Programs(programIds),
   ]);
@@ -331,7 +281,7 @@ const fetchV3ChainData = async (): Promise<PoolV3Chain[]> => {
     },
     tradingFeePPM: tradingFeePPM[i],
     latestProgram: latestProgramIds[i]
-      ? latestProgramIds[i].toString()
+      ? programs.find((p) => p.pool === id)
       : undefined,
     programs: programs.filter((p) => p.pool === id),
     logoURI:
@@ -341,6 +291,45 @@ const fetchV3ChainData = async (): Promise<PoolV3Chain[]> => {
   }));
   data.push(ethData);
   return data;
+};
+
+const fetchV3ChainPoolTokens = async (
+  poolIds: string[]
+): Promise<Map<string, string>> => {
+  const calls: MultiCall[] = poolIds.map((id) => ({
+    contractAddress: ContractsApi.BancorNetworkInfo.contractAddress,
+    interface: ContractsApi.BancorNetworkInfo.read.interface,
+    methodName: 'poolToken',
+    methodParameters: [id],
+  }));
+
+  const data = await fetchMulticall<string>(calls);
+
+  return new Map(data.map((id, i) => [poolIds[i], id]));
+};
+
+export const useV3ChainPoolIds = () => {
+  return useQuery(
+    ['chain', 'v3', 'poolIds'],
+    () => ContractsApi.BancorNetwork.read.liquidityPools(),
+    {
+      refetchInterval: 144 * 1000,
+      staleTime: 88 * 1000,
+    }
+  );
+};
+
+export const useV3ChainPoolTokenIds = () => {
+  const { data: poolIds } = useV3ChainPoolIds();
+  return useQuery(
+    ['chain', 'v3', 'poolTokenIds'],
+    () => fetchV3ChainPoolTokens(poolIds!),
+    {
+      enabled: poolIds !== undefined,
+      refetchInterval: 144 * 1000,
+      staleTime: 88 * 1000,
+    }
+  );
 };
 
 export const useV3ChainData = () => {

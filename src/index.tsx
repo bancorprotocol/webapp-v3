@@ -10,29 +10,27 @@ import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { persistQueryClient } from 'react-query/persistQueryClient';
-import { createWebStoragePersister } from 'react-query/createWebStoragePersister';
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchInterval: 60000,
       staleTime: 30000,
       useErrorBoundary: true,
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
 });
-
-const localStoragePersister = createWebStoragePersister({
-  key: 'bancor-test-local',
-  storage: window.localStorage,
-});
-
-persistQueryClient({
-  queryClient,
-  persister: localStoragePersister,
-});
+//
+// const localStoragePersister = createWebStoragePersister({
+//   key: 'bancor-test-local',
+//   storage: window.localStorage,
+// });
+//
+// persistQueryClient({
+//   queryClient,
+//   persister: localStoragePersister,
+// });
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>

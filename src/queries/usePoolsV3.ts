@@ -84,10 +84,6 @@ export const usePoolsV3 = () => {
           standardRewardsClaimed24h: apiPool.standardRewardsClaimed24h,
           standardRewardsProviderJoined: apiPool.standardRewardsProviderJoined,
           standardRewardsProviderLeft: apiPool.standardRewardsProviderLeft,
-          logoURI:
-            'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/' +
-            pool.poolDltId.toLowerCase() +
-            '.svg',
           apr24h: {
             tradingFees: tradingFeesApr24h,
             standardRewards: standardRewardsApr24H,
