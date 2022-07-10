@@ -92,13 +92,12 @@ const V3WithdrawStep1 = ({
     bntAmount: string;
   }>();
 
-  const onInputChange = useCallback(
+  const onInputChange = useCallback(() => {
     debounce(async () => {
       const res = await fetchWithdrawAmounts(inputTkn);
       setWithdrawAmountsInput(res);
-    }, 300),
-    [fetchWithdrawAmounts, inputTkn]
-  );
+    }, 300);
+  }, [fetchWithdrawAmounts, inputTkn]);
 
   useAsyncEffect(async () => {
     if (Number(inputTkn) > 0) {
@@ -234,7 +233,7 @@ const V3WithdrawStep1 = ({
             : skipStep2
             ? `${
                 isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol} - ` : ''
-              }Start cooldown`
+              }Start cooldown and move to withdraw`
             : `Start cooldown and move to withdraw`}
         </Button>
       </div>

@@ -53,6 +53,10 @@ export const V3WithdrawConfirmModal = memo(
 
     const isBNT = withdrawRequest.pool.poolDltId === bntToken;
 
+    const defecitAmount = isBNT
+      ? undefined
+      : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
+
     return (
       <ModalFullscreenV3
         title="Complete Withdraw"
@@ -73,6 +77,7 @@ export const V3WithdrawConfirmModal = memo(
             logoURI={token.logoURI}
             label="Amount"
             showWarning={!isBNT}
+            defecitAmount={defecitAmount}
           />
           {!isBNT && (
             <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
