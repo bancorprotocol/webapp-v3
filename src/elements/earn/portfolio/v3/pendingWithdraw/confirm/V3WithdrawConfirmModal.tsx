@@ -80,7 +80,7 @@ export const V3WithdrawConfirmContent = ({
     : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
 
   return (
-    <div className="w-[520px] p-20 space-y-20 md:p-30">
+    <div className="w-full max-w-[520px] p-20 space-y-20 md:p-30">
       {ModalApprove}
 
       <TokenBalanceLarge
@@ -97,7 +97,7 @@ export const V3WithdrawConfirmContent = ({
         defecitAmount={defecitAmount}
       />
       {!isBNT && (
-        <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 w-[460px] p-20">
+        <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 p-20">
           <Switch
             selected={isConfirmed}
             onChange={() => setIsConfirmed(!isConfirmed)}
