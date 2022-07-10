@@ -17,7 +17,6 @@ export const AdminUseFork = () => {
   const [inputRpcUrl, setInputRpcUrl] = useState(getTenderlyRpcLS());
   const [inputV3ApiUrl, setInputV3ApiUrl] = useState(getV3ApiUrlLS());
   const [inputV2ApiUrl, setInputV2ApiUrl] = useState(getV2ApiUrlLS());
-  const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     setV3ApiUrlLS(inputV3ApiUrl);
@@ -32,7 +31,7 @@ export const AdminUseFork = () => {
     if (account && inputRpcUrl) {
       setSigner(rpc.getUncheckedSigner(account));
     }
-    setSaved(true);
+    window.location.reload();
   };
 
   return (
@@ -45,7 +44,7 @@ export const AdminUseFork = () => {
           type="text"
           className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
           value={inputRpcUrl}
-          onChange={(e) => setInputRpcUrl(e.target.value)}
+          onChange={(e) => setInputRpcUrl(e.target.value.trim())}
         />
 
         <div className="mt-20 font-semibold">Step 2 (optional): V3 API URL</div>
@@ -53,7 +52,7 @@ export const AdminUseFork = () => {
           type="text"
           className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
           value={inputV3ApiUrl}
-          onChange={(e) => setInputV3ApiUrl(e.target.value)}
+          onChange={(e) => setInputV3ApiUrl(e.target.value.trim())}
         />
 
         <div className="mt-20 font-semibold">Step 3 (optional): V2 API URL</div>
@@ -61,22 +60,17 @@ export const AdminUseFork = () => {
           type="text"
           className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
           value={inputV2ApiUrl}
-          onChange={(e) => setInputV2ApiUrl(e.target.value)}
+          onChange={(e) => setInputV2ApiUrl(e.target.value.trim())}
         />
       </div>
 
       <Button
         onClick={handleSave}
-        size={ButtonSize.ExtraSmall}
+        size={ButtonSize.Small}
         className="mx-auto mt-20"
       >
         Save
       </Button>
-      {saved && (
-        <div className="mt-10 font-semibold text-center text-success">
-          Successfully saved changes! Refresh to make them take effect.
-        </div>
-      )}
     </div>
   );
 };
