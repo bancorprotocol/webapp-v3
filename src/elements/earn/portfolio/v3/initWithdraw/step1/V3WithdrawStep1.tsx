@@ -98,7 +98,7 @@ const V3WithdrawStep1 = ({
       setWithdrawAmountsInput(res);
       setIsLoadingWithdrawAmounts(false);
     }, 300)();
-  }, [fetchWithdrawAmounts, inputTkn]);
+  }, [fetchWithdrawAmounts, inputTkn, setIsLoadingWithdrawAmounts]);
 
   useAsyncEffect(async () => {
     if (Number(inputTkn) > 0) {
