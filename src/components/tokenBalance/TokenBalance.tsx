@@ -32,8 +32,8 @@ export const TokenBalance = ({
         className="w-40 h-40 mr-10 !rounded-full"
       />
       <div className={`${inverted ? 'text-right' : ''}`}>
-        <div className="flex items-center gap-5">
-          <div className="text-16">{label}</div>
+        <div className="flex items-center gap-5 text-16">
+          {label}
           {defecitAmount && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error" />}

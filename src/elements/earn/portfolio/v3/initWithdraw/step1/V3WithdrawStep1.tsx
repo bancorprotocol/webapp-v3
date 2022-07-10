@@ -110,15 +110,15 @@ const V3WithdrawStep1 = ({
   const isBNT = token.address === bntToken;
 
   return (
-    <div className="text-center">
+    <div className="w-full max-w-[460px]">
       {ModalApprove}
-      <h1 className="text-[36px] font-normal mb-50 leading-10">
+      <h1 className="text-[36px] font-normal mb-30 leading-10">
         How much {token.symbol} do you want to withdraw?
       </h1>
 
       <button
         onClick={() => setBalance(100)}
-        className={`flex items-center mx-auto mb-5 ${
+        className={`flex items-center mb-5 ${
           isInputError ? 'text-error' : 'text-secondary'
         }`}
       >
@@ -201,9 +201,9 @@ const V3WithdrawStep1 = ({
         </span>
       )}
 
-      <div className="flex flex-col items-center justify-center mb-40 mt-20">
+      <div className="flex flex-col items-center justify-center my-20">
         {!isBNT && (
-          <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 h-[100px] w-[460px] p-20">
+          <div className="flex text-start gap-10 text-error bg-error bg-opacity-10 rounded-20 p-20">
             <Switch
               selected={isConfirmed}
               onChange={() => setIsConfirmed(!isConfirmed)}
@@ -222,7 +222,7 @@ const V3WithdrawStep1 = ({
 
         <Button
           className="mt-20 px-50"
-          size={ButtonSize.ExtraLarge}
+          size={ButtonSize.Full}
           onClick={handleNextStep}
           variant={ButtonVariant.Secondary}
           disabled={
