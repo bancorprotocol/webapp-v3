@@ -213,8 +213,8 @@ const V3WithdrawStep1 = ({
                 BNT distribution is currently disabled.
               </div>
               <div>
-                I understand I may be withdrawing at a loss if the ETH vault is
-                in deficit.
+                I understand I may be withdrawing at a loss if the{' '}
+                {token.symbol} vault is in deficit.
               </div>
             </div>
           </div>

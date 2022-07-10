@@ -58,7 +58,7 @@ export const V3HoldingsItem = ({
   useAsyncEffect(async () => {
     const res = await fetchWithdrawalRequestOutputBreakdown(
       holding.pool.poolDltId,
-      expandToken(holding.poolTokenBalance, holding.pool.decimals)
+      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
     );
     setWithdrawAmounts(res);
   }, [holding]);

@@ -91,8 +91,8 @@ export const V3WithdrawConfirmModal = memo(
                 </div>
                 <div>
                   If I withdraw now, I expect to receive the amount shown above.
-                  I understand I may be withdrawing at a loss if the ETH vault
-                  is in deficit.
+                  I understand I may be withdrawing at a loss if the{' '}
+                  {token.symbol} vault is in deficit.
                 </div>
               </div>
             </div>
