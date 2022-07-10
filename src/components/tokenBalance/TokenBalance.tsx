@@ -20,9 +20,6 @@ export const TokenBalance = ({
   defecitAmount,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
-  const label = inverted
-    ? `${prettifyNumber(amount)} ${symbol}`
-    : `${symbol} ${prettifyNumber(amount)}`;
 
   return (
     <div className={`flex ${inverted ? '' : 'items-center'}`}>
@@ -32,8 +29,18 @@ export const TokenBalance = ({
         className="w-40 h-40 mr-10 !rounded-full"
       />
       <div className={`${inverted ? 'text-right' : ''}`}>
-        <div className="flex items-center gap-5 text-16">
-          {label}
+        <div className="flex items-center text-justify gap-5 text-16">
+          {inverted ? (
+            <>
+              <div>{prettifyNumber(amount)}</div>
+              {symbol}
+            </>
+          ) : (
+            <>
+              {symbol}
+              <div>{prettifyNumber(amount)}</div>
+            </>
+          )}
           {defecitAmount && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error" />}

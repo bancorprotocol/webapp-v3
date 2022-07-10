@@ -104,7 +104,7 @@ export const V3HoldingsItem = ({
           </PopoverV3>
           {!isBNT && (
             <PopoverV3
-              buttonElement={() => <IconWarning className="text-error" />}
+              buttonElement={() => <IconWarning className="text-error z-50" />}
             >
               <span className="text-secondary">
                 Due to vault deficit, current value is{' '}
