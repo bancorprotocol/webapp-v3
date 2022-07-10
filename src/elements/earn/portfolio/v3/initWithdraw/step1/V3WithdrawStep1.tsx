@@ -96,7 +96,8 @@ const V3WithdrawStep1 = ({
     debounce(async () => {
       const res = await fetchWithdrawAmounts(inputTkn);
       setWithdrawAmountsInput(res);
-    }, 300);
+      setIsLoadingWithdrawAmounts(false);
+    }, 300)();
   }, [fetchWithdrawAmounts, inputTkn]);
 
   useAsyncEffect(async () => {
@@ -138,7 +139,7 @@ const V3WithdrawStep1 = ({
             >
               <span className="text-secondary">
                 {isLoadingWithdrawAmounts ? (
-                  '... loading'
+                  '...'
                 ) : (
                   <>
                     Due to vault deficit, current value is{' '}
@@ -185,7 +186,7 @@ const V3WithdrawStep1 = ({
         <span className="text-secondary">
           Due to vault deficit, current value is{' '}
           {isLoadingWithdrawAmounts ? (
-            '... loading'
+            '...'
           ) : (
             <>
               {prettifyNumber(
