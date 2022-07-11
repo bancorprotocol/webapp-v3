@@ -41,16 +41,19 @@ interface Props {
   requestId: string;
 }
 
-const V3WithdrawStep4 = ({ onClose, isOpen, requestId }: Props) => {
+const V3WithdrawStep4 = ({ onClose, isOpen }: Props) => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
-  const withdrawRequest = withdrawalRequests.find(
-    (x) => x.id.toString() === requestId
-  );
+  const withdrawRequest =
+    withdrawalRequests.length === 0
+      ? undefined
+      : withdrawalRequests[withdrawalRequests.length - 1];
+  if (!withdrawRequest) return null;
+
   return (
     <V3WithdrawConfirmContent
       isModalOpen={isOpen}
       setIsModalOpen={onClose}
-      withdrawRequest={withdrawRequest!}
+      withdrawRequest={withdrawRequest}
       openCancelModal={() => {}}
     />
   );

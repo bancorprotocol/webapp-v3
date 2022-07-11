@@ -68,7 +68,6 @@ const V3WithdrawStep1 = ({
   );
 
   const handleNextStep = () => {
-    setInputTkn('');
     if (skipStep2) {
       void handleButtonClick();
     } else {
