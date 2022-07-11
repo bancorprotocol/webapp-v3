@@ -42,7 +42,7 @@ export const WithdrawItem = memo(
           withdrawalRequest.pool.reserveToken.decimals
         )
       );
-      setOutputBreakdown(res);
+      if (res) setOutputBreakdown(res);
     }, [withdrawalRequest]);
 
     const isBNT = withdrawalRequest.pool.poolDltId === bntToken;

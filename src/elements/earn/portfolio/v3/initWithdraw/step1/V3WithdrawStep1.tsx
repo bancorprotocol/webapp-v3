@@ -84,24 +84,37 @@ const V3WithdrawStep1 = ({
     setRequestId,
   });
 
-  const [withdrawAmountsInput, setWithdrawAmountsInput] = useState<{
-    tkn: number;
-    bnt: number;
-    totalAmount: string;
-    baseTokenAmount: string;
-    bntAmount: string;
-  }>();
+  const [withdrawAmountsInput, setWithdrawAmountsInput] = useState<
+    | {
+        tkn: number;
+        bnt: number;
+        totalAmount: string;
+        baseTokenAmount: string;
+        bntAmount: string;
+      }
+    | undefined
+  >(undefined);
 
   const onInputChange = useCallback(() => {
     debounce(async () => {
-      const res = await fetchWithdrawAmounts(inputTkn);
-      setWithdrawAmountsInput(res);
+      if (Number(inputTkn) > Number(holding.tokenBalance))
+        setWithdrawAmountsInput(undefined);
+      else {
+        const res = await fetchWithdrawAmounts(inputTkn);
+        setWithdrawAmountsInput(res);
+      }
       setIsLoadingWithdrawAmounts(false);
     }, 300)();
-  }, [fetchWithdrawAmounts, inputTkn, setIsLoadingWithdrawAmounts]);
+  }, [
+    fetchWithdrawAmounts,
+    inputTkn,
+    setIsLoadingWithdrawAmounts,
+    holding.tokenBalance,
+  ]);
 
   useAsyncEffect(async () => {
-    if (Number(inputTkn) > 0) {
+    const input = Number(inputTkn);
+    if (input > 0) {
       setIsLoadingWithdrawAmounts(true);
       onInputChange();
     }
@@ -116,47 +129,47 @@ const V3WithdrawStep1 = ({
         How much {token.symbol} do you want to withdraw?
       </h1>
 
-      <button
-        onClick={() => setBalance(100)}
-        className={`flex items-center mb-5 ${
-          isInputError ? 'text-error' : 'text-secondary'
-        }`}
-      >
-        {showBreakdown && (
-          <div className="relative flex items-center justify-center mr-10">
-            <IconLightning className="absolute w-6 text-primary" />
-            <CirclePercentage
-              percentage={percentageUnstaked}
-              className="w-24 h-24"
-            />
-          </div>
-        )}
-        <div className="flex items-center gap-10">
-          Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
-          {!isBNT && (
-            <PopoverV3
-              buttonElement={() => <IconWarning className="text-error" />}
-            >
-              <span className="text-secondary">
-                {isLoadingWithdrawAmounts ? (
-                  '...'
-                ) : (
-                  <>
-                    Due to vault deficit, current value is{' '}
-                    {prettifyNumber(
-                      shrinkToken(
-                        withdrawAmounts?.baseTokenAmount.toString() || '0',
-                        holding.pool.decimals
-                      )
-                    )}{' '}
-                    {token.symbol}
-                  </>
-                )}
-              </span>
-            </PopoverV3>
+      <div className="flex items-center gap-10 mb-5">
+        <button
+          onClick={() => setBalance(100)}
+          className={`flex items-center ${
+            isInputError ? 'text-error' : 'text-secondary'
+          }`}
+        >
+          {showBreakdown && (
+            <div className="relative flex items-center justify-center mr-10">
+              <IconLightning className="absolute w-6 text-primary" />
+              <CirclePercentage
+                percentage={percentageUnstaked}
+                className="w-24 h-24"
+              />
+            </div>
           )}
-        </div>
-      </button>
+          Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
+        </button>
+        {!isBNT && (
+          <PopoverV3
+            buttonElement={() => <IconWarning className="text-error" />}
+          >
+            <span className="text-secondary">
+              {isLoadingWithdrawAmounts ? (
+                '...'
+              ) : (
+                <>
+                  Due to vault deficit, current value is{' '}
+                  {prettifyNumber(
+                    shrinkToken(
+                      withdrawAmounts?.baseTokenAmount.toString() || '0',
+                      holding.pool.decimals
+                    )
+                  )}{' '}
+                  {token.symbol}
+                </>
+              )}
+            </span>
+          </PopoverV3>
+        )}
+      </div>
 
       <TokenInputV3
         token={token}
@@ -182,24 +195,27 @@ const V3WithdrawStep1 = ({
           />
         )}
       </div>
-      {Number(inputTkn) > 0 && !isBNT && (
-        <span className="text-secondary">
-          Due to vault deficit, current value is{' '}
-          {isLoadingWithdrawAmounts ? (
-            '...'
-          ) : (
-            <>
-              {prettifyNumber(
-                shrinkToken(
-                  withdrawAmountsInput?.baseTokenAmount || 0,
-                  holding.pool.decimals
-                )
-              )}{' '}
-              {token.symbol}
-            </>
-          )}
-        </span>
-      )}
+      {Number(inputTkn) > 0 &&
+        !isBNT &&
+        withdrawAmountsInput &&
+        Number(inputTkn) <= Number(holding.tokenBalance) && (
+          <span className="text-secondary">
+            Due to vault deficit, current value is{' '}
+            {isLoadingWithdrawAmounts ? (
+              '...'
+            ) : (
+              <>
+                {prettifyNumber(
+                  shrinkToken(
+                    withdrawAmountsInput?.baseTokenAmount || 0,
+                    holding.pool.decimals
+                  )
+                )}{' '}
+                {token.symbol}
+              </>
+            )}
+          </span>
+        )}
 
       <div className="flex flex-col items-center justify-center my-20">
         {!isBNT && (
