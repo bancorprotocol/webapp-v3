@@ -7,11 +7,19 @@ import {
 } from 'services/web3/multicall/multicallFunctions';
 import { queryOptionsNoInterval } from 'queries/queryOptions';
 
-export const useChainTokenDecimals = () => {
+interface Props {
+  enabled?: boolean;
+}
+
+export const useChainTokenDecimals = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  return useQuery(
+  const query = useQuery(
     QueryKey.chainCoreDecimals(poolIds?.length),
     () => fetchMulticallHelper<number>(poolIds!, buildMulticallDecimal),
-    queryOptionsNoInterval(!!poolIds)
+    queryOptionsNoInterval(!!poolIds && enabled)
   );
+
+  const getDecimalsByID = (id: string) => query.data?.get(id);
+
+  return { ...query, getDecimalsByID };
 };

@@ -7,11 +7,19 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 
-export const useChainPoolTokenIds = () => {
+interface Props {
+  enabled?: boolean;
+}
+
+export const useChainPoolTokenIds = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  return useQuery(
+  const query = useQuery(
     QueryKey.chainCorePoolTokenIds(poolIds?.length),
     () => fetchMulticallHelper<string>(poolIds!, buildMulticallPoolToken),
-    queryOptionsNoInterval(!!poolIds)
+    queryOptionsNoInterval(!!poolIds && enabled)
   );
+
+  const getPoolTokenByID = (id: string) => query.data?.get(id);
+
+  return { ...query, getPoolTokenByID };
 };

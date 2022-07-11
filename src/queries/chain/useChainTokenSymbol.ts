@@ -7,11 +7,19 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 
-export const useChainTokenSymbol = () => {
+interface Props {
+  enabled?: boolean;
+}
+
+export const useChainTokenSymbol = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  return useQuery(
+  const query = useQuery(
     QueryKey.chainCoreSymbols(poolIds?.length),
     () => fetchMulticallHelper<string>(poolIds!, buildMulticallSymbol, true),
-    queryOptionsNoInterval(!!poolIds)
+    queryOptionsNoInterval(!!poolIds && enabled)
   );
+
+  const getSymbolByID = (id: string) => query.data?.get(id);
+
+  return { ...query, getSymbolByID };
 };

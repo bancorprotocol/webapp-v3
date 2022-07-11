@@ -40,6 +40,14 @@ export abstract class QueryKey {
     ...this.chainCore(key),
     'latestProgramId',
   ];
+  static chainCorePrograms = (key?: number) => [
+    ...this.chainCore(key),
+    'programs',
+  ];
   static chainPools = () => [...this.chain(), 'pools'];
   static chainPoolsByID = (key?: string) => [...this.chainPools(), key];
+
+  static api = () => [...this.v3(), 'api'];
+  static apiPools = () => [...this.api(), 'pools'];
+  static apiFees = () => [...this.api(), 'fees'];
 }

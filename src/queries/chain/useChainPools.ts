@@ -59,7 +59,7 @@ export const useChainPools = () => {
     tradingFee.error ||
     poolTokens.error;
 
-  const data = (): PoolV3Chain[] | undefined => {
+  const _buildPool = (id: string): PoolV3Chain | undefined => {
     if (
       !poolIds.data ||
       !symbols.data ||
@@ -75,43 +75,46 @@ export const useChainPools = () => {
       return undefined;
     }
 
-    return poolIds.data.map((id) => {
-      const tokenDecimals = decimals.data.get(id)!;
-      const tokenTradingLiquidity = tradingLiquidity.data.get(id)!;
+    const tokenDecimals = decimals.data.get(id)!;
+    const tokenTradingLiquidity = tradingLiquidity.data.get(id)!;
 
-      return {
-        poolDltId: id,
-        poolTokenDltId: poolTokens.data.get(id)!,
-        symbol: symbols.data.get(id)!,
-        decimals: tokenDecimals,
-        name: name.data.get(id)!,
-        tradingFeePPM: tradingFee.data.get(id)!,
-        tradingEnabled: tradingEnabled.data.get(id)!,
-        depositingEnabled: depositingEnabled.data.get(id)!,
-        tradingLiquidityBNT: {
+    const pool: PoolV3Chain = {
+      poolDltId: id,
+      poolTokenDltId: poolTokens.data.get(id)!,
+      symbol: symbols.data.get(id)!,
+      decimals: tokenDecimals,
+      name: name.data.get(id)!,
+      tradingFeePPM: tradingFee.data.get(id)!,
+      tradingEnabled: tradingEnabled.data.get(id)!,
+      depositingEnabled: depositingEnabled.data.get(id)!,
+      tradingLiquidity: {
+        BNT: {
           bnt: utils.formatUnits(
             tokenTradingLiquidity.bntTradingLiquidity,
             tokenDecimals
           ),
           tkn: utils.formatUnits(tokenTradingLiquidity.bntTradingLiquidity, 18),
         },
-        tradingLiquidityTKN: {
+        TKN: {
           tkn: utils.formatUnits(
             tokenTradingLiquidity.baseTokenTradingLiquidity,
             tokenDecimals
           ),
         },
-        stakedBalance: {
-          tkn: utils.formatUnits(stakedBalance.data.get(id)!, tokenDecimals),
-        },
-        programs: [],
-        logoURI:
-          'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/' +
-          id.toLowerCase() +
-          '.svg',
-      };
-    });
+      },
+      stakedBalance: {
+        tkn: utils.formatUnits(stakedBalance.data.get(id)!, tokenDecimals),
+      },
+      programs: [],
+      logoURI:
+        'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/' +
+        id.toLowerCase() +
+        '.svg',
+    };
+    return pool;
   };
 
-  return { data: data(), isLoading, error, isFetching };
+  const getPoolByID = (id: string) => _buildPool(id);
+
+  return { isLoading, error, isFetching, getPoolByID };
 };

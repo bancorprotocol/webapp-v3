@@ -7,11 +7,19 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 
-export const useChainTradingEnabled = () => {
+interface Props {
+  enabled?: boolean;
+}
+
+export const useChainTradingEnabled = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  return useQuery(
+  const query = useQuery(
     QueryKey.chainCoreTradingEnabled(poolIds?.length),
     () => fetchMulticallHelper<boolean>(poolIds!, buildMulticallTradingEnabled),
-    queryOptionsStaleTimeLow(!!poolIds)
+    queryOptionsStaleTimeLow(!!poolIds && enabled)
   );
+
+  const getTradingEnabledByID = (id: string) => query.data?.get(id);
+
+  return { ...query, getTradingEnabledByID };
 };

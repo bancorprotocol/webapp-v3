@@ -27,8 +27,10 @@ export interface PoolV3Chain {
   name: string;
   symbol: string;
   decimals: number;
-  tradingLiquidityBNT: PriceDictionaryV3;
-  tradingLiquidityTKN: PriceDictionaryV3;
+  tradingLiquidity: {
+    BNT: PriceDictionaryV3;
+    TKN: PriceDictionaryV3;
+  };
   stakedBalance: PriceDictionaryV3;
   tradingFeePPM: number;
   tradingEnabled: boolean;
@@ -38,16 +40,24 @@ export interface PoolV3Chain {
   latestProgram?: RewardsProgramRaw;
   tknBalance?: string;
   bnTknBalance?: string;
-  volume24h?: PriceDictionaryV3;
-  fees24h?: PriceDictionaryV3;
-  volume7d?: PriceDictionaryV3;
-  fees7d?: PriceDictionaryV3;
-  apr24h?: PoolApr;
-  apr7d?: PoolApr;
-  standardRewardsClaimed24h?: PriceDictionaryV3;
-  standardRewardsProviderJoined?: PriceDictionaryV3;
-  standardRewardsProviderLeft?: PriceDictionaryV3;
-  standardRewardsStaked?: PriceDictionaryV3;
+  volume?: {
+    volume7d: PriceDictionaryV3;
+    volume24h: PriceDictionaryV3;
+  };
+  fees?: {
+    fees7d: PriceDictionaryV3;
+    fees24h: PriceDictionaryV3;
+  };
+  apr?: {
+    apr24h: PoolApr;
+    apr7d: PoolApr;
+  };
+  standardRewards?: {
+    claimed24h: PriceDictionaryV3;
+    providerJoined: PriceDictionaryV3;
+    providerLeft: PriceDictionaryV3;
+    staked: PriceDictionaryV3;
+  };
 }
 
 const fetchEthData = async (): Promise<PoolV3Chain> => {
@@ -104,12 +114,14 @@ const fetchEthData = async (): Promise<PoolV3Chain> => {
     poolTokenDltId: res[0],
     decimals: 18,
     tradingEnabled: res[2],
-    tradingLiquidityBNT: {
-      bnt: utils.formatUnits(res[1].bntTradingLiquidity, 18),
-      tkn: utils.formatUnits(res[1].bntTradingLiquidity, 18),
-    },
-    tradingLiquidityTKN: {
-      tkn: utils.formatUnits(res[1].baseTokenTradingLiquidity, 18),
+    tradingLiquidity: {
+      BNT: {
+        bnt: utils.formatUnits(res[1].bntTradingLiquidity, 18),
+        tkn: utils.formatUnits(res[1].bntTradingLiquidity, 18),
+      },
+      TKN: {
+        tkn: utils.formatUnits(res[1].baseTokenTradingLiquidity, 18),
+      },
     },
     depositingEnabled: res[3],
     stakedBalance: { tkn: utils.formatUnits(res[4], 18) },
@@ -262,18 +274,20 @@ const fetchV3ChainData = async (): Promise<PoolV3Chain[]> => {
     poolTokenDltId: poolTokens[i],
     decimals: tokenDecimals[i],
     tradingEnabled: tradingEnabled[i],
-    tradingLiquidityBNT: {
-      bnt: utils.formatUnits(
-        tradingLiquidity[i].baseTokenTradingLiquidity,
-        tokenDecimals[i]
-      ),
-      tkn: utils.formatUnits(tradingLiquidity[i].bntTradingLiquidity, 18),
-    },
-    tradingLiquidityTKN: {
-      tkn: utils.formatUnits(
-        tradingLiquidity[i].baseTokenTradingLiquidity,
-        tokenDecimals[i]
-      ),
+    tradingLiquidity: {
+      BNT: {
+        bnt: utils.formatUnits(
+          tradingLiquidity[i].baseTokenTradingLiquidity,
+          tokenDecimals[i]
+        ),
+        tkn: utils.formatUnits(tradingLiquidity[i].bntTradingLiquidity, 18),
+      },
+      TKN: {
+        tkn: utils.formatUnits(
+          tradingLiquidity[i].baseTokenTradingLiquidity,
+          tokenDecimals[i]
+        ),
+      },
     },
     depositingEnabled: depositingEnabled[i],
     stakedBalance: {

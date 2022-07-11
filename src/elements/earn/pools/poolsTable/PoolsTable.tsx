@@ -46,9 +46,9 @@ export const PoolsTable = ({
       ? pools.filter(
           (p) =>
             p.symbol.toLowerCase().includes(search.toLowerCase()) &&
-            (lowVolume || Number(p.volume24h?.usd) > 5000) &&
-            (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-            (lowEarnRate || (p.apr7d?.total ?? 0) > 0.15)
+            (lowVolume || Number(p.volume?.volume24h?.usd) > 5000) &&
+            (lowLiquidity || Number(p.tradingLiquidity.TKN.usd) > 50000) &&
+            (lowEarnRate || (p.apr?.apr7d?.total ?? 0) > 0.15)
         )
       : [];
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
@@ -66,23 +66,23 @@ export const PoolsTable = ({
             </div>
           </div>
         )}
-        {row.volume7d?.usd && (
+        {row.volume?.volume7d?.usd && (
           <div className="flex items-center justify-between">
             Volume 7d
             <div>
-              {toBigNumber(row.volume7d.usd).isZero()
+              {toBigNumber(row.volume.volume7d.usd).isZero()
                 ? 'New'
-                : prettifyNumber(row.volume7d.usd, true)}
+                : prettifyNumber(row.volume.volume7d.usd, true)}
             </div>
           </div>
         )}
-        {row.fees7d?.usd && (
+        {row.fees?.fees7d.usd && (
           <div className="flex items-center justify-between">
             Fees 7d
             <div>
-              {toBigNumber(row.fees7d.usd).isZero()
+              {toBigNumber(row.fees.fees7d.usd).isZero()
                 ? 'New'
-                : prettifyNumber(row.fees7d.usd, true)}
+                : prettifyNumber(row.fees.fees7d.usd, true)}
             </div>
           </div>
         )}
@@ -132,14 +132,14 @@ export const PoolsTable = ({
       {
         id: 'apr',
         Header: 'Earn',
-        accessor: 'apr7d',
+        accessor: 'apr',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
             {cellData.value
-              ? toBigNumber(cellData.value.total).isZero() &&
+              ? toBigNumber(cellData.value.apr7d.total).isZero() &&
                 !cellData.row.original.tradingEnabled
                 ? 'New'
-                : `${cellData.value.total.toFixed(2)}%`
+                : `${cellData.value.apr7d.total.toFixed(2)}%`
               : 'N/A'}
             {}
 
