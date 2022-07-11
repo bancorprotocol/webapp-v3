@@ -68,6 +68,7 @@ const V3WithdrawStep1 = ({
   );
 
   const handleNextStep = () => {
+    setInputTkn('');
     if (skipStep2) {
       void handleButtonClick();
     } else {
@@ -250,8 +251,8 @@ const V3WithdrawStep1 = ({
             : skipStep2
             ? `${
                 isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol} - ` : ''
-              }Start cooldown and move to withdraw`
-            : `Start cooldown and move to withdraw`}
+              }Start cooldown & move to withdraw`
+            : `Start cooldown & move to withdraw`}
         </Button>
       </div>
 
