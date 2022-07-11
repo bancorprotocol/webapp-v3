@@ -238,7 +238,7 @@ const V3WithdrawStep1 = ({
         )}
 
         <Button
-          className="mt-20 px-50"
+          className="mt-20"
           size={ButtonSize.Full}
           onClick={handleNextStep}
           variant={ButtonVariant.Secondary}
@@ -251,8 +251,8 @@ const V3WithdrawStep1 = ({
             : skipStep2
             ? `${
                 isFiat ? `${prettifyNumber(amount.tkn)} ${token.symbol} - ` : ''
-              }Start cooldown & move to withdraw`
-            : `Start cooldown & move to withdraw`}
+              }Start cooldown and move to withdraw`
+            : `Start cooldown and move to withdraw`}
         </Button>
       </div>
 
