@@ -61,7 +61,11 @@ export const V3HoldingsItem = ({
       expandToken(holding.combinedTokenBalance, holding.pool.decimals)
     );
     setWithdrawAmounts(res);
-  }, [holding]);
+  }, [
+    holding.pool.poolDltId,
+    holding.combinedTokenBalance,
+    holding.pool.decimals,
+  ]);
 
   return (
     <div
