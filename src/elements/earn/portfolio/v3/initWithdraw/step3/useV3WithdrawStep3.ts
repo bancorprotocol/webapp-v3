@@ -14,6 +14,7 @@ import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
+import { getPortfolioWithdrawalRequests } from 'store/portfolio/v3Portfolio';
 
 interface Props {
   holding: Holding;
@@ -32,6 +33,8 @@ export const useV3WithdrawStep3 = ({
   const account = useAppSelector((state) => state.user.account);
   const [txBusy, setTxBusy] = useState(false);
   const hasStarted = useRef(false);
+  const initiatedWithdraw = useRef(false);
+  const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
   const { pool } = holding;
   const { reserveToken, poolDltId, poolTokenDltId, decimals } = pool;
 
@@ -107,7 +110,6 @@ export const useV3WithdrawStep3 = ({
         'WithdrawalInitiated',
         async (pool, provider, requestId) => {
           setRequestId(requestId.toString());
-          setStep(4);
           await updatePortfolioData(dispatch);
         }
       );
@@ -118,6 +120,7 @@ export const useV3WithdrawStep3 = ({
         reserveToken.symbol
       );
       await tx.wait();
+      initiatedWithdraw.current = true;
     } catch (e: any) {
       setTxBusy(false);
       console.error('initWithdraw failed', e);
@@ -128,6 +131,9 @@ export const useV3WithdrawStep3 = ({
       }
     }
   };
+  useEffect(() => {
+    if (initiatedWithdraw.current) setStep(4);
+  }, [withdrawalRequests, setStep]);
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,

@@ -1,7 +1,3 @@
-import { Button, ButtonVariant } from 'components/button/Button';
-import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
-import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
-import { ReactComponent as IconCalendar } from 'assets/icons/calendar.svg';
 import { memo } from 'react';
 import {
   CalendarOptions,
@@ -9,12 +5,13 @@ import {
   ICalendar,
   OutlookCalendar,
 } from 'datebook';
-import { PopoverV3 } from 'components/popover/PopoverV3';
 import { openNewTab } from 'utils/pureFunctions';
 import dayjs from 'dayjs';
-import { Navigate } from 'components/navigate/Navigate';
+import { V3WithdrawConfirmContent } from '../../pendingWithdraw/confirm/V3WithdrawConfirmModal';
+import { useAppSelector } from 'store';
+import { getPortfolioWithdrawalRequests } from 'store/portfolio/v3Portfolio';
 
-const generateCalendarEvent = (
+export const generateCalendarEvent = (
   type: 'ical' | 'google' | 'outlook',
   days: number
 ) => {
@@ -40,12 +37,27 @@ const generateCalendarEvent = (
 
 interface Props {
   onClose: (state: boolean) => void;
-  lockDurationInDays: number;
+  isOpen: boolean;
   requestId: string;
 }
 
-const V3WithdrawStep4 = ({ onClose, lockDurationInDays, requestId }: Props) => {
+const V3WithdrawStep4 = ({ onClose, isOpen }: Props) => {
+  const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
+  const withdrawRequest =
+    withdrawalRequests.length === 0
+      ? undefined
+      : withdrawalRequests[withdrawalRequests.length - 1];
+  if (!withdrawRequest) return null;
+
   return (
+    <V3WithdrawConfirmContent
+      isModalOpen={isOpen}
+      setIsModalOpen={onClose}
+      withdrawRequest={withdrawRequest}
+      openCancelModal={() => {}}
+    />
+  );
+  /*return (
     <div className="text-center">
       <span className="flex justify-center text-primary items-center text-20">
         <IconCheck className="w-30 mr-10" /> Cooldown began
@@ -108,7 +120,7 @@ const V3WithdrawStep4 = ({ onClose, lockDurationInDays, requestId }: Props) => {
         </div>
       </div>
     </div>
-  );
+  );*/
 };
 
 export default memo(V3WithdrawStep4);
