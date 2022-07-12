@@ -15,10 +15,10 @@ interface Props {
 
 export const useChainLatestProgram = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  const { data: programsMap } = useChainPrograms();
+  const { data: programsMap } = useChainPrograms({ enabled });
 
   const query = useQuery(
-    QueryKey.chainCoreLatestProgramId(poolIds?.length),
+    QueryKey.chainCoreLatestProgram(poolIds?.length),
     async () => {
       const ids = await fetchMulticallHelper<BigNumberish>(
         poolIds!,
@@ -36,7 +36,7 @@ export const useChainLatestProgram = ({ enabled = true }: Props = {}) => {
     queryOptionsNoInterval(!!poolIds && !!programsMap && enabled)
   );
 
-  const getLatestProgramByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getLatestProgramByID };
+  return { ...query, getByID };
 };

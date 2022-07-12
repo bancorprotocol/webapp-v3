@@ -19,7 +19,7 @@ export const useChainPoolTokenIds = ({ enabled = true }: Props = {}) => {
     queryOptionsNoInterval(!!poolIds && enabled)
   );
 
-  const getPoolTokenByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getPoolTokenByID };
+  return { ...query, getByID };
 };

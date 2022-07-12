@@ -9,6 +9,8 @@ import {
 import { TradingLiquidityStructOutput } from 'services/web3/abis/types/BancorNetworkInfo';
 import { useChainTokenDecimals } from 'queries/chain/useChainTokenDecimals';
 import { utils } from 'ethers';
+import { bntToken } from 'services/web3/config';
+import { useApiBnt } from 'queries/api/useApiBnt';
 
 interface Props {
   enabled?: boolean;
@@ -17,18 +19,38 @@ interface Props {
 export const useChainTradingLiquidity = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const { data: decimals } = useChainTokenDecimals({ enabled });
+  const { data: bnt } = useApiBnt({ enabled });
 
   const query = useQuery(
     QueryKey.chainCoreTradingLiquidity(poolIds?.length),
     () =>
       fetchMulticallHelper<TradingLiquidityStructOutput>(
-        poolIds!,
+        poolIds!.filter((id) => id !== bntToken),
         buildMulticallTradingLiquidity
       ),
     queryOptionsStaleTimeLow(!!poolIds && enabled)
   );
 
-  const getTradingLiquidityByID = (id: string) => {
+  const _getBNT = () => {
+    if (!bnt) {
+      return undefined;
+    }
+
+    return {
+      BNT: {
+        ...bnt.tradingLiquidity,
+        tkn: bnt.tradingLiquidity.bnt,
+      },
+      TKN: {
+        tkn: '0',
+      },
+    };
+  };
+
+  const getByID = (id: string) => {
+    if (id === bntToken) {
+      return _getBNT();
+    }
     const dec = decimals?.get(id);
     const liq = query.data?.get(id);
     if (!liq || !dec) {
@@ -47,5 +69,5 @@ export const useChainTradingLiquidity = ({ enabled = true }: Props = {}) => {
     };
   };
 
-  return { ...query, getTradingLiquidityByID };
+  return { ...query, getByID };
 };

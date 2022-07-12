@@ -18,7 +18,6 @@ import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { PoolNew, usePoolPick } from 'queries/chain/usePoolPick';
 
 const poolKeys = [
-  'poolDltId',
   'symbol',
   'fees',
   'tradingLiquidity',
@@ -50,18 +49,16 @@ export const PoolsTable = ({
   lowEarnRate: boolean;
   setLowEarnRate: Function;
 }) => {
-  const { data: poolIds, isLoading } = useChainPoolIds();
+  const { data: poolIds } = useChainPoolIds();
 
   const { getMany } = usePoolPick([...poolKeys]);
 
-  const pools: Pool[] = useMemo(() => {
-    return getMany(poolIds || []);
-  }, [getMany, poolIds]);
+  const { data: pools, isLoading } = getMany(poolIds || []);
 
   const [search, setSearch] = useState('');
 
   const data = useMemo(() => {
-    return pools
+    return pools && !isLoading
       ? pools.filter(
           (p) =>
             p.symbol.toLowerCase().includes(search.toLowerCase()) &&
@@ -70,7 +67,7 @@ export const PoolsTable = ({
             (lowEarnRate || (p.apr?.apr7d?.total ?? 0) > 0.15)
         )
       : [];
-  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate, isLoading]);
 
   const toolTip = useCallback(
     (row: Pool) => (
@@ -176,7 +173,7 @@ export const PoolsTable = ({
       {
         id: 'actions',
         Header: '',
-        accessor: 'poolDltId',
+        accessor: 'symbol',
         Cell: (_) => (
           <DepositDisabledModal
             renderButton={(onClick) => (

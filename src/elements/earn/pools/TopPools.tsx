@@ -9,23 +9,25 @@ import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 // import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {
-  const { getMany } = usePoolPick(['symbol', 'apr', 'latestProgram']);
   const { data: poolIds } = useChainPoolIds();
+  const { getMany } = usePoolPick(['symbol', 'apr', 'latestProgram']);
+
+  const { data, isLoading } = getMany(poolIds || []);
 
   const pools = useMemo(() => {
     return orderBy(
-      getMany(poolIds ?? []).filter((p) => p.apr && p.apr.apr7d.total > 0),
+      data.filter((p) => p.apr && p.apr.apr7d.total > 0),
       'apr.apr7d.total',
       'desc'
     ).slice(0, 20);
-  }, [getMany, poolIds]);
+  }, [data]);
 
   return (
     <section className="pt-20 pb-10 content-block">
       <h2 className="ml-[20px]">Top Performing</h2>
       <Ticker id="top-tokens">
         <div className="flex mt-20 space-x-16">
-          {pools.length
+          {!isLoading
             ? pools.map((pool, index) => {
                 return (
                   <DepositDisabledModal

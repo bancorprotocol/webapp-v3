@@ -24,91 +24,119 @@ export type PoolNew = Omit<
 
 export type PoolKey = keyof PoolNew;
 type Fetchers = {
-  [key in PoolKey]: (id: string) => PoolNew[key] | undefined;
+  [key in PoolKey]: {
+    getByID: (id: string) => PoolNew[key] | undefined;
+    isLoading: boolean;
+    isFetching: boolean;
+    isError: boolean;
+  };
 };
 
-const useFetchers = (select: PoolKey[]): Fetchers => {
+type PoolReturn<T extends PoolKey[]> = Pick<PoolNew, T[number]> extends infer R
+  ? { [key in keyof R]: R[key] }
+  : never;
+
+const useFetchers = (select: PoolKey[]) => {
   const set = new Set(select.map((key) => key));
 
-  const { getSymbolByID } = useChainTokenSymbol({
+  const symbol = useChainTokenSymbol({
     enabled: set.has('symbol'),
   });
 
-  const { getDecimalsByID } = useChainTokenDecimals({
+  const decimals = useChainTokenDecimals({
     enabled: set.has('decimals'),
   });
 
-  const { getPoolTokenByID } = useChainPoolTokenIds({
+  const poolTokenDltId = useChainPoolTokenIds({
     enabled: set.has('poolTokenDltId'),
   });
 
-  const { getProgramsByID } = useChainPrograms({
+  const programs = useChainPrograms({
     enabled: set.has('programs'),
   });
 
-  const { getTradingEnabledByID } = useChainTradingEnabled({
+  const tradingEnabled = useChainTradingEnabled({
     enabled: set.has('tradingEnabled'),
   });
 
-  const { getTradingLiquidityByID } = useChainTradingLiquidity({
+  const tradingLiquidity = useChainTradingLiquidity({
     enabled: set.has('tradingLiquidity'),
   });
 
-  const { getLatestProgramByID } = useChainLatestProgram({
+  const latestProgram = useChainLatestProgram({
     enabled: set.has('latestProgram'),
   });
 
-  const { getFeeByID } = useApiFees({
+  const fees = useApiFees({
     enabled: set.has('fees'),
   });
 
-  const { getAprByID } = useApiApr({
+  const apr = useApiApr({
     enabled: set.has('apr'),
   });
 
-  const { getVolumeByID } = useApiVolume({
+  const volume = useApiVolume({
     enabled: set.has('volume'),
   });
 
-  const { getStakedBalanceByID } = useApiStakedBalance({
+  const stakedBalance = useApiStakedBalance({
     enabled: set.has('stakedBalance'),
   });
 
-  return {
-    poolDltId: (id) => id,
-    symbol: getSymbolByID,
-    decimals: getDecimalsByID,
-    poolTokenDltId: getPoolTokenByID,
-    programs: getProgramsByID,
-    tradingEnabled: getTradingEnabledByID,
-    apr: getAprByID,
-    tradingLiquidity: getTradingLiquidityByID,
-    fees: getFeeByID,
-    volume: getVolumeByID,
-    stakedBalance: getStakedBalanceByID,
-    latestProgram: getLatestProgramByID,
+  const fetchers: Fetchers = {
+    poolDltId: {
+      getByID: (id: string) => id,
+      isError: false,
+      isFetching: false,
+      isLoading: false,
+    },
+    symbol,
+    decimals,
+    poolTokenDltId,
+    programs,
+    tradingEnabled,
+    apr,
+    tradingLiquidity,
+    fees,
+    volume,
+    stakedBalance,
+    latestProgram,
   };
+
+  const isLoading = select.some((res) => fetchers[res].isLoading);
+  const isFetching = select.some((res) => fetchers[res].isFetching);
+  const isError = select.some((res) => fetchers[res].isError);
+
+  return { fetchers, isLoading, isFetching, isError };
 };
 
 const selectReduce = <T extends PoolKey[]>(
   id: string,
   select: T,
   fetchers: Fetchers
-) => {
-  return select.reduce((res, key) => {
+): PoolReturn<T> =>
+  select.reduce((res, key) => {
     // @ts-ignore
-    res[key] = fetchers[key](id);
+    res[key] = fetchers[key].getByID(id);
     return res;
-  }, {}) as Pick<PoolNew, T[number]>;
-};
+  }, {} as PoolReturn<T>);
 
 export const usePoolPick = <T extends PoolKey[]>(select: T) => {
-  const fetchers = useFetchers(select);
+  const { fetchers, isLoading, isFetching, isError } = useFetchers(select);
 
-  const getOne = (id: string) => selectReduce(id, select, fetchers);
+  const getOne = (id: string) => ({
+    data: selectReduce(id, select, fetchers),
+    isLoading,
+    isFetching,
+    isError,
+  });
 
-  const getMany = (ids: string[]) =>
-    ids.map((id) => selectReduce(id, select, fetchers));
+  const getMany = (ids: string[]) => ({
+    data: ids.map((id) => selectReduce(id, select, fetchers)),
+    isLoading,
+    isFetching,
+    isError,
+  });
 
-  return { getOne, getMany };
+  return { getOne, getMany, isLoading, isFetching, isError };
 };

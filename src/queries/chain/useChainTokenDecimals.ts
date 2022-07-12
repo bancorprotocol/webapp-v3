@@ -6,6 +6,7 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 import { queryOptionsNoInterval } from 'queries/queryOptions';
+import { ethToken } from 'services/web3/config';
 
 interface Props {
   enabled?: boolean;
@@ -15,11 +16,18 @@ export const useChainTokenDecimals = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
     QueryKey.chainCoreDecimals(poolIds?.length),
-    () => fetchMulticallHelper<number>(poolIds!, buildMulticallDecimal),
+    async () => {
+      const decimals = await fetchMulticallHelper<number>(
+        poolIds!.filter((id) => id !== ethToken),
+        buildMulticallDecimal
+      );
+      decimals.set(ethToken, 18);
+      return decimals;
+    },
     queryOptionsNoInterval(!!poolIds && enabled)
   );
 
-  const getDecimalsByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getDecimalsByID };
+  return { ...query, getByID };
 };

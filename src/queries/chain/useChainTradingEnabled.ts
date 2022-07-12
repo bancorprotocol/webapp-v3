@@ -19,7 +19,7 @@ export const useChainTradingEnabled = ({ enabled = true }: Props = {}) => {
     queryOptionsStaleTimeLow(!!poolIds && enabled)
   );
 
-  const getTradingEnabledByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getTradingEnabledByID };
+  return { ...query, getByID };
 };

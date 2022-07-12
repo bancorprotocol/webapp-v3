@@ -8,10 +8,11 @@ interface Props {
 
 export const useApiPools = ({ enabled = true }: Props = {}) => {
   const queryKey = QueryKey.apiPools();
+
   const query = useQuery(
     queryKey,
     async () => {
-      const pools = await BancorApi.v3.getPools();
+      const pools = await BancorApi.v3.getPoolsWithBNT();
       return new Map(pools.map((p) => [p.poolDltId, p]));
     },
     {

@@ -41,4 +41,54 @@ export abstract class BancorV3Api {
     const { data } = await axiosInstance.get<APIDataV3<APIBntV3>>('/bnt');
     return data.data;
   };
+
+  static getPoolsWithBNT = async (): Promise<APIPoolV3[]> => {
+    const [bnt, pools] = await Promise.all([this.getBnt(), this.getPools()]);
+    const bntPool: APIPoolV3 = {
+      poolDltId: bnt.poolDltId,
+      poolTokenDltId: bnt.poolTokenDltId,
+      name: bnt.name,
+      decimals: bnt.decimals,
+      tradingLiquidityTKN: {
+        ...bnt.tradingLiquidity,
+        tkn: bnt.tradingLiquidity.bnt,
+      },
+      tradingLiquidityBNT: {
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
+      },
+      volume24h: { ...bnt.volume24h, tkn: bnt.volume24h.bnt },
+      fees24h: { ...bnt.fees24h, tkn: bnt.fees24h.bnt },
+      stakedBalance: { ...bnt.stakedBalance, tkn: bnt.stakedBalance.bnt },
+      standardRewardsClaimed24h: {
+        ...bnt.standardRewardsClaimed24h,
+        tkn: bnt.standardRewardsClaimed24h.bnt,
+      },
+      standardRewardsStaked: {
+        ...bnt.standardRewardsStaked,
+        tkn: bnt.standardRewardsStaked.bnt,
+      },
+      volume7d: bnt.volume7d,
+      fees7d: bnt.fees7d,
+      standardRewardsProviderJoined: {
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
+      },
+      standardRewardsProviderLeft: {
+        bnt: '0',
+        usd: '0',
+        eur: '0',
+        eth: '0',
+        tkn: '0',
+      },
+      tradingEnabled: true,
+    };
+    return [bntPool, ...pools];
+  };
 }

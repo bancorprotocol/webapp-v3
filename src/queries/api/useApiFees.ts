@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { useApiPools } from 'queries/api/useApiPools';
 
@@ -7,25 +6,27 @@ interface Props {
 }
 
 export const useApiFees = ({ enabled = true }: Props = {}) => {
-  const { data: poolIds } = useChainPoolIds();
-  const { getApiPoolByID } = useApiPools({ enabled });
+  const poolIds = useChainPoolIds();
+  const apiPools = useApiPools({ enabled });
 
-  const data = useMemo(
-    () =>
-      new Map(
-        poolIds?.map((id) => {
-          const apiPool = getApiPoolByID(id);
+  const data = new Map(
+    poolIds.data?.map((id) => {
+      const apiPool = apiPools.getApiPoolByID(id);
 
-          if (!apiPool) {
-            return [id, undefined];
-          }
-          return [id, { fees7d: apiPool.fees7d, fees24h: apiPool.fees24h }];
-        })
-      ),
-    [getApiPoolByID, poolIds]
+      if (!apiPool) {
+        return [id, undefined];
+      }
+      return [id, { fees7d: apiPool.fees7d, fees24h: apiPool.fees24h }];
+    })
   );
 
-  const getFeeByID = (id: string) => data.get(id);
+  const getByID = (id: string) => data.get(id);
 
-  return { data, getFeeByID };
+  return {
+    data,
+    getByID,
+    isLoading: apiPools.isLoading || poolIds.isLoading,
+    isFetching: apiPools.isFetching || poolIds.isFetching,
+    isError: apiPools.isError || poolIds.isError,
+  };
 };

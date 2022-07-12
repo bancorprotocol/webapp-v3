@@ -6,6 +6,7 @@ import {
   buildMulticallSymbol,
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
+import { ethToken } from 'services/web3/config';
 
 interface Props {
   enabled?: boolean;
@@ -15,11 +16,19 @@ export const useChainTokenSymbol = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
     QueryKey.chainCoreSymbols(poolIds?.length),
-    () => fetchMulticallHelper<string>(poolIds!, buildMulticallSymbol, true),
+    async () => {
+      const symbols = await fetchMulticallHelper<string>(
+        poolIds!,
+        buildMulticallSymbol,
+        true
+      );
+      symbols.set(ethToken, 'ETH');
+      return symbols;
+    },
     queryOptionsNoInterval(!!poolIds && enabled)
   );
 
-  const getSymbolByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getSymbolByID };
+  return { ...query, getByID };
 };

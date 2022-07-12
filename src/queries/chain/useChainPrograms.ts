@@ -21,7 +21,7 @@ export const useChainPrograms = ({ enabled = true }: Props = {}) => {
     queryOptionsNoInterval(!!poolIds && enabled)
   );
 
-  const getProgramsByID = (id: string) => query.data?.get(id);
+  const getByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getProgramsByID };
+  return { ...query, getByID };
 };
