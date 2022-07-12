@@ -59,6 +59,7 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
       pool,
       poolTokenAmountWei
     );
+
     const tkn = new BigNumber(res.baseTokenAmount.toString())
       .div(res.totalAmount.toString())
       .times(100)
