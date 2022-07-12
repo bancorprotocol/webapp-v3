@@ -1,7 +1,7 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { shrinkToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemStaked';
@@ -9,6 +9,10 @@ import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3Ho
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
+import useAsyncEffect from 'use-async-effect';
+import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
+import { bntToken } from 'services/web3/config';
 
 export const V3HoldingsItem = ({
   holding,
@@ -40,6 +44,28 @@ export const V3HoldingsItem = ({
   );
 
   const isOpen = holding.pool.poolDltId === selectedId;
+
+  const isBNT = holding.pool.poolDltId === bntToken;
+
+  const [withdrawAmounts, setWithdrawAmounts] = useState<{
+    tkn: number;
+    bnt: number;
+    totalAmount: string;
+    baseTokenAmount: string;
+    bntAmount: string;
+  }>();
+
+  useAsyncEffect(async () => {
+    const res = await fetchWithdrawalRequestOutputBreakdown(
+      holding.pool.poolDltId,
+      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+    );
+    setWithdrawAmounts(res);
+  }, [
+    holding.pool.poolDltId,
+    holding.combinedTokenBalance,
+    holding.pool.decimals,
+  ]);
 
   return (
     <div
@@ -80,6 +106,22 @@ export const V3HoldingsItem = ({
           >
             {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
           </PopoverV3>
+          {!isBNT && (
+            <PopoverV3
+              buttonElement={() => <IconWarning className="text-error z-50" />}
+            >
+              <span className="text-secondary">
+                Due to vault deficit, current value is{' '}
+                {prettifyNumber(
+                  shrinkToken(
+                    withdrawAmounts?.baseTokenAmount ?? 0,
+                    holding.pool.decimals
+                  )
+                )}{' '}
+                {holding.pool.reserveToken.symbol}
+              </span>
+            </PopoverV3>
+          )}
         </div>
         <div className="flex items-center space-x-30">
           {toBigNumber(rewardTokenAmountUsd).gt(0) && (

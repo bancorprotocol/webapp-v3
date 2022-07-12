@@ -2,6 +2,8 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 import { Image } from 'components/image/Image';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 
 interface Props {
   symbol: string;
@@ -9,6 +11,8 @@ interface Props {
   usdPrice: string;
   logoURI: string;
   label?: string;
+  showWarning?: boolean;
+  defecitAmount?: string;
 }
 
 export const TokenBalanceLarge = ({
@@ -17,6 +21,8 @@ export const TokenBalanceLarge = ({
   usdPrice,
   logoURI,
   label,
+  showWarning,
+  defecitAmount,
 }: Props) => {
   const usdAmount = useMemo(
     () => new BigNumber(amount).times(usdPrice),
@@ -35,7 +41,20 @@ export const TokenBalanceLarge = ({
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center">
             <div className="text-[36px]">{prettifyNumber(amount)}</div>
-            <span className="ml-10">{symbol}</span>
+            <span className="mx-10">{symbol}</span>
+            {showWarning && !defecitAmount && (
+              <IconWarning className="text-error" />
+            )}
+            {defecitAmount && (
+              <PopoverV3
+                buttonElement={() => <IconWarning className="text-error" />}
+              >
+                <span className="text-secondary">
+                  Due to vault deficit, current value is{' '}
+                  {prettifyNumber(defecitAmount)} {symbol}
+                </span>
+              </PopoverV3>
+            )}
           </div>
 
           <div className="text-secondary">
