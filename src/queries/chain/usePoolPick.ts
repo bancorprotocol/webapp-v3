@@ -7,23 +7,24 @@ import { useChainTradingEnabled } from 'queries/chain/useChainTradingEnabled';
 import { useApiApr } from 'queries/api/useApiApr';
 import { useChainTradingLiquidity } from 'queries/chain/useChainTradingLiquidity';
 import { useApiFees } from 'queries/api/useApiFees';
+import { useApiVolume } from 'queries/api/useApiVolume';
+import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
+import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
 
-type Pool = Pick<
+export type PoolNew = Omit<
   PoolV3Chain,
-  | 'symbol'
-  | 'decimals'
-  | 'poolTokenDltId'
-  | 'programs'
-  | 'tradingEnabled'
-  | 'poolDltId'
-  | 'apr'
-  | 'tradingLiquidity'
-  | 'fees'
+  | 'name'
+  | 'logoURI'
+  | 'standardRewards'
+  | 'tradingFeePPM'
+  | 'depositingEnabled'
+  | 'tknBalance'
+  | 'bnTknBalance'
 >;
 
-type PoolKey = keyof Pool;
+export type PoolKey = keyof PoolNew;
 type Fetchers = {
-  [key in PoolKey]: (id: string) => Pool[key] | undefined;
+  [key in PoolKey]: (id: string) => PoolNew[key] | undefined;
 };
 
 const useFetchers = (select: PoolKey[]): Fetchers => {
@@ -53,12 +54,24 @@ const useFetchers = (select: PoolKey[]): Fetchers => {
     enabled: set.has('tradingLiquidity'),
   });
 
+  const { getLatestProgramByID } = useChainLatestProgram({
+    enabled: set.has('latestProgram'),
+  });
+
   const { getFeeByID } = useApiFees({
     enabled: set.has('fees'),
   });
 
   const { getAprByID } = useApiApr({
     enabled: set.has('apr'),
+  });
+
+  const { getVolumeByID } = useApiVolume({
+    enabled: set.has('volume'),
+  });
+
+  const { getStakedBalanceByID } = useApiStakedBalance({
+    enabled: set.has('stakedBalance'),
   });
 
   return {
@@ -71,15 +84,31 @@ const useFetchers = (select: PoolKey[]): Fetchers => {
     apr: getAprByID,
     tradingLiquidity: getTradingLiquidityByID,
     fees: getFeeByID,
+    volume: getVolumeByID,
+    stakedBalance: getStakedBalanceByID,
+    latestProgram: getLatestProgramByID,
   };
 };
 
-export const usePoolPick = <T extends PoolKey[]>(id: string, select: T) => {
-  const fetchers = useFetchers(select);
-
+const selectReduce = <T extends PoolKey[]>(
+  id: string,
+  select: T,
+  fetchers: Fetchers
+) => {
   return select.reduce((res, key) => {
     // @ts-ignore
     res[key] = fetchers[key](id);
     return res;
-  }, {}) as Pick<Pool, T[number]>;
+  }, {}) as Pick<PoolNew, T[number]>;
+};
+
+export const usePoolPick = <T extends PoolKey[]>(select: T) => {
+  const fetchers = useFetchers(select);
+
+  const getOne = (id: string) => selectReduce(id, select, fetchers);
+
+  const getMany = (ids: string[]) =>
+    ids.map((id) => selectReduce(id, select, fetchers));
+
+  return { getOne, getMany };
 };

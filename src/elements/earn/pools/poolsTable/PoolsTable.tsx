@@ -1,4 +1,3 @@
-import { Token } from 'services/observables/tokens';
 import { useCallback, useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
@@ -15,8 +14,22 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { usePoolsV3 } from 'queries/usePoolsV3';
-import { PoolV3Chain } from 'queries/useV3ChainData';
+import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
+import { PoolNew, usePoolPick } from 'queries/chain/usePoolPick';
+
+const poolKeys = [
+  'poolDltId',
+  'symbol',
+  'fees',
+  'tradingLiquidity',
+  'apr',
+  'volume',
+  'tradingEnabled',
+  'stakedBalance',
+  'latestProgram',
+] as const;
+
+type Pool = Pick<PoolNew, typeof poolKeys[number]>;
 
 export const PoolsTable = ({
   rewards,
@@ -37,11 +50,17 @@ export const PoolsTable = ({
   lowEarnRate: boolean;
   setLowEarnRate: Function;
 }) => {
-  const { data: pools, isLoading } = usePoolsV3();
+  const { data: poolIds, isLoading } = useChainPoolIds();
+
+  const { getMany } = usePoolPick([...poolKeys]);
+
+  const pools: Pool[] = useMemo(() => {
+    return getMany(poolIds || []);
+  }, [getMany, poolIds]);
 
   const [search, setSearch] = useState('');
 
-  const data = useMemo<PoolV3Chain[]>(() => {
+  const data = useMemo(() => {
     return pools
       ? pools.filter(
           (p) =>
@@ -54,7 +73,7 @@ export const PoolsTable = ({
   }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
 
   const toolTip = useCallback(
-    (row: PoolV3Chain) => (
+    (row: Pool) => (
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         {row.stakedBalance.usd && (
           <div className="flex items-center justify-between">
@@ -91,7 +110,7 @@ export const PoolsTable = ({
     []
   );
 
-  const columns = useMemo<TableColumn<PoolV3Chain>[]>(
+  const columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
         id: 'name',
@@ -103,7 +122,6 @@ export const PoolsTable = ({
             buttonElement={() => (
               <div className="flex items-center">
                 <Image
-                  src={cellData.row.original.logoURI}
                   alt="Pool Logo"
                   className="w-40 h-40 !rounded-full mr-10"
                 />
@@ -112,20 +130,6 @@ export const PoolsTable = ({
             )}
           />
         ),
-        minWidth: 185,
-        sortDescFirst: true,
-      },
-      {
-        id: 'tknBalance',
-        Header: 'Tkn Balance',
-        accessor: 'tknBalance',
-        minWidth: 185,
-        sortDescFirst: true,
-      },
-      {
-        id: 'bnTknBalance',
-        Header: 'BnTkn Balance',
-        accessor: 'bnTknBalance',
         minWidth: 185,
         sortDescFirst: true,
       },
@@ -163,7 +167,7 @@ export const PoolsTable = ({
           </div>
         ),
         sortType: (a, b) =>
-          sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
+          sortNumbersByKey(a.original, b.original, ['apr', 'apr7d', 'total']),
         tooltip:
           'Estimated APR based on the last 7d trading fees, auto compounding and standard rewards',
         minWidth: 100,
@@ -194,8 +198,8 @@ export const PoolsTable = ({
     [toolTip]
   );
 
-  const defaultSort: SortingRule<Token> = {
-    id: 'apr',
+  const defaultSort: SortingRule<Pool> = {
+    id: 'apr.apr7d.total',
     desc: true,
   };
 
@@ -224,7 +228,7 @@ export const PoolsTable = ({
               setLowEarnRate={setLowEarnRate}
             />
           </div>
-          <DataTable<PoolV3Chain>
+          <DataTable<Pool>
             data={data}
             columns={columns}
             defaultSort={defaultSort}
