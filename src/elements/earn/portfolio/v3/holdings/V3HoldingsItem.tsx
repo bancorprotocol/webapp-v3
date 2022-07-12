@@ -13,6 +13,7 @@ import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import { bntToken } from 'services/web3/config';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const V3HoldingsItem = ({
   holding,
@@ -56,9 +57,14 @@ export const V3HoldingsItem = ({
   }>();
 
   useAsyncEffect(async () => {
+    const poolTokenBalance =
+      await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+        pool.poolDltId,
+        expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+      );
     const res = await fetchWithdrawalRequestOutputBreakdown(
       holding.pool.poolDltId,
-      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+      poolTokenBalance.toString()
     );
     setWithdrawAmounts(res);
   }, [
