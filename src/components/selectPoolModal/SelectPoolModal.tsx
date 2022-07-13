@@ -1,13 +1,13 @@
 import { isMobile } from 'react-device-detect';
-import { ModalFullscreen } from '../modalFullscreen/ModalFullscreen';
 import { Modal } from '../modal/Modal';
 import { SelectPoolModalContent } from './SelectPoolModalContent';
 import { Pool } from 'services/observables/pools';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
 interface Props {
   pools: Pool[];
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   onSelect: Function;
 }
 
@@ -24,14 +24,13 @@ export const SelectPoolModal = ({
 
   if (isMobile) {
     return (
-      <ModalFullscreen
+      <ModalFullscreenV3
         title="Select a Pool"
         setIsOpen={setIsOpen}
         isOpen={isOpen}
-        showHeader
       >
         <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
-      </ModalFullscreen>
+      </ModalFullscreenV3>
     );
   }
 

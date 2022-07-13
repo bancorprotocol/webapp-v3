@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
-import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
@@ -15,6 +14,7 @@ import { userPreferredListIds$ } from 'services/observables/tokenLists';
 import { orderBy } from 'lodash';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { Image } from 'components/image/Image';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -43,17 +43,16 @@ const SearchableTokenListLayout = ({
 }: SearchableTokenListLayoutProps) => {
   if (isMobile) {
     return (
-      <ModalFullscreen
+      <ModalFullscreenV3
         title={manage ? 'Manage' : 'Select a Token'}
         setIsOpen={() => {
           if (manage) return setManage(false);
           onClose();
         }}
         isOpen={isOpen}
-        showHeader
       >
         {children}
-      </ModalFullscreen>
+      </ModalFullscreenV3>
     );
   }
 
@@ -139,7 +138,7 @@ export const SearchableTokenList = ({
       setManage={setManage}
     >
       {manage ? (
-        <div className="h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20">
+        <div className="w-full mx-10 h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20">
           <div className="pt-10 px-20 space-y-15">
             {tokensLists.map((tokenList) => {
               const isSelected = userPreferredListIds.some(
@@ -178,14 +177,14 @@ export const SearchableTokenList = ({
         </div>
       ) : (
         <>
-          <div className="mb-10 px-20 relative">
+          <div className="w-full px-20">
             <SearchInput
               value={search}
               setValue={setSearch}
               className="rounded-full py-10 w-full"
             />
           </div>
-          <div className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10">
+          <div className="w-full px-10 h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto pb-10">
             <div className="pb-12">
               <SuggestedTokens
                 allTokens={tokens}
