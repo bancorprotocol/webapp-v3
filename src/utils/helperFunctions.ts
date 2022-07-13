@@ -182,3 +182,6 @@ export const calcTknValue = (
 export const toBigNumber = (
   num: BigNumberEther | string | number | BigNumber
 ): BigNumber => new BigNumber(num.toString());
+
+export const compareWithout1Wei = (a: string, b: string) =>
+  a.substring(0, a.length - 1) === b.substring(0, b.length - 1);
