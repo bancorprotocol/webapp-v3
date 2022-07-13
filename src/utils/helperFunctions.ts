@@ -184,4 +184,4 @@ export const toBigNumber = (
 ): BigNumber => new BigNumber(num.toString());
 
 export const compareWithout1Wei = (a: string, b: string) =>
-  a.slice(0, -1) === b.slice(0, -1);
+  a.substring(0, a.length - 1) === b.substring(0, b.length - 1);

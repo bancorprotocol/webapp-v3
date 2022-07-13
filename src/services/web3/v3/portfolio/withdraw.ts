@@ -61,7 +61,9 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
       poolTokenAmountWei
     );
 
-    if (compareWithout1Wei(reserveTokenAmountWei, res.totalAmount.toString()))
+    if (
+      compareWithout1Wei(reserveTokenAmountWei, res.baseTokenAmount.toString())
+    )
       return undefined;
 
     const tkn = new BigNumber(res.baseTokenAmount.toString())
