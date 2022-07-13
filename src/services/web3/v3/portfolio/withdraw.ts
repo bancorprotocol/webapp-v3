@@ -64,6 +64,7 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
       .div(res.totalAmount.toString())
       .times(100)
       .toNumber();
+
     const bnt = new BigNumber(100).minus(tkn).toNumber();
     return {
       tkn,
