@@ -147,7 +147,7 @@ const V3WithdrawStep1 = ({
           )}
           Available {prettifyNumber(holding.tokenBalance)} {token.symbol}
         </button>
-        {!isBNT && (
+        {!isBNT && withdrawAmounts && (
           <PopoverV3
             buttonElement={() => <IconWarning className="text-error" />}
           >
@@ -159,7 +159,7 @@ const V3WithdrawStep1 = ({
                   Due to vault deficit, current value is{' '}
                   {prettifyNumber(
                     shrinkToken(
-                      withdrawAmounts?.baseTokenAmount.toString() || '0',
+                      withdrawAmounts.baseTokenAmount.toString() || '0',
                       holding.pool.decimals
                     )
                   )}{' '}
@@ -207,7 +207,7 @@ const V3WithdrawStep1 = ({
               <>
                 {prettifyNumber(
                   shrinkToken(
-                    withdrawAmountsInput?.baseTokenAmount || 0,
+                    withdrawAmountsInput.baseTokenAmount || 0,
                     holding.pool.decimals
                   )
                 )}{' '}
