@@ -9,6 +9,7 @@ interface Props {
   children: ReactNode;
   title: string;
   titleElement?: ReactNode;
+  className?: string;
 }
 
 const ModalFullscreenV3 = ({
@@ -17,6 +18,7 @@ const ModalFullscreenV3 = ({
   children,
   title,
   titleElement,
+  className,
 }: Props) => {
   return (
     <>
@@ -50,7 +52,9 @@ const ModalFullscreenV3 = ({
               </div>
             </header>
 
-            <main className="min-h-[calc(100vh-70px)] space-y-10 flex items-center pt-[70px] px-20 justify-center w-full">
+            <main
+              className={`${className} w-full flex items-center justify-center min-h-[calc(100vh-70px)] space-y-10  pt-[70px] px-20`}
+            >
               {children}
             </main>
           </div>

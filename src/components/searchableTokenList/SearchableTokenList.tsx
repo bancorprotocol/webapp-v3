@@ -49,6 +49,7 @@ const SearchableTokenListLayout = ({
           if (manage) return setManage(false);
           onClose();
         }}
+        className="flex flex-col px-0"
         isOpen={isOpen}
       >
         {children}
