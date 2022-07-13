@@ -64,7 +64,8 @@ export const V3HoldingsItem = ({
       );
     const res = await fetchWithdrawalRequestOutputBreakdown(
       holding.pool.poolDltId,
-      poolTokenBalance.toString()
+      poolTokenBalance.toString(),
+      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
     );
     setWithdrawAmounts(res);
   }, [

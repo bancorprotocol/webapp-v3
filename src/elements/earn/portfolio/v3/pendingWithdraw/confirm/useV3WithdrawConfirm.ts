@@ -68,6 +68,10 @@ export const useV3WithdrawConfirm = ({
       expandToken(
         withdrawRequest.poolTokenAmount,
         withdrawRequest.pool.reserveToken.decimals
+      ),
+      expandToken(
+        withdrawRequest.reserveTokenAmount,
+        withdrawRequest.pool.reserveToken.decimals
       )
     );
     if (res) setOutputBreakdown(res);
