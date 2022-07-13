@@ -7,7 +7,7 @@ import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { useIsPoolStable } from 'hooks/useIsPoolStable';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { shrinkToken } from 'utils/formulas';
-import { bntToken } from 'services/web3/config';
+import { bntDecimals, bntToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
@@ -54,6 +54,7 @@ export const V3WithdrawConfirmContent = ({
     outputBreakdown,
     missingGovTokenBalance,
     txBusy,
+    isBntToken,
     handleCancelClick,
     govToken,
     handleWithdrawClick,
@@ -74,10 +75,9 @@ export const V3WithdrawConfirmContent = ({
 
   const isBNT = withdrawRequest.pool.poolDltId === bntToken;
 
-  const defecitAmount =
-    isBNT || !outputBreakdown
-      ? undefined
-      : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
+  const defecitAmount = isBNT
+    ? undefined
+    : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
 
   return (
     <div className="w-full max-w-[520px] p-20 space-y-20 md:p-30">
@@ -85,7 +85,11 @@ export const V3WithdrawConfirmContent = ({
 
       <TokenBalanceLarge
         symbol={token.symbol}
-        amount={withdrawRequest.reserveTokenAmount}
+        amount={
+          isBntToken
+            ? shrinkToken(outputBreakdown.bntAmount, bntDecimals)
+            : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals)
+        }
         usdPrice={token.usdPrice}
         logoURI={token.logoURI}
         label="Amount"

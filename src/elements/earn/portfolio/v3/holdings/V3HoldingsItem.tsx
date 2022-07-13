@@ -64,8 +64,7 @@ export const V3HoldingsItem = ({
       );
     const res = await fetchWithdrawalRequestOutputBreakdown(
       holding.pool.poolDltId,
-      poolTokenBalance.toString(),
-      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+      poolTokenBalance.toString()
     );
     setWithdrawAmounts(res);
   }, [
@@ -113,7 +112,7 @@ export const V3HoldingsItem = ({
           >
             {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
           </PopoverV3>
-          {!isBNT && withdrawAmounts && (
+          {!isBNT && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error z-50" />}
             >
@@ -121,7 +120,7 @@ export const V3HoldingsItem = ({
                 Due to vault deficit, current value is{' '}
                 {prettifyNumber(
                   shrinkToken(
-                    withdrawAmounts.baseTokenAmount ?? 0,
+                    withdrawAmounts?.baseTokenAmount ?? 0,
                     holding.pool.decimals
                   )
                 )}{' '}
