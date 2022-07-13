@@ -77,16 +77,14 @@ export const useV3WithdrawStep1 = ({
 
   const fetchWithdrawAmounts = async (tokenBalance: string) => {
     setIsLoadingWithdrawAmounts(true);
-    const tokenBalanceWei = expandToken(tokenBalance, holding.pool.decimals);
     const poolTokenBalance =
       await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
         pool.poolDltId,
-        tokenBalanceWei
+        expandToken(tokenBalance, holding.pool.decimals)
       );
     const res = await fetchWithdrawalRequestOutputBreakdown(
       pool.poolDltId,
-      poolTokenBalance.toString(),
-      tokenBalanceWei
+      poolTokenBalance.toString()
     );
     setIsLoadingWithdrawAmounts(false);
     return res;

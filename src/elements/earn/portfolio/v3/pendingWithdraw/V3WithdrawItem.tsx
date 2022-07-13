@@ -40,10 +40,6 @@ export const WithdrawItem = memo(
         expandToken(
           withdrawalRequest.poolTokenAmount,
           withdrawalRequest.pool.reserveToken.decimals
-        ),
-        expandToken(
-          withdrawalRequest.reserveTokenAmount,
-          withdrawalRequest.pool.reserveToken.decimals
         )
       );
       if (res) setOutputBreakdown(res);
