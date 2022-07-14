@@ -2,7 +2,7 @@ import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
-import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
+import { WalletConnectModal } from '../../modals/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';

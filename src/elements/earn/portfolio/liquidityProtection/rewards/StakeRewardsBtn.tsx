@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAppSelector } from 'store';
 import { getProtectedPools } from 'store/bancor/pool';
-import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
+import { SelectPoolModal } from 'modals/SelectPoolModal';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { Button } from 'components/button/Button';

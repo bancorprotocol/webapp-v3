@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { ModalV3 } from 'components/modal/ModalV3';
 
-interface Props {
+export const DepositDisabledModal = ({
+  renderButton,
+}: {
   renderButton: (onClick: () => void) => React.ReactNode;
-}
-
-export const DepositDisabledModal = ({ renderButton }: Props) => {
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = async () => {

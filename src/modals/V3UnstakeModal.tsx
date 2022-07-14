@@ -16,12 +16,13 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 
-interface Props {
+export const V3UnstakeModal = ({
+  holding,
+  renderButton,
+}: {
   holding: Holding;
   renderButton: (onClick: () => void) => React.ReactNode;
-}
-
-export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
+}) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);

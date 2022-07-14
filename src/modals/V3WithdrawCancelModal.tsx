@@ -5,20 +5,18 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { toBigNumber } from 'utils/helperFunctions';
 
-interface Props {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-  withdrawRequest: WithdrawalRequest;
-  cancelWithdrawal: () => Promise<void>;
-}
-
 export const V3WithdrawCancelModal = memo(
   ({
     isModalOpen,
     setIsModalOpen,
     withdrawRequest,
     cancelWithdrawal,
-  }: Props) => {
+  }: {
+    isModalOpen: boolean;
+    setIsModalOpen: (isOpen: boolean) => void;
+    withdrawRequest: WithdrawalRequest;
+    cancelWithdrawal: () => Promise<void>;
+  }) => {
     const [txBusy, setTxBusy] = useState(false);
     const { pool } = withdrawRequest;
     const token = pool.reserveToken;

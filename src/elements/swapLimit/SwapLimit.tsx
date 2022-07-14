@@ -3,7 +3,7 @@ import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { ModalDuration } from 'elements/modalDuration/modalDuration';
+import { ModalDuration } from 'modals/modalDuration';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -17,19 +17,13 @@ import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
-import { ModalApprove } from 'elements/modalApprove/modalApprove';
+import { ModalApprove } from 'modals/modalApprove';
 import {
   ApprovalContract,
   getNetworkContractApproval,
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
-import {
-  ConversionEvents,
-  sendConversionEvent,
-  setCurrentConversion,
-} from 'services/api/googleTagManager';
 import { calculatePercentageChange } from 'utils/formulas';
-import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 import {
   Button,
   ButtonPercentages,
@@ -37,6 +31,12 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { ModalDepositETH } from 'modals/modalDepositETH';
+import {
+  sendConversionEvent,
+  ConversionEvents,
+  setCurrentConversion,
+} from 'services/api/googleTagManager';
 
 enum Field {
   from,

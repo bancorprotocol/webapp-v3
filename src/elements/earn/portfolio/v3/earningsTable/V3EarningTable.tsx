@@ -1,7 +1,7 @@
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useMemo, useState } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
+import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'store';
 import {
@@ -10,7 +10,7 @@ import {
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 // import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';

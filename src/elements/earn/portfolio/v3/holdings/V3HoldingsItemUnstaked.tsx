@@ -14,7 +14,7 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
+import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 
 export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {

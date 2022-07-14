@@ -6,14 +6,14 @@ import { CellProps } from 'react-table';
 import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { Button } from 'components/button/Button';
-import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
-import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
+import { WithdrawLiquidityWidget } from '../../../../../modals/WithdrawLiquidityWidget';
+import { UpgradeBntModal } from '../../../../../modals/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
 import { getAllBntPositionsAndAmount } from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { UpgradeTknModal } from '../../v3/UpgradeTknModal';
+import { UpgradeTknModal } from '../../../../../modals/UpgradeTknModal';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<

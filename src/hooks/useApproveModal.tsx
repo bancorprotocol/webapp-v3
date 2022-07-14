@@ -5,7 +5,7 @@ import {
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
-import { ModalApproveNew } from 'elements/modalApprove/modalApproveNew';
+import { ModalApproveNew } from 'modals/modalApproveNew';
 import {
   addNotification,
   NotificationType,

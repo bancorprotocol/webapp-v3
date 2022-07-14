@@ -1,12 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
-import { Modal } from 'components/modal/Modal';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { wait } from 'utils/pureFunctions';
 import { ReactComponent as IconEdit } from 'assets/icons/edit.svg';
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
-import { isMobile } from 'react-device-detect';
 import { SuggestedTokens } from './SuggestedTokens';
 import { Switch } from 'components/switch/Switch';
 import { TokenList } from 'services/observables/tokens';
@@ -14,7 +12,7 @@ import { userPreferredListIds$ } from 'services/observables/tokenLists';
 import { orderBy } from 'lodash';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { Image } from 'components/image/Image';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
+import { SearchableTokenListModal } from 'modals/SearchableTokenListModal';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -25,50 +23,6 @@ interface SearchableTokenListProps {
   tokens: Token[];
   limit?: boolean;
 }
-
-interface SearchableTokenListLayoutProps {
-  manage: boolean;
-  setManage: Function;
-  isOpen: boolean;
-  onClose: Function;
-  children: JSX.Element;
-}
-
-const SearchableTokenListLayout = ({
-  manage,
-  setManage,
-  onClose,
-  isOpen,
-  children,
-}: SearchableTokenListLayoutProps) => {
-  if (isMobile) {
-    return (
-      <ModalFullscreenV3
-        title={manage ? 'Manage' : 'Select a Token'}
-        setIsOpen={() => {
-          if (manage) return setManage(false);
-          onClose();
-        }}
-        className="flex flex-col px-0"
-        isOpen={isOpen}
-      >
-        {children}
-      </ModalFullscreenV3>
-    );
-  }
-
-  return (
-    <Modal
-      title={manage ? 'Manage' : 'Select a Token'}
-      isOpen={isOpen}
-      setIsOpen={onClose}
-      showBackButton={manage}
-      onBackClick={() => setManage(false)}
-    >
-      {children}
-    </Modal>
-  );
-};
 
 const suggestedTokens = ['BNT', 'ETH', 'WBTC', 'USDC', 'USDT'];
 
@@ -132,7 +86,7 @@ export const SearchableTokenList = ({
   }, [excludedTokens, includedTokens, limit, search, tokens]);
 
   return (
-    <SearchableTokenListLayout
+    <SearchableTokenListModal
       manage={manage}
       onClose={onClose}
       isOpen={isOpen}
@@ -256,6 +210,6 @@ export const SearchableTokenList = ({
           </div>
         </>
       )}
-    </SearchableTokenListLayout>
+    </SearchableTokenListModal>
   );
 };

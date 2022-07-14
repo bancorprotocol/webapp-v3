@@ -8,13 +8,15 @@ import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 
-interface Props {
+const V3WithdrawModal = ({
+  isOpen,
+  setIsOpen,
+  holding,
+}: {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   holding: Holding;
-}
-
-const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
+}) => {
   const {
     step,
     onClose,

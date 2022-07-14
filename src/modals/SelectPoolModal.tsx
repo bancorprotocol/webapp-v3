@@ -1,13 +1,53 @@
-import { InputField } from '../inputField/InputField';
 import { useState } from 'react';
+import { isMobile } from 'react-device-detect';
+import { Modal } from '../components/modal/Modal';
 import { Pool } from 'services/observables/pools';
+import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
+import { InputField } from '../components/inputField/InputField';
 import { Image } from 'components/image/Image';
 
-interface Props {
+export const SelectPoolModal = ({
+  pools,
+  isOpen,
+  setIsOpen,
+  onSelect,
+}: {
   pools: Pool[];
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
   onSelect: Function;
-}
-export const SelectPoolModalContent = ({ pools, onSelect }: Props) => {
+}) => {
+  const handleOnSelect = (pool: Pool) => {
+    setIsOpen(false);
+    onSelect(pool);
+  };
+
+  if (isMobile) {
+    return (
+      <ModalFullscreenV3
+        title="Select a Pool"
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+      >
+        <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
+      </ModalFullscreenV3>
+    );
+  }
+
+  return (
+    <Modal title="Select a Pool" isOpen={isOpen} setIsOpen={setIsOpen}>
+      <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
+    </Modal>
+  );
+};
+
+const SelectPoolModalContent = ({
+  pools,
+  onSelect,
+}: {
+  pools: Pool[];
+  onSelect: (pool: Pool) => void;
+}) => {
   const [search, setSearch] = useState('');
   const filteredPools = pools.filter((pool) =>
     pool.reserves[0].symbol.toLowerCase().includes(search.toLowerCase())

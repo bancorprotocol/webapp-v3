@@ -31,14 +31,15 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 
-interface Props {
-  pool: PoolV3;
-  renderButton: (onClick: () => void) => React.ReactNode;
-}
-
 const REWARDS_EXTRA_GAS = 130_000;
 
-export const DepositV3Modal = ({ pool, renderButton }: Props) => {
+export const DepositV3Modal = ({
+  pool,
+  renderButton,
+}: {
+  pool: PoolV3;
+  renderButton: (onClick: () => void) => React.ReactNode;
+}) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);

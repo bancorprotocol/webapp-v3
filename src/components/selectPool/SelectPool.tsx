@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
+import { SelectPoolModal } from 'modals/SelectPoolModal';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';

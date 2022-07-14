@@ -1,6 +1,6 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 
 export const PoolsTableCellActions = (_id: string) => {
   return (

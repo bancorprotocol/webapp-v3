@@ -1,8 +1,8 @@
 import { Modal } from 'components/modal/Modal';
-import { UseWalletConnect } from './useWalletConnect';
-import { WalletConnectModalList } from './WalletConnectModalList';
-import { WalletConnectModalPending } from './WalletConnectModalPending';
-import { WalletConnectModalError } from './WalletConnectModalError';
+import { UseWalletConnect } from '../elements/walletConnect/useWalletConnect';
+import { WalletConnectModalList } from '../elements/walletConnect/WalletConnectModalList';
+import { WalletConnectModalPending } from '../elements/walletConnect/WalletConnectModalPending';
+import { WalletConnectModalError } from '../elements/walletConnect/WalletConnectModalError';
 
 export const WalletConnectModal = (props: UseWalletConnect) => {
   const { isPending, isError } = props;
