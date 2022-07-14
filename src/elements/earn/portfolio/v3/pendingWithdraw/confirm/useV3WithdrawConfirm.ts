@@ -34,7 +34,7 @@ export const useV3WithdrawConfirm = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const [outputBreakdown, setOutputBreakdown] = useState<{
+  const [withdrawAmounts, setWithdrawAmounts] = useState<{
     tkn: number;
     bnt: number;
     totalAmount: string;
@@ -74,12 +74,12 @@ export const useV3WithdrawConfirm = ({
         withdrawRequest.pool.reserveToken.decimals
       )
     );
-    if (res) setOutputBreakdown(res);
+    setWithdrawAmounts(res);
   }, [withdrawRequest, isModalOpen]);
 
   const onModalClose = useCallback(() => {
     setIsModalOpen(false);
-    setOutputBreakdown({
+    setWithdrawAmounts({
       tkn: 0,
       bnt: 0,
       totalAmount: '0',
@@ -155,7 +155,7 @@ export const useV3WithdrawConfirm = ({
     onModalClose,
     ModalApprove,
     token,
-    outputBreakdown,
+    withdrawAmounts,
     missingGovTokenBalance,
     txBusy,
     isBntToken,
