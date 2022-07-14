@@ -34,7 +34,8 @@ export const useV3WithdrawConfirm = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const [outputBreakdown, setOutputBreakdown] = useState<{
+  const [loadingAmounts, setLoadingAmounts] = useState(false);
+  const [withdrawAmounts, setWithdrawAmounts] = useState<{
     tkn: number;
     bnt: number;
     totalAmount: string;
@@ -62,7 +63,7 @@ export const useV3WithdrawConfirm = ({
     if (!isModalOpen) {
       return;
     }
-
+    setLoadingAmounts(true);
     const res = await fetchWithdrawalRequestOutputBreakdown(
       withdrawRequest.reserveToken,
       expandToken(
@@ -74,18 +75,13 @@ export const useV3WithdrawConfirm = ({
         withdrawRequest.pool.reserveToken.decimals
       )
     );
-    if (res) setOutputBreakdown(res);
+    setWithdrawAmounts(res);
+    setLoadingAmounts(false);
   }, [withdrawRequest, isModalOpen]);
 
   const onModalClose = useCallback(() => {
     setIsModalOpen(false);
-    setOutputBreakdown({
-      tkn: 0,
-      bnt: 0,
-      totalAmount: '0',
-      baseTokenAmount: '0',
-      bntAmount: '0',
-    });
+    setWithdrawAmounts(undefined);
   }, [setIsModalOpen]);
 
   const withdraw = useCallback(async () => {
@@ -155,12 +151,13 @@ export const useV3WithdrawConfirm = ({
     onModalClose,
     ModalApprove,
     token,
-    outputBreakdown,
+    withdrawAmounts,
     missingGovTokenBalance,
     txBusy,
     isBntToken,
     handleCancelClick,
     govToken,
     handleWithdrawClick,
+    loadingAmounts,
   };
 };
