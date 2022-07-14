@@ -12,17 +12,15 @@ import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
 
-interface Props {
-  position: ExternalHolding;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-}
-
 export const V3ExternalHoldingsModal = ({
   position,
   isOpen,
   setIsOpen,
-}: Props) => {
+}: {
+  position: ExternalHolding;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}) => {
   const [txBusy, setTxBusy] = useState(false);
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();

@@ -20,7 +20,7 @@ import {
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
 
-export const ModalCreatePool = () => {
+export const CreatePoolModal = () => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 

@@ -3,7 +3,7 @@ import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { ModalDuration } from 'modals/DurationModal';
+import { DurationModal } from 'modals/DurationModal';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
-import { ModalApprove } from 'modals/ApproveModal';
+import { ApproveModal } from 'modals/ApproveModal';
 import {
   ApprovalContract,
   getNetworkContractApproval,
@@ -31,7 +31,7 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { ModalDepositETH } from 'modals/DepositETHModal';
+import { DepositETHModal } from 'modals/DepositETHModal';
 import {
   sendConversionEvent,
   ConversionEvents,
@@ -510,13 +510,13 @@ export const SwapLimit = ({
 
               <div className="flex justify-between items-center mt-15">
                 <span className="font-semibold">Expires in</span>
-                <ModalDuration duration={duration} setDuration={setDuration} />
+                <DurationModal duration={duration} setDuration={setDuration} />
               </div>
             </>
           )}
         </div>
 
-        <ModalApprove
+        <ApproveModal
           isOpen={showApproveModal}
           setIsOpen={setShowApproveModal}
           amount={fromAmount}
@@ -530,7 +530,7 @@ export const SwapLimit = ({
           }
           contract={ApprovalContract.ExchangeProxy}
         />
-        <ModalDepositETH
+        <DepositETHModal
           amount={fromAmount}
           setIsOpen={setShowEthModal}
           isOpen={showEthModal}

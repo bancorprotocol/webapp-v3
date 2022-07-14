@@ -8,20 +8,18 @@ import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { formatDuration } from 'utils/helperFunctions';
 import { Button, ButtonSize } from 'components/button/Button';
 
-interface ModalDurationProps {
-  duration: Duration;
-  setDuration: Function;
-}
-
 interface DurationItem {
   id: string;
   title: number;
 }
 
-export const ModalDuration = ({
+export const DurationModal = ({
   duration,
   setDuration,
-}: ModalDurationProps) => {
+}: {
+  duration: Duration;
+  setDuration: Function;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [days, setDays] = useState(duration.days());
   const [hours, setHours] = useState(duration.hours());

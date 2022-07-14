@@ -2,7 +2,7 @@ import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
 import { Button, ButtonSize } from 'components/button/Button';
 
-export const ModalDepositETH = ({
+export const DepositETHModal = ({
   amount,
   isOpen,
   setIsOpen,

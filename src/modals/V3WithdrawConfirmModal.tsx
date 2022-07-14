@@ -11,20 +11,18 @@ import { bntToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 
-interface Props {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-  withdrawRequest: WithdrawalRequest;
-  openCancelModal: (req: WithdrawalRequest) => void;
-}
-
 export const V3WithdrawConfirmModal = memo(
   ({
     isModalOpen,
     setIsModalOpen,
     withdrawRequest,
     openCancelModal,
-  }: Props) => {
+  }: {
+    isModalOpen: boolean;
+    setIsModalOpen: (isOpen: boolean) => void;
+    withdrawRequest: WithdrawalRequest;
+    openCancelModal: (req: WithdrawalRequest) => void;
+  }) => {
     return (
       <ModalFullscreenV3
         title="Complete Withdraw"
@@ -47,7 +45,12 @@ export const V3WithdrawConfirmContent = ({
   setIsModalOpen,
   withdrawRequest,
   openCancelModal,
-}: Props) => {
+}: {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+  withdrawRequest: WithdrawalRequest;
+  openCancelModal: (req: WithdrawalRequest) => void;
+}) => {
   const {
     ModalApprove,
     token,
