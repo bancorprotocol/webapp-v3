@@ -8,7 +8,7 @@ import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 // import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';

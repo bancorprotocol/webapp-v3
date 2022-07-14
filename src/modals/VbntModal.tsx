@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
@@ -22,23 +22,21 @@ import { ApprovalContract } from 'services/web3/approval';
 import { useAppSelector } from 'store';
 import { Button, ButtonSize } from 'components/button/Button';
 
-interface ModalVbntProps {
-  setIsOpen: Function;
-  isOpen: boolean;
-  token: Token;
-  stake: boolean;
-  stakeBalance?: string;
-  onCompleted?: Function;
-}
-
-export const ModalVbnt = ({
+export const VbntModal = ({
   setIsOpen,
   isOpen,
   token,
   stake,
   stakeBalance,
   onCompleted,
-}: ModalVbntProps) => {
+}: {
+  setIsOpen: (isOpen: boolean) => void;
+  isOpen: boolean;
+  token: Token;
+  stake: boolean;
+  stakeBalance?: string;
+  onCompleted?: Function;
+}) => {
   const account = useAppSelector((state) => state.user.account);
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);

@@ -1,17 +1,7 @@
-import { Modal } from 'components/modal/Modal';
 import { Token } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
-
-interface Props {
-  isOpen: boolean;
-  setIsOpen: Function;
-  setApproval: Function;
-  token: Token;
-  amount: string;
-  isLoading: boolean;
-  onClose?: Function;
-}
+import { Modal } from 'modals';
 
 export const ModalApproveNew = ({
   isOpen,
@@ -21,7 +11,15 @@ export const ModalApproveNew = ({
   amount,
   isLoading,
   onClose,
-}: Props) => {
+}: {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  setApproval: Function;
+  token: Token;
+  amount: string;
+  isLoading: boolean;
+  onClose?: Function;
+}) => {
   return (
     <Modal
       onClose={() => {

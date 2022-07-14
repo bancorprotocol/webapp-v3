@@ -30,6 +30,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
+import { Modals } from 'modals';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -102,6 +103,7 @@ export const App = () => {
       )}
       <MobileBottomNav />
       <NotificationAlerts />
+      <Modals />
     </BrowserRouter>
   );
 };

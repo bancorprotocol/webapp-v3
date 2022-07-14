@@ -1,17 +1,13 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
-  ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
 import { Button, ButtonSize } from 'components/button/Button';
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
 import { useAppSelector } from 'store';
 import { useMemo } from 'react';
-import {
-  getAllBntPositionsAndAmount,
-  setProtectedPositions,
-} from 'store/liquidity/liquidity';
+import { setProtectedPositions } from 'store/liquidity/liquidity';
 import {
   migrateNotification,
   rejectNotification,
@@ -24,25 +20,20 @@ import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 
-export const UpgradeBntModal = ({
-  position,
+export const UpgradeTknModal = ({
+  positions,
   isOpen,
   setIsOpen,
 }: {
-  position: ProtectedPositionGrouped;
+  positions: ProtectedPosition[];
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
 }) => {
   const dispatch = useDispatch();
-
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
-
-  const totalBNT = useAppSelector<{
-    usdAmount: number;
-    tknAmount: number;
-    bntPositions: ProtectedPosition[];
-  }>(getAllBntPositionsAndAmount);
+  const position = positions.length !== 0 ? positions[0] : undefined;
+  const token = position?.reserveToken;
 
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
@@ -58,7 +49,7 @@ export const UpgradeBntModal = ({
     [withdrawalFee]
   );
 
-  const migrate = (positions: ProtectedPosition[]) => {
+  const migrate = () => {
     migrateV2Positions(
       positions,
       (txHash: string) => migrateNotification(dispatch, txHash),
@@ -72,17 +63,19 @@ export const UpgradeBntModal = ({
     setIsOpen(false);
   };
 
+  if (!position || !token) return null;
+
   return (
     <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
       <div className="flex flex-col items-center gap-20 p-20 text-center">
         <Image
           alt="Token"
-          src={position.reserveToken.logoURI}
+          src={token?.logoURI}
           className="!rounded-full h-50 w-50"
         />
-        <div>Upgrade BNT</div>
-        <div>
-          Move all BNT to a single pool and earn from all trades in the network
+        <div className="text-20">Upgrade {token.symbol}</div>
+        <div className="text-black-low dark:text-white-low">
+          Move all {token.symbol} to Bancor V3
         </div>
         <div className="flex flex-col items-center justify-center font-bold text-center text-error">
           <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
@@ -99,11 +92,11 @@ export const UpgradeBntModal = ({
         </div>
         <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
           <div className="flex items-center justify-between text-18 mb-15">
-            <div>Upgrade all BNT</div>
+            <div>Upgrade all {token.symbol}</div>
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
-            Single BNT pool
+            Single Side
           </div>
           <div className="flex items-center gap-5">
             <IconCheck className="w-10 text-primary" />
@@ -114,22 +107,9 @@ export const UpgradeBntModal = ({
             Fully upgrade partially protected holdings
           </div>
         </div>
-        <Button
-          onClick={() => migrate(totalBNT.bntPositions)}
-          size={ButtonSize.Full}
-        >
+        <Button onClick={() => migrate()} size={ButtonSize.Full}>
           Upgrade All
         </Button>
-        <button
-          onClick={() =>
-            migrate(
-              position.subRows.length === 0 ? [position] : position.subRows
-            )
-          }
-          className="text-primary"
-        >
-          No Thanks, just BNT from the {position.pool.name}
-        </button>
         <div className="text-secondary text-[13px]">
           {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>

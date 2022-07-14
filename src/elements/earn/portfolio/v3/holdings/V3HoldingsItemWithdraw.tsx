@@ -1,7 +1,7 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { useState } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
+import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 
 export const V3HoldingsItemWithdraw = ({ holding }: { holding: Holding }) => {

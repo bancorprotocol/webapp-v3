@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { ModalV3 } from 'components/modal/ModalV3';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
@@ -15,13 +14,15 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
+import { Modal } from 'modals';
 
-interface Props {
+export const V3UnstakeModal = ({
+  holding,
+  renderButton,
+}: {
   holding: Holding;
   renderButton: (onClick: () => void) => React.ReactNode;
-}
-
-export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
+}) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
@@ -83,7 +84,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
   return (
     <>
       {renderButton(() => setIsOpen(true))}
-      <ModalV3
+      <Modal
         title={'Rewards'}
         setIsOpen={onClose}
         isOpen={isOpen}
@@ -176,7 +177,7 @@ export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
             </div>
           )}
         </div>
-      </ModalV3>
+      </Modal>
     </>
   );
 };

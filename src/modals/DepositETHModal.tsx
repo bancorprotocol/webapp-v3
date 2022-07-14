@@ -1,19 +1,18 @@
-import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
 import { Button, ButtonSize } from 'components/button/Button';
+import { Modal } from 'modals';
 
-interface ModalDepositETHProps {
-  amount: string;
-  isOpen: boolean;
-  setIsOpen: Function;
-  onConfirm: Function;
-}
-export const ModalDepositETH = ({
+export const DepositETHModal = ({
   amount,
   isOpen,
   setIsOpen,
   onConfirm,
-}: ModalDepositETHProps) => {
+}: {
+  amount: string;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  onConfirm: Function;
+}) => {
   return (
     <Modal
       titleElement={<div className="w-full"></div>}

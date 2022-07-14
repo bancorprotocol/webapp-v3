@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
 import { store } from 'store';
 import { Provider } from 'react-redux';
-import { V3BonusesModal } from 'elements/earn/portfolio/v3/bonuses/V3BonusesModal';
+import { V3BonusesModal } from 'modals/V3BonusesModal';
 
 export default {
   title: 'Elements/V3/Portfolio/Bonuses',

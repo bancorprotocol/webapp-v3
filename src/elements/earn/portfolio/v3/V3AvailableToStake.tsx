@@ -7,7 +7,7 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import 'swiper/css';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {

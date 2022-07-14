@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 
 interface SlideoverProps {
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   children: JSX.Element;
 }
 

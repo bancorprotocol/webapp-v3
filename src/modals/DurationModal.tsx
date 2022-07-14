@@ -1,27 +1,25 @@
 import { useState } from 'react';
 import dayjs from 'utils/dayjs';
 import { Dropdown } from 'components/dropdown/Dropdown';
-import { Modal } from 'components/modal/Modal';
 import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { formatDuration } from 'utils/helperFunctions';
 import { Button, ButtonSize } from 'components/button/Button';
-
-interface ModalDurationProps {
-  duration: Duration;
-  setDuration: Function;
-}
+import { Modal } from 'modals';
 
 interface DurationItem {
   id: string;
   title: number;
 }
 
-export const ModalDuration = ({
+export const DurationModal = ({
   duration,
   setDuration,
-}: ModalDurationProps) => {
+}: {
+  duration: Duration;
+  setDuration: Function;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [days, setDays] = useState(duration.days());
   const [hours, setHours] = useState(duration.hours());

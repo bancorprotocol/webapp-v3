@@ -1,7 +1,7 @@
 import { useV3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/useV3Withdraw';
 import { WithdrawItem } from 'elements/earn/portfolio/v3/pendingWithdraw/V3WithdrawItem';
-import { V3WithdrawCancelModal } from 'elements/earn/portfolio/v3/pendingWithdraw/V3WithdrawCancelModal';
-import { V3WithdrawConfirmModal } from 'elements/earn/portfolio/v3/pendingWithdraw/confirm/V3WithdrawConfirmModal';
+import { V3WithdrawCancelModal } from 'modals/V3WithdrawCancelModal';
+import { V3WithdrawConfirmModal } from 'modals/V3WithdrawConfirmModal';
 
 export const V3Withdraw = () => {
   const {

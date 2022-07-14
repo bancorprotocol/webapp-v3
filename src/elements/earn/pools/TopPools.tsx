@@ -3,7 +3,7 @@ import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Image } from 'components/image/Image';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 // import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {

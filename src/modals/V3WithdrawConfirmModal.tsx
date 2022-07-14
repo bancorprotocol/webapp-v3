@@ -9,14 +9,7 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { shrinkToken } from 'utils/formulas';
 import { bntToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
-
-interface Props {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-  withdrawRequest: WithdrawalRequest;
-  openCancelModal: (req: WithdrawalRequest) => void;
-}
+import { ModalFullscreen } from 'modals';
 
 export const V3WithdrawConfirmModal = memo(
   ({
@@ -24,9 +17,14 @@ export const V3WithdrawConfirmModal = memo(
     setIsModalOpen,
     withdrawRequest,
     openCancelModal,
-  }: Props) => {
+  }: {
+    isModalOpen: boolean;
+    setIsModalOpen: (isOpen: boolean) => void;
+    withdrawRequest: WithdrawalRequest;
+    openCancelModal: (req: WithdrawalRequest) => void;
+  }) => {
     return (
-      <ModalFullscreenV3
+      <ModalFullscreen
         title="Complete Withdraw"
         isOpen={isModalOpen}
         setIsOpen={setIsModalOpen}
@@ -37,7 +35,7 @@ export const V3WithdrawConfirmModal = memo(
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
         />
-      </ModalFullscreenV3>
+      </ModalFullscreen>
     );
   }
 );
@@ -47,7 +45,12 @@ export const V3WithdrawConfirmContent = ({
   setIsModalOpen,
   withdrawRequest,
   openCancelModal,
-}: Props) => {
+}: {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+  withdrawRequest: WithdrawalRequest;
+  openCancelModal: (req: WithdrawalRequest) => void;
+}) => {
   const {
     ModalApprove,
     token,

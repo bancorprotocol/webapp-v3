@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { V3ExternalHoldingsModal } from 'elements/earn/portfolio/v3/externalHoldings/V3ExternalHoldingsModal';
+import { V3ExternalHoldingsModal } from 'modals/V3ExternalHoldingsModal';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 
 interface Props {

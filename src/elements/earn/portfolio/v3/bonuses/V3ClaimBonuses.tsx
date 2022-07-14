@@ -1,5 +1,5 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { V3BonusesModal } from 'elements/earn/portfolio/v3/bonuses/V3BonusesModal';
+import { V3BonusesModal } from 'modals/V3BonusesModal';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { prettifyNumber } from 'utils/helperFunctions';
 
