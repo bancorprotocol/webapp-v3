@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 import V3WithdrawStep1 from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1';
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3WithdrawStep3';
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3WithdrawStep4';
@@ -7,6 +6,7 @@ import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3Wit
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import { ModalFullscreen } from 'modals';
 
 const V3WithdrawModal = ({
   isOpen,
@@ -35,7 +35,7 @@ const V3WithdrawModal = ({
   } = useV3WithdrawModal({ setIsOpen });
 
   return (
-    <ModalFullscreenV3
+    <ModalFullscreen
       title={step === 4 ? 'Complete Withdraw' : 'Begin instant cooldown'}
       isOpen={isOpen}
       setIsOpen={onClose}
@@ -82,7 +82,7 @@ const V3WithdrawModal = ({
           requestId={requestId}
         />
       )}
-    </ModalFullscreenV3>
+    </ModalFullscreen>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
@@ -30,7 +30,7 @@ export const VbntModal = ({
   stakeBalance,
   onCompleted,
 }: {
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
   token: Token;
   stake: boolean;

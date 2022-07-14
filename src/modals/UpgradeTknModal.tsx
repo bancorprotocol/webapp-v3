@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
@@ -27,7 +27,7 @@ export const UpgradeTknModal = ({
 }: {
   positions: ProtectedPosition[];
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
 }) => {
   const dispatch = useDispatch();
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);

@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
@@ -31,7 +31,7 @@ export const UpgradeBntModal = ({
 }: {
   position: ProtectedPositionGrouped;
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
 }) => {
   const dispatch = useDispatch();
 

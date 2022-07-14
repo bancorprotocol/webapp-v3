@@ -1,6 +1,6 @@
-import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
 import { Button, ButtonSize } from 'components/button/Button';
+import { Modal } from 'modals';
 
 export const DepositETHModal = ({
   amount,
@@ -10,7 +10,7 @@ export const DepositETHModal = ({
 }: {
   amount: string;
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   onConfirm: Function;
 }) => {
   return (

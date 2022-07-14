@@ -17,7 +17,7 @@ import { SearchableTokenListModal } from 'modals/SearchableTokenListModal';
 interface SearchableTokenListProps {
   onClick: Function;
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   excludedTokens?: string[];
   includedTokens?: string[];
   tokens: Token[];

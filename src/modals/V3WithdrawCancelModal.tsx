@@ -1,6 +1,6 @@
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import { memo, useCallback, useMemo, useState } from 'react';
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { toBigNumber } from 'utils/helperFunctions';

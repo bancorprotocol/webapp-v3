@@ -1,4 +1,3 @@
-import { Modal } from 'components/modal/Modal';
 import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
 import {
   addNotification,
@@ -15,6 +14,7 @@ import { wait } from 'utils/pureFunctions';
 import { sendConversionApprovedEvent } from 'services/api/googleTagManager';
 import { ErrorCode } from 'services/web3/types';
 import { Button, ButtonSize } from 'components/button/Button';
+import { Modal } from 'modals';
 
 export const ApproveModal = ({
   setIsOpen,
@@ -25,7 +25,7 @@ export const ApproveModal = ({
   waitForApproval,
   contract,
 }: {
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
   amount: string;
   fromToken?: Token;

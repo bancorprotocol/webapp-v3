@@ -1,6 +1,6 @@
 import { EmergencyInfo } from 'components/EmergencyInfo';
-import { ModalV3 } from 'components/modal/ModalV3';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { Modal } from 'modals';
 import { useMemo } from 'react';
 import { useAppSelector } from 'store';
 
@@ -21,7 +21,7 @@ export const WithdrawLiquidityModal = ({
   );
 
   return (
-    <ModalV3 setIsOpen={() => setIsModalOpen(false)} isOpen={isModalOpen} large>
+    <Modal setIsOpen={() => setIsModalOpen(false)} isOpen={isModalOpen} large>
       <div className="flex flex-col items-center gap-20 p-20 pb-40 text-center">
         <div className="text-20 mb-30">
           <div className="font-bold">Migrate to Bancor V3 to withdraw.</div>
@@ -40,6 +40,6 @@ export const WithdrawLiquidityModal = ({
           )}
         />
       </div>
-    </ModalV3>
+    </Modal>
   );
 };

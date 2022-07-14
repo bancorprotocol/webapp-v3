@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { UseWalletConnect } from '../elements/walletConnect/useWalletConnect';
 import { WalletConnectModalList } from '../elements/walletConnect/WalletConnectModalList';
 import { WalletConnectModalPending } from '../elements/walletConnect/WalletConnectModalPending';

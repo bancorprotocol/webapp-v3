@@ -1,4 +1,4 @@
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';

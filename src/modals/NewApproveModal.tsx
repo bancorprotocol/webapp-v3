@@ -1,7 +1,7 @@
-import { Modal } from 'components/modal/Modal';
 import { Token } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
+import { Modal } from 'modals';
 
 export const ModalApproveNew = ({
   isOpen,
@@ -13,7 +13,7 @@ export const ModalApproveNew = ({
   onClose,
 }: {
   isOpen: boolean;
-  setIsOpen: Function;
+  setIsOpen: (isOpen: boolean) => void;
   setApproval: Function;
   token: Token;
   amount: string;

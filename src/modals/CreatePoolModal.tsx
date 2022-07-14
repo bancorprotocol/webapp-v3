@@ -8,7 +8,6 @@ import { EthNetworks } from 'services/web3/types';
 import { getNetworkVariables } from 'services/web3/config';
 import { SelectToken } from 'components/selectToken/SelectToken';
 import { InputField } from 'components/inputField/InputField';
-import { Modal } from 'components/modal/Modal';
 import {
   ownershipNotification,
   poolCreateNotification,
@@ -19,6 +18,7 @@ import {
 } from 'services/notifications/notifications';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
+import { Modal } from 'modals';
 
 export const CreatePoolModal = () => {
   const account = useAppSelector((state) => state.user.account);

@@ -1,5 +1,4 @@
-import { Modal } from 'components/modal/Modal';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
+import { Modal, ModalFullscreen } from 'modals';
 import { isMobile } from 'react-device-detect';
 
 export const SearchableTokenListModal = ({
@@ -12,12 +11,12 @@ export const SearchableTokenListModal = ({
   manage: boolean;
   setManage: Function;
   isOpen: boolean;
-  onClose: Function;
+  onClose: () => void;
   children: JSX.Element;
 }) => {
   if (isMobile) {
     return (
-      <ModalFullscreenV3
+      <ModalFullscreen
         title={manage ? 'Manage' : 'Select a Token'}
         setIsOpen={() => {
           if (manage) return setManage(false);
@@ -27,7 +26,7 @@ export const SearchableTokenListModal = ({
         isOpen={isOpen}
       >
         {children}
-      </ModalFullscreenV3>
+      </ModalFullscreen>
     );
   }
 

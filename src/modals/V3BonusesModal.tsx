@@ -4,7 +4,7 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
-import { Modal } from 'components/modal/Modal';
+import { Modal } from 'modals';
 import { useCallback, useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';

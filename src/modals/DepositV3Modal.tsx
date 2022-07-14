@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
-import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
@@ -30,6 +29,7 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { Modal } from 'modals';
 
 const REWARDS_EXTRA_GAS = 130_000;
 
@@ -160,7 +160,7 @@ export const DepositV3Modal = ({
   return (
     <>
       {renderButton(() => setIsOpen(true))}
-      <ModalV3
+      <Modal
         title={'Deposit & Earn'}
         setIsOpen={onClose}
         isOpen={isOpen}
@@ -277,7 +277,7 @@ export const DepositV3Modal = ({
           <ProtectedSettingsV3 />
           {ApproveModal}
         </div>
-      </ModalV3>
+      </Modal>
     </>
   );
 };

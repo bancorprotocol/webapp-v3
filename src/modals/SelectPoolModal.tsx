@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { isMobile } from 'react-device-detect';
-import { Modal } from '../components/modal/Modal';
 import { Pool } from 'services/observables/pools';
-import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 import { InputField } from '../components/inputField/InputField';
 import { Image } from 'components/image/Image';
+import { Modal, ModalFullscreen } from 'modals';
 
 export const SelectPoolModal = ({
   pools,
@@ -24,13 +23,13 @@ export const SelectPoolModal = ({
 
   if (isMobile) {
     return (
-      <ModalFullscreenV3
+      <ModalFullscreen
         title="Select a Pool"
         setIsOpen={setIsOpen}
         isOpen={isOpen}
       >
         <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
-      </ModalFullscreenV3>
+      </ModalFullscreen>
     );
   }
 
