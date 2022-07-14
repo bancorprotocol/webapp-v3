@@ -85,7 +85,9 @@ export const V3WithdrawConfirmContent = ({
 
       <TokenBalanceLarge
         symbol={token.symbol}
-        amount={withdrawRequest.reserveTokenAmount}
+        amount={
+          deficitAmount ? deficitAmount : withdrawRequest.reserveTokenAmount
+        }
         usdPrice={token.usdPrice}
         logoURI={token.logoURI}
         label="Amount"
