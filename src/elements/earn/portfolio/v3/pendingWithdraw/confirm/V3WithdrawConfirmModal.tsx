@@ -89,7 +89,6 @@ export const V3WithdrawConfirmContent = ({
         usdPrice={token.usdPrice}
         logoURI={token.logoURI}
         label="Amount"
-        showWarning={!isBNT}
         defecitAmount={defecitAmount}
       />
       {!isBNT && (
