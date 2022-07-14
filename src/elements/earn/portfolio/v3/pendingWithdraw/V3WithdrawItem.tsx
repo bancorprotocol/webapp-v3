@@ -26,13 +26,13 @@ export const WithdrawItem = memo(
       () => lockEndsAt - dayjs(dateNow).unix() <= 0,
       [dateNow, lockEndsAt]
     );
-    const [outputBreakdown, setOutputBreakdown] = useState({
-      tkn: 0,
-      bnt: 0,
-      totalAmount: '0',
-      baseTokenAmount: '0',
-      bntAmount: '0',
-    });
+    const [withdrawAmounts, setWithdrawAmounts] = useState<{
+      tkn: number;
+      bnt: number;
+      totalAmount: string;
+      baseTokenAmount: string;
+      bntAmount: string;
+    }>();
 
     useAsyncEffect(async () => {
       const res = await fetchWithdrawalRequestOutputBreakdown(
@@ -40,25 +40,30 @@ export const WithdrawItem = memo(
         expandToken(
           withdrawalRequest.poolTokenAmount,
           withdrawalRequest.pool.reserveToken.decimals
+        ),
+        expandToken(
+          withdrawalRequest.reserveTokenAmount,
+          withdrawalRequest.pool.reserveToken.decimals
         )
       );
-      if (res) setOutputBreakdown(res);
+      setWithdrawAmounts(res);
     }, [withdrawalRequest]);
 
     const isBNT = withdrawalRequest.pool.poolDltId === bntToken;
 
-    const defecitAmount = isBNT
-      ? undefined
-      : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
+    const deficitAmount =
+      isBNT || !withdrawAmounts
+        ? undefined
+        : shrinkToken(withdrawAmounts.baseTokenAmount, token.decimals);
 
     return (
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <TokenBalance
           symbol={token.symbol}
           amount={withdrawalRequest.reserveTokenAmount}
           usdPrice={token.usdPrice ?? '0'}
           imgUrl={token.logoURI}
-          defecitAmount={defecitAmount}
+          deficitAmount={deficitAmount}
         />
         <div className="flex items-center space-x-5">
           {isLocked && (
@@ -71,14 +76,14 @@ export const WithdrawItem = memo(
             </Button>
           )}
           {!isLocked && (
-            <div className="text-secondary text-12 text-right">
+            <div className="text-right text-secondary text-12">
               Cooling down
               <CountdownTimer date={lockEndsAt * 1000} />
             </div>
           )}
           <button
             onClick={() => openCancelModal(withdrawalRequest)}
-            className="hover:text-error p-10"
+            className="p-10 hover:text-error"
           >
             <IconTimes className="w-10" />
           </button>
