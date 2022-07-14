@@ -3,7 +3,7 @@ import {
   WithdrawalRequestRaw,
   WithdrawalSettings,
 } from 'store/portfolio/v3Portfolio.types';
-import { compareIgnoreLastDigit, ppmToDec } from 'utils/helperFunctions';
+import { compareLowWei, ppmToDec } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 
 export const fetchPortfolioV3WithdrawalSettings =
@@ -61,12 +61,7 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
       poolTokenAmountWei
     );
 
-    if (
-      compareIgnoreLastDigit(
-        reserveTokenAmountWei,
-        res.baseTokenAmount.toString()
-      )
-    )
+    if (compareLowWei(reserveTokenAmountWei, res.baseTokenAmount.toString()))
       return undefined;
 
     const tkn = new BigNumber(res.baseTokenAmount.toString())

@@ -183,5 +183,5 @@ export const toBigNumber = (
   num: BigNumberEther | string | number | BigNumber
 ): BigNumber => new BigNumber(num.toString());
 
-export const compareIgnoreLastDigit = (a: string, b: string) =>
-  a.substring(0, a.length - 1) === b.substring(0, b.length - 1);
+export const compareLowWei = (a: string, b: string) =>
+  new BigNumber(a).minus(b).abs().c?.length === 1;

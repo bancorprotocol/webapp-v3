@@ -26,13 +26,13 @@ export const WithdrawItem = memo(
       () => lockEndsAt - dayjs(dateNow).unix() <= 0,
       [dateNow, lockEndsAt]
     );
-    const [outputBreakdown, setOutputBreakdown] = useState({
-      tkn: 0,
-      bnt: 0,
-      totalAmount: '0',
-      baseTokenAmount: '0',
-      bntAmount: '0',
-    });
+    const [outputBreakdown, setOutputBreakdown] = useState<{
+      tkn: number;
+      bnt: number;
+      totalAmount: string;
+      baseTokenAmount: string;
+      bntAmount: string;
+    }>();
 
     useAsyncEffect(async () => {
       const res = await fetchWithdrawalRequestOutputBreakdown(
@@ -46,14 +46,15 @@ export const WithdrawItem = memo(
           withdrawalRequest.pool.reserveToken.decimals
         )
       );
-      if (res) setOutputBreakdown(res);
+      setOutputBreakdown(res);
     }, [withdrawalRequest]);
 
     const isBNT = withdrawalRequest.pool.poolDltId === bntToken;
 
-    const defecitAmount = isBNT
-      ? undefined
-      : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
+    const defecitAmount =
+      isBNT || !outputBreakdown
+        ? undefined
+        : shrinkToken(outputBreakdown.baseTokenAmount, token.decimals);
 
     return (
       <div className="flex justify-between items-center">

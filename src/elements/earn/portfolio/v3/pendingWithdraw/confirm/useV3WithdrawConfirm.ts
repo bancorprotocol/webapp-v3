@@ -74,7 +74,7 @@ export const useV3WithdrawConfirm = ({
         withdrawRequest.pool.reserveToken.decimals
       )
     );
-    if (res) setOutputBreakdown(res);
+    setOutputBreakdown(res);
   }, [withdrawRequest, isModalOpen]);
 
   const onModalClose = useCallback(() => {
