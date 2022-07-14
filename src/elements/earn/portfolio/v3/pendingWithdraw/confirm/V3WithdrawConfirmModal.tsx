@@ -51,6 +51,7 @@ export const V3WithdrawConfirmContent = ({
   const {
     ModalApprove,
     token,
+    loadingAmounts,
     withdrawAmounts,
     missingGovTokenBalance,
     txBusy,
@@ -88,6 +89,7 @@ export const V3WithdrawConfirmContent = ({
         amount={
           deficitAmount ? deficitAmount : withdrawRequest.reserveTokenAmount
         }
+        loadingAmount={loadingAmounts}
         usdPrice={token.usdPrice}
         logoURI={token.logoURI}
         label="Amount"

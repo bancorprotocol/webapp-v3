@@ -12,6 +12,7 @@ interface Props {
   logoURI: string;
   label?: string;
   deficitAmount?: string;
+  loadingAmount?: boolean;
 }
 
 export const TokenBalanceLarge = ({
@@ -21,6 +22,7 @@ export const TokenBalanceLarge = ({
   logoURI,
   label,
   deficitAmount,
+  loadingAmount,
 }: Props) => {
   const usdAmount = useMemo(
     () => new BigNumber(amount).times(usdPrice),
@@ -38,7 +40,9 @@ export const TokenBalanceLarge = ({
         />
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
-            <div className="text-[36px]">{prettifyNumber(amount)}</div>
+            <div className="text-[36px]">
+              {loadingAmount ? '...' : prettifyNumber(amount)}
+            </div>
             <span className="mx-10">{symbol}</span>
             {deficitAmount && (
               <PopoverV3

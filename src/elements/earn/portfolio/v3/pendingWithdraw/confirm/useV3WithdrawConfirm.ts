@@ -34,6 +34,7 @@ export const useV3WithdrawConfirm = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
+  const [loadingAmounts, setLoadingAmounts] = useState(false);
   const [withdrawAmounts, setWithdrawAmounts] = useState<{
     tkn: number;
     bnt: number;
@@ -62,7 +63,7 @@ export const useV3WithdrawConfirm = ({
     if (!isModalOpen) {
       return;
     }
-
+    setLoadingAmounts(true);
     const res = await fetchWithdrawalRequestOutputBreakdown(
       withdrawRequest.reserveToken,
       expandToken(
@@ -75,17 +76,12 @@ export const useV3WithdrawConfirm = ({
       )
     );
     setWithdrawAmounts(res);
+    setLoadingAmounts(false);
   }, [withdrawRequest, isModalOpen]);
 
   const onModalClose = useCallback(() => {
     setIsModalOpen(false);
-    setWithdrawAmounts({
-      tkn: 0,
-      bnt: 0,
-      totalAmount: '0',
-      baseTokenAmount: '0',
-      bntAmount: '0',
-    });
+    setWithdrawAmounts(undefined);
   }, [setIsModalOpen]);
 
   const withdraw = useCallback(async () => {
@@ -162,5 +158,6 @@ export const useV3WithdrawConfirm = ({
     handleCancelClick,
     govToken,
     handleWithdrawClick,
+    loadingAmounts,
   };
 };
