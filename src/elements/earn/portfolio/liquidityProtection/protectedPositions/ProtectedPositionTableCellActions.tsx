@@ -6,7 +6,7 @@ import { CellProps } from 'react-table';
 import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { Button } from 'components/button/Button';
-import { WithdrawLiquidityWidget } from '../../../../../modals/WithdrawLiquidityWidget';
+import { WithdrawLiquidityModal } from '../../../../../modals/WithdrawLiquidityModal';
 import { UpgradeBntModal } from '../../../../../modals/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
 import { getAllBntPositionsAndAmount } from 'store/liquidity/liquidity';
@@ -123,7 +123,7 @@ export const ProtectedPositionTableCellActions = (
         groupContent,
         subMenu: () => setIsOpenWithdraw(true),
       })}
-      <WithdrawLiquidityWidget
+      <WithdrawLiquidityModal
         isModalOpen={isOpenWithdraw}
         setIsModalOpen={setIsOpenWithdraw}
       />

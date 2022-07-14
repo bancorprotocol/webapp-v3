@@ -4,15 +4,13 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 import { useMemo } from 'react';
 import { useAppSelector } from 'store';
 
-interface Props {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-}
-
-export const WithdrawLiquidityWidget = ({
+export const WithdrawLiquidityModal = ({
   isModalOpen,
   setIsModalOpen,
-}: Props) => {
+}: {
+  isModalOpen: boolean;
+  setIsModalOpen: (isOpen: boolean) => void;
+}) => {
   const { lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
