@@ -63,8 +63,9 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
 
     if (
       compareWithTolerance(
-        new BigNumber(reserveTokenAmountWei),
-        new BigNumber(res.baseTokenAmount.toString())
+        reserveTokenAmountWei,
+        res.baseTokenAmount.toString(),
+        1
       )
     )
       return undefined;

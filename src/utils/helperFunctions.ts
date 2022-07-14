@@ -184,7 +184,9 @@ export const toBigNumber = (
 ): BigNumber => new BigNumber(num.toString());
 
 export const compareWithTolerance = (
-  a: BigNumber,
-  b: BigNumber,
-  tolerance: number = 1
-) => a.minus(b).abs().isLessThanOrEqualTo(tolerance);
+  a: string,
+  b: string,
+  tolerance: number
+) => {
+  return new BigNumber(a).minus(b).abs().isLessThanOrEqualTo(tolerance);
+};
