@@ -2,7 +2,8 @@ import { sendGTM } from 'services/api/googleTagManager';
 
 export enum DepositEvent {
   DepositPoolClick,
-  DepositClick,
+  DepositAmountView,
+  DepositAmountContinue,
   DepositUnlimitedPopupRequest,
   DepositUnlimitedPopupConfirm,
   DepositWalletRequest,
@@ -13,7 +14,8 @@ export enum DepositEvent {
 
 const depositTxtMap = new Map([
   [DepositEvent.DepositPoolClick, 'Deposit Pool Click'],
-  [DepositEvent.DepositClick, 'Deposit Click'],
+  [DepositEvent.DepositAmountView, 'Deposit Enter Amount View'],
+  [DepositEvent.DepositAmountContinue, 'Deposit Enter Amount Continue'],
   [
     DepositEvent.DepositUnlimitedPopupRequest,
     'Deposit Unlimited Popup Request',

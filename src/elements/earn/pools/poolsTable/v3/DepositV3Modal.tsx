@@ -176,7 +176,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         deposit_access_full_earning: getOnOff(accessFullEarnings),
         deposit_display_currency: getCurrency(),
       });
-      sendDepositEvent(DepositEvent.DepositClick);
+      sendDepositEvent(DepositEvent.DepositAmountContinue);
       onStart();
     } else if (shouldConnect) {
       handleWalletButtonClick();
@@ -234,6 +234,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           deposit_display_currency: getCurrency(),
         });
         sendDepositEvent(DepositEvent.DepositPoolClick);
+        sendDepositEvent(DepositEvent.DepositAmountView);
         setIsOpen(true);
       })}
       <ModalV3

@@ -17,6 +17,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import { PoolEvent, sendPoolEvent } from 'services/api/googleTagManager/pool';
 
 export const PoolsTable = ({
   rewards,
@@ -154,7 +155,13 @@ export const PoolsTable = ({
             pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
-                onClick={onClick}
+                onClick={() => {
+                  sendPoolEvent(PoolEvent.PoolClick, {
+                    pool: cellData.row.original.name,
+                    pool_click_location: 'Main Table',
+                  });
+                  onClick();
+                }}
                 variant={ButtonVariant.Tertiary}
                 size={ButtonSize.ExtraSmall}
               >
