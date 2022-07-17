@@ -13,6 +13,7 @@ export enum WithdrawEvent {
   WithdrawSuccess,
   WithdrawFailed,
   CompleteView,
+  CompleteClose,
   WithdrawRemoveRewardView,
   WithdrawRemoveRewardContinue,
   WithdrawRemoveRewardRequest,
@@ -52,6 +53,7 @@ const withdrawTxtMap = new Map([
   [WithdrawEvent.WithdrawSuccess, 'Withdraw XX Success'],
   [WithdrawEvent.WithdrawFailed, 'Withdraw XX Failed'],
   [WithdrawEvent.CompleteView, 'Withdraw XX Complete View'],
+  [WithdrawEvent.CompleteClose, 'Withdraw XX Complete Close'],
   [WithdrawEvent.WithdrawRemoveRewardView, 'Withdraw FR Remove Reward View'],
   [
     WithdrawEvent.WithdrawRemoveRewardContinue,

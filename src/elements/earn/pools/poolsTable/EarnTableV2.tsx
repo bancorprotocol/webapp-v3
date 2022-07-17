@@ -8,7 +8,7 @@ import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCel
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
-import { PoolsTableSort } from './PoolsTableFilter';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { Pool } from 'services/observables/pools';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
@@ -124,7 +124,7 @@ export const EarnTableV2 = ({
               />
             </div>
           </div>
-          <PoolsTableSort
+          <PoolsTableFilter
             lowVolume={lowVolume}
             setLowVolume={setLowVolume}
             lowLiquidity={lowLiquidity}

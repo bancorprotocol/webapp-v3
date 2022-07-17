@@ -5,7 +5,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableFilter';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 //import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
@@ -190,7 +190,7 @@ export const PoolsTable = ({
                 />
               </div>
             </div>
-            <PoolsTableSort
+            <PoolsTableFilter
               rewards={rewards}
               setRewards={setRewards}
               lowVolume={lowVolume}

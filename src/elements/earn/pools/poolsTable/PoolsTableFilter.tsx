@@ -6,7 +6,7 @@ import { PoolEvent, sendPoolEvent } from 'services/api/googleTagManager/pool';
 import { getOnOff } from 'services/api/googleTagManager';
 import { useState } from 'react';
 
-export const PoolsTableSort = ({
+export const PoolsTableFilter = ({
   rewards,
   setRewards,
   lowVolume,
