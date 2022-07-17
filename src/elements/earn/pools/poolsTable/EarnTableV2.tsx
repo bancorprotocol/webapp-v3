@@ -93,8 +93,7 @@ export const EarnTableV2 = ({
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
         minWidth: 180,
         disableSortBy: true,
-        tooltip:
-          'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',
+        tooltip: 'Estimated APR based on the last 24h trading fees',
       },
       {
         id: 'actions',

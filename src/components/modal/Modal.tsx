@@ -75,7 +75,7 @@ export const Modal = ({
                     </button>
                   )}
                   {titleElement && titleElement}
-                  {title && title}
+                  {title ? title : <div>&nbsp;</div>}
                   <div className="w-[80px] flex justify-end">
                     <button
                       onClick={() => setIsOpen(false)}

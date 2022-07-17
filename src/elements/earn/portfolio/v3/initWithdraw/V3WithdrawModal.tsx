@@ -60,10 +60,10 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
 
   return (
     <ModalFullscreenV3
-      title={`Begin ${lockDurationInDays} day cooldown`}
+      title={step === 4 ? 'Complete Withdraw' : 'Begin instant cooldown'}
       isOpen={isOpen}
       setIsOpen={onClose}
-      titleElement={<SwapSwitch />}
+      titleElement={step !== 4 && <SwapSwitch />}
     >
       {step === 1 && (
         <V3WithdrawStep1
@@ -102,7 +102,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
       {step === 4 && (
         <V3WithdrawStep4
           onClose={onClose}
-          lockDurationInDays={lockDurationInDays}
+          isOpen={isOpen}
           requestId={requestId}
         />
       )}

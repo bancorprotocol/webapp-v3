@@ -1,7 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { calcFiatValue } from 'utils/helperFunctions';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import useAsyncEffect from 'use-async-effect';
+import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
+import { expandToken } from 'utils/formulas';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 interface Props {
   holding: Holding;
@@ -61,6 +65,38 @@ export const useV3WithdrawStep1 = ({
     }
   };
 
+  const [isLoadingWithdrawAmounts, setIsLoadingWithdrawAmounts] =
+    useState(false);
+  const [withdrawAmounts, setWithdrawAmounts] = useState<{
+    tkn: number;
+    bnt: number;
+    totalAmount: string;
+    baseTokenAmount: string;
+    bntAmount: string;
+  }>();
+
+  const fetchWithdrawAmounts = async (tokenBalance: string) => {
+    setIsLoadingWithdrawAmounts(true);
+    const tokenBalanceWei = expandToken(tokenBalance, holding.pool.decimals);
+    const poolTokenBalance =
+      await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+        pool.poolDltId,
+        tokenBalanceWei
+      );
+    const res = await fetchWithdrawalRequestOutputBreakdown(
+      pool.poolDltId,
+      poolTokenBalance.toString(),
+      tokenBalanceWei
+    );
+    setIsLoadingWithdrawAmounts(false);
+    return res;
+  };
+
+  useAsyncEffect(async () => {
+    const res = await fetchWithdrawAmounts(holding.tokenBalance);
+    setWithdrawAmounts(res);
+  }, [pool.poolDltId, holding.poolTokenBalance]);
+
   return {
     handleNextStep,
     token: pool.reserveToken,
@@ -69,5 +105,9 @@ export const useV3WithdrawStep1 = ({
     combinedTokenBalance,
     percentageUnstaked,
     showBreakdown,
+    withdrawAmounts,
+    fetchWithdrawAmounts,
+    isLoadingWithdrawAmounts,
+    setIsLoadingWithdrawAmounts,
   };
 };
