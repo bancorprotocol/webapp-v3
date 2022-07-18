@@ -95,7 +95,7 @@ interface CurrentWithdraw {
   withdraw_pool: string;
   withdraw_blockchain: string;
   withdraw_blockchain_network: string;
-  withdraw_input_type: string;
+  withdraw_input_type?: string;
   withdraw_token: string;
   withdraw_token_amount?: string;
   withdraw_token_amount_usd?: string;
@@ -127,7 +127,7 @@ export const sendWithdrawEvent = (
   sendGTM(data);
 };
 
-enum WithdrawACEvent {
+export enum WithdrawACEvent {
   CTAClick,
   ApproveClick,
   WalletUnlimitedRequest,
@@ -152,7 +152,24 @@ const withdrawACTxtMap = new Map([
 const getWithdrawACText = (event: WithdrawACEvent) =>
   'Withdraw AC ' + withdrawACTxtMap.get(event);
 
-export const sendWithdrawACEvent = () => {};
+export const sendWithdrawACEvent = (
+  event: WithdrawACEvent,
+  unlimitied_selection?: boolean,
+  error?: string
+) => {
+  const data = {
+    event: getWithdrawACText(event),
+    event_properties: {
+      ...currentWithdraw,
+      unlimitied_selection,
+      error,
+    },
+    ga_event: {
+      category: 'Withdraw',
+    },
+  };
+  sendGTM(data);
+};
 
 enum WithdrawBonusEvent {
   CTAClick,

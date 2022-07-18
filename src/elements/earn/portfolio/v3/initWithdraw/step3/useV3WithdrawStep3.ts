@@ -106,10 +106,12 @@ export const useV3WithdrawStep3 = ({
     }
 
     try {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownRequest);
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         poolTokenDltId,
         poolTokenAmountWei
       );
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownConfirm);
       ContractsApi.PendingWithdrawals.read.once(
         'WithdrawalInitiated',
         async (pool, provider, requestId) => {
@@ -124,8 +126,10 @@ export const useV3WithdrawStep3 = ({
         reserveToken.symbol
       );
       await tx.wait();
+      sendWithdrawEvent(WithdrawEvent.WithdrawSuccess);
       initiatedWithdraw.current = true;
     } catch (e: any) {
+      sendWithdrawEvent(WithdrawEvent.WithdrawFailed, undefined, e.message);
       setTxBusy(false);
       console.error('initWithdraw failed', e);
       if (e.code === ErrorCode.DeniedTx) {
