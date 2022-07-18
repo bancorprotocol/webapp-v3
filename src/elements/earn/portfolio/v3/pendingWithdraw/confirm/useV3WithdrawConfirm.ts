@@ -171,7 +171,12 @@ export const useV3WithdrawConfirm = ({
     sendWithdrawACEvent(WithdrawACEvent.CTAClick);
     setTxBusy(true);
     onStart();
-  }, [onStart]);
+  }, [
+    onStart,
+    pool.name,
+    withdrawRequest.pool.reserveToken.usdPrice,
+    withdrawRequest.reserveTokenAmount,
+  ]);
 
   const handleCancelClick = useCallback(async () => {
     onModalClose();
