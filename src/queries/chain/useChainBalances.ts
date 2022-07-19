@@ -2,16 +2,16 @@ import { useQuery } from 'react-query';
 import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 import { useAppSelector } from 'store/index';
 import { ethToken } from 'services/web3/config';
-import { useChainPoolIds } from './chain/useChainPoolIds';
-import { useChainPoolTokenIds } from './chain/useChainPoolTokenIds';
-import { useChainTokenDecimals } from './chain/useChainTokenDecimals';
+import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
+import { useChainPoolTokenIds } from 'queries/chain/useChainPoolTokenIds';
+import { useChainTokenDecimals } from 'queries/chain/useChainTokenDecimals';
 import { shrinkToken } from 'utils/formulas';
 
 interface Props {
   enabled?: boolean;
 }
 
-export const useBalances = ({ enabled = true }: Props = {}) => {
+export const useChainBalances = ({ enabled = true }: Props = {}) => {
   const user = useAppSelector((state) => state.user.account);
   const { data: poolIds } = useChainPoolIds();
   const { data: poolTokenIds } = useChainPoolTokenIds({ enabled });

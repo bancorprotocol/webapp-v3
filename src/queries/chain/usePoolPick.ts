@@ -10,7 +10,7 @@ import { useApiVolume } from 'queries/api/useApiVolume';
 import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
 import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
 import { PoolV3Chain } from './types';
-import { useBalances } from 'queries/useBalances';
+import { useChainBalances } from 'queries/chain/useChainBalances';
 
 export type PoolNew = Omit<
   PoolV3Chain,
@@ -78,7 +78,7 @@ const useFetchers = (select: PoolKey[]) => {
     enabled: set.has('stakedBalance'),
   });
 
-  const balance = useBalances({
+  const balance = useChainBalances({
     enabled: set.has('balance'),
   });
 

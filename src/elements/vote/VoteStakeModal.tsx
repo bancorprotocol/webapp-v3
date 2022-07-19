@@ -47,7 +47,7 @@ const useApproval = (id: string, amount: string, spender: string) => {
     }
 
     const amountWei = expandToken(amount, query.data.decimals);
-    const res = await setApproval(
+    await setApproval(
       id,
       account,
       spender,
@@ -86,7 +86,7 @@ export const VoteStakeModal = ({ isOpen, setIsOpen }: Props) => {
       const balanceWei = expandToken(balance, decimals);
       const tx = await ContractsApi.Governance.write.stake(balanceWei);
       await tx.wait();
-      queryClient.invalidateQueries(['chain']);
+      await queryClient.invalidateQueries(['chain']);
 
       console.log('muh');
     } catch (e: any) {
