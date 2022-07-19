@@ -19,6 +19,8 @@ import {
   BancorPortal__factory,
   Multicall,
   Multicall__factory,
+  Governance,
+  Governance__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3/index';
 import { providers } from 'ethers';
@@ -115,6 +117,11 @@ export abstract class ContractsApi {
   static Multicall = new BancorContract<Multicall>(
     multiCallContract,
     Multicall__factory
+  );
+
+  static Governance = new BancorContract<Governance>(
+    '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
+    Governance__factory
   );
 
   static Token = (tokenAddress: string) => {

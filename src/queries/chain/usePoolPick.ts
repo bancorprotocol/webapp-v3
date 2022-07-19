@@ -1,4 +1,3 @@
-import { PoolV3Chain } from 'queries/useV3ChainData';
 import { useChainTokenSymbol } from 'queries/chain/useChainTokenSymbol';
 import { useChainTokenDecimals } from 'queries/chain/useChainTokenDecimals';
 import { useChainPoolTokenIds } from 'queries/chain/useChainPoolTokenIds';
@@ -10,16 +9,12 @@ import { useApiFees } from 'queries/api/useApiFees';
 import { useApiVolume } from 'queries/api/useApiVolume';
 import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
 import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
+import { PoolV3Chain } from './types';
+import { useBalances } from 'queries/useBalances';
 
 export type PoolNew = Omit<
   PoolV3Chain,
-  | 'name'
-  | 'logoURI'
-  | 'standardRewards'
-  | 'tradingFeePPM'
-  | 'depositingEnabled'
-  | 'tknBalance'
-  | 'bnTknBalance'
+  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM' | 'depositingEnabled'
 >;
 
 export type PoolKey = keyof PoolNew;
@@ -83,6 +78,10 @@ const useFetchers = (select: PoolKey[]) => {
     enabled: set.has('stakedBalance'),
   });
 
+  const balance = useBalances({
+    enabled: set.has('balance'),
+  });
+
   const fetchers: Fetchers = {
     poolDltId: {
       getByID: (id: string) => id,
@@ -101,6 +100,7 @@ const useFetchers = (select: PoolKey[]) => {
     volume,
     stakedBalance,
     latestProgram,
+    balance,
   };
 
   const isLoading = select.some((res) => fetchers[res].isLoading);
@@ -124,15 +124,19 @@ const selectReduce = <T extends PoolKey[]>(
 export const usePoolPick = <T extends PoolKey[]>(select: T) => {
   const { fetchers, isLoading, isFetching, isError } = useFetchers(select);
 
+  const isUndefined = isLoading || isError;
+
   const getOne = (id: string) => ({
-    data: selectReduce(id, select, fetchers),
+    data: !isUndefined ? selectReduce(id, select, fetchers) : undefined,
     isLoading,
     isFetching,
     isError,
   });
 
   const getMany = (ids: string[]) => ({
-    data: ids.map((id) => selectReduce(id, select, fetchers)),
+    data: !isUndefined
+      ? ids.map((id) => selectReduce(id, select, fetchers))
+      : undefined,
     isLoading,
     isFetching,
     isError,

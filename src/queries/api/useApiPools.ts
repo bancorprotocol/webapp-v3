@@ -12,13 +12,18 @@ export const useApiPools = ({ enabled = true }: Props = {}) => {
   const query = useQuery(
     queryKey,
     async () => {
-      const pools = await BancorApi.v3.getPoolsWithBNT();
-      return new Map(pools.map((p) => [p.poolDltId, p]));
+      try {
+        const pools = await BancorApi.v3.getPoolsWithBNT();
+        return new Map(pools.map((p) => [p.poolDltId, p]));
+      } catch (e: any) {
+        throw new Error(
+          'useQuery failed: ' + queryKey.join('-') + ' MSG: ' + e.message
+        );
+      }
     },
     {
       enabled,
       useErrorBoundary: true,
-      onError: (err) => console.error('query failed', queryKey, err),
     }
   );
 

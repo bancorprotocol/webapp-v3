@@ -10,10 +10,7 @@ import {
   setSlippageTolerance,
   setUsdToggle,
 } from 'store/user/user';
-import {
-  Notification,
-  setNotifications,
-} from 'store/notification/notification';
+import { setNotifications } from 'store/notification/notification';
 import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
@@ -30,7 +27,8 @@ import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { FallbackProps } from 'react-error-boundary';
+import * as Sentry from '@sentry/react';
 
 function ErrorFallback({ error }: FallbackProps) {
   return (
@@ -49,9 +47,10 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
+  const pathname = window.location.pathname;
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 
@@ -85,11 +84,14 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    subscribeToObservables(dispatch);
+    if (pathname !== '/vote' && pathname !== '/earn') {
+      subscribeToObservables(dispatch);
+    }
+    console.log(pathname);
 
     const dark = getDarkModeLS();
     dispatch(setDarkMode(dark));
-  }, [dispatch]);
+  }, [dispatch, pathname]);
 
   useEffect(() => {
     setNotificationsLS(notifications);
@@ -102,7 +104,7 @@ export const App = () => {
 
   return (
     // @ts-ignore
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <Sentry.ErrorBoundary fallback={ErrorFallback} showDialog>
       <BrowserRouter>
         <LayoutHeader />
         {unsupportedNetwork ? (
@@ -115,6 +117,6 @@ export const App = () => {
         <MobileBottomNav />
         <NotificationAlerts />
       </BrowserRouter>
-    </ErrorBoundary>
+    </Sentry.ErrorBoundary>
   );
 };

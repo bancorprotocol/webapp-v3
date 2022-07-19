@@ -10,6 +10,18 @@ import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
+
+Sentry.init({
+  dsn: 'https://115b6423a34b41b7815a4256cf99dc32@o1317972.ingest.sentry.io/6571500',
+  integrations: [new BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+});
 
 export const queryClient = new QueryClient({
   defaultOptions: {

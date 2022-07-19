@@ -18,6 +18,7 @@ import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { PoolNew, usePoolPick } from 'queries/chain/usePoolPick';
 
 const poolKeys = [
+  'poolDltId',
   'symbol',
   'fees',
   'tradingLiquidity',
@@ -119,6 +120,7 @@ export const PoolsTable = ({
             buttonElement={() => (
               <div className="flex items-center">
                 <Image
+                  src={`https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/${cellData.row.original.poolDltId.toLowerCase()}.svg`}
                   alt="Pool Logo"
                   className="w-40 h-40 !rounded-full mr-10"
                 />

@@ -4,9 +4,14 @@ import { usePoolPick } from 'queries/chain/usePoolPick';
 export const AdminQueryTest = () => {
   const { data: poolIds } = useChainPoolIds();
 
-  const { getMany, isLoading } = usePoolPick(['fees', 'symbol']);
+  const { getMany } = usePoolPick([
+    'fees',
+    'symbol',
+    'balance',
+    'stakedBalance',
+  ]);
 
-  const { data: all } = getMany(poolIds || []);
+  const { data: all, isLoading } = getMany(poolIds || []);
 
   return (
     <div className={'text-left'}>

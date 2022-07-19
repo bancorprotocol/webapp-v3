@@ -10,13 +10,18 @@ import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 
 export const TopPools = () => {
   const { data: poolIds } = useChainPoolIds();
-  const { getMany } = usePoolPick(['symbol', 'apr', 'latestProgram']);
+  const { getMany } = usePoolPick([
+    'poolDltId',
+    'symbol',
+    'apr',
+    'latestProgram',
+  ]);
 
   const { data, isLoading } = getMany(poolIds || []);
 
   const pools = useMemo(() => {
     return orderBy(
-      data.filter((p) => p.apr && p.apr.apr7d.total > 0),
+      data?.filter((p) => p.apr && p.apr.apr7d.total > 0),
       'apr.apr7d.total',
       'desc'
     ).slice(0, 20);
@@ -38,6 +43,7 @@ export const TopPools = () => {
                         className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                       >
                         <Image
+                          src={`https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/${pool.poolDltId.toLowerCase()}.svg`}
                           alt="Token Logo"
                           className="!rounded-full w-50 h-50"
                         />

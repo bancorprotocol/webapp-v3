@@ -44,6 +44,11 @@ export abstract class QueryKey {
     ...this.chainCore(key),
     'programs',
   ];
+  static chainVoteBalance = (user?: string) => [
+    ...this.chainCore(),
+    'vote',
+    user,
+  ];
   static chainPools = () => [...this.chain(), 'pools'];
   static chainPoolsByID = (key?: string) => [...this.chainPools(), key];
 
