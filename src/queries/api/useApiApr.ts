@@ -58,6 +58,7 @@ export const useApiApr = ({ enabled = true }: Props = {}) => {
         .plus(autoCompoundingApr7d)
         .plus(standardRewardsApr7d)
         .toNumber();
+
       const apr = {
         apr24h: {
           tradingFees: tradingFeesApr24h,

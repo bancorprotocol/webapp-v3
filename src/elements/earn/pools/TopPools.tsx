@@ -5,11 +5,9 @@ import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositD
 import { usePoolPick } from 'queries/usePoolPick';
 import { useMemo } from 'react';
 import { orderBy } from 'lodash';
-import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 // import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {
-  const { data: poolIds } = useChainPoolIds();
   const { getMany } = usePoolPick([
     'poolDltId',
     'symbol',
@@ -17,7 +15,7 @@ export const TopPools = () => {
     'latestProgram',
   ]);
 
-  const { data, isLoading } = getMany(poolIds || []);
+  const { data, isLoading } = getMany();
 
   const pools = useMemo(() => {
     return orderBy(

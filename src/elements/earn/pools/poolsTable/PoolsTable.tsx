@@ -14,7 +14,6 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { PoolNew, usePoolPick } from 'queries/usePoolPick';
 
 const poolKeys = [
@@ -31,6 +30,17 @@ const poolKeys = [
 
 type Pool = Pick<PoolNew, typeof poolKeys[number]>;
 
+interface Props {
+  rewards: boolean;
+  setRewards: Function;
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}
+
 export const PoolsTable = ({
   rewards,
   setRewards,
@@ -40,21 +50,10 @@ export const PoolsTable = ({
   setLowLiquidity,
   lowEarnRate,
   setLowEarnRate,
-}: {
-  rewards: boolean;
-  setRewards: Function;
-  lowVolume: boolean;
-  setLowVolume: Function;
-  lowLiquidity: boolean;
-  setLowLiquidity: Function;
-  lowEarnRate: boolean;
-  setLowEarnRate: Function;
-}) => {
-  const { data: poolIds } = useChainPoolIds();
-
+}: Props) => {
   const { getMany } = usePoolPick([...poolKeys]);
 
-  const { data: pools, isLoading } = getMany(poolIds || []);
+  const { data: pools, isLoading } = getMany();
 
   const [search, setSearch] = useState('');
 

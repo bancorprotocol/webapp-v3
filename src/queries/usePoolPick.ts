@@ -11,6 +11,7 @@ import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
 import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
 import { PoolV3Chain } from 'queries/types';
 import { useChainBalances } from 'queries/chain/useChainBalances';
+import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 
 export type PoolNew = Omit<
   PoolV3Chain,
@@ -122,6 +123,7 @@ const selectReduce = <T extends PoolKey[]>(
   }, {} as PoolReturn<T>);
 
 export const usePoolPick = <T extends PoolKey[]>(select: T) => {
+  const idsQuery = useChainPoolIds();
   const { fetchers, isLoading, isFetching, isError } = useFetchers(select);
 
   const isUndefined = isLoading || isError;
@@ -133,10 +135,11 @@ export const usePoolPick = <T extends PoolKey[]>(select: T) => {
     isError,
   });
 
-  const getMany = (ids: string[]) => ({
-    data: !isUndefined
-      ? ids.map((id) => selectReduce(id, select, fetchers))
-      : undefined,
+  const getMany = (ids = idsQuery.data) => ({
+    data:
+      !isUndefined && ids
+        ? ids.map((id) => selectReduce(id, select, fetchers))
+        : undefined,
     isLoading,
     isFetching,
     isError,
