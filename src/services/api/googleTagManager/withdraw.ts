@@ -171,7 +171,7 @@ export const sendWithdrawACEvent = (
   sendGTM(data);
 };
 
-enum WithdrawBonusEvent {
+export enum WithdrawBonusEvent {
   CTAClick,
   ClaimClick,
   ClaimEarnClick,
@@ -188,10 +188,27 @@ const withdrawBonusTxtMap = new Map([
   [WithdrawBonusEvent.WalletRequest, 'Wallet Request'],
   [WithdrawBonusEvent.WalletConfirm, 'Wallet Confirm'],
   [WithdrawBonusEvent.Success, 'Success'],
-  [WithdrawBonusEvent.Success, 'Failed'],
+  [WithdrawBonusEvent.Failed, 'Failed'],
 ]);
 
 const getWithdrawBonusText = (event: WithdrawBonusEvent) =>
   'Withdraw Bonus ' + withdrawBonusTxtMap.get(event);
 
-export const sendWithdrawBonusEvent = () => {};
+export const sendWithdrawBonusEvent = (
+  event: WithdrawBonusEvent,
+  unlimitied_selection?: boolean,
+  error?: string
+) => {
+  const data = {
+    event: getWithdrawBonusText(event),
+    event_properties: {
+      ...currentWithdraw,
+      unlimitied_selection,
+      error,
+    },
+    ga_event: {
+      category: 'Withdraw',
+    },
+  };
+  sendGTM(data);
+};
