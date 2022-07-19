@@ -149,8 +149,8 @@ export const V3WithdrawConfirmContent = ({
               Withdrawal is temporarily paused!
             </div>
             <div className="ml-[24px] text-secondary">
-              Price in the pool is too volatile, lets wait a few minutes before
-              proceeding.
+              The price in the pool is too volatile. Please wait a few minutes
+              before proceeding.
             </div>
           </div>
         )}
