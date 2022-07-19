@@ -8,8 +8,6 @@ export const Admin = () => {
     <div className="space-y-20 text-center">
       <h1 className="pt-80">Bancor Network Configurator</h1>
 
-      <hr />
-
       <AdminUseMainnet />
 
       <hr />
