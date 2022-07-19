@@ -3,7 +3,7 @@ import {
   WithdrawalRequestRaw,
   WithdrawalSettings,
 } from 'store/portfolio/v3Portfolio.types';
-import { ppmToDec } from 'utils/helperFunctions';
+import { compareWithTolerance, ppmToDec } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
 
 export const fetchPortfolioV3WithdrawalSettings =
@@ -43,7 +43,8 @@ export const fetchPortfolioV3Withdrawals = async (
 
 export const fetchWithdrawalRequestOutputBreakdown = async (
   pool: string,
-  poolTokenAmountWei: string
+  poolTokenAmountWei: string,
+  reserveTokenAmountWei: string
 ): Promise<
   | {
       tkn: number;
@@ -59,10 +60,21 @@ export const fetchWithdrawalRequestOutputBreakdown = async (
       pool,
       poolTokenAmountWei
     );
+
+    if (
+      compareWithTolerance(
+        reserveTokenAmountWei,
+        res.baseTokenAmount.toString(),
+        1
+      )
+    )
+      return undefined;
+
     const tkn = new BigNumber(res.baseTokenAmount.toString())
       .div(res.totalAmount.toString())
       .times(100)
       .toNumber();
+
     const bnt = new BigNumber(100).minus(tkn).toNumber();
     return {
       tkn,

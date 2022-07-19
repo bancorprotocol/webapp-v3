@@ -13,6 +13,7 @@ import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import { bntToken } from 'services/web3/config';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const V3HoldingsItem = ({
   holding,
@@ -56,8 +57,14 @@ export const V3HoldingsItem = ({
   }>();
 
   useAsyncEffect(async () => {
+    const poolTokenBalance =
+      await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+        pool.poolDltId,
+        expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+      );
     const res = await fetchWithdrawalRequestOutputBreakdown(
       holding.pool.poolDltId,
+      poolTokenBalance.toString(),
       expandToken(holding.combinedTokenBalance, holding.pool.decimals)
     );
     setWithdrawAmounts(res);
@@ -106,7 +113,7 @@ export const V3HoldingsItem = ({
           >
             {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
           </PopoverV3>
-          {!isBNT && (
+          {!isBNT && withdrawAmounts && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error z-50" />}
             >
@@ -114,7 +121,7 @@ export const V3HoldingsItem = ({
                 Due to vault deficit, current value is{' '}
                 {prettifyNumber(
                   shrinkToken(
-                    withdrawAmounts?.baseTokenAmount ?? 0,
+                    withdrawAmounts.baseTokenAmount ?? 0,
                     holding.pool.decimals
                   )
                 )}{' '}

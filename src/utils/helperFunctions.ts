@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { BigNumber as BigNumberEther } from 'ethers';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
-import { shrinkToken } from './formulas';
+import { shrinkToken } from 'utils/formulas';
 import dayjs from './dayjs';
 import { Pool } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancorApi/bancorApi.types';
@@ -182,3 +182,11 @@ export const calcTknValue = (
 export const toBigNumber = (
   num: BigNumberEther | string | number | BigNumber
 ): BigNumber => new BigNumber(num.toString());
+
+export const compareWithTolerance = (
+  a: string,
+  b: string,
+  tolerance: number
+) => {
+  return new BigNumber(a).minus(b).abs().isLessThanOrEqualTo(tolerance);
+};

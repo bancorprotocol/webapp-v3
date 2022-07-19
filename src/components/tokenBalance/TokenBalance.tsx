@@ -9,7 +9,7 @@ interface Props {
   usdPrice: string;
   imgUrl: string;
   inverted?: boolean;
-  defecitAmount?: string;
+  deficitAmount?: string;
 }
 export const TokenBalance = ({
   symbol,
@@ -17,7 +17,7 @@ export const TokenBalance = ({
   usdPrice,
   imgUrl,
   inverted,
-  defecitAmount,
+  deficitAmount,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
 
@@ -29,7 +29,7 @@ export const TokenBalance = ({
         className="w-40 h-40 mr-10 !rounded-full"
       />
       <div className={`${inverted ? 'text-right' : ''}`}>
-        <div className="flex items-center text-justify gap-5 text-16">
+        <div className="flex items-center gap-5 text-justify text-16">
           {inverted ? (
             <>
               <div>{prettifyNumber(amount)}</div>
@@ -41,13 +41,13 @@ export const TokenBalance = ({
               <div>{prettifyNumber(amount)}</div>
             </>
           )}
-          {defecitAmount && (
+          {deficitAmount && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error" />}
             >
               <span className="text-secondary">
                 Due to vault deficit, current value is{' '}
-                {prettifyNumber(defecitAmount)} {symbol}
+                {prettifyNumber(deficitAmount)} {symbol}
               </span>
             </PopoverV3>
           )}
