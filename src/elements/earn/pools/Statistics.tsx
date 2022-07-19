@@ -1,8 +1,8 @@
 import './Statistics.css';
-import { useStatistics } from 'queries/useStatistics';
+import { useApiStatistics } from 'queries/api/useApiStatistics';
 
 export const Statistics = () => {
-  const { data: stats } = useStatistics();
+  const { data: stats } = useApiStatistics();
 
   if (!stats) {
     return (

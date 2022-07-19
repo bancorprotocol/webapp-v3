@@ -1,6 +1,6 @@
 import { Button, ButtonSize } from 'components/button/Button';
 import { ModalV3 } from 'components/modal/ModalV3';
-import { usePoolPick } from 'queries/chain/usePoolPick';
+import { usePoolPick } from 'queries/usePoolPick';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { getApproval, setApproval } from 'services/web3/approval';

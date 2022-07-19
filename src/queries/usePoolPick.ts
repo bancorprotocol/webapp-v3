@@ -9,7 +9,7 @@ import { useApiFees } from 'queries/api/useApiFees';
 import { useApiVolume } from 'queries/api/useApiVolume';
 import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
 import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
-import { PoolV3Chain } from './types';
+import { PoolV3Chain } from 'queries/types';
 import { useChainBalances } from 'queries/chain/useChainBalances';
 
 export type PoolNew = Omit<

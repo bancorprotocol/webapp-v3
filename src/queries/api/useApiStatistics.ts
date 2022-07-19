@@ -4,8 +4,10 @@ import BigNumber from 'bignumber.js';
 import { bntToken } from 'services/web3/config';
 import { toBigNumber } from 'utils/helperFunctions';
 import numbro from 'numbro';
-import { useApiDataV2 } from 'queries/useApiDataV2';
+import { useApiV2Welcome } from 'queries/api/useApiV2Welcome';
 import { WelcomeData } from 'services/api/bancorApi/bancorApi.types';
+import { genericFailedNotification } from 'services/notifications/notifications';
+import { useDispatch } from 'react-redux';
 
 export interface Statistic {
   label: string;
@@ -93,12 +95,23 @@ const fetchStatistics = async (
   ];
 };
 
-export const useStatistics = () => {
-  const { data: apiDataV2 } = useApiDataV2();
+export const useApiStatistics = () => {
+  const dispatch = useDispatch();
+  const { data: apiDataV2 } = useApiV2Welcome();
 
   return useQuery<Statistic[]>(
     ['api', 'v3', 'statistics'],
     () => fetchStatistics(apiDataV2!),
-    { enabled: !!apiDataV2 }
+    {
+      enabled: !!apiDataV2,
+      useErrorBoundary: false,
+      onError: (err: any) => {
+        genericFailedNotification(
+          dispatch,
+          `${err.message}`,
+          `Server Error: ${['api', 'v3', 'tokens'].join('->')}`
+        );
+      },
+    }
   );
 };

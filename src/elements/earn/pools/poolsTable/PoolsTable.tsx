@@ -15,7 +15,7 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
-import { PoolNew, usePoolPick } from 'queries/chain/usePoolPick';
+import { PoolNew, usePoolPick } from 'queries/usePoolPick';
 
 const poolKeys = [
   'poolDltId',
