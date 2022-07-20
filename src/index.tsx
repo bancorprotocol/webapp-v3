@@ -8,12 +8,11 @@ import { I18nProvider } from 'i18n/i18nProvider';
 import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from 'queries';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { queryClient } from 'queries';
 
 ReactDOM.render(
-  <QueryClientProvider client={queryClient}>
+  <QueryClientProvider>
     <Provider store={store}>
       <I18nProvider>
         <Web3ReactProvider getLibrary={getLibrary}>
