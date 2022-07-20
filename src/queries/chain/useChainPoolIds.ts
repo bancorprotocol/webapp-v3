@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { QueryKey } from 'queries/queryKeyFactory';
 // import { ethToken } from 'services/web3/config';

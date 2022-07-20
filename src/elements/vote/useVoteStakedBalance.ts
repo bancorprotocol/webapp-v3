@@ -1,5 +1,5 @@
 import { usePoolPick } from 'queries/usePoolPick';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { vBntToken } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useAppSelector } from 'store';

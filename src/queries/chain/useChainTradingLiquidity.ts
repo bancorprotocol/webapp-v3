@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { QueryKey } from 'queries/queryKeyFactory';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { queryOptionsStaleTimeLow } from 'queries/queryOptions';

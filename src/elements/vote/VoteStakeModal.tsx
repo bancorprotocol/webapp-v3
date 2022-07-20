@@ -2,7 +2,7 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { usePoolPick } from 'queries/usePoolPick';
 import { useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { getApproval, setApproval } from 'services/web3/approval';
 import { vBntToken } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';

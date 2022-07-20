@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 import { useAppSelector } from 'store/index';
 import { ethToken } from 'services/web3/config';

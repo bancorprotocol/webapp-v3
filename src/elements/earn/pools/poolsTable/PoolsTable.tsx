@@ -52,7 +52,6 @@ export const PoolsTable = ({
   setLowEarnRate,
 }: Props) => {
   const { getMany } = usePoolPick([...poolKeys]);
-
   const { data: pools, isLoading } = getMany();
 
   const [search, setSearch] = useState('');
@@ -197,7 +196,7 @@ export const PoolsTable = ({
   );
 
   const defaultSort: SortingRule<Pool> = {
-    id: 'apr.apr7d.total',
+    id: 'apr',
     desc: true,
   };
 

@@ -13,7 +13,7 @@ import { getIsAppBusy } from 'store/bancor/bancor';
 import { BancorURL } from 'router/bancorURL.service';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { useIsFetching } from 'react-query';
+import { useIsFetching } from '@tanstack/react-query';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();

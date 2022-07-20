@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import BigNumber from 'bignumber.js';
 import { bntToken } from 'services/web3/config';
