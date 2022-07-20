@@ -1,4 +1,4 @@
-import { usePoolPick } from 'queries/usePoolPick';
+import { usePoolPick } from 'queries';
 import { useState } from 'react';
 import { vBntToken } from 'services/web3/config';
 import { useAppSelector } from 'store';

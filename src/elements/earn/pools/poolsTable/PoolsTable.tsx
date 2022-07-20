@@ -14,7 +14,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { PoolNew, usePoolPick } from 'queries/usePoolPick';
+import { PoolV3Chain, usePoolPick } from 'queries';
 
 const poolKeys = [
   'poolDltId',
@@ -28,7 +28,7 @@ const poolKeys = [
   'latestProgram',
 ] as const;
 
-type Pool = Pick<PoolNew, typeof poolKeys[number]>;
+type Pool = Pick<PoolV3Chain, typeof poolKeys[number]>;
 
 interface Props {
   rewards: boolean;

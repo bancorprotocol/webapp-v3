@@ -13,12 +13,13 @@ import { PoolV3Chain } from 'queries/types';
 import { useChainBalances } from 'queries/chain/useChainBalances';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 
-export type PoolNew = Omit<
+type PoolNew = Omit<
   PoolV3Chain,
   'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM' | 'depositingEnabled'
 >;
 
-export type PoolKey = keyof PoolNew;
+type PoolKey = keyof PoolNew;
+
 type Fetchers = {
   [key in PoolKey]: {
     getByID: (id: string) => PoolNew[key] | undefined;

@@ -2,7 +2,7 @@ import { Ticker } from 'components/ticker/Ticker';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Image } from 'components/image/Image';
 import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
-import { usePoolPick } from 'queries/usePoolPick';
+import { usePoolPick } from 'queries';
 import { useMemo } from 'react';
 import { orderBy } from 'lodash';
 // import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';

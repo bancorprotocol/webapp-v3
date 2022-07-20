@@ -8,19 +8,9 @@ import { I18nProvider } from 'i18n/i18nProvider';
 import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchInterval: 60000,
-      staleTime: 30000,
-      useErrorBoundary: true,
-      // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-    },
-  },
-});
+import { queryClient } from 'queries';
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
