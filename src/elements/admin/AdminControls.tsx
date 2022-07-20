@@ -9,15 +9,15 @@ export const AdminControls = () => {
   const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
 
   return (
-    <div className="flex items-center gap-10 mx-10">
-      <div>
+    <div className="flex items-center justify-center gap-30 mx-10">
+      <div className="flex items-center gap-10">
         Force V3
         <Switch
           selected={forceV3Routing}
           onChange={() => dispatch(setForceV3Routing(!forceV3Routing))}
         />
       </div>
-      <div>
+      <div className="flex items-center gap-10">
         Enable Deposit
         <Switch
           selected={enableDeposit}
