@@ -11,6 +11,8 @@ const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
+const forceV3 = 'forceV3';
+const enableDeposit = 'enableDeposit';
 
 const deprecated_cleanup = ['userTokenLists'];
 
@@ -120,4 +122,22 @@ export const setV2ApiUrlLS = (url?: string) => {
   } else {
     localStorage.removeItem(v2ApiUrl);
   }
+};
+
+export const getEnableDepositLS = (): boolean => {
+  const deposit = localStorage.getItem(enableDeposit);
+  return deposit && JSON.parse(deposit);
+};
+
+export const setEnableDepositLS = (flag: boolean) => {
+  localStorage.setItem(enableDeposit, JSON.stringify(flag));
+};
+
+export const getForceV3LS = (): boolean => {
+  const force = localStorage.getItem(forceV3);
+  return force && JSON.parse(force);
+};
+
+export const setForceV3LS = (flag: boolean) => {
+  localStorage.setItem(forceV3, JSON.stringify(flag));
 };
