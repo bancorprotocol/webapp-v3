@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import ModalFullscreenV3 from 'components/modalFullscreen/modalFullscreenV3';
 import V3WithdrawStep1 from 'elements/earn/portfolio/v3/initWithdraw/step1/V3WithdrawStep1';
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3WithdrawStep3';
@@ -7,6 +7,17 @@ import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3Wit
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
+import {
+  sendWithdrawEvent,
+  setCurrentWithdraw,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+  getFiat,
+} from 'services/api/googleTagManager';
 
 interface Props {
   isOpen: boolean;
@@ -31,6 +42,21 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
     requestId,
     setRequestId,
   } = useV3WithdrawModal({ setIsOpen });
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentWithdraw({
+        withdraw_pool: holding.pool.name,
+        withdraw_blockchain: getBlockchain(),
+        withdraw_blockchain_network: getBlockchainNetwork(),
+        withdraw_input_type: getFiat(isFiat),
+        withdraw_token: holding.pool.name,
+        withdraw_display_currency: getCurrency(),
+      });
+      sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
+      sendWithdrawEvent(WithdrawEvent.WithdrawAmountView);
+    }
+  }, [isOpen, isFiat, holding.pool.name]);
 
   return (
     <ModalFullscreenV3

@@ -5,6 +5,7 @@ import { BancorURL } from 'router/bancorURL.service';
 import { PoolsTable } from 'elements/earn/pools/poolsTable/PoolsTable';
 import { EarnTableV2 } from 'elements/earn/pools/poolsTable/EarnTableV2';
 import { useState } from 'react';
+import { AddLiquidity } from 'pages/earn/pools/AddLiquidity';
 
 export const useRoutesEarn = (): RouteObject[] => {
   const [rewards, setRewards] = useState(false);
@@ -46,9 +47,9 @@ export const useRoutesEarn = (): RouteObject[] => {
         },
       ],
     },
-    // {
-    //   path: BancorURL.addLiquidityV2(':id'),
-    //   element: <AddLiquidity />,
-    // },
+    {
+      path: BancorURL.addLiquidityV2(':id'),
+      element: <AddLiquidity />,
+    },
   ];
 };

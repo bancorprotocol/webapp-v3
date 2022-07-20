@@ -14,7 +14,6 @@ import {
   NotificationType,
 } from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
 import { ModalApprove } from 'elements/modalApprove/modalApprove';
@@ -24,10 +23,9 @@ import {
 } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
-  ConversionEvents,
   sendConversionEvent,
   setCurrentConversion,
-} from 'services/api/googleTagManager';
+} from 'services/api/googleTagManager/conversion';
 import { calculatePercentageChange } from 'utils/formulas';
 import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 import {
@@ -37,6 +35,7 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { Events, getLimitMarket } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -62,7 +61,6 @@ export const SwapLimit = ({
   refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { chainId } = useWeb3React();
   const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -227,7 +225,7 @@ export const SwapLimit = ({
         fromAmount
       );
       if (isApprovalReq) {
-        sendConversionEvent(ConversionEvents.approvePop);
+        sendConversionEvent(Events.approvePop);
         setShowApproveModal(true);
       } else await handleSwap(true, token.address === wethToken);
     } catch (e: any) {
@@ -342,8 +340,7 @@ export const SwapLimit = ({
   const handleSwapClick = () => {
     const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
     setCurrentConversion(
-      'Limit',
-      chainId,
+      getLimitMarket(true),
       tokenPair,
       fromToken.symbol,
       toToken?.symbol,
@@ -356,7 +353,7 @@ export const SwapLimit = ({
       percentage,
       duration.asSeconds().toString()
     );
-    sendConversionEvent(ConversionEvents.click);
+    sendConversionEvent(Events.click);
     handleSwap(false, false, fromToken.address === ethToken);
   };
 

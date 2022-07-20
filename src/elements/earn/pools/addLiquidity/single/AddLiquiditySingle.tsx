@@ -20,25 +20,23 @@ import {
 } from 'services/notifications/notifications';
 import { ApprovalContract } from 'services/web3/approval';
 import {
-  ConversionEvents,
   sendLiquidityApprovedEvent,
   sendLiquidityEvent,
   sendLiquidityFailEvent,
   sendLiquiditySuccessEvent,
   setCurrentLiquidity,
-} from 'services/api/googleTagManager';
-import { useWeb3React } from '@web3-react/core';
+} from 'services/api/googleTagManager/liquidity';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { fetchProtectedPositions } from 'services/web3/protection/positions';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
+import { Events } from 'services/api/googleTagManager';
 
 interface Props {
   pool: Pool;
 }
 
 export const AddLiquiditySingle = ({ pool }: Props) => {
-  const { chainId } = useWeb3React();
   const dispatch = useDispatch();
   const tkn = useAppSelector<Token | undefined>((state: any) =>
     getTokenById(state, pool.reserves[0].address)
@@ -158,7 +156,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const handleCTAClick = useCallback(() => {
     setCurrentLiquidity(
       'Deposit Single',
-      chainId,
       pool.name,
       selectedToken.symbol,
       amount,
@@ -167,17 +164,9 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       undefined,
       fiatToggle
     );
-    sendLiquidityEvent(ConversionEvents.click);
+    sendLiquidityEvent(Events.click);
     onStart();
-  }, [
-    amount,
-    amountUsd,
-    chainId,
-    fiatToggle,
-    onStart,
-    pool.name,
-    selectedToken.symbol,
-  ]);
+  }, [amount, amountUsd, fiatToggle, onStart, pool.name, selectedToken.symbol]);
 
   if (!tkn) {
     goToPage.notFound();

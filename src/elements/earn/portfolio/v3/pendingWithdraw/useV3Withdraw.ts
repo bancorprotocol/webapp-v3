@@ -14,6 +14,10 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
+import {
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
@@ -38,9 +42,11 @@ export const useV3Withdraw = () => {
     }
 
     try {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelWalletRequest);
       const tx = await ContractsApi.BancorNetwork.write.cancelWithdrawal(
         selected.id
       );
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelWalletConfirm);
       withdrawCancelNotification(
         dispatch,
         tx.hash,
@@ -48,8 +54,15 @@ export const useV3Withdraw = () => {
         selected.pool.reserveToken.symbol
       );
       setIsModalCancelOpen(false);
+      await tx.wait();
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelSuccess);
       await updatePortfolioData(dispatch);
     } catch (e: any) {
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawCancelFailed,
+        undefined,
+        e.message
+      );
       setIsModalCancelOpen(false);
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {

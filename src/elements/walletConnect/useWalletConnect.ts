@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
-import { sendWalletEvent, WalletEvents } from 'services/api/googleTagManager';
+import {
+  sendWalletEvent,
+  WalletEvents,
+} from 'services/api/googleTagManager/wallet';
 import { setAutoLoginLS } from 'utils/localStorage';
 import { setSigner } from 'services/web3';
 import { Web3Provider } from '@ethersproject/providers';

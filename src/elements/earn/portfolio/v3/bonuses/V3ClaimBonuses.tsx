@@ -2,6 +2,17 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { V3BonusesModal } from 'elements/earn/portfolio/v3/bonuses/V3BonusesModal';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { prettifyNumber } from 'utils/helperFunctions';
+import {
+  sendWithdrawBonusEvent,
+  setCurrentWithdraw,
+  WithdrawBonusEvent,
+} from 'services/api/googleTagManager/withdraw';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+} from 'services/api/googleTagManager';
+import { pool } from 'store/bancor/pool';
 
 export const V3ClaimBonuses = () => {
   const { setBonusModalOpen, bonusUsdTotal, isLoading } = useV3Bonuses();
@@ -22,7 +33,17 @@ export const V3ClaimBonuses = () => {
             <Button
               variant={ButtonVariant.Tertiary}
               size={ButtonSize.ExtraSmall}
-              onClick={() => setBonusModalOpen(true)}
+              onClick={() => {
+                setCurrentWithdraw({
+                  withdraw_pool: pool.name,
+                  withdraw_blockchain: getBlockchain(),
+                  withdraw_blockchain_network: getBlockchainNetwork(),
+                  withdraw_token: pool.name,
+                  withdraw_display_currency: getCurrency(),
+                });
+                sendWithdrawBonusEvent(WithdrawBonusEvent.CTAClick);
+                setBonusModalOpen(true);
+              }}
               disabled={bonusUsdTotal === 0}
             >
               Claim
