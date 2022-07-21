@@ -54,6 +54,7 @@ export abstract class QueryKey {
 
   static api = () => [...this.v3(), 'api'];
   static apiPools = () => [...this.api(), 'pools'];
+  static apiTokens = () => [...this.api(), 'tokens'];
   static apiBnt = () => [...this.api(), 'bnt'];
   static apiFees = () => [...this.api(), 'fees'];
 }

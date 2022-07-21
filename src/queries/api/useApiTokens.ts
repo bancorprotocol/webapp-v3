@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const useApiTokens = ({ enabled = true }: Props = {}) => {
-  const queryKey = QueryKey.apiPools();
+  const queryKey = QueryKey.apiTokens();
 
   const query = useQuery(
     queryKey,

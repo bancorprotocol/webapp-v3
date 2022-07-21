@@ -13,6 +13,7 @@ import { PoolV3Chain } from 'queries/types';
 import { useChainBalances } from 'queries/chain/useChainBalances';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 import { useApiRate } from 'queries/api/useApiRate';
+import { useChainDepositingEnabled } from 'queries/chain/useChainDepositingEnabled';
 
 type PoolNew = Omit<
   PoolV3Chain,
@@ -57,7 +58,7 @@ const useFetchers = (select: PoolKey[]) => {
     enabled: set.has('tradingEnabled'),
   });
 
-  const depositingEnabled = useChainTradingEnabled({
+  const depositingEnabled = useChainDepositingEnabled({
     enabled: set.has('depositingEnabled'),
   });
 
