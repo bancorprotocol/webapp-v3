@@ -26,7 +26,7 @@ const useApproval = (id: string, amount: string, spender: string) => {
 
   const getAllowance = async () => {
     if (!account || !query.data || query.isLoading) {
-      throw new Error('Error muhhh');
+      throw new Error('Error getAllowance');
     }
     setIsLoadingAllowance(true);
     const amountWei = expandToken(amount, query.data.decimals);
@@ -58,8 +58,10 @@ const useApproval = (id: string, amount: string, spender: string) => {
   };
 
   useAsyncEffect(async () => {
-    await getAllowance();
-  }, [id, amount]);
+    if (account && query.data && !query.isLoading) {
+      await getAllowance();
+    }
+  }, [id, amount, account]);
 
   return { approvalRequired, isLoading, setAllowance };
 };
