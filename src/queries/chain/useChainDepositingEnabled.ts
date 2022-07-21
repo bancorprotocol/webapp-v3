@@ -7,12 +7,21 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 
-export const useChainDepositingEnabled = () => {
+interface Props {
+  enabled?: boolean;
+}
+
+export const useChainDepositingEnabled = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  return useQuery(
+
+  const query = useQuery(
     QueryKey.chainCoreDepositingEnabled(poolIds?.length),
     () =>
       fetchMulticallHelper<boolean>(poolIds!, buildMulticallDepositingEnabled),
-    queryOptionsNoInterval(!!poolIds)
+    queryOptionsNoInterval(!!poolIds && enabled)
   );
+
+  const getByID = (id: string) => query.data?.get(id);
+
+  return { ...query, getByID };
 };

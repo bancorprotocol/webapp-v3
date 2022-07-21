@@ -15,7 +15,7 @@ import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
 
 type PoolNew = Omit<
   PoolV3Chain,
-  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM' | 'depositingEnabled'
+  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM'
 >;
 
 type PoolKey = keyof PoolNew;
@@ -54,6 +54,10 @@ const useFetchers = (select: PoolKey[]) => {
 
   const tradingEnabled = useChainTradingEnabled({
     enabled: set.has('tradingEnabled'),
+  });
+
+  const depositingEnabled = useChainTradingEnabled({
+    enabled: set.has('depositingEnabled'),
   });
 
   const tradingLiquidity = useChainTradingLiquidity({
@@ -96,6 +100,7 @@ const useFetchers = (select: PoolKey[]) => {
     poolTokenDltId,
     programs,
     tradingEnabled,
+    depositingEnabled,
     apr,
     tradingLiquidity,
     fees,
