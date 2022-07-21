@@ -141,3 +141,9 @@ export const getForceV3LS = (): boolean => {
 export const setForceV3LS = (flag: boolean) => {
   localStorage.setItem(forceV3, JSON.stringify(flag));
 };
+
+export const resetTenderly = () => {
+  localStorage.removeItem(tenderlyRpcUrl);
+  localStorage.removeItem(forceV3);
+  localStorage.removeItem(enableDeposit);
+};
