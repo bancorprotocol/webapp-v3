@@ -9,7 +9,6 @@ import { getLibrary } from 'services/web3/wallet/utils';
 import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
 import { QueryClientProvider } from 'queries';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 ReactDOM.render(
   <QueryClientProvider>
@@ -22,7 +21,6 @@ ReactDOM.render(
         </Web3ReactProvider>
       </I18nProvider>
     </Provider>
-    <ReactQueryDevtools initialIsOpen={false} />
   </QueryClientProvider>,
   document.getElementById('root')
 );
