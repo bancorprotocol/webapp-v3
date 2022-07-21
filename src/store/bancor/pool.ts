@@ -4,7 +4,6 @@ import { RootState } from 'store';
 import { isEqual, orderBy } from 'lodash';
 import { createSelectorCreator, defaultMemoize } from 'reselect';
 import { Pool, PoolV3 } from 'services/observables/pools';
-import { bntToken } from 'services/web3/config';
 
 interface PoolState {
   v2Pools: Pool[];
@@ -31,13 +30,6 @@ const poolSlice = createSlice({
     },
   },
 });
-
-export interface TopPool {
-  tknSymbol: string;
-  tknLogoURI: string;
-  apr: number;
-  poolName: string;
-}
 
 export const getPools = createSelector(
   (state: RootState) => state.pool.v2Pools,
@@ -78,61 +70,11 @@ export const getProtectedPools = createSelector(getPools, (pools: Pool[]) =>
   pools.filter((p) => p.isProtected)
 );
 
-export const getTopPools = createSelector(getPools, (pools: Pool[]) => {
-  const filteredPools = pools
-    .filter((p) => p.isProtected && p.liquidity > 100000)
-    .map((p) => {
-      return {
-        tknSymbol: p.reserves[0].symbol,
-        tknLogoURI: p.reserves[0].logoURI,
-        tknApr: p.apr_24h + (p.reserves[0].rewardApr || 0),
-        bntSymbol: p.reserves[1].symbol,
-        bntLogoURI: p.reserves[1].logoURI,
-        bntApr: p.apr_24h + (p.reserves[1].rewardApr || 0),
-        poolName: p.name,
-      };
-    });
-  const winningBntPool = orderBy(filteredPools, 'bntApr', 'desc').slice(0, 1);
-  const topPools: TopPool[] = filteredPools.map((p) => {
-    return {
-      tknSymbol: p.tknSymbol,
-      tknLogoURI: p.tknLogoURI,
-      poolName: p.poolName,
-      apr: p.tknApr,
-    };
-  });
-  if (winningBntPool.length === 1) {
-    topPools.push({
-      tknSymbol: winningBntPool[0].bntSymbol,
-      tknLogoURI: winningBntPool[0].bntLogoURI,
-      apr: winningBntPool[0].bntApr,
-      poolName: winningBntPool[0].poolName,
-    });
-  }
-  return orderBy(topPools, 'apr', 'desc').slice(0, 20);
-});
-
-export const getTopPoolsV3 = createSelector(
-  (state: RootState) => state.pool.v3Pools,
-  (pools: PoolV3[]) => {
-    return orderBy(
-      pools.filter((p) => p.apr7d.total > 0),
-      'apr7d.total',
-      'desc'
-    ).slice(0, 20);
-  }
-);
-
 export const getIsV3Exist = createSelector(
   [(state: RootState) => getPoolsV3Map(state), (_: any, id: string) => id],
   (pools: Map<string, PoolV3>, id): boolean => {
     return !!pools.get(id);
   }
-);
-
-export const getBNTPoolV3 = createSelector(
-  (state: RootState) => getPoolsV3Map(state),
-  (pools: Map<string, PoolV3>): PoolV3 | undefined => pools.get(bntToken)
 );
 
 export interface SelectedPool {
