@@ -13,12 +13,14 @@ interface Props {
 
 export const useChainBalances = ({ enabled = true }: Props = {}) => {
   const user = useAppSelector((state) => state.user.account);
-  const { data: poolIds } = useChainPoolIds();
-  const { data: poolTokenIds } = useChainPoolTokenIds({ enabled });
-  const { data: decimals } = useChainTokenDecimals({ enabled });
+  const poolIds = useChainPoolIds();
+  const poolTokenIds = useChainPoolTokenIds({ enabled });
+  const decimals = useChainTokenDecimals({ enabled });
 
-  const tknIds = poolIds ?? [];
-  const bnTknIds = poolTokenIds ? Array.from(poolTokenIds.values()) : [];
+  const tknIds = poolIds.data ?? [];
+  const bnTknIds = poolTokenIds.data
+    ? Array.from(poolTokenIds.data.values())
+    : [];
 
   const query = useQuery(
     ['chain', 'balances', user],
@@ -28,20 +30,31 @@ export const useChainBalances = ({ enabled = true }: Props = {}) => {
         user!
       ),
     {
-      enabled: !!user && !!poolIds && !!poolTokenIds && !!decimals && enabled,
+      enabled:
+        !!user &&
+        !!poolIds.data &&
+        !!poolTokenIds.data &&
+        !!decimals.data &&
+        enabled,
       useErrorBoundary: false,
     }
   );
 
   const getByID = (id: string) => {
     if (!user) return undefined;
-    const poolTokenId = poolTokenIds?.get(id) ?? '';
-    const dec = decimals?.get(id) ?? 0;
+    const poolTokenId = poolTokenIds.data?.get(id) ?? '';
+    const dec = decimals.data?.get(id) ?? 0;
     return {
       tkn: shrinkToken(query.data?.get(id) ?? '0', dec),
       bnTkn: shrinkToken(query.data?.get(poolTokenId) ?? '0', dec),
     };
   };
 
-  return { ...query, getByID, isLoading: query.isLoading && query.isFetching };
+  const queries = [poolIds, poolTokenIds, decimals, query];
+
+  const isLoading = queries.some((q) => q.isLoading);
+  const isFetching = queries.some((q) => q.isFetching);
+  const isError = queries.some((q) => q.isError);
+
+  return { ...query, getByID, isLoading, isFetching, isError };
 };

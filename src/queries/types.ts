@@ -31,7 +31,6 @@ export interface PoolV3Chain {
   tradingEnabled: boolean;
   depositingEnabled: boolean;
   programs: RewardsProgramRaw[];
-  logoURI: string;
   rate?: PriceDictionary;
   rate24hAgo?: PriceDictionary;
   latestProgram?: RewardsProgramRaw;

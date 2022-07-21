@@ -17,7 +17,7 @@ import { useChainDepositingEnabled } from 'queries/chain/useChainDepositingEnabl
 
 type PoolNew = Omit<
   PoolV3Chain,
-  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM' | 'rate24hAgo'
+  'name' | 'standardRewards' | 'tradingFeePPM' | 'rate24hAgo'
 >;
 
 type PoolKey = keyof PoolNew;
