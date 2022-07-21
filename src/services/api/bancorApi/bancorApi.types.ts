@@ -79,6 +79,14 @@ export interface PriceDictionary {
   tkn: string;
 }
 
+export interface PriceDictionaryV3 {
+  bnt?: string;
+  usd?: string;
+  eur?: string;
+  eth?: string;
+  tkn: string;
+}
+
 export interface APIPoolV3 {
   poolDltId: string;
   poolTokenDltId: string;

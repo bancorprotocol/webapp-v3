@@ -1,12 +1,9 @@
-import { Token } from 'services/observables/tokens';
 import { useCallback, useMemo, useState } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
-import { PoolV3 } from 'services/observables/pools';
 // import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -17,6 +14,32 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import { PoolV3Chain, usePoolPick } from 'queries';
+
+const poolKeys = [
+  'poolDltId',
+  'symbol',
+  'fees',
+  'tradingLiquidity',
+  'apr',
+  'volume',
+  'tradingEnabled',
+  'stakedBalance',
+  'latestProgram',
+] as const;
+
+type Pool = Pick<PoolV3Chain, typeof poolKeys[number]>;
+
+interface Props {
+  rewards: boolean;
+  setRewards: Function;
+  lowVolume: boolean;
+  setLowVolume: Function;
+  lowLiquidity: boolean;
+  setLowLiquidity: Function;
+  lowEarnRate: boolean;
+  setLowEarnRate: Function;
+}
 
 export const PoolsTable = ({
   rewards,
@@ -27,76 +50,75 @@ export const PoolsTable = ({
   setLowLiquidity,
   lowEarnRate,
   setLowEarnRate,
-}: {
-  rewards: boolean;
-  setRewards: Function;
-  lowVolume: boolean;
-  setLowVolume: Function;
-  lowLiquidity: boolean;
-  setLowLiquidity: Function;
-  lowEarnRate: boolean;
-  setLowEarnRate: Function;
-}) => {
-  const pools = useAppSelector((state) => state.pool.v3Pools);
+}: Props) => {
+  const { getMany } = usePoolPick([...poolKeys]);
+  const { data: pools, isLoading } = getMany();
 
   const [search, setSearch] = useState('');
 
-  const data = useMemo<PoolV3[]>(() => {
-    return pools.filter(
-      (p) =>
-        p.name &&
-        p.name.toLowerCase().includes(search.toLowerCase()) &&
-        (lowVolume || Number(p.volume24h.usd) > 5000) &&
-        (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr7d.total > 0.15)
-    );
-  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
+  const data = useMemo(() => {
+    return pools && !isLoading
+      ? pools.filter(
+          (p) =>
+            p.symbol.toLowerCase().includes(search.toLowerCase()) &&
+            (lowVolume || Number(p.volume?.volume24h?.usd) > 5000) &&
+            (lowLiquidity || Number(p.tradingLiquidity.TKN.usd) > 50000) &&
+            (lowEarnRate || (p.apr?.apr7d?.total ?? 0) > 0.15)
+        )
+      : [];
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate, isLoading]);
 
   const toolTip = useCallback(
-    (row: PoolV3) => (
+    (row: Pool) => (
       <div className="w-[150px] text-black-medium dark:text-white-medium">
-        <div className="flex items-center justify-between">
-          Liquidity
-          <div>
-            {toBigNumber(row.stakedBalance.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.stakedBalance.usd, true)}
+        {row.stakedBalance.usd && (
+          <div className="flex items-center justify-between">
+            Liquidity
+            <div>
+              {toBigNumber(row.stakedBalance.usd).isZero()
+                ? 'New'
+                : prettifyNumber(row.stakedBalance.usd, true)}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between">
-          Volume 7d
-          <div>
-            {toBigNumber(row.volume7d.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.volume7d.usd, true)}
+        )}
+        {row.volume?.volume7d?.usd && (
+          <div className="flex items-center justify-between">
+            Volume 7d
+            <div>
+              {toBigNumber(row.volume.volume7d.usd).isZero()
+                ? 'New'
+                : prettifyNumber(row.volume.volume7d.usd, true)}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center justify-between">
-          Fees 7d
-          <div>
-            {toBigNumber(row.fees7d.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.fees7d.usd, true)}
+        )}
+        {row.fees?.fees7d.usd && (
+          <div className="flex items-center justify-between">
+            Fees 7d
+            <div>
+              {toBigNumber(row.fees.fees7d.usd).isZero()
+                ? 'New'
+                : prettifyNumber(row.fees.fees7d.usd, true)}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     ),
     []
   );
 
-  const columns = useMemo<TableColumn<PoolV3>[]>(
+  const columns = useMemo<TableColumn<Pool>[]>(
     () => [
       {
         id: 'name',
         Header: 'Name',
-        accessor: 'name',
+        accessor: 'symbol',
         Cell: (cellData) => (
           <PopoverV3
             children={toolTip(cellData.row.original)}
             buttonElement={() => (
               <div className="flex items-center">
                 <Image
-                  src={cellData.row.original.reserveToken.logoURI}
+                  src={`https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/${cellData.row.original.poolDltId.toLowerCase()}.svg`}
                   alt="Pool Logo"
                   className="w-40 h-40 !rounded-full mr-10"
                 />
@@ -111,13 +133,16 @@ export const PoolsTable = ({
       {
         id: 'apr',
         Header: 'Earn',
-        accessor: 'apr7d',
+        accessor: 'apr',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
-            {toBigNumber(cellData.value.total).isZero() &&
-            cellData.row.original.tradingEnabled === false
-              ? 'New'
-              : `${cellData.value.total.toFixed(2)}%`}
+            {cellData.value
+              ? toBigNumber(cellData.value.apr7d.total).isZero() &&
+                !cellData.row.original.tradingEnabled
+                ? 'New'
+                : `${cellData.value.apr7d.total.toFixed(2)}%`
+              : 'N/A'}
+            {}
 
             {cellData.row.original.latestProgram?.isActive && (
               <>
@@ -139,7 +164,7 @@ export const PoolsTable = ({
           </div>
         ),
         sortType: (a, b) =>
-          sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
+          sortNumbersByKey(a.original, b.original, ['apr', 'apr7d', 'total']),
         tooltip:
           'Estimated APR based on the last 7d trading fees, auto compounding and standard rewards',
         minWidth: 100,
@@ -148,7 +173,7 @@ export const PoolsTable = ({
       {
         id: 'actions',
         Header: '',
-        accessor: 'poolDltId',
+        accessor: 'symbol',
         Cell: (_) => (
           <DepositDisabledModal
             renderButton={(onClick) => (
@@ -170,7 +195,7 @@ export const PoolsTable = ({
     [toolTip]
   );
 
-  const defaultSort: SortingRule<Token> = {
+  const defaultSort: SortingRule<Pool> = {
     id: 'apr',
     desc: true,
   };
@@ -200,17 +225,19 @@ export const PoolsTable = ({
               setLowEarnRate={setLowEarnRate}
             />
           </div>
-          <DataTable<PoolV3>
+          <DataTable<Pool>
             data={data}
             columns={columns}
             defaultSort={defaultSort}
-            isLoading={!pools.length}
+            isLoading={isLoading}
             search={search}
           />
         </div>
       </div>
       <div className="hidden col-span-4 space-y-40 lg:block">
-        <Statistics />
+        <section className="content-block p-20">
+          <Statistics />
+        </section>
         <TopPools />
       </div>
     </section>

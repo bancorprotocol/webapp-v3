@@ -1,7 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import { Tokens } from 'pages/Tokens';
 import { Fiat } from 'pages/Fiat';
-import { Vote } from 'pages/Vote';
+import { Vote2 } from 'pages/Vote2';
 import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
@@ -34,7 +34,7 @@ export const useRoutesMain = (): RouteObject[] => {
     },
     {
       path: BancorURL.vote,
-      element: <Vote />,
+      element: <Vote2 />,
     },
     {
       path: BancorURL.termsOfUse,

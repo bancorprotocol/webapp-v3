@@ -676,12 +676,13 @@ export const rewardsClaimedNotification = (
 
 export const genericFailedNotification = (
   dispatch: any,
-  msg = 'Unknown error occurred'
+  msg = 'Unknown error occurred',
+  title = 'Transaction Failed'
 ) =>
   showNotification(
     {
       type: NotificationType.error,
-      title: 'Transaction Failed',
+      title,
       msg: `${msg} - Please try again or contact support`,
     },
     dispatch

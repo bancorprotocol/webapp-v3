@@ -10,10 +10,7 @@ import {
   setSlippageTolerance,
   setUsdToggle,
 } from 'store/user/user';
-import {
-  Notification,
-  setNotifications,
-} from 'store/notification/notification';
+import { setNotifications } from 'store/notification/notification';
 import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
@@ -39,9 +36,10 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
+  const pathname = window.location.pathname;
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 
@@ -75,11 +73,14 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    subscribeToObservables(dispatch);
+    if (pathname !== '/vote' && pathname !== '/earn') {
+      subscribeToObservables(dispatch);
+    }
+    console.log(pathname);
 
     const dark = getDarkModeLS();
     dispatch(setDarkMode(dark));
-  }, [dispatch]);
+  }, [dispatch, pathname]);
 
   useEffect(() => {
     setNotificationsLS(notifications);

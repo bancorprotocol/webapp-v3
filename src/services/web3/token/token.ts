@@ -14,6 +14,9 @@ export const fetchTokenBalanceMulticall = async (
   tokenIds: string[],
   user: string
 ): Promise<Map<string, string>> => {
+  if (!user || tokenIds.length === 0) {
+    throw new Error('Multicall Error no user provided');
+  }
   const calls = tokenIds.map((tokenId) => buildTokenBalanceCall(tokenId, user));
   const res = await multicall(calls);
   if (!res || !res.length) {
