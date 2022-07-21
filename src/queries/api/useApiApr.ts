@@ -16,7 +16,7 @@ export const useApiApr = ({ enabled = true }: Props = {}) => {
 
   const data = new Map(
     poolIds.data?.map((id) => {
-      const apiPool = apiPools.getApiPoolByID(id);
+      const apiPool = apiPools.getByID(id);
       const programs = programsMap.data?.get(id);
 
       if (!apiPool) {

@@ -1,4 +1,5 @@
 import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
+import { PriceDictionary } from 'services/api/bancorApi/bancorApi.types';
 
 export interface PriceDictionaryV3 {
   bnt?: string;
@@ -31,6 +32,8 @@ export interface PoolV3Chain {
   depositingEnabled: boolean;
   programs: RewardsProgramRaw[];
   logoURI: string;
+  rate?: PriceDictionary;
+  rate24hAgo?: PriceDictionary;
   latestProgram?: RewardsProgramRaw;
   balance?: {
     tkn: string;

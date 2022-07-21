@@ -6,15 +6,15 @@ interface Props {
   enabled?: boolean;
 }
 
-export const useApiPools = ({ enabled = true }: Props = {}) => {
+export const useApiTokens = ({ enabled = true }: Props = {}) => {
   const queryKey = QueryKey.apiPools();
 
   const query = useQuery(
     queryKey,
     async () => {
       try {
-        const pools = await BancorApi.v3.getPoolsWithBNT();
-        return new Map(pools.map((p) => [p.poolDltId, p]));
+        const pools = await BancorApi.v3.getTokens();
+        return new Map(pools.map((t) => [t.dltId, t]));
       } catch (e: any) {
         throw new Error(
           'useQuery failed: ' + queryKey.join('-') + ' MSG: ' + e.message
@@ -27,7 +27,7 @@ export const useApiPools = ({ enabled = true }: Props = {}) => {
     }
   );
 
-  const getByID = (id: string) => query.data?.get(id);
+  const getApiPoolByID = (id: string) => query.data?.get(id);
 
-  return { ...query, getByID };
+  return { ...query, getApiPoolByID };
 };

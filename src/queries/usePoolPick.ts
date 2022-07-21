@@ -12,10 +12,11 @@ import { useChainLatestProgram } from 'queries/chain/useChainLatestProgram';
 import { PoolV3Chain } from 'queries/types';
 import { useChainBalances } from 'queries/chain/useChainBalances';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
+import { useApiRate } from 'queries/api/useApiRate';
 
 type PoolNew = Omit<
   PoolV3Chain,
-  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM'
+  'name' | 'logoURI' | 'standardRewards' | 'tradingFeePPM' | 'rate24hAgo'
 >;
 
 type PoolKey = keyof PoolNew;
@@ -80,6 +81,10 @@ const useFetchers = (select: PoolKey[]) => {
     enabled: set.has('volume'),
   });
 
+  const rate = useApiRate({
+    enabled: set.has('rate'),
+  });
+
   const stakedBalance = useApiStakedBalance({
     enabled: set.has('stakedBalance'),
   });
@@ -108,6 +113,7 @@ const useFetchers = (select: PoolKey[]) => {
     stakedBalance,
     latestProgram,
     balance,
+    rate,
   };
 
   const isLoading = select.some((res) => fetchers[res].isLoading);

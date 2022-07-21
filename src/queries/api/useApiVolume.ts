@@ -11,7 +11,7 @@ export const useApiVolume = ({ enabled = true }: Props = {}) => {
 
   const data = new Map(
     poolIds.data?.map((id) => {
-      const apiPool = apiPools.getApiPoolByID(id);
+      const apiPool = apiPools.getByID(id);
 
       if (!apiPool) {
         return [id, undefined];
