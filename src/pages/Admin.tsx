@@ -2,6 +2,7 @@ import { AdminTknData } from 'elements/admin/AdminTknData';
 import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
 import { AdminUseFork } from 'elements/admin/AdminUseFork';
 import { AdminControls } from 'elements/admin/AdminControls';
+import { isForkAvailable } from 'services/web3/config';
 
 export const Admin = () => {
   return (
@@ -14,9 +15,12 @@ export const Admin = () => {
 
       <AdminUseFork />
 
-      <hr />
-
-      <AdminControls />
+      {isForkAvailable && (
+        <>
+          <hr />
+          <AdminControls />
+        </>
+      )}
 
       <hr />
 

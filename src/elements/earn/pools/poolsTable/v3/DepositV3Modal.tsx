@@ -30,6 +30,7 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { DepositDisabledModal } from './DepositDisabledModal';
 
 interface Props {
   pool: PoolV3;
@@ -39,6 +40,7 @@ interface Props {
 const REWARDS_EXTRA_GAS = 130_000;
 
 export const DepositV3Modal = ({ pool, renderButton }: Props) => {
+  const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
@@ -155,6 +157,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   }, [accessFullEarnings, eth, isOpen]);
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
+
+  if (!enableDeposit)
+    return <DepositDisabledModal renderButton={renderButton} />;
 
   return (
     <>

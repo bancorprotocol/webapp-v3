@@ -7,8 +7,6 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -17,6 +15,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import { DepositV3Modal } from './v3/DepositV3Modal';
 
 export const PoolsTable = ({
   rewards,
@@ -148,8 +147,9 @@ export const PoolsTable = ({
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (_) => (
-          <DepositDisabledModal
+        Cell: (cellData) => (
+          <DepositV3Modal
+            pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
                 onClick={onClick}

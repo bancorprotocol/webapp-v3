@@ -7,12 +7,13 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import 'swiper/css';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
   return (
-    <DepositDisabledModal
+    <DepositV3Modal
+      pool={pool}
       renderButton={(onClick) => (
         <button
           onClick={onClick}
