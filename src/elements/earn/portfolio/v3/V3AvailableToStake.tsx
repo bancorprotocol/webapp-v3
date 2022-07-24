@@ -7,35 +7,32 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import 'swiper/css';
+import { useDispatch } from 'react-redux';
+import { setDisableDepositOpen } from 'store/modals/modals';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
+  const dispatch = useDispatch();
+
   return (
-    <DepositDisabledModal
-      renderButton={(onClick) => (
-        <button
-          onClick={onClick}
-          className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
-        >
-          <TokenBalance
-            symbol={token.symbol}
-            amount={token.balance!}
-            usdPrice={token.usdPrice!}
-            imgUrl={token.logoURI}
-          />
-          <div>
-            <div className="mb-5 text-secondary">Earn</div>
-            <div className="flex">
-              <span className="text-[22px]">
-                {pool.apr7d.total.toFixed(2)}%
-              </span>
-              <IconArrow className="w-10 rotate-[90deg] ml-10" />
-            </div>
-          </div>
-        </button>
-      )}
-    />
+    <button
+      onClick={() => dispatch(setDisableDepositOpen(true))}
+      className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
+    >
+      <TokenBalance
+        symbol={token.symbol}
+        amount={token.balance!}
+        usdPrice={token.usdPrice!}
+        imgUrl={token.logoURI}
+      />
+      <div>
+        <div className="mb-5 text-secondary">Earn</div>
+        <div className="flex">
+          <span className="text-[22px]">{pool.apr7d.total.toFixed(2)}%</span>
+          <IconArrow className="w-10 rotate-[90deg] ml-10" />
+        </div>
+      </div>
+    </button>
   );
 };
 

@@ -9,15 +9,16 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { useDispatch } from 'react-redux';
+import { setDisableDepositOpen } from 'store/modals/modals';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding>();
+  const dispatch = useDispatch();
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
@@ -73,15 +74,11 @@ export const V3EarningTable = () => {
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <div className="flex items-center">
-            <DepositDisabledModal
-              renderButton={(onClick) => (
-                <V3EarningTableMenu
-                  holding={cell.row.original}
-                  handleDepositClick={onClick}
-                  setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                  setHoldingToWithdraw={setHoldingToWithdraw}
-                />
-              )}
+            <V3EarningTableMenu
+              holding={cell.row.original}
+              handleDepositClick={() => dispatch(setDisableDepositOpen(true))}
+              setIsWithdrawModalOpen={setIsWithdrawModalOpen}
+              setHoldingToWithdraw={setHoldingToWithdraw}
             />
           </div>
         ),
@@ -90,7 +87,7 @@ export const V3EarningTable = () => {
         disableSortBy: true,
       },
     ],
-    []
+    [dispatch]
   );
 
   const defaultSort: SortingRule<Holding> = {

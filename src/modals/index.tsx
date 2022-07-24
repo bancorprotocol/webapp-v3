@@ -3,9 +3,16 @@ import { Fragment, ReactNode } from 'react';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { CreatePoolModal } from './CreatePoolModal';
+import { DepositDisabledModal } from './DepositDisabledModal';
 
 export const Modals = () => {
-  return <></>;
+  return (
+    <>
+      <CreatePoolModal />
+      <DepositDisabledModal />
+    </>
+  );
 };
 
 export const Modal = ({

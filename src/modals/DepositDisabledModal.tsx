@@ -1,20 +1,18 @@
 import { Modal } from 'modals';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
+import { setDisableDepositOpen } from 'store/modals/modals';
 
-export const DepositDisabledModal = ({
-  renderButton,
-}: {
-  renderButton: (onClick: () => void) => React.ReactNode;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const DepositDisabledModal = () => {
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) => state.modals.disableDepositOpen);
 
-  const onClose = async () => {
-    setIsOpen(false);
+  const onClose = () => {
+    dispatch(setDisableDepositOpen(false));
   };
 
   return (
     <>
-      {renderButton(() => setIsOpen(true))}
       <Modal setIsOpen={onClose} isOpen={isOpen} large>
         <div className="flex flex-col items-center gap-20 p-20 pb-40 text-center">
           <div className="text-3xl mb-30">Deposits are temporarily paused.</div>

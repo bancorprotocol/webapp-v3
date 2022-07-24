@@ -7,8 +7,6 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableSort } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'modals/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -17,6 +15,8 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import { useDispatch } from 'react-redux';
+import { setDisableDepositOpen } from 'store/modals/modals';
 
 export const PoolsTable = ({
   rewards,
@@ -38,6 +38,7 @@ export const PoolsTable = ({
   setLowEarnRate: Function;
 }) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
+  const dispatch = useDispatch();
 
   const [search, setSearch] = useState('');
 
@@ -150,24 +151,20 @@ export const PoolsTable = ({
         Header: '',
         accessor: 'poolDltId',
         Cell: (_) => (
-          <DepositDisabledModal
-            renderButton={(onClick) => (
-              <Button
-                onClick={onClick}
-                variant={ButtonVariant.Tertiary}
-                size={ButtonSize.ExtraSmall}
-              >
-                Deposit
-              </Button>
-            )}
-          />
+          <Button
+            onClick={() => dispatch(setDisableDepositOpen(true))}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.ExtraSmall}
+          >
+            Deposit
+          </Button>
         ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
       },
     ],
-    [toolTip]
+    [toolTip, dispatch]
   );
 
   const defaultSort: SortingRule<Token> = {
