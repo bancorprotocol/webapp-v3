@@ -1,5 +1,5 @@
 {
-  "name": "webapp-v2",
+  "name": "webapp-v3",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -56,10 +56,10 @@
     "@storybook/addon-actions": "6.5.9",
     "@storybook/addon-essentials": "6.5.9",
     "@storybook/addon-links": "6.5.9",
-    "@storybook/node-logger": "6.5.9",
-    "@storybook/preset-create-react-app": "4.1.2",
     "@storybook/builder-webpack5": "6.5.9",
     "@storybook/manager-webpack5": "6.5.9",
+    "@storybook/node-logger": "6.5.9",
+    "@storybook/preset-create-react-app": "4.1.2",
     "@storybook/react": "6.5.9",
     "@typechain/ethers-v5": "^8.0.2",
     "@types/json-bigint": "^1.0.0",
@@ -67,6 +67,7 @@
     "@types/p-queue": "^3.2.1",
     "@types/react-table": "^7.7.2",
     "autoprefixer": "^9",
+    "bundlewatch": "^0.3.3",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
@@ -154,5 +155,13 @@
   "resolutions": {
     "babel-loader": "8.1.0",
     "react-error-overlay": "6.0.9"
+  },
+  "bundlewatch": {
+    "files": [
+      {
+        "path": "build/static/**/*.{js,css,svg}",
+        "maxSize": "750kB"
+      }
+    ]
   }
 }
