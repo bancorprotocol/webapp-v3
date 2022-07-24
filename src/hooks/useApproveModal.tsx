@@ -5,7 +5,7 @@ import {
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
-import { ModalApproveNew } from 'modals/NewApproveModal';
+import { ApproveModal } from 'modals/ApproveModal';
 import {
   addNotification,
   NotificationType,
@@ -156,7 +156,7 @@ export const useApproveModal = (
     }
   };
 
-  const ModalApprove = ModalApproveNew({
+  const ModalApprove = ApproveModal({
     isOpen,
     setIsOpen,
     amount: tokens[tokenIndex].amount,

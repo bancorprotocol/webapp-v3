@@ -1,121 +1,63 @@
-import { ReactComponent as IconLock } from 'assets/icons/lock.svg';
-import {
-  addNotification,
-  NotificationType,
-} from 'store/notification/notification';
-import {
-  ApprovalContract,
-  setNetworkContractApproval,
-} from 'services/web3/approval';
-import { useDispatch } from 'react-redux';
 import { Token } from 'services/observables/tokens';
-import { web3 } from 'services/web3';
-import { wait } from 'utils/pureFunctions';
-import { sendConversionApprovedEvent } from 'services/api/googleTagManager';
-import { ErrorCode } from 'services/web3/types';
 import { Button, ButtonSize } from 'components/button/Button';
+import { Image } from 'components/image/Image';
 import { Modal } from 'modals';
 
 export const ApproveModal = ({
-  setIsOpen,
   isOpen,
+  setIsOpen,
+  setApproval,
+  token,
   amount,
-  fromToken,
-  handleApproved,
-  waitForApproval,
-  contract,
+  isLoading,
+  onClose,
 }: {
-  setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  setApproval: Function;
+  token: Token;
   amount: string;
-  fromToken?: Token;
-  handleApproved: Function;
-  waitForApproval?: boolean;
-  contract: ApprovalContract;
+  isLoading: boolean;
+  onClose?: Function;
 }) => {
-  const dispatch = useDispatch();
-
-  if (!fromToken) return null;
-
-  // Wait for user to choose approval and proceed with approval based on user selection
-  // Prop amount is UNDEFINED when UNLIMITED
-  const approve = async (amount?: string) => {
-    try {
-      setIsOpen(false);
-      const isUnlimited = amount === undefined;
-      sendConversionApprovedEvent(isUnlimited);
-      const txHash = await setNetworkContractApproval(
-        fromToken,
-        contract,
-        amount
-      );
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Approve ${fromToken.symbol} is pending confirmation`,
-          updatedInfo: {
-            successTitle: 'Transaction Confirmed',
-            successMsg: `${amount || 'Unlimited'} approval set for ${
-              fromToken.symbol
-            }`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
-          },
-          txHash,
-        })
-      );
-      if (waitForApproval) {
-        let tx = null;
-        while (tx === null)
-          try {
-            await wait(2000);
-            tx = await web3.provider.getTransactionReceipt(txHash);
-          } catch (error) {}
-      }
-      handleApproved();
-    } catch (e: any) {
-      setIsOpen(false);
-      if (e.code === ErrorCode.DeniedTx)
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          })
-        );
-      else
-        addNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `${fromToken.symbol} approval had failed. Please try again or contact support.`,
-        });
-    }
-  };
-
   return (
-    <Modal title={'Set Allowance'} setIsOpen={setIsOpen} isOpen={isOpen}>
-      <div className="p-10 px-30">
+    <Modal
+      onClose={() => {
+        if (onClose) onClose();
+        setIsOpen(false);
+      }}
+      setIsOpen={setIsOpen}
+      isOpen={isOpen}
+    >
+      <div className="px-30 py-10">
         <div className="flex flex-col items-center text-12 mb-20">
-          <div className="flex justify-center items-center w-[52px] h-[52px] bg-primary rounded-full mb-14">
-            <IconLock className="w-[22px] text-white" />
+          <div className="flex justify-center items-center mb-14">
+            <Image
+              alt={'Token Logo'}
+              src={token.logoURI}
+              className={'w-[52px] h-[52px] rounded-full'}
+            />
           </div>
-          <h2 className="text-20 mb-8">Approve {fromToken.symbol}</h2>
+          <h2 className="text-20 mb-8">Approve {token.symbol}</h2>
           <p className="text-center text-graphite">
-            Before you can proceed, you need to approve {fromToken.symbol}{' '}
-            spending.
+            Before you can proceed, you need to approve {token.symbol} spending.
           </p>
           <Button
+            onClick={() => setApproval()}
             size={ButtonSize.Full}
-            onClick={() => approve()}
             className="my-15"
+            disabled={isLoading}
           >
-            Approve
+            {isLoading ? 'waiting for confirmation' : 'Approve'}
           </Button>
           <p className="text-center text-graphite">
             Want to approve before each transaction?
           </p>
-          <button onClick={() => approve(amount)} className="underline">
+          <button
+            onClick={() => setApproval(amount)}
+            className="underline"
+            disabled={isLoading}
+          >
             Approve limited permission
           </button>
         </div>
