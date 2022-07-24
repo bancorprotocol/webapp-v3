@@ -2,14 +2,13 @@ import { Page } from 'components/Page';
 import { PageNavLink } from 'components/pageNavLink/PageNavLink';
 import { BancorURL } from 'router/bancorURL.service';
 import { Outlet } from 'react-router-dom';
-import { PopoverV3 } from 'components/popover/PopoverV3';
 //import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 //import { openNewTab } from 'utils/pureFunctions';
 
 export const Pools = () => {
-  const title = 'Earn';
+  const title = 'Pools';
   const subtitle =
-    'Deposit a single token and maintain 100% upside exposure while earning fees and rewards.';
+    'The only DeFi staking protocol with Single-Sided Liquidity.';
 
   return (
     <Page
@@ -32,7 +31,7 @@ export const Pools = () => {
                       'https://support.bancor.network/hc/en-us/articles/5478576660242-What-is-a-whitelisted-pool'
                     )
                   }
-                  className="hover:underline text-primary cursor-pointer"
+                  className="cursor-pointer hover:underline text-primary"
                 >
                   Read more
                 </div>
@@ -40,12 +39,7 @@ export const Pools = () => {
             </PopoverV3> */}
             V3
           </PageNavLink>
-          <PageNavLink to={BancorURL.earnV2}>
-            <PopoverV3
-              children="In Bancor V2, only tokens with a “shield” icon offer Single-Sided Staking and Impermanent Loss Protection."
-              buttonElement={() => <div className="px-6">V2</div>}
-            />
-          </PageNavLink>
+          <PageNavLink to={BancorURL.earnV2}>V2</PageNavLink>
         </div>
       }
     >
