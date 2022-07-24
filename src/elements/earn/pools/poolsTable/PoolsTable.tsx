@@ -110,7 +110,7 @@ export const PoolsTable = ({
       },
       {
         id: 'apr',
-        Header: 'Pool APR (7d)',
+        Header: 'APR (7d)',
         accessor: 'apr7d',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
