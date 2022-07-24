@@ -16,7 +16,7 @@ import {
   rejectNotification,
   setFeeNotification,
 } from 'services/notifications/notifications';
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { Button, ButtonSize } from 'components/button/Button';
 import { Pool } from 'services/observables/pools';
 import { Modal } from 'modals';
 
@@ -73,58 +73,48 @@ export const CreatePoolModal = () => {
   };
 
   return (
-    <>
-      <Button
-        variant={ButtonVariant.Secondary}
-        size={ButtonSize.ExtraSmall}
-        className="h-[35px]"
-        onClick={() => setIsOpen(true)}
-      >
-        Create Pool
-      </Button>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Create Pool">
-        <div className="p-14">
-          <div className="mx-10 mb-30">
-            <SelectToken label="First Token" token={bnt} selectable={false} />
-          </div>
-          <div className="widget-block">
-            <div className="widget-block-icon">
-              <IconPlus className="w-[25px] text-primary dark:text-primary-light" />
-            </div>
-            <div className="my-30">
-              <SelectToken
-                label="Second Token"
-                token={token}
-                tokens={allTokens}
-                setToken={setToken}
-                selectable
-                startEmpty
-                excludedTokens={tokens ? tokens.map((x) => x.address) : []}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center ml-15">
-            <div className="text-grey">Fee</div>
-            <div className="max-w-[200px] my-20">
-              <InputField
-                input={fee}
-                setInput={setFee}
-                borderGrey
-                format
-                customClass="text-right"
-              />
-            </div>
-          </div>
-          <Button
-            onClick={() => confirm()}
-            disabled={isCreateDisabled()}
-            size={ButtonSize.Full}
-          >
-            {errorText() ?? 'Create a Pool'}
-          </Button>
+    <Modal isOpen={isOpen} setIsOpen={setIsOpen} title="Create Pool">
+      <div className="p-14">
+        <div className="mx-10 mb-30">
+          <SelectToken label="First Token" token={bnt} selectable={false} />
         </div>
-      </Modal>
-    </>
+        <div className="widget-block">
+          <div className="widget-block-icon">
+            <IconPlus className="w-[25px] text-primary dark:text-primary-light" />
+          </div>
+          <div className="my-30">
+            <SelectToken
+              label="Second Token"
+              token={token}
+              tokens={allTokens}
+              setToken={setToken}
+              selectable
+              startEmpty
+              excludedTokens={tokens ? tokens.map((x) => x.address) : []}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center ml-15">
+          <div className="text-grey">Fee</div>
+          <div className="max-w-[200px] my-20">
+            <InputField
+              input={fee}
+              setInput={setFee}
+              borderGrey
+              format
+              customClass="text-right"
+            />
+          </div>
+        </div>
+        <Button
+          onClick={() => confirm()}
+          disabled={isCreateDisabled()}
+          size={ButtonSize.Full}
+        >
+          {errorText() ?? 'Create a Pool'}
+        </Button>
+      </div>
+    </Modal>
   );
 };
