@@ -9,19 +9,11 @@ import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
-import {
-  addNotification,
-  NotificationType,
-} from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
-import { ApproveModal } from 'modals/ApproveModal';
-import {
-  ApprovalContract,
-  getNetworkContractApproval,
-} from 'services/web3/approval';
+import { ApprovalContract } from 'services/web3/approval';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { calculatePercentageChange } from 'utils/formulas';
 import {
@@ -36,7 +28,18 @@ import {
   sendConversionEvent,
   ConversionEvents,
   setCurrentConversion,
+  sendConversionSuccessEvent,
+  sendConversionFailEvent,
 } from 'services/api/googleTagManager';
+import { useApproveModal } from 'hooks/useApproveModal';
+import {
+  depositETHNotification,
+  rejectNotification,
+  swapLimitFailedNotification,
+  swapLimitNotification,
+} from 'services/notifications/notifications';
+import { depositWeth } from 'services/web3/swap/limit';
+import { ErrorCode } from 'services/web3/types';
 
 enum Field {
   from,
@@ -72,7 +75,6 @@ export const SwapLimit = ({
   const [marketRate, setMarketRate] = useState(-1);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
-  const [showApproveModal, setShowApproveModal] = useState(false);
   const [showEthModal, setShowEthModal] = useState(false);
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
@@ -218,29 +220,6 @@ export const SwapLimit = ({
     [toToken?.address, fromToken?.address]
   );
 
-  //Check if approval is required
-  const checkApproval = async (token: Token) => {
-    try {
-      const isApprovalReq = await getNetworkContractApproval(
-        token,
-        ApprovalContract.ExchangeProxy,
-        fromAmount
-      );
-      if (isApprovalReq) {
-        sendConversionEvent(ConversionEvents.approvePop);
-        setShowApproveModal(true);
-      } else await handleSwap(true, token.address === wethToken);
-    } catch (e: any) {
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
-        })
-      );
-    }
-  };
-
   const updateETHandWETH = async () => {
     if (!(toToken && account)) return;
 
@@ -250,11 +229,7 @@ export const SwapLimit = ({
     await updateUserBalances();
   };
 
-  const handleSwap = async (
-    approved: boolean = false,
-    weth: boolean = false,
-    showETHtoWETHModal: boolean = false
-  ) => {
+  const handleSwap = async () => {
     if (!account) {
       handleWalletButtonClick();
       return;
@@ -262,23 +237,73 @@ export const SwapLimit = ({
 
     if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
-    if (showETHtoWETHModal) return setShowEthModal(true);
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Limit',
+      chainId,
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      percentage,
+      duration.asSeconds().toString()
+    );
+    sendConversionEvent(ConversionEvents.click);
 
-    if (!approved) return checkApproval(fromToken);
-
-    const notification = await swapLimit(
-      weth ? { ...fromToken, address: wethToken } : fromToken,
+    await swapLimit(
+      fromToken.address === ethToken
+        ? { ...fromToken, address: wethToken }
+        : fromToken,
       toToken,
       fromAmount,
       toAmount,
       account,
       duration,
-      checkApproval
+      () => sendConversionEvent(ConversionEvents.wallet_req),
+      () => {
+        sendConversionSuccessEvent(fromToken.usdPrice);
+        swapLimitNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
+        if (fromToken.address === ethToken) updateETHandWETH();
+        refreshLimit();
+      },
+      () => {
+        sendConversionFailEvent('User rejected transaction');
+        rejectNotification(dispatch);
+      },
+      (error: string) => {
+        sendConversionFailEvent(error);
+        swapLimitFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
+      }
     );
+  };
 
-    if (notification) dispatch(addNotification(notification));
-    if (fromToken.address === ethToken) updateETHandWETH();
-    refreshLimit();
+  const deposiEthWeth = async () => {
+    try {
+      const txHash = await depositWeth(fromAmount);
+      depositETHNotification(dispatch, fromAmount, txHash);
+      approveWETH();
+    } catch (e: any) {
+      if (e.code === ErrorCode.DeniedTx)
+        sendConversionFailEvent('User rejected transaction');
+      else sendConversionFailEvent(e.message);
+    }
   };
 
   const isSwapDisabled = () => {
@@ -339,26 +364,22 @@ export const SwapLimit = ({
     return 'Trade';
   };
 
-  const handleSwapClick = () => {
-    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
-    setCurrentConversion(
-      'Limit',
-      chainId,
-      tokenPair,
-      fromToken.symbol,
-      toToken?.symbol,
-      fromAmount,
-      fromAmountUsd,
-      toAmount,
-      toAmountUsd,
-      fiatToggle,
-      rate,
-      percentage,
-      duration.asSeconds().toString()
-    );
-    sendConversionEvent(ConversionEvents.click);
-    handleSwap(false, false, fromToken.address === ethToken);
-  };
+  const [onStart, ModalApprove] = useApproveModal(
+    [{ amount: fromAmount, token: fromToken }],
+    handleSwap,
+    ApprovalContract.ExchangeProxy
+  );
+
+  const [approveWETH, ModalApproveWETH] = useApproveModal(
+    [
+      {
+        amount: fromAmount,
+        token: { ...fromToken, symbol: 'WETH', address: wethToken },
+      },
+    ],
+    handleSwap,
+    ApprovalContract.ExchangeProxy
+  );
 
   return (
     <div>
@@ -516,29 +537,20 @@ export const SwapLimit = ({
           )}
         </div>
 
-        <ApproveModal
-          isOpen={showApproveModal}
-          setIsOpen={setShowApproveModal}
-          amount={fromAmount}
-          fromToken={
-            fromToken?.address === ethToken
-              ? { ...fromToken, symbol: 'WETH', address: wethToken }
-              : fromToken
-          }
-          handleApproved={() =>
-            handleSwap(true, fromToken.address === ethToken)
-          }
-          contract={ApprovalContract.ExchangeProxy}
-        />
+        {ModalApprove}
+        {ModalApproveWETH}
         <DepositETHModal
           amount={fromAmount}
           setIsOpen={setShowEthModal}
           isOpen={showEthModal}
-          onConfirm={() => handleSwap(true)}
+          onConfirm={() => deposiEthWeth()}
         />
         <Button
           size={ButtonSize.Full}
-          onClick={() => handleSwapClick()}
+          onClick={() => {
+            if (fromToken.address === ethToken) setShowEthModal(true);
+            else onStart();
+          }}
           disabled={isSwapDisabled()}
           className="disabled:bg-silver dark:disabled:bg-charcoal"
         >

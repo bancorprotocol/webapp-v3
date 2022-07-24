@@ -133,6 +133,59 @@ export const swapFailedNotification = (
     dispatch
   );
 
+export const swapLimitNotification = (
+  dispatch: any,
+  fromToken: Token,
+  toToken: Token,
+  from: string,
+  to: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.success,
+      title: 'Success!',
+      msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
+    },
+    dispatch
+  );
+
+export const swapLimitFailedNotification = (
+  dispatch: any,
+  fromToken: Token,
+  toToken: Token,
+  from: string,
+  to: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.error,
+      title: 'Transaction Failed',
+      msg: `Limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} could not be created. Please try again or contact support`,
+    },
+    dispatch
+  );
+
+export const depositETHNotification = (
+  dispatch: any,
+  from: string,
+  txHash: string
+) =>
+  showNotification(
+    {
+      type: NotificationType.pending,
+      title: 'Pending Confirmation',
+      msg: `Depositing ${from} ETH to WETH is pending confirmation`,
+      txHash,
+      updatedInfo: {
+        successTitle: 'Success!',
+        successMsg: `Your deposit ${from} ETH to WETH is confirmed`,
+        errorTitle: 'Transaction Failed',
+        errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
+      },
+    },
+    dispatch
+  );
+
 export const poolExistNotification = (dispatch: any) =>
   showNotification(
     {

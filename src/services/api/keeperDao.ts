@@ -8,15 +8,8 @@ import {
 import { take } from 'rxjs/operators';
 import { Token, tokensV2$ } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';
-import { ethToken, wethToken } from 'services/web3/config';
-import { createOrder, depositWeth } from 'services/web3/swap/limit';
+import { createOrder } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import {
-  ConversionEvents,
-  sendConversionEvent,
-  sendConversionFailEvent,
-  sendConversionSuccessEvent,
-} from './googleTagManager';
 import { utils } from 'ethers';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
@@ -53,79 +46,18 @@ export const swapLimit = async (
   to: string,
   user: string,
   duration: plugin.Duration,
-  checkApproval: Function
-): Promise<BaseNotification | undefined> => {
-  const fromIsEth = ethToken === fromToken.address;
+  onHash: () => void,
+  onCompleted: () => void,
+  rejected: () => void,
+  failed: (error: string) => void
+) => {
   try {
-    if (fromIsEth) {
-      try {
-        const txHash = await depositWeth(from);
-        checkApproval({ ...fromToken, symbol: 'WETH', address: wethToken });
-        return {
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Depositing ${from} ETH to WETH is pending confirmation`,
-          txHash,
-          updatedInfo: {
-            successTitle: 'Success!',
-            successMsg: `Your deposit ${from} ETH to WETH is confirmed`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
-          },
-        };
-      } catch (e: any) {
-        if (e.code === ErrorCode.DeniedTx) {
-          sendConversionFailEvent('User rejected transaction');
-          return {
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. To complete the order you need to click approve.',
-          };
-        }
-
-        sendConversionFailEvent(e.message);
-
-        return {
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `Depositing ${from} ETH to WETH has failed. Please try again or contact support`,
-        };
-      }
-    } else {
-      sendConversionEvent(ConversionEvents.wallet_req);
-      await createOrder(
-        fromToken,
-        toToken,
-        from,
-        to,
-        user,
-        duration.asSeconds()
-      );
-      sendConversionSuccessEvent(fromToken.usdPrice);
-
-      return {
-        type: NotificationType.success,
-        title: 'Success!',
-        msg: `Your limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} was created`,
-      };
-    }
+    onHash();
+    await createOrder(fromToken, toToken, from, to, user, duration.asSeconds());
+    onCompleted();
   } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx) {
-      sendConversionFailEvent('User rejected transaction');
-      return {
-        type: NotificationType.error,
-        title: 'Transaction Rejected',
-        msg: 'You rejected the transaction. If this was by mistake, please try again.',
-      };
-    }
-
-    sendConversionFailEvent(e.message);
-
-    return {
-      type: NotificationType.error,
-      title: 'Transaction Failed',
-      msg: `Limit order to trade ${from} ${fromToken.symbol} for ${to} ${toToken.symbol} could not be created. Please try again or contact support`,
-    };
+    if (e.code === ErrorCode.DeniedTx) rejected();
+    else failed(e.message);
   }
 };
 
