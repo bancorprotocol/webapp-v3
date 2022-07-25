@@ -89,7 +89,7 @@ const V3WithdrawStep1 = ({
       portion === '75' ||
       portion === '100'
         ? portion
-        : 'N/A';
+        : '(no value)';
     setCurrentWithdraw({
       withdraw_pool: holding.pool.name,
       withdraw_blockchain: getBlockchain(),

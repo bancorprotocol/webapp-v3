@@ -1,4 +1,4 @@
-import { sendGTM } from 'services/api/googleTagManager';
+import { getUnlimitedLimited, sendGTM } from 'services/api/googleTagManager';
 
 export enum DepositEvent {
   DepositPoolClick,
@@ -56,7 +56,7 @@ export const sendDepositEvent = (
     event: depositTxtMap.get(event),
     event_properties: {
       ...currentDeposit,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
     },
     ga_event: {

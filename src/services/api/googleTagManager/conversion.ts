@@ -3,6 +3,7 @@ import {
   eventTxtMap,
   getBlockchainNetwork,
   getFiat,
+  getUnlimitedLimited,
   sendGTM,
 } from 'services/api/googleTagManager';
 
@@ -70,7 +71,7 @@ export const sendConversionEvent = (
     event_properties: {
       ...currentConversion,
       transaction_hash,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
     },
     ga_event: {

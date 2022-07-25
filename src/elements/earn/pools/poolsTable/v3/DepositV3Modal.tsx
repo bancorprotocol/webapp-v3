@@ -163,7 +163,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           portion === '75' ||
           portion === '100')
           ? portion
-          : 'N/A';
+          : '(no value)';
       setCurrentDeposit({
         deposit_pool: pool.name,
         deposit_blockchain: getBlockchain(),

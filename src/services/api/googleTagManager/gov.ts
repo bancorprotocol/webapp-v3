@@ -1,4 +1,4 @@
-import { sendGTM } from '.';
+import { getUnlimitedLimited, sendGTM } from '.';
 
 export enum GovEvent {
   StartClick,
@@ -42,7 +42,7 @@ export const sendGovEvent = (
     event: getGovText(event, stake),
     event_properties: {
       ...event_properties,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
     },
     ga_event: {

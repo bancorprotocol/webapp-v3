@@ -1,4 +1,4 @@
-import { sendGTM } from 'services/api/googleTagManager';
+import { getUnlimitedLimited, sendGTM } from 'services/api/googleTagManager';
 
 export enum WithdrawEvent {
   WithdrawPoolClick,
@@ -34,26 +34,26 @@ const withdrawTxtMap = new Map([
   [WithdrawEvent.WithdrawAmountContinue, 'Withdraw Enter Amount Continue'],
   [
     WithdrawEvent.WithdrawUnlimitedTokenView,
-    'Withdraw XX Unlimited Token View',
+    'Withdraw Init Unlimited Token View',
   ],
   [
     WithdrawEvent.WithdrawUnlimitedTokenContinue,
-    'Withdraw XX Unlimited Token Continue',
+    'Withdraw Init Unlimited Token Continue',
   ],
-  [WithdrawEvent.WithdrawTokenRequest, 'Withdraw XX Wallet Token Request'],
-  [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw XX Wallet Token Confirm'],
+  [WithdrawEvent.WithdrawTokenRequest, 'Withdraw Init Wallet Token Request'],
+  [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw Init Wallet Token Confirm'],
   [
     WithdrawEvent.WithdrawCooldownRequest,
-    'Withdraw XX Wallet Cooldown Request',
+    'Withdraw Init Wallet Cooldown Request',
   ],
   [
     WithdrawEvent.WithdrawCooldownConfirm,
-    'Withdraw XX Wallet Cooldown Confirm',
+    'Withdraw Init Wallet Cooldown Confirm',
   ],
-  [WithdrawEvent.WithdrawSuccess, 'Withdraw XX Success'],
-  [WithdrawEvent.WithdrawFailed, 'Withdraw XX Failed'],
-  [WithdrawEvent.CompleteView, 'Withdraw XX Complete View'],
-  [WithdrawEvent.CompleteClose, 'Withdraw XX Complete Close'],
+  [WithdrawEvent.WithdrawSuccess, 'Withdraw Init Success'],
+  [WithdrawEvent.WithdrawFailed, 'Withdraw Init Failed'],
+  [WithdrawEvent.CompleteView, 'Withdraw Init Complete View'],
+  [WithdrawEvent.CompleteClose, 'Withdraw Init Complete Close'],
   [WithdrawEvent.WithdrawRemoveRewardView, 'Withdraw FR Remove Reward View'],
   [
     WithdrawEvent.WithdrawRemoveRewardContinue,
@@ -85,12 +85,6 @@ const withdrawTxtMap = new Map([
   [WithdrawEvent.WithdrawCancelSuccess, 'Withdraw Cancel Success'],
   [WithdrawEvent.WithdrawCancelFailed, 'Withdraw Cancel Failed'],
 ]);
-
-const getWithdrawText = (event: WithdrawEvent, reward?: boolean) => {
-  const txt = withdrawTxtMap.get(event);
-  return txt?.replace('XX', reward ? 'FR' : 'FW');
-};
-
 interface CurrentWithdraw {
   withdraw_pool: string;
   withdraw_blockchain: string;
@@ -114,11 +108,13 @@ export const sendWithdrawEvent = (
   reward?: boolean
 ) => {
   const data = {
-    event: getWithdrawText(event, reward),
+    event: withdrawTxtMap.get(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
+      withdraw_type:
+        reward === undefined ? reward : reward ? 'from_reward' : 'from_wallet',
     },
     ga_event: {
       category: 'Withdraw',
@@ -161,7 +157,7 @@ export const sendWithdrawACEvent = (
     event: getWithdrawACText(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
     },
     ga_event: {
@@ -203,7 +199,7 @@ export const sendWithdrawBonusEvent = (
     event: getWithdrawBonusText(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection,
+      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
       error,
     },
     ga_event: {
