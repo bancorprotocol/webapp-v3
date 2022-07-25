@@ -48,7 +48,7 @@ export const V3WithdrawCancelModal = memo(
           .toString(),
         withdraw_display_currency: getCurrency(),
       });
-      sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelApproveClick);
       setTxBusy(true);
       await cancelWithdrawal();
       setIsModalOpen(false);

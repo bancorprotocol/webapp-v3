@@ -77,10 +77,7 @@ const withdrawTxtMap = new Map([
   ],
   [WithdrawEvent.WithdrawCancelClick, 'Withdraw Cancel CTA Click'],
   [WithdrawEvent.WithdrawCancelApproveClick, 'Withdraw Cancel Approve Click'],
-  [
-    WithdrawEvent.WithdrawCancelWalletRequest,
-    'Withdraw Cancel Wallet Confirmation Request',
-  ],
+  [WithdrawEvent.WithdrawCancelWalletRequest, 'Withdraw Cancel Wallet Request'],
   [WithdrawEvent.WithdrawCancelWalletConfirm, 'Withdraw Cancel Wallet Confirm'],
   [WithdrawEvent.WithdrawCancelSuccess, 'Withdraw Cancel Success'],
   [WithdrawEvent.WithdrawCancelFailed, 'Withdraw Cancel Failed'],
@@ -137,8 +134,8 @@ export enum WithdrawACEvent {
 const withdrawACTxtMap = new Map([
   [WithdrawACEvent.CTAClick, 'CTA Click'],
   [WithdrawACEvent.ApproveClick, 'Approve Click'],
-  [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited Request'],
-  [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Confirm'],
+  [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited View'],
+  [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Continue'],
   [WithdrawACEvent.WalletRequest, 'Wallet Request'],
   [WithdrawACEvent.WalletConfirm, 'Wallet Confirm'],
   [WithdrawACEvent.Success, 'Success'],

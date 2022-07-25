@@ -168,7 +168,7 @@ export const useV3WithdrawConfirm = ({
         .toString(),
       withdraw_display_currency: getCurrency(),
     });
-    sendWithdrawACEvent(WithdrawACEvent.CTAClick);
+    sendWithdrawACEvent(WithdrawACEvent.ApproveClick);
     setTxBusy(true);
     onStart();
   }, [

@@ -15,7 +15,9 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import {
+  sendWithdrawACEvent,
   sendWithdrawEvent,
+  WithdrawACEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
 
@@ -32,6 +34,7 @@ export const useV3Withdraw = () => {
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
 
   const openCancelModal = useCallback(async (req: WithdrawalRequest) => {
+    sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
     setSelected(req);
     setIsModalCancelOpen(true);
   }, []);
@@ -74,6 +77,7 @@ export const useV3Withdraw = () => {
   }, [account, dispatch, selected]);
 
   const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
+    sendWithdrawACEvent(WithdrawACEvent.CTAClick);
     setSelected(req);
     setIsModalConfirmOpen(true);
   }, []);
