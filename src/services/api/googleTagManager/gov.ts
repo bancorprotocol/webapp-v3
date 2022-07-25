@@ -20,9 +20,9 @@ export interface GovProperties {
 const govTxtMap = new Map([
   [GovEvent.StartClick, 'Start Click'],
   [GovEvent.Click, 'Click'],
-  [GovEvent.UnlimitedPopup, 'Unlimited Popup'],
-  [GovEvent.UnlimitedPopupSelect, 'Unlimited Popup Select'],
-  [GovEvent.WalletRequest, 'Wallet Confirmation Request'],
+  [GovEvent.UnlimitedPopup, 'Unlimited View'],
+  [GovEvent.UnlimitedPopupSelect, 'Unlimited Continue'],
+  [GovEvent.WalletRequest, 'Wallet Wallet Request'],
   [GovEvent.WalletConfirm, 'Wallet Confirm'],
   [GovEvent.Success, 'Success'],
   [GovEvent.Success, 'Failed'],
