@@ -64,7 +64,9 @@ export const PoolsTableFilter = ({
           </Popover.Button>
           <DropdownTransition>
             <Popover.Panel
-              onTransitionEndCapture={() => checkChanged()}
+              onTransitionEndCapture={() => {
+                if (!open) checkChanged();
+              }}
               className="dropdown-menu w-[240px]"
             >
               <div className="space-y-15">
