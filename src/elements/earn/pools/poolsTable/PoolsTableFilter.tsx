@@ -31,6 +31,21 @@ export const PoolsTableFilter = ({
     lowLiquidity,
     lowEarnRate,
   });
+  const checkChanged = () => {
+    if (
+      filters.rewards !== rewards ||
+      filters.lowVolume !== lowVolume ||
+      filters.lowLiquidity !== lowLiquidity ||
+      filters.lowEarnRate !== lowEarnRate
+    ) {
+      sendPoolEvent(PoolEvent.PoolsFilter, {
+        pools_filter_reward_only: getOnOff(!!rewards),
+        pools_filter_low_volume: getOnOff(!!lowVolume),
+        pools_filter_low_popularity: getOnOff(!!lowLiquidity),
+        pools_filter_low_earn_rate: getOnOff(!!lowEarnRate),
+      });
+    }
+  };
   return (
     <Popover className="relative">
       {({ open }) => (
@@ -41,28 +56,17 @@ export const PoolsTableFilter = ({
               if (!open) {
                 setFilters({ rewards, lowVolume, lowLiquidity, lowEarnRate });
                 sendPoolEvent(PoolEvent.PoolsFilterOpen);
-              } else {
-                if (
-                  filters.rewards !== rewards ||
-                  filters.lowVolume !== lowVolume ||
-                  filters.lowLiquidity !== lowLiquidity ||
-                  filters.lowEarnRate !== lowEarnRate
-                ) {
-                  sendPoolEvent(PoolEvent.PoolsFilter, {
-                    pools_filter_reward_only: getOnOff(!!rewards),
-                    pools_filter_low_volume: getOnOff(!!lowVolume),
-                    pools_filter_low_popularity: getOnOff(!!lowLiquidity),
-                    pools_filter_low_earn_rate: getOnOff(!!lowEarnRate),
-                  });
-                }
-              }
+              } else checkChanged();
             }}
           >
             Filter
             <IconChevronDown className="w-12 ml-10" />
           </Popover.Button>
           <DropdownTransition>
-            <Popover.Panel className="dropdown-menu w-[240px]">
+            <Popover.Panel
+              onTransitionEndCapture={() => checkChanged()}
+              className="dropdown-menu w-[240px]"
+            >
               <div className="space-y-15">
                 <div className="space-y-24">
                   {setRewards && (
