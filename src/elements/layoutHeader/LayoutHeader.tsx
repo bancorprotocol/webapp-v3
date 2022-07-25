@@ -41,7 +41,7 @@ export const LayoutHeader = () => {
         }`}
       >
         <div className="flex items-center justify-between w-full mx-20">
-          <div className="hidden md:flex items-center gap-30">
+          <div className="items-center hidden md:flex gap-30">
             <Navigate to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
             </Navigate>
@@ -53,7 +53,7 @@ export const LayoutHeader = () => {
               className="w-[75px]"
             />
 
-            <Navigate to={BancorURL.earn}>Earn</Navigate>
+            <Navigate to={BancorURL.earn}>Pools</Navigate>
             <TopMenuDropdown
               items={[
                 { title: 'Vote', link: BancorURL.vote },
@@ -74,7 +74,7 @@ export const LayoutHeader = () => {
             {!!(isLoading || isFetching) && (
               <div className="h-[20px] w-[20px]">
                 <span className="absolute flex items-center justify-center h-[20px] w-[20px]">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75">
+                  <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary">
                     &nbsp;
                   </span>
                   <span className="relative inline-flex rounded-full h-[12px] w-[12px] bg-primary/60">

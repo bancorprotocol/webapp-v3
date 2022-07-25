@@ -12,7 +12,7 @@ export const MobileBottomNav = () => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className="md:hidden fixed bottom-0 flex items-center justify-between px-30 w-full h-60 z-30 bg-white dark:bg-black shadow-header text-10 text-black dark:text-white-low dark:text-white-low">
+    <div className="fixed bottom-0 z-30 flex items-center justify-between w-full text-black bg-white md:hidden px-30 h-60 dark:bg-black shadow-header text-10 dark:text-white-low">
       <Navigate
         to={BancorURL.trade()}
         className="flex flex-col items-center gap-4"
@@ -24,21 +24,21 @@ export const MobileBottomNav = () => {
         to={BancorURL.earn}
         className="flex flex-col items-center gap-4"
       >
-        <IconEarn className="w-18 text-black dark:text-white" />
-        Earn
+        <IconEarn className="text-black w-18 dark:text-white" />
+        Pools
       </Navigate>
       <Navigate
         to={BancorURL.portfolio}
         className="flex flex-col items-center gap-4"
       >
-        <IconPortfolio className="w-14 text-black dark:text-white" />
+        <IconPortfolio className="text-black w-14 dark:text-white" />
         Portfolio
       </Navigate>
       <button
         onClick={() => setShow(true)}
         className="flex flex-col items-center gap-[8px]"
       >
-        <IconMore className="w-18 text-black dark:text-white" />
+        <IconMore className="text-black w-18 dark:text-white" />
         More
       </button>
 
