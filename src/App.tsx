@@ -20,7 +20,6 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
-import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
@@ -36,7 +35,6 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 export const App = () => {
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
-  const pathname = window.location.pathname;
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector(
@@ -73,14 +71,9 @@ export const App = () => {
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
 
-    if (pathname !== '/vote' && pathname !== '/earn') {
-      subscribeToObservables(dispatch);
-    }
-    console.log(pathname);
-
     const dark = getDarkModeLS();
     dispatch(setDarkMode(dark));
-  }, [dispatch, pathname]);
+  }, [dispatch]);
 
   useEffect(() => {
     setNotificationsLS(notifications);
