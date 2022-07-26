@@ -7,8 +7,6 @@ import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-//import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -17,7 +15,8 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { PoolEvent, sendPoolEvent } from 'services/api/googleTagManager/pool';
+import { DepositV3Modal } from './v3/DepositV3Modal';
+import { sendPoolEvent, PoolEvent } from 'services/api/googleTagManager/pool';
 
 export const PoolsTable = ({
   rewards,
@@ -111,7 +110,7 @@ export const PoolsTable = ({
       },
       {
         id: 'apr',
-        Header: 'Earn',
+        Header: 'APR (7d)',
         accessor: 'apr7d',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
@@ -141,8 +140,7 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
-        tooltip:
-          'Estimated APR based on the last 7d trading fees, auto compounding and standard rewards',
+        tooltip: 'Estimated APR based on the last 7d trading fees',
         minWidth: 100,
         sortDescFirst: true,
       },

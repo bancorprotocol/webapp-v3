@@ -12,7 +12,7 @@ export const V3WithdrawConfirmInfo = ({ handleCancelClick }: Props) => {
 
       <div className="flex items-center gap-10 mb-20">
         <IconProtected className="w-15 h-15" />
-        Stay in Bancor until BNT distribution is reenabled.
+        Stay in Bancor.
       </div>
       <div className="flex gap-10">
         <IconEarn className="w-15 h-15" />

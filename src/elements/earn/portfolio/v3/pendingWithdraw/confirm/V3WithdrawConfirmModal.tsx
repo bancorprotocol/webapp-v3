@@ -114,6 +114,21 @@ export const V3WithdrawConfirmContent = ({
         </div>
       )}
 
+      {isPoolStable === false &&
+        !isLoading &&
+        withdrawRequest.pool.tradingEnabled && (
+          <div className="p-20 rounded bg-warning bg-opacity-10">
+            <div className="flex items-center font-semibold text-warning">
+              <IconInfo className="mr-10 w-14" />
+              Withdrawal is temporarily paused!
+            </div>
+            <div className="ml-[24px] text-secondary">
+              The price in the pool is too volatile. Please wait a few minutes
+              before proceeding.
+            </div>
+          </div>
+        )}
+
       {missingGovTokenBalance > 0 ? (
         <div className="p-20 text-center rounded text-error bg-error bg-opacity-30">
           <span className="font-semibold">vBNT Balance insufficient.</span>{' '}
@@ -139,21 +154,6 @@ export const V3WithdrawConfirmContent = ({
       )}
 
       <V3WithdrawConfirmInfo handleCancelClick={handleCancelClick} />
-
-      {isPoolStable === false &&
-        !isLoading &&
-        withdrawRequest.pool.tradingEnabled && (
-          <div className="p-20 rounded bg-warning bg-opacity-10">
-            <div className="flex items-center font-semibold text-warning">
-              <IconInfo className="mr-10 w-14" />
-              Withdrawal is temporarily paused!
-            </div>
-            <div className="ml-[24px] text-secondary">
-              Price in the pool is too volatile, lets wait a few minutes before
-              proceeding.
-            </div>
-          </div>
-        )}
     </div>
   );
 };
