@@ -42,7 +42,10 @@ export const sendGovEvent = (
     event: getGovText(event, stake),
     event_properties: {
       ...event_properties,
-      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
+      unlimitied_selection:
+        unlimitied_selection === undefined
+          ? unlimitied_selection
+          : getUnlimitedLimited(unlimitied_selection),
       error,
     },
     ga_event: {

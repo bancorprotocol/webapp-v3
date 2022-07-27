@@ -56,7 +56,10 @@ export const sendDepositEvent = (
     event: depositTxtMap.get(event),
     event_properties: {
       ...currentDeposit,
-      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
+      unlimitied_selection:
+        unlimitied_selection === undefined
+          ? unlimitied_selection
+          : getUnlimitedLimited(unlimitied_selection),
       error,
     },
     ga_event: {

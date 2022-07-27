@@ -29,51 +29,51 @@ export enum WithdrawEvent {
 }
 
 const withdrawTxtMap = new Map([
-  [WithdrawEvent.WithdrawPoolClick, 'Withdraw Pool Click'],
-  [WithdrawEvent.WithdrawAmountView, 'Withdraw Enter Amount View'],
-  [WithdrawEvent.WithdrawAmountContinue, 'Withdraw Enter Amount Continue'],
+  [WithdrawEvent.WithdrawPoolClick, 'Withdraw SC Pool Click'],
+  [WithdrawEvent.WithdrawAmountView, 'Withdraw SC Enter Amount View'],
+  [WithdrawEvent.WithdrawAmountContinue, 'Withdraw SC Enter Amount Continue'],
   [
     WithdrawEvent.WithdrawUnlimitedTokenView,
-    'Withdraw Init Unlimited Token View',
+    'Withdraw SC Unlimited Token View',
   ],
   [
     WithdrawEvent.WithdrawUnlimitedTokenContinue,
-    'Withdraw Init Unlimited Token Continue',
+    'Withdraw SC Unlimited Token Continue',
   ],
-  [WithdrawEvent.WithdrawTokenRequest, 'Withdraw Init Wallet Token Request'],
-  [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw Init Wallet Token Confirm'],
+  [WithdrawEvent.WithdrawTokenRequest, 'Withdraw SC Wallet Token Request'],
+  [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw SC Wallet Token Confirm'],
   [
     WithdrawEvent.WithdrawCooldownRequest,
-    'Withdraw Init Wallet Cooldown Request',
+    'Withdraw SC Wallet Cooldown Request',
   ],
   [
     WithdrawEvent.WithdrawCooldownConfirm,
-    'Withdraw Init Wallet Cooldown Confirm',
+    'Withdraw SC Wallet Cooldown Confirm',
   ],
-  [WithdrawEvent.WithdrawSuccess, 'Withdraw Init Success'],
-  [WithdrawEvent.WithdrawFailed, 'Withdraw Init Failed'],
-  [WithdrawEvent.CompleteView, 'Withdraw Init Complete View'],
-  [WithdrawEvent.CompleteClose, 'Withdraw Init Complete Close'],
-  [WithdrawEvent.WithdrawRemoveRewardView, 'Withdraw FR Remove Reward View'],
+  [WithdrawEvent.WithdrawSuccess, 'Withdraw SC Success'],
+  [WithdrawEvent.WithdrawFailed, 'Withdraw SC Failed'],
+  [WithdrawEvent.CompleteView, 'Withdraw SC Complete View'],
+  [WithdrawEvent.CompleteClose, 'Withdraw SC Complete Close'],
+  [WithdrawEvent.WithdrawRemoveRewardView, 'Withdraw SC Remove Reward View'],
   [
     WithdrawEvent.WithdrawRemoveRewardContinue,
-    'Withdraw FR Remove Reward Continue',
+    'Withdraw SC Remove Reward Continue',
   ],
   [
     WithdrawEvent.WithdrawRemoveRewardRequest,
-    'Withdraw FR Wallet Remove Reward Request',
+    'Withdraw SC Wallet Remove Reward Request',
   ],
   [
     WithdrawEvent.WithdrawRemoveRewardConfirm,
-    'Withdraw FR Wallet Remove Reward Confirm',
+    'Withdraw SC Wallet Remove Reward Confirm',
   ],
   [
     WithdrawEvent.WithdrawCooldownAmountView,
-    'Withdraw FR Cooldown Amount View',
+    'Withdraw SC Cooldown Amount View',
   ],
   [
     WithdrawEvent.WithdrawCooldownAmountContinue,
-    'Withdraw FR Cooldown Amount Continue',
+    'Withdraw SC Cooldown Amount Continue',
   ],
   [WithdrawEvent.WithdrawCancelClick, 'Withdraw Cancel CTA Click'],
   [WithdrawEvent.WithdrawCancelApproveClick, 'Withdraw Cancel Approve Click'],
@@ -108,10 +108,12 @@ export const sendWithdrawEvent = (
     event: withdrawTxtMap.get(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
+      unlimitied_selection:
+        unlimitied_selection === undefined
+          ? unlimitied_selection
+          : getUnlimitedLimited(unlimitied_selection),
       error,
-      withdraw_type:
-        reward === undefined ? reward : reward ? 'from_reward' : 'from_wallet',
+      withdraw_type: reward ? 'from_reward' : 'from_wallet',
     },
     ga_event: {
       category: 'Withdraw',
@@ -154,7 +156,10 @@ export const sendWithdrawACEvent = (
     event: getWithdrawACText(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
+      unlimitied_selection:
+        unlimitied_selection === undefined
+          ? unlimitied_selection
+          : getUnlimitedLimited(unlimitied_selection),
       error,
     },
     ga_event: {
@@ -196,7 +201,10 @@ export const sendWithdrawBonusEvent = (
     event: getWithdrawBonusText(event),
     event_properties: {
       ...currentWithdraw,
-      unlimitied_selection: getUnlimitedLimited(!!unlimitied_selection),
+      unlimitied_selection:
+        unlimitied_selection === undefined
+          ? unlimitied_selection
+          : getUnlimitedLimited(unlimitied_selection),
       error,
     },
     ga_event: {
