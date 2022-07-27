@@ -126,7 +126,13 @@ export const useV3WithdrawStep3 = ({
         reserveToken.symbol
       );
       await tx.wait();
-      sendWithdrawEvent(WithdrawEvent.WithdrawSuccess);
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawSuccess,
+        undefined,
+        undefined,
+        undefined,
+        tx.hash
+      );
       initiatedWithdraw.current = true;
     } catch (e: any) {
       sendWithdrawEvent(WithdrawEvent.WithdrawFailed, undefined, e.message);

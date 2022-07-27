@@ -102,7 +102,8 @@ export const sendWithdrawEvent = (
   event: WithdrawEvent,
   unlimitied_selection?: boolean,
   error?: string,
-  reward?: boolean
+  reward?: boolean,
+  txHash?: string
 ) => {
   const data = {
     event: withdrawTxtMap.get(event),
@@ -150,7 +151,8 @@ const getWithdrawACText = (event: WithdrawACEvent) =>
 export const sendWithdrawACEvent = (
   event: WithdrawACEvent,
   unlimitied_selection?: boolean,
-  error?: string
+  error?: string,
+  txHash?: string
 ) => {
   const data = {
     event: getWithdrawACText(event),
@@ -195,7 +197,8 @@ const getWithdrawBonusText = (event: WithdrawBonusEvent) =>
 export const sendWithdrawBonusEvent = (
   event: WithdrawBonusEvent,
   unlimitied_selection?: boolean,
-  error?: string
+  error?: string,
+  txHash?: string
 ) => {
   const data = {
     event: getWithdrawBonusText(event),

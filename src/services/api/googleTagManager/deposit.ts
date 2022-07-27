@@ -50,7 +50,8 @@ export const setCurrentDeposit = (currDeposit: CurrentDeposit) =>
 export const sendDepositEvent = (
   event: DepositEvent,
   unlimitied_selection?: boolean,
-  error?: string
+  error?: string,
+  txHash?: string
 ) => {
   const data = {
     event: depositTxtMap.get(event),

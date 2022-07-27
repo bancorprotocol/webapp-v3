@@ -78,7 +78,7 @@ export const swapLimit = async (
           };
         }
 
-        sendConversionEvent(Events.fail, e.message);
+        sendConversionEvent(Events.fail, undefined, undefined, e.message);
 
         return {
           type: NotificationType.error,

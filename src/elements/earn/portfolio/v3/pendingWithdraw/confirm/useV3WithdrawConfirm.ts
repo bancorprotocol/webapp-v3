@@ -115,7 +115,12 @@ export const useV3WithdrawConfirm = ({
 
       await tx.wait();
       await updatePortfolioData(dispatch);
-      sendWithdrawACEvent(WithdrawACEvent.Success);
+      sendWithdrawACEvent(
+        WithdrawACEvent.Success,
+        undefined,
+        undefined,
+        tx.hash
+      );
     } catch (e: any) {
       console.error('withdraw request failed', e);
       sendWithdrawACEvent(WithdrawACEvent.Failed, undefined, e.message);

@@ -116,7 +116,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       onClose();
       goToPage.portfolio();
       await tx.wait();
-      sendDepositEvent(DepositEvent.DepositSuccess);
+      sendDepositEvent(
+        DepositEvent.DepositSuccess,
+        undefined,
+        undefined,
+        tx.hash
+      );
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('failed to deposit', e);

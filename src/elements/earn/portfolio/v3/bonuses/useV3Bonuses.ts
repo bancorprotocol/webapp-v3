@@ -63,7 +63,12 @@ export const useV3Bonuses = () => {
         confirmClaimNotification(dispatch, tx.hash);
         setBonusModalOpen(false);
         await tx.wait();
-        sendWithdrawBonusEvent(WithdrawBonusEvent.Success);
+        sendWithdrawBonusEvent(
+          WithdrawBonusEvent.Success,
+          undefined,
+          undefined,
+          tx.hash
+        );
         await updatePortfolioData(dispatch);
       } catch (e: any) {
         sendWithdrawBonusEvent(WithdrawBonusEvent.Failed, undefined, e.message);

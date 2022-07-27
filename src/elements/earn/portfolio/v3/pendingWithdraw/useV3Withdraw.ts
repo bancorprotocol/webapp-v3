@@ -58,7 +58,13 @@ export const useV3Withdraw = () => {
       );
       setIsModalCancelOpen(false);
       await tx.wait();
-      sendWithdrawEvent(WithdrawEvent.WithdrawCancelSuccess);
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawCancelSuccess,
+        undefined,
+        undefined,
+        undefined,
+        tx.hash
+      );
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       sendWithdrawEvent(
