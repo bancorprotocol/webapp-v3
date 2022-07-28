@@ -134,7 +134,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           Help Center / FAQ
         </Navigate>
         <Navigate to="https://dune.com/Bancor/bancor_1">Analytics</Navigate>
-        <Navigate to="https://dune.com/Bancor/Bancor-3-Beta">
+        <Navigate to="analytics.bancor.network">
           Analytics V3
         </Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
