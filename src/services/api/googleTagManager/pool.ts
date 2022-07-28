@@ -14,11 +14,10 @@ enum PoolLocation {
 }
 
 const poolEventTxtMap = new Map([
-  [PoolEvent.VersionSwitch, 'Pools Version Switch'],
-  [PoolEvent.PoolsFilterOpen, 'Pools Filter Open'],
-  [PoolEvent.PoolsFilter, 'Pools Filter Change'],
-  [PoolEvent.PoolSearch, 'Pools Search'],
-  [PoolEvent.PoolClick, 'Pool Click'],
+  [PoolEvent.VersionSwitch, 'Deposit Pools Version Switch'],
+  [PoolEvent.PoolsFilterOpen, 'Deposit Pools Filter Open'],
+  [PoolEvent.PoolsFilter, 'Deposit Pools Filter Change'],
+  [PoolEvent.PoolSearch, 'Deposit Pools Search'],
 ]);
 
 export const poolClickLocationTxtMap = new Map([
@@ -33,18 +32,12 @@ interface PoolFilterEP {
   pools_filter_low_earn_rate: string;
 }
 
-interface PoolClickEP {
-  pool: string;
-  pool_click_location: 'Main Table' | 'Top Performing';
-}
-
 export const sendPoolEvent = (
   event: PoolEvent,
   event_properties?:
     | PoolFilterEP
-    | PoolClickEP
-    | { pools_bancor_version_selection: string }
-    | { pools_search_term: string }
+    | { bancor_version_selection: string }
+    | { search_term: string }
 ) => {
   const data = {
     event: poolEventTxtMap.get(event),

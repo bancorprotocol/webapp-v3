@@ -46,7 +46,9 @@ import { DepositDisabledModal } from './DepositDisabledModal';
 
 interface Props {
   pool: PoolV3;
-  renderButton: (onClick: () => void) => React.ReactNode;
+  renderButton: (
+    onClick: (pool_click_location?: string) => void
+  ) => React.ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
@@ -105,7 +107,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               amountWei,
               { value: isETH ? amountWei : undefined }
             );
-      sendDepositEvent(DepositEvent.DepositWalletConfirm);
+      sendDepositEvent(
+        DepositEvent.DepositWalletConfirm,
+        undefined,
+        undefined,
+        tx.hash
+      );
       confirmDepositNotification(
         dispatch,
         tx.hash,
@@ -225,7 +232,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   return (
     <>
-      {renderButton(() => {
+      {renderButton((pool_click_location) => {
         setCurrentDeposit({
           deposit_pool: pool.name,
           deposit_blockchain: getBlockchain(),
@@ -238,7 +245,13 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           deposit_access_full_earning: getOnOff(accessFullEarnings),
           deposit_display_currency: getCurrency(),
         });
-        sendDepositEvent(DepositEvent.DepositPoolClick);
+        sendDepositEvent(
+          DepositEvent.DepositPoolClick,
+          undefined,
+          undefined,
+          undefined,
+          pool_click_location
+        );
         sendDepositEvent(DepositEvent.DepositAmountView);
         setIsOpen(true);
       })}

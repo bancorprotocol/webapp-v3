@@ -32,13 +32,10 @@ const withdrawTxtMap = new Map([
   [WithdrawEvent.WithdrawPoolClick, 'Withdraw SC Pool Click'],
   [WithdrawEvent.WithdrawAmountView, 'Withdraw SC Enter Amount View'],
   [WithdrawEvent.WithdrawAmountContinue, 'Withdraw SC Enter Amount Continue'],
-  [
-    WithdrawEvent.WithdrawUnlimitedTokenView,
-    'Withdraw SC Unlimited Token View',
-  ],
+  [WithdrawEvent.WithdrawUnlimitedTokenView, 'Withdraw SC Unlimited View'],
   [
     WithdrawEvent.WithdrawUnlimitedTokenContinue,
-    'Withdraw SC Unlimited Token Continue',
+    'Withdraw SC Unlimited Continue',
   ],
   [WithdrawEvent.WithdrawTokenRequest, 'Withdraw SC Wallet Token Request'],
   [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw SC Wallet Token Confirm'],
@@ -103,7 +100,7 @@ export const sendWithdrawEvent = (
   unlimitied_selection?: boolean,
   error?: string,
   reward?: boolean,
-  txHash?: string
+  transaction_hash?: string
 ) => {
   const data = {
     event: withdrawTxtMap.get(event),
@@ -114,6 +111,7 @@ export const sendWithdrawEvent = (
           ? unlimitied_selection
           : getUnlimitedLimited(unlimitied_selection),
       error,
+      transaction_hash,
       withdraw_type: reward ? 'from_reward' : 'from_wallet',
     },
     ga_event: {
@@ -152,7 +150,7 @@ export const sendWithdrawACEvent = (
   event: WithdrawACEvent,
   unlimitied_selection?: boolean,
   error?: string,
-  txHash?: string
+  transaction_hash?: string
 ) => {
   const data = {
     event: getWithdrawACText(event),
@@ -162,6 +160,7 @@ export const sendWithdrawACEvent = (
         unlimitied_selection === undefined
           ? unlimitied_selection
           : getUnlimitedLimited(unlimitied_selection),
+      transaction_hash,
       error,
     },
     ga_event: {
@@ -198,7 +197,7 @@ export const sendWithdrawBonusEvent = (
   event: WithdrawBonusEvent,
   unlimitied_selection?: boolean,
   error?: string,
-  txHash?: string
+  transaction_hash?: string
 ) => {
   const data = {
     event: getWithdrawBonusText(event),
@@ -208,6 +207,7 @@ export const sendWithdrawBonusEvent = (
         unlimitied_selection === undefined
           ? unlimitied_selection
           : getUnlimitedLimited(unlimitied_selection),
+      transaction_hash,
       error,
     },
     ga_event: {

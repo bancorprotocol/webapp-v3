@@ -16,7 +16,6 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from './v3/DepositV3Modal';
-import { sendPoolEvent, PoolEvent } from 'services/api/googleTagManager/pool';
 
 export const PoolsTable = ({
   rewards,
@@ -153,13 +152,7 @@ export const PoolsTable = ({
             pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
-                onClick={() => {
-                  sendPoolEvent(PoolEvent.PoolClick, {
-                    pool: cellData.row.original.name,
-                    pool_click_location: 'Main Table',
-                  });
-                  onClick();
-                }}
+                onClick={() => onClick('Main Table')}
                 variant={ButtonVariant.Tertiary}
                 size={ButtonSize.ExtraSmall}
               >

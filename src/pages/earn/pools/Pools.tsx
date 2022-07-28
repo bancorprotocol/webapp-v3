@@ -22,7 +22,7 @@ export const Pools = () => {
             to={BancorURL.earn}
             onClick={() =>
               sendPoolEvent(PoolEvent.VersionSwitch, {
-                pools_bancor_version_selection: getV2V3(false),
+                bancor_version_selection: getV2V3(false),
               })
             }
           >
@@ -52,7 +52,7 @@ export const Pools = () => {
             to={BancorURL.earnV2}
             onClick={() =>
               sendPoolEvent(PoolEvent.VersionSwitch, {
-                pools_bancor_version_selection: getV2V3(true),
+                bancor_version_selection: getV2V3(true),
               })
             }
           >

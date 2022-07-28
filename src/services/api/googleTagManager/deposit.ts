@@ -16,14 +16,8 @@ const depositTxtMap = new Map([
   [DepositEvent.DepositPoolClick, 'Deposit Pool Click'],
   [DepositEvent.DepositAmountView, 'Deposit Enter Amount View'],
   [DepositEvent.DepositAmountContinue, 'Deposit Enter Amount Continue'],
-  [
-    DepositEvent.DepositUnlimitedPopupRequest,
-    'Deposit Unlimited Popup Request',
-  ],
-  [
-    DepositEvent.DepositUnlimitedPopupConfirm,
-    'Deposit Unlimited Popup Confirm',
-  ],
+  [DepositEvent.DepositUnlimitedPopupRequest, 'Deposit Unlimited Request'],
+  [DepositEvent.DepositUnlimitedPopupConfirm, 'Deposit Unlimited Continue'],
   [DepositEvent.DepositWalletRequest, 'Deposit Wallet Request'],
   [DepositEvent.DepositWalletConfirm, 'Deposit Wallet Confirm'],
   [DepositEvent.DepositSuccess, 'Deposit Success'],
@@ -51,7 +45,8 @@ export const sendDepositEvent = (
   event: DepositEvent,
   unlimitied_selection?: boolean,
   error?: string,
-  txHash?: string
+  transaction_hash?: string,
+  pool_click_location?: string
 ) => {
   const data = {
     event: depositTxtMap.get(event),
@@ -61,6 +56,8 @@ export const sendDepositEvent = (
         unlimitied_selection === undefined
           ? unlimitied_selection
           : getUnlimitedLimited(unlimitied_selection),
+      pool_click_location,
+      transaction_hash,
       error,
     },
     ga_event: {

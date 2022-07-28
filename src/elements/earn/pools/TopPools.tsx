@@ -4,7 +4,6 @@ import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
-import { sendPoolEvent, PoolEvent } from 'services/api/googleTagManager/pool';
 
 export const TopPools = () => {
   const pools = useAppSelector(getTopPoolsV3);
@@ -22,13 +21,7 @@ export const TopPools = () => {
                     key={`pool-table-key-${index}`}
                     renderButton={(onClick) => (
                       <button
-                        onClick={() => {
-                          sendPoolEvent(PoolEvent.PoolClick, {
-                            pool: pool.name,
-                            pool_click_location: 'Top Performing',
-                          });
-                          onClick();
-                        }}
+                        onClick={() => onClick('Top Performing')}
                         className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                       >
                         <Image
