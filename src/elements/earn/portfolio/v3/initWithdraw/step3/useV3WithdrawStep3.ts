@@ -99,11 +99,19 @@ export const useV3WithdrawStep3 = ({
     }
   }, [account, amount.tkn, decimals, poolDltId, poolTokenDltId]);
 
-  const initWithdraw = async () => {
+  const initWithdraw = async (approvalHash?: string) => {
     if (!account) {
       console.error('No account, please connect wallet');
       return;
     }
+    if (approvalHash)
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawWalletUnlimitedConfirm,
+        undefined,
+        undefined,
+        undefined,
+        approvalHash
+      );
 
     try {
       sendWithdrawEvent(WithdrawEvent.WithdrawCooldownRequest);
@@ -151,9 +159,12 @@ export const useV3WithdrawStep3 = ({
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
-    initWithdraw,
+    (approvalHash?: string) => initWithdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
-    () => sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView),
+    () => {
+      sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView);
+      sendWithdrawEvent(WithdrawEvent.WithdrawWalletUnlimitedRequest);
+    },
     (isUnlimited: boolean) =>
       sendWithdrawEvent(
         WithdrawEvent.WithdrawUnlimitedTokenContinue,

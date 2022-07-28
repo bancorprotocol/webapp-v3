@@ -94,45 +94,56 @@ export const useV3WithdrawConfirm = ({
     setWithdrawAmounts(undefined);
   }, [setIsModalOpen]);
 
-  const withdraw = useCallback(async () => {
-    if (!withdrawRequest || !account) {
-      return;
-    }
-    try {
-      sendWithdrawACEvent(WithdrawACEvent.WalletRequest);
-      const tx = await ContractsApi.BancorNetwork.write.withdraw(
-        withdrawRequest.id
-      );
-      sendWithdrawACEvent(WithdrawACEvent.WalletConfirm);
-      confirmWithdrawNotification(
-        dispatch,
-        tx.hash,
-        withdrawRequest.reserveTokenAmount,
-        token.symbol
-      );
-      onModalClose();
-      setTxBusy(false);
-
-      await tx.wait();
-      await updatePortfolioData(dispatch);
-      sendWithdrawACEvent(
-        WithdrawACEvent.Success,
-        undefined,
-        undefined,
-        tx.hash
-      );
-    } catch (e: any) {
-      console.error('withdraw request failed', e);
-      sendWithdrawACEvent(WithdrawACEvent.Failed, undefined, e.message);
-      if (e.code === ErrorCode.DeniedTx) {
-        rejectNotification(dispatch);
-      } else {
-        genericFailedNotification(dispatch, 'Confirm withdrawal failed');
+  const withdraw = useCallback(
+    async (approvalHash?: string) => {
+      if (!withdrawRequest || !account) {
+        return;
       }
-      onModalClose();
-      setTxBusy(false);
-    }
-  }, [account, dispatch, onModalClose, token.symbol, withdrawRequest]);
+      if (approvalHash)
+        sendWithdrawACEvent(
+          WithdrawACEvent.WalletUnlimitedConfirm,
+          undefined,
+          undefined,
+          approvalHash
+        );
+
+      try {
+        sendWithdrawACEvent(WithdrawACEvent.WalletRequest);
+        const tx = await ContractsApi.BancorNetwork.write.withdraw(
+          withdrawRequest.id
+        );
+        sendWithdrawACEvent(WithdrawACEvent.WalletConfirm);
+        confirmWithdrawNotification(
+          dispatch,
+          tx.hash,
+          withdrawRequest.reserveTokenAmount,
+          token.symbol
+        );
+        onModalClose();
+        setTxBusy(false);
+
+        await tx.wait();
+        await updatePortfolioData(dispatch);
+        sendWithdrawACEvent(
+          WithdrawACEvent.Success,
+          undefined,
+          undefined,
+          tx.hash
+        );
+      } catch (e: any) {
+        console.error('withdraw request failed', e);
+        sendWithdrawACEvent(WithdrawACEvent.Failed, undefined, e.message);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        } else {
+          genericFailedNotification(dispatch, 'Confirm withdrawal failed');
+        }
+        onModalClose();
+        setTxBusy(false);
+      }
+    },
+    [account, dispatch, onModalClose, token.symbol, withdrawRequest]
+  );
 
   const approveTokens = useMemo(() => {
     const tokensToApprove = [];
@@ -152,9 +163,12 @@ export const useV3WithdrawConfirm = ({
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
-    withdraw,
+    (approvalHash?: string) => withdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
-    () => sendWithdrawACEvent(WithdrawACEvent.UnlimitedView),
+    () => {
+      sendWithdrawACEvent(WithdrawACEvent.UnlimitedView);
+      sendWithdrawACEvent(WithdrawACEvent.WalletUnlimitedRequest);
+    },
     (isUnlimited: boolean) =>
       sendWithdrawACEvent(WithdrawACEvent.UnlimitedContinue, isUnlimited)
   );

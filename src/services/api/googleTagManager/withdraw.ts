@@ -147,7 +147,6 @@ const withdrawACTxtMap = new Map([
   [WithdrawACEvent.UnlimitedContinue, 'Unlimited Continue'],
   [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited Request'],
   [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Confirm'],
-
   [WithdrawACEvent.WalletRequest, 'Wallet Request'],
   [WithdrawACEvent.WalletConfirm, 'Wallet Confirm'],
   [WithdrawACEvent.Success, 'Success'],

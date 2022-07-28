@@ -23,7 +23,7 @@ interface Tokens {
 
 export const useApproveModal = (
   tokens: Tokens[] = [],
-  onComplete: Function,
+  onComplete: (txHash?: string) => void,
   contract: ApprovalContract | string = ApprovalContract.BancorNetwork,
   gtmPopupEvent?: (event: Events) => void,
   gtmSelectEvent?: (isUnlimited: boolean) => void,
@@ -48,8 +48,8 @@ export const useApproveModal = (
 
     const successCount = receipts.filter((r) => r && r.status).length;
     if (successCount === ref.current.length) {
+      onComplete(ref.current.length > 0 ? ref.current[0] : undefined);
       ref.current = [];
-      onComplete();
     } else {
       await wait(3000);
       await awaitConfirmation();

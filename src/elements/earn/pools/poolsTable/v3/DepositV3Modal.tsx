@@ -84,10 +84,18 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
 
-  const deposit = async () => {
+  const deposit = async (approvalHash?: string) => {
     if (!pool.reserveToken.balance || !account) {
       return;
     }
+
+    if (approvalHash)
+      sendDepositEvent(
+        DepositEvent.DepositWalletUnlimitedConfirm,
+        undefined,
+        undefined,
+        approvalHash
+      );
 
     sendDepositEvent(DepositEvent.DepositWalletRequest);
     const amountWei = expandToken(amount, pool.reserveToken.decimals);
@@ -145,11 +153,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: amount || '0', token: pool.reserveToken }],
-    deposit,
+    (approvalHash?: string) => deposit(approvalHash),
     accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress,
-    () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
+    () => {
+      sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest);
+      sendDepositEvent(DepositEvent.DepositWalletUnlimitedRequest);
+    },
     (isUnlimited: boolean) =>
       sendDepositEvent(DepositEvent.DepositUnlimitedPopupConfirm, isUnlimited)
   );
