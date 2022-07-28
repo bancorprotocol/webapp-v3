@@ -20,7 +20,7 @@ import { BancorURL } from 'router/bancorURL.service';
 export const SettingsMenu = () => {
   return (
     <>
-      <Popover className="hidden md:block relative">
+      <Popover className="relative hidden md:block">
         <Popover.Button className="flex items-center">
           <IconMenu className="w-[20px]" />
         </Popover.Button>
@@ -103,19 +103,19 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           <>
             <Navigate to={BancorURL.tokens}>
               <div className="flex items-center gap-10 text-black dark:text-white">
-                <IconCoins className="text-black dark:text-white w-20" />
+                <IconCoins className="w-20 text-black dark:text-white" />
                 Tokens
               </div>
             </Navigate>
             <Navigate to={BancorURL.vote}>
               <div className="flex items-center gap-10 text-black dark:text-white">
-                <IconVote className="text-black dark:text-white w-20" />
+                <IconVote className="w-20 text-black dark:text-white" />
                 Vote
               </div>
             </Navigate>
             <Navigate to={'https://gov.bancor.network'}>
               <div className="flex items-center gap-10 text-black dark:text-white">
-                <IconForum className="text-black dark:text-white w-20" />
+                <IconForum className="w-20 text-black dark:text-white" />
                 DAO Forum
               </div>
             </Navigate>
@@ -134,9 +134,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           Help Center / FAQ
         </Navigate>
         <Navigate to="https://dune.com/Bancor/bancor_1">Analytics</Navigate>
-        <Navigate to="analytics.bancor.network">
-          Analytics V3
-        </Navigate>
+        <Navigate to="https://analytics.bancor.network">Analytics V3</Navigate>
         <Navigate to="https://docs.bancor.network">Developers</Navigate>
         <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
         <Navigate to={BancorURL.privacyPolicy}>Privacy Policy</Navigate>
