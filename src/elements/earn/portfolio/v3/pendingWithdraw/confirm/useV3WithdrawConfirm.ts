@@ -154,9 +154,9 @@ export const useV3WithdrawConfirm = ({
     approveTokens,
     withdraw,
     ContractsApi.BancorNetwork.contractAddress,
-    () => sendWithdrawACEvent(WithdrawACEvent.WalletUnlimitedRequest),
+    () => sendWithdrawACEvent(WithdrawACEvent.UnlimitedView),
     (isUnlimited: boolean) =>
-      sendWithdrawACEvent(WithdrawACEvent.WalletUnlimitedConfirm, isUnlimited)
+      sendWithdrawACEvent(WithdrawACEvent.UnlimitedContinue, isUnlimited)
   );
 
   const handleWithdrawClick = useCallback(async () => {

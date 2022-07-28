@@ -22,7 +22,7 @@ const govTxtMap = new Map([
   [GovEvent.Click, 'Click'],
   [GovEvent.UnlimitedPopup, 'Unlimited View'],
   [GovEvent.UnlimitedPopupSelect, 'Unlimited Continue'],
-  [GovEvent.WalletRequest, 'Wallet Wallet Request'],
+  [GovEvent.WalletRequest, 'Wallet Request'],
   [GovEvent.WalletConfirm, 'Wallet Confirm'],
   [GovEvent.Success, 'Success'],
   [GovEvent.Success, 'Failed'],

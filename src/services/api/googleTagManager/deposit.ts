@@ -6,6 +6,8 @@ export enum DepositEvent {
   DepositAmountContinue,
   DepositUnlimitedPopupRequest,
   DepositUnlimitedPopupConfirm,
+  DepositWalletUnlimitedRequest,
+  DepositWalletUnlimitedConfirm,
   DepositWalletRequest,
   DepositWalletConfirm,
   DepositSuccess,
@@ -18,6 +20,14 @@ const depositTxtMap = new Map([
   [DepositEvent.DepositAmountContinue, 'Deposit Enter Amount Continue'],
   [DepositEvent.DepositUnlimitedPopupRequest, 'Deposit Unlimited Request'],
   [DepositEvent.DepositUnlimitedPopupConfirm, 'Deposit Unlimited Continue'],
+  [
+    DepositEvent.DepositWalletUnlimitedRequest,
+    'Deposit Wallet Unlimited Request',
+  ],
+  [
+    DepositEvent.DepositWalletUnlimitedConfirm,
+    'Deposit Wallet Unlimited Confirm',
+  ],
   [DepositEvent.DepositWalletRequest, 'Deposit Wallet Request'],
   [DepositEvent.DepositWalletConfirm, 'Deposit Wallet Confirm'],
   [DepositEvent.DepositSuccess, 'Deposit Success'],

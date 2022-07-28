@@ -6,8 +6,8 @@ export enum WithdrawEvent {
   WithdrawAmountContinue,
   WithdrawUnlimitedTokenView,
   WithdrawUnlimitedTokenContinue,
-  WithdrawTokenRequest,
-  WithdrawTokenConfirm,
+  WithdrawWalletUnlimitedRequest,
+  WithdrawWalletUnlimitedConfirm,
   WithdrawCooldownRequest,
   WithdrawCooldownConfirm,
   WithdrawSuccess,
@@ -37,8 +37,14 @@ const withdrawTxtMap = new Map([
     WithdrawEvent.WithdrawUnlimitedTokenContinue,
     'Withdraw SC Unlimited Continue',
   ],
-  [WithdrawEvent.WithdrawTokenRequest, 'Withdraw SC Wallet Token Request'],
-  [WithdrawEvent.WithdrawTokenConfirm, 'Withdraw SC Wallet Token Confirm'],
+  [
+    WithdrawEvent.WithdrawWalletUnlimitedRequest,
+    'Withdraw SC Wallet Unlimited Request',
+  ],
+  [
+    WithdrawEvent.WithdrawWalletUnlimitedConfirm,
+    'Withdraw SC Wallet Unlimited Confirm',
+  ],
   [
     WithdrawEvent.WithdrawCooldownRequest,
     'Withdraw SC Wallet Cooldown Request',
@@ -124,6 +130,8 @@ export const sendWithdrawEvent = (
 export enum WithdrawACEvent {
   CTAClick,
   ApproveClick,
+  UnlimitedView,
+  UnlimitedContinue,
   WalletUnlimitedRequest,
   WalletUnlimitedConfirm,
   WalletRequest,
@@ -135,8 +143,11 @@ export enum WithdrawACEvent {
 const withdrawACTxtMap = new Map([
   [WithdrawACEvent.CTAClick, 'CTA Click'],
   [WithdrawACEvent.ApproveClick, 'Approve Click'],
-  [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited View'],
-  [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Continue'],
+  [WithdrawACEvent.UnlimitedView, 'Unlimited View'],
+  [WithdrawACEvent.UnlimitedContinue, 'Unlimited Continue'],
+  [WithdrawACEvent.WalletUnlimitedRequest, 'Wallet Unlimited Request'],
+  [WithdrawACEvent.WalletUnlimitedConfirm, 'Wallet Unlimited Confirm'],
+
   [WithdrawACEvent.WalletRequest, 'Wallet Request'],
   [WithdrawACEvent.WalletConfirm, 'Wallet Confirm'],
   [WithdrawACEvent.Success, 'Success'],
