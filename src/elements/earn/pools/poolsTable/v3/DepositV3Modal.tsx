@@ -157,12 +157,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress,
-    () => {
-      sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest);
+    () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
+
+    (isUnlimited: boolean) => {
+      sendDepositEvent(DepositEvent.DepositUnlimitedPopupConfirm, isUnlimited);
       sendDepositEvent(DepositEvent.DepositWalletUnlimitedRequest);
-    },
-    (isUnlimited: boolean) =>
-      sendDepositEvent(DepositEvent.DepositUnlimitedPopupConfirm, isUnlimited)
+    }
   );
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);

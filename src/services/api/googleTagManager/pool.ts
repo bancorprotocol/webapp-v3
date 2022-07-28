@@ -43,7 +43,7 @@ export const sendPoolEvent = (
     event: poolEventTxtMap.get(event),
     event_properties,
     ga_event: {
-      category: 'Pools Page',
+      category: 'Deposit',
     },
   };
   sendGTM(data);

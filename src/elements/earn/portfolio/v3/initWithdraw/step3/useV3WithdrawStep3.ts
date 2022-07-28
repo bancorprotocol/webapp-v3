@@ -161,15 +161,14 @@ export const useV3WithdrawStep3 = ({
     approveTokens,
     (approvalHash?: string) => initWithdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
-    () => {
-      sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView);
-      sendWithdrawEvent(WithdrawEvent.WithdrawWalletUnlimitedRequest);
-    },
-    (isUnlimited: boolean) =>
+    () => sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView),
+    (isUnlimited: boolean) => {
       sendWithdrawEvent(
         WithdrawEvent.WithdrawUnlimitedTokenContinue,
         isUnlimited
-      )
+      );
+      sendWithdrawEvent(WithdrawEvent.WithdrawWalletUnlimitedRequest);
+    }
   );
 
   const handleButtonClick = useCallback(async () => {

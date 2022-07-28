@@ -165,12 +165,12 @@ export const useV3WithdrawConfirm = ({
     approveTokens,
     (approvalHash?: string) => withdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
-    () => {
-      sendWithdrawACEvent(WithdrawACEvent.UnlimitedView);
+    () => sendWithdrawACEvent(WithdrawACEvent.UnlimitedView),
+
+    (isUnlimited: boolean) => {
+      sendWithdrawACEvent(WithdrawACEvent.UnlimitedContinue, isUnlimited);
       sendWithdrawACEvent(WithdrawACEvent.WalletUnlimitedRequest);
-    },
-    (isUnlimited: boolean) =>
-      sendWithdrawACEvent(WithdrawACEvent.UnlimitedContinue, isUnlimited)
+    }
   );
 
   const handleWithdrawClick = useCallback(async () => {

@@ -150,7 +150,7 @@ const withdrawACTxtMap = new Map([
   [WithdrawACEvent.WalletRequest, 'Wallet Request'],
   [WithdrawACEvent.WalletConfirm, 'Wallet Confirm'],
   [WithdrawACEvent.Success, 'Success'],
-  [WithdrawACEvent.Success, 'Failed'],
+  [WithdrawACEvent.Failed, 'Failed'],
 ]);
 
 const getWithdrawACText = (event: WithdrawACEvent) =>
