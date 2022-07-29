@@ -4,6 +4,17 @@ import { Modal } from 'modals';
 import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalanceLarge } from 'components/tokenBalance/TokenBalanceLarge';
 import { toBigNumber } from 'utils/helperFunctions';
+import {
+  sendWithdrawEvent,
+  setCurrentWithdraw,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
+import BigNumber from 'bignumber.js';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+} from 'services/api/googleTagManager';
 
 export const V3WithdrawCancelModal = memo(
   ({
@@ -22,11 +33,31 @@ export const V3WithdrawCancelModal = memo(
     const token = pool.reserveToken;
 
     const handleCTAClick = useCallback(async () => {
+      setCurrentWithdraw({
+        withdraw_pool: pool.name,
+        withdraw_blockchain: getBlockchain(),
+        withdraw_blockchain_network: getBlockchainNetwork(),
+        withdraw_token: pool.name,
+        withdraw_token_amount: withdrawRequest.reserveTokenAmount,
+        withdraw_token_amount_usd: new BigNumber(
+          withdrawRequest.reserveTokenAmount
+        )
+          .times(withdrawRequest.pool.reserveToken.usdPrice)
+          .toString(),
+        withdraw_display_currency: getCurrency(),
+      });
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelApproveClick);
       setTxBusy(true);
       await cancelWithdrawal();
       setIsModalOpen(false);
       setTxBusy(false);
-    }, [cancelWithdrawal, setIsModalOpen]);
+    }, [
+      cancelWithdrawal,
+      setIsModalOpen,
+      pool.name,
+      withdrawRequest.pool.reserveToken.usdPrice,
+      withdrawRequest.reserveTokenAmount,
+    ]);
 
     const compoundingApr = useMemo(
       () =>

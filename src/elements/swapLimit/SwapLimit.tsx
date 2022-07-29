@@ -10,7 +10,6 @@ import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
 import { useDispatch } from 'react-redux';
-import { useWeb3React } from '@web3-react/core';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
 import { ApprovalContract } from 'services/web3/approval';
@@ -24,13 +23,6 @@ import {
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { DepositETHModal } from 'modals/DepositETHModal';
-import {
-  sendConversionEvent,
-  ConversionEvents,
-  setCurrentConversion,
-  sendConversionSuccessEvent,
-  sendConversionFailEvent,
-} from 'services/api/googleTagManager';
 import { useApproveModal } from 'hooks/useApproveModal';
 import {
   depositETHNotification,
@@ -40,6 +32,11 @@ import {
 } from 'services/notifications/notifications';
 import { depositWeth } from 'services/web3/swap/limit';
 import { ErrorCode } from 'services/web3/types';
+import {
+  setCurrentConversion,
+  sendConversionEvent,
+} from 'services/api/googleTagManager/conversion';
+import { Events } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -65,7 +62,6 @@ export const SwapLimit = ({
   refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
-  const { chainId } = useWeb3React();
   const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -240,7 +236,6 @@ export const SwapLimit = ({
     const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
     setCurrentConversion(
       'Limit',
-      chainId,
       tokenPair,
       fromToken.symbol,
       toToken?.symbol,
@@ -253,7 +248,7 @@ export const SwapLimit = ({
       percentage,
       duration.asSeconds().toString()
     );
-    sendConversionEvent(ConversionEvents.click);
+    sendConversionEvent(Events.click);
 
     await swapLimit(
       fromToken.address === ethToken
@@ -264,9 +259,8 @@ export const SwapLimit = ({
       toAmount,
       account,
       duration,
-      () => sendConversionEvent(ConversionEvents.wallet_req),
+      () => sendConversionEvent(Events.wallet_req),
       () => {
-        sendConversionSuccessEvent(fromToken.usdPrice);
         swapLimitNotification(
           dispatch,
           fromToken,
@@ -277,20 +271,15 @@ export const SwapLimit = ({
         if (fromToken.address === ethToken) updateETHandWETH();
         refreshLimit();
       },
-      () => {
-        sendConversionFailEvent('User rejected transaction');
-        rejectNotification(dispatch);
-      },
-      (error: string) => {
-        sendConversionFailEvent(error);
+      () => rejectNotification(dispatch),
+      () =>
         swapLimitFailedNotification(
           dispatch,
           fromToken,
           toToken,
           fromAmount,
           toAmount
-        );
-      }
+        )
     );
   };
 
@@ -301,8 +290,13 @@ export const SwapLimit = ({
       approveWETH();
     } catch (e: any) {
       if (e.code === ErrorCode.DeniedTx)
-        sendConversionFailEvent('User rejected transaction');
-      else sendConversionFailEvent(e.message);
+        sendConversionEvent(
+          Events.fail,
+          undefined,
+          undefined,
+          'User rejected transaction'
+        );
+      else sendConversionEvent(Events.fail, undefined, undefined, e.message);
     }
   };
 

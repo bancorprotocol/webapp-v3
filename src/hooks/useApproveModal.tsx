@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
 import { web3 } from 'services/web3';
-import { ConversionEvents } from 'services/api/googleTagManager';
+import { Events } from 'services/api/googleTagManager';
 
 interface Tokens {
   token: Token;
@@ -23,9 +23,9 @@ interface Tokens {
 
 export const useApproveModal = (
   tokens: Tokens[] = [],
-  onComplete: Function,
+  onComplete: (txHash?: string) => void,
   contract: ApprovalContract | string = ApprovalContract.BancorNetwork,
-  gtmPopupEvent?: (event: ConversionEvents) => void,
+  gtmPopupEvent?: (event: Events) => void,
   gtmSelectEvent?: (isUnlimited: boolean) => void,
   onClose?: Function
 ) => {
@@ -48,8 +48,8 @@ export const useApproveModal = (
 
     const successCount = receipts.filter((r) => r && r.status).length;
     if (successCount === ref.current.length) {
+      onComplete(ref.current.length > 0 ? ref.current[0] : undefined);
       ref.current = [];
-      onComplete();
     } else {
       await wait(3000);
       await awaitConfirmation();
@@ -91,7 +91,7 @@ export const useApproveModal = (
       return checkNextToken(tokenIndex);
     }
 
-    gtmPopupEvent && gtmPopupEvent(ConversionEvents.approvePop);
+    gtmPopupEvent && gtmPopupEvent(Events.approvePop);
 
     setIsOpen(true);
   };

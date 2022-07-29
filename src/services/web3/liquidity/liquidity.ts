@@ -32,11 +32,9 @@ import {
   zeroAddress,
 } from '../config';
 import { ErrorCode, EthNetworks, PoolType } from '../types';
-import {
-  ConversionEvents,
-  sendLiquidityEvent,
-} from '../../api/googleTagManager';
+import { sendLiquidityEvent } from 'services/api/googleTagManager/liquidity';
 import { Pool, PoolToken } from 'services/observables/pools';
+import { Events } from 'services/api/googleTagManager';
 
 export const createPool = async (
   token: Token,
@@ -121,7 +119,7 @@ export const addLiquidity = async (
 
     const value = tkn.address === ethToken ? tknWei : undefined;
 
-    // sendLiquidityEvent(ConversionEvents.wallet_req);
+    // sendLiquidityEvent(Events.wallet_req);
 
     const estimate = await contract.estimateGas.addLiquidity(
       [bnt.address, tkn.address],
@@ -138,7 +136,7 @@ export const addLiquidity = async (
       { value, gasLimit }
     );
 
-    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
+    sendLiquidityEvent(Events.wallet_confirm, tx.hash);
 
     onHash(tx.hash);
 
@@ -187,10 +185,10 @@ export const removeLiquidity = async (
         );
       }
     };
-    sendLiquidityEvent(ConversionEvents.wallet_req);
+    sendLiquidityEvent(Events.wallet_req);
 
     const tx = await liquidateFn();
-    sendLiquidityEvent(ConversionEvents.wallet_confirm);
+    sendLiquidityEvent(Events.wallet_confirm);
 
     onHash(tx.hash);
     await tx.wait();
@@ -222,7 +220,7 @@ export const addLiquidityV2Single = async (
     );
     const fromIsEth = ethToken === token.address;
 
-    sendLiquidityEvent(ConversionEvents.wallet_req);
+    sendLiquidityEvent(Events.wallet_req);
 
     const estimate = await contract.estimateGas.addLiquidity(
       pool.pool_dlt_id,
@@ -239,7 +237,7 @@ export const addLiquidityV2Single = async (
       { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
     );
     onHash(tx.hash);
-    sendLiquidityEvent(ConversionEvents.wallet_confirm, tx.hash);
+    sendLiquidityEvent(Events.wallet_confirm, tx.hash);
 
     await tx.wait();
 

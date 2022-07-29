@@ -21,6 +21,12 @@ import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInput
 import { ApprovalContract } from 'services/web3/approval';
 import { useAppSelector } from 'store';
 import { Button, ButtonSize } from 'components/button/Button';
+import {
+  GovEvent,
+  GovProperties,
+  sendGovEvent,
+} from 'services/api/googleTagManager/gov';
+import { getFiat } from 'services/api/googleTagManager';
 
 export const VbntModal = ({
   setIsOpen,
@@ -38,9 +44,10 @@ export const VbntModal = ({
   onCompleted?: Function;
 }) => {
   const account = useAppSelector((state) => state.user.account);
+  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
-  const [, setSelPercentage] = useState<number>(-1);
+  const [selPercentage, setSelPercentage] = useState<number>(-1);
   const dispatch = useDispatch();
 
   const stakeDisabled = !account || !amount || Number(amount) === 0;
@@ -50,6 +57,13 @@ export const VbntModal = ({
       ? token.balance
       : undefined
     : stakeBalance;
+
+  const govProperties: GovProperties = {
+    stake_input_type: getFiat(isFiat),
+    stake_token_amount_usd: amount,
+    stake_token_portion_percent:
+      selPercentage !== -1 ? percentages[selPercentage].toFixed(0) : 'N/A',
+  };
 
   useEffect(() => {
     if (amount && fieldBlance) {
@@ -63,30 +77,64 @@ export const VbntModal = ({
   const handleStakeUnstake = async () => {
     if (stakeDisabled || !account) return;
 
+    sendGovEvent(GovEvent.Click, govProperties, stake);
+    sendGovEvent(GovEvent.WalletRequest, govProperties, stake);
     if (stake)
       await stakeAmount(
         amount,
         token,
-        (txHash: string) => stakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(),
-        () => rejectNotification(dispatch),
-        () => stakeFailedNotification(dispatch, amount)
+        (txHash: string) => {
+          stakeNotification(dispatch, amount, txHash);
+          sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
+        },
+        () => {
+          refreshBalances();
+          sendGovEvent(GovEvent.Success, govProperties, stake);
+        },
+        (error: string) => {
+          rejectNotification(dispatch);
+          sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
+        },
+        (error: string) => {
+          stakeFailedNotification(dispatch, amount);
+          sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
+        }
       );
     else
       await unstakeAmount(
         amount,
         token,
-        (txHash: string) => unstakeNotification(dispatch, amount, txHash),
-        () => refreshBalances(),
-        () => rejectNotification(dispatch),
-        () => unstakeFailedNotification(dispatch, amount)
+        (txHash: string) => {
+          unstakeNotification(dispatch, amount, txHash);
+          sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
+        },
+        () => {
+          refreshBalances();
+          sendGovEvent(GovEvent.Success, govProperties, stake);
+        },
+        (error: string) => {
+          rejectNotification(dispatch);
+          sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
+        },
+        (error: string) => {
+          unstakeFailedNotification(dispatch, amount);
+          sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
+        }
       );
   };
 
   const [checkApprove, ModalApprove] = useApproveModal(
     [{ amount: amount, token: token }],
     handleStakeUnstake,
-    ApprovalContract.Governance
+    ApprovalContract.Governance,
+    () => sendGovEvent(GovEvent.UnlimitedPopup, govProperties, stake),
+    (isUnlimited: boolean) =>
+      sendGovEvent(
+        GovEvent.UnlimitedPopupSelect,
+        govProperties,
+        stake,
+        isUnlimited
+      )
   );
 
   const refreshBalances = async () => {

@@ -15,6 +15,8 @@ import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
 import { exchangeProxy$ } from 'services/observables/contracts';
+import { sendConversionEvent } from './googleTagManager/conversion';
+import { Events } from './googleTagManager';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -53,9 +55,12 @@ export const swapLimit = async (
 ) => {
   try {
     onHash();
+    sendConversionEvent(Events.wallet_req);
     await createOrder(fromToken, toToken, from, to, user, duration.asSeconds());
+    sendConversionEvent(Events.success);
     onCompleted();
   } catch (e: any) {
+    sendConversionEvent(Events.fail, undefined, undefined, e.message);
     if (e.code === ErrorCode.DeniedTx) rejected();
     else failed(e.message);
   }

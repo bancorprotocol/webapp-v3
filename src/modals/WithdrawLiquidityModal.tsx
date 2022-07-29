@@ -29,7 +29,7 @@ export const WithdrawLiquidityModal = ({
             V3 withdrawals involve a {lockDurationInDays}-day cool-down.
           </div>
           <div className="mt-10 font-bold text-error">
-            Please note that the IL protection mechanism is temporarily paused.
+            Please note that BNT distribution is temporarily paused.
           </div>
         </div>
         <PopoverV3

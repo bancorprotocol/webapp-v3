@@ -7,6 +7,7 @@ import { DropdownTransition } from 'components/transitions/DropdownTransition';
 import { BancorURL } from 'router/bancorURL.service';
 import { useAppSelector } from 'store';
 import { getUserRewardsProof } from 'store/liquidity/liquidity';
+import { Button, ButtonSize } from 'components/button/Button';
 
 export const MyRewards = () => {
   const {
@@ -17,17 +18,28 @@ export const MyRewards = () => {
     loading,
     userRewards,
     hasClaimed,
+    stakeRewardsToV3,
   } = useMyRewards();
   const account = useAppSelector((state) => state.user.account);
   const proof = useAppSelector(getUserRewardsProof);
   const canClaim =
     !hasClaimed && !!account && userRewards.claimable !== '0' && !!proof;
+  const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
       <div className="flex items-center justify-between">
         <h2 className="ml-[20px] md:ml-[33px]">Rewards</h2>
         <div className="flex items-center mr-[20px] md:mr-[44px] space-x-8">
+          {enableDeposit && (
+            <Button
+              onClick={stakeRewardsToV3}
+              size={ButtonSize.Small}
+              disabled={!canClaim}
+            >
+              Stake to V3
+            </Button>
+          )}
           <Popover className="relative block">
             <Popover.Button disabled={!canClaim}>
               <IconMore className="w-16 rotate-90" />
