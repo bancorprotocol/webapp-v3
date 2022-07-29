@@ -15,6 +15,10 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { AmountTknFiat } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { getPortfolioWithdrawalRequests } from 'store/portfolio/v3Portfolio';
+import {
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 interface Props {
   holding: Holding;
@@ -95,17 +99,27 @@ export const useV3WithdrawStep3 = ({
     }
   }, [account, amount.tkn, decimals, poolDltId, poolTokenDltId]);
 
-  const initWithdraw = async () => {
+  const initWithdraw = async (approvalHash?: string) => {
     if (!account) {
       console.error('No account, please connect wallet');
       return;
     }
+    if (approvalHash)
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawWalletUnlimitedConfirm,
+        undefined,
+        undefined,
+        undefined,
+        approvalHash
+      );
 
     try {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownRequest);
       const tx = await ContractsApi.BancorNetwork.write.initWithdrawal(
         poolTokenDltId,
         poolTokenAmountWei
       );
+      sendWithdrawEvent(WithdrawEvent.WithdrawCooldownConfirm);
       ContractsApi.PendingWithdrawals.read.once(
         'WithdrawalInitiated',
         async (pool, provider, requestId) => {
@@ -120,8 +134,16 @@ export const useV3WithdrawStep3 = ({
         reserveToken.symbol
       );
       await tx.wait();
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawSuccess,
+        undefined,
+        undefined,
+        undefined,
+        tx.hash
+      );
       initiatedWithdraw.current = true;
     } catch (e: any) {
+      sendWithdrawEvent(WithdrawEvent.WithdrawFailed, undefined, e.message);
       setTxBusy(false);
       console.error('initWithdraw failed', e);
       if (e.code === ErrorCode.DeniedTx) {
@@ -137,8 +159,16 @@ export const useV3WithdrawStep3 = ({
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
-    initWithdraw,
-    ContractsApi.BancorNetwork.contractAddress
+    (approvalHash?: string) => initWithdraw(approvalHash),
+    ContractsApi.BancorNetwork.contractAddress,
+    () => sendWithdrawEvent(WithdrawEvent.WithdrawUnlimitedTokenView),
+    (isUnlimited: boolean) => {
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawUnlimitedTokenContinue,
+        isUnlimited
+      );
+      sendWithdrawEvent(WithdrawEvent.WithdrawWalletUnlimitedRequest);
+    }
   );
 
   const handleButtonClick = useCallback(async () => {

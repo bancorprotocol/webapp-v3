@@ -19,6 +19,16 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
 import { expandToken } from 'utils/formulas';
+import {
+  sendWithdrawACEvent,
+  setCurrentWithdraw,
+  WithdrawACEvent,
+} from 'services/api/googleTagManager/withdraw';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+} from 'services/api/googleTagManager';
 
 interface Props {
   isModalOpen: boolean;
@@ -84,35 +94,56 @@ export const useV3WithdrawConfirm = ({
     setWithdrawAmounts(undefined);
   }, [setIsModalOpen]);
 
-  const withdraw = useCallback(async () => {
-    if (!withdrawRequest || !account) {
-      return;
-    }
-
-    try {
-      const tx = await ContractsApi.BancorNetwork.write.withdraw(
-        withdrawRequest.id
-      );
-      confirmWithdrawNotification(
-        dispatch,
-        tx.hash,
-        withdrawRequest.reserveTokenAmount,
-        token.symbol
-      );
-      onModalClose();
-      setTxBusy(false);
-      await updatePortfolioData(dispatch);
-    } catch (e: any) {
-      console.error('withdraw request failed', e);
-      if (e.code === ErrorCode.DeniedTx) {
-        rejectNotification(dispatch);
-      } else {
-        genericFailedNotification(dispatch, 'Confirm withdrawal failed');
+  const withdraw = useCallback(
+    async (approvalHash?: string) => {
+      if (!withdrawRequest || !account) {
+        return;
       }
-      onModalClose();
-      setTxBusy(false);
-    }
-  }, [account, dispatch, onModalClose, token.symbol, withdrawRequest]);
+      if (approvalHash)
+        sendWithdrawACEvent(
+          WithdrawACEvent.WalletUnlimitedConfirm,
+          undefined,
+          undefined,
+          approvalHash
+        );
+
+      try {
+        sendWithdrawACEvent(WithdrawACEvent.WalletRequest);
+        const tx = await ContractsApi.BancorNetwork.write.withdraw(
+          withdrawRequest.id
+        );
+        sendWithdrawACEvent(WithdrawACEvent.WalletConfirm);
+        confirmWithdrawNotification(
+          dispatch,
+          tx.hash,
+          withdrawRequest.reserveTokenAmount,
+          token.symbol
+        );
+        onModalClose();
+        setTxBusy(false);
+
+        await tx.wait();
+        await updatePortfolioData(dispatch);
+        sendWithdrawACEvent(
+          WithdrawACEvent.Success,
+          undefined,
+          undefined,
+          tx.hash
+        );
+      } catch (e: any) {
+        console.error('withdraw request failed', e);
+        sendWithdrawACEvent(WithdrawACEvent.Failed, undefined, e.message);
+        if (e.code === ErrorCode.DeniedTx) {
+          rejectNotification(dispatch);
+        } else {
+          genericFailedNotification(dispatch, 'Confirm withdrawal failed');
+        }
+        onModalClose();
+        setTxBusy(false);
+      }
+    },
+    [account, dispatch, onModalClose, token.symbol, withdrawRequest]
+  );
 
   const approveTokens = useMemo(() => {
     const tokensToApprove = [];
@@ -132,14 +163,39 @@ export const useV3WithdrawConfirm = ({
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,
-    withdraw,
-    ContractsApi.BancorNetwork.contractAddress
+    (approvalHash?: string) => withdraw(approvalHash),
+    ContractsApi.BancorNetwork.contractAddress,
+    () => sendWithdrawACEvent(WithdrawACEvent.UnlimitedView),
+
+    (isUnlimited: boolean) => {
+      sendWithdrawACEvent(WithdrawACEvent.UnlimitedContinue, isUnlimited);
+      sendWithdrawACEvent(WithdrawACEvent.WalletUnlimitedRequest);
+    }
   );
 
   const handleWithdrawClick = useCallback(async () => {
+    setCurrentWithdraw({
+      withdraw_pool: pool.name,
+      withdraw_blockchain: getBlockchain(),
+      withdraw_blockchain_network: getBlockchainNetwork(),
+      withdraw_token: pool.name,
+      withdraw_token_amount: withdrawRequest.reserveTokenAmount,
+      withdraw_token_amount_usd: new BigNumber(
+        withdrawRequest.reserveTokenAmount
+      )
+        .times(withdrawRequest.pool.reserveToken.usdPrice)
+        .toString(),
+      withdraw_display_currency: getCurrency(),
+    });
+    sendWithdrawACEvent(WithdrawACEvent.ApproveClick);
     setTxBusy(true);
     onStart();
-  }, [onStart]);
+  }, [
+    onStart,
+    pool.name,
+    withdrawRequest.pool.reserveToken.usdPrice,
+    withdrawRequest.reserveTokenAmount,
+  ]);
 
   const handleCancelClick = useCallback(async () => {
     onModalClose();

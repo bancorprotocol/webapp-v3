@@ -5,7 +5,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableFilter';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
@@ -152,7 +152,7 @@ export const PoolsTable = ({
             pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
-                onClick={onClick}
+                onClick={() => onClick('Main Table')}
                 variant={ButtonVariant.Tertiary}
                 size={ButtonSize.ExtraSmall}
               >
@@ -188,7 +188,7 @@ export const PoolsTable = ({
                 />
               </div>
             </div>
-            <PoolsTableSort
+            <PoolsTableFilter
               rewards={rewards}
               setRewards={setRewards}
               lowVolume={lowVolume}

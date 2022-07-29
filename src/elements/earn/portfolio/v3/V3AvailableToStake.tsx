@@ -16,7 +16,7 @@ const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
       pool={pool}
       renderButton={(onClick) => (
         <button
-          onClick={onClick}
+          onClick={() => onClick()}
           className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
         >
           <TokenBalance

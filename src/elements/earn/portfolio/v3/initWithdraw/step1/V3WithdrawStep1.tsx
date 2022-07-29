@@ -17,6 +17,17 @@ import { shrinkToken } from 'utils/formulas';
 import useAsyncEffect from 'use-async-effect';
 import { debounce } from 'lodash';
 import { bntToken } from 'services/web3/config';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getFiat,
+  getCurrency,
+} from 'services/api/googleTagManager';
+import {
+  setCurrentWithdraw,
+  sendWithdrawEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 interface Props {
   inputTkn: string;
@@ -68,6 +79,29 @@ const V3WithdrawStep1 = ({
   );
 
   const handleNextStep = () => {
+    const portion = new BigNumber(inputTkn)
+      .div(holding.tokenBalance)
+      .times(100)
+      .toFixed(0);
+    const withdraw_portion =
+      portion === '25' ||
+      portion === '50' ||
+      portion === '75' ||
+      portion === '100'
+        ? portion
+        : '(no value)';
+    setCurrentWithdraw({
+      withdraw_pool: holding.pool.name,
+      withdraw_blockchain: getBlockchain(),
+      withdraw_blockchain_network: getBlockchainNetwork(),
+      withdraw_input_type: getFiat(isFiat),
+      withdraw_token: holding.pool.name,
+      withdraw_token_amount: inputTkn,
+      withdraw_token_amount_usd: inputFiat,
+      withdraw_portion,
+      withdraw_display_currency: getCurrency(),
+    });
+    sendWithdrawEvent(WithdrawEvent.WithdrawAmountContinue);
     if (skipStep2) {
       void handleButtonClick();
     } else {
