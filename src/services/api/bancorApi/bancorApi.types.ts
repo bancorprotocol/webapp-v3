@@ -134,6 +134,8 @@ export interface APIStatsV3 {
   totalVolume24hAgo: Omit<PriceDictionary, 'tkn'>;
   totalFees24h: Omit<PriceDictionary, 'tkn'>;
   totalFees24hAgo: Omit<PriceDictionary, 'tkn'>;
+  totalNetworkFees24h: Omit<PriceDictionary, 'tkn'>;
+  totalNetworkFees24hAgo: Omit<PriceDictionary, 'tkn'>;
   stakedBalanceBNT: Omit<PriceDictionary, 'tkn'>;
   bntRate: string;
   bntRate24hAgo: string;

@@ -17,7 +17,7 @@ interface BancorState {
   allTokenListTokens: TokenMinimal[];
   allTokens: Token[];
   isLoadingTokens: boolean;
-  statistics: Statistic[];
+  statistics: Statistic | null;
 }
 
 export const initialState: BancorState = {
@@ -28,7 +28,7 @@ export const initialState: BancorState = {
   keeperDaoTokens: [],
   allTokenListTokens: [],
   isLoadingTokens: true,
-  statistics: [],
+  statistics: null,
 };
 
 const bancorSlice = createSlice({
@@ -54,7 +54,7 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
-    setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
+    setStatisticsV3: (state, action: PayloadAction<Statistic>) => {
       state.statistics = action.payload;
     },
   },
