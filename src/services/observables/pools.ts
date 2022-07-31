@@ -98,8 +98,6 @@ export const buildPoolObject = (
   const apr_24h =
     liquidity && fees_24h ? calcApr(fees_24h - network_fees_24h, liquidity) : 0;
 
-  console.log(fees_24h, network_fees_24h, fees_7d, network_fees_7d);
-
   const reserveTkn = apiPool.reserves.find((r) => r.address === tkn.address);
   if (!reserveTkn) {
     return undefined;
