@@ -5,6 +5,7 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -76,6 +77,25 @@ export const PoolsTable = ({
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
               : prettifyNumber(row.fees7d.usd, true)}
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-start">
+            LP Fees 7d
+            <Navigate
+              to="https://vote.bancor.network/#/proposal/0x61cd3ec4295bf0819fb7fd80a9dcc0922036510f40b02c76213b29c48a1a5137"
+              className="hover:underline text-primary"
+            >
+              <IconInfo className="w-[10px] h-[10px] ml-2 text-black-low dark:text-white-low" />
+            </Navigate>
+          </div>
+          <div>
+            {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
+              ? 'New'
+              : prettifyNumber(
+                  toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
+                  true
+                )}
           </div>
         </div>
       </div>
