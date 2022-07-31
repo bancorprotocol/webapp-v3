@@ -88,6 +88,7 @@ export interface APIPoolV3 {
   tradingLiquidityTKN: PriceDictionary;
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
+  networkFees24h: PriceDictionary;
   stakedBalance: PriceDictionary;
   tradingFeePPM?: string;
   tradingEnabled?: boolean;
@@ -97,6 +98,7 @@ export interface APIPoolV3 {
   standardRewardsStaked: PriceDictionary;
   volume7d: PriceDictionary;
   fees7d: PriceDictionary;
+  networkFees7d: PriceDictionary;
 }
 
 export interface APIBntV3

@@ -51,20 +51,17 @@ export interface Pool {
   isProtected: boolean;
 }
 
+export interface APR {
+  tradingFees: number;
+  standardRewards: number;
+  autoCompounding: number;
+  total: number;
+}
+
 export interface PoolV3 extends APIPoolV3 {
   reserveToken: Token;
-  apr24h: {
-    tradingFees: number;
-    standardRewards: number;
-    autoCompounding: number;
-    total: number;
-  };
-  apr7d: {
-    tradingFees: number;
-    standardRewards: number;
-    autoCompounding: number;
-    total: number;
-  };
+  apr24h: APR;
+  apr7d: APR;
   programs: RewardsProgramRaw[];
   latestProgram?: RewardsProgramRaw;
 }
@@ -187,8 +184,15 @@ const buildPoolV3Object = async (
   const standardRewardsApr24H = standardsRewardsAPR(apiPool, programs);
   const standardRewardsApr7d = standardsRewardsAPR(apiPool, programs);
 
-  const tradingFeesApr24h = calcApr(apiPool.fees24h.usd, stakedBalance.usd);
-  const tradingFeesApr7d = calcApr(apiPool.fees7d.usd, stakedBalance.usd, true);
+  const tradingFeesApr24h = calcApr(
+    new BigNumber(apiPool.fees24h.usd).minus(apiPool.networkFees24h.usd),
+    stakedBalance.usd
+  );
+  const tradingFeesApr7d = calcApr(
+    new BigNumber(apiPool.fees7d.usd).minus(apiPool.networkFees7d.usd),
+    stakedBalance.usd,
+    true
+  );
 
   // TODO - add values once available
   const autoCompoundingApr24H = 0;
