@@ -13,6 +13,8 @@ export interface WelcomeData {
   total_volume_24h_ago: USDPrice;
   total_fees_24h: USDPrice;
   total_fees_24h_ago: USDPrice;
+  total_network_fees_24h: USDPrice;
+  total_network_fees_24h_ago: USDPrice;
   bnt_price_24h_ago: USDPrice;
   bnt_price: USDPrice;
   bnt_supply: string;
@@ -45,7 +47,9 @@ export interface APIPool {
   liquidity: USDPrice;
   volume_24h: USDPrice;
   fees_24h: USDPrice;
+  network_fees_24h: USDPrice;
   fees_7d: USDPrice;
+  network_fees_7d: USDPrice;
   fee: string;
   version: number;
   supply: string;

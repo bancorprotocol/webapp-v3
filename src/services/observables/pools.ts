@@ -90,9 +90,15 @@ export const buildPoolObject = (
 ): Pool | undefined => {
   const liquidity = Number(apiPool.liquidity.usd ?? 0);
   const fees_24h = Number(apiPool.fees_24h.usd ?? 0);
+  const network_fees_24h = Number(apiPool.network_fees_24h.usd ?? 0);
   const fees_7d = Number(apiPool.fees_7d.usd ?? 0);
-  const apr_7d = liquidity && fees_24h ? calcApr(fees_7d, liquidity) : 0;
-  const apr_24h = liquidity && fees_24h ? calcApr(fees_24h, liquidity) : 0;
+  const network_fees_7d = Number(apiPool.network_fees_7d.usd ?? 0);
+  const apr_7d =
+    liquidity && fees_24h ? calcApr(fees_7d - network_fees_7d, liquidity) : 0;
+  const apr_24h =
+    liquidity && fees_24h ? calcApr(fees_24h - network_fees_24h, liquidity) : 0;
+
+  console.log(fees_24h, network_fees_24h, fees_7d, network_fees_7d);
 
   const reserveTkn = apiPool.reserves.find((r) => r.address === tkn.address);
   if (!reserveTkn) {
