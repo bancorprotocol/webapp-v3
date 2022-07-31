@@ -139,7 +139,7 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
-        tooltip: 'Estimated APR based on the last 7d trading fees',
+        tooltip: 'Estimated APR based on the last 7d LP fees',
         minWidth: 100,
         sortDescFirst: true,
       },
