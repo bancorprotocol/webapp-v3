@@ -274,7 +274,7 @@ const Protect = () => {
           </div>
           <div className="text-16 text-black-low mt-10">$??,??? balance</div>
           <TokenInputV3
-            token={availabelToStake[selectedPosition].token}
+            dltId={availabelToStake[selectedPosition].token.address}
             inputTkn={input}
             setInputTkn={setInput}
             inputFiat={''}

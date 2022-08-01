@@ -1,6 +1,6 @@
 import { Button, ButtonSize } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -8,7 +8,6 @@ import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import { getTokenById } from 'store/bancor/bancor';
@@ -30,6 +29,7 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { TokenInputPercentageV3New } from 'components/tokenInputPercentage/TokenInputPercentageV3New';
 import {
   DepositEvent,
   sendDepositEvent,
@@ -46,9 +46,7 @@ import { DepositDisabledModal } from './DepositDisabledModal';
 
 interface Props {
   pool: PoolV3;
-  renderButton: (
-    onClick: (pool_click_location?: string) => void
-  ) => React.ReactNode;
+  renderButton: (onClick: (pool_click_location?: string) => void) => ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
@@ -275,10 +273,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         large
       >
         <div className="p-30 pb-14">
-          <TokenInputPercentageV3
+          <TokenInputPercentageV3New
             label="Amount"
             balanceLabel="Available"
-            token={pool.reserveToken}
+            dltId={pool.reserveToken.address}
             inputTkn={amount}
             inputFiat={inputFiat}
             setInputFiat={setInputFiat}

@@ -1,7 +1,7 @@
-import { ChangeEvent, useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { calcFiatValue, calcTknValue } from 'utils/helperFunctions';
-import { Token } from 'services/observables/tokens';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
+import { usePoolPick } from 'queries/index';
 
 export const calcOppositeValue = (
   isFiat: boolean,
@@ -17,20 +17,24 @@ export const calcOppositeValue = (
 };
 
 export interface useTokenInputV3Props {
-  token: Token;
+  dltId: string;
   setInputTkn: (amount: string) => void;
   setInputFiat: (amount: string) => void;
   isFiat: boolean;
 }
 
 export const useTokenInputV3 = ({
-  token,
+  dltId,
   setInputTkn,
   setInputFiat,
   isFiat,
 }: useTokenInputV3Props) => {
+  const { getOne } = usePoolPick(['symbol', 'decimals', 'rate']);
+  const { data } = getOne(dltId);
+  const symbol = data?.symbol;
+  const usdPrice = data?.rate?.usd;
+  const decimals = data?.decimals;
   const [isFocused, setIsFocused] = useState(false);
-  const { symbol, usdPrice, decimals } = useMemo(() => token, [token]);
   const inputUnit = isFiat ? 'USD' : symbol;
 
   const oppositeUnit = isFiat ? symbol : 'USD';
@@ -38,6 +42,10 @@ export const useTokenInputV3 = ({
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = sanitizeNumberInput(e.target.value);
+      if (!usdPrice || !decimals) {
+        console.error('Missing or still loading data for calculation');
+        return;
+      }
 
       if (isFiat) {
         const oppositeValue = value

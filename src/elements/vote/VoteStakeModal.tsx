@@ -1,4 +1,4 @@
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { usePoolPick } from 'queries';
 import { useState } from 'react';
@@ -9,6 +9,8 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useAppSelector } from 'store';
 import useAsyncEffect from 'use-async-effect';
 import { expandToken } from 'utils/formulas';
+import { TokenInputPercentageV3New } from 'components/tokenInputPercentage/TokenInputPercentageV3New';
+import { toBigNumber } from 'utils/helperFunctions';
 
 interface Props {
   isOpen: boolean;
@@ -74,21 +76,17 @@ export const VoteStakeModal = ({ isOpen, setIsOpen }: Props) => {
   const decimals = vBntQuery.data?.decimals;
   const account = useAppSelector((state) => state.user.account);
 
-  const { isLoading, approvalRequired, setAllowance } = useApproval(
-    vBntToken,
-    balance,
-    ContractsApi.Governance.contractAddress
-  );
-
   const handleStake = async () => {
     try {
       if (!decimals) {
         throw new Error('No decimals found');
       }
-      const balanceWei = expandToken(balance, decimals);
-      const tx = await ContractsApi.Governance.write.stake(balanceWei);
+      const inputWei = expandToken(input, decimals);
+      const tx = await ContractsApi.Governance.write.stake(inputWei);
       await tx.wait();
       await queryClient.invalidateQueries(['chain']);
+      setInput('');
+      setIsOpen(false);
 
       console.log('muh');
     } catch (e: any) {
@@ -96,45 +94,80 @@ export const VoteStakeModal = ({ isOpen, setIsOpen }: Props) => {
     }
   };
 
-  const sendMoney = async () => {
-    if (!account) {
-      throw new Error('No decimals found');
-    }
-    try {
-      const tx = await ContractsApi.Token(vBntToken).write.transfer(
-        '0xC030109bE8960f938Cf141F2E752D69960C785E4',
-        expandToken(1, 18)
-      );
-      await tx.wait();
-      queryClient.invalidateQueries(['chain', 'balances']);
-      console.log('muh');
-    } catch (e: any) {
-      console.error(e.message);
-    }
-  };
+  const [input, setInput] = useState('');
+  const [inputFiat, setInputFiat] = useState('');
+
+  const isInsufficientBalance = toBigNumber(balance).lt(input);
+
+  const { isLoading, approvalRequired, setAllowance } = useApproval(
+    vBntToken,
+    input,
+    ContractsApi.Governance.contractAddress
+  );
 
   return (
-    <ModalV3 isOpen={isOpen} setIsOpen={setIsOpen} title="Stake vBNT">
+    <ModalV3 isOpen={isOpen} setIsOpen={setIsOpen} large title="Stake vBNT">
       <div className="p-20">
-        Unstaked balance: {balance}
-        {!isLoading && approvalRequired && (
-          <div>
-            <div>isLoading: {isLoading ? 'true' : 'false'}</div>
-            <div>approvalRequired: {approvalRequired ? 'true' : 'false'}</div>
-            <Button size={ButtonSize.Small} onClick={() => setAllowance()}>
-              Unlimited
-            </Button>
-            <Button size={ButtonSize.Small} onClick={() => setAllowance(false)}>
+        <TokenInputPercentageV3New
+          label="Amount"
+          balanceLabel="Available"
+          balance={balance}
+          dltId={vBntToken}
+          inputTkn={input}
+          setInputTkn={setInput}
+          inputFiat={inputFiat}
+          setInputFiat={setInputFiat}
+          isFiat={false}
+          isError={isInsufficientBalance}
+        />
+        <div className={'py-10'} />
+
+        <div
+          className={`bg-secondary content-block overflow-hidden ${
+            approvalRequired && !isInsufficientBalance
+              ? 'h-[134px]  p-10'
+              : 'h-0 opacity-0 px-10'
+          } transition-all duration-500 ease-in-out`}
+        >
+          <h3>Approval required</h3>
+          <div className={'text-secondary mb-10'}>
+            Before you can proceed, please set the allowance for the Bancor
+            Governance Contract.
+          </div>
+          <div className={'flex space-x-10'}>
+            <Button
+              variant={ButtonVariant.Secondary}
+              size={ButtonSize.Small}
+              className={'!w-full'}
+              onClick={() => setAllowance(false)}
+            >
               Limited
             </Button>
+            <Button
+              size={ButtonSize.Small}
+              className={'!w-full'}
+              onClick={() => setAllowance()}
+            >
+              Unlimited
+            </Button>
           </div>
-        )}
-        <Button size={ButtonSize.Full} onClick={sendMoney}>
-          Plus One
-        </Button>
-        <Button size={ButtonSize.Full} onClick={handleStake}>
-          Stake all
-        </Button>
+        </div>
+
+        <div className={'mt-20 flex items-end'}>
+          <Button
+            size={ButtonSize.Full}
+            onClick={handleStake}
+            disabled={
+              isLoading ||
+              approvalRequired ||
+              !input ||
+              isInsufficientBalance ||
+              toBigNumber(input).isZero()
+            }
+          >
+            Stake vBNT
+          </Button>
+        </div>
       </div>
     </ModalV3>
   );

@@ -206,7 +206,7 @@ const V3WithdrawStep1 = ({
       </div>
 
       <TokenInputV3
-        token={token}
+        dltId={token.address}
         inputTkn={inputTkn}
         setInputTkn={setInputTkn}
         inputFiat={inputFiat}

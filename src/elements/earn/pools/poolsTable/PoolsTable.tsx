@@ -9,7 +9,7 @@ import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
 import { TopPools } from 'elements/earn/pools/TopPools';
-import { sortNumbersByKey } from 'utils/pureFunctions';
+import { getBancorLogoUrl, sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
@@ -117,7 +117,7 @@ export const PoolsTable = ({
             buttonElement={() => (
               <div className="flex items-center">
                 <Image
-                  src={`https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/${cellData.row.original.poolDltId.toLowerCase()}.svg`}
+                  src={getBancorLogoUrl(cellData.row.original.poolDltId)}
                   alt="Pool Logo"
                   className="w-40 h-40 !rounded-full mr-10"
                 />
