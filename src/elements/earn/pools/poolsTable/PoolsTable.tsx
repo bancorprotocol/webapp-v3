@@ -174,7 +174,7 @@ export const PoolsTable = ({
         accessor: 'poolDltId',
         Cell: (cellData) => (
           <DepositV3Modal
-            pool={cellData.row.original}
+            poolId={cellData.row.original.poolDltId}
             renderButton={(onClick) => (
               <Button
                 onClick={() => onClick('Main Table')}
@@ -234,7 +234,7 @@ export const PoolsTable = ({
         </div>
       </div>
       <div className="hidden col-span-4 space-y-40 lg:block">
-        <section className="content-block p-20">
+        <section className="p-20 content-block">
           <Statistics />
         </section>
         <TopPools />

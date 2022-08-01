@@ -33,7 +33,7 @@ export const TopPools = () => {
             ? pools.map((pool, index) => {
                 return (
                   <DepositV3Modal
-                    pool={pool}
+                    poolId={pool.poolDltId}
                     key={`pool-table-key-${index}`}
                     renderButton={(onClick) => (
                       <button

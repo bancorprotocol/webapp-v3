@@ -74,7 +74,7 @@ export const V3EarningTable = () => {
         Cell: ({ cell }) => (
           <div className="flex items-center">
             <DepositV3Modal
-              pool={cell.row.original.pool}
+              poolId={cell.row.original.pool.poolDltId}
               renderButton={(onClick) => (
                 <V3EarningTableMenu
                   holding={cell.row.original}
