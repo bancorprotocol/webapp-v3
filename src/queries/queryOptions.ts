@@ -1,8 +1,8 @@
 export const queryOptionsDefaults = (enabled?: boolean) => ({
   enabled,
-  refetchInterval: 60000,
-  staleTime: 30000,
-  useErrorBoundary: true,
+  refetchInterval: 30 * 1000,
+  staleTime: 15 * 1000,
+  useErrorBoundary: false,
 });
 
 export const queryOptionsNoInterval = (enabled?: boolean) => ({
@@ -11,13 +11,13 @@ export const queryOptionsNoInterval = (enabled?: boolean) => ({
   staleTime: 6 * 60 * 60 * 1000,
 });
 
-export const queryOptionsStaleTimeLow = (enabled?: boolean) => ({
+export const queryOptionsStaleTime2m = (enabled?: boolean) => ({
   enabled,
-  refetchInterval: 5 * 60 * 1000,
-  staleTime: 5 * 60 * 1000,
+  refetchInterval: 2 * 60 * 1000,
+  staleTime: 2 * 60 * 1000,
 });
 
-export const queryOptionsStaleTimeHigh = (enabled?: boolean) => ({
+export const queryOptionsStaleTime15s = (enabled?: boolean) => ({
   enabled,
   refetchInterval: 15 * 1000,
   staleTime: 15 * 1000,

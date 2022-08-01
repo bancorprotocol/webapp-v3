@@ -61,7 +61,7 @@ export const PoolsTable = ({
           (p) =>
             p.symbol.toLowerCase().includes(search.toLowerCase()) &&
             (lowVolume || Number(p.volume?.volume24h?.usd) > 5000) &&
-            (lowLiquidity || Number(p.tradingLiquidity.TKN.usd) > 50000) &&
+            (lowLiquidity || Number(p.tradingLiquidity?.TKN.usd) > 50000) &&
             (lowEarnRate || (p.apr?.apr7d?.total ?? 0) > 0.15)
         )
       : [];

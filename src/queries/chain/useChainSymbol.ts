@@ -25,7 +25,10 @@ export const useChainSymbol = ({ enabled = true }: Props = {}) => {
       symbols.set(ethToken, 'ETH');
       return symbols;
     },
-    queryOptionsNoInterval(!!poolIds && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

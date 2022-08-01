@@ -18,7 +18,10 @@ export const useChainPrograms = ({ enabled = true }: Props = {}) => {
         poolIds?.map((id) => [id, programs.filter((p) => p.pool === id)])
       );
     },
-    queryOptionsNoInterval(!!poolIds && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

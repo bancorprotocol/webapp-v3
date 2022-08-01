@@ -4,7 +4,7 @@ import { useChainPoolTokenIds } from 'queries/chain/useChainPoolTokenIds';
 import { useChainPrograms } from 'queries/chain/useChainPrograms';
 import { useChainTradingEnabled } from 'queries/chain/useChainTradingEnabled';
 import { useApiApr } from 'queries/api/useApiApr';
-import { useChainTradingLiquidity } from 'queries/chain/useChainTradingLiquidity';
+import { useApiTradingLiquidity } from 'queries/api/useApiTradingLiquidity';
 import { useApiFees } from 'queries/api/useApiFees';
 import { useApiVolume } from 'queries/api/useApiVolume';
 import { useApiStakedBalance } from 'queries/api/useApiStakedBalance';
@@ -62,7 +62,7 @@ const useFetchers = (select: PoolKey[]) => {
     enabled: set.has('depositingEnabled'),
   });
 
-  const tradingLiquidity = useChainTradingLiquidity({
+  const tradingLiquidity = useApiTradingLiquidity({
     enabled: set.has('tradingLiquidity'),
   });
 

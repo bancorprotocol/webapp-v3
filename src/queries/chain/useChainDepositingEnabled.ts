@@ -18,7 +18,10 @@ export const useChainDepositingEnabled = ({ enabled = true }: Props = {}) => {
     QueryKey.chainDepositingEnabled(poolIds?.length),
     () =>
       fetchMulticallHelper<boolean>(poolIds!, buildMulticallDepositingEnabled),
-    queryOptionsNoInterval(!!poolIds && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

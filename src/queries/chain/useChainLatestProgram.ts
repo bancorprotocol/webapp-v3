@@ -33,7 +33,10 @@ export const useChainLatestProgram = ({ enabled = true }: Props = {}) => {
         })
       );
     },
-    queryOptionsNoInterval(!!poolIds && !!programsMap && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && !!programsMap && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

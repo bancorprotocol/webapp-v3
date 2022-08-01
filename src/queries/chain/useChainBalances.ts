@@ -37,7 +37,7 @@ export const useChainBalances = ({ enabled = true }: Props = {}) => {
         !!poolTokenIds.data &&
         !!decimals.data &&
         enabled,
-      useErrorBoundary: false,
+      useErrorBoundary: true,
     }
   );
 

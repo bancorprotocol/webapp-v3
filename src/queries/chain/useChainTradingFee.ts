@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { QueryKey } from 'queries/queryKeyFactory';
 import { useChainPoolIds } from 'queries/chain/useChainPoolIds';
-import { queryOptionsStaleTimeLow } from 'queries/queryOptions';
+import { queryOptionsStaleTime2m } from 'queries/queryOptions';
 import {
   buildMulticallTradingFee,
   fetchMulticallHelper,
@@ -13,7 +13,8 @@ export const useChainTradingFee = () => {
     QueryKey.chainTradingFee(poolIds?.length),
     () => fetchMulticallHelper<number>(poolIds!, buildMulticallTradingFee),
     {
-      ...queryOptionsStaleTimeLow(!!poolIds),
+      ...queryOptionsStaleTime2m(!!poolIds),
+      useErrorBoundary: true,
     }
   );
 };

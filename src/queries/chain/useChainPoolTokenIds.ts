@@ -16,7 +16,10 @@ export const useChainPoolTokenIds = ({ enabled = true }: Props = {}) => {
   const query = useQuery(
     QueryKey.chainPoolTokenIds(poolIds?.length),
     () => fetchMulticallHelper<string>(poolIds!, buildMulticallPoolToken),
-    queryOptionsNoInterval(!!poolIds && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

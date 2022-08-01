@@ -8,7 +8,7 @@ import { useApiV2Welcome } from 'queries/api/useApiV2Welcome';
 import { WelcomeData } from 'services/api/bancorApi/bancorApi.types';
 import { genericFailedNotification } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { queryOptionsStaleTimeHigh } from 'queries/queryOptions';
+import { queryOptionsStaleTime15s } from 'queries/queryOptions';
 import { QueryKey } from 'queries/queryKeyFactory';
 
 export interface Statistic {
@@ -105,7 +105,7 @@ export const useApiStatistics = () => {
     QueryKey.apiStatistics(),
     () => fetchStatistics(apiDataV2!),
     {
-      ...queryOptionsStaleTimeHigh(!!apiDataV2),
+      ...queryOptionsStaleTime15s(!!apiDataV2),
       useErrorBoundary: false,
       onError: (err: any) => {
         genericFailedNotification(

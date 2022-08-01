@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { QueryKey } from 'queries/queryKeyFactory';
-import { queryOptionsStaleTimeHigh } from 'queries/queryOptions';
+import { queryOptionsStaleTime15s } from 'queries/queryOptions';
 
 interface Props {
   enabled?: boolean;
@@ -22,7 +22,7 @@ export const useApiTokens = ({ enabled = true }: Props = {}) => {
         );
       }
     },
-    queryOptionsStaleTimeHigh(enabled)
+    queryOptionsStaleTime15s(enabled)
   );
 
   const getApiPoolByID = (id: string) => query.data?.get(id);

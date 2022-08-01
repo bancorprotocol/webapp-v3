@@ -22,9 +22,9 @@ export interface PoolV3Chain {
   name: string;
   symbol: string;
   decimals: number;
-  tradingLiquidity: {
-    BNT: PriceDictionaryV3;
-    TKN: PriceDictionaryV3;
+  tradingLiquidity?: {
+    BNT: PriceDictionary;
+    TKN: PriceDictionary;
   };
   stakedBalance: PriceDictionaryV3;
   tradingFeePPM: number;

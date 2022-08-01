@@ -24,7 +24,10 @@ export const useChainDecimals = ({ enabled = true }: Props = {}) => {
       decimals.set(ethToken, 18);
       return decimals;
     },
-    queryOptionsNoInterval(!!poolIds && enabled)
+    {
+      ...queryOptionsNoInterval(!!poolIds && enabled),
+      useErrorBoundary: true,
+    }
   );
 
   const getByID = (id: string) => query.data?.get(id);

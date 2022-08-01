@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { QueryKey } from 'queries/queryKeyFactory';
-import { queryOptionsStaleTimeLow } from 'queries/queryOptions';
+import { queryOptionsStaleTime2m } from 'queries/queryOptions';
 import { bntToken } from 'services/web3/config';
 
 export const useChainPoolIds = () => {
@@ -11,6 +11,9 @@ export const useChainPoolIds = () => {
       const pools = await ContractsApi.BancorNetwork.read.liquidityPools();
       return [bntToken, ...pools];
     },
-    queryOptionsStaleTimeLow()
+    {
+      ...queryOptionsStaleTime2m(),
+      useErrorBoundary: true,
+    }
   );
 };
