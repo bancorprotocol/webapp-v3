@@ -28,7 +28,7 @@ export enum ApprovalContract {
   Governance,
 }
 
-const getApproval = async (
+export const getApproval = async (
   token: string,
   user: string,
   spender: string,
@@ -47,7 +47,7 @@ const getApproval = async (
   return { allowanceWei, isApprovalRequired };
 };
 
-const setApproval = async (
+export const setApproval = async (
   token: string,
   user: string,
   spender: string,
@@ -130,7 +130,7 @@ export const setNetworkContractApproval = async (
   );
 };
 
-const getApprovalAddress = async (
+export const getApprovalAddress = async (
   contract: ApprovalContract | string
 ): Promise<string> => {
   if (typeof contract === 'string') return contract;

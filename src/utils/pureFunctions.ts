@@ -77,3 +77,6 @@ export const sorAlphaByKey = <T>(a: T, b: T, key: string[]) => {
 
 export const openNewTab = (url: string) =>
   window.open(url, '_blank', 'noopener');
+
+export const getBancorLogoUrl = (id: string) =>
+  `https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/${id.toLowerCase()}.svg`;

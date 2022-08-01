@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
 import { getTokenById } from 'store/bancor/bancor';
-import { bntToken, getNetworkVariables } from 'services/web3/config';
+import { bntToken, getNetworkVariables, vBntToken } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
@@ -151,15 +151,15 @@ export const useV3WithdrawConfirm = ({
       tokensToApprove.push({
         amount: poolTokenAmount,
         token: {
-          ...token,
-          address: govToken?.address ?? '',
-          symbol: govToken?.symbol ?? 'vBNT',
+          address: vBntToken,
+          decimals: govToken?.decimals || 18,
+          symbol: govToken?.symbol || 'vBNT',
         },
       });
     }
 
     return tokensToApprove;
-  }, [govToken?.address, govToken?.symbol, poolTokenAmount, token]);
+  }, [govToken?.decimals, govToken?.symbol, poolTokenAmount, token.address]);
 
   const [onStart, ModalApprove] = useApproveModal(
     approveTokens,

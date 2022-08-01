@@ -5,15 +5,19 @@ import TokenInputV3, {
 } from 'components/tokenInput/TokenInputV3';
 import { useEffect, useState } from 'react';
 import { calcFiatValue, prettifyNumber } from 'utils/helperFunctions';
+import { usePoolPick } from 'queries/index';
 
-interface TokenInputPercentageV3Props extends TokenInputV3Props {
+interface TokenInputPercentageV3Props extends Omit<TokenInputV3Props, 'token'> {
+  dltId: string;
   label: string;
+  balance?: string;
   balanceLabel?: string;
 }
 const percentages = [25, 50, 75, 100];
 
-export const TokenInputPercentageV3 = ({
-  token,
+export const TokenInputPercentageV3New = ({
+  dltId,
+  balance,
   inputTkn,
   setInputTkn,
   inputFiat,
@@ -23,27 +27,23 @@ export const TokenInputPercentageV3 = ({
   label,
   balanceLabel = 'Balance',
 }: TokenInputPercentageV3Props) => {
-  const fieldBalance = token.balance
-    ? token.balance
-    : token && token.balance
-    ? token.balance
-    : undefined;
-
+  const { getOne } = usePoolPick(['decimals', 'rate']);
+  const { data: token } = getOne(dltId);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
 
   const handleSetPercentage = (percent: number) => {
     setSelPercentage(percentages.indexOf(percent));
-    if (fieldBalance !== undefined) {
-      const amount = new BigNumber(fieldBalance).times(percent / 100);
+    if (balance !== undefined && !!token) {
+      const amount = new BigNumber(balance).times(percent / 100);
       setInputTkn(amount.toString());
-      setInputFiat(calcFiatValue(amount, token.usdPrice));
+      setInputFiat(calcFiatValue(amount, token.rate?.usd ?? 0));
     }
   };
 
   useEffect(() => {
-    if (fieldBalance !== undefined) {
+    if (balance !== undefined) {
       const percentage = new BigNumber(inputTkn)
-        .div(fieldBalance)
+        .div(balance)
         .times(100)
         .toNumber()
         .toFixed(10);
@@ -51,22 +51,22 @@ export const TokenInputPercentageV3 = ({
         percentages.findIndex((x) => percentage === x.toFixed(10))
       );
     }
-  }, [fieldBalance, inputTkn]);
+  }, [balance, inputTkn]);
 
   return (
     <div className="w-full">
       <div className="flex justify-between items-end mb-10">
         <span>{label}</span>
-        {fieldBalance && (
+        {balance && (
           <button
             onClick={() => handleSetPercentage(100)}
             className={`text-12 ${isError ? 'text-error' : ''}`}
           >
-            {balanceLabel}: {prettifyNumber(fieldBalance)}{' '}
+            {balanceLabel}: {prettifyNumber(balance)}{' '}
             <span className="text-secondary">
               (
               {prettifyNumber(
-                calcFiatValue(fieldBalance, token.usdPrice),
+                calcFiatValue(balance, token?.rate?.usd ?? 0),
                 true
               )}
               )
@@ -76,7 +76,7 @@ export const TokenInputPercentageV3 = ({
       </div>
       {token && (
         <TokenInputV3
-          token={token}
+          dltId={dltId}
           inputTkn={inputTkn}
           setInputTkn={setInputTkn}
           inputFiat={inputFiat}

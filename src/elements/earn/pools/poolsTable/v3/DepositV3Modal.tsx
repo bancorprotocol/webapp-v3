@@ -1,6 +1,5 @@
 import { Button, ButtonSize } from 'components/button/Button';
-import { PoolV3 } from 'services/observables/pools';
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -8,7 +7,6 @@ import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
-import { TokenInputPercentageV3 } from 'components/tokenInputPercentage/TokenInputPercentageV3';
 import { ethToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
 import { getTokenById } from 'store/bancor/bancor';
@@ -30,6 +28,7 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { TokenInputPercentageV3New } from 'components/tokenInputPercentage/TokenInputPercentageV3New';
 import {
   DepositEvent,
   sendDepositEvent,
@@ -43,17 +42,24 @@ import {
   getOnOff,
 } from 'services/api/googleTagManager';
 import { DepositDisabledModal } from './DepositDisabledModal';
+import { usePoolPick } from 'queries';
 
 interface Props {
-  pool: PoolV3;
-  renderButton: (
-    onClick: (pool_click_location?: string) => void
-  ) => React.ReactNode;
+  poolId: string;
+  renderButton: (onClick: (pool_click_location?: string) => void) => ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
 
-export const DepositV3Modal = ({ pool, renderButton }: Props) => {
+export const DepositV3Modal = ({ poolId, renderButton }: Props) => {
+  const { getOne } = usePoolPick([
+    'balance',
+    'symbol',
+    'latestProgram',
+    'decimals',
+    'apr',
+  ]);
+  const { data: pool } = getOne(poolId);
   const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,15 +83,15 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   };
 
   const isInputError = useMemo(
-    () => !!account && new BigNumber(pool.reserveToken.balance || 0).lt(amount),
-    [account, amount, pool.reserveToken.balance]
+    () => !!account && new BigNumber(pool?.balance?.tkn || 0).lt(amount),
+    [account, amount, pool?.balance?.tkn]
   );
 
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
 
   const deposit = async (approvalHash?: string) => {
-    if (!pool.reserveToken.balance || !account) {
+    if (!pool || !pool.balance?.tkn || !account) {
       return;
     }
 
@@ -98,8 +104,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       );
 
     sendDepositEvent(DepositEvent.DepositWalletRequest);
-    const amountWei = expandToken(amount, pool.reserveToken.decimals);
-    const isETH = pool.reserveToken.address === ethToken;
+    const amountWei = expandToken(amount, pool.decimals);
+    const isETH = poolId === ethToken;
 
     try {
       setTxBusy(true);
@@ -110,23 +116,16 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               amountWei,
               { value: isETH ? amountWei : undefined }
             )
-          : await ContractsApi.BancorNetwork.write.deposit(
-              pool.reserveToken.address,
-              amountWei,
-              { value: isETH ? amountWei : undefined }
-            );
+          : await ContractsApi.BancorNetwork.write.deposit(poolId, amountWei, {
+              value: isETH ? amountWei : undefined,
+            });
       sendDepositEvent(
         DepositEvent.DepositWalletConfirm,
         undefined,
         undefined,
         tx.hash
       );
-      confirmDepositNotification(
-        dispatch,
-        tx.hash,
-        amount,
-        pool.reserveToken.symbol
-      );
+      confirmDepositNotification(dispatch, tx.hash, amount, pool.symbol);
       setTxBusy(false);
       onClose();
       goToPage.portfolio();
@@ -152,9 +151,18 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   };
 
   const [onStart, ApproveModal] = useApproveModal(
-    [{ amount: amount || '0', token: pool.reserveToken }],
+    [
+      {
+        amount: amount || '0',
+        token: {
+          address: poolId,
+          symbol: pool?.symbol ?? 'N/A',
+          decimals: pool?.decimals ?? 18,
+        },
+      },
+    ],
     (approvalHash?: string) => deposit(approvalHash),
-    accessFullEarnings && pool.latestProgram?.isActive
+    accessFullEarnings && pool?.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress,
     () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
@@ -172,13 +180,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   );
 
   const handleClick = useCallback(() => {
-    if (canDeposit) {
+    if (canDeposit && pool) {
       const portion =
-        pool.reserveToken.balance &&
-        new BigNumber(amount)
-          .div(pool.reserveToken.balance)
-          .times(100)
-          .toFixed(0);
+        pool?.balance &&
+        new BigNumber(amount).div(pool?.balance.tkn).times(100).toFixed(0);
       const deposit_portion =
         portion &&
         (portion === '25' ||
@@ -188,11 +193,11 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           ? portion
           : '(no value)';
       setCurrentDeposit({
-        deposit_pool: pool.name,
+        deposit_pool: pool.symbol,
         deposit_blockchain: getBlockchain(),
         deposit_blockchain_network: getBlockchainNetwork(),
         deposit_input_type: getFiat(isFiat),
-        deposit_token: pool.name,
+        deposit_token: pool.symbol,
         deposit_token_amount: amount,
         deposit_token_amount_usd: inputFiat,
         deposit_portion,
@@ -213,8 +218,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     amount,
     inputFiat,
     isFiat,
-    pool.name,
-    pool.reserveToken.balance,
+    pool,
   ]);
 
   const shouldPollForGasPrice = useMemo(() => {
@@ -241,15 +245,17 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   if (!enableDeposit)
     return <DepositDisabledModal renderButton={renderButton} />;
 
+  if (!pool) return null;
+
   return (
     <>
       {renderButton((pool_click_location) => {
         setCurrentDeposit({
-          deposit_pool: pool.name,
+          deposit_pool: pool.symbol,
           deposit_blockchain: getBlockchain(),
           deposit_blockchain_network: getBlockchainNetwork(),
           deposit_input_type: getFiat(isFiat),
-          deposit_token: pool.name,
+          deposit_token: pool.symbol,
           deposit_token_amount: undefined,
           deposit_token_amount_usd: undefined,
           deposit_portion: undefined,
@@ -275,10 +281,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         large
       >
         <div className="p-30 pb-14">
-          <TokenInputPercentageV3
+          <TokenInputPercentageV3New
             label="Amount"
             balanceLabel="Available"
-            token={pool.reserveToken}
+            dltId={poolId}
             inputTkn={amount}
             inputFiat={inputFiat}
             setInputFiat={setInputFiat}
@@ -310,8 +316,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     <div className="flex items-center justify-between">
                       <span>
                         {accessFullEarnings
-                          ? pool.apr7d.total.toFixed(2)
-                          : pool.apr7d.tradingFees.toFixed(2)}
+                          ? pool.apr?.apr7d.total.toFixed(2)
+                          : pool.apr?.apr7d.tradingFees.toFixed(2)}
                         %
                       </span>
                       <IconChevron
@@ -331,11 +337,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[50px]">
                   <span>
                     <span>Compounding rewards</span>{' '}
-                    <span className="text-secondary">
-                      {pool.reserveToken.symbol}
-                    </span>
+                    <span className="text-secondary">{pool.symbol}</span>
                   </span>
-                  <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
+                  <span>{pool.apr?.apr7d.tradingFees.toFixed(2)}%</span>
                 </div>
                 <div className="flex justify-between w-full pl-20 pr-[44px] py-10 rounded bg-secondary items-center h-[40px]">
                   <span>
@@ -347,7 +351,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   </span>
                   <span>
                     {accessFullEarnings
-                      ? pool.apr7d.standardRewards.toFixed(2)
+                      ? pool.apr?.apr7d.standardRewards.toFixed(2)
                       : 0}
                     %
                   </span>
@@ -358,11 +362,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             <div className="flex justify-between w-full px-20 py-10 mt-20 rounded bg-secondary items-center h-[50px]">
               <span>
                 <span>Compounding rewards</span>{' '}
-                <span className="text-secondary">
-                  {pool.reserveToken.symbol}
-                </span>
+                <span className="text-secondary">{pool.symbol}</span>
               </span>
-              <span>{pool.apr7d.tradingFees.toFixed(2)}%</span>
+              <span>{pool.apr?.apr7d.tradingFees.toFixed(2)}%</span>
             </div>
           )}
 
@@ -377,7 +379,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               : shouldConnect
               ? 'Connect your wallet'
               : canDeposit
-              ? `Deposit ${pool.name}`
+              ? `Deposit ${pool.symbol}`
               : 'Enter amount'}
           </Button>
           <ProtectedSettingsV3 />

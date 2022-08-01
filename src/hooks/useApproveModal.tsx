@@ -1,9 +1,9 @@
-import { Token } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
   ApprovalContract,
-  getNetworkContractApproval,
-  setNetworkContractApproval,
+  getApproval,
+  setApproval as setUserApproval,
+  getApprovalAddress,
 } from 'services/web3/approval';
 import { ModalApproveNew } from 'elements/modalApprove/modalApproveNew';
 import {
@@ -15,9 +15,15 @@ import { ErrorCode } from 'services/web3/types';
 import { wait } from 'utils/pureFunctions';
 import { web3 } from 'services/web3';
 import { Events } from 'services/api/googleTagManager';
+import { useAppSelector } from 'store/index';
+import { expandToken } from 'utils/formulas';
 
 interface Tokens {
-  token: Token;
+  token: {
+    address: string;
+    symbol: string;
+    decimals: number;
+  };
   amount: string;
 }
 
@@ -29,6 +35,7 @@ export const useApproveModal = (
   gtmSelectEvent?: (isUnlimited: boolean) => void,
   onClose?: Function
 ) => {
+  const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [tokenIndex, setTokenIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -80,11 +87,17 @@ export const useApproveModal = (
   };
 
   const checkApprovalRequired = async (tokenIndex: number = 0) => {
+    if (!account) {
+      return;
+    }
+
     const { token, amount } = tokens[tokenIndex];
-    const isApprovalRequired = await getNetworkContractApproval(
-      token,
-      contract,
-      amount
+    const amountWei = expandToken(amount, token.decimals);
+    const { isApprovalRequired } = await getApproval(
+      token.address,
+      account,
+      await getApprovalAddress(contract),
+      amountWei
     );
 
     if (!isApprovalRequired) {
@@ -97,18 +110,23 @@ export const useApproveModal = (
   };
 
   const setApproval = async (amount?: string) => {
+    if (!account) {
+      return;
+    }
     if (gtmSelectEvent) {
       const isUnlimited = amount === undefined;
       gtmSelectEvent(isUnlimited);
     }
     const { token } = tokens[tokenIndex];
+    const amountWei = amount ? expandToken(amount, token.decimals) : undefined;
+
     try {
       setIsLoading(true);
-      const txHash = await setNetworkContractApproval(
-        token,
-        contract,
-        amount,
-        true
+      const txHash = await setUserApproval(
+        token.address,
+        account,
+        await getApprovalAddress(contract),
+        amountWei
       );
 
       ref.current = [...ref.current, txHash];

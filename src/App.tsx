@@ -10,10 +10,7 @@ import {
   setSlippageTolerance,
   setUsdToggle,
 } from 'store/user/user';
-import {
-  Notification,
-  setNotifications,
-} from 'store/notification/notification';
+import { setNotifications } from 'store/notification/notification';
 import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
@@ -23,7 +20,6 @@ import {
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
-import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
@@ -41,7 +37,7 @@ export const App = () => {
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 
@@ -74,8 +70,6 @@ export const App = () => {
 
     const slippage = getSlippageToleranceLS();
     if (slippage) dispatch(setSlippageTolerance(slippage));
-
-    subscribeToObservables(dispatch);
 
     const dark = getDarkModeLS();
     dispatch(setDarkMode(dark));

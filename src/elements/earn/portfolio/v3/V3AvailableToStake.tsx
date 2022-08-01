@@ -13,7 +13,7 @@ import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
   return (
     <DepositV3Modal
-      pool={pool}
+      poolId={pool.poolDltId}
       renderButton={(onClick) => (
         <button
           onClick={() => onClick()}

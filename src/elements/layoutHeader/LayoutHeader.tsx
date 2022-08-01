@@ -13,12 +13,14 @@ import { getIsAppBusy } from 'store/bancor/bancor';
 import { BancorURL } from 'router/bancorURL.service';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { useIsFetching } from '@tanstack/react-query';
 
 export const LayoutHeader = () => {
   const wallet = useWalletConnect();
   const [isTop, setIsTop] = useState(true);
 
   const isLoading = useAppSelector(getIsAppBusy);
+  const isFetching = useIsFetching();
 
   useEffect(() => {
     const listener = () => setIsTop(window.pageYOffset === 0);
@@ -69,7 +71,7 @@ export const LayoutHeader = () => {
             </Navigate>
           </div>
           <div className="flex items-center gap-20">
-            {isLoading && (
+            {!!(isLoading || isFetching) && (
               <div className="h-[20px] w-[20px]">
                 <span className="absolute flex items-center justify-center h-[20px] w-[20px]">
                   <span className="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping bg-primary">

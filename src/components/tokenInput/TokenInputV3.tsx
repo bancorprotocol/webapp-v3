@@ -2,12 +2,12 @@ import { memo, useMemo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useResizeTokenInput } from 'components/tokenInput/useResizeTokenInput';
 import { useTokenInputV3 } from 'components/tokenInput/useTokenInputV3';
-import { Token } from 'services/observables/tokens';
 import useDimensions from 'hooks/useDimensions';
 import { Image } from 'components/image/Image';
+import { getBancorLogoUrl } from 'utils/pureFunctions';
 
 export interface TokenInputV3Props {
-  token: Token;
+  dltId: string;
   inputTkn: string;
   setInputTkn: (amount: string) => void;
   inputFiat: string;
@@ -17,7 +17,7 @@ export interface TokenInputV3Props {
 }
 
 const TokenInputV3 = ({
-  token,
+  dltId,
   inputTkn,
   setInputTkn,
   inputFiat,
@@ -27,7 +27,7 @@ const TokenInputV3 = ({
 }: TokenInputV3Props) => {
   const { handleChange, inputUnit, oppositeUnit, isFocused, setIsFocused } =
     useTokenInputV3({
-      token,
+      dltId,
       setInputTkn,
       setInputFiat,
       isFiat,
@@ -55,7 +55,7 @@ const TokenInputV3 = ({
       } ${isError ? 'border-error text-error' : ''}`}
     >
       <Image
-        src={token.logoURI}
+        src={getBancorLogoUrl(dltId)}
         alt={'Token Logo'}
         className="absolute w-[40px] h-[40px] ml-20 !rounded-full"
       />
