@@ -3,6 +3,8 @@ import 'elements/earn/pools/Statistics.css';
 import numbro from 'numbro';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { Statistic } from 'services/observables/statistics';
+import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
 
 const averageFormat = {
   average: true,
@@ -51,49 +53,7 @@ export const Statistics = () => {
                 <div>
                   <div className="flex items-center text-secondary">
                     Fees (24h)
-                    <span className="inline-flex ml-5">
-                      <PopoverV3
-                        buttonElement={() => (
-                          <IconInfo className="w-[10px] h-[10px] text-black-low dark:text-white-low" />
-                        )}
-                      >
-                        <div className="w-[220px] text-black-medium dark:text-white-medium">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center justify-start">
-                              <span>Fees</span>
-                              <span className="ml-4 text-secondary">24h</span>
-                            </div>
-                            <div>
-                              {`$${numbro(stats.totalFees).format(
-                                averageFormat
-                              )}`}
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center justify-start">
-                              <span>Network Fees</span>
-                              <span className="ml-4 text-secondary">24h</span>
-                            </div>
-                            <div>
-                              {`$${numbro(stats.totalNetworkFees).format(
-                                averageFormat
-                              )}`}
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center justify-start">
-                              <span>LP Fees</span>
-                              <span className="ml-4 text-secondary">24h</span>
-                            </div>
-                            <div>
-                              {`$${numbro(stats.totalLpFees).format(
-                                averageFormat
-                              )}`}
-                            </div>
-                          </div>
-                        </div>
-                      </PopoverV3>
-                    </span>
+                    {toolTip(stats)}
                   </div>
                   <div className="uppercase text-20 text-black-medium dark:text-white-medium">
                     {`$${numbro(stats.totalFees).format(averageFormat)}`}
@@ -125,5 +85,44 @@ export const Statistics = () => {
         </div>
       )}
     </section>
+  );
+};
+
+const toolTip = (stats: Statistic) => {
+  return (
+    <span className="inline-flex ml-5">
+      <PopoverV3
+        buttonElement={() => (
+          <IconInfo className="w-[10px] h-[10px] text-black-low dark:text-white-low" />
+        )}
+      >
+        <div className="w-[220px] text-black-medium dark:text-white-medium">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-start">
+              <span>Fees</span>
+              <span className="ml-4 text-secondary">24h</span>
+            </div>
+            <div>{`$${numbro(stats.totalFees).format(averageFormat)}`}</div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-start">
+              <span>Network Fees</span>
+              <span className="ml-4 text-secondary">24h</span>
+            </div>
+            <div>
+              {`$${numbro(stats.totalNetworkFees).format(averageFormat)}`}
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-start">
+              <span>LP Fees</span>
+              <span className="ml-4 text-secondary">24h</span>
+              <SnapshotLink />
+            </div>
+            <div>{`$${numbro(stats.totalLpFees).format(averageFormat)}`}</div>
+          </div>
+        </div>
+      </PopoverV3>
+    </span>
   );
 };

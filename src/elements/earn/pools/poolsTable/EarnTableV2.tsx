@@ -13,6 +13,7 @@ import { Pool } from 'services/observables/pools';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
+import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
 
 export const EarnTableV2 = ({
   lowVolume,
@@ -93,7 +94,12 @@ export const EarnTableV2 = ({
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
         minWidth: 180,
         disableSortBy: true,
-        tooltip: 'Estimated APR based on the last 24h LP fees',
+        tooltip: (
+          <span>
+            Estimated APR based on the last 24h LP fees
+            <SnapshotLink />
+          </span>
+        ),
       },
       {
         id: 'actions',

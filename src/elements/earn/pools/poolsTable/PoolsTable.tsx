@@ -5,7 +5,6 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -17,6 +16,8 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 import { DepositV3Modal } from './v3/DepositV3Modal';
+import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
+import { config } from 'config';
 
 export const PoolsTable = ({
   rewards,
@@ -82,12 +83,7 @@ export const PoolsTable = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
             LP Fees 7d
-            <Navigate
-              to="https://vote.bancor.network/#/proposal/0x61cd3ec4295bf0819fb7fd80a9dcc0922036510f40b02c76213b29c48a1a5137"
-              className="hover:underline text-primary"
-            >
-              <IconInfo className="w-[10px] h-[10px] ml-2 text-black-low dark:text-white-low" />
-            </Navigate>
+            <SnapshotLink />
           </div>
           <div>
             {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
@@ -146,7 +142,7 @@ export const PoolsTable = ({
                   <div>
                     Rewards enabled on this token.{' '}
                     <Navigate
-                      to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
+                      to={config.externalUrls.rewardsProgramsArticle}
                       className="hover:underline text-primary"
                     >
                       Read about the rewards here
@@ -159,7 +155,11 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
-        tooltip: 'Estimated APR based on the last 7d LP fees',
+        tooltip: (
+          <span>
+            Estimated APR based on the last 7d LP fees <SnapshotLink />
+          </span>
+        ),
         minWidth: 100,
         sortDescFirst: true,
       },
