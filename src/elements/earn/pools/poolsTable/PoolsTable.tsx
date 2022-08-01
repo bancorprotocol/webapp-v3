@@ -3,9 +3,8 @@ import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableFilter';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -172,12 +171,13 @@ export const PoolsTable = ({
       {
         id: 'actions',
         Header: '',
-        accessor: 'symbol',
-        Cell: (_) => (
-          <DepositDisabledModal
+        accessor: 'poolDltId',
+        Cell: (cellData) => (
+          <DepositV3Modal
+            pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
-                onClick={onClick}
+                onClick={() => onClick('Main Table')}
                 variant={ButtonVariant.Tertiary}
                 size={ButtonSize.ExtraSmall}
               >
@@ -213,7 +213,7 @@ export const PoolsTable = ({
                 />
               </div>
             </div>
-            <PoolsTableSort
+            <PoolsTableFilter
               rewards={rewards}
               setRewards={setRewards}
               lowVolume={lowVolume}

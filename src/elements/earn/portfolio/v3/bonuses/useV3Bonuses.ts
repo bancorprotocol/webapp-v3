@@ -16,6 +16,10 @@ import {
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
+import {
+  sendWithdrawBonusEvent,
+  WithdrawBonusEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 export const useV3Bonuses = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -52,12 +56,22 @@ export const useV3Bonuses = () => {
         return;
       }
       try {
+        sendWithdrawBonusEvent(WithdrawBonusEvent.ClaimClick);
+        sendWithdrawBonusEvent(WithdrawBonusEvent.WalletRequest);
         const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
+        sendWithdrawBonusEvent(WithdrawBonusEvent.WalletConfirm);
         confirmClaimNotification(dispatch, tx.hash);
         setBonusModalOpen(false);
         await tx.wait();
+        sendWithdrawBonusEvent(
+          WithdrawBonusEvent.Success,
+          undefined,
+          undefined,
+          tx.hash
+        );
         await updatePortfolioData(dispatch);
       } catch (e: any) {
+        sendWithdrawBonusEvent(WithdrawBonusEvent.Failed, undefined, e.message);
         console.error('failed to claim rewards', e);
         if (e.code === ErrorCode.DeniedTx) {
           rejectNotification(dispatch);

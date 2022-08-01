@@ -1,7 +1,7 @@
 import { useAppSelector } from 'store/index';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigation } from 'hooks/useNavigation';
-import { executeSwapTx } from 'services/web3/swap/market';
+import { swap } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { toBigNumber } from 'utils/helperFunctions';
 import { Token, updateUserBalances } from 'services/observables/tokens';
@@ -18,7 +18,8 @@ import { ApprovalContract } from 'services/web3/approval';
 import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { addNotification } from 'store/notification/notification';
-import { ErrorCode } from 'services/web3/types';
+import { Events } from 'services/api/googleTagManager';
+import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
@@ -56,36 +57,30 @@ export const useTrade = ({
       return;
     }
 
-    try {
-      const tx = await executeSwapTx(
-        isV3,
-        account,
-        slippageTolerance,
-        fromInput.token,
-        toInput.token,
-        fromInput.inputTkn,
-        toInput.inputTkn
-      );
-      swapNotification(
-        dispatch,
-        fromInput.token,
-        toInput.token,
-        fromInput.inputTkn,
-        toInput.inputTkn,
-        tx.hash
-      );
-      setIsBusy(false);
-      fromInput.setInputTkn('');
-      fromInput.setInputFiat('');
-      toInput.setInputTkn('');
-      toInput.setInputFiat('');
-      await tx.wait();
-      await updateUserBalances();
-    } catch (e: any) {
-      console.error('trade failed', e);
-      if (e.code === ErrorCode.DeniedTx) {
-        rejectNotification(dispatch);
-      } else {
+    await swap(
+      isV3,
+      account,
+      slippageTolerance,
+      fromInput.token,
+      toInput.token,
+      fromInput.inputTkn,
+      toInput.inputTkn,
+      (txHash: string) =>
+        swapNotification(
+          dispatch,
+          fromInput.token,
+          toInput.token,
+          fromInput.inputTkn,
+          toInput.inputTkn,
+          txHash
+        ),
+      async () => {
+        sendConversionEvent(Events.success);
+        await updateUserBalances();
+      },
+      () => rejectNotification(dispatch),
+      (message: string) => {
+        sendConversionEvent(Events.fail, undefined, undefined, message);
         swapFailedNotification(
           dispatch,
           fromInput.token,
@@ -94,8 +89,13 @@ export const useTrade = ({
           toInput.inputTkn
         );
       }
-      setIsBusy(false);
-    }
+    );
+
+    setIsBusy(false);
+    fromInput.setInputTkn('');
+    fromInput.setInputFiat('');
+    toInput.setInputTkn('');
+    toInput.setInputFiat('');
   };
 
   const handleCTAClick = () => {
@@ -113,8 +113,10 @@ export const useTrade = ({
     isV3
       ? ContractsApi.BancorNetwork.contractAddress
       : ApprovalContract.BancorNetwork,
-    undefined,
-    undefined,
+    () => sendConversionEvent(Events.approvePop),
+    (isUnlimited) => {
+      sendConversionEvent(Events.approved, undefined, isUnlimited);
+    },
     () => {
       setIsBusy(false);
       if (fromInput && toInput) {

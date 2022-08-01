@@ -30,15 +30,31 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { getPoolsV3Map } from 'store/bancor/pool';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import {
+  DepositEvent,
+  sendDepositEvent,
+  setCurrentDeposit,
+} from 'services/api/googleTagManager/deposit';
+import {
+  getBlockchain,
+  getBlockchainNetwork,
+  getCurrency,
+  getFiat,
+  getOnOff,
+} from 'services/api/googleTagManager';
+import { DepositDisabledModal } from './DepositDisabledModal';
 
 interface Props {
   pool: PoolV3;
-  renderButton: (onClick: () => void) => React.ReactNode;
+  renderButton: (
+    onClick: (pool_click_location?: string) => void
+  ) => React.ReactNode;
 }
 
 const REWARDS_EXTRA_GAS = 130_000;
 
 export const DepositV3Modal = ({ pool, renderButton }: Props) => {
+  const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
@@ -68,11 +84,20 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
 
-  const deposit = async () => {
+  const deposit = async (approvalHash?: string) => {
     if (!pool.reserveToken.balance || !account) {
       return;
     }
 
+    if (approvalHash)
+      sendDepositEvent(
+        DepositEvent.DepositWalletUnlimitedConfirm,
+        undefined,
+        undefined,
+        approvalHash
+      );
+
+    sendDepositEvent(DepositEvent.DepositWalletRequest);
     const amountWei = expandToken(amount, pool.reserveToken.decimals);
     const isETH = pool.reserveToken.address === ethToken;
 
@@ -90,6 +115,12 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
               amountWei,
               { value: isETH ? amountWei : undefined }
             );
+      sendDepositEvent(
+        DepositEvent.DepositWalletConfirm,
+        undefined,
+        undefined,
+        tx.hash
+      );
       confirmDepositNotification(
         dispatch,
         tx.hash,
@@ -100,9 +131,16 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       onClose();
       goToPage.portfolio();
       await tx.wait();
+      sendDepositEvent(
+        DepositEvent.DepositSuccess,
+        undefined,
+        undefined,
+        tx.hash
+      );
       await updatePortfolioData(dispatch);
     } catch (e: any) {
       console.error('failed to deposit', e);
+      sendDepositEvent(DepositEvent.DepositFailed, undefined, e.message);
       onClose();
       setTxBusy(false);
       if (e.code === ErrorCode.DeniedTx) {
@@ -115,10 +153,16 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const [onStart, ApproveModal] = useApproveModal(
     [{ amount: amount || '0', token: pool.reserveToken }],
-    deposit,
+    (approvalHash?: string) => deposit(approvalHash),
     accessFullEarnings && pool.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
-      : ContractsApi.BancorNetwork.contractAddress
+      : ContractsApi.BancorNetwork.contractAddress,
+    () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
+
+    (isUnlimited: boolean) => {
+      sendDepositEvent(DepositEvent.DepositUnlimitedPopupConfirm, isUnlimited);
+      sendDepositEvent(DepositEvent.DepositWalletUnlimitedRequest);
+    }
   );
 
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
@@ -129,11 +173,49 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const handleClick = useCallback(() => {
     if (canDeposit) {
+      const portion =
+        pool.reserveToken.balance &&
+        new BigNumber(amount)
+          .div(pool.reserveToken.balance)
+          .times(100)
+          .toFixed(0);
+      const deposit_portion =
+        portion &&
+        (portion === '25' ||
+          portion === '50' ||
+          portion === '75' ||
+          portion === '100')
+          ? portion
+          : '(no value)';
+      setCurrentDeposit({
+        deposit_pool: pool.name,
+        deposit_blockchain: getBlockchain(),
+        deposit_blockchain_network: getBlockchainNetwork(),
+        deposit_input_type: getFiat(isFiat),
+        deposit_token: pool.name,
+        deposit_token_amount: amount,
+        deposit_token_amount_usd: inputFiat,
+        deposit_portion,
+        deposit_access_full_earning: getOnOff(accessFullEarnings),
+        deposit_display_currency: getCurrency(),
+      });
+      sendDepositEvent(DepositEvent.DepositAmountContinue);
       onStart();
     } else if (shouldConnect) {
       handleWalletButtonClick();
     }
-  }, [canDeposit, onStart, shouldConnect, handleWalletButtonClick]);
+  }, [
+    canDeposit,
+    onStart,
+    shouldConnect,
+    handleWalletButtonClick,
+    accessFullEarnings,
+    amount,
+    inputFiat,
+    isFiat,
+    pool.name,
+    pool.reserveToken.balance,
+  ]);
 
   const shouldPollForGasPrice = useMemo(() => {
     return !!amount && !txBusy && accessFullEarnings && !!eth;
@@ -156,9 +238,34 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   useConditionalInterval(shouldPollForGasPrice, updateExtraGasCost, 13000);
 
+  if (!enableDeposit)
+    return <DepositDisabledModal renderButton={renderButton} />;
+
   return (
     <>
-      {renderButton(() => setIsOpen(true))}
+      {renderButton((pool_click_location) => {
+        setCurrentDeposit({
+          deposit_pool: pool.name,
+          deposit_blockchain: getBlockchain(),
+          deposit_blockchain_network: getBlockchainNetwork(),
+          deposit_input_type: getFiat(isFiat),
+          deposit_token: pool.name,
+          deposit_token_amount: undefined,
+          deposit_token_amount_usd: undefined,
+          deposit_portion: undefined,
+          deposit_access_full_earning: getOnOff(accessFullEarnings),
+          deposit_display_currency: getCurrency(),
+        });
+        sendDepositEvent(
+          DepositEvent.DepositPoolClick,
+          undefined,
+          undefined,
+          undefined,
+          pool_click_location
+        );
+        sendDepositEvent(DepositEvent.DepositAmountView);
+        setIsOpen(true);
+      })}
       <ModalV3
         title={'Deposit & Earn'}
         setIsOpen={onClose}
