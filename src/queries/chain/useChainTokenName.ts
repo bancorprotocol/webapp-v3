@@ -10,7 +10,7 @@ import {
 export const useChainTokenName = () => {
   const { data: poolIds } = useChainPoolIds();
   return useQuery(
-    QueryKey.chainCoreName(poolIds?.length),
+    QueryKey.chainName(poolIds?.length),
     () => fetchMulticallHelper<string>(poolIds!, buildMulticallName, true),
     queryOptionsNoInterval(!!poolIds)
   );

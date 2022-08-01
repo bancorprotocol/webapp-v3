@@ -18,7 +18,7 @@ export const useChainLatestProgram = ({ enabled = true }: Props = {}) => {
   const { data: programsMap } = useChainPrograms({ enabled });
 
   const query = useQuery(
-    QueryKey.chainCoreLatestProgram(poolIds?.length),
+    QueryKey.chainLatestProgram(poolIds?.length),
     async () => {
       const ids = await fetchMulticallHelper<BigNumberish>(
         poolIds!,

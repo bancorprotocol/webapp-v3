@@ -12,10 +12,10 @@ interface Props {
   enabled?: boolean;
 }
 
-export const useChainTokenDecimals = ({ enabled = true }: Props = {}) => {
+export const useChainDecimals = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
-    QueryKey.chainCoreDecimals(poolIds?.length),
+    QueryKey.chainDecimals(poolIds?.length),
     async () => {
       const decimals = await fetchMulticallHelper<number>(
         poolIds!.filter((id) => id !== ethToken),

@@ -14,7 +14,7 @@ interface Props {
 export const useChainTradingEnabled = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
-    QueryKey.chainCoreTradingEnabled(poolIds?.length),
+    QueryKey.chainTradingEnabled(poolIds?.length),
     () => fetchMulticallHelper<boolean>(poolIds!, buildMulticallTradingEnabled),
     queryOptionsStaleTimeLow(!!poolIds && enabled)
   );

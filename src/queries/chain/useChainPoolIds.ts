@@ -6,7 +6,7 @@ import { bntToken } from 'services/web3/config';
 
 export const useChainPoolIds = () => {
   return useQuery(
-    QueryKey.chainCorePoolIds(),
+    QueryKey.chainPoolIds(),
     async () => {
       const pools = await ContractsApi.BancorNetwork.read.liquidityPools();
       return [bntToken, ...pools];

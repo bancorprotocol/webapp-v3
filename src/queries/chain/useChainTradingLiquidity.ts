@@ -7,7 +7,7 @@ import {
   fetchMulticallHelper,
 } from 'services/web3/multicall/multicallFunctions';
 import { TradingLiquidityStructOutput } from 'services/web3/abis/types/BancorNetworkInfo';
-import { useChainTokenDecimals } from 'queries/chain/useChainTokenDecimals';
+import { useChainDecimals } from 'queries/chain/useChainDecimals';
 import { utils } from 'ethers';
 import { bntToken } from 'services/web3/config';
 import { useApiBnt } from 'queries/api/useApiBnt';
@@ -18,11 +18,11 @@ interface Props {
 
 export const useChainTradingLiquidity = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
-  const { data: decimals } = useChainTokenDecimals({ enabled });
+  const { data: decimals } = useChainDecimals({ enabled });
   const { data: bnt } = useApiBnt({ enabled });
 
   const query = useQuery(
-    QueryKey.chainCoreTradingLiquidity(poolIds?.length),
+    QueryKey.chainTradingLiquidity(poolIds?.length),
     () =>
       fetchMulticallHelper<TradingLiquidityStructOutput>(
         poolIds!.filter((id) => id !== bntToken),

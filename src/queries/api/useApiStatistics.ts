@@ -9,6 +9,7 @@ import { WelcomeData } from 'services/api/bancorApi/bancorApi.types';
 import { genericFailedNotification } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { queryOptionsStaleTimeHigh } from 'queries/queryOptions';
+import { QueryKey } from 'queries/queryKeyFactory';
 
 export interface Statistic {
   label: string;
@@ -101,7 +102,7 @@ export const useApiStatistics = () => {
   const { data: apiDataV2 } = useApiV2Welcome();
 
   return useQuery<Statistic[]>(
-    ['api', 'v3', 'statistics'],
+    QueryKey.apiStatistics(),
     () => fetchStatistics(apiDataV2!),
     {
       ...queryOptionsStaleTimeHigh(!!apiDataV2),
@@ -110,7 +111,7 @@ export const useApiStatistics = () => {
         genericFailedNotification(
           dispatch,
           `${err.message}`,
-          `Server Error: ${['api', 'v3', 'tokens'].join('->')}`
+          `Server Error: ${QueryKey.apiStatistics().join('->')}`
         );
       },
     }

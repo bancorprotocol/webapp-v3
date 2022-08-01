@@ -14,7 +14,7 @@ interface Props {
 export const useChainPoolTokenIds = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
-    QueryKey.chainCorePoolTokenIds(poolIds?.length),
+    QueryKey.chainPoolTokenIds(poolIds?.length),
     () => fetchMulticallHelper<string>(poolIds!, buildMulticallPoolToken),
     queryOptionsNoInterval(!!poolIds && enabled)
   );

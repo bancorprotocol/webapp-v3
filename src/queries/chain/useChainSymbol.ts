@@ -12,10 +12,10 @@ interface Props {
   enabled?: boolean;
 }
 
-export const useChainTokenSymbol = ({ enabled = true }: Props = {}) => {
+export const useChainSymbol = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
-    QueryKey.chainCoreSymbols(poolIds?.length),
+    QueryKey.chainSymbols(poolIds?.length),
     async () => {
       const symbols = await fetchMulticallHelper<string>(
         poolIds!,

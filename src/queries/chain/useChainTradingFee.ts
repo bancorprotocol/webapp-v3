@@ -10,7 +10,7 @@ import {
 export const useChainTradingFee = () => {
   const { data: poolIds } = useChainPoolIds();
   return useQuery(
-    QueryKey.chainCoreTradingFee(poolIds?.length),
+    QueryKey.chainTradingFee(poolIds?.length),
     () => fetchMulticallHelper<number>(poolIds!, buildMulticallTradingFee),
     {
       ...queryOptionsStaleTimeLow(!!poolIds),

@@ -1,5 +1,5 @@
-import { useChainTokenSymbol } from 'queries/chain/useChainTokenSymbol';
-import { useChainTokenDecimals } from 'queries/chain/useChainTokenDecimals';
+import { useChainSymbol } from 'queries/chain/useChainSymbol';
+import { useChainDecimals } from 'queries/chain/useChainDecimals';
 import { useChainPoolTokenIds } from 'queries/chain/useChainPoolTokenIds';
 import { useChainPrograms } from 'queries/chain/useChainPrograms';
 import { useChainTradingEnabled } from 'queries/chain/useChainTradingEnabled';
@@ -38,11 +38,11 @@ type PoolReturn<T extends PoolKey[]> = Pick<PoolNew, T[number]> extends infer R
 const useFetchers = (select: PoolKey[]) => {
   const set = new Set(select.map((key) => key));
 
-  const symbol = useChainTokenSymbol({
+  const symbol = useChainSymbol({
     enabled: set.has('symbol'),
   });
 
-  const decimals = useChainTokenDecimals({
+  const decimals = useChainDecimals({
     enabled: set.has('decimals'),
   });
 

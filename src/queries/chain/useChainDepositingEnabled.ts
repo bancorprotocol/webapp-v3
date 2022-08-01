@@ -15,7 +15,7 @@ export const useChainDepositingEnabled = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
 
   const query = useQuery(
-    QueryKey.chainCoreDepositingEnabled(poolIds?.length),
+    QueryKey.chainDepositingEnabled(poolIds?.length),
     () =>
       fetchMulticallHelper<boolean>(poolIds!, buildMulticallDepositingEnabled),
     queryOptionsNoInterval(!!poolIds && enabled)

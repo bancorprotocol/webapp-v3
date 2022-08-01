@@ -1,60 +1,64 @@
 export abstract class QueryKey {
-  static v3 = () => ['v3'];
-  static chain = () => [...this.v3(), 'chain'];
-  static chainCore = (key?: number | string) => [...this.chain(), 'pools', key];
-  static chainCorePoolIds = () => [...this.chainCore('poolIds')];
-  static chainCorePoolTokenIds = (key?: number) => [
-    ...this.chainCore(key),
+  private static _v2 = () => ['v2'];
+  private static _v3 = () => ['v3'];
+  private static _chain = () => [...this._v3(), 'chain'];
+  private static _chainPools = (key?: number | string) => [
+    ...this._chain(),
+    'pools',
+    key,
+  ];
+
+  static chainPoolIds = () => [...this._chainPools('poolIds')];
+  static chainPoolTokenIds = (key?: number) => [
+    ...this._chainPools(key),
     'poolTokenIds',
   ];
-  static chainCoreSymbols = (key?: number) => [
-    ...this.chainCore(key),
-    'symbols',
-  ];
-  static chainCoreDecimals = (key?: number) => [
-    ...this.chainCore(key),
+  static chainSymbols = (key?: number) => [...this._chainPools(key), 'symbols'];
+  static chainDecimals = (key?: number) => [
+    ...this._chainPools(key),
     'decimals',
   ];
-  static chainCoreName = (key?: number) => [...this.chainCore(key), 'name'];
-  static chainCoreTradingEnabled = (key?: number) => [
-    ...this.chainCore(key),
+  static chainName = (key?: number) => [...this._chainPools(key), 'name'];
+  static chainTradingEnabled = (key?: number) => [
+    ...this._chainPools(key),
     'tradingEnabled',
   ];
-  static chainCoreTradingLiquidity = (key?: number) => [
-    ...this.chainCore(key),
+  static chainTradingLiquidity = (key?: number) => [
+    ...this._chainPools(key),
     'tradingLiquidity',
   ];
-  static chainCoreDepositingEnabled = (key?: number) => [
-    ...this.chainCore(key),
+  static chainDepositingEnabled = (key?: number) => [
+    ...this._chainPools(key),
     'depositingEnabled',
   ];
-  static chainCoreStakedBalance = (key?: number) => [
-    ...this.chainCore(key),
+  static chainStakedBalance = (key?: number) => [
+    ...this._chainPools(key),
     'stakedBalance',
   ];
-  static chainCoreTradingFee = (key?: number) => [
-    ...this.chainCore(key),
+  static chainTradingFee = (key?: number) => [
+    ...this._chainPools(key),
     'tradingFee',
   ];
-  static chainCoreLatestProgram = (key?: number) => [
-    ...this.chainCore(key),
+  static chainLatestProgram = (key?: number) => [
+    ...this._chainPools(key),
     'latestProgramId',
   ];
-  static chainCorePrograms = (key?: number) => [
-    ...this.chainCore(key),
+  static chainPrograms = (key?: number) => [
+    ...this._chainPools(key),
     'programs',
   ];
-  static chainVoteBalance = (user?: string) => [
-    ...this.chainCore(),
-    'vote',
+  static chainBalances = (user?: string | null) => [
+    ...this._chain(),
+    'balances',
     user,
   ];
-  static chainPools = () => [...this.chain(), 'pools'];
-  static chainPoolsByID = (key?: string) => [...this.chainPools(), key];
+  static chainVoteBalance = (user?: string) => [...this._chain(), 'vote', user];
 
-  static api = () => [...this.v3(), 'api'];
-  static apiPools = () => [...this.api(), 'pools'];
-  static apiTokens = () => [...this.api(), 'tokens'];
-  static apiBnt = () => [...this.api(), 'bnt'];
-  static apiFees = () => [...this.api(), 'fees'];
+  static v2ApiWelcome = () => [...this._v2(), 'api', 'welcome'];
+
+  private static _v3Api = () => [...this._v3(), 'api'];
+  static apiPools = () => [...this._v3Api(), 'pools'];
+  static apiTokens = () => [...this._v3Api(), 'tokens'];
+  static apiBnt = () => [...this._v3Api(), 'bnt'];
+  static apiStatistics = () => [...this._v3Api(), 'statistics'];
 }

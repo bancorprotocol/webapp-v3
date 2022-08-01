@@ -11,7 +11,7 @@ interface Props {
 export const useChainPrograms = ({ enabled = true }: Props = {}) => {
   const { data: poolIds } = useChainPoolIds();
   const query = useQuery(
-    QueryKey.chainCorePrograms(poolIds?.length),
+    QueryKey.chainPrograms(poolIds?.length),
     async () => {
       const programs = await fetchAllStandardRewards();
       return new Map(
