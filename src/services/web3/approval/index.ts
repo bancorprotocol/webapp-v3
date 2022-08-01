@@ -130,7 +130,7 @@ export const setNetworkContractApproval = async (
   );
 };
 
-const getApprovalAddress = async (
+export const getApprovalAddress = async (
   contract: ApprovalContract | string
 ): Promise<string> => {
   if (typeof contract === 'string') return contract;

@@ -1,13 +1,17 @@
 import { Modal } from 'components/modal/Modal';
-import { Token } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
+import { getBancorLogoUrl } from 'utils/pureFunctions';
 
 interface Props {
   isOpen: boolean;
   setIsOpen: Function;
   setApproval: Function;
-  token: Token;
+  token: {
+    address: string;
+    symbol: string;
+    decimals: number;
+  };
   amount: string;
   isLoading: boolean;
   onClose?: Function;
@@ -36,7 +40,7 @@ export const ModalApproveNew = ({
           <div className="flex justify-center items-center mb-14">
             <Image
               alt={'Token Logo'}
-              src={token.logoURI}
+              src={getBancorLogoUrl(token.address)}
               className={'w-[52px] h-[52px] rounded-full'}
             />
           </div>

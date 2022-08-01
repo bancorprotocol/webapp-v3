@@ -25,7 +25,6 @@ export const useApiTradingLiquidity = ({ enabled = true }: Props = {}) => {
   const getByID = (id: string) => data.get(id);
 
   return {
-    data,
     getByID,
     isLoading: poolIds.isLoading || apiPools.isLoading,
     isError: poolIds.isError || apiPools.isError,

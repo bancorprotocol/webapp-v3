@@ -151,8 +151,16 @@ export const DepositV3Modal = ({ poolId, renderButton }: Props) => {
   };
 
   const [onStart, ApproveModal] = useApproveModal(
-    //@ts-ignore
-    [{ amount: amount || '0', token: {} }],
+    [
+      {
+        amount: amount || '0',
+        token: {
+          address: poolId,
+          symbol: pool?.symbol ?? 'N/A',
+          decimals: pool?.decimals ?? 18,
+        },
+      },
+    ],
     (approvalHash?: string) => deposit(approvalHash),
     accessFullEarnings && pool?.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
