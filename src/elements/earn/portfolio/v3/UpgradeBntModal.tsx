@@ -129,7 +129,7 @@ export const UpgradeBntModal = ({
           No Thanks, just BNT from the {position.pool.name}
         </button>
         <div className="text-secondary text-[13px]">
-          {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+          {`${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
     </Modal>
