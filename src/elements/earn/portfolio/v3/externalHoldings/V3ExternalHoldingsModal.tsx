@@ -105,7 +105,7 @@ export const V3ExternalHoldingsModal = ({
           {position.rektStatus === 'At risk'
             ? 'Your position is at risk of impermanent loss'
             : `You’ve lost ${position.rektStatus} in impermanent loss so far`}
-          , get 100% protected on Bancor.
+          , get protected on Bancor.
         </p>
 
         <h3 className="mb-10">Moving to Bancor</h3>
@@ -133,7 +133,7 @@ export const V3ExternalHoldingsModal = ({
         </Button>
 
         <p className="text-secondary text-center mt-10">
-          100% Protected • {lockDurationInDays} day cooldown •{' '}
+          {lockDurationInDays} day cooldown •{' '}
           {withdrawalFeeInPercent}% withdrawal fee
         </p>
 
