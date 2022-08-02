@@ -109,7 +109,7 @@ export const UpgradeTknModal = ({
           Upgrade All
         </Button>
         <div className="text-secondary text-[13px]">
-          {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+          {`${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
     </Modal>
