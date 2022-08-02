@@ -16,11 +16,6 @@ const whatsNewList = [
     description:
       'Deposit into a single BNT pool to earn instest and rewards across the entire network.',
   },
-  {
-    icon: <IconProtect />,
-    title: 'Instant 100% Impermanent Loss protection',
-    description: 'Fully protected from day 1 with no vesting period needed.',
-  },
 ];
 
 export const WhatsNew = () => {
