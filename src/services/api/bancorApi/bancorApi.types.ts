@@ -13,6 +13,8 @@ export interface WelcomeData {
   total_volume_24h_ago: USDPrice;
   total_fees_24h: USDPrice;
   total_fees_24h_ago: USDPrice;
+  total_network_fees_24h: USDPrice;
+  total_network_fees_24h_ago: USDPrice;
   bnt_price_24h_ago: USDPrice;
   bnt_price: USDPrice;
   bnt_supply: string;
@@ -45,7 +47,9 @@ export interface APIPool {
   liquidity: USDPrice;
   volume_24h: USDPrice;
   fees_24h: USDPrice;
+  network_fees_24h: USDPrice;
   fees_7d: USDPrice;
+  network_fees_7d: USDPrice;
   fee: string;
   version: number;
   supply: string;
@@ -88,6 +92,7 @@ export interface APIPoolV3 {
   tradingLiquidityTKN: PriceDictionary;
   volume24h: PriceDictionary;
   fees24h: PriceDictionary;
+  networkFees24h: PriceDictionary;
   stakedBalance: PriceDictionary;
   tradingFeePPM?: string;
   tradingEnabled?: boolean;
@@ -97,6 +102,7 @@ export interface APIPoolV3 {
   standardRewardsStaked: PriceDictionary;
   volume7d: PriceDictionary;
   fees7d: PriceDictionary;
+  networkFees7d: PriceDictionary;
 }
 
 export interface APIBntV3
@@ -128,6 +134,8 @@ export interface APIStatsV3 {
   totalVolume24hAgo: Omit<PriceDictionary, 'tkn'>;
   totalFees24h: Omit<PriceDictionary, 'tkn'>;
   totalFees24hAgo: Omit<PriceDictionary, 'tkn'>;
+  totalNetworkFees24h: Omit<PriceDictionary, 'tkn'>;
+  totalNetworkFees24hAgo: Omit<PriceDictionary, 'tkn'>;
   stakedBalanceBNT: Omit<PriceDictionary, 'tkn'>;
   bntRate: string;
   bntRate24hAgo: string;
