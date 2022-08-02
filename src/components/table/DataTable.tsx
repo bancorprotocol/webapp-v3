@@ -13,7 +13,7 @@ import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect } from 'react';
 
 export type TableColumn<D extends object> = Column<D> & {
-  tooltip?: string;
+  tooltip?: string | JSX.Element;
   headerClassName?: string;
 };
 
@@ -94,11 +94,11 @@ export const DataTable = <D extends object>({
       </div>
 
       {!isLoading && data.length === 0 && (
-        <div className="text-secondary text-center py-50">No record found</div>
+        <div className="text-center text-secondary py-50">No record found</div>
       )}
 
       {isLoading && (
-        <div className="space-y-20 p-20">
+        <div className="p-20 space-y-20">
           {[...Array(3)].map((_, index) => (
             <div
               key={index}

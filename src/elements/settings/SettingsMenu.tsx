@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
 import { BancorURL } from 'router/bancorURL.service';
+import { config } from 'config';
 
 export const SettingsMenu = () => {
   return (
@@ -113,7 +114,7 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
                 Vote
               </div>
             </Navigate>
-            <Navigate to={'https://gov.bancor.network'}>
+            <Navigate to={config.externalUrls.governance}>
               <div className="flex items-center gap-10 text-black dark:text-white">
                 <IconForum className="w-20 text-black dark:text-white" />
                 DAO Forum
@@ -130,25 +131,25 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
           </div>
         </Navigate>
         <hr className="border-fog dark:border-grey" />
-        <Navigate to="https://support.bancor.network">
-          Help Center / FAQ
+        <Navigate to={config.externalUrls.support}>Help Center / FAQ</Navigate>
+        <Navigate to={config.externalUrls.duneAnalytics}>Analytics</Navigate>
+        <Navigate to={config.externalUrls.bancorAnalytics}>
+          Analytics V3
         </Navigate>
-        <Navigate to="https://dune.com/Bancor/bancor_1">Analytics</Navigate>
-        <Navigate to="https://analytics.bancor.network">Analytics V3</Navigate>
-        <Navigate to="https://docs.bancor.network">Developers</Navigate>
+        <Navigate to={config.externalUrls.documentation}>Developers</Navigate>
         <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
         <Navigate to={BancorURL.privacyPolicy}>Privacy Policy</Navigate>
         <div className="flex justify-between text- dark:black-disabled">
-          <Navigate to="https://twitter.com/Bancor">
+          <Navigate to={config.externalUrls.bancorTwitter}>
             <IconTwitter className="h-20" />
           </Navigate>
-          <Navigate to="https://t.me/bancor">
+          <Navigate to={config.externalUrls.bancorTelegram}>
             <IconTelegram className="h-20" />
           </Navigate>
-          <Navigate to="https://discord.com/invite/aMVTbrmgD7">
+          <Navigate to={config.externalUrls.bancorDiscord}>
             <IconDiscord className="h-20" />
           </Navigate>
-          <Navigate to="https://www.reddit.com/r/Bancor">
+          <Navigate to={config.externalUrls.bancorReddit}>
             <IconReddit className="h-20" />
           </Navigate>
         </div>
