@@ -104,6 +104,8 @@ export const V3ExternalHoldingsModal = ({
         <p className="mt-16 mb-20 text-secondary">
           {position.rektStatus === 'At risk'
             ? 'Your position is at risk of impermanent loss'
+            : `You’ve lost ${position.rektStatus} in impermanent loss so far`}
+          , get protected on Bancor.
             : `You’ve lost ${position.rektStatus} in impermanent loss so far`}.
         </p>
 
