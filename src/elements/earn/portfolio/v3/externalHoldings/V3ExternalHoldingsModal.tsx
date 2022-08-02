@@ -133,7 +133,7 @@ export const V3ExternalHoldingsModal = ({
         </Button>
 
         <p className="text-secondary text-center mt-10">
-          100% Protected • {lockDurationInDays} day cooldown •{' '}
+          {lockDurationInDays} day cooldown •{' '}
           {withdrawalFeeInPercent}% withdrawal fee
         </p>
 
