@@ -1,6 +1,5 @@
 import { ReactComponent as IconSync } from 'assets/icons/dottedSync.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancorOutline.svg';
-import { ReactComponent as IconProtect } from 'assets/icons/protectLight.svg';
 import { Button } from 'components/button/Button';
 
 const whatsNewList = [
