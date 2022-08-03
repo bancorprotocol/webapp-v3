@@ -18,6 +18,15 @@ export enum DepositMethods {
   openBanking = 'Open Banking',
   sepaInstant = 'SEPA Instant',
   fasterPayments = 'Faster Payments',
+  fasterBankTransfer = 'Faster Bank Transfer',
+  upiBankTransfer = 'UPI Bank Transfer',
+  mobikwikPayments = 'Mobikwik Payments',
+  visa = 'Visa',
+  mastercard = 'Mastercard',
+  americanExpress = 'American Express',
+  discover = 'Discover',
+  venmo = 'Venmo',
+  cashApp = 'Cash App',
 }
 
 export interface Fiat {
