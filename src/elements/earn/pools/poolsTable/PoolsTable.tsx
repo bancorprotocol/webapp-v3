@@ -49,9 +49,10 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr7d.total > 0.15)
+        (lowEarnRate || p.apr7d.total > 0.15) &&
+        (!rewards || p.latestProgram?.isActive)
     );
-  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate, rewards]);
 
   const toolTip = useCallback(
     (row: PoolV3) => (
