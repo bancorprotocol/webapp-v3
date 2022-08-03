@@ -1,4 +1,6 @@
 import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { openNewTab } from 'utils/pureFunctions';
 
 export enum Operations {
   fiatIn,
@@ -67,24 +69,23 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
       {fiat.text}
       <div className="flex justify-between items-center my-20 max-w-[280px]">
         {fiatIn && (
-          <a
-            className="btn btn-primary btn-sm w-[135px]"
-            href={fiat.buyUrl}
-            rel="noreferrer"
-            target="_blank"
+          <Button
+            className="w-[135px]"
+            size={ButtonSize.Small}
+            onClick={() => fiat.buyUrl && openNewTab(fiat.buyUrl)}
           >
             Buy
-          </a>
+          </Button>
         )}
         {fiatOut && (
-          <a
-            className="btn btn-primary btn-sm w-[135px]"
-            href={fiat.sellUrl}
-            rel="noreferrer"
-            target="_blank"
+          <Button
+            className="w-[135px]"
+            size={ButtonSize.Small}
+            variant={ButtonVariant.Tertiary}
+            onClick={() => fiat.sellUrl && openNewTab(fiat.sellUrl)}
           >
             Sell
-          </a>
+          </Button>
         )}
       </div>
       <hr className="widget-separator" />
