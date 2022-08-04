@@ -21,7 +21,7 @@ export const V3WithdrawConfirmOutputBreakdown = ({
             className="text-primary"
           />
           <div className="flex justify-between">
-            <div className="text-primary">
+            <div className="text-primary dark:text-white">
               {outputBreakdown.tkn.toFixed(2)}% {symbol}
             </div>
             <div className="text-secondary">
