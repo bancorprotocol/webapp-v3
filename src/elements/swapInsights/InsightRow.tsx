@@ -75,7 +75,7 @@ export const InsightRow = ({
           />
           <div className="text-20 font-medium ml-5">{token.symbol}</div>
           <div className="text-14 ml-10">
-            Price {prettifyNumber(token.usdPrice ?? 0, true)}
+            Price {prettifyNumber(token.usdPrice ?? 0, { usd: true })}
           </div>
         </div>
         <div className="h-[138px] col-span-3 gap-8 grid grid-cols-3">

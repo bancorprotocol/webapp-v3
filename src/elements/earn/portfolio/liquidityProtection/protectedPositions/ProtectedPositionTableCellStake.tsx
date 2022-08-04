@@ -16,7 +16,7 @@ export const ProtectedPositionTableCellAmount = ({
       </div>
       {usdAmount !== '0' && (
         <div className="mt-4 text-12 text-black-low dark:text-white-low">
-          {prettifyNumber(usdAmount, true)} USD
+          {prettifyNumber(usdAmount, { usd: true })} USD
         </div>
       )}
     </div>

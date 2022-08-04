@@ -55,7 +55,9 @@ const REKT_STATUS_THRESHOLD = -50;
 const getRektStatus = (usdValue: number, hodlValue: number): string => {
   const rektUsdValue = new BigNumber(usdValue).minus(hodlValue);
   const rektAtRisk = new BigNumber(rektUsdValue).lt(REKT_STATUS_THRESHOLD);
-  return rektAtRisk ? prettifyNumber(rektUsdValue.times(-1), true) : 'At risk';
+  return rektAtRisk
+    ? prettifyNumber(rektUsdValue.times(-1), { usd: true })
+    : 'At risk';
 };
 
 export enum AMMProvider {

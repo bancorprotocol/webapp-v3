@@ -26,7 +26,7 @@ const V3WithdrawStep2 = ({ setStep, amount, holding, isFiat }: Props) => {
         Remove{' '}
         <span className="text-primary">
           {isFiat
-            ? `${prettifyNumber(amount.fiat, true)} USD`
+            ? `${prettifyNumber(amount.fiat, { usd: true })} USD`
             : `${prettifyNumber(amount.tkn)} ${token.symbol}`}
         </span>{' '}
         from earning rewards

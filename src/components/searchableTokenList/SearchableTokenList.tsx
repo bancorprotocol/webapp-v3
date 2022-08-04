@@ -229,7 +229,7 @@ export const SearchableTokenList = ({
                     </div>
                     <div className="text-secondary">
                       {token.balanceUsd &&
-                        prettifyNumber(token.balanceUsd, true)}
+                        prettifyNumber(token.balanceUsd, { usd: true })}
                     </div>
                   </div>
                 </button>

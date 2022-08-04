@@ -45,7 +45,9 @@ export const PoolTokensTable = () => {
         id: 'value',
         Header: 'Value',
         accessor: 'value',
-        Cell: (cellData) => <>{prettifyNumber(cellData.value, true)}</>,
+        Cell: (cellData) => (
+          <>{prettifyNumber(cellData.value, { usd: true })}</>
+        ),
         sortType: (a, b) => sortNumbersByKey(a.original, b.original, ['value']),
         minWidth: 130,
       },

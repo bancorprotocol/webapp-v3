@@ -19,7 +19,7 @@ export const TokenBalance = ({
   imgUrl,
   inverted,
   deficitAmount,
-  abbreviate = false,
+  abbreviate,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
 
@@ -35,7 +35,7 @@ export const TokenBalance = ({
           {inverted ? (
             <>
               <div className={'uppercase'}>
-                {prettifyNumber(amount, false, abbreviate)}
+                {prettifyNumber(amount, { abbreviate })}
               </div>
               {symbol}
             </>
@@ -43,7 +43,7 @@ export const TokenBalance = ({
             <>
               {symbol}
               <div className={'uppercase'}>
-                {prettifyNumber(amount, false, abbreviate)}
+                {prettifyNumber(amount, { abbreviate: true })}
               </div>
             </>
           )}
@@ -59,7 +59,7 @@ export const TokenBalance = ({
           )}
         </div>
         <span className="text-secondary">
-          {prettifyNumber(usdAmount, true)}
+          {prettifyNumber(usdAmount, { usd: true })}
         </span>
       </div>
     </div>

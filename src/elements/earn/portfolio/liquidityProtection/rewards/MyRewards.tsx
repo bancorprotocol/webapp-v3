@@ -68,7 +68,7 @@ export const MyRewards = () => {
                   {prettifyNumber(totalRewards)} BNT
                 </span>
                 <span className="text-12 text-primary dark:text-primary-light">
-                  {prettifyNumber(totalRewardsUsd, true)}
+                  {prettifyNumber(totalRewardsUsd, { usd: true })}
                 </span>
               </div>
             ) : (
@@ -91,7 +91,7 @@ export const MyRewards = () => {
                   {prettifyNumber(claimableRewards)} BNT
                 </span>
                 <span className="text-12 text-primary dark:text-primary-light">
-                  {prettifyNumber(claimableRewardsUsd, true)}
+                  {prettifyNumber(claimableRewardsUsd, { usd: true })}
                 </span>
               </div>
             ) : (

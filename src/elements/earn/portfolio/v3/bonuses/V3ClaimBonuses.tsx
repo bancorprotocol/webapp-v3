@@ -28,7 +28,7 @@ export const V3ClaimBonuses = () => {
         ) : bonusUsdTotal > 0 ? (
           <div className="flex items-center justify-between">
             <span className="text-[30px]">
-              {prettifyNumber(bonusUsdTotal, true)}
+              {prettifyNumber(bonusUsdTotal, { usd: true })}
             </span>
             <Button
               variant={ButtonVariant.Tertiary}

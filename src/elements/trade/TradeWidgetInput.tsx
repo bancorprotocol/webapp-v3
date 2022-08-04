@@ -78,7 +78,7 @@ export const TradeWidgetInput = ({
                 }`}
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
-                {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+                {prettifyNumber(input?.token.balanceUsd ?? 0, { usd: true })})
               </button>
             )}
         </div>
@@ -147,7 +147,7 @@ export const TradeWidgetInput = ({
                       isFocused
                         ? value
                         : value
-                        ? prettifyNumber(value, isFiat)
+                        ? prettifyNumber(value, { usd: true })
                         : ''
                     }
                     className="w-full text-right text-20 outline-none bg-white dark:bg-charcoal"
@@ -162,7 +162,7 @@ export const TradeWidgetInput = ({
                     <div className="text-secondary text-12">
                       {prettifyNumber(
                         !isFiat ? input.inputFiat : input.inputTkn,
-                        !isFiat
+                        { usd: !isFiat }
                       )}{' '}
                       {input.oppositeUnit}
                     </div>

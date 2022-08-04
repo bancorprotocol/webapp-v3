@@ -57,7 +57,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                           bnt && bnt.usdPrice
                             ? Number(bnt.usdPrice) * lock.bnt
                             : 0,
-                          true
+                          { usd: true }
                         )})`}</div>
                       </div>
                       <div className="flex text-12">

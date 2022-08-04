@@ -63,7 +63,7 @@ export const ClaimAvailable = ({
                     bnt && bnt.usdPrice
                       ? Number(bnt.usdPrice) * availableBNT
                       : 0,
-                    true
+                    { usd: true }
                   )})`}</span>
                 </>
               )}

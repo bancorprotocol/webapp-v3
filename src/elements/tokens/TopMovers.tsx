@@ -35,7 +35,9 @@ export const TopMovers = ({ setSearch }: Props) => {
                       />
                       <div className="ml-10 text-12 dark:text-graphite">
                         <div className="font-medium">{token.symbol}</div>
-                        <div>{prettifyNumber(token.usdPrice ?? 0, true)}</div>
+                        <div>
+                          {prettifyNumber(token.usdPrice ?? 0, { usd: true })}
+                        </div>
                         <div
                           className={`font-bold text-${
                             changePositive ? 'success' : 'error'

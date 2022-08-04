@@ -20,7 +20,7 @@ export const AddLiquidityDualTokenPrices = ({
   const rateString = () => {
     return `${prettifyNumber(bntTknRate)} ${tkn.symbol} (${prettifyNumber(
       bntTknRateUsd(),
-      true
+      { usd: true }
     )})`;
   };
   return (
@@ -30,12 +30,12 @@ export const AddLiquidityDualTokenPrices = ({
         <div key={t.address} className="flex justify-between text-20 mt-5">
           <div>1 {t.symbol} = </div>
           <div className="text-grey dark:text-graphite">
-            {prettifyNumber(t.usdPrice!, true)}
+            {prettifyNumber(t.usdPrice!, { usd: true })}
           </div>
         </div>
       ))}
       <div className="flex justify-between mt-20 text-grey dark:text-graphite">
-        <div>1 BNT ({prettifyNumber(bnt.usdPrice!, true)}) =</div>
+        <div>1 BNT ({prettifyNumber(bnt.usdPrice!, { usd: true })}) =</div>
         <div>{rateString()}</div>
       </div>
     </div>

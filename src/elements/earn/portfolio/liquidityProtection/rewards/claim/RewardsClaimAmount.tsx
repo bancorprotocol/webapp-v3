@@ -37,7 +37,9 @@ export const RewardsClaimAmount = ({ amount }: Props) => {
         {amount && bnt?.usdPrice ? (
           <div>
             <div className="text-20">{prettifyNumber(amount)} BNT</div>
-            <div className="text-12">{prettifyNumber(usdPrice(), true)}</div>
+            <div className="text-12">
+              {prettifyNumber(usdPrice(), { usd: true })}
+            </div>
           </div>
         ) : (
           <div>--</div>

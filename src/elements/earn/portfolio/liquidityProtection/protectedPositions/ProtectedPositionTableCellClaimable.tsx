@@ -32,7 +32,7 @@ export const ProtectedPositionTableCellClaimable = (
             {`${prettifyNumber(tknAmount)} ${symbol}`}
           </div>
           <div className="mt-4 text-12 text-black-low dark:text-white-low">
-            {prettifyNumber(usdAmount, true)} USD
+            {prettifyNumber(usdAmount, { usd: true })} USD
           </div>
         </>
       )}

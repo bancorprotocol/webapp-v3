@@ -322,7 +322,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                     </div>
                   </div>
                   <div className="text-12 text-secondary">
-                    Additional gas {prettifyNumber(extraGasNeeded, true)}
+                    Additional gas{' '}
+                    {prettifyNumber(extraGasNeeded, { usd: true })}
                   </div>
                 </div>
               )}

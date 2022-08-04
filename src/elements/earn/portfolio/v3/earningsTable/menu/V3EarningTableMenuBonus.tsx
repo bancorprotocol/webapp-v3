@@ -13,7 +13,7 @@ export const V3EarningTableMenuBonus = memo(({ setCurrentMenu }: Props) => {
     <V3EarningsTableSubMenuWrapper setCurrentMenu={setCurrentMenu}>
       <div className="text-secondary">Claim rewards</div>
       <div className="text-[28px] my-16">{prettifyNumber(123)} BNT</div>
-      <div className="mt-10 mb-40">{prettifyNumber(123, true)}</div>
+      <div className="mt-10 mb-40">{prettifyNumber(123, { usd: true })}</div>
       <div className="grid grid-cols-2 gap-10">
         <Button variant={ButtonVariant.Tertiary} size={ButtonSize.Small}>
           Claim & Earn ??%

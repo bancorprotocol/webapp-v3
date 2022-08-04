@@ -105,7 +105,7 @@ export const V3HoldingsItem = ({
                     toBigNumber(holding.pool.reserveToken.usdPrice).times(
                       holding.combinedTokenBalance
                     ),
-                    true
+                    { usd: true }
                   )}
                 </div>
               </div>
@@ -138,7 +138,7 @@ export const V3HoldingsItem = ({
                   holding.hasLegacyStake ? 'text-warning' : 'text-primary'
                 }`}
               />
-              <div>+{prettifyNumber(rewardTokenAmountUsd, true)}</div>
+              <div>+{prettifyNumber(rewardTokenAmountUsd, { usd: true })}</div>
             </div>
           )}
 

@@ -172,7 +172,7 @@ const MigrateHoldingAtRisk = ({
           >
             <div>
               <div>{holding.ammName}</div>
-              <div>{prettifyNumber(holding.usdValue, true)}</div>
+              <div>{prettifyNumber(holding.usdValue, { usd: true })}</div>
             </div>
 
             <div className="mt-6">

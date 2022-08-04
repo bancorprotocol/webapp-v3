@@ -26,21 +26,20 @@ const prettifyNumberAbbreviateFormat: numbro.Format = {
 
 export const prettifyNumber = (
   num: number | string | BigNumber,
-  usd = false,
-  abbreviate = false
+  options?: { usd?: boolean; abbreviate?: boolean }
 ): string => {
   const bigNum = new BigNumber(num);
-  if (usd) {
+  if (options?.usd) {
     if (bigNum.lte(0)) return '$0.00';
     if (bigNum.lt(0.01)) return '< $0.01';
     if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    if (abbreviate && bigNum.gt(999999))
+    if (options.abbreviate && bigNum.gt(999999))
       return `$${numbro(bigNum).format(prettifyNumberAbbreviateFormat)}`;
     return numeral(bigNum).format('$0,0.00', Math.floor);
   }
 
   if (bigNum.lte(0)) return '0';
-  if (abbreviate && bigNum.gt(999999))
+  if (options?.abbreviate && bigNum.gt(999999))
     return numbro(bigNum).format(prettifyNumberAbbreviateFormat);
   if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
   if (bigNum.gte(2)) return numeral(bigNum).format('0,0.[00]', Math.floor);

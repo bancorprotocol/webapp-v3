@@ -19,7 +19,7 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
       </div>
       <div className="mt-20 flex justify-between">
         <div>{position.ammName}: </div>
-        <div>{prettifyNumber(position.usdValue, true)}</div>
+        <div>{prettifyNumber(position.usdValue, { usd: true })}</div>
       </div>
       <div className="mt-6 flex justify-between">
         <div>Rekt Status: </div>

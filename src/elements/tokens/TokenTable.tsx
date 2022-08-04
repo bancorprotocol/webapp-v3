@@ -68,7 +68,9 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'price',
         Header: 'Price',
         accessor: 'usdPrice',
-        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
+        Cell: (cellData) => (
+          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
+        ),
         minWidth: 110,
         sortDescFirst: true,
       },
@@ -95,7 +97,9 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'v24h',
         Header: '24h Volume',
         accessor: 'usd_volume_24',
-        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
+        Cell: (cellData) => (
+          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
+        ),
         minWidth: 120,
         sortDescFirst: true,
       },
@@ -103,7 +107,9 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'liquidity',
         Header: 'Liquidity',
         accessor: 'liquidity',
-        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
+        Cell: (cellData) => (
+          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
+        ),
         tooltip: 'The value of tokens staked in the pool',
         minWidth: 150,
         sortDescFirst: true,

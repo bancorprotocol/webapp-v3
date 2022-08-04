@@ -115,7 +115,7 @@ export const TokenInputField = ({
 
   const convertedAmount = () => {
     const tokenAmount = prettifyNumber(input);
-    const usdAmount = prettifyNumber(amountUsd ?? 0, true);
+    const usdAmount = prettifyNumber(amountUsd ?? 0, { usd: true });
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return amount;
@@ -158,7 +158,7 @@ export const TokenInputField = ({
             >
               {balanceLabel}: {prettifyNumber(balance)}
               <span className="text-primary ml-4">
-                {prettifyNumber(balanceUsd, true)}
+                {prettifyNumber(balanceUsd, { usd: true })}
               </span>
             </button>
           )
