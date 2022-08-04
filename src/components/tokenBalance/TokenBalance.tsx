@@ -10,6 +10,7 @@ interface Props {
   imgUrl: string;
   inverted?: boolean;
   deficitAmount?: string;
+  abbreviate?: boolean;
 }
 export const TokenBalance = ({
   symbol,
@@ -18,6 +19,7 @@ export const TokenBalance = ({
   imgUrl,
   inverted,
   deficitAmount,
+  abbreviate = false,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
 
@@ -32,13 +34,17 @@ export const TokenBalance = ({
         <div className="flex items-center gap-5 text-justify text-16">
           {inverted ? (
             <>
-              <div>{prettifyNumber(amount)}</div>
+              <div className={'uppercase'}>
+                {prettifyNumber(amount, false, abbreviate)}
+              </div>
               {symbol}
             </>
           ) : (
             <>
               {symbol}
-              <div>{prettifyNumber(amount)}</div>
+              <div className={'uppercase'}>
+                {prettifyNumber(amount, false, abbreviate)}
+              </div>
             </>
           )}
           {deficitAmount && (

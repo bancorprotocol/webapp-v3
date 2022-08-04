@@ -6,6 +6,7 @@ import { shrinkToken } from 'utils/formulas';
 import dayjs from './dayjs';
 import { Pool } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancorApi/bancorApi.types';
+import numbro from 'numbro';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -15,24 +16,36 @@ export const ppmToDec = (ppm: number | string | BigNumber) =>
 export const decToPpm = (dec: number | string | BigNumber): string =>
   new BigNumber(dec).times(oneMillion).toFixed(0);
 
+const prettifyNumberAbbreviateFormat: numbro.Format = {
+  average: true,
+  mantissa: 1,
+  optionalMantissa: true,
+  lowPrecision: false,
+  spaceSeparated: true,
+};
+
 export const prettifyNumber = (
   num: number | string | BigNumber,
-  usd = false
+  usd = false,
+  abbreviate = false
 ): string => {
   const bigNum = new BigNumber(num);
   if (usd) {
     if (bigNum.lte(0)) return '$0.00';
-    else if (bigNum.lt(0.01)) return '< $0.01';
-    else if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    else return numeral(bigNum).format('$0,0.00', Math.floor);
-  } else {
-    if (bigNum.lte(0)) return '0';
-    else if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
-    else if (bigNum.gte(2))
-      return numeral(bigNum).format('0,0.[00]', Math.floor);
-    else if (bigNum.lt(0.000001)) return '< 0.000001';
-    else return numeral(bigNum).format('0.[000000]', Math.floor);
+    if (bigNum.lt(0.01)) return '< $0.01';
+    if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
+    if (abbreviate && bigNum.gt(999999))
+      return `$${numbro(bigNum).format(prettifyNumberAbbreviateFormat)}`;
+    return numeral(bigNum).format('$0,0.00', Math.floor);
   }
+
+  if (bigNum.lte(0)) return '0';
+  if (abbreviate && bigNum.gt(999999))
+    return numbro(bigNum).format(prettifyNumberAbbreviateFormat);
+  if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
+  if (bigNum.gte(2)) return numeral(bigNum).format('0,0.[00]', Math.floor);
+  if (bigNum.lt(0.000001)) return '< 0.000001';
+  return numeral(bigNum).format('0.[000000]', Math.floor);
 };
 
 export const formatDuration = (duration: plugin.Duration): string => {
