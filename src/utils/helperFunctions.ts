@@ -22,6 +22,7 @@ const prettifyNumberAbbreviateFormat: numbro.Format = {
   optionalMantissa: true,
   lowPrecision: false,
   spaceSeparated: true,
+  roundingFunction: (num) => Math.floor(num),
 };
 
 export const prettifyNumber = (
