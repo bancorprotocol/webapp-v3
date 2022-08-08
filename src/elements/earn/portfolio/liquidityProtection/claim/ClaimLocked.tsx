@@ -17,13 +17,13 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
   const noBntLocked = lockedBNT.length === 0;
 
   return (
-    <section className="content-section py-20">
+    <section className="py-20 content-section">
       <h2 className="ml-[20px] md:ml-[44px]">Locked</h2>
       <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
 
       {loading ? (
         <div className="flex items-center h-50 mx-30">
-          <div className="loading-skeleton h-20 w-full"></div>
+          <div className="w-full h-20 loading-skeleton"></div>
         </div>
       ) : (
         <div className="mx-[20px] md:mx-[44px] mt-30 mb-10">
@@ -43,7 +43,7 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
               <>
                 {lockedBNT.map((lock, index) => (
                   <div key={lock.expiry.toString()}>
-                    <div className="w-full flex justify-between items-center">
+                    <div className="flex items-center justify-between w-full">
                       <div className="flex items-center">
                         {!isMobile && <IconLock className="h-20 mr-16" />}
                         <Image
@@ -61,14 +61,14 @@ export const ClaimLocked = ({ bnt, lockedBNT, loading }: ClaimLockedProps) => {
                         )})`}</div>
                       </div>
                       <div className="flex text-12">
-                        <div className="text-primary dark:text-primary-light font-semibold mr-10 text-14">
+                        <div className="mr-10 font-semibold text-primary dark:text-primary-light text-14">
                           <CountdownTimer date={lock.expiry as UTCTimestamp} />
                         </div>
                         {!isMobile && 'left to claim'}
                       </div>
                     </div>
                     {index !== lockedBNT.length - 1 && (
-                      <hr className="content-separator my-16" />
+                      <hr className="my-16 content-separator" />
                     )}
                   </div>
                 ))}

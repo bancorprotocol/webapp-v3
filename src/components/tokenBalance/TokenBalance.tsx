@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
@@ -10,7 +10,39 @@ interface Props {
   imgUrl: string;
   inverted?: boolean;
   deficitAmount?: string;
+  abbreviate?: boolean;
 }
+
+const AmountWithPopover = ({
+  amount,
+  symbol,
+  options,
+}: {
+  amount: string;
+  symbol?: string;
+  options?: {
+    usd?: boolean;
+    abbreviate?: boolean;
+  };
+}) => {
+  const prettifiedAmount = prettifyNumber(amount, options);
+
+  if (!options?.abbreviate || toBigNumber(amount).lte(999999)) {
+    return <>{prettifiedAmount}</>;
+  }
+
+  return (
+    <PopoverV3
+      buttonElement={() => (
+        <span className={'uppercase'}>{prettifiedAmount}</span>
+      )}
+    >
+      {prettifyNumber(amount, { ...options, abbreviate: false })}{' '}
+      {symbol && symbol}
+    </PopoverV3>
+  );
+};
+
 export const TokenBalance = ({
   symbol,
   amount,
@@ -18,6 +50,7 @@ export const TokenBalance = ({
   imgUrl,
   inverted,
   deficitAmount,
+  abbreviate,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
 
@@ -32,13 +65,21 @@ export const TokenBalance = ({
         <div className="flex items-center gap-5 text-justify text-16">
           {inverted ? (
             <>
-              <div>{prettifyNumber(amount)}</div>
+              <AmountWithPopover
+                amount={amount}
+                symbol={symbol}
+                options={{ abbreviate }}
+              />
               {symbol}
             </>
           ) : (
             <>
-              {symbol}
-              <div>{prettifyNumber(amount)}</div>
+              {symbol}{' '}
+              <AmountWithPopover
+                amount={amount}
+                symbol={symbol}
+                options={{ abbreviate }}
+              />
             </>
           )}
           {deficitAmount && (

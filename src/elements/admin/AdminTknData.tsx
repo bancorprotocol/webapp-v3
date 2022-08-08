@@ -12,7 +12,7 @@ export const AdminTknData = () => {
   const userStandardRewardPrograms = useAppSelector(getStandardRewards);
 
   return (
-    <div className="grid grid-cols-3 text-left gap-20">
+    <div className="grid grid-cols-3 gap-20 text-left">
       <div className="space-y-20">
         <h2>All Tokens</h2>
         {allTokens
