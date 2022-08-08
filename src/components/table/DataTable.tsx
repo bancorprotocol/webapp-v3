@@ -71,7 +71,7 @@ export const DataTable = <D extends object>({
 
   useEffect(() => {
     gotoPage(0);
-  }, [gotoPage, search]);
+  }, [gotoPage, pageCount, search]);
 
   return (
     <>
