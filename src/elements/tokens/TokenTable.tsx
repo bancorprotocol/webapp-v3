@@ -21,12 +21,13 @@ interface Props {
 
 export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const tokens = useAppSelector(getTokenTableData);
+  const search = searchInput.toLowerCase();
 
   const data = useMemo<Token[]>(() => {
     return tokens.filter((t) => {
       const isSearchMatch =
-        t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
-        t.name.toLowerCase().includes(searchInput.toLowerCase());
+        t.symbol.toLowerCase().includes(search) ||
+        t.name.toLowerCase().includes(search);
 
       return (
         toBigNumber(t.liquidity).gt(0) &&
@@ -34,7 +35,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         isSearchMatch
       );
     });
-  }, [tokens, searchInput]);
+  }, [tokens, search]);
 
   const CellName = (token: Token) => {
     return (
