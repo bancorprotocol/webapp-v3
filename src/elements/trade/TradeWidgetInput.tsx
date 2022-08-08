@@ -58,7 +58,7 @@ export const TradeWidgetInput = ({
   return (
     <>
       <div>
-        <div className="mb-10 text-secondary flex justify-between px-10">
+        <div className="flex justify-between px-10 mb-10 text-secondary">
           {label && <div>{label}</div>}
           {input?.token &&
             input?.token.balance &&
@@ -136,7 +136,7 @@ export const TradeWidgetInput = ({
           {
             <div
               onClick={() => handleFocusChange(true)}
-              className="text-right cursor-text h-full flex-grow flex justify-center flex-col"
+              className="flex flex-col justify-center flex-grow h-full text-right cursor-text"
             >
               {!isLoading && input ? (
                 <>
@@ -150,7 +150,7 @@ export const TradeWidgetInput = ({
                         ? prettifyNumber(value, isFiat)
                         : ''
                     }
-                    className="w-full text-right text-20 outline-none bg-white dark:bg-charcoal"
+                    className="w-full text-right bg-white outline-none text-20 dark:bg-charcoal"
                     onChange={(e) => {
                       !disabled && input.handleChange(e.target.value);
                     }}
@@ -171,8 +171,8 @@ export const TradeWidgetInput = ({
               ) : (
                 (!tokens.length || (isLoading && input)) && (
                   <div className="flex flex-col items-end">
-                    <div className="loading-skeleton h-18 mb-4 w-3/4" />
-                    <div className="loading-skeleton h-12 w-1/2" />
+                    <div className="w-3/4 mb-4 loading-skeleton h-18" />
+                    <div className="w-1/2 h-12 loading-skeleton" />
                   </div>
                 )
               )}
@@ -181,7 +181,7 @@ export const TradeWidgetInput = ({
         </div>
         {errorMsg && (
           <div className="relative flex justify-end mr-10">
-            <div className="absolute text-error mt-5">{errorMsg}</div>
+            <div className="absolute mt-5 text-error">{errorMsg}</div>
           </div>
         )}
       </div>
