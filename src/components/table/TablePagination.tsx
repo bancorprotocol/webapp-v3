@@ -1,5 +1,6 @@
 import { UsePaginationInstanceProps } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { useEffect } from 'react';
 
 interface TablePaginationProps
   extends Omit<UsePaginationInstanceProps<never>, 'page'> {
@@ -20,6 +21,11 @@ export const TablePagination = ({
   pageSize,
 }: TablePaginationProps) => {
   const showResults = [10, 20, 30, 40, 50];
+  useEffect(() => {
+    if (pageIndex + 1 > pageCount) {
+      gotoPage(0);
+    }
+  }, [gotoPage, pageCount, pageIndex]);
   return (
     <div className="flex justify-center md:justify-between items-center p-20 text-graphite text-12">
       <div className="hidden md:flex justify-between items-center space-x-10">
