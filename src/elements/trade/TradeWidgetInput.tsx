@@ -147,7 +147,7 @@ export const TradeWidgetInput = ({
                       isFocused
                         ? value
                         : value
-                        ? prettifyNumber(value, true)
+                        ? prettifyNumber(value, isFiat)
                         : ''
                     }
                     className="w-full text-right bg-white outline-none text-20 dark:bg-charcoal"
@@ -162,7 +162,7 @@ export const TradeWidgetInput = ({
                     <div className="text-secondary text-12">
                       {prettifyNumber(
                         !isFiat ? input.inputFiat : input.inputTkn,
-                        { usd: !isFiat }
+                        !isFiat
                       )}{' '}
                       {input.oppositeUnit}
                     </div>
