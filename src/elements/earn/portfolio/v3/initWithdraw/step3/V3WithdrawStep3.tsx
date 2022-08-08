@@ -38,7 +38,7 @@ const V3WithdrawStep3 = ({
           Start {lockDurationInDays} day cooldown of{' '}
           <span className="text-primary">
             {isFiat
-              ? `${prettifyNumber(amount.fiat, { usd: true })} USD`
+              ? `${prettifyNumber(amount.fiat, true)} USD`
               : `${prettifyNumber(amount.tkn)} ${token.symbol}`}
           </span>
         </h1>

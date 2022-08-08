@@ -94,7 +94,7 @@ export const TokenBalance = ({
           )}
         </div>
         <span className="text-secondary">
-          {prettifyNumber(usdAmount, { usd: true })}
+          {prettifyNumber(usdAmount, true)}
         </span>
       </div>
     </div>

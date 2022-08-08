@@ -55,7 +55,7 @@ export const TokenInputPercentageV3 = ({
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-end mb-10">
+      <div className="flex items-end justify-between mb-10">
         <span>{label}</span>
         {fieldBalance && (
           <button
@@ -65,9 +65,10 @@ export const TokenInputPercentageV3 = ({
             {balanceLabel}: {prettifyNumber(fieldBalance)}{' '}
             <span className="text-secondary">
               (
-              {prettifyNumber(calcFiatValue(fieldBalance, token.usdPrice), {
-                usd: true,
-              })}
+              {prettifyNumber(
+                calcFiatValue(fieldBalance, token.usdPrice),
+                true
+              )}
               )
             </span>
           </button>

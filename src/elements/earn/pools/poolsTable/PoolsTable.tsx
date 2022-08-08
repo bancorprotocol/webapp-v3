@@ -62,7 +62,7 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.stakedBalance.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.stakedBalance.usd, { usd: true })}
+              : prettifyNumber(row.stakedBalance.usd, true)}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.volume7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.volume7d.usd, { usd: true })}
+              : prettifyNumber(row.volume7d.usd, true)}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -78,7 +78,7 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.fees7d.usd, { usd: true })}
+              : prettifyNumber(row.fees7d.usd, true)}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -91,7 +91,7 @@ export const PoolsTable = ({
               ? 'New'
               : prettifyNumber(
                   toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
-                  { usd: true }
+                  true
                 )}
           </div>
         </div>

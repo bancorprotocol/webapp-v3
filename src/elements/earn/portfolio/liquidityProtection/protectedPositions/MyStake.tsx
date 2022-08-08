@@ -15,9 +15,9 @@ export const MyStake = ({ loading }: { loading: boolean }) => {
         ) : (
           <div>
             <div className="mb-5">Protected Value</div>
-            <div className="text-16 text-primary dark:text-primary-light font-semibold">
+            <div className="font-semibold text-16 text-primary dark:text-primary-light">
               {summary
-                ? `${prettifyNumber(summary.protectedValue, { usd: true })}`
+                ? `${prettifyNumber(summary.protectedValue, true)}`
                 : '--'}
             </div>
           </div>
@@ -27,9 +27,9 @@ export const MyStake = ({ loading }: { loading: boolean }) => {
         ) : (
           <div>
             <div className="mb-5">Claimable Value</div>
-            <div className="text-16 text-primary dark:text-primary-light font-semibold">
+            <div className="font-semibold text-16 text-primary dark:text-primary-light">
               {summary
-                ? `${prettifyNumber(summary.claimableValue, { usd: true })}`
+                ? `${prettifyNumber(summary.claimableValue, true)}`
                 : '--'}
             </div>
           </div>
@@ -39,10 +39,8 @@ export const MyStake = ({ loading }: { loading: boolean }) => {
         ) : (
           <div>
             <div className="mb-5">Total Fees</div>
-            <div className="text-16 text-primary dark:text-primary-light font-semibold">
-              {summary
-                ? `${prettifyNumber(summary.fees, { usd: true })}`
-                : '--'}
+            <div className="font-semibold text-16 text-primary dark:text-primary-light">
+              {summary ? `${prettifyNumber(summary.fees, true)}` : '--'}
             </div>
           </div>
         )}

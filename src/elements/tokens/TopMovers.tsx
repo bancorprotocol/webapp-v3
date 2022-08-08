@@ -15,10 +15,10 @@ export const TopMovers = ({ setSearch }: Props) => {
   };
 
   return (
-    <section className="content-block pt-20 pb-10">
+    <section className="pt-20 pb-10 content-block">
       <h2 className="ml-[20px]">Top Movers</h2>
       <Ticker id="top-tokens">
-        <div className="flex space-x-16 mt-20">
+        <div className="flex mt-20 space-x-16">
           {tokens.length
             ? tokens.map((token) => {
                 const changePositive = Number(token.price_change_24) > 0;
@@ -31,13 +31,11 @@ export const TopMovers = ({ setSearch }: Props) => {
                       <img
                         src={token.logoURI.replace('thumb', 'small')}
                         alt="Token Logo"
-                        className="w-50 h-50 rounded-full"
+                        className="rounded-full w-50 h-50"
                       />
                       <div className="ml-10 text-12 dark:text-graphite">
                         <div className="font-medium">{token.symbol}</div>
-                        <div>
-                          {prettifyNumber(token.usdPrice ?? 0, { usd: true })}
-                        </div>
+                        <div>{prettifyNumber(token.usdPrice ?? 0, true)}</div>
                         <div
                           className={`font-bold text-${
                             changePositive ? 'success' : 'error'

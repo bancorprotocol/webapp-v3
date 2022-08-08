@@ -55,8 +55,8 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
       {
         id: 'name',
         Header: () => (
-          <span className="align-middle inline-flex items-center">
-            <IconProtected className="w-18 mr-20" /> <span>Name</span>
+          <span className="inline-flex items-center align-middle">
+            <IconProtected className="mr-20 w-18" /> <span>Name</span>
           </span>
         ),
         accessor: 'symbol',
@@ -68,9 +68,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'price',
         Header: 'Price',
         accessor: 'usdPrice',
-        Cell: (cellData) => (
-          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
-        ),
+        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
         minWidth: 110,
         sortDescFirst: true,
       },
@@ -97,9 +95,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'v24h',
         Header: '24h Volume',
         accessor: 'usd_volume_24',
-        Cell: (cellData) => (
-          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
-        ),
+        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
         minWidth: 120,
         sortDescFirst: true,
       },
@@ -107,9 +103,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         id: 'liquidity',
         Header: 'Liquidity',
         accessor: 'liquidity',
-        Cell: (cellData) => (
-          <>{prettifyNumber(cellData.value ?? 0, { usd: true })}</>
-        ),
+        Cell: (cellData) => <>{prettifyNumber(cellData.value ?? 0, true)}</>,
         tooltip: 'The value of tokens staked in the pool',
         minWidth: 150,
         sortDescFirst: true,
@@ -160,7 +154,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-block pt-20 pb-10">
+    <section className="pt-20 pb-10 content-block">
       <div className="flex justify-between items-center mb-20 mx-[20px]">
         <h2>Tokens</h2>
         <SearchInput

@@ -115,7 +115,7 @@ export const TokenInputField = ({
 
   const convertedAmount = () => {
     const tokenAmount = prettifyNumber(input);
-    const usdAmount = prettifyNumber(amountUsd ?? 0, { usd: true });
+    const usdAmount = prettifyNumber(amountUsd ?? 0, true);
     const amount = toggle ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return amount;
@@ -157,8 +157,8 @@ export const TokenInputField = ({
               })}`}
             >
               {balanceLabel}: {prettifyNumber(balance)}
-              <span className="text-primary ml-4">
-                {prettifyNumber(balanceUsd, { usd: true })}
+              <span className="ml-4 text-primary">
+                {prettifyNumber(balanceUsd, true)}
               </span>
             </button>
           )
@@ -167,7 +167,7 @@ export const TokenInputField = ({
       {startEmpty && !token ? (
         <button
           onClick={() => (selectable ? setIsOpen(true) : {})}
-          className="flex items-center text-primary font-medium text-20 mt-10 mb-30 py-5"
+          className="flex items-center py-5 mt-10 font-medium text-primary text-20 mb-30"
         >
           Select a token
           <IconChevronDown className="w-[10px] h-[6px] ml-10" />
@@ -189,12 +189,12 @@ export const TokenInputField = ({
                   alt="Token"
                   className="!rounded-full h-28 w-28"
                 />
-                <span className="text-20 mx-10">{token.symbol}</span>
+                <span className="mx-10 text-20">{token.symbol}</span>
               </>
             ) : (
               <>
                 <div className="loading-skeleton h-28 w-28"></div>
-                <div className="loading-skeleton mx-10 h-16 w-50"></div>
+                <div className="h-16 mx-10 loading-skeleton w-50"></div>
               </>
             )}
 
@@ -206,18 +206,18 @@ export const TokenInputField = ({
           </div>
           <div className="w-full">
             <div className="relative w-full">
-              <div className="absolute text-12 bottom-0 right-0 w-full">
+              <div className="absolute bottom-0 right-0 w-full text-12">
                 {isLoading ? (
                   <div className="flex flex-col items-end right-[15px] bottom-12 absolute w-4/5 bg-white dark:bg-charcoal ">
                     <div className="loading-skeleton h-[22px] w-full mb-[8px]"></div>
-                    <div className="loading-skeleton h-12 w-80 mr-2"></div>
+                    <div className="h-12 mr-2 loading-skeleton w-80"></div>
                   </div>
                 ) : (
                   <div className="text-right mr-[22px] mb-10">
                     {convertedAmount()} {toggle && token?.symbol}
                     {!usdSlippage ||
                       (usdSlippage !== 0 && (
-                        <span className="text-graphite ml-4">
+                        <span className="ml-4 text-graphite">
                           ({usdSlippage}%)
                         </span>
                       ))}
@@ -235,7 +235,7 @@ export const TokenInputField = ({
               />
             </div>
             {errorMsg && (
-              <div className="text-error text-12 px-10 pt-5">{errorMsg}</div>
+              <div className="px-10 pt-5 text-error text-12">{errorMsg}</div>
             )}
           </div>
         </div>

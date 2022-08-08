@@ -25,28 +25,52 @@ const prettifyNumberAbbreviateFormat: numbro.Format = {
   roundingFunction: (num) => Math.floor(num),
 };
 
-export const prettifyNumber = (
+export function prettifyNumber(num: number | string | BigNumber): string;
+
+export function prettifyNumber(
+  num: number | string | BigNumber,
+  usd: boolean
+): string;
+
+export function prettifyNumber(
   num: number | string | BigNumber,
   options?: { usd?: boolean; abbreviate?: boolean }
-): string => {
+): string;
+
+export function prettifyNumber(
+  num: number | string | BigNumber,
+  optionsOrUsd?: { usd?: boolean; abbreviate?: boolean } | boolean
+): string {
+  let usd, abbreviate;
+  if (optionsOrUsd === undefined) {
+    usd = false;
+    abbreviate = false;
+  } else if (typeof optionsOrUsd === 'boolean') {
+    usd = optionsOrUsd;
+    abbreviate = false;
+  } else {
+    usd = optionsOrUsd.usd;
+    abbreviate = optionsOrUsd.abbreviate;
+  }
+
   const bigNum = new BigNumber(num);
-  if (options?.usd) {
+  if (usd) {
     if (bigNum.lte(0)) return '$0.00';
     if (bigNum.lt(0.01)) return '< $0.01';
     if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    if (options.abbreviate && bigNum.gt(999999))
+    if (abbreviate && bigNum.gt(999999))
       return `$${numbro(bigNum).format(prettifyNumberAbbreviateFormat)}`;
     return numeral(bigNum).format('$0,0.00', Math.floor);
   }
 
   if (bigNum.lte(0)) return '0';
-  if (options?.abbreviate && bigNum.gt(999999))
+  if (abbreviate && bigNum.gt(999999))
     return numbro(bigNum).format(prettifyNumberAbbreviateFormat);
   if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
   if (bigNum.gte(2)) return numeral(bigNum).format('0,0.[00]', Math.floor);
   if (bigNum.lt(0.000001)) return '< 0.000001';
   return numeral(bigNum).format('0.[000000]', Math.floor);
-};
+}
 
 export const formatDuration = (duration: plugin.Duration): string => {
   let sentence = '';

@@ -62,20 +62,20 @@ export const InsightRow = ({
   ];
 
   return (
-    <div className="grid grid-cols-9 py-24 px-4 gap-x-40 border-t dark:border-black-low">
+    <div className="grid grid-cols-9 px-4 py-24 border-t gap-x-40 dark:border-black-low">
       <div className="col-span-3">
         <Speedometer summary={data ? data.summary : null} />
       </div>
       <div className="flex flex-col justify-between col-span-6">
         <div className="flex items-center col-span-6">
           <img
-            className="rounded-full h-20 w-20 bg-silver"
+            className="w-20 h-20 rounded-full bg-silver"
             src={token.logoURI}
             alt="Token Logo"
           />
-          <div className="text-20 font-medium ml-5">{token.symbol}</div>
-          <div className="text-14 ml-10">
-            Price {prettifyNumber(token.usdPrice ?? 0, { usd: true })}
+          <div className="ml-5 font-medium text-20">{token.symbol}</div>
+          <div className="ml-10 text-14">
+            Price {prettifyNumber(token.usdPrice ?? 0, true)}
           </div>
         </div>
         <div className="h-[138px] col-span-3 gap-8 grid grid-cols-3">

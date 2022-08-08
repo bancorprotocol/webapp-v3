@@ -35,12 +35,12 @@ export const ClaimAvailable = ({
   };
 
   return (
-    <section className="content-section py-20">
+    <section className="py-20 content-section">
       <h2 className="ml-[20px] md:ml-[44px]">Available to Claim</h2>
       <hr className="content-separator my-14 mx-[20px] md:mx-[44px]" />
       {loading ? (
         <div className="flex items-center h-50 mx-30">
-          <div className="loading-skeleton h-20 w-full"></div>
+          <div className="w-full h-20 loading-skeleton"></div>
         </div>
       ) : (
         <div className="mx-[20px] md:mx-[44px] mt-30 mb-10">
@@ -63,7 +63,7 @@ export const ClaimAvailable = ({
                     bnt && bnt.usdPrice
                       ? Number(bnt.usdPrice) * availableBNT
                       : 0,
-                    { usd: true }
+                    true
                   )})`}</span>
                 </>
               )}

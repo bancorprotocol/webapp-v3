@@ -78,12 +78,11 @@ const TokenInputV3 = ({
           maxWidth: maxInputWidth,
         }}
       />
-      <span ref={symbolRef} className="text-16 ml-5">
+      <span ref={symbolRef} className="ml-5 text-16">
         {inputUnit}
       </span>
       <span ref={oppositeRef} className="absolute text-12 right-[10px]">
-        {prettifyNumber(isFiat ? inputTkn : inputFiat, { usd: !isFiat })}{' '}
-        {oppositeUnit}
+        {prettifyNumber(isFiat ? inputTkn : inputFiat, !isFiat)} {oppositeUnit}
       </span>
     </div>
   );

@@ -138,7 +138,7 @@ const BonusGroup = ({
               {prettifyNumber(amount)}
             </div>
             <div className="flex justify-end text-black-low dark:text-white-low">
-              {prettifyNumber(usdAmount, { usd: true })}
+              {prettifyNumber(usdAmount, true)}
             </div>
           </div>
         </div>

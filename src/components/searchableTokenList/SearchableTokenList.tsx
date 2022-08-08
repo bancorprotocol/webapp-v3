@@ -140,7 +140,7 @@ export const SearchableTokenList = ({
     >
       {manage ? (
         <div className="h-full md:max-h-[calc(70vh-100px)] overflow-auto mb-20">
-          <div className="pt-10 px-20 space-y-15">
+          <div className="px-20 pt-10 space-y-15">
             {tokensLists.map((tokenList) => {
               const isSelected = userPreferredListIds.some(
                 (listId) => tokenList.name === listId
@@ -156,7 +156,7 @@ export const SearchableTokenList = ({
                     <Image
                       alt="TokenList"
                       src={tokenList.logoURI}
-                      className="bg-silver rounded-full h-28 w-28"
+                      className="rounded-full bg-silver h-28 w-28"
                     />
                     <div className={'ml-15'}>
                       <div className={'text-16'}>{tokenList.name}</div>
@@ -178,11 +178,11 @@ export const SearchableTokenList = ({
         </div>
       ) : (
         <>
-          <div className="mb-10 px-20 relative">
+          <div className="relative px-20 mb-10">
             <SearchInput
               value={search}
               setValue={setSearch}
-              className="rounded-full py-10 w-full"
+              className="w-full py-10 rounded-full"
             />
           </div>
           <div className="h-[calc(70vh-50px)] md:h-[calc(70vh-206px)] overflow-auto px-10 pb-10">
@@ -197,8 +197,8 @@ export const SearchableTokenList = ({
               />
             </div>
             <div className="flex justify-between px-10 mt-20">
-              <div className="text-secondary pb-6">Token</div>
-              <div className="text-secondary pb-6">Balance</div>
+              <div className="pb-6 text-secondary">Token</div>
+              <div className="pb-6 text-secondary">Balance</div>
             </div>
             {sortedTokens.map((token) => {
               return (
@@ -208,7 +208,7 @@ export const SearchableTokenList = ({
                     onClick(token);
                     onClose();
                   }}
-                  className="flex items-center justify-between rounded focus:ring-2 focus:ring-primary px-14 py-5 my-5 w-full"
+                  className="flex items-center justify-between w-full py-5 my-5 rounded focus:ring-2 focus:ring-primary px-14"
                 >
                   <div className="flex items-center">
                     <Image
@@ -229,7 +229,7 @@ export const SearchableTokenList = ({
                     </div>
                     <div className="text-secondary">
                       {token.balanceUsd &&
-                        prettifyNumber(token.balanceUsd, { usd: true })}
+                        prettifyNumber(token.balanceUsd, true)}
                     </div>
                   </div>
                 </button>
@@ -243,13 +243,13 @@ export const SearchableTokenList = ({
                 setUserLists(getTokenListLS());
                 setManage(true);
               }}
-              className="text-primary font-semibold"
+              className="font-semibold text-primary"
             >
               <span className="flex justify-center items center">
                 <IconEdit className="w-[18px] h-[18px] mr-4" />
                 Manage Token Lists
               </span>
-              <span className="text-graphite text-12 font-medium">
+              <span className="font-medium text-graphite text-12">
                 Only supported tokens will be displayed
               </span>
             </button>

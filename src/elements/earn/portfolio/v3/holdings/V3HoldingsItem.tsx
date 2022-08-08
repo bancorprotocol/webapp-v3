@@ -82,7 +82,7 @@ export const V3HoldingsItem = ({
     >
       <button
         onClick={() => setSelectedId(isOpen ? '' : holding.pool.poolDltId)}
-        className="flex justify-between items-center w-full"
+        className="flex items-center justify-between w-full"
       >
         <div className="flex items-center space-x-10">
           <Image
@@ -93,7 +93,7 @@ export const V3HoldingsItem = ({
           <PopoverV3
             buttonElement={() => (
               <div className="flex items-center space-x-10">
-                <div className="flex text-20 items-center space-x-10">
+                <div className="flex items-center space-x-10 text-20">
                   <div className=" text-secondary">
                     {holding.pool.reserveToken.symbol}
                   </div>
@@ -105,7 +105,7 @@ export const V3HoldingsItem = ({
                     toBigNumber(holding.pool.reserveToken.usdPrice).times(
                       holding.combinedTokenBalance
                     ),
-                    { usd: true }
+                    true
                   )}
                 </div>
               </div>
@@ -115,7 +115,7 @@ export const V3HoldingsItem = ({
           </PopoverV3>
           {!isBNT && withdrawAmounts && (
             <PopoverV3
-              buttonElement={() => <IconWarning className="text-error z-50" />}
+              buttonElement={() => <IconWarning className="z-50 text-error" />}
             >
               <span className="text-secondary">
                 Due to vault deficit, current value is{' '}
@@ -138,7 +138,7 @@ export const V3HoldingsItem = ({
                   holding.hasLegacyStake ? 'text-warning' : 'text-primary'
                 }`}
               />
-              <div>+{prettifyNumber(rewardTokenAmountUsd, { usd: true })}</div>
+              <div>+{prettifyNumber(rewardTokenAmountUsd, true)}</div>
             </div>
           )}
 
@@ -150,9 +150,9 @@ export const V3HoldingsItem = ({
         </div>
       </button>
 
-      <hr className="border-1 mt-20 border-silver dark:border-grey -mx-20" />
+      <hr className="mt-20 -mx-20 border-1 border-silver dark:border-grey" />
 
-      <div className="flex justify-between mt-20 flex-col md:flex-row md:space-x-30 space-y-30 md:space-y-0">
+      <div className="flex flex-col justify-between mt-20 md:flex-row md:space-x-30 space-y-30 md:space-y-0">
         <V3HoldingsItemUnstaked holding={holding} />
         <V3HoldingsItemStaked holding={holding} />
       </div>

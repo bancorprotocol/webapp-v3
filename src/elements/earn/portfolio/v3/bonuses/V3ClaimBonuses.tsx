@@ -20,7 +20,7 @@ export const V3ClaimBonuses = () => {
   return (
     <>
       <section className="content-block p-14">
-        <div className="text-secondary text-12 hidden md:block mb-14">
+        <div className="hidden text-secondary text-12 md:block mb-14">
           Claim Rewards
         </div>
         {isLoading ? (
@@ -28,7 +28,7 @@ export const V3ClaimBonuses = () => {
         ) : bonusUsdTotal > 0 ? (
           <div className="flex items-center justify-between">
             <span className="text-[30px]">
-              {prettifyNumber(bonusUsdTotal, { usd: true })}
+              {prettifyNumber(bonusUsdTotal, true)}
             </span>
             <Button
               variant={ButtonVariant.Tertiary}

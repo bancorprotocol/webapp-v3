@@ -45,9 +45,7 @@ export const PoolTokensTable = () => {
         id: 'value',
         Header: 'Value',
         accessor: 'value',
-        Cell: (cellData) => (
-          <>{prettifyNumber(cellData.value, { usd: true })}</>
-        ),
+        Cell: (cellData) => <>{prettifyNumber(cellData.value, true)}</>,
         sortType: (a, b) => sortNumbersByKey(a.original, b.original, ['value']),
         minWidth: 130,
       },
@@ -71,7 +69,7 @@ export const PoolTokensTable = () => {
   );
 
   return (
-    <section className="content-section pt-20 pb-10">
+    <section className="pt-20 pb-10 content-section">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
         <h2>Pool Tokens</h2>
         <div className="relative">

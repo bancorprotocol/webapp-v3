@@ -16,9 +16,9 @@ export const RewardsClaimAmount = ({ amount }: Props) => {
 
   return (
     <div className="flex justify-between mt-20">
-      <div className="flex mr-20 pt-10 items-start">
+      <div className="flex items-start pt-10 mr-20">
         <div className="flex items-center">
-          <h3 className="text-14 whitespace-nowrap font-semibold mr-5">
+          <h3 className="mr-5 font-semibold text-14 whitespace-nowrap">
             Claimable Rewards
           </h3>
           <PopoverV3
@@ -33,13 +33,11 @@ export const RewardsClaimAmount = ({ amount }: Props) => {
         </div>
       </div>
 
-      <div className="text-right text-graphite w-full border-2 border-primary dark:border-black-low rounded px-20 py-10">
+      <div className="w-full px-20 py-10 text-right border-2 rounded text-graphite border-primary dark:border-black-low">
         {amount && bnt?.usdPrice ? (
           <div>
             <div className="text-20">{prettifyNumber(amount)} BNT</div>
-            <div className="text-12">
-              {prettifyNumber(usdPrice(), { usd: true })}
-            </div>
+            <div className="text-12">{prettifyNumber(usdPrice(), true)}</div>
           </div>
         ) : (
           <div>--</div>
