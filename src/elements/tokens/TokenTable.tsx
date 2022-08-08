@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
@@ -23,12 +23,17 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const tokens = useAppSelector(getTokenTableData);
 
   const data = useMemo<Token[]>(() => {
-    return tokens.filter(
-      (t) =>
+    return tokens.filter((t) => {
+      const isSearchMatch =
+        t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
+        t.name.toLowerCase().includes(searchInput.toLowerCase());
+
+      return (
+        toBigNumber(t.liquidity).gt(0) &&
         t.address !== wethToken &&
-        (t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
-          t.name.toLowerCase().includes(searchInput.toLowerCase()))
-    );
+        isSearchMatch
+      );
+    });
   }, [tokens, searchInput]);
 
   const CellName = (token: Token) => {
