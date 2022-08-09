@@ -74,7 +74,7 @@ const Migrate = () => {
           )}
           {positions.length ? (
             <MigrateHoldingAtRisk
-              className="mt-60 max-h-[400px] overflow-scroll"
+              className="mt-60 max-h-[400px] overflow-auto"
               holdings={seeAllHoldings ? positions : [positions[0]]}
               onSelect={(index: number) => setSelectedHolding(index)}
             />
@@ -211,7 +211,7 @@ const Protect = () => {
               <div className="mt-10 text-16 text-black-low mb-100">
                 $??,??? balance
               </div>
-              <div className="max-h-[400px] overflow-scroll">
+              <div className="max-h-[400px] overflow-auto">
                 {availabelToStake.map((stake, index) => {
                   return (
                     <button

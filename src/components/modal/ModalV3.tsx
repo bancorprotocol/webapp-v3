@@ -68,7 +68,7 @@ export const ModalV3 = ({
                   large ? 'max-w-[485px]' : 'max-w-[380px]'
                 } overflow-hidden align-middle transition-all transform rounded-40 bg-white dark:bg-charcoal text-left`}
               >
-                <Dialog.Title className="flex justify-between items-center px-30 text-20 mt-30 mb-20">
+                <Dialog.Title className="flex items-center justify-between mb-20 px-30 text-20 mt-30">
                   <div className="flex items-center text-20">
                     {showBackButton && (
                       <button onClick={() => onBackClick && onBackClick()}>
@@ -87,8 +87,8 @@ export const ModalV3 = ({
                     </button>
                   </div>
                 </Dialog.Title>
-                <div className="max-h-[80vh] overflow-scroll">
-                  {separator && <hr className="widget-separator m-0" />}
+                <div className="max-h-[80vh] overflow-auto">
+                  {separator && <hr className="m-0 widget-separator" />}
                   {children}
                 </div>
               </div>
