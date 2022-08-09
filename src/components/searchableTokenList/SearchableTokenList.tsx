@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -22,7 +22,7 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens?: string[];
   includedTokens?: string[];
-  tokens: Token[];
+  tokens: TokenMinimal[];
   limit?: boolean;
 }
 

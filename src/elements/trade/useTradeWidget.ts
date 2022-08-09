@@ -1,5 +1,5 @@
 import PQueue from 'p-queue';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getRateAndPriceImapct } from 'services/web3/swap/market';
@@ -16,7 +16,7 @@ const queue = new PQueue({ concurrency: 1 });
 interface UseTradeWidgetProps {
   from?: string;
   to?: string;
-  tokens: Token[];
+  tokens: TokenMinimal[];
 }
 
 export interface UseTradeWidgetReturn {
@@ -24,7 +24,7 @@ export interface UseTradeWidgetReturn {
   fromInput: useTokenInputV3Return | undefined;
   toInput: useTokenInputV3Return | undefined;
   priceImpact: string;
-  filteredTokens: Token[];
+  filteredTokens: TokenMinimal[];
   isV3: boolean;
 }
 
@@ -85,7 +85,7 @@ export const useTradeWidget = ({
             ? calcOppositeValue(
                 false,
                 toValue,
-                toToken.usdPrice,
+                toToken.usdPrice ?? null,
                 toToken.decimals
               )
             : '';

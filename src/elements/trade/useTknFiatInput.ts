@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useCallback, useState } from 'react';
 import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
@@ -6,7 +6,7 @@ import { sanitizeNumberInput } from 'utils/pureFunctions';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
 
 interface useTokenInputV3Props {
-  token?: Token;
+  token?: TokenMinimal;
   inputTkn: string;
   setInputTkn: (amount: string) => void;
   inputFiat: string;
@@ -23,7 +23,7 @@ export interface useTokenInputV3Return {
   inputFiat: string;
   setInputFiat: (val: string) => void;
   isTyping: boolean;
-  token: Token;
+  token: TokenMinimal;
 }
 
 export const useTknFiatInput = ({

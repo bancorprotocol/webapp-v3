@@ -40,6 +40,8 @@ export interface TokenMinimal {
   name?: string;
   symbol: string;
   balance?: string;
+  balanceUsd?: number;
+  usdPrice?: string;
 }
 
 export interface Token extends TokenMinimal {

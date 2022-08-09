@@ -4,7 +4,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { swap } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { toBigNumber } from 'utils/helperFunctions';
-import { Token, updateUserBalances } from 'services/observables/tokens';
+import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
 import {
@@ -26,8 +26,8 @@ export interface UseTradeReturn {
   isBusy: boolean;
   handleSelectSwitch: () => void;
   errorInsufficientBalance: string | undefined;
-  handleSelectTo: (token: Token) => void;
-  handleSelectFrom: (token: Token) => void;
+  handleSelectTo: (token: TokenMinimal) => void;
+  handleSelectFrom: (token: TokenMinimal) => void;
   handleCTAClick: () => void;
 }
 
@@ -129,7 +129,7 @@ export const useTrade = ({
   );
 
   const handleSelectFrom = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: token.address,
@@ -142,7 +142,7 @@ export const useTrade = ({
   );
 
   const handleSelectTo = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: fromInput?.token.address,

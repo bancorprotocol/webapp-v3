@@ -1,5 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntDecimals,
@@ -23,8 +23,8 @@ import { apiData$, apiPoolsV3$ } from 'services/observables/apiData';
 import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
 
 export const getRateAndPriceImapct = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string,
   forceV3Routing: boolean
 ) => {
@@ -98,8 +98,8 @@ export const getRateAndPriceImapct = async (
 };
 
 export const getRate = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string
 ) => {
   try {
@@ -141,8 +141,8 @@ export const swap = async (
   isV3: boolean,
   user: string,
   slippageTolerance: number,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string,
   onHash: (txHash: string) => void,
@@ -180,8 +180,8 @@ export const executeSwapTx = async (
   isV3: boolean,
   user: string,
   slippageTolerance: number,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string
 ) => {
@@ -255,8 +255,8 @@ const findPath = async (from: string, to: string) => {
 };
 
 const calculateSpotPriceAndRate = async (
-  from: Token,
-  to: Token,
+  from: TokenMinimal,
+  to: TokenMinimal,
   rateShape: MCInterface
 ) => {
   const empty = { rate: '0', spotPrice: new BigNumber(0) };
@@ -360,8 +360,8 @@ export const v3PoolTradingEnabled = async (tkn: string) => {
 };
 
 export const getV3Rate = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string
 ) => {
   try {
@@ -397,8 +397,8 @@ export const getV3RateInverse = async (
 };
 
 export const getV3PriceImpact = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string,
   rate: string
 ) => {

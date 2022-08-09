@@ -97,6 +97,18 @@ export const getV2AndV3Tokens = createSelector(
   }
 );
 
+export const getTradeTokensWithExternal = createSelector(
+  (state: RootState) => state.bancor.tokensV2,
+  (state: RootState) => state.bancor.tokensV3,
+  (state: RootState) => state.bancor.allTokenListTokens,
+  (tokensV2, tokensV3, allTokenListTokens): TokenMinimal[] => {
+    return uniqBy(
+      [...tokensV3, ...tokensV2, ...allTokenListTokens],
+      (x) => x.address
+    );
+  }
+);
+
 export const bancor = bancorSlice.reducer;
 
 export const getIsAppBusy = createSelector(
