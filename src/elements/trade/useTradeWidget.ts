@@ -72,6 +72,7 @@ export const useTradeWidget = ({
         return {
           rate: shrinkToken(res.buyAmount, toToken.decimals),
           priceImpact: res.estimatedPriceImpact,
+          isV3: true,
         };
       }
       if (fromToken.address === wethToken) {
@@ -106,7 +107,7 @@ export const useTradeWidget = ({
           );
 
           setPriceImpact(priceImpact);
-          setIsV3(isV3 ?? false);
+          setIsV3(isV3);
 
           const toValue =
             toBigNumber(rate).isZero() || isNaN(Number(rate)) ? '' : rate;
