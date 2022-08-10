@@ -9,6 +9,7 @@ export const TradeWidgetDetails = ({
   isLoading,
   priceImpact,
   isV3,
+  isExternal,
 }: UseTradeWidgetReturn) => {
   const loading = useMemo(
     () => isLoading || fromInput?.isTyping || toInput?.isTyping,
@@ -26,7 +27,7 @@ export const TradeWidgetDetails = ({
                 children="Version routing to ensure you get the best rate possible for your trade"
                 buttonElement={() => (
                   <div className="ml-5 px-5 rounded text-12 bg-primary dark:bg-black dark:bg-opacity-30 bg-opacity-20 text-primary-dark">
-                    {isV3 ? 'V3' : 'V2'}
+                    {isExternal ? 'external' : isV3 ? 'V3' : 'V2'}
                   </div>
                 )}
               />

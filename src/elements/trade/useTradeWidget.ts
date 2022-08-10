@@ -10,6 +10,8 @@ import {
 } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
 import { wethToken } from 'services/web3/config';
+import { BancorApi } from 'services/api/bancorApi/bancorApi';
+import { expandToken, shrinkToken } from 'utils/formulas';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -26,6 +28,7 @@ export interface UseTradeWidgetReturn {
   priceImpact: string;
   filteredTokens: TokenMinimal[];
   isV3: boolean;
+  isExternal: boolean;
 }
 
 export const useTradeWidget = ({
@@ -55,6 +58,39 @@ export const useTradeWidget = ({
   const fromToken = useMemo(() => tokensMap.get(from ?? ''), [from, tokensMap]);
   const toToken = useMemo(() => tokensMap.get(to ?? ''), [to, tokensMap]);
 
+  const isExternal = !!fromToken?.isExternal || !!toToken?.isExternal;
+
+  const handleRateAndPriceImpact = useCallback(
+    async (val: string, fromToken: TokenMinimal, toToken: TokenMinimal) => {
+      if (isExternal && val) {
+        const res = await BancorApi.ZeroEx.getPrice({
+          sellToken: fromToken.address,
+          buyToken: toToken.address,
+          sellAmount: expandToken(val, fromToken.decimals),
+        });
+        console.log(res);
+        return {
+          rate: shrinkToken(res.buyAmount, toToken.decimals),
+          priceImpact: res.estimatedPriceImpact,
+        };
+      }
+      if (fromToken.address === wethToken) {
+        return { rate: val, priceImpact: '0', isV3: true };
+      }
+      if (val) {
+        return await getRateAndPriceImapct(
+          fromToken,
+          toToken,
+          val,
+          forceV3Routing
+        );
+      }
+
+      return { rate: '', priceImpact: '', isV3: true };
+    },
+    [forceV3Routing, isExternal]
+  );
+
   const onFromDebounce = useCallback(
     async (val: string) => {
       if (!fromToken || !toToken) return;
@@ -63,20 +99,14 @@ export const useTradeWidget = ({
         if (queue.size !== 0) return;
         setIsLoading(!!val);
         try {
-          const { rate, priceImpact, isV3 } =
-            fromToken.address === wethToken
-              ? { rate: val, priceImpact: '0', isV3: true }
-              : val
-              ? await getRateAndPriceImapct(
-                  fromToken,
-                  toToken,
-                  val,
-                  forceV3Routing
-                )
-              : { rate: '', priceImpact: '', isV3: true };
+          const { rate, priceImpact, isV3 } = await handleRateAndPriceImpact(
+            val,
+            fromToken,
+            toToken
+          );
 
           setPriceImpact(priceImpact);
-          setIsV3(isV3);
+          setIsV3(isV3 ?? false);
 
           const toValue =
             toBigNumber(rate).isZero() || isNaN(Number(rate)) ? '' : rate;
@@ -103,7 +133,7 @@ export const useTradeWidget = ({
         }
       });
     },
-    [forceV3Routing, fromToken, isFiat, toToken]
+    [fromToken, handleRateAndPriceImpact, isFiat, toToken]
   );
 
   const fromInput = useTknFiatInput({
@@ -155,5 +185,13 @@ export const useTradeWidget = ({
     }
   }, [fromToken?.address, onTokenChange, toToken?.address]);
 
-  return { fromInput, toInput, isLoading, priceImpact, filteredTokens, isV3 };
+  return {
+    fromInput,
+    toInput,
+    isLoading,
+    priceImpact,
+    filteredTokens,
+    isV3,
+    isExternal,
+  };
 };
