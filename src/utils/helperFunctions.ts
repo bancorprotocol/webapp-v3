@@ -101,7 +101,7 @@ export const formatTime = (ms: number): string => {
 export const isUnsupportedNetwork = (
   network: EthNetworks | undefined
 ): boolean => {
-  return !!network && !!EthNetworks[network];
+  return !!network && !EthNetworks[network];
 };
 
 export const calculateBntNeededToOpenSpace = (
