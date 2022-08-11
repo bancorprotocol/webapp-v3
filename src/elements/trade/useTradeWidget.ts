@@ -10,8 +10,7 @@ import {
 } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
 import { wethToken } from 'services/web3/config';
-import { BancorApi } from 'services/api/bancorApi/bancorApi';
-import { expandToken, shrinkToken } from 'utils/formulas';
+import { getZeroExRateAndPriceImpact } from 'services/web3/swap/zeroEx';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -63,17 +62,11 @@ export const useTradeWidget = ({
   const handleRateAndPriceImpact = useCallback(
     async (val: string, fromToken: TokenMinimal, toToken: TokenMinimal) => {
       if (isExternal && val) {
-        const res = await BancorApi.ZeroEx.getPrice({
-          sellToken: fromToken.address,
-          buyToken: toToken.address,
-          sellAmount: expandToken(val, fromToken.decimals),
+        return await getZeroExRateAndPriceImpact({
+          from: { ...fromToken },
+          to: { ...toToken },
+          value: val,
         });
-        console.log(res);
-        return {
-          rate: shrinkToken(res.buyAmount, toToken.decimals),
-          priceImpact: res.estimatedPriceImpact,
-          isV3: true,
-        };
       }
       if (fromToken.address === wethToken) {
         return { rate: val, priceImpact: '0', isV3: true };

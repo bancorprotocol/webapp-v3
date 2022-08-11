@@ -11,6 +11,7 @@ type ZeroExApiQuoteInput = {
   sellToken: string;
   buyToken: string;
   sellAmount: string;
+  takerAddress?: string;
 };
 
 export abstract class ZeroExApi {

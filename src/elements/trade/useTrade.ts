@@ -35,6 +35,7 @@ export const useTrade = ({
   fromInput,
   toInput,
   isV3,
+  isExternal,
 }: UseTradeWidgetReturn): UseTradeReturn => {
   const dispatch = useDispatch();
   const slippageTolerance = useAppSelector(
@@ -59,6 +60,7 @@ export const useTrade = ({
 
     await swap(
       isV3,
+      isExternal,
       account,
       slippageTolerance,
       fromInput.token,
@@ -107,12 +109,20 @@ export const useTrade = ({
     onStart();
   };
 
+  const tokensToApprove = fromInput
+    ? [{ token: fromInput.token, amount: fromInput.inputTkn }]
+    : [];
+
+  const contractToApprove = isExternal
+    ? ContractsApi.ZeroEx.contractAddress
+    : isV3
+    ? ContractsApi.BancorNetwork.contractAddress
+    : ApprovalContract.BancorNetwork;
+
   const [onStart, ApproveModal] = useApproveModal(
-    fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
+    tokensToApprove,
     handleTrade,
-    isV3
-      ? ContractsApi.BancorNetwork.contractAddress
-      : ApprovalContract.BancorNetwork,
+    contractToApprove,
     () => sendConversionEvent(Events.approvePop),
     (isUnlimited) => {
       sendConversionEvent(Events.approved, undefined, isUnlimited);

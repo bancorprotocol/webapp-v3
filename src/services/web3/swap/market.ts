@@ -21,6 +21,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
 import { apiData$, apiPoolsV3$ } from 'services/observables/apiData';
 import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import { executeZeroExSwap } from './zeroEx';
 
 export const getRateAndPriceImapct = async (
   fromToken: TokenMinimal,
@@ -139,6 +140,7 @@ export const calculateMinimumReturn = (
 
 export const swap = async (
   isV3: boolean,
+  isExternal: boolean,
   user: string,
   slippageTolerance: number,
   fromToken: TokenMinimal,
@@ -155,6 +157,7 @@ export const swap = async (
 
     const tx = await executeSwapTx(
       isV3,
+      isExternal,
       user,
       slippageTolerance,
       fromToken,
@@ -178,6 +181,7 @@ export const swap = async (
 
 export const executeSwapTx = async (
   isV3: boolean,
+  isExternal: boolean,
   user: string,
   slippageTolerance: number,
   fromToken: TokenMinimal,
@@ -189,6 +193,15 @@ export const executeSwapTx = async (
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const expectedToWei = expandToken(toAmount, toToken.decimals);
   const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
+
+  if (isExternal) {
+    return await executeZeroExSwap(
+      user,
+      fromToken.address,
+      toToken.address,
+      fromWei
+    );
+  }
 
   if (isV3) {
     return await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
@@ -432,11 +445,9 @@ export const getV3PriceImpact = async (
         ppmToDec(tradingFeePPM)
       );
 
-      const priceImpact = new BigNumber(1)
+      return new BigNumber(1)
         .minus(new BigNumber(rate).div(amount).div(spotPrice))
         .times(100);
-
-      return priceImpact;
     }
 
     const fromLiqudity =
@@ -475,11 +486,9 @@ export const getV3PriceImpact = async (
 
     const spotPrice = spot1.times(spot2);
 
-    const priceImpact = new BigNumber(1)
+    return new BigNumber(1)
       .minus(new BigNumber(rate).div(amount).div(spotPrice))
       .times(100);
-
-    return priceImpact;
   } catch (error) {
     return new BigNumber(0);
   }
