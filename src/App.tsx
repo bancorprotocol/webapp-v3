@@ -36,9 +36,9 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 };
 
 export const App = () => {
-  const account = useAppSelector((state) => state.user.account);
+  const user = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
-  const { chainId } = useWeb3React();
+  const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector(
@@ -90,7 +90,7 @@ export const App = () => {
     googleTagManager();
   }, [account, dispatch]);
 
-  const isWalletRestricted = !!account && handleRestrictedWalletCheck(account);
+  const isWalletRestricted = !!user && handleRestrictedWalletCheck(user);
 
   return (
     <BrowserRouter>
