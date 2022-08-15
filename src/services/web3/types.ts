@@ -2,7 +2,6 @@ export type EthAddress = string;
 
 export enum EthNetworks {
   Mainnet = 1,
-  Ropsten = 3,
 }
 
 export enum PoolType {
