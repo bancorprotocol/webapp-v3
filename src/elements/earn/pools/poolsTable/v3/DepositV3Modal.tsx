@@ -43,6 +43,7 @@ import {
   getOnOff,
 } from 'services/api/googleTagManager';
 import { DepositDisabledModal } from './DepositDisabledModal';
+import { checkV3DepositWhitelist } from 'utils/v3Deposit';
 
 interface Props {
   pool: PoolV3;
@@ -54,7 +55,9 @@ interface Props {
 const REWARDS_EXTRA_GAS = 130_000;
 
 export const DepositV3Modal = ({ pool, renderButton }: Props) => {
-  const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
+  const adminEnableDeposit = useAppSelector(
+    (state) => state.user.enableDeposit
+  );
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
@@ -66,6 +69,10 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const eth = useAppSelector((state) => getTokenById(state, ethToken));
   const poolV3Map = useAppSelector(getPoolsV3Map);
   const { handleWalletButtonClick } = useWalletConnect();
+
+  const enableDeposit =
+    adminEnableDeposit ||
+    (pool.depositingEnabled && checkV3DepositWhitelist(pool.poolDltId));
 
   const onClose = async () => {
     setIsOpen(false);

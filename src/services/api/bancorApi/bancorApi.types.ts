@@ -96,6 +96,7 @@ export interface APIPoolV3 {
   stakedBalance: PriceDictionary;
   tradingFeePPM?: string;
   tradingEnabled?: boolean;
+  depositingEnabled?: boolean;
   standardRewardsClaimed24h: PriceDictionary;
   standardRewardsProviderJoined: PriceDictionary;
   standardRewardsProviderLeft: PriceDictionary;
