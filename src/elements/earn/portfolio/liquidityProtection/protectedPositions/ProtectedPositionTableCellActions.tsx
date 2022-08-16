@@ -1,4 +1,5 @@
 import {
+  fetchProtectedPositions,
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
@@ -9,11 +10,23 @@ import { Button } from 'components/button/Button';
 import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
 import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
-import { getAllBntPositionsAndAmount } from 'store/liquidity/liquidity';
+import {
+  getAllBntPositionsAndAmount,
+  getGroupedPositions,
+  setProtectedPositions,
+} from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { UpgradeTknModal } from '../../v3/UpgradeTknModal';
+import {
+  migrateNotification,
+  rejectNotification,
+  migrateFailedNotification,
+} from 'services/notifications/notifications';
+import { migrateV2Positions } from 'services/web3/protection/migration';
+import { useDispatch } from 'react-redux';
+import { Pool } from 'services/observables/pools';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -23,6 +36,7 @@ export const ProtectedPositionTableCellActions = (
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
   const [isOpenBnt, setIsOpenBnt] = useState(false);
   const [isOpenTkn, setIsOpenTkn] = useState(false);
+  const dispatch = useDispatch();
   const { row } = cellData;
   const position = row.original;
   const [SelectedPositions, setSelectedPositions] = useState<
@@ -39,6 +53,11 @@ export const ProtectedPositionTableCellActions = (
   const protocolBnBNTAmount = useAppSelector<number>(
     (state) => state.liquidity.protocolBnBNTAmount
   );
+  const groupedPositions =
+    useAppSelector<ProtectedPositionGrouped[]>(getGroupedPositions);
+
+  const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+  const account = useAppSelector((state) => state.user.account);
 
   const isMigrateDisabled = useCallback(
     (positions: ProtectedPosition[]) => {
@@ -59,13 +78,33 @@ export const ProtectedPositionTableCellActions = (
   const migrate = useCallback(
     (positions: ProtectedPosition[]) => {
       const isBnt = positions[0].reserveToken.address === bntToken;
-      if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) setIsOpenBnt(true);
-      else {
+      if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) {
+        if (groupedPositions.length === 1)
+          migrateV2Positions(
+            totalBNT.bntPositions,
+            (txHash: string) => migrateNotification(dispatch, txHash),
+            async () => {
+              const positions = await fetchProtectedPositions(pools, account!);
+              dispatch(setProtectedPositions(positions));
+            },
+            () => rejectNotification(dispatch),
+            () => migrateFailedNotification(dispatch)
+          );
+        else setIsOpenBnt(true);
+      } else {
         setSelectedPositions(positions);
         setIsOpenTkn(true);
       }
     },
-    [totalBNT.tknAmount, protocolBnBNTAmount]
+    [
+      totalBNT.tknAmount,
+      protocolBnBNTAmount,
+      account,
+      dispatch,
+      groupedPositions.length,
+      pools,
+      totalBNT.bntPositions,
+    ]
   );
 
   const singleContent = useMemo(() => {
