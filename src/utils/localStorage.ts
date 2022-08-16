@@ -13,6 +13,7 @@ const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
 const enableDeposit = 'enableDeposit';
+const pageRows = 'pageRows';
 
 const deprecated_cleanup = ['userTokenLists'];
 
@@ -146,4 +147,15 @@ export const resetTenderly = () => {
   localStorage.removeItem(tenderlyRpcUrl);
   localStorage.removeItem(forceV3);
   localStorage.removeItem(enableDeposit);
+};
+
+export const getPageRowsLS = (): number => {
+  const rows = localStorage.getItem(pageRows);
+  if (rows) return JSON.parse(rows);
+
+  return 10;
+};
+
+export const setpageRowsLS = (rows: number) => {
+  localStorage.setItem(pageRows, JSON.stringify(rows));
 };
