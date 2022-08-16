@@ -195,12 +195,7 @@ export const executeSwapTx = async (
   const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
 
   if (isExternal) {
-    return await executeZeroExSwap(
-      user,
-      fromToken.address,
-      toToken.address,
-      fromWei
-    );
+    return await executeZeroExSwap(fromToken.address, toToken.address, fromWei);
   }
 
   if (isV3) {

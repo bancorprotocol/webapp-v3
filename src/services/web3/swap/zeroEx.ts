@@ -1,6 +1,6 @@
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { writeWeb3 } from '../index';
+import { ContractsApi } from '../v3/contractsApi';
 
 type ZeroExRateParams = {
   value: string;
@@ -32,7 +32,6 @@ export const getZeroExRateAndPriceImpact = async ({
 };
 
 export const executeZeroExSwap = async (
-  takerAddress: string,
   sellToken: string,
   buyToken: string,
   sellAmount: string
@@ -41,8 +40,13 @@ export const executeZeroExSwap = async (
     sellToken,
     buyToken,
     sellAmount,
-    takerAddress,
   });
   console.log(data);
-  return await writeWeb3.signer.sendTransaction(data);
+  return await ContractsApi.ZeroEx.write.signer.sendTransaction({
+    to: data.to,
+    data: data.data,
+    value: data.value,
+    gasLimit: data.gasLimit,
+    gasPrice: data.gasPrice,
+  });
 };
