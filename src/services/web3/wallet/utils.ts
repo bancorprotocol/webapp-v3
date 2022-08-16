@@ -9,6 +9,7 @@ import {
   portis,
   gnosisSafe,
   torus,
+  uauth,
 } from 'services/web3/wallet/connectors';
 
 import metamaskLogo from 'assets/logos/metamask.png';
@@ -22,6 +23,7 @@ import frameLogo from 'assets/logos/frame.png';
 import gnosisSafeLogo from 'assets/logos/gnosisSafe.svg';
 import torusLogo from 'assets/logos/torus.svg';
 import imposterLogo from 'assets/logos/imposter.svg';
+import unstoppableDomains from 'assets/logos/unstoppableDomainsLogo.svg';
 import { isForkAvailable } from '../config';
 
 export const getLibrary = (provider: any): Web3Provider => {
@@ -88,6 +90,11 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     connector: gnosisSafe,
     name: 'GnosisSafe',
     icon: gnosisSafeLogo,
+  },
+  {
+    connector: uauth,
+    name: 'Unstoppable Domains',
+    icon: unstoppableDomains,
   },
   {
     connector: frame,

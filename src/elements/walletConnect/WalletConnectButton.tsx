@@ -6,13 +6,15 @@ import { ReactComponent as IconDisconnect } from 'assets/icons/disconnect.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { useState } from 'react';
+import { useUDName } from 'services/web3/wallet/hooks';
 
 export const WalletConnectButton = ({
   handleWalletButtonClick,
   account,
   selectedWallet,
 }: UseWalletConnect) => {
-  const buttonText = account ? shortenString(account) : 'Connect';
+  const udName = useUDName();
+  const buttonText = account ? udName || shortenString(account) : 'Connect';
   const [isOpen, setIsOpen] = useState(false);
 
   const loggedIn = selectedWallet && account;
