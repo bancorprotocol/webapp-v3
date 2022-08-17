@@ -339,7 +339,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             </Button>
             {ApproveModal}
           </div>
-          <DepositFAQ />
+          {!isBNT && <DepositFAQ />}
         </>
       </ModalV3>
     </>

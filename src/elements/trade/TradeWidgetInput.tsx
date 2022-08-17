@@ -71,7 +71,7 @@ export const TradeWidgetInput = ({
                     else if (input.token.balance && !isFiat)
                       input.handleChange(input.token.balance.toString());
                 }}
-                className={`${
+                className={`flex items-center ${
                   disabled
                     ? 'cursor-text'
                     : 'hover:text-primary transition-colors duration-300'
@@ -79,6 +79,13 @@ export const TradeWidgetInput = ({
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+                <span
+                  className={
+                    'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                  }
+                >
+                  Max
+                </span>
               </button>
             )}
         </div>
