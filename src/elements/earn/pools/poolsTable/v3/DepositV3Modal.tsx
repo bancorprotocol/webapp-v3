@@ -9,7 +9,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { bntToken, ethToken } from 'services/web3/config';
-import { toBigNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken } from 'utils/formulas';
 import BigNumber from 'bignumber.js';
 import {
@@ -291,11 +291,17 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 <p className={'text-secondary mt-20'}>
                   {vaultBalance.gte(0)
                     ? 'This pool is currently NOT in deficit. This may change over time. Should this pool be in deficit when you’re ready to withdraw, your deposit will accrue the pool deficit at that time.'
-                    : `This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be ${vaultBalance.toFixed(
-                        2
-                      )}% less ${
+                    : `This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be ${
+                        amount
+                          ? prettifyNumber(
+                              toBigNumber(amount).minus(
+                                vaultBalance.div(100).times(-1).times(amount)
+                              )
+                            )
+                          : '--'
+                      } ${
                         pool.name
-                      } than your deposit. The deficit amount can go up or down over time.`}
+                      }. Its value and deficit amount can change over time.`}
                 </p>
                 <div
                   className={
