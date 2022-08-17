@@ -80,7 +80,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     setAccessFullEarnings(true);
   };
 
-  const isInputError = useMemo(
+  const inputErrorMsg = useMemo(
     () =>
       !!account && new BigNumber(pool.reserveToken.balance || 0).lt(amount)
         ? 'Insufficient balance'
@@ -175,8 +175,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const shouldConnect = useMemo(() => !account && amount, [account, amount]);
 
   const canDeposit = useMemo(
-    () => !!account && !!amount && +amount > 0 && !isInputError && !txBusy,
-    [account, amount, isInputError, txBusy]
+    () => !!account && !!amount && +amount > 0 && !inputErrorMsg && !txBusy,
+    [account, amount, inputErrorMsg, txBusy]
   );
 
   const handleClick = useCallback(() => {
@@ -270,7 +270,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
             <TradeWidgetInput
               label={'Amount'}
               input={tokenInputField}
-              errorMsg={isInputError}
+              errorMsg={inputErrorMsg}
               disableSelection
             />
 
@@ -291,7 +291,11 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 <p className={'text-secondary mt-20'}>
                   {vaultBalance.gte(0)
                     ? 'This pool is currently NOT in deficit. This may change over time. Should this pool be in deficit when you’re ready to withdraw, your deposit will accrue the pool deficit at that time.'
-                    : 'This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be xxxxxxxxxx ETH. Its value and deficit amount can change over time.'}
+                    : `This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be ${vaultBalance.toFixed(
+                        2
+                      )}% less ${
+                        pool.name
+                      } than your deposit. The deficit amount can go up or down over time.`}
                 </p>
                 <div
                   className={
@@ -320,7 +324,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 !amount ||
                 +amount === 0 ||
                 txBusy ||
-                !!isInputError ||
+                !!inputErrorMsg ||
                 (!tosAgreed && !isBNT)
               }
               size={ButtonSize.Full}
@@ -331,8 +335,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 ? '... waiting for confirmation'
                 : shouldConnect
                 ? 'Connect your wallet'
-                : !!isInputError
-                ? isInputError
+                : !!inputErrorMsg
+                ? inputErrorMsg
                 : !amount
                 ? 'Enter amount'
                 : `Deposit ${pool.name}`}
