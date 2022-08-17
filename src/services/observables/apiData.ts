@@ -59,6 +59,7 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         eth: '0',
         tkn: '0',
       },
+      liquidity: apiBnt.liquidity,
       volume24h: { ...apiBnt.volume24h, tkn: apiBnt.volume24h.bnt },
       fees24h: { ...apiBnt.fees24h, tkn: apiBnt.fees24h.bnt },
       networkFees24h: {
@@ -92,6 +93,7 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         tkn: '0',
       },
       tradingEnabled: true,
+      depositingEnabled: true,
     };
     return [...(await BancorApi.v3.getPools()), bntPool];
   }),

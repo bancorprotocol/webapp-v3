@@ -94,6 +94,7 @@ export interface APIPoolV3 {
   fees24h: PriceDictionary;
   networkFees24h: PriceDictionary;
   stakedBalance: PriceDictionary;
+  liquidity: PriceDictionary;
   tradingFeePPM?: string;
   tradingEnabled?: boolean;
   depositingEnabled?: boolean;
