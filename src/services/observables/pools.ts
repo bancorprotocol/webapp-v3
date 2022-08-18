@@ -156,6 +156,7 @@ export const calculateAPR = (fees: string, liquidity: string) => {
 };
 
 const buildPoolV3Object = async (
+  tokensMap: Map<string, Token>,
   apiPool?: APIPoolV3,
   reserveToken?: Token,
   latestProgramIdMap?: Map<string, string | undefined>,
@@ -185,8 +186,16 @@ const buildPoolV3Object = async (
   }
 
   // Calculate APR
-  const standardRewardsApr24H = standardsRewardsAPR(apiPool, programs);
-  const standardRewardsApr7d = standardsRewardsAPR(apiPool, programs);
+  const standardRewardsApr24H = standardsRewardsAPR(
+    apiPool,
+    tokensMap,
+    programs
+  );
+  const standardRewardsApr7d = standardsRewardsAPR(
+    apiPool,
+    tokensMap,
+    programs
+  );
 
   const tradingFeesApr24h = calcApr(
     new BigNumber(apiPool.fees24h.usd).minus(apiPool.networkFees24h.usd),
@@ -235,6 +244,7 @@ const buildPoolV3Object = async (
 
 export const standardsRewardsAPR = (
   apiPool: APIPoolV3,
+  tokensMap: Map<string, Token>,
   programs?: RewardsProgramRaw[],
   seven_days?: boolean
 ) => {
@@ -244,8 +254,11 @@ export const standardsRewardsAPR = (
         // Only use APR from active programs
         .filter((p) => p.isActive)
         .reduce((acc, data) => {
-          // TODO - currently assuming reward token to be BNT
-          const rewardRate = shrinkToken(data.rewardRate ?? 0, 18);
+          const rewardToken = tokensMap?.get(data.rewardsToken);
+          const rewardRate = shrinkToken(
+            data.rewardRate ?? 0,
+            rewardToken ? rewardToken.decimals : 0
+          );
           const rewardRateTime = toBigNumber(rewardRate)
             .times(60 * 60)
             .times(24)
@@ -302,6 +315,7 @@ export const poolsV3$ = combineLatest([
         apiPoolsV3.map(
           async (pool) =>
             await buildPoolV3Object(
+              tokensMap,
               pool,
               tokensMap.get(pool.poolDltId),
               latestProgramIds,

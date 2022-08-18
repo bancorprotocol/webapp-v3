@@ -1,5 +1,6 @@
 import { UsePaginationInstanceProps } from 'react-table';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { setpageRowsLS } from 'utils/localStorage';
 
 interface TablePaginationProps
   extends Omit<UsePaginationInstanceProps<never>, 'page'> {
@@ -29,7 +30,9 @@ export const TablePagination = ({
             className="outline-none bg-white dark:bg-charcoal w-[40px]"
             value={pageSize}
             onChange={(e) => {
-              setPageSize(Number(e.target.value));
+              const rows = Number(e.target.value);
+              setpageRowsLS(rows);
+              setPageSize(rows);
             }}
           >
             {showResults.map((pageSize) => (
