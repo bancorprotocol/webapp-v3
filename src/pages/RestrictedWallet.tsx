@@ -1,9 +1,9 @@
 import { DisabledWarning } from 'components/disabledWarning/DisabledWarning';
 
-const title = 'Unsupported network';
+const title = 'Wallet blocked';
 const description =
-  'In order to proceed, please change your wallets network settings to Ethereum Mainnet.';
+  'For compliance reasons, this wallet has been blocked from using the bancor.network app.';
 
-export const UnsupportedNetwork = () => {
+export const RestrictedWallet = () => {
   return <DisabledWarning title={title} description={description} />;
 };
