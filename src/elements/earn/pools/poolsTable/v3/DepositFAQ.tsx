@@ -1,5 +1,7 @@
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { Navigate } from '../../../../../components/navigate/Navigate';
 
 const faq = [
   {
@@ -41,6 +43,18 @@ export const DepositFAQ = () => {
             <p className={'text-secondary text-12'}>{a}</p>
           </ExpandableSection>
         ))}
+
+        <div>
+          <Navigate
+            to={
+              'https://support.bancor.network/hc/en-us/articles/6352404707602-FAQ-Pause-of-BNT-Distribution'
+            }
+          >
+            <Button variant={ButtonVariant.Secondary} size={ButtonSize.Small}>
+              Learn more
+            </Button>
+          </Navigate>
+        </div>
       </div>
     </div>
   );
