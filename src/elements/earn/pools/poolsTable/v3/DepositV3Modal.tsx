@@ -285,6 +285,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                       vaultBalance.gte(0) ? 'text-primary' : 'text-error'
                     }`}
                   >
+                    {vaultBalance.gte(0) ? '+' : ''}
                     {vaultBalance.toFixed(2)}%
                   </span>
                 </div>
