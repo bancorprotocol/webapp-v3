@@ -12,7 +12,6 @@ import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
 import {
   getAllBntPositionsAndAmount,
-  getGroupedPositions,
   setProtectedPositions,
 } from 'store/liquidity/liquidity';
 import { useAppSelector } from 'store';
@@ -53,8 +52,6 @@ export const ProtectedPositionTableCellActions = (
   const protocolBnBNTAmount = useAppSelector<number>(
     (state) => state.liquidity.protocolBnBNTAmount
   );
-  const groupedPositions =
-    useAppSelector<ProtectedPositionGrouped[]>(getGroupedPositions);
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
@@ -79,7 +76,7 @@ export const ProtectedPositionTableCellActions = (
     (positions: ProtectedPosition[]) => {
       const isBnt = positions[0].reserveToken.address === bntToken;
       if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) {
-        if (groupedPositions.length === 1)
+        if (totalBNT.bntPositions.length === 1)
           migrateV2Positions(
             totalBNT.bntPositions,
             (txHash: string) => migrateNotification(dispatch, txHash),
@@ -101,7 +98,6 @@ export const ProtectedPositionTableCellActions = (
       protocolBnBNTAmount,
       account,
       dispatch,
-      groupedPositions.length,
       pools,
       totalBNT.bntPositions,
     ]
