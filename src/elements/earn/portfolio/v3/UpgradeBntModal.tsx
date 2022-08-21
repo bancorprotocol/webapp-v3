@@ -23,6 +23,7 @@ import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const UpgradeBntModal = ({
   position,
@@ -34,6 +35,7 @@ export const UpgradeBntModal = ({
   setIsOpen: Function;
 }) => {
   const dispatch = useDispatch();
+  const { goToPage } = useNavigation();
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
@@ -64,6 +66,7 @@ export const UpgradeBntModal = ({
       (txHash: string) => migrateNotification(dispatch, txHash),
       async () => {
         const positions = await fetchProtectedPositions(pools, account!);
+        if (positions.length === 0) goToPage.portfolio();
         dispatch(setProtectedPositions(positions));
       },
       () => rejectNotification(dispatch),
