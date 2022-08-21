@@ -76,18 +76,23 @@ export const ProtectedPositionTableCellActions = (
     (positions: ProtectedPosition[]) => {
       const isBnt = positions[0].reserveToken.address === bntToken;
       if (isBnt && protocolBnBNTAmount > totalBNT.tknAmount) {
-        if (totalBNT.bntPositions.length === 1)
-          migrateV2Positions(
-            totalBNT.bntPositions,
-            (txHash: string) => migrateNotification(dispatch, txHash),
-            async () => {
-              const positions = await fetchProtectedPositions(pools, account!);
-              dispatch(setProtectedPositions(positions));
-            },
-            () => rejectNotification(dispatch),
-            () => migrateFailedNotification(dispatch)
-          );
-        else setIsOpenBnt(true);
+        if (totalBNT.bntPositions.length > 0) {
+          const poolID = totalBNT.bntPositions[0].pool.pool_dlt_id;
+          if (totalBNT.bntPositions.every((x) => x.pool.pool_dlt_id === poolID))
+            migrateV2Positions(
+              totalBNT.bntPositions,
+              (txHash: string) => migrateNotification(dispatch, txHash),
+              async () => {
+                const positions = await fetchProtectedPositions(
+                  pools,
+                  account!
+                );
+                dispatch(setProtectedPositions(positions));
+              },
+              () => rejectNotification(dispatch),
+              () => migrateFailedNotification(dispatch)
+            );
+        } else setIsOpenBnt(true);
       } else {
         setSelectedPositions(positions);
         setIsOpenTkn(true);
@@ -95,11 +100,11 @@ export const ProtectedPositionTableCellActions = (
     },
     [
       totalBNT.tknAmount,
+      totalBNT.bntPositions,
       protocolBnBNTAmount,
       account,
       dispatch,
       pools,
-      totalBNT.bntPositions,
     ]
   );
 
