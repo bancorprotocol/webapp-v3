@@ -11,6 +11,7 @@ import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect } from 'react';
+import { getPageRowsLS } from 'utils/localStorage';
 
 export type TableColumn<D extends object> = Column<D> & {
   tooltip?: string | JSX.Element;
@@ -58,6 +59,7 @@ export const DataTable = <D extends object>({
       initialState: {
         pageIndex: 0,
         sortBy: defaultSort ? [defaultSort] : [],
+        pageSize: getPageRowsLS(),
       },
       autoResetSortBy: false,
       disableSortRemove: true,

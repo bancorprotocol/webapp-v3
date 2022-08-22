@@ -13,8 +13,8 @@ interface Props {
   isLoading?: boolean;
   onFocus?: () => void;
   label?: string;
-  tokens: TokenMinimal[];
-  onTokenSelect: (token: TokenMinimal) => void;
+  tokens?: TokenMinimal[];
+  onTokenSelect?: (token: TokenMinimal) => void;
   disabled?: boolean;
   errorMsg?: string;
   excludedTokens?: string[];
@@ -71,7 +71,7 @@ export const TradeWidgetInput = ({
                     else if (input.token.balance && !isFiat)
                       input.handleChange(input.token.balance.toString());
                 }}
-                className={`${
+                className={`flex items-center ${
                   disabled
                     ? 'cursor-text'
                     : 'hover:text-primary transition-colors duration-300'
@@ -79,6 +79,13 @@ export const TradeWidgetInput = ({
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+                <span
+                  className={
+                    'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                  }
+                >
+                  Max
+                </span>
               </button>
             )}
         </div>
@@ -87,10 +94,10 @@ export const TradeWidgetInput = ({
           className={`border ${
             isFocused ? 'border-primary' : 'border-fog dark:border-grey'
           } ${
-            errorMsg ? 'border-error' : ''
+            errorMsg ? 'border-error dark:border-error' : ''
           } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-charcoal space-x-20`}
         >
-          {!tokens.length && (
+          {tokens && !tokens.length && (
             <div className="flex items-center space-x-10">
               <div className="loading-skeleton h-40 w-40 !rounded-full" />
               <div className="loading-skeleton h-20 w-[80px]" />
@@ -121,7 +128,7 @@ export const TradeWidgetInput = ({
               </button>
             )}
 
-            {!!tokens.length && !input && (
+            {tokens && !!tokens.length && !input && (
               <button
                 onClick={() => {
                   setIsOpen(true);
@@ -169,6 +176,7 @@ export const TradeWidgetInput = ({
                   )}
                 </>
               ) : (
+                tokens &&
                 (!tokens.length || (isLoading && input)) && (
                   <div className="flex flex-col items-end">
                     <div className="w-3/4 mb-4 loading-skeleton h-18" />
@@ -185,16 +193,17 @@ export const TradeWidgetInput = ({
           </div>
         )}
       </div>
-
-      <SearchableTokenList
-        onClick={onTokenSelect}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        tokens={tokens}
-        limit
-        excludedTokens={excludedTokens}
-        includedTokens={includedTokens}
-      />
+      {tokens && onTokenSelect && (
+        <SearchableTokenList
+          onClick={onTokenSelect}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          tokens={tokens}
+          limit
+          excludedTokens={excludedTokens}
+          includedTokens={includedTokens}
+        />
+      )}
     </>
   );
 };
