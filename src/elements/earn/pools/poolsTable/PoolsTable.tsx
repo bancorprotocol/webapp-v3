@@ -5,10 +5,8 @@ import { DataTable, TableColumn } from 'components/table/DataTable';
 import { useAppSelector } from 'store';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { PoolsTableSort } from './PoolsTableFilter';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { PoolV3 } from 'services/observables/pools';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Statistics } from 'elements/earn/pools/Statistics';
@@ -17,6 +15,9 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
+import { DepositV3Modal } from './v3/DepositV3Modal';
+import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
+import { config } from 'config';
 
 export const PoolsTable = ({
   rewards,
@@ -48,9 +49,10 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr7d.total > 0.15)
+        (lowEarnRate || p.apr7d.total > 0.15) &&
+        (!rewards || p.latestProgram?.isActive)
     );
-  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate, rewards]);
 
   const toolTip = useCallback(
     (row: PoolV3) => (
@@ -77,6 +79,20 @@ export const PoolsTable = ({
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
               : prettifyNumber(row.fees7d.usd, true)}
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-start">
+            LP Fees 7d
+            <SnapshotLink />
+          </div>
+          <div>
+            {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
+              ? 'New'
+              : prettifyNumber(
+                  toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
+                  true
+                )}
           </div>
         </div>
       </div>
@@ -110,7 +126,7 @@ export const PoolsTable = ({
       },
       {
         id: 'apr',
-        Header: 'Earn',
+        Header: 'APR (7d)',
         accessor: 'apr7d',
         Cell: (cellData) => (
           <div className="flex items-center gap-8 text-16 text-primary">
@@ -127,7 +143,7 @@ export const PoolsTable = ({
                   <div>
                     Rewards enabled on this token.{' '}
                     <Navigate
-                      to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
+                      to={config.externalUrls.rewardsProgramsArticle}
                       className="hover:underline text-primary"
                     >
                       Read about the rewards here
@@ -140,8 +156,11 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
-        tooltip:
-          'Estimated APR based on the last 7d trading fees, auto compounding and standard rewards',
+        tooltip: (
+          <span>
+            Estimated APR based on the last 7d LP fees <SnapshotLink />
+          </span>
+        ),
         minWidth: 100,
         sortDescFirst: true,
       },
@@ -149,11 +168,12 @@ export const PoolsTable = ({
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (_) => (
-          <DepositDisabledModal
+        Cell: (cellData) => (
+          <DepositV3Modal
+            pool={cellData.row.original}
             renderButton={(onClick) => (
               <Button
-                onClick={onClick}
+                onClick={() => onClick('Main Table')}
                 variant={ButtonVariant.Tertiary}
                 size={ButtonSize.ExtraSmall}
               >
@@ -189,7 +209,7 @@ export const PoolsTable = ({
                 />
               </div>
             </div>
-            <PoolsTableSort
+            <PoolsTableFilter
               rewards={rewards}
               setRewards={setRewards}
               lowVolume={lowVolume}

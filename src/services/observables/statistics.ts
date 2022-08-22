@@ -1,7 +1,6 @@
 import { combineLatest } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
 import BigNumber from 'bignumber.js';
-import numbro from 'numbro';
 import { apiData$ } from 'services/observables/apiData';
 import { bntToken } from 'services/web3/config';
 import { oneMinute$ } from 'services/observables/timers';
@@ -10,28 +9,18 @@ import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { toBigNumber } from 'utils/helperFunctions';
 
 export interface Statistic {
-  label: string;
-  value: string;
-  change24h?: number;
+  totalLiquidity: string;
+  totalVolume: string;
+  totalFees: string;
+  totalLpFees: string;
+  totalNetworkFees: string;
+  bntRate: string;
+  totalBNTStaked: string;
 }
-
-const averageFormat = {
-  average: true,
-  mantissa: 2,
-  optionalMantissa: true,
-  spaceSeparated: true,
-  lowPrecision: false,
-};
 
 export const statisticsV3$ = combineLatest([apiData$, oneMinute$]).pipe(
   switchMapIgnoreThrow(async ([apiDataV2]) => {
     const stats = await BancorApi.v3.getStatistics();
-
-    const bnt24hChange = new BigNumber(stats.bntRate)
-      .div(stats.bntRate24hAgo)
-      .times(100)
-      .minus(100)
-      .toNumber();
 
     const bntSupply = apiDataV2.bnt_supply;
 
@@ -65,33 +54,19 @@ export const statisticsV3$ = combineLatest([apiData$, oneMinute$]).pipe(
     const totalFees = new BigNumber(apiDataV2.total_fees_24h.usd).plus(
       stats.totalFees24h.usd
     );
+    const totalNetworkFees = new BigNumber(
+      apiDataV2.total_network_fees_24h.usd
+    ).plus(stats.totalNetworkFees24h.usd);
 
-    const statistics: Statistic[] = [
-      {
-        label: 'Total Liquidity',
-        value: '$' + numbro(totalLiquidity).format(averageFormat),
-        change24h: 0,
-      },
-      {
-        label: 'Volume',
-        value: '$' + numbro(totalVolume).format(averageFormat),
-        change24h: 0,
-      },
-      {
-        label: 'Fees (24h)',
-        value: '$' + numbro(totalFees).format(averageFormat),
-        change24h: 0,
-      },
-      {
-        label: 'BNT Price',
-        value: '$' + numbro(stats.bntRate).format({ mantissa: 2 }),
-        change24h: bnt24hChange,
-      },
-      {
-        label: 'BNT Staked',
-        value: numbro(totalBNTStaked).format({ mantissa: 2 }) + '%',
-      },
-    ];
+    const statistics: Statistic = {
+      totalLiquidity: totalLiquidity.toString(),
+      totalVolume: totalVolume.toString(),
+      totalFees: totalFees.toString(),
+      bntRate: stats.bntRate,
+      totalBNTStaked: totalBNTStaked.toString(),
+      totalNetworkFees: totalNetworkFees.toString(),
+      totalLpFees: totalFees.minus(totalNetworkFees).toString(),
+    };
     return statistics;
   }),
   shareReplay(1)

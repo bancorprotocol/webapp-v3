@@ -7,15 +7,16 @@ import { useAppSelector } from 'store';
 import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import 'swiper/css';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
   return (
-    <DepositDisabledModal
+    <DepositV3Modal
+      pool={pool}
       renderButton={(onClick) => (
         <button
-          onClick={onClick}
+          onClick={() => onClick()}
           className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
         >
           <TokenBalance
@@ -48,6 +49,7 @@ const navOptions: NavigationOptions = {
 
 export const V3AvailableToStake = () => {
   const availabelToStake = useAppSelector(getAvailableToStakeTokens);
+  if (availabelToStake.length === 0) return null;
 
   return (
     <section>
@@ -58,14 +60,16 @@ export const V3AvailableToStake = () => {
             ({availabelToStake.length})
           </span>
         </h2>
-        <div className="flex items-center space-x-20">
-          <button className="swiper-prev-btn hover:text-primary">
-            <IconArrow className="w-10 rotate-[-90deg]" />
-          </button>
-          <button className="swiper-next-btn hover:text-primary">
-            <IconArrow className="w-10 rotate-[90deg]" />
-          </button>
-        </div>
+        {availabelToStake.length > 3 && (
+          <div className="flex items-center space-x-20">
+            <button className="swiper-prev-btn hover:text-primary">
+              <IconArrow className="w-10 rotate-[-90deg]" />
+            </button>
+            <button className="swiper-next-btn hover:text-primary">
+              <IconArrow className="w-10 rotate-[90deg]" />
+            </button>
+          </div>
+        )}
       </div>
 
       <Swiper

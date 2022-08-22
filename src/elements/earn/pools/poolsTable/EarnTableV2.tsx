@@ -8,11 +8,12 @@ import { PoolsTableCellName } from 'elements/earn/pools/poolsTable/PoolsTableCel
 import { PoolsTableCellApr } from 'elements/earn/pools/poolsTable/PoolsTableCellApr';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { PoolsTableCellActions } from './PoolsTableCellActions';
-import { PoolsTableSort } from './PoolsTableFilter';
+import { PoolsTableFilter } from './PoolsTableFilter';
 import { Pool } from 'services/observables/pools';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { sortNumbersByKey } from 'utils/pureFunctions';
 import { getV2PoolsWithoutV3 } from 'store/bancor/pool';
+import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
 
 export const EarnTableV2 = ({
   lowVolume,
@@ -64,7 +65,7 @@ export const EarnTableV2 = ({
       //   Cell: (cellData) =>
       //     cellData.value ? (
       //       <div className="flex justify-center">
-      //         <IconProtected className="w-18 h-20 text-primary" />
+      //         <IconProtected className="h-20 w-18 text-primary" />
       //       </div>
       //     ) : (
       //       <div />
@@ -93,8 +94,12 @@ export const EarnTableV2 = ({
         Cell: (cellData) => PoolsTableCellApr(cellData.row.original),
         minWidth: 180,
         disableSortBy: true,
-        tooltip:
-          'Estimated APR based on the maximum (2x multiplier) weekly BNT Liquidity Mining rewards. Counter indicates time until 12-week rewards cycle concludes.',
+        tooltip: (
+          <span>
+            Estimated APR based on the last 24h LP fees
+            <SnapshotLink />
+          </span>
+        ),
       },
       {
         id: 'actions',
@@ -113,7 +118,7 @@ export const EarnTableV2 = ({
 
   return (
     <section>
-      <div className="content-block pt-20">
+      <div className="pt-20 content-block">
         <div className="flex justify-between items-center mb-20 mx-[20px]">
           <div className="flex items-center gap-x-10">
             <div className="mr-16">
@@ -124,7 +129,7 @@ export const EarnTableV2 = ({
               />
             </div>
           </div>
-          <PoolsTableSort
+          <PoolsTableFilter
             lowVolume={lowVolume}
             setLowVolume={setLowVolume}
             lowLiquidity={lowLiquidity}

@@ -14,6 +14,12 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
+import {
+  sendWithdrawACEvent,
+  sendWithdrawEvent,
+  WithdrawACEvent,
+  WithdrawEvent,
+} from 'services/api/googleTagManager/withdraw';
 
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
@@ -28,6 +34,7 @@ export const useV3Withdraw = () => {
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
 
   const openCancelModal = useCallback(async (req: WithdrawalRequest) => {
+    sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
     setSelected(req);
     setIsModalCancelOpen(true);
   }, []);
@@ -38,9 +45,11 @@ export const useV3Withdraw = () => {
     }
 
     try {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelWalletRequest);
       const tx = await ContractsApi.BancorNetwork.write.cancelWithdrawal(
         selected.id
       );
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelWalletConfirm);
       withdrawCancelNotification(
         dispatch,
         tx.hash,
@@ -48,8 +57,21 @@ export const useV3Withdraw = () => {
         selected.pool.reserveToken.symbol
       );
       setIsModalCancelOpen(false);
+      await tx.wait();
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawCancelSuccess,
+        undefined,
+        undefined,
+        undefined,
+        tx.hash
+      );
       await updatePortfolioData(dispatch);
     } catch (e: any) {
+      sendWithdrawEvent(
+        WithdrawEvent.WithdrawCancelFailed,
+        undefined,
+        e.message
+      );
       setIsModalCancelOpen(false);
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {
@@ -61,6 +83,7 @@ export const useV3Withdraw = () => {
   }, [account, dispatch, selected]);
 
   const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
+    sendWithdrawACEvent(WithdrawACEvent.CTAClick);
     setSelected(req);
     setIsModalConfirmOpen(true);
   }, []);

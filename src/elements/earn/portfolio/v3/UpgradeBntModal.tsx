@@ -23,6 +23,7 @@ import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const UpgradeBntModal = ({
   position,
@@ -34,6 +35,7 @@ export const UpgradeBntModal = ({
   setIsOpen: Function;
 }) => {
   const dispatch = useDispatch();
+  const { goToPage } = useNavigation();
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
@@ -64,6 +66,7 @@ export const UpgradeBntModal = ({
       (txHash: string) => migrateNotification(dispatch, txHash),
       async () => {
         const positions = await fetchProtectedPositions(pools, account!);
+        if (positions.length === 0) goToPage.portfolio();
         dispatch(setProtectedPositions(positions));
       },
       () => rejectNotification(dispatch),
@@ -86,9 +89,7 @@ export const UpgradeBntModal = ({
         </div>
         <div className="flex flex-col items-center justify-center font-bold text-center text-error">
           <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
-          <div>
-            Please note that the IL protection mechanism is temporarily paused.
-          </div>
+          <div>Please note that BNT distribution is temporarily paused.</div>
           <PopoverV3
             children={<EmergencyInfo />}
             hover
@@ -131,7 +132,7 @@ export const UpgradeBntModal = ({
           No Thanks, just BNT from the {position.pool.name}
         </button>
         <div className="text-secondary text-[13px]">
-          {`100% Protected • ${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+          {`${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
         </div>
       </div>
     </Modal>

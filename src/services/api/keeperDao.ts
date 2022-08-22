@@ -11,17 +11,13 @@ import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
 import { prettifyNumber } from 'utils/helperFunctions';
-import {
-  ConversionEvents,
-  sendConversionEvent,
-  sendConversionFailEvent,
-  sendConversionSuccessEvent,
-} from './googleTagManager';
+import { sendConversionEvent } from './googleTagManager/conversion';
 import { utils } from 'ethers';
 import { ErrorCode } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
 import { ExchangeProxy__factory } from 'services/web3/abis/types';
 import { exchangeProxy$ } from 'services/observables/contracts';
+import { Events } from './googleTagManager';
 
 const baseUrl: string = 'https://hidingbook.keeperdao.com/api/v1';
 
@@ -75,7 +71,6 @@ export const swapLimit = async (
         };
       } catch (e: any) {
         if (e.code === ErrorCode.DeniedTx) {
-          sendConversionFailEvent('User rejected transaction');
           return {
             type: NotificationType.error,
             title: 'Transaction Rejected',
@@ -83,7 +78,7 @@ export const swapLimit = async (
           };
         }
 
-        sendConversionFailEvent(e.message);
+        sendConversionEvent(Events.fail, undefined, undefined, e.message);
 
         return {
           type: NotificationType.error,
@@ -92,7 +87,7 @@ export const swapLimit = async (
         };
       }
     } else {
-      sendConversionEvent(ConversionEvents.wallet_req);
+      sendConversionEvent(Events.wallet_req);
       await createOrder(
         fromToken,
         toToken,
@@ -101,7 +96,7 @@ export const swapLimit = async (
         user,
         duration.asSeconds()
       );
-      sendConversionSuccessEvent(fromToken.usdPrice);
+      sendConversionEvent(Events.success);
 
       return {
         type: NotificationType.success,
@@ -111,7 +106,6 @@ export const swapLimit = async (
     }
   } catch (e: any) {
     if (e.code === ErrorCode.DeniedTx) {
-      sendConversionFailEvent('User rejected transaction');
       return {
         type: NotificationType.error,
         title: 'Transaction Rejected',
@@ -119,7 +113,7 @@ export const swapLimit = async (
       };
     }
 
-    sendConversionFailEvent(e.message);
+    sendConversionEvent(Events.fail, undefined, undefined, e.message);
 
     return {
       type: NotificationType.error,

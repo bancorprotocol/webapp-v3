@@ -10,10 +10,10 @@ import {
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 // import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
+import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -73,7 +73,8 @@ export const V3EarningTable = () => {
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <div className="flex items-center">
-            <DepositDisabledModal
+            <DepositV3Modal
+              pool={cell.row.original.pool}
               renderButton={(onClick) => (
                 <V3EarningTableMenu
                   holding={cell.row.original}

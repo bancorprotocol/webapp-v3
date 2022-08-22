@@ -1,7 +1,7 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { shrinkToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemStaked';
@@ -9,6 +9,11 @@ import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3Ho
 import BigNumber from 'bignumber.js';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
+import useAsyncEffect from 'use-async-effect';
+import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
+import { bntToken } from 'services/web3/config';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
 
 export const V3HoldingsItem = ({
   holding,
@@ -41,6 +46,34 @@ export const V3HoldingsItem = ({
 
   const isOpen = holding.pool.poolDltId === selectedId;
 
+  const isBNT = holding.pool.poolDltId === bntToken;
+
+  const [withdrawAmounts, setWithdrawAmounts] = useState<{
+    tkn: number;
+    bnt: number;
+    totalAmount: string;
+    baseTokenAmount: string;
+    bntAmount: string;
+  }>();
+
+  useAsyncEffect(async () => {
+    const poolTokenBalance =
+      await ContractsApi.BancorNetworkInfo.read.underlyingToPoolToken(
+        pool.poolDltId,
+        expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+      );
+    const res = await fetchWithdrawalRequestOutputBreakdown(
+      holding.pool.poolDltId,
+      poolTokenBalance.toString(),
+      expandToken(holding.combinedTokenBalance, holding.pool.decimals)
+    );
+    setWithdrawAmounts(res);
+  }, [
+    holding.pool.poolDltId,
+    holding.combinedTokenBalance,
+    holding.pool.decimals,
+  ]);
+
   return (
     <div
       className={`content-block p-20 overflow-hidden ${
@@ -49,7 +82,7 @@ export const V3HoldingsItem = ({
     >
       <button
         onClick={() => setSelectedId(isOpen ? '' : holding.pool.poolDltId)}
-        className="flex justify-between items-center w-full"
+        className="flex items-center justify-between w-full"
       >
         <div className="flex items-center space-x-10">
           <Image
@@ -60,7 +93,7 @@ export const V3HoldingsItem = ({
           <PopoverV3
             buttonElement={() => (
               <div className="flex items-center space-x-10">
-                <div className="flex text-20 items-center space-x-10">
+                <div className="flex items-center space-x-10 text-20">
                   <div className=" text-secondary">
                     {holding.pool.reserveToken.symbol}
                   </div>
@@ -80,6 +113,22 @@ export const V3HoldingsItem = ({
           >
             {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
           </PopoverV3>
+          {!isBNT && withdrawAmounts && (
+            <PopoverV3
+              buttonElement={() => <IconWarning className="z-50 text-error" />}
+            >
+              <span className="text-secondary">
+                Due to vault deficit, current value is{' '}
+                {prettifyNumber(
+                  shrinkToken(
+                    withdrawAmounts.baseTokenAmount ?? 0,
+                    holding.pool.decimals
+                  )
+                )}{' '}
+                {holding.pool.reserveToken.symbol}
+              </span>
+            </PopoverV3>
+          )}
         </div>
         <div className="flex items-center space-x-30">
           {toBigNumber(rewardTokenAmountUsd).gt(0) && (
@@ -101,9 +150,9 @@ export const V3HoldingsItem = ({
         </div>
       </button>
 
-      <hr className="border-1 mt-20 border-silver dark:border-grey -mx-20" />
+      <hr className="mt-20 -mx-20 border-1 border-silver dark:border-grey" />
 
-      <div className="flex justify-between mt-20 flex-col md:flex-row md:space-x-30 space-y-30 md:space-y-0">
+      <div className="flex flex-col justify-between mt-20 md:flex-row md:space-x-30 space-y-30 md:space-y-0">
         <V3HoldingsItemUnstaked holding={holding} />
         <V3HoldingsItemStaked holding={holding} />
       </div>

@@ -1,7 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
@@ -21,15 +21,21 @@ interface Props {
 
 export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const tokens = useAppSelector(getTokenTableData);
+  const search = searchInput.toLowerCase();
 
   const data = useMemo<Token[]>(() => {
-    return tokens.filter(
-      (t) =>
+    return tokens.filter((t) => {
+      const isSearchMatch =
+        t.symbol.toLowerCase().includes(search) ||
+        t.name.toLowerCase().includes(search);
+
+      return (
+        toBigNumber(t.liquidity).gt(0) &&
         t.address !== wethToken &&
-        (t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
-          t.name.toLowerCase().includes(searchInput.toLowerCase()))
-    );
-  }, [tokens, searchInput]);
+        isSearchMatch
+      );
+    });
+  }, [tokens, search]);
 
   const CellName = (token: Token) => {
     return (
@@ -55,8 +61,8 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
       {
         id: 'name',
         Header: () => (
-          <span className="align-middle inline-flex items-center">
-            <IconProtected className="w-18 mr-20" /> <span>Name</span>
+          <span className="inline-flex items-center align-middle">
+            <IconProtected className="mr-20 w-18" /> <span>Name</span>
           </span>
         ),
         accessor: 'symbol',
@@ -136,7 +142,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
         Cell: (cellData) => {
           return (
             <Navigate
-              to={BancorURL.trade({ to: cellData.row.original.address })}
+              to={BancorURL.trade({ from: cellData.row.original.address })}
               className="btn btn-secondary btn-xs"
             >
               Trade
@@ -154,7 +160,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-block pt-20 pb-10">
+    <section className="pt-20 pb-10 content-block">
       <div className="flex justify-between items-center mb-20 mx-[20px]">
         <h2>Tokens</h2>
         <SearchInput

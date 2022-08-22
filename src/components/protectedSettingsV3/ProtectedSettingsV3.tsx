@@ -21,7 +21,7 @@ export const ProtectedSettingsV3 = ({
     [withdrawalFee]
   );
 
-  const text = `100% Protected • ${
+  const text = `${
     lockDurationInDays < 1 ? '< 1' : lockDurationInDays
   } day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`;
 

@@ -3,8 +3,7 @@ import { useAppSelector } from 'store';
 import { getTopPoolsV3 } from 'store/bancor/pool';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Image } from 'components/image/Image';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
-// import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
+import { DepositV3Modal } from './poolsTable/v3/DepositV3Modal';
 
 export const TopPools = () => {
   const pools = useAppSelector(getTopPoolsV3);
@@ -17,11 +16,12 @@ export const TopPools = () => {
           {pools.length
             ? pools.map((pool, index) => {
                 return (
-                  <DepositDisabledModal
+                  <DepositV3Modal
+                    pool={pool}
                     key={`pool-table-key-${index}`}
                     renderButton={(onClick) => (
                       <button
-                        onClick={onClick}
+                        onClick={() => onClick('Top Performing')}
                         className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                       >
                         <Image
