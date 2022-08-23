@@ -27,9 +27,14 @@ export const getZeroExRateAndPriceImpact = async ({
     const res = await BancorApi.ZeroEx.getPrice({
       sellToken: from.address,
       buyToken: to.address,
-      sellAmount: expandToken(value + '00', from.decimals),
+      sellAmount: expandToken(value, from.decimals),
     });
-    console.log(res);
+    console.log('api call to 0x price api: ', res);
+
+    if (!res.estimatedPriceImpact) {
+      throw new Error('estimatedPriceImpact is null');
+    }
+
     return {
       rate: shrinkToken(res.buyAmount, to.decimals),
       priceImpact: res.estimatedPriceImpact,

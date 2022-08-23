@@ -11,9 +11,9 @@ import {
 import { toBigNumber } from 'utils/helperFunctions';
 import { wethToken } from 'services/web3/config';
 import { getZeroExRateAndPriceImpact } from 'services/web3/swap/zeroEx';
-import useAsyncEffect from 'use-async-effect';
 import { fetchTokenBalance } from 'services/web3/token/token';
 import { shrinkToken } from 'utils/formulas';
+import { useInterval } from 'hooks/useInterval';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -77,7 +77,7 @@ export const useTradeWidget = ({
     return tkn;
   }, [to, toTokenBalance, tokensMap]);
 
-  useAsyncEffect(async () => {
+  const fetchExternalBalances = useCallback(async () => {
     if (!account) {
       return;
     }
@@ -100,6 +100,8 @@ export const useTradeWidget = ({
     toToken?.isExternal,
     toToken?.decimals,
   ]);
+
+  useInterval(fetchExternalBalances, 5000);
 
   const isExternal = !!fromToken?.isExternal || !!toToken?.isExternal;
 
