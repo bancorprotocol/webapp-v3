@@ -53,10 +53,10 @@ export const TradeWidgetDetails = ({
             ) : (
               <div
                 className={`${
-                  toBigNumber(priceImpact).gte(5) ? 'text-error' : ''
+                  toBigNumber(priceImpact ?? '0').gte(5) ? 'text-error' : ''
                 }`}
               >
-                {prettifyNumber(priceImpact)} %
+                {priceImpact ? prettifyNumber(priceImpact) : 'unknown '} %
               </div>
             )}
           </div>

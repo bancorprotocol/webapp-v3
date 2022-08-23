@@ -11,6 +11,9 @@ import {
 import { toBigNumber } from 'utils/helperFunctions';
 import { wethToken } from 'services/web3/config';
 import { getZeroExRateAndPriceImpact } from 'services/web3/swap/zeroEx';
+import useAsyncEffect from 'use-async-effect';
+import { fetchTokenBalance } from 'services/web3/token/token';
+import { shrinkToken } from 'utils/formulas';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -35,6 +38,7 @@ export const useTradeWidget = ({
   to,
   tokens,
 }: UseTradeWidgetProps): UseTradeWidgetReturn => {
+  const account = useAppSelector((state) => state.user.account);
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
@@ -43,6 +47,9 @@ export const useTradeWidget = ({
 
   const [toInputTkn, setToInputTkn] = useState('');
   const [toInputFiat, setToInputFiat] = useState('');
+
+  const [fromTokenBalance, setFromTokenBalance] = useState('');
+  const [toTokenBalance, setToTokenBalance] = useState('');
 
   const [priceImpact, setPriceImpact] = useState('0.0000');
   const [isV3, setIsV3] = useState<boolean>(false);
@@ -54,8 +61,45 @@ export const useTradeWidget = ({
     [tokens]
   );
 
-  const fromToken = useMemo(() => tokensMap.get(from ?? ''), [from, tokensMap]);
-  const toToken = useMemo(() => tokensMap.get(to ?? ''), [to, tokensMap]);
+  const fromToken = useMemo(() => {
+    const tkn = tokensMap.get(from ?? '');
+    if (tkn && !!tkn.isExternal) {
+      return { ...tkn, balance: fromTokenBalance };
+    }
+    return tkn;
+  }, [from, fromTokenBalance, tokensMap]);
+
+  const toToken = useMemo(() => {
+    const tkn = tokensMap.get(to ?? '');
+    if (tkn && !!tkn.isExternal) {
+      return { ...tkn, balance: toTokenBalance };
+    }
+    return tkn;
+  }, [to, toTokenBalance, tokensMap]);
+
+  useAsyncEffect(async () => {
+    if (!account) {
+      return;
+    }
+
+    if (!!fromToken?.isExternal) {
+      const balance = await fetchTokenBalance(fromToken.address, account);
+      setFromTokenBalance(shrinkToken(balance.toString(), fromToken.decimals));
+    }
+
+    if (!!toToken?.isExternal) {
+      const balance = await fetchTokenBalance(toToken.address, account);
+      setToTokenBalance(shrinkToken(balance.toString(), toToken.decimals));
+    }
+  }, [
+    account,
+    fromToken?.address,
+    fromToken?.isExternal,
+    fromToken?.decimals,
+    toToken?.address,
+    toToken?.isExternal,
+    toToken?.decimals,
+  ]);
 
   const isExternal = !!fromToken?.isExternal || !!toToken?.isExternal;
 

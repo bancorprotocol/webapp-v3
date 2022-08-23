@@ -1,6 +1,7 @@
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { ContractsApi } from '../v3/contractsApi';
+import { toBigNumber } from '../../../utils/helperFunctions';
 
 type ZeroExRateParams = {
   value: string;
@@ -19,16 +20,25 @@ export const getZeroExRateAndPriceImpact = async ({
   to,
   value,
 }: ZeroExRateParams) => {
-  const res = await BancorApi.ZeroEx.getPrice({
-    sellToken: from.address,
-    buyToken: to.address,
-    sellAmount: expandToken(value + '00', from.decimals),
-  });
-  return {
-    rate: shrinkToken(res.buyAmount, to.decimals),
-    priceImpact: res.estimatedPriceImpact,
-    isV3: true,
-  };
+  if (toBigNumber(value ?? '0').isZero()) {
+    return { rate: '0', priceImpact: '0.0000', isV3: false };
+  }
+  try {
+    const res = await BancorApi.ZeroEx.getPrice({
+      sellToken: from.address,
+      buyToken: to.address,
+      sellAmount: expandToken(value + '00', from.decimals),
+    });
+    console.log(res);
+    return {
+      rate: shrinkToken(res.buyAmount, to.decimals),
+      priceImpact: res.estimatedPriceImpact,
+      isV3: true,
+    };
+  } catch (e: any) {
+    console.error('Failed fetching 0x rate and price impact: ', e);
+    return { rate: '0', priceImpact: '0.0000', isV3: false };
+  }
 };
 
 export const executeZeroExSwap = async (
