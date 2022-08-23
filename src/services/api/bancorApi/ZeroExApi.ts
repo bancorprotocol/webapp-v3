@@ -16,12 +16,24 @@ type ZeroExApiQuoteInput = {
 
 export abstract class ZeroExApi {
   static getPrice = async (params: ZeroExApiQuoteInput): Promise<any> => {
-    const { data } = await axiosInstance.get('/price', { params });
+    const { data } = await axiosInstance.get('/price', {
+      params: {
+        ...params,
+        feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
+        buyTokenPercentageFee: 0.5,
+      },
+    });
     return data;
   };
 
   static getQuote = async (params: ZeroExApiQuoteInput): Promise<any> => {
-    const { data } = await axiosInstance.get('/quote', { params });
+    const { data } = await axiosInstance.get('/quote', {
+      params: {
+        ...params,
+        feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
+        buyTokenPercentageFee: 0.5,
+      },
+    });
     return data;
   };
 }
