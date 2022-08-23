@@ -9,10 +9,11 @@ import {
   useTokenInputV3Return,
 } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
-import { wethToken } from 'services/web3/config';
-import { getZeroExRateAndPriceImpact } from 'services/web3/swap/zeroEx';
-import { fetchTokenBalance } from 'services/web3/token/token';
-import { shrinkToken } from 'utils/formulas';
+import { ethToken, wethToken } from 'services/web3/config';
+import {
+  fetchZeroExTokenBalance,
+  getZeroExRateAndPriceImpact,
+} from 'services/web3/swap/zeroEx';
 import { useInterval } from 'hooks/useInterval';
 
 const queue = new PQueue({ concurrency: 1 });
@@ -48,8 +49,12 @@ export const useTradeWidget = ({
   const [toInputTkn, setToInputTkn] = useState('');
   const [toInputFiat, setToInputFiat] = useState('');
 
-  const [fromTokenBalance, setFromTokenBalance] = useState('');
-  const [toTokenBalance, setToTokenBalance] = useState('');
+  const [fromTokenExternal, setFromTokenExternal] = useState<
+    Partial<TokenMinimal>
+  >({});
+  const [toTokenExternal, setToTokenExternal] = useState<Partial<TokenMinimal>>(
+    {}
+  );
 
   const [priceImpact, setPriceImpact] = useState('0.0000');
   const [isV3, setIsV3] = useState<boolean>(false);
@@ -64,34 +69,48 @@ export const useTradeWidget = ({
   const fromToken = useMemo(() => {
     const tkn = tokensMap.get(from ?? '');
     if (tkn && !!tkn.isExternal) {
-      return { ...tkn, balance: fromTokenBalance };
+      return { ...tkn, ...fromTokenExternal };
     }
     return tkn;
-  }, [from, fromTokenBalance, tokensMap]);
+  }, [from, fromTokenExternal, tokensMap]);
 
   const toToken = useMemo(() => {
     const tkn = tokensMap.get(to ?? '');
     if (tkn && !!tkn.isExternal) {
-      return { ...tkn, balance: toTokenBalance };
+      return { ...tkn, ...toTokenExternal };
     }
     return tkn;
-  }, [to, toTokenBalance, tokensMap]);
+  }, [to, toTokenExternal, tokensMap]);
 
   const fetchExternalBalances = useCallback(async () => {
     if (!account) {
       return;
     }
+    const ethUsdPrice = tokensMap.get(ethToken)?.usdPrice ?? '0';
 
     if (!!fromToken?.isExternal) {
-      const balance = await fetchTokenBalance(fromToken.address, account);
-      setFromTokenBalance(shrinkToken(balance.toString(), fromToken.decimals));
+      setFromTokenExternal(
+        await fetchZeroExTokenBalance(
+          account,
+          fromToken.address,
+          fromToken.decimals,
+          ethUsdPrice
+        )
+      );
     }
 
     if (!!toToken?.isExternal) {
-      const balance = await fetchTokenBalance(toToken.address, account);
-      setToTokenBalance(shrinkToken(balance.toString(), toToken.decimals));
+      setToTokenExternal(
+        await fetchZeroExTokenBalance(
+          account,
+          toToken.address,
+          toToken.decimals,
+          ethUsdPrice
+        )
+      );
     }
   }, [
+    tokensMap,
     account,
     fromToken?.address,
     fromToken?.isExternal,

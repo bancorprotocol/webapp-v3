@@ -14,13 +14,20 @@ type ZeroExApiQuoteInput = {
   takerAddress?: string;
 };
 
+const zeroExAffiliateOptions = {
+  feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
+  buyTokenPercentageFee: 0.5,
+};
+
 export abstract class ZeroExApi {
-  static getPrice = async (params: ZeroExApiQuoteInput): Promise<any> => {
+  static getPrice = async (
+    params: ZeroExApiQuoteInput,
+    includeAffiliate = true
+  ): Promise<any> => {
     const { data } = await axiosInstance.get('/price', {
       params: {
         ...params,
-        feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
-        buyTokenPercentageFee: 0.5,
+        ...(includeAffiliate && zeroExAffiliateOptions),
       },
     });
     return data;
@@ -30,8 +37,7 @@ export abstract class ZeroExApi {
     const { data } = await axiosInstance.get('/quote', {
       params: {
         ...params,
-        feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
-        buyTokenPercentageFee: 0.5,
+        ...zeroExAffiliateOptions,
       },
     });
     return data;

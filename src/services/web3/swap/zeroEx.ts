@@ -2,6 +2,9 @@ import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { ContractsApi } from '../v3/contractsApi';
 import { toBigNumber } from '../../../utils/helperFunctions';
+import { fetchTokenBalance } from '../token/token';
+import { ethToken } from '../config';
+import { TokenMinimal } from '../../observables/tokens';
 
 type ZeroExRateParams = {
   value: string;
@@ -64,4 +67,30 @@ export const executeZeroExSwap = async (
     gasLimit: data.gasLimit,
     gasPrice: data.gasPrice,
   });
+};
+
+export const fetchZeroExTokenBalance = async (
+  account: string,
+  id: string,
+  decimals: number,
+  ethUsdPrice: string
+): Promise<Partial<TokenMinimal>> => {
+  const balanceWei = await fetchTokenBalance(id, account);
+  const ethQuote = await BancorApi.ZeroEx.getPrice(
+    {
+      sellToken: ethToken,
+      sellAmount: expandToken(0.1, 18),
+      buyToken: id,
+    },
+    false
+  );
+  const balance = shrinkToken(balanceWei.toString(), decimals);
+  const usdPrice = toBigNumber(ethUsdPrice).div(ethQuote.buyTokenToEthRate);
+  const balanceUsd = usdPrice.times(balance).toNumber();
+
+  return {
+    balance,
+    usdPrice: usdPrice.toString(),
+    balanceUsd,
+  };
 };
