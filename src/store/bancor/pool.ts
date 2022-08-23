@@ -9,12 +9,14 @@ import { bntToken } from 'services/web3/config';
 interface PoolState {
   v2Pools: Pool[];
   v3Pools: PoolV3[];
+  allV3Pools: PoolV3[];
   isLoadingV3Pools: boolean;
 }
 
 const initialState: PoolState = {
   v2Pools: [],
   v3Pools: [],
+  allV3Pools: [],
   isLoadingV3Pools: true,
 };
 
@@ -27,6 +29,10 @@ const poolSlice = createSlice({
     },
     setv3Pools: (state, action) => {
       state.v3Pools = action.payload;
+      state.isLoadingV3Pools = false;
+    },
+    setAllV3Pools: (state, action) => {
+      state.allV3Pools = action.payload;
       state.isLoadingV3Pools = false;
     },
   },
@@ -56,6 +62,13 @@ export const getPools = createSelector(
 
 export const getPoolsV3Map = createSelector(
   [(state: RootState) => state.pool.v3Pools],
+  (pools: PoolV3[]): Map<string, PoolV3> => {
+    return new Map(pools.map((pool) => [pool.poolDltId, pool]));
+  }
+);
+
+export const getAllPoolsV3Map = createSelector(
+  [(state: RootState) => state.pool.allV3Pools],
   (pools: PoolV3[]): Map<string, PoolV3> => {
     return new Map(pools.map((pool) => [pool.poolDltId, pool]));
   }
@@ -165,6 +178,6 @@ export const getPoolByIdWithoutV3 = (id: string) =>
     return { status: 'ready', pool } as SelectedPool;
   });
 
-export const { setv2Pools, setv3Pools } = poolSlice.actions;
+export const { setv2Pools, setv3Pools, setAllV3Pools } = poolSlice.actions;
 
 export const pool = poolSlice.reducer;
