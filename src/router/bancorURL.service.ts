@@ -15,6 +15,7 @@ export abstract class BancorURL {
   static portfolio = '/portfolio';
   static portfolioV1 = this.portfolio + '/v1';
   static portfolioV2 = this.portfolio + '/v2';
+  static portfolioHolding = (pool: string) => `${this.portfolio}/${pool}`;
   static portfolioV2RewardsClaim = this.portfolioV2 + '/rewards/claim';
   static portfolioV2RewardsStake = (id: string, posGroupId?: string) =>
     `${this.portfolioV2}/rewards/stake/${id}${

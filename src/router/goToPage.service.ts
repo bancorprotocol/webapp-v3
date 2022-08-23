@@ -53,6 +53,11 @@ export class GoToPage {
     this.navigate(url, { replace });
   };
 
+  portfolioHolding = (pool: string) => {
+    const url = BancorURL.portfolioHolding(pool);
+    this.navigate(url);
+  };
+
   portfolioV2RewardsClaim = (replace = false) => {
     const url = BancorURL.portfolioV2RewardsClaim;
     this.navigate(url, { replace });
