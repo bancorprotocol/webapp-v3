@@ -29,7 +29,7 @@ const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
             <div className="mb-5 text-secondary">Earn</div>
             <div className="flex">
               <span className="text-[22px]">
-                {pool.apr7d.total === 0
+                {pool.apr7d.total === 0 && !pool.depositingEnabled
                   ? 'New'
                   : `${pool.apr7d.total.toFixed(2)}%`}
               </span>
