@@ -79,13 +79,15 @@ export const TradeWidgetInput = ({
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
-                <span
-                  className={
-                    'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
-                  }
-                >
-                  Max
-                </span>
+                {!disabled && (
+                  <span
+                    className={
+                      'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                    }
+                  >
+                    Max
+                  </span>
+                )}
               </button>
             )}
         </div>
