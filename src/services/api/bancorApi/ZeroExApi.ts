@@ -16,7 +16,7 @@ type ZeroExApiQuoteInput = {
 
 const zeroExAffiliateOptions = {
   feeRecipient: '0x5f7a009664B771E889751f4FD721aDc439033ECD',
-  buyTokenPercentageFee: 0.5,
+  buyTokenPercentageFee: 0.005,
 };
 
 export abstract class ZeroExApi {
