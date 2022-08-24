@@ -4,7 +4,7 @@ import { ReactComponent as banxaLogo } from 'assets/logos/banxa.svg';
 import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
-import { ReactComponent as onJunoLogo } from 'assets/logos/onJuno.svg';
+import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
 import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
@@ -91,9 +91,9 @@ const fiats = [
       'https://exchange.mercuryo.io/?widget_id=d7702dc1-c8ee-4726-a5be-5f18e31849b6&currency=ETH&type=sell',
   },
   {
-    name: 'OnJuno',
-    text: 'OnJuno is a leading mobile banking platform that allows customers to manage cryptocurrency and traditional payment accounts in one easy-to-use app. OnJuno has the lowest fees, tightest spreads, and most innovative features, enabling you to buy, sell and spend your crypto.',
-    logo: onJunoLogo,
+    name: 'Juno',
+    text: 'Juno is a leading mobile banking platform that allows customers to manage cryptocurrency and traditional payment accounts in one easy-to-use app. Juno has the lowest fees, tightest spreads, and most innovative features, enabling you to buy, sell and spend your crypto.',
+    logo: junoLogo,
     operations: [Operations.fiatIn],
     depositMethods: [
       DepositMethods.creditCard,
@@ -102,7 +102,7 @@ const fiats = [
       DepositMethods.cashApp,
     ],
     buyUrl:
-      'https://onjuno.com/partners/bancor?action=buy&currency=eth&partnerKey=live_th2t6ysuok4xu11gykm2p65e&name=bancor',
+      'https://juno.finance/partners/bancor?action=buy&currency=eth&partnerKey=live_th2t6ysuok4xu11gykm2p65e&name=bancor',
   },
   {
     name: 'Transak',
