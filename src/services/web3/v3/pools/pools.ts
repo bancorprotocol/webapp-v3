@@ -1,7 +1,7 @@
 import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
-import { ethToken } from 'services/web3/config';
+import { bancorMasterVault, ethToken } from 'services/web3/config';
 import { fetchETH } from 'services/web3/token/token';
 
 const buildMasterVaultBalanceCall = (poolId: string): MultiCall => {
@@ -11,7 +11,7 @@ const buildMasterVaultBalanceCall = (poolId: string): MultiCall => {
     contractAddress: contract.address,
     interface: contract.interface,
     methodName: 'balanceOf',
-    methodParameters: ['0x649765821D9f64198c905eC0B2B037a4a52Bc373'],
+    methodParameters: [bancorMasterVault],
   };
 };
 
@@ -28,7 +28,7 @@ export const fetchMasterVaultBalancesMulticall = async (
 
   const [res, eth] = await Promise.all([
     multicall(calls),
-    fetchETH('0x649765821D9f64198c905eC0B2B037a4a52Bc373'),
+    fetchETH(bancorMasterVault),
   ]);
 
   if (!res) {
