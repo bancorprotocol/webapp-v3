@@ -122,7 +122,10 @@ export const getOnOff = (on: boolean) => (on ? 'On' : 'Off');
 
 export const getLimitMarket = (limit: boolean) => (limit ? 'Limit' : 'Market');
 
-export const getV2V3 = (v2: boolean) => (v2 ? 'V2' : 'V3');
+export const getV2V3 = (v3: boolean) => (v3 ? 'V3' : 'V2');
 
 export const getUnlimitedLimited = (unlimited: boolean) =>
   unlimited ? 'Unlimited Approve' : 'Limited Approve';
+
+export const getRegularAdvanced = (slippage: number) =>
+  slippage === 0.005 ? 'Regular' : 'Advanced';
