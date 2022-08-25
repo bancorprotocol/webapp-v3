@@ -59,7 +59,6 @@ export const executeZeroExSwap = async (
     buyToken,
     sellAmount,
   });
-  console.log(data);
   return await writeWeb3.signer.sendTransaction({
     to: data.to,
     data: data.data,
