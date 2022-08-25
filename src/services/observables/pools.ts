@@ -10,8 +10,9 @@ import {
   APIPool,
   APIPoolV3,
   APIReward,
+  PriceDictionary,
 } from 'services/api/bancorApi/bancorApi.types';
-import { toBigNumber } from 'utils/helperFunctions';
+import { calcFiatValue, toBigNumber } from 'utils/helperFunctions';
 import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 import {
@@ -20,6 +21,7 @@ import {
 } from 'services/web3/v3/portfolio/standardStaking';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { fetchMasterVaultBalancesMulticall } from 'services/web3/v3/pools/pools';
 dayjs.extend(utc);
 
 export interface Reserve {
@@ -147,20 +149,13 @@ export const buildPoolObject = (
   };
 };
 
-export const calculateAPR = (fees: string, liquidity: string) => {
-  return new BigNumber(fees)
-    .times(52.1429)
-    .div(liquidity)
-    .times(100)
-    .toNumber();
-};
-
 const buildPoolV3Object = async (
   tokensMap: Map<string, Token>,
   apiPool?: APIPoolV3,
   reserveToken?: Token,
   latestProgramIdMap?: Map<string, string | undefined>,
-  rewardsPrograms?: RewardsProgramRaw[]
+  rewardsPrograms?: RewardsProgramRaw[],
+  masterVaultBalances?: Map<string, string>
 ): Promise<PoolV3 | undefined> => {
   if (!apiPool || !reserveToken) {
     return undefined;
@@ -221,8 +216,20 @@ const buildPoolV3Object = async (
     .plus(standardRewardsApr7d)
     .toNumber();
 
+  // Master Vault Balances aka liquidity
+  const tknVaultBalance = shrinkToken(
+    masterVaultBalances?.get(apiPool.poolDltId) ?? '',
+    apiPool.decimals
+  );
+
+  const liquidity: Pick<PriceDictionary, 'tkn' | 'usd'> = {
+    tkn: tknVaultBalance,
+    usd: calcFiatValue(tknVaultBalance, reserveToken.usdPrice),
+  };
+
   return {
     ...apiPool,
+    liquidity,
     stakedBalance,
     apr24h: {
       tradingFees: tradingFeesApr24h,
@@ -309,7 +316,10 @@ export const poolsV3$ = combineLatest([
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
 
-      const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
+      const [latestProgramIds, masterVaultBalances] = await Promise.all([
+        fetchLatestProgramIdsMulticall(apiPoolsV3),
+        fetchMasterVaultBalancesMulticall(apiPoolsV3),
+      ]);
 
       const pools = await Promise.all(
         apiPoolsV3.map(
@@ -319,7 +329,8 @@ export const poolsV3$ = combineLatest([
               pool,
               tokensMap.get(pool.poolDltId),
               latestProgramIds,
-              standardRewardPrograms
+              standardRewardPrograms,
+              masterVaultBalances
             )
         )
       );
