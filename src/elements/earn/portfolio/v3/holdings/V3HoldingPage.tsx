@@ -19,6 +19,7 @@ import useAsyncEffect from 'use-async-effect';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
+import BigNumber from 'bignumber.js';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
@@ -65,6 +66,13 @@ export const V3HoldingPage = () => {
     holding && !isBNT && withdrawAmounts
       ? shrinkToken(withdrawAmounts.baseTokenAmount ?? 0, holding.pool.decimals)
       : undefined;
+
+  const vaultBalance = holding
+    ? toBigNumber(holding.pool.liquidity.usd)
+        .div(holding.pool.stakedBalance.usd)
+        .minus(1)
+        .times(100)
+    : new BigNumber(0);
 
   return (
     <div className="pt-100 mx-auto max-w-[1140px] p-20">
@@ -116,14 +124,22 @@ export const V3HoldingPage = () => {
                 </div>
                 <div>
                   Compunding returns
-                  <div className="text-black dark:text-white mt-8">
-                    {prettifyNumber(holding.combinedTokenBalance)}
-                  </div>
+                  <div className="text-black dark:text-white mt-8">????.??</div>
                   <div className="text-primary mt-8">???%</div>
                 </div>
                 <div>
                   Vault balance
-                  <div className="text-primary mt-8">??%</div>
+                  <div className="text-primary mt-8">
+                    {' '}
+                    <span
+                      className={`${
+                        vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                      }`}
+                    >
+                      {vaultBalance.gte(0) ? '+' : ''}
+                      {vaultBalance.toFixed(2)}%
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -139,7 +155,7 @@ export const V3HoldingPage = () => {
                     <div className="text-secondary">
                       Available to Deposit
                       <div className="text-black dark:text-white mt-8">
-                        {token.balance}
+                        {prettifyNumber(token.balance ?? 0)}
                       </div>
                     </div>
                     <DepositV3Modal
