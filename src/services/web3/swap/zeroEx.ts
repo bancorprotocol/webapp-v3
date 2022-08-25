@@ -1,10 +1,10 @@
 import { BancorApi } from 'services/api/bancorApi/bancorApi';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { ContractsApi } from '../v3/contractsApi';
-import { toBigNumber } from '../../../utils/helperFunctions';
-import { fetchTokenBalance } from '../token/token';
-import { ethToken } from '../config';
-import { TokenMinimal } from '../../observables/tokens';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { fetchTokenBalance } from 'services/web3/token/token';
+import { ethToken } from 'services/web3/config';
+import { toBigNumber } from 'utils/helperFunctions';
+import { TokenMinimal } from 'services/observables/tokens';
 
 type ZeroExRateParams = {
   value: string;
