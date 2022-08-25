@@ -75,7 +75,7 @@ export const V3HoldingPage = () => {
     : new BigNumber(0);
 
   return (
-    <div className="pt-100 mx-auto max-w-[1140px] p-20">
+    <div className="py-100 w-full mx-auto max-w-[1140px] p-20">
       <button
         className="flex items-center gap-10 text-secondary"
         onClick={() => goToPage.portfolio()}
@@ -88,7 +88,7 @@ export const V3HoldingPage = () => {
           'Loading'
         ) : (
           <>
-            <div className="col-span-2">
+            <div className="md:col-span-2">
               <div className="flex items-center">
                 <Image
                   alt={'Token Logo'}
@@ -115,21 +115,25 @@ export const V3HoldingPage = () => {
                 </div>
               </div>
               <hr className="my-48 border-silver dark:border-grey" />
-              <div className="grid md:grid-cols-3 text-secondary">
-                <div>
+              <div className="grid md:grid-cols-3 gap-20 text-secondary">
+                <div className="md:block grid grid-cols-2">
                   Total Invested
-                  <div className="text-black dark:text-white mt-8">
+                  <div className="text-black dark:text-white md:mt-8 justify-self-end">
                     {holding.stakedTokenBalance}
                   </div>
                 </div>
-                <div>
+                <div className="md:block grid grid-cols-2">
                   Compunding returns
-                  <div className="text-black dark:text-white mt-8">????.??</div>
-                  <div className="text-primary mt-8">???%</div>
+                  <div className="md:block flex flex-col items-end justify-self-end">
+                    <div className="text-black dark:text-white md:mt-8">
+                      ????.??
+                    </div>
+                    <div className="text-primary mt-8">???%</div>
+                  </div>
                 </div>
-                <div>
+                <div className="md:block grid grid-cols-2">
                   Vault balance
-                  <div className="text-primary mt-8">
+                  <div className="text-primary md:mt-8 justify-self-end">
                     {' '}
                     <span
                       className={`${
@@ -143,7 +147,7 @@ export const V3HoldingPage = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full">
+            <div>
               <div className="mb-30 shadow p-30 rounded-10">
                 {token.symbol} Pool APR
                 <div>
