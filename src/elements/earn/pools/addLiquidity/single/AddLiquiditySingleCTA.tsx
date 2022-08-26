@@ -1,7 +1,7 @@
 import { useAppSelector } from 'store';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useNavigation } from 'hooks/useNavigation';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 interface Props {
   onStart: Function;
@@ -17,7 +17,7 @@ export const AddLiquiditySingleCTA = ({
   isBNTSelected,
 }: Props) => {
   const account = useAppSelector((state) => state.user.account);
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
 
   const { goToPage } = useNavigation();
 
@@ -51,7 +51,7 @@ export const AddLiquiditySingleCTA = ({
   };
 
   const onClick = () => {
-    if (!account) {
+    if (!account && handleWalletButtonClick) {
       handleWalletButtonClick();
     } else {
       onStart();

@@ -5,18 +5,17 @@ import { App } from 'App';
 import { store } from 'store';
 import reportWebVitals from 'reportWebVitals';
 import { I18nProvider } from 'i18n/i18nProvider';
-import { getLibrary } from 'services/web3/wallet/utils';
-import { Web3ReactProvider } from '@web3-react/core';
 import 'styles/index.css';
+import { RainbowKitWallet } from 'services/web3/rainbowKit/RainbowKitWallet';
 
 ReactDOM.render(
   <Provider store={store}>
     <I18nProvider>
-      <Web3ReactProvider getLibrary={getLibrary}>
+      <RainbowKitWallet>
         <StrictMode>
           <App />
         </StrictMode>
-      </Web3ReactProvider>
+      </RainbowKitWallet>
     </I18nProvider>
   </Provider>,
   document.getElementById('root')

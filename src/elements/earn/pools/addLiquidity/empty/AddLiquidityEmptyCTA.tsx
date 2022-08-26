@@ -13,7 +13,7 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 interface Props {
   pool: Pool;
@@ -34,7 +34,7 @@ export const AddLiquidityEmptyCTA = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
   const { goToPage } = useNavigation();
 
   const handleAddLiquidity = useCallback(async () => {
@@ -118,7 +118,7 @@ export const AddLiquidityEmptyCTA = ({
   const btn = button();
 
   const onClick = () => {
-    if (!account) {
+    if (!account && handleWalletButtonClick) {
       handleWalletButtonClick();
     } else {
       onStart();

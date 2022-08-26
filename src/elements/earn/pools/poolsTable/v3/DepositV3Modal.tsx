@@ -20,7 +20,6 @@ import {
 import { ErrorCode } from 'services/web3/types';
 import { useNavigation } from 'hooks/useNavigation';
 import { wait } from 'utils/pureFunctions';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import {
   DepositEvent,
   sendDepositEvent,
@@ -35,10 +34,11 @@ import {
 } from 'services/api/googleTagManager';
 import { DepositDisabledModal } from './DepositDisabledModal';
 import { checkV3DepositWhitelist } from 'utils/v3Deposit';
-import { TradeWidgetInput } from '../../../../trade/TradeWidgetInput';
-import { useTknFiatInput } from '../../../../trade/useTknFiatInput';
+import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
+import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { DepositFAQ } from './DepositFAQ';
-import { Switch, SwitchVariant } from '../../../../../components/switch/Switch';
+import { Switch, SwitchVariant } from 'components/switch/Switch';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 interface Props {
   pool: PoolV3;
@@ -58,7 +58,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [inputFiat, setInputFiat] = useState('');
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
 
   const tokenInputField = useTknFiatInput({
     token: pool.reserveToken,
@@ -209,7 +209,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
       });
       sendDepositEvent(DepositEvent.DepositAmountContinue);
       onStart();
-    } else if (shouldConnect) {
+    } else if (shouldConnect && handleWalletButtonClick) {
       handleWalletButtonClick();
     }
   }, [

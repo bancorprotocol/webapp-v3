@@ -4,7 +4,7 @@ import { Button } from 'components/button/Button';
 import { DynamicText } from 'components/DynamicText/DynamicText';
 import { MigrateProtect } from 'pages/earn/portfolio/MigrateProtect';
 import { useWalletEmpty } from 'pages/earn/portfolio/usePortfolioRedirect';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 export const PortfolioWelcome = () => {
   const walletIsEmpty = useWalletEmpty();
@@ -17,7 +17,7 @@ export const PortfolioWelcome = () => {
 };
 
 const GrowYour = () => {
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
 
   return (
     <div className="grid items-center h-screen md:grid-cols-2 justify-items-center">

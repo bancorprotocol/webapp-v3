@@ -34,8 +34,8 @@ import {
   ButtonSize,
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { Events, getLimitMarket } from 'services/api/googleTagManager';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 enum Field {
   from,
@@ -78,7 +78,7 @@ export const SwapLimit = ({
   const [duration, setDuration] = useState(
     dayjs.duration({ days: 7, hours: 0, minutes: 0 })
   );
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
 
   const previousField = useRef<Field>();
   const lastChangedField = useRef<Field>();
@@ -254,7 +254,7 @@ export const SwapLimit = ({
     showETHtoWETHModal: boolean = false
   ) => {
     if (!account) {
-      handleWalletButtonClick();
+      handleWalletButtonClick && handleWalletButtonClick();
       return;
     }
 

@@ -10,12 +10,12 @@ import { WhatsNew } from './WhatsNew';
 import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
   const darkMode = useAppSelector<boolean>(getDarkMode);
-  const { handleWalletButtonClick } = useWalletConnect();
+  const { openConnectModal: handleWalletButtonClick } = useConnectModal();
   const hasHoldings = true;
 
   return account ? (
@@ -65,7 +65,7 @@ const V3Portfolio = () => {
       <Button
         className="flex items-center justify-center mt-20"
         size={ButtonSize.Meduim}
-        onClick={() => handleWalletButtonClick()}
+        onClick={() => handleWalletButtonClick && handleWalletButtonClick()}
       >
         <IconWallet className="w-20 mr-10" />
         Connect Wallet

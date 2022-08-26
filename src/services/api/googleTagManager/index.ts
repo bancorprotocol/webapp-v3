@@ -4,7 +4,6 @@ import { isForkAvailable } from 'services/web3/config';
 declare global {
   interface Window {
     dataLayer: any;
-    ethereum: any;
     Buffer: Buffer;
   }
 }

@@ -1,38 +1,23 @@
-import { Web3Provider } from '@ethersproject/providers';
 import { EthNetworks } from 'services/web3//types';
 import { providers } from 'ethers';
-import { ALCHEMY_URL } from 'services/web3/wallet/connectors';
 import { isForkAvailable } from 'services/web3/config';
 import { getTenderlyRpcLS } from 'utils/localStorage';
+
+export const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_MAINNET}`;
+
+export const web3 = {
+  provider: providers.getDefaultProvider(1),
+};
+
+export const writeWeb3 = {
+  signer: new providers.StaticJsonRpcProvider(ALCHEMY_URL).getSigner(),
+};
 
 export const getProvider = (
   network: EthNetworks = EthNetworks.Mainnet,
   useFork: boolean = isForkAvailable
 ): providers.BaseProvider => {
-  if (useFork) {
-    return new providers.StaticJsonRpcProvider({
-      url: getTenderlyRpcLS(),
-      skipFetchSetup: true,
-    });
-  }
-  if (process.env.REACT_APP_ALCHEMY_MAINNET) {
-    return new providers.StaticJsonRpcProvider({
-      url: ALCHEMY_URL,
-      skipFetchSetup: true,
-    });
-  }
-
-  return providers.getDefaultProvider(network);
-};
-
-export const web3 = {
-  provider: getProvider(),
-};
-
-export const writeWeb3 = {
-  signer: window.ethereum
-    ? new Web3Provider(window.ethereum).getSigner()
-    : new providers.StaticJsonRpcProvider(ALCHEMY_URL).getSigner(),
+  return web3.provider;
 };
 
 export const setProvider = (provider: providers.BaseProvider) => {
@@ -40,12 +25,13 @@ export const setProvider = (provider: providers.BaseProvider) => {
 };
 
 export const setSigner = (
-  signer?: providers.JsonRpcSigner,
+  signer?: providers.JsonRpcSigner | null,
   account?: string | null
 ) => {
-  if (account)
+  if (account) {
+    console.log('account', account);
     writeWeb3.signer = new providers.StaticJsonRpcProvider(
       getTenderlyRpcLS()
     ).getUncheckedSigner(account);
-  else if (signer) writeWeb3.signer = signer;
+  } else if (signer) writeWeb3.signer = signer;
 };

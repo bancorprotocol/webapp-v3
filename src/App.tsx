@@ -17,18 +17,19 @@ import {
   getDarkModeLS,
   getNotificationsLS,
   getSlippageToleranceLS,
+  getTenderlyRpcLS,
   getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
-import { useWeb3React } from '@web3-react/core';
-import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { setProvider, setSigner } from 'services/web3';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -38,8 +39,14 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 export const App = () => {
   const user = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
-  const { chainId, account } = useWeb3React();
-  useAutoConnect();
+  const { chain } = useNetwork();
+  const { address: account } = useAccount();
+  const chainId = chain?.id;
+  const provider = useProvider();
+  setProvider(provider);
+  const { data: signer } = useSigner();
+
+  // TODO useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector(
     (state) => state.notification.notifications
@@ -89,6 +96,12 @@ export const App = () => {
     setUser(account, dispatch);
     googleTagManager();
   }, [account, dispatch]);
+
+  useEffect(() => {
+    if (account && signer) {
+      setSigner(signer as any, getTenderlyRpcLS() ? account : undefined);
+    }
+  }, [account, dispatch, signer]);
 
   const isWalletRestricted = !!user && handleRestrictedWalletCheck(user);
 
