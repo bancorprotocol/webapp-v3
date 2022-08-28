@@ -110,12 +110,12 @@ export const V3HoldingPage = () => {
                 src={token.logoURI}
               />
             ) : (
-              <div className="loading-skeleton rounded-full w-64 h-64" />
+              <div className="loading-skeleton !rounded-full w-64 h-64" />
             )}
-            <div className="text-secondary">
-              Total Holdings
+            <div>
+              <div className="text-secondary mb-10">Total Holdings</div>
               {holding ? (
-                <div className="flex items-center gap-16 text-[36px] mt-5 text-black dark:text-white">
+                <div className="flex items-center gap-16 text-[36px] text-black dark:text-white">
                   {prettifyNumber(holding.combinedTokenBalance)}
                   {deficitAmount && (
                     <PopoverV3
@@ -132,7 +132,7 @@ export const V3HoldingPage = () => {
                   )}
                 </div>
               ) : (
-                <div className="loading-skeleton rounded-full w-64 h-64" />
+                <div className="loading-skeleton !rounded-full w-[140px] h-40" />
               )}
             </div>
           </div>
@@ -172,15 +172,15 @@ export const V3HoldingPage = () => {
               </div>
             </div>
           ) : (
-            <div className="loading-skeleton rounded-full w-64 h-64" />
+            <div className="loading-skeleton w-full h-32" />
           )}
         </div>
         <div>
-          <div className="mb-30 shadow p-30 rounded-10">
+          <div className="mb-30 shadow rounded-10">
             {token ? (
               `${token.symbol} Pool APR`
             ) : (
-              <div className="loading-skeleton rounded-full w-64 h-64" />
+              <div className="loading-skeleton w-80 h-32" />
             )}
             <div>
               {pool ? (
@@ -188,10 +188,10 @@ export const V3HoldingPage = () => {
                   {pool.apr7d.total.toFixed(2)}%
                 </div>
               ) : (
-                <div className="loading-skeleton rounded-full w-64 h-64" />
+                <div className="loading-skeleton w-[200px] h-32 mt-10" />
               )}
               <hr className="my-30 border-silver dark:border-grey" />
-              {token && pool && account && Number(token.balance) > 0 ? (
+              {token && pool ? (
                 <div className="flex items-center justify-between">
                   <div className="text-secondary">
                     Available to Deposit
@@ -212,13 +212,15 @@ export const V3HoldingPage = () => {
                     )}
                   />
                 </div>
+              ) : !account && token && Number(token.balance) < 0 ? (
+                <></>
               ) : (
-                <div className="loading-skeleton rounded-full w-64 h-64" />
+                <div className="loading-skeleton w-full h-32" />
               )}
             </div>
           </div>
           {holding ? (
-            <div className="flex items-center justify-between p-30 shadow rounded-10">
+            <div className="flex items-center justify-between shadow rounded-10">
               <div className="text-secondary">
                 bn{holding.pool.reserveToken.symbol} Available
                 <div className="text-black text-20 dark:text-white mt-8">
@@ -242,7 +244,7 @@ export const V3HoldingPage = () => {
               </>
             </div>
           ) : (
-            <div className="loading-skeleton rounded-full w-64 h-64" />
+            <div className="loading-skeleton w-full h-32" />
           )}
         </div>
       </div>
