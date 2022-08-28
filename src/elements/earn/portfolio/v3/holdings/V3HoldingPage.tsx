@@ -1,8 +1,8 @@
 import { useNavigation } from 'hooks/useNavigation';
 import { useParams } from 'react-router-dom';
 import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
-import { Image } from 'components/image/Image';
 import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
+import { Image } from 'components/image/Image';
 import { useAppSelector } from 'store';
 import {
   getPortfolioHoldings,
@@ -20,16 +20,28 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
 import BigNumber from 'bignumber.js';
+import { Token } from 'services/observables/tokens';
+import { getTokenById } from 'store/bancor/bancor';
+import { getV3byID } from 'store/bancor/pool';
+import { PoolV3 } from 'services/observables/pools';
+import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
   const { goToPage } = useNavigation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const account = useAppSelector((state) => state.user.account);
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
   const holding = holdings.find((x) => x.pool.poolDltId === id);
+  const token = useAppSelector<Token | undefined>((state: any) =>
+    getTokenById(state, id || '')
+  );
+  const pool = useAppSelector<PoolV3 | undefined>((state: any) =>
+    getV3byID(state, id || '')
+  );
 
-  const token = holding?.pool.reserveToken;
   const isBNT = holding?.pool.poolDltId === bntToken;
 
   const isDisabled = toBigNumber(holding ? holding.tokenBalance : 0).isZero();
@@ -74,6 +86,11 @@ export const V3HoldingPage = () => {
         .times(100)
     : new BigNumber(0);
 
+  if (!token && !isLoadingHoldings) {
+    goToPage.notFound();
+    return null;
+  }
+
   return (
     <div className="py-100 w-full mx-auto max-w-[1140px] p-20">
       <button
@@ -84,125 +101,150 @@ export const V3HoldingPage = () => {
         Portfolio
       </button>
       <div className="grid md:grid-cols-3 gap-[70px] mt-[48px]">
-        {isLoadingHoldings || !holding || !token ? (
-          'Loading'
-        ) : (
-          <>
-            <div className="md:col-span-2">
-              <div className="flex items-center">
-                <Image
-                  alt={'Token Logo'}
-                  className="w-64 h-64 !rounded-full mr-10"
-                  src={token.logoURI}
-                />
-                <div className="text-secondary">
-                  Total Holdings
-                  <div className="flex items-center gap-16 text-[36px] mt-5 text-black dark:text-white">
-                    {prettifyNumber(holding.combinedTokenBalance)}
-                    {deficitAmount && (
-                      <PopoverV3
-                        buttonElement={() => (
-                          <IconWarning className="text-error w-24 h-24" />
-                        )}
-                      >
-                        <span className="text-secondary">
-                          Due to vault deficit, current value is{' '}
-                          {prettifyNumber(deficitAmount)} {token.symbol}
-                        </span>
-                      </PopoverV3>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <hr className="my-48 border-silver dark:border-grey" />
-              <div className="grid md:grid-cols-3 gap-20 text-secondary">
-                <div className="md:block grid grid-cols-2">
-                  Total Invested
-                  <div className="text-black dark:text-white md:mt-8 justify-self-end">
-                    {holding.stakedTokenBalance}
-                  </div>
-                </div>
-                <div className="md:block grid grid-cols-2">
-                  Compunding returns
-                  <div className="md:block flex flex-col items-end justify-self-end">
-                    <div className="text-black dark:text-white md:mt-8">
-                      ????.??
-                    </div>
-                    <div className="text-primary mt-8">???%</div>
-                  </div>
-                </div>
-                <div className="md:block grid grid-cols-2">
-                  Vault balance
-                  <div className="text-primary md:mt-8 justify-self-end">
-                    {' '}
-                    <span
-                      className={`${
-                        vaultBalance.gte(0) ? 'text-primary' : 'text-error'
-                      }`}
-                    >
-                      {vaultBalance.gte(0) ? '+' : ''}
-                      {vaultBalance.toFixed(2)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="mb-30 shadow p-30 rounded-10">
-                {token.symbol} Pool APR
-                <div>
-                  <div className="text-[36px] mt-10">
-                    {holding.pool.apr7d.total.toFixed(2)}%
-                  </div>
-                  <hr className="my-30 border-silver dark:border-grey" />
-                  <div className="flex items-center justify-between">
-                    <div className="text-secondary">
-                      Available to Deposit
-                      <div className="text-black dark:text-white mt-8">
-                        {prettifyNumber(token.balance ?? 0)}
-                      </div>
-                    </div>
-                    <DepositV3Modal
-                      pool={holding.pool}
-                      renderButton={(onClick) => (
-                        <Button
-                          onClick={() => onClick()}
-                          size={ButtonSize.ExtraSmall}
-                          variant={ButtonVariant.Secondary}
-                        >
-                          Deposit
-                        </Button>
+        <div className="md:col-span-2">
+          <div className="flex items-center">
+            {token ? (
+              <Image
+                alt={'Token Logo'}
+                className="w-64 h-64 !rounded-full mr-10"
+                src={token.logoURI}
+              />
+            ) : (
+              <div className="loading-skeleton rounded-full w-64 h-64" />
+            )}
+            <div className="text-secondary">
+              Total Holdings
+              {holding ? (
+                <div className="flex items-center gap-16 text-[36px] mt-5 text-black dark:text-white">
+                  {prettifyNumber(holding.combinedTokenBalance)}
+                  {deficitAmount && (
+                    <PopoverV3
+                      buttonElement={() => (
+                        <IconWarning className="text-error w-24 h-24" />
                       )}
-                    />
-                  </div>
+                    >
+                      <span className="text-secondary">
+                        Due to vault deficit, current value is{' '}
+                        {prettifyNumber(deficitAmount)}{' '}
+                        {holding.pool.reserveToken.symbol}
+                      </span>
+                    </PopoverV3>
+                  )}
+                </div>
+              ) : (
+                <div className="loading-skeleton rounded-full w-64 h-64" />
+              )}
+            </div>
+          </div>
+          <hr className="my-48 border-silver dark:border-grey" />
+          {!account ? (
+            <WalletConnectRequest />
+          ) : holding ? (
+            <div className="grid md:grid-cols-3 gap-20 text-secondary">
+              <div className="md:block grid grid-cols-2">
+                Total Invested
+                <div className="text-black dark:text-white md:mt-8 justify-self-end">
+                  {holding.stakedTokenBalance}
                 </div>
               </div>
-              <div className="flex items-center justify-between p-30 shadow rounded-10">
-                <div className="text-secondary">
-                  bn{token.symbol} Available
-                  <div className="text-black text-20 dark:text-white mt-8">
-                    {prettifyNumber(holding.poolTokenBalance)}
+              <div className="md:block grid grid-cols-2">
+                Compunding returns
+                <div className="md:block flex flex-col items-end justify-self-end">
+                  <div className="text-black dark:text-white md:mt-8">
+                    ????.??
                   </div>
+                  <div className="text-primary mt-8">???%</div>
                 </div>
-                <>
-                  <V3WithdrawModal
-                    holding={holding}
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                  />
-                  <Button
-                    size={ButtonSize.ExtraSmall}
-                    variant={ButtonVariant.Secondary}
-                    onClick={() => setIsOpen(true)}
-                    disabled={isDisabled}
+              </div>
+              <div className="md:block grid grid-cols-2">
+                Vault balance
+                <div className="text-primary md:mt-8 justify-self-end">
+                  {' '}
+                  <span
+                    className={`${
+                      vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                    }`}
                   >
-                    Withdraw
-                  </Button>
-                </>
+                    {vaultBalance.gte(0) ? '+' : ''}
+                    {vaultBalance.toFixed(2)}%
+                  </span>
+                </div>
               </div>
             </div>
-          </>
-        )}
+          ) : (
+            <div className="loading-skeleton rounded-full w-64 h-64" />
+          )}
+        </div>
+        <div>
+          <div className="mb-30 shadow p-30 rounded-10">
+            {token ? (
+              `${token.symbol} Pool APR`
+            ) : (
+              <div className="loading-skeleton rounded-full w-64 h-64" />
+            )}
+            <div>
+              {pool ? (
+                <div className="text-[36px] mt-10">
+                  {pool.apr7d.total.toFixed(2)}%
+                </div>
+              ) : (
+                <div className="loading-skeleton rounded-full w-64 h-64" />
+              )}
+              <hr className="my-30 border-silver dark:border-grey" />
+              {token && pool && account && Number(token.balance) > 0 ? (
+                <div className="flex items-center justify-between">
+                  <div className="text-secondary">
+                    Available to Deposit
+                    <div className="text-black dark:text-white mt-8">
+                      {prettifyNumber(token.balance ?? 0)}
+                    </div>
+                  </div>
+                  <DepositV3Modal
+                    pool={pool}
+                    renderButton={(onClick) => (
+                      <Button
+                        onClick={() => onClick()}
+                        size={ButtonSize.ExtraSmall}
+                        variant={ButtonVariant.Secondary}
+                      >
+                        Deposit
+                      </Button>
+                    )}
+                  />
+                </div>
+              ) : (
+                <div className="loading-skeleton rounded-full w-64 h-64" />
+              )}
+            </div>
+          </div>
+          {holding ? (
+            <div className="flex items-center justify-between p-30 shadow rounded-10">
+              <div className="text-secondary">
+                bn{holding.pool.reserveToken.symbol} Available
+                <div className="text-black text-20 dark:text-white mt-8">
+                  {prettifyNumber(holding.poolTokenBalance)}
+                </div>
+              </div>
+              <>
+                <V3WithdrawModal
+                  holding={holding}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                />
+                <Button
+                  size={ButtonSize.ExtraSmall}
+                  variant={ButtonVariant.Secondary}
+                  onClick={() => setIsOpen(true)}
+                  disabled={isDisabled}
+                >
+                  Withdraw
+                </Button>
+              </>
+            </div>
+          ) : (
+            <div className="loading-skeleton rounded-full w-64 h-64" />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -75,7 +75,11 @@ export const getTokenById = createSelector(
   (_: any, id: string) => id,
   (allTokensMap: Map<string, Token>, id: string): Token | undefined => {
     if (!id) return undefined;
-    return allTokensMap.get(utils.getAddress(id));
+    try {
+      return allTokensMap.get(utils.getAddress(id));
+    } catch (error) {
+      return undefined;
+    }
   }
 );
 
