@@ -131,22 +131,20 @@ export const V3HoldingPage = () => {
                     </PopoverV3>
                   )}
                 </div>
-              ) : account ? (
-                <div className="loading-skeleton !rounded-full w-[140px] h-40" />
+              ) : account && isLoadingHoldings ? (
+                <div className="loading-skeleton !rounded-full w-[140px] h-20" />
               ) : (
                 <></>
               )}
             </div>
           </div>
           <hr className="my-48 border-silver dark:border-grey" />
-          {!account ? (
-            <></>
-          ) : holding ? (
+          {holding ? (
             <div className="grid md:grid-cols-3 gap-20 text-secondary">
               <div className="md:block grid grid-cols-2">
                 Total Invested
                 <div className="text-black dark:text-white md:mt-8 justify-self-end">
-                  {holding.stakedTokenBalance}
+                  ????.??
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
@@ -173,8 +171,10 @@ export const V3HoldingPage = () => {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : account && isLoadingHoldings ? (
             <div className="loading-skeleton w-full h-32" />
+          ) : (
+            <></>
           )}
         </div>
         <div>
@@ -182,7 +182,7 @@ export const V3HoldingPage = () => {
             {token ? (
               `${token.symbol} Pool APR`
             ) : (
-              <div className="loading-skeleton w-80 h-32" />
+              <div className="loading-skeleton w-80 h-20" />
             )}
             <div>
               {pool ? (
@@ -190,7 +190,7 @@ export const V3HoldingPage = () => {
                   {pool.apr7d.total.toFixed(2)}%
                 </div>
               ) : (
-                <div className="loading-skeleton w-[200px] h-32 mt-10" />
+                <div className="loading-skeleton w-[200px] h-20 mt-10" />
               )}
               {!account || (token && Number(token.balance) < 0) ? (
                 <></>
@@ -247,7 +247,7 @@ export const V3HoldingPage = () => {
                 </Button>
               </>
             </div>
-          ) : !account ? (
+          ) : !account || !isLoadingHoldings ? (
             <></>
           ) : (
             <div className="loading-skeleton w-full h-32" />
