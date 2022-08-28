@@ -131,14 +131,16 @@ export const V3HoldingPage = () => {
                     </PopoverV3>
                   )}
                 </div>
-              ) : (
+              ) : account ? (
                 <div className="loading-skeleton !rounded-full w-[140px] h-40" />
+              ) : (
+                <></>
               )}
             </div>
           </div>
           <hr className="my-48 border-silver dark:border-grey" />
           {!account ? (
-            <WalletConnectRequest />
+            <></>
           ) : holding ? (
             <div className="grid md:grid-cols-3 gap-20 text-secondary">
               <div className="md:block grid grid-cols-2">
@@ -176,7 +178,7 @@ export const V3HoldingPage = () => {
           )}
         </div>
         <div>
-          <div className="mb-30 shadow rounded-10">
+          <div className="mb-30 p-30 shadow rounded-10">
             {token ? (
               `${token.symbol} Pool APR`
             ) : (
@@ -190,37 +192,39 @@ export const V3HoldingPage = () => {
               ) : (
                 <div className="loading-skeleton w-[200px] h-32 mt-10" />
               )}
-              <hr className="my-30 border-silver dark:border-grey" />
-              {token && pool ? (
-                <div className="flex items-center justify-between">
-                  <div className="text-secondary">
-                    Available to Deposit
-                    <div className="text-black dark:text-white mt-8">
-                      {prettifyNumber(token.balance ?? 0)}
-                    </div>
-                  </div>
-                  <DepositV3Modal
-                    pool={pool}
-                    renderButton={(onClick) => (
-                      <Button
-                        onClick={() => onClick()}
-                        size={ButtonSize.ExtraSmall}
-                        variant={ButtonVariant.Secondary}
-                      >
-                        Deposit
-                      </Button>
-                    )}
-                  />
-                </div>
-              ) : !account && token && Number(token.balance) < 0 ? (
+              {!account || (token && Number(token.balance) < 0) ? (
                 <></>
+              ) : token && pool ? (
+                <>
+                  <hr className="my-30 border-silver dark:border-grey" />
+                  <div className="flex items-center justify-between">
+                    <div className="text-secondary">
+                      Available to Deposit
+                      <div className="text-black dark:text-white mt-8">
+                        {prettifyNumber(token.balance ?? 0)}
+                      </div>
+                    </div>
+                    <DepositV3Modal
+                      pool={pool}
+                      renderButton={(onClick) => (
+                        <Button
+                          onClick={() => onClick()}
+                          size={ButtonSize.ExtraSmall}
+                          variant={ButtonVariant.Secondary}
+                        >
+                          Deposit
+                        </Button>
+                      )}
+                    />
+                  </div>
+                </>
               ) : (
                 <div className="loading-skeleton w-full h-32" />
               )}
             </div>
           </div>
           {holding ? (
-            <div className="flex items-center justify-between shadow rounded-10">
+            <div className="flex items-center justify-between shadow rounded-10 p-30">
               <div className="text-secondary">
                 bn{holding.pool.reserveToken.symbol} Available
                 <div className="text-black text-20 dark:text-white mt-8">
@@ -243,10 +247,17 @@ export const V3HoldingPage = () => {
                 </Button>
               </>
             </div>
+          ) : !account ? (
+            <></>
           ) : (
             <div className="loading-skeleton w-full h-32" />
           )}
         </div>
+        {!account && (
+          <div className="md:col-span-3">
+            <WalletConnectRequest />
+          </div>
+        )}
       </div>
     </div>
   );
