@@ -58,7 +58,7 @@ export const setCurrentConversion = (
     conversion_rate_percentage: ratePercentage,
     conversion_experation: expiration,
     conversion_settings: settings,
-    conversion_version: isV3 ? getV2V3(isV3) : undefined,
+    conversion_version: isV3 === undefined ? undefined : getV2V3(isV3),
   };
 };
 
