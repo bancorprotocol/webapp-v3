@@ -178,7 +178,7 @@ export const V3HoldingPage = () => {
           )}
         </div>
         <div>
-          <div className="mb-30 p-30 shadow rounded-10">
+          <div className="mb-30 p-30 shadow dark:bg-charcoal rounded-10">
             {token ? (
               `${token.symbol} Pool APR`
             ) : (
@@ -224,7 +224,7 @@ export const V3HoldingPage = () => {
             </div>
           </div>
           {holding ? (
-            <div className="flex items-center justify-between shadow rounded-10 p-30">
+            <div className="flex items-center justify-between shadow dark:bg-charcoal rounded-10 p-30">
               <div className="text-secondary">
                 bn{holding.pool.reserveToken.symbol} Available
                 <div className="text-black text-20 dark:text-white mt-8">
