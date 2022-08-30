@@ -10,6 +10,12 @@ import { publicProvider } from 'wagmi/providers/public';
 import { ReactNode } from 'react';
 import { getTenderlyRpcLS } from 'utils/localStorage';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import {
+  customRainbowThemeDark,
+  customRainbowThemeLight,
+} from 'services/web3/rainbowKit/customRainbowTheme';
+import { useAppSelector } from 'store';
+import { getDarkMode } from 'store/user/user';
 
 const { chains, provider } = configureChains(
   [chain.mainnet],
@@ -38,6 +44,7 @@ const connectors = connectorsForWallets([
     ],
   },
 ]);
+
 const wagmiClient = createClient({
   autoConnect: true,
   connectors,
@@ -45,9 +52,16 @@ const wagmiClient = createClient({
 });
 
 export const RainbowKitWallet = ({ children }: { children: ReactNode }) => {
+  const darkmode = useAppSelector(getDarkMode);
+
   return (
     <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains}>{children}</RainbowKitProvider>
+      <RainbowKitProvider
+        theme={darkmode ? customRainbowThemeDark : customRainbowThemeLight}
+        chains={chains}
+      >
+        {children}
+      </RainbowKitProvider>
     </WagmiConfig>
   );
 };
