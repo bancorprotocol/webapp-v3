@@ -217,8 +217,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     pool.reserveToken.balance,
   ]);
 
-  const vaultBalance = toBigNumber(pool.liquidity.usd)
-    .div(pool.stakedBalance.usd)
+  const vaultBalance = toBigNumber(pool.liquidity.tkn)
+    .div(pool.stakedBalance.tkn)
     .minus(1)
     .times(100);
 
