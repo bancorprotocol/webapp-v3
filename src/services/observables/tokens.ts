@@ -1,11 +1,8 @@
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { user$ } from 'services/observables/user';
-import {
-  fetchETH,
-  fetchTokenBalanceMulticall,
-} from 'services/web3/token/token';
-import { bntToken, ethToken, genericToken } from 'services/web3/config';
+import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
+import { bntToken, genericToken } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -219,14 +216,11 @@ export const userBalancesInWei$ = combineLatest([
       return undefined;
     }
 
-    // get balances for tokens other than ETH
-    const balances = await fetchTokenBalanceMulticall(
-      apiTokens.map((t) => t.dlt_id).filter((id) => id !== ethToken),
+    // get balances for tokens and return map
+    return await fetchTokenBalanceMulticall(
+      apiTokens.map((t) => t.dlt_id),
       user
     );
-    // get balance for ETH
-    balances.set(ethToken, await fetchETH(user));
-    return balances;
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),
   shareReplay(1)
@@ -243,14 +237,11 @@ export const userBalancesInWeiV3$ = combineLatest([
       return undefined;
     }
 
-    // get balances for tokens other than ETH
-    const balances = await fetchTokenBalanceMulticall(
-      apiTokensv3.map((t) => t.dltId).filter((id) => id !== ethToken),
+    // get balances for tokens and return map
+    return await fetchTokenBalanceMulticall(
+      apiTokensv3.map((t) => t.dltId),
       user
     );
-    // get balance for ETH
-    balances.set(ethToken, await fetchETH(user));
-    return balances;
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),
   shareReplay(1)
