@@ -18,8 +18,16 @@ import { ApprovalContract } from 'services/web3/approval';
 import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { addNotification } from 'store/notification/notification';
-import { Events } from 'services/api/googleTagManager';
-import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import {
+  Events,
+  getLimitMarket,
+  getRegularAdvanced,
+} from 'services/api/googleTagManager';
+import {
+  sendConversionEvent,
+  setCurrentConversion,
+} from 'services/api/googleTagManager/conversion';
+import BigNumber from 'bignumber.js';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
@@ -41,6 +49,7 @@ export const useTrade = ({
     (state) => state.user.slippageTolerance
   );
   const account = useAppSelector((state) => state.user.account);
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const [isBusy, setIsBusy] = useState(false);
 
@@ -56,6 +65,31 @@ export const useTrade = ({
       setIsBusy(false);
       return;
     }
+
+    const fromToken = fromInput.token;
+    const toToken = toInput.token;
+    const fromAmount = fromInput.inputTkn;
+    const fromAmountUsd = fromInput.inputFiat;
+    const toAmount = toInput.inputTkn;
+    const toAmountUsd = toInput.inputFiat;
+    const tokenPair = fromToken.symbol + '/' + toToken.symbol;
+    const rate = new BigNumber(toAmount).div(fromAmount).toFixed(4);
+    setCurrentConversion(
+      getLimitMarket(false),
+      tokenPair,
+      fromToken.symbol,
+      toToken.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      undefined,
+      undefined,
+      getRegularAdvanced(slippageTolerance),
+      isV3
+    );
 
     await swap(
       isV3,

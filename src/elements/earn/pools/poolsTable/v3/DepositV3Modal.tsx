@@ -34,7 +34,6 @@ import {
   getOnOff,
 } from 'services/api/googleTagManager';
 import { DepositDisabledModal } from './DepositDisabledModal';
-import { checkV3DepositWhitelist } from 'utils/v3Deposit';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { DepositFAQ } from './DepositFAQ';
@@ -47,9 +46,6 @@ interface Props {
 
 export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const isBNT = bntToken === pool.poolDltId;
-  const adminEnableDeposit = useAppSelector(
-    (state) => state.user.enableDeposit
-  );
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
@@ -67,10 +63,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     inputTkn: amount,
     inputFiat: inputFiat,
   });
-
-  const enableDeposit =
-    adminEnableDeposit ||
-    (pool.depositingEnabled && checkV3DepositWhitelist(pool.poolDltId));
 
   const onClose = async () => {
     setIsOpen(false);
@@ -230,7 +222,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     .minus(1)
     .times(100);
 
-  if (!enableDeposit)
+  if (!pool.depositingEnabled)
     return <DepositDisabledModal renderButton={renderButton} />;
 
   return (
