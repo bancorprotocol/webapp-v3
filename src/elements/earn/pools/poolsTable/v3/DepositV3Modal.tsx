@@ -35,10 +35,10 @@ import {
 } from 'services/api/googleTagManager';
 import { DepositDisabledModal } from './DepositDisabledModal';
 import { checkV3DepositWhitelist } from 'utils/v3Deposit';
-import { TradeWidgetInput } from '../../../../trade/TradeWidgetInput';
-import { useTknFiatInput } from '../../../../trade/useTknFiatInput';
+import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
+import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { DepositFAQ } from './DepositFAQ';
-import { Switch, SwitchVariant } from '../../../../../components/switch/Switch';
+import { Switch, SwitchVariant } from 'components/switch/Switch';
 
 interface Props {
   pool: PoolV3;
@@ -225,8 +225,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     pool.reserveToken.balance,
   ]);
 
-  const vaultBalance = toBigNumber(pool.liquidity.usd)
-    .div(pool.stakedBalance.usd)
+  const vaultBalance = toBigNumber(pool.liquidity.tkn)
+    .div(pool.stakedBalance.tkn)
     .minus(1)
     .times(100);
 
