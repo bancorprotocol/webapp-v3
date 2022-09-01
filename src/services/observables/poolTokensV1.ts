@@ -9,7 +9,7 @@ import { user$ } from 'services/observables/user';
 import { multicall } from 'services/web3/multicall/multicall';
 import { utils } from 'ethers';
 import { zip } from 'lodash';
-import { poolsNew$, PoolToken } from 'services/observables/pools';
+import { poolsV2$, PoolToken } from 'services/observables/pools';
 import { findPoolByConverter } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { buildTokenPoolCall } from 'services/web3/swap/market';
@@ -116,7 +116,7 @@ const zipAnchorAndConverters = (
 };
 
 export const poolTokens$ = combineLatest([
-  poolsNew$,
+  poolsV2$,
   partialPoolTokens$,
   apiPools$,
 ]).pipe(

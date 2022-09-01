@@ -1,10 +1,8 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import {
-  getEnableDepositLS,
   getForceV3LS,
   setDarkModeLS,
-  setEnableDepositLS,
   setForceV3LS,
   setSlippageToleranceLS,
   setUsdToggleLS,
@@ -26,7 +24,6 @@ export interface UserState {
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
-  enableDeposit: boolean;
 }
 
 export const initialState: UserState = {
@@ -38,7 +35,6 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
-  enableDeposit: getEnableDepositLS(),
 };
 
 const userSlice = createSlice({
@@ -74,10 +70,6 @@ const userSlice = createSlice({
       state.forceV3Routing = action.payload;
       setForceV3LS(action.payload);
     },
-    setEnableDeposit: (state, action) => {
-      state.enableDeposit = action.payload;
-      setEnableDepositLS(action.payload);
-    },
   },
 });
 
@@ -112,7 +104,6 @@ export const {
   setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
-  setEnableDeposit,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

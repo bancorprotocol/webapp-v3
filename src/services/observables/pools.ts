@@ -5,13 +5,14 @@ import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import { bntToken } from 'services/web3/config';
+import { bancorMasterVault, bntToken } from 'services/web3/config';
 import {
   APIPool,
   APIPoolV3,
   APIReward,
+  PriceDictionary,
 } from 'services/api/bancorApi/bancorApi.types';
-import { toBigNumber } from 'utils/helperFunctions';
+import { calcFiatValue, toBigNumber } from 'utils/helperFunctions';
 import { calcApr, shrinkToken } from 'utils/formulas';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 import {
@@ -20,6 +21,8 @@ import {
 } from 'services/web3/v3/portfolio/standardStaking';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
+import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
 dayjs.extend(utc);
 
 export interface Reserve {
@@ -64,6 +67,8 @@ export interface PoolV3 extends APIPoolV3 {
   apr7d: APR;
   programs: RewardsProgramRaw[];
   latestProgram?: RewardsProgramRaw;
+  extVaultBalance: Pick<PriceDictionary, 'tkn' | 'usd'>;
+  poolDeficit: BigNumber;
 }
 
 export interface PoolToken {
@@ -147,21 +152,15 @@ export const buildPoolObject = (
   };
 };
 
-export const calculateAPR = (fees: string, liquidity: string) => {
-  return new BigNumber(fees)
-    .times(52.1429)
-    .div(liquidity)
-    .times(100)
-    .toNumber();
-};
-
-const buildPoolV3Object = async (
+const buildPoolV3Object = (
   tokensMap: Map<string, Token>,
   apiPool?: APIPoolV3,
   reserveToken?: Token,
   latestProgramIdMap?: Map<string, string | undefined>,
-  rewardsPrograms?: RewardsProgramRaw[]
-): Promise<PoolV3 | undefined> => {
+  rewardsPrograms?: RewardsProgramRaw[],
+  masterVaultBalances?: Map<string, string>,
+  extVaultBalances?: Map<string, string>
+): PoolV3 | undefined => {
   if (!apiPool || !reserveToken) {
     return undefined;
   }
@@ -221,8 +220,40 @@ const buildPoolV3Object = async (
     .plus(standardRewardsApr7d)
     .toNumber();
 
+  // Master Vault Balances aka liquidity
+  const tknVaultBalance = shrinkToken(
+    masterVaultBalances?.get(apiPool.poolDltId) ?? '0',
+    apiPool.decimals
+  );
+
+  const liquidity: Pick<PriceDictionary, 'tkn' | 'usd'> = {
+    tkn: tknVaultBalance,
+    usd: calcFiatValue(tknVaultBalance, reserveToken.usdPrice),
+  };
+
+  // External Vault Balances
+  const tknExtVaultBalance = shrinkToken(
+    extVaultBalances?.get(apiPool.poolDltId) ?? '0',
+    apiPool.decimals
+  );
+
+  const extVaultBalance: Pick<PriceDictionary, 'tkn' | 'usd'> = {
+    tkn: tknExtVaultBalance,
+    usd: calcFiatValue(tknExtVaultBalance, reserveToken.usdPrice),
+  };
+
+  // Pool Deficit Percentage
+  const poolDeficit = toBigNumber(liquidity.tkn)
+    .plus(extVaultBalance.tkn)
+    .div(stakedBalance.tkn)
+    .minus(1)
+    .times(100);
+
   return {
     ...apiPool,
+    liquidity,
+    extVaultBalance,
+    poolDeficit,
     stakedBalance,
     apr24h: {
       tradingFees: tradingFeesApr24h,
@@ -273,7 +304,7 @@ export const standardsRewardsAPR = (
   return 0;
 };
 
-export const poolsNew$ = combineLatest([apiPools$, allTokensNew$]).pipe(
+export const poolsV2$ = combineLatest([apiPools$, allTokensNew$]).pipe(
   switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
     const bnt = allTokens.find((t) => t.address === bntToken);
     if (!bnt) {
@@ -308,21 +339,35 @@ export const poolsV3$ = combineLatest([
   switchMapIgnoreThrow(
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+      const poolIds = apiPoolsV3.map((pool) => pool.poolDltId);
 
-      const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
+      const [
+        latestProgramIds,
+        masterVaultBalances,
+        extVaultBalances,
+        extVaultIsPaused,
+      ] = await Promise.all([
+        fetchLatestProgramIdsMulticall(apiPoolsV3),
+        fetchTokenBalanceMulticall(poolIds, bancorMasterVault),
+        fetchTokenBalanceMulticall(
+          poolIds,
+          ContractsApi.ExternalProtectionVault.contractAddress
+        ),
+        ContractsApi.ExternalProtectionVault.read.isPaused(),
+      ]);
 
-      const pools = await Promise.all(
-        apiPoolsV3.map(
-          async (pool) =>
-            await buildPoolV3Object(
-              tokensMap,
-              pool,
-              tokensMap.get(pool.poolDltId),
-              latestProgramIds,
-              standardRewardPrograms
-            )
+      const pools = apiPoolsV3.map((pool) =>
+        buildPoolV3Object(
+          tokensMap,
+          pool,
+          tokensMap.get(pool.poolDltId),
+          latestProgramIds,
+          standardRewardPrograms,
+          masterVaultBalances,
+          !extVaultIsPaused ? extVaultBalances : undefined
         )
       );
+
       return pools.filter((pool) => !!pool) as PoolV3[];
     }
   ),
