@@ -163,5 +163,10 @@
         "maxSize": "750kB"
       }
     ]
+  },
+  "ci": {
+    "trackBranches": [
+      "main"
+    ]
   }
 }
