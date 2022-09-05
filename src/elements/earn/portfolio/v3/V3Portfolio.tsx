@@ -1,7 +1,5 @@
 import { V3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/V3Withdraw';
 import { V3AvailableToStake } from 'elements/earn/portfolio/v3/V3AvailableToStake';
-import { Button, ButtonSize } from 'components/button/Button';
-import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { getDarkMode } from 'store/user/user';
 import { memo } from 'react';
 import { useAppSelector } from 'store';
@@ -11,6 +9,7 @@ import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -58,19 +57,7 @@ const V3Portfolio = () => {
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center mx-auto">
-      <h2 className="text-20 text-center font-medium">
-        Connect your wallet to see your earnings
-      </h2>
-      <Button
-        className="flex items-center justify-center mt-20"
-        size={ButtonSize.Meduim}
-        onClick={() => handleWalletButtonClick()}
-      >
-        <IconWallet className="w-20 mr-10" />
-        Connect Wallet
-      </Button>
-    </div>
+    <WalletConnectRequest />
   );
 };
 
