@@ -3,10 +3,9 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
+import { toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import {
   confirmLeaveNotification,
@@ -15,6 +14,7 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
+import { ReactComponent as IconClock } from 'assets/icons/time.svg';
 
 interface Props {
   holding: Holding;
@@ -40,8 +40,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
     ...holding.pool.programs.find((pp) => pp.id === p.id),
   }));
 
-  const activePrograms = programsMerged.filter((p) => p.isActive);
-  const inactivePrograms = programsMerged.filter((p) => !p.isActive);
+  const programsSorted = programsMerged.sort((a, _) => (a.isActive ? 0 : -1));
 
   const handleLeaveClick = async (
     id: string,
@@ -84,80 +83,74 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
     <>
       {renderButton(() => setIsOpen(true))}
       <ModalV3
-        title={'Rewards'}
+        title={'Manage Rewards'}
         setIsOpen={onClose}
         isOpen={isOpen}
         separator
         large
       >
-        <div className="p-30 space-y-30">
-          <div>
-            <IconGift className="text-primary w-40 mx-auto" />
+        <div className="px-30 pb-30 pt-10">
+          <div className="text-secondary mb-48">
+            Earn BNT rewards on your bn{holding.pool.reserveToken.symbol}, there
+            are no cooldowns or withdrawal fees for adding or removing bnETH to
+            reward progrms
           </div>
-          <h2 className="text-center">Reward program you have joined</h2>
-          {activePrograms.map((program) => (
-            <div
-              key={program.id}
-              className="flex items-end justify-between bg-secondary rounded px-20 py-10"
-            >
-              <div>
-                <div className="text-20">
-                  {prettifyNumber(
-                    shrinkToken(program.tokenAmountWei, holding.pool.decimals)
-                  )}{' '}
-                  {holding.pool.reserveToken.symbol}
-                </div>
-                <div>Program ID: {program.id}</div>
-                <div>APR: {holding.pool.apr7d.standardRewards.toFixed(2)}%</div>
-              </div>
-              <div>
-                <Button
-                  variant={ButtonVariant.Tertiary}
-                  size={ButtonSize.ExtraSmall}
-                  disabled={txBusy}
-                  onClick={() =>
-                    handleLeaveClick(
-                      program.id,
-                      program.poolTokenAmountWei,
-                      program.tokenAmountWei
-                    )
-                  }
-                >
-                  Leave
-                </Button>
-              </div>
-            </div>
-          ))}
-          {inactivePrograms.length > 0 && (
-            <div>
-              <div className="text-warning text-center">
-                You have joined an inactive program!
-              </div>
-              <div className="text-secondary text-center mb-10">
-                First leave, then join an active program to earn more bonuses.
-              </div>
-              {inactivePrograms.map((program) => (
-                <div
-                  key={program.id}
-                  className="flex items-end justify-between bg-secondary rounded pl-20 p-10"
-                >
+          {true && (
+            <>
+              <div className="text-secondary">
+                Available bn{holding.pool.reserveToken.symbol}
+                <div className="flex items-center justify-between mt-30">
                   <div>
-                    <div className="text-20">
-                      {prettifyNumber(
-                        shrinkToken(
-                          program.tokenAmountWei,
-                          holding.pool.decimals
-                        )
-                      )}{' '}
-                      {holding.pool.reserveToken.symbol}
+                    <div className="text-black text-20 dark:text-white">
+                      ????
                     </div>
-                    <div>Program ID: {program.id}</div>
-                    <div>APR: 0%</div>
+                    <div>??? bn{holding.pool.reserveToken.symbol}</div>
                   </div>
+                  <Button
+                    size={ButtonSize.Small}
+                    variant={ButtonVariant.Tertiary}
+                  >
+                    Join Rewards
+                  </Button>
+                </div>
+              </div>
+              <hr className="my-30 border-silver dark:border-grey" />
+            </>
+          )}
+          <div className="text-seconday mb-30">
+            bn{holding.pool.reserveToken.symbol} in BNT Rewards
+          </div>
 
-                  <div>
+          {programsSorted.length > 0 && (
+            <div>
+              {programsSorted.map((program) => (
+                <div key={program.id}>
+                  <div className="flex items-center justify-between text-secondary">
+                    <div>
+                      <div className="text-black text-20 dark:text-white">
+                        ????
+                      </div>
+                      <div>??? bn{holding.pool.reserveToken.symbol}</div>
+                    </div>
+                    {program.isActive ? (
+                      <div className="text-secondary">
+                        <div className="text-primary">???% APR</div>
+                        <div className="flex items-center gap-5">
+                          <IconClock />
+                          {program.startTime} - {program.endTime}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-error">
+                        <div className="text-secondary text-16">Inactive</div>
+                        <div className="flex items-center gap-5">
+                          <IconClock />
+                          Ended {program.endTime}
+                        </div>
+                      </div>
+                    )}
                     <Button
-                      variant={ButtonVariant.Secondary}
+                      variant={ButtonVariant.Tertiary}
                       size={ButtonSize.ExtraSmall}
                       disabled={txBusy}
                       onClick={() =>
@@ -168,7 +161,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
                         )
                       }
                     >
-                      Leave
+                      Remove
                     </Button>
                   </div>
                 </div>

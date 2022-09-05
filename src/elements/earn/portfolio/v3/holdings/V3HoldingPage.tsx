@@ -226,7 +226,7 @@ export const V3HoldingPage = () => {
           </div>
           {holding ? (
             <div className="shadow dark:bg-charcoal rounded-10 p-30">
-              {holding.latestProgram && (
+              {holding.programs.length !== 0 && (
                 <>
                   <div className="flex items-center justify-between mb-10 md:mb-0">
                     <div className="text-secondary">
@@ -237,9 +237,9 @@ export const V3HoldingPage = () => {
                       <div className="text-black text-20 dark:text-white mt-8">
                         {prettifyNumber(
                           shrinkToken(
-                            holding.latestProgram.poolTokenAmountWei,
+                            holding.latestProgram?.poolTokenAmountWei ?? '0',
                             holding.pool.reserveToken.decimals
-                          ) ?? '0'
+                          )
                         )}
                       </div>
                     </div>
