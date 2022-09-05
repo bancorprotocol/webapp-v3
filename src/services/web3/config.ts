@@ -21,7 +21,7 @@ export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const genericToken: string = generic_token;
-
+export const bancorMasterVault = '0x649765821D9f64198c905eC0B2B037a4a52Bc373';
 export const bntDecimals: number = 18;
 export const vBntDecimals: number = 18;
 const gasBuffer = 1.05;

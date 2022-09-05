@@ -24,7 +24,7 @@ export const MyRewards = () => {
   const proof = useAppSelector(getUserRewardsProof);
   const canClaim =
     !hasClaimed && !!account && userRewards.claimable !== '0' && !!proof;
-  const enableDeposit = useAppSelector((state) => state.user.enableDeposit);
+  const enableDeposit = false;
 
   return (
     <section className="content-section py-20 border-l-[10px] border-primary-light dark:border-primary-dark">
