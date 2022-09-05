@@ -21,7 +21,7 @@ interface Props {
   renderButton: (onClick: () => void) => React.ReactNode;
 }
 
-export const V3UnstakeModal = ({ holding, renderButton }: Props) => {
+export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   const account = useAppSelector((state) => state.user.account);
   const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);

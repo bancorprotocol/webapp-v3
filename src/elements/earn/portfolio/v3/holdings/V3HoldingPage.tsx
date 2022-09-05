@@ -25,6 +25,7 @@ import { getTokenById } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { PoolV3 } from 'services/observables/pools';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
+import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
@@ -224,28 +225,63 @@ export const V3HoldingPage = () => {
             </div>
           </div>
           {holding ? (
-            <div className="flex items-center justify-between shadow dark:bg-charcoal rounded-10 p-30">
-              <div className="text-secondary">
-                bn{holding.pool.reserveToken.symbol} Available
-                <div className="text-black text-20 dark:text-white mt-8">
-                  {prettifyNumber(holding.poolTokenBalance)}
+            <div className="shadow dark:bg-charcoal rounded-10 p-30">
+              {holding.latestProgram && (
+                <>
+                  <div className="flex items-center justify-between mb-10 md:mb-0">
+                    <div className="text-secondary">
+                      <div className="max-w-[145px]">
+                        bn{holding.pool.reserveToken.symbol} Available in
+                        rewards program
+                      </div>
+                      <div className="text-black text-20 dark:text-white mt-8">
+                        {prettifyNumber(
+                          shrinkToken(
+                            holding.latestProgram.poolTokenAmountWei,
+                            holding.pool.reserveToken.decimals
+                          ) ?? '0'
+                        )}
+                      </div>
+                    </div>
+                    <V3ManageProgramsModal
+                      holding={holding}
+                      renderButton={(onClick) => (
+                        <Button
+                          size={ButtonSize.ExtraSmall}
+                          variant={ButtonVariant.Secondary}
+                          onClick={() => onClick()}
+                        >
+                          Manage
+                        </Button>
+                      )}
+                    />
+                  </div>
+                  <hr className="hidden md:block my-30 border-silver dark:border-grey" />
+                </>
+              )}
+              <div className="flex items-center justify-between">
+                <div className="text-secondary">
+                  bn{holding.pool.reserveToken.symbol} Available
+                  <div className="text-black text-20 dark:text-white mt-8">
+                    {prettifyNumber(holding.poolTokenBalance)}
+                  </div>
                 </div>
+                <>
+                  <V3WithdrawModal
+                    holding={holding}
+                    isOpen={isOpen}
+                    setIsOpen={setIsOpen}
+                  />
+                  <Button
+                    size={ButtonSize.ExtraSmall}
+                    variant={ButtonVariant.Secondary}
+                    onClick={() => setIsOpen(true)}
+                    disabled={isDisabled}
+                  >
+                    Withdraw
+                  </Button>
+                </>
               </div>
-              <>
-                <V3WithdrawModal
-                  holding={holding}
-                  isOpen={isOpen}
-                  setIsOpen={setIsOpen}
-                />
-                <Button
-                  size={ButtonSize.ExtraSmall}
-                  variant={ButtonVariant.Secondary}
-                  onClick={() => setIsOpen(true)}
-                  disabled={isDisabled}
-                >
-                  Withdraw
-                </Button>
-              </>
             </div>
           ) : !account || !isLoadingHoldings ? (
             <></>
