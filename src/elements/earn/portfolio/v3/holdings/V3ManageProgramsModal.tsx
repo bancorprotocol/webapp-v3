@@ -114,59 +114,63 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
                   </Button>
                 </div>
               </div>
-              <hr className="my-30 border-silver dark:border-grey" />
+              {programsSorted.length > 0 && (
+                <hr className="my-30 border-silver dark:border-grey" />
+              )}
             </>
           )}
-          <div className="text-seconday mb-30">
-            bn{holding.pool.reserveToken.symbol} in BNT Rewards
-          </div>
-
           {programsSorted.length > 0 && (
-            <div>
-              {programsSorted.map((program) => (
-                <div key={program.id}>
-                  <div className="flex items-center justify-between text-secondary">
-                    <div>
-                      <div className="text-black text-20 dark:text-white">
-                        ????
+            <>
+              <div className="text-seconday mb-30">
+                bn{holding.pool.reserveToken.symbol} in BNT Rewards
+              </div>
+
+              <div>
+                {programsSorted.map((program) => (
+                  <div key={program.id}>
+                    <div className="flex items-center justify-between text-secondary">
+                      <div>
+                        <div className="text-black text-20 dark:text-white">
+                          ????
+                        </div>
+                        <div>??? bn{holding.pool.reserveToken.symbol}</div>
                       </div>
-                      <div>??? bn{holding.pool.reserveToken.symbol}</div>
+                      {program.isActive ? (
+                        <div className="text-secondary">
+                          <div className="text-primary">???% APR</div>
+                          <div className="flex items-center gap-5">
+                            <IconClock />
+                            {program.startTime} - {program.endTime}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-error">
+                          <div className="text-secondary text-16">Inactive</div>
+                          <div className="flex items-center gap-5">
+                            <IconClock />
+                            Ended {program.endTime}
+                          </div>
+                        </div>
+                      )}
+                      <Button
+                        variant={ButtonVariant.Tertiary}
+                        size={ButtonSize.ExtraSmall}
+                        disabled={txBusy}
+                        onClick={() =>
+                          handleLeaveClick(
+                            program.id,
+                            program.poolTokenAmountWei,
+                            program.tokenAmountWei
+                          )
+                        }
+                      >
+                        Remove
+                      </Button>
                     </div>
-                    {program.isActive ? (
-                      <div className="text-secondary">
-                        <div className="text-primary">???% APR</div>
-                        <div className="flex items-center gap-5">
-                          <IconClock />
-                          {program.startTime} - {program.endTime}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-error">
-                        <div className="text-secondary text-16">Inactive</div>
-                        <div className="flex items-center gap-5">
-                          <IconClock />
-                          Ended {program.endTime}
-                        </div>
-                      </div>
-                    )}
-                    <Button
-                      variant={ButtonVariant.Tertiary}
-                      size={ButtonSize.ExtraSmall}
-                      disabled={txBusy}
-                      onClick={() =>
-                        handleLeaveClick(
-                          program.id,
-                          program.poolTokenAmountWei,
-                          program.tokenAmountWei
-                        )
-                      }
-                    >
-                      Remove
-                    </Button>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </ModalV3>

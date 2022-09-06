@@ -44,8 +44,11 @@ export const V3HoldingPage = () => {
   );
 
   const isBNT = holding?.pool.poolDltId === bntToken;
-
   const isDisabled = toBigNumber(holding ? holding.tokenBalance : 0).isZero();
+  const programs = holding?.programs.filter((p) =>
+    toBigNumber(p.tokenAmountWei).gt(0)
+  );
+  const showRewards = programs?.length !== 0;
 
   const [withdrawAmounts, setWithdrawAmounts] = useState<{
     tkn: number;
@@ -145,16 +148,16 @@ export const V3HoldingPage = () => {
               <div className="md:block grid grid-cols-2">
                 Total Invested
                 <div className="text-black dark:text-white md:mt-8 justify-self-end">
-                  ????.??
+                  Coming Soon
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
                 Compunding returns
                 <div className="md:block flex flex-col items-end justify-self-end">
                   <div className="text-black dark:text-white md:mt-8">
-                    ????.??
+                    Coming Soon
                   </div>
-                  <div className="text-primary mt-8">???%</div>
+                  <div className="text-primary mt-8">Coming Soon</div>
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
@@ -226,7 +229,7 @@ export const V3HoldingPage = () => {
           </div>
           {holding ? (
             <div className="shadow dark:bg-charcoal rounded-10 p-30">
-              {holding.programs.length !== 0 && (
+              {showRewards && (
                 <>
                   <div className="flex items-center justify-between mb-10 md:mb-0">
                     <div className="text-secondary">

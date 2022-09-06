@@ -8,13 +8,11 @@ import { WhatsNew } from './WhatsNew';
 import { ReactComponent as HoldingsLight } from 'assets/holdingsLight.svg';
 import { ReactComponent as HoldingsDark } from 'assets/holdingsDark.svg';
 import { V3Holdings } from 'elements/earn/portfolio/v3/holdings/V3Holdings';
-import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 
 const V3Portfolio = () => {
   const account = useAppSelector((state) => state.user.account);
   const darkMode = useAppSelector<boolean>(getDarkMode);
-  const { handleWalletButtonClick } = useWalletConnect();
   const hasHoldings = true;
 
   return account ? (
