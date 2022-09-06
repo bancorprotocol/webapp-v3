@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { toBigNumber } from 'utils/helperFunctions';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { shrinkToken } from 'utils/formulas';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
@@ -15,6 +15,8 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { ReactComponent as IconClock } from 'assets/icons/time.svg';
+import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 
 interface Props {
   holding: Holding;
@@ -95,29 +97,36 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
             are no cooldowns or withdrawal fees for adding or removing bnETH to
             reward progrms
           </div>
-          {true && (
-            <>
-              <div className="text-secondary">
-                Available bn{holding.pool.reserveToken.symbol}
-                <div className="flex items-center justify-between mt-30">
-                  <div>
-                    <div className="text-black text-20 dark:text-white">
-                      ????
-                    </div>
-                    <div>??? bn{holding.pool.reserveToken.symbol}</div>
-                  </div>
-                  <Button
-                    size={ButtonSize.Small}
-                    variant={ButtonVariant.Tertiary}
-                  >
-                    Join Rewards
-                  </Button>
+
+          <div className="text-secondary">
+            Available bn{holding.pool.reserveToken.symbol}
+            <div className="flex items-center justify-between mt-30">
+              <div>
+                <div className="text-black text-20 dark:text-white">
+                  {prettifyNumber(
+                    new BigNumber(holding.tokenBalance).times(
+                      holding.pool.reserveToken.usdPrice
+                    ),
+                    true
+                  )}
+                </div>
+                <div>
+                  {prettifyNumber(holding.poolTokenBalance)} bn
+                  {holding.pool.reserveToken.symbol}
                 </div>
               </div>
-              {programsSorted.length > 0 && (
-                <hr className="my-30 border-silver dark:border-grey" />
+              {holding.pool.latestProgram?.isActive && (
+                <Button
+                  size={ButtonSize.Small}
+                  variant={ButtonVariant.Tertiary}
+                >
+                  Join Rewards
+                </Button>
               )}
-            </>
+            </div>
+          </div>
+          {programsSorted.length > 0 && (
+            <hr className="my-30 border-silver dark:border-grey" />
           )}
           {programsSorted.length > 0 && (
             <>
@@ -131,16 +140,36 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
                     <div className="flex items-center justify-between text-secondary">
                       <div>
                         <div className="text-black text-20 dark:text-white">
-                          ????
+                          {prettifyNumber(
+                            new BigNumber(
+                              shrinkToken(
+                                program.tokenAmountWei,
+                                holding.pool.decimals
+                              )
+                            ).times(holding.pool.reserveToken.usdPrice),
+                            true
+                          )}
                         </div>
-                        <div>??? bn{holding.pool.reserveToken.symbol}</div>
+                        <div>
+                          {prettifyNumber(
+                            shrinkToken(
+                              program.poolTokenAmountWei,
+                              holding.pool.decimals
+                            )
+                          )}{' '}
+                          bn{holding.pool.reserveToken.symbol}
+                        </div>
                       </div>
                       {program.isActive ? (
                         <div className="text-secondary">
-                          <div className="text-primary">???% APR</div>
+                          <div className="text-primary">
+                            {holding.pool.apr7d.standardRewards.toFixed(2)}% APR
+                          </div>
                           <div className="flex items-center gap-5">
                             <IconClock />
-                            {program.startTime} - {program.endTime}
+                            {dayjs(program.startTime).format(
+                              'MMM D, YYYY'
+                            )} - {dayjs(program.endTime).format('MMM D, YYYY')}
                           </div>
                         </div>
                       ) : (
@@ -148,7 +177,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
                           <div className="text-secondary text-16">Inactive</div>
                           <div className="flex items-center gap-5">
                             <IconClock />
-                            Ended {program.endTime}
+                            Ended {dayjs(program.endTime).format('MMM D, YYYY')}
                           </div>
                         </div>
                       )}

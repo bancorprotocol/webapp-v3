@@ -48,7 +48,8 @@ export const V3HoldingPage = () => {
   const programs = holding?.programs.filter((p) =>
     toBigNumber(p.tokenAmountWei).gt(0)
   );
-  const showRewards = programs?.length !== 0;
+  const showRewards =
+    programs?.length !== 0 || holding?.pool.latestProgram?.isActive;
 
   const [withdrawAmounts, setWithdrawAmounts] = useState<{
     tkn: number;
@@ -77,6 +78,13 @@ export const V3HoldingPage = () => {
     holding?.combinedTokenBalance,
     holding?.pool.decimals,
   ]);
+
+  const totalPTAllPrograms =
+    holding?.programs
+      .map((program) =>
+        Number(shrinkToken(program.poolTokenAmountWei, holding?.pool.decimals))
+      )
+      .reduce((sum, current) => sum + current, 0) ?? 0;
 
   const deficitAmount =
     holding && !isBNT && withdrawAmounts
@@ -157,7 +165,8 @@ export const V3HoldingPage = () => {
                   <div className="text-black dark:text-white md:mt-8">
                     Coming Soon
                   </div>
-                  <div className="text-primary mt-8">Coming Soon</div>
+
+                  {false && <div className="text-primary mt-8">???%</div>}
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
@@ -238,12 +247,7 @@ export const V3HoldingPage = () => {
                         rewards program
                       </div>
                       <div className="text-black text-20 dark:text-white mt-8">
-                        {prettifyNumber(
-                          shrinkToken(
-                            holding.latestProgram?.poolTokenAmountWei ?? '0',
-                            holding.pool.reserveToken.decimals
-                          )
-                        )}
+                        {prettifyNumber(totalPTAllPrograms)}
                       </div>
                     </div>
                     <V3ManageProgramsModal
