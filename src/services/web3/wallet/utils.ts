@@ -23,6 +23,7 @@ import gnosisSafeLogo from 'assets/logos/gnosisSafe.svg';
 import torusLogo from 'assets/logos/torus.svg';
 import imposterLogo from 'assets/logos/imposter.svg';
 import { isForkAvailable } from '../config';
+import { isMobile } from 'react-device-detect';
 
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new Web3Provider(
@@ -43,7 +44,29 @@ export interface WalletInfo {
   icon: string;
   mobile?: boolean;
   url?: string;
+  canAutoConnect?: boolean;
 }
+
+export const [isMetaMaskMobile, isCoinbaseMobile] =
+  (function checkMobileWallets() {
+    let isMetaMaskMobile = false;
+    let isCoinbaseMobile = false;
+    if (isMobile && window.ethereum) {
+      if (window.ethereum.isMetaMask) {
+        isMetaMaskMobile = true;
+      }
+
+      if (window.ethereum.isCoinbaseWallet) {
+        isCoinbaseMobile = true;
+      } else if (window.ethereum.providers?.length) {
+        window.ethereum.providers.forEach((p: any) => {
+          if (p.isMetaMask) isMetaMaskMobile = true;
+          if (p.isCoinbaseWallet) isCoinbaseMobile = true;
+        });
+      }
+    }
+    return [isMetaMaskMobile, isCoinbaseMobile];
+  })();
 
 export const SUPPORTED_WALLETS: WalletInfo[] = [
   {
@@ -51,6 +74,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'MetaMask',
     icon: metamaskLogo,
     mobile: true,
+    canAutoConnect: isMetaMaskMobile,
   },
   ...(isForkAvailable
     ? [
@@ -73,6 +97,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
     mobile: true,
+    canAutoConnect: isCoinbaseMobile,
   },
   {
     name: 'Ledger',
