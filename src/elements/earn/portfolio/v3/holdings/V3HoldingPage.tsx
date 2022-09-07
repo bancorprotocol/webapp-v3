@@ -20,10 +20,8 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
 import BigNumber from 'bignumber.js';
-import { Token } from 'services/observables/tokens';
 import { getTokenById } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
-import { PoolV3 } from 'services/observables/pools';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 
@@ -36,12 +34,8 @@ export const V3HoldingPage = () => {
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
   const holding = holdings.find((x) => x.pool.poolDltId === id);
-  const token = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, id || '')
-  );
-  const pool = useAppSelector<PoolV3 | undefined>((state: any) =>
-    getV3byID(state, id || '')
-  );
+  const token = useAppSelector((state) => getTokenById(state, id || ''));
+  const pool = useAppSelector((state) => getV3byID(state, id || ''));
 
   const isBNT = holding?.pool.poolDltId === bntToken;
   const isDisabled = toBigNumber(holding ? holding.tokenBalance : 0).isZero();
