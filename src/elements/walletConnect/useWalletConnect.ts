@@ -1,10 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import {
-  SUPPORTED_WALLETS,
-  WalletInfo,
-  isCoinbaseMobile,
-  isMetaMaskMobile,
-} from 'services/web3/wallet/utils';
+import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
 import {
   sendWalletEvent,
   WalletEvents,
@@ -128,18 +123,8 @@ export const useWalletConnect = (): UseWalletConnect => {
     async (isMounted) => {
       if (selectedWallet) return;
 
-      if (isMetaMaskMobile) {
-        const wallet = SUPPORTED_WALLETS.find(
-          (wallet) => wallet.name === 'MetaMask'
-        )!;
-        await handleConnect(wallet);
-        return;
-      }
-
-      if (isCoinbaseMobile) {
-        const wallet = SUPPORTED_WALLETS.find(
-          (wallet) => wallet.name === 'Coinbase Wallet'
-        )!;
+      const wallet = SUPPORTED_WALLETS.find((wallet) => wallet.canAutoConnect)!;
+      if (wallet) {
         await handleConnect(wallet);
         return;
       }
