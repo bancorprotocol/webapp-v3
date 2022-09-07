@@ -180,7 +180,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
             <div className="text-secondary mb-48">
               Earn BNT rewards on your bn{holding.pool.reserveToken.symbol},
               there are no cooldowns or withdrawal fees for adding or removing
-              bnETH to reward progrms
+              bnETH to reward programs
             </div>
 
             <div className="text-secondary">
