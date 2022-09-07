@@ -53,9 +53,9 @@ export class GoToPage {
     this.navigate(url, { replace });
   };
 
-  portfolioHolding = (pool: string) => {
+  portfolioHolding = (pool: string, replace = false) => {
     const url = BancorURL.portfolioHolding(pool);
-    this.navigate(url);
+    this.navigate(url, { replace });
   };
 
   portfolioV2RewardsClaim = (replace = false) => {
