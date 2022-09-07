@@ -206,10 +206,24 @@ const buildPoolV3Object = (
     true
   );
 
-  // TODO - add values once available
-  const autoCompoundingApr24H = 0;
-  const autoCompoundingApr7d = 0;
+  // Auto Comp APR
+  const autoCompoundingApr24H = calcApr(
+    apiPool.autoCompoundingRewards24h.tkn ??
+      apiPool.autoCompoundingRewards24h.bnt,
+    apiPool.autoCompoundingRewards24h.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt
+  );
+  const autoCompoundingApr7d = calcApr(
+    apiPool.autoCompoundingRewards7d.tkn ??
+      apiPool.autoCompoundingRewards7d.bnt,
+    apiPool.autoCompoundingRewards7d.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt,
+    true
+  );
 
+  // Total APR
   const totalApr24H = toBigNumber(tradingFeesApr24h)
     .plus(standardRewardsApr24H)
     .plus(autoCompoundingApr24H)

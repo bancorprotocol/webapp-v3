@@ -105,6 +105,9 @@ export interface APIPoolV3 {
   volume7d: PriceDictionary;
   fees7d: PriceDictionary;
   networkFees7d: PriceDictionary;
+  autoCompoundingRewardsActive: boolean;
+  autoCompoundingRewards24h: PriceDictionary;
+  autoCompoundingRewards7d: PriceDictionary;
 }
 
 export interface APIBntV3
