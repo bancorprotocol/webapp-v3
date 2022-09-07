@@ -135,7 +135,8 @@ export const PoolsTable = ({
               ? 'New'
               : `${cellData.value.total.toFixed(2)}%`}
 
-            {cellData.row.original.latestProgram?.isActive && (
+            {(cellData.row.original.latestProgram?.isActive ||
+              cellData.row.original.autoCompoundingRewardsActive) && (
               <>
                 <PopoverV3
                   buttonElement={() => <IconGift className="w-16 h-16" />}
