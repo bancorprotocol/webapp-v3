@@ -208,12 +208,18 @@ const buildPoolV3Object = (
 
   // Auto Comp APR
   const autoCompoundingApr24H = calcApr(
-    apiPool.autoCompoundingRewards24h.tkn,
-    stakedBalance.tkn
+    apiPool.autoCompoundingRewards24h.tkn ??
+      apiPool.autoCompoundingRewards24h.bnt,
+    apiPool.autoCompoundingRewards24h.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt
   );
   const autoCompoundingApr7d = calcApr(
-    apiPool.autoCompoundingRewards7d.tkn,
-    stakedBalance.tkn,
+    apiPool.autoCompoundingRewards7d.tkn ??
+      apiPool.autoCompoundingRewards7d.bnt,
+    apiPool.autoCompoundingRewards7d.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt,
     true
   );
 
