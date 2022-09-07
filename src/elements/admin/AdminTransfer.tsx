@@ -6,6 +6,7 @@ import { getTenderlyRpcLS } from 'utils/localStorage';
 import { Token__factory } from 'services/web3/abis/types';
 import { updateUserBalances } from 'services/observables/tokens';
 import { useState } from 'react';
+import { ethToken } from 'services/web3/config';
 
 export const AdminTransfer = () => {
   const account = useAppSelector((state) => state.user.account);
@@ -33,7 +34,14 @@ export const AdminTransfer = () => {
     const tokenContract = Token__factory.connect(tokenAddress, signer);
 
     try {
-      await tokenContract.transfer(toUser, expandToken(amount, decimals));
+      if (tokenAddress === ethToken) {
+        await signer.sendTransaction({
+          to: toUser,
+          value: expandToken(amount, decimals),
+        });
+      } else {
+        await tokenContract.transfer(toUser, expandToken(amount, decimals));
+      }
       await updateUserBalances();
       setStatus('success');
       setTokenAddress('');
