@@ -3,6 +3,8 @@ import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
 import { AdminUseFork } from 'elements/admin/AdminUseFork';
 import { AdminControls } from 'elements/admin/AdminControls';
 import { isForkAvailable } from 'services/web3/config';
+import { AdminFaucet } from 'elements/admin/AdminFaucet';
+import { AdminTransfer } from 'elements/admin/AdminTransfer';
 
 export const Admin = () => {
   return (
@@ -21,6 +23,17 @@ export const Admin = () => {
           <AdminControls />
         </>
       )}
+
+      {isForkAvailable && (
+        <>
+          <hr />
+
+          <AdminFaucet />
+        </>
+      )}
+
+      <hr />
+      <AdminTransfer />
 
       <hr />
 

@@ -5,7 +5,7 @@ import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import { apiPools$, apiPoolsV3$ } from 'services/observables/apiData';
-import { bancorMasterVault, bntToken } from 'services/web3/config';
+import { bancorMasterVault, bntToken, ethToken } from 'services/web3/config';
 import {
   APIPool,
   APIPoolV3,
@@ -167,6 +167,9 @@ const buildPoolV3Object = (
 
   // ALL programs of this pool
   const programs = rewardsPrograms?.filter((p) => p.pool === apiPool.poolDltId);
+  if (apiPool.poolDltId === ethToken) {
+    console.log(programs);
+  }
 
   // The latest program
   const latestProgram = programs?.find(
