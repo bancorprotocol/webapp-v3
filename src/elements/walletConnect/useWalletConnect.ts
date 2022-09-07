@@ -138,7 +138,7 @@ export const useWalletConnect = (): UseWalletConnect => {
 
       if (isCoinbaseMobile) {
         const wallet = SUPPORTED_WALLETS.find(
-          (wallet) => wallet.name === 'WalletConnect'
+          (wallet) => wallet.name === 'Coinbase Wallet'
         )!;
         await handleConnect(wallet);
         return;
