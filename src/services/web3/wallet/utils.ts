@@ -3,7 +3,6 @@ import { AbstractConnector } from '@web3-react/abstract-connector';
 import {
   injected,
   walletconnect,
-  walletlink,
   frame,
   fortmatic,
   portis,
@@ -69,7 +68,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     mobile: true,
   },
   {
-    connector: walletlink,
+    connector: injected,
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
     mobile: true,
