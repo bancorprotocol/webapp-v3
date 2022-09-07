@@ -2,7 +2,6 @@ import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
@@ -40,16 +39,10 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const CellName = (token: Token) => {
     return (
       <div className={'flex items-center'}>
-        <div className="w-18">
-          {token.isProtected && (
-            <IconProtected className={`w-18 h-20 text-primary`} />
-          )}
-        </div>
-
         <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="!rounded-full h-30 w-30 mr-10 ml-20"
+          className="!rounded-full h-30 w-30 mr-10"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>
@@ -60,11 +53,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
     () => [
       {
         id: 'name',
-        Header: () => (
-          <span className="inline-flex items-center align-middle">
-            <IconProtected className="mr-20 w-18" /> <span>Name</span>
-          </span>
-        ),
+        Header: 'Name',
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
         minWidth: 180,

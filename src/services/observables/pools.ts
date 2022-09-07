@@ -68,7 +68,7 @@ export interface PoolV3 extends APIPoolV3 {
   programs: RewardsProgramRaw[];
   latestProgram?: RewardsProgramRaw;
   extVaultBalance: Pick<PriceDictionary, 'tkn' | 'usd'>;
-  poolDeficit: BigNumber;
+  poolDeficit: string;
 }
 
 export interface PoolToken {
@@ -264,7 +264,8 @@ const buildPoolV3Object = (
     .plus(extVaultBalance.tkn)
     .div(stakedBalance.tkn)
     .minus(1)
-    .times(100);
+    .times(100)
+    .toString();
 
   return {
     ...apiPool,
