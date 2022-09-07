@@ -1,103 +1,111 @@
 import { useAppSelector } from 'store';
 import { Button, ButtonSize } from 'components/button/Button';
 import { expandToken } from 'utils/formulas';
-import { providers, utils } from 'ethers';
+import { providers } from 'ethers';
 import { getTenderlyRpcLS } from 'utils/localStorage';
 import { Token__factory } from 'services/web3/abis/types';
 import { updateUserBalances } from 'services/observables/tokens';
 import { useState } from 'react';
-import { getTokensV3Map } from 'store/bancor/token';
-import { ethToken } from 'services/web3/config';
-
-const WHALES = [
-  {
-    symbol: 'USDC',
-    decimals: 6,
-    tokenContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    whaleAccount: '0x0a59649758aa4d66e25f08dd01271e891fe52199',
-  },
-  {
-    symbol: 'DAI',
-    decimals: 18,
-    tokenContract: '0x6b175474e89094c44da98b954eedeac495271d0f',
-    whaleAccount: '0x5777d92f208679db4b9778590fa3cab3ac9e2168',
-  },
-  {
-    symbol: 'BNT',
-    decimals: 18,
-    tokenContract: '0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c',
-    whaleAccount: '0xa744a64dfd51e4fee3360f1ec1509d329047d7db',
-  },
-];
 
 export const AdminTransfer = () => {
-  const [faucetStatus, setFaucetStatus] = useState<
+  const account = useAppSelector((state) => state.user.account);
+  const [status, setStatus] = useState<
     'loading' | 'success' | 'error' | 'idle'
   >('idle');
-  const [tokenContract, setTokenContract] = useState('');
-  const account = useAppSelector((state) => state.user.account);
-  const tokensMap = useAppSelector(getTokensV3Map);
+  const [tokenAddress, setTokenAddress] = useState('');
+  const [fromUser, setFromUser] = useState(account ?? '');
+  const [toUser, setToUser] = useState('');
+  const [amount, setAmount] = useState('');
+  const [decimals, setDecimals] = useState(18);
 
-  const tokens = WHALES.map((x) =>
-    tokensMap.get(utils.getAddress(x.tokenContract))
-  );
-  tokens.push(tokensMap.get(ethToken));
+  const handleClick = async () => {
+    setStatus('loading');
 
-  const handleSave = async () => {
-    setFaucetStatus('loading');
-    if (!account) {
-      setFaucetStatus('error');
+    if (!(tokenAddress && fromUser && toUser && amount && decimals)) {
+      setStatus('error');
       return;
     }
 
-    const ethSigner = new providers.StaticJsonRpcProvider(
+    const signer = new providers.StaticJsonRpcProvider(
       getTenderlyRpcLS()
-    ).getUncheckedSigner('0x00000000219ab540356cbb839cbe05303d7705fa');
+    ).getUncheckedSigner(fromUser);
 
-    await ethSigner.sendTransaction({
-      to: account,
-      value: expandToken(100000, 18),
-    });
+    const tokenContract = Token__factory.connect(tokenAddress, signer);
 
-    for await (const x of WHALES) {
-      const signer = new providers.StaticJsonRpcProvider(
-        getTenderlyRpcLS()
-      ).getUncheckedSigner(x.whaleAccount);
-
-      const tokenContract = Token__factory.connect(x.tokenContract, signer);
-
-      try {
-        await tokenContract.transfer(account, expandToken(100000, x.decimals));
-        await updateUserBalances();
-        setFaucetStatus('success');
-      } catch (e) {
-        console.error('faucet failed for ', x.symbol, e);
-        setFaucetStatus('error');
-      }
+    try {
+      await tokenContract.transfer(toUser, expandToken(amount, decimals));
+      await updateUserBalances();
+      setStatus('success');
+      setTokenAddress('');
+      setAmount('');
+      setDecimals(18);
+      setFromUser(account ?? '');
+      setToUser('');
+    } catch (e) {
+      console.error('debug transfer failed: ', e);
+      setStatus('error');
     }
   };
 
   return (
-    <div>
+    <div className={'max-w-[500px] mx-auto'}>
       <h2 className="pb-20 text-primary">Transfer ERC20 Tokens</h2>
 
-      <div className="flex flex-col items-center justify-between">
-        <div className="font-semibold">Step 1: Token Contract</div>
+      <div className="flex flex-col justify-between space-y-10 text-left">
+        <div className="font-semibold">Token Contract</div>
         <input
           type="text"
           className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
-          value={tokenContract}
-          onChange={(e) => setTokenContract(e.target.value.trim())}
+          value={tokenAddress}
+          onChange={(e) => setTokenAddress(e.target.value.trim())}
+        />
+
+        <div className={'flex space-x-30 w-full'}>
+          <div className={'w-full'}>
+            <div className="font-semibold">Amount</div>
+            <input
+              type="text"
+              className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value.trim())}
+            />
+          </div>
+          <div>
+            <div className="font-semibold">Decimals</div>
+            <input
+              type="number"
+              className="w-full max-w-[100px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+              value={decimals}
+              onChange={(e) => setDecimals(Number(e.target.value.trim()))}
+            />
+          </div>
+        </div>
+
+        <div className="font-semibold">Transfer From</div>
+        <input
+          type="text"
+          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+          value={fromUser}
+          onChange={(e) => setFromUser(e.target.value.trim())}
+        />
+        <div className="font-semibold">Transfer To</div>
+        <input
+          type="text"
+          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+          value={toUser}
+          onChange={(e) => setToUser(e.target.value.trim())}
         />
       </div>
 
       <Button
-        onClick={handleSave}
+        onClick={handleClick}
         size={ButtonSize.Small}
         className="mx-auto mt-20"
+        disabled={status === 'loading'}
       >
-        Save
+        Full Send
       </Button>
+      {status === 'error' && <div>Error: Check console for details</div>}
     </div>
   );
 };

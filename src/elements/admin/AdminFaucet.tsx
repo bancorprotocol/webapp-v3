@@ -101,6 +101,7 @@ export const AdminFaucet = () => {
       >
         Give me money
       </Button>
+      {faucetStatus === 'error' && <div>Error: Check console for details</div>}
     </div>
   );
 };

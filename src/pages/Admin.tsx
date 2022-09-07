@@ -21,19 +21,12 @@ export const Admin = () => {
         <>
           <hr />
           <AdminControls />
-        </>
-      )}
-
-      {isForkAvailable && (
-        <>
           <hr />
-
           <AdminFaucet />
+          <hr />
+          <AdminTransfer />
         </>
       )}
-
-      <hr />
-      <AdminTransfer />
 
       <hr />
 
