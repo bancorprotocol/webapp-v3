@@ -1,5 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
-import { SUPPORTED_WALLETS, WalletInfo } from 'services/web3/wallet/utils';
+import {
+  SUPPORTED_WALLETS,
+  WalletInfo,
+  isCoinbaseMobile,
+  isMetaMaskMobile,
+} from 'services/web3/wallet/utils';
 import {
   sendWalletEvent,
   WalletEvents,
@@ -9,7 +14,6 @@ import { setSigner } from 'services/web3';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
-import { isMobile } from 'react-device-detect';
 import { useAppSelector } from 'store';
 import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
@@ -119,26 +123,6 @@ export const useWalletConnect = (): UseWalletConnect => {
       handleOpenModal();
     }
   }, [account, handleDisconnect, handleOpenModal]);
-
-  const [isMetaMaskMobile, isCoinbaseMobile] = (function checkMobileWallets() {
-    let isMetaMaskMobile = false;
-    let isCoinbaseMobile = false;
-    if (isMobile && window.ethereum) {
-      if (window.ethereum.isMetaMask) {
-        isMetaMaskMobile = true;
-      }
-
-      if (window.ethereum.isCoinbaseWallet) {
-        isCoinbaseMobile = true;
-      } else if (window.ethereum.providers?.length) {
-        window.ethereum.providers.forEach((p: any) => {
-          if (p.isMetaMask) isMetaMaskMobile = true;
-          if (p.isCoinbaseWallet) isCoinbaseMobile = true;
-        });
-      }
-    }
-    return [isMetaMaskMobile, isCoinbaseMobile];
-  })();
 
   useAsyncEffect(
     async (isMounted) => {
