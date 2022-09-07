@@ -120,25 +120,8 @@ export const useWalletConnect = (): UseWalletConnect => {
     }
   }, [account, handleDisconnect, handleOpenModal]);
 
-  const [isMetaMaskMobile, isCoinbaseMobile] = (function checkMobileWallets() {
-    let isMetaMaskMobile = false;
-    let isCoinbaseMobile = false;
-    if (isMobile && window.ethereum) {
-      if (window.ethereum.isMetaMask) {
-        isMetaMaskMobile = true;
-      }
-
-      if (window.ethereum.isCoinbaseWallet) {
-        isCoinbaseMobile = true;
-      } else if (window.ethereum.providers?.length) {
-        window.ethereum.providers.forEach((p) => {
-          if (p.isMetaMask) isMetaMaskMobile = true;
-          if (p.isCoinbaseWallet) isCoinbaseMobile = true;
-        });
-      }
-    }
-    return [isMetaMaskMobile, isCoinbaseMobile];
-  })();
+  const isMetaMaskMobile =
+    isMobile && window.ethereum && window.ethereum.isMetaMask;
 
   useAsyncEffect(
     async (isMounted) => {
@@ -147,14 +130,6 @@ export const useWalletConnect = (): UseWalletConnect => {
       if (isMetaMaskMobile) {
         const wallet = SUPPORTED_WALLETS.find(
           (wallet) => wallet.name === 'MetaMask'
-        )!;
-        await handleConnect(wallet);
-        return;
-      }
-
-      if (isCoinbaseMobile) {
-        const wallet = SUPPORTED_WALLETS.find(
-          (wallet) => wallet.name === 'Coinbase Wallet'
         )!;
         await handleConnect(wallet);
         return;
