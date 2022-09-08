@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { zeroExFeeRecipient } from 'services/web3/config';
 
 const axiosInstance = axios.create({
   baseURL: 'https://api.0x.org/swap/v1/',
@@ -15,9 +14,10 @@ type ZeroExApiQuoteInput = {
   takerAddress?: string;
 };
 
+// Disable fees until further notice
 const zeroExAffiliateOptions = {
-  feeRecipient: zeroExFeeRecipient,
-  buyTokenPercentageFee: 0.005,
+  // feeRecipient: zeroExFeeRecipient,
+  // buyTokenPercentageFee: 0.005,
 };
 
 export abstract class ZeroExApi {
