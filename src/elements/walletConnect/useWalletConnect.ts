@@ -9,7 +9,6 @@ import { setSigner } from 'services/web3';
 import { Web3Provider } from '@ethersproject/providers';
 import { useWeb3React } from '@web3-react/core';
 import useAsyncEffect from 'use-async-effect';
-import { isMobile } from 'react-device-detect';
 import { useAppSelector } from 'store';
 import { openWalletModal } from 'store/user/user';
 import { useDispatch } from 'react-redux';
@@ -120,17 +119,12 @@ export const useWalletConnect = (): UseWalletConnect => {
     }
   }, [account, handleDisconnect, handleOpenModal]);
 
-  const isMetaMaskMobile =
-    isMobile && window.ethereum && window.ethereum.isMetaMask;
-
   useAsyncEffect(
     async (isMounted) => {
       if (selectedWallet) return;
 
-      if (isMetaMaskMobile) {
-        const wallet = SUPPORTED_WALLETS.find(
-          (wallet) => wallet.name === 'MetaMask'
-        )!;
+      const wallet = SUPPORTED_WALLETS.find((wallet) => wallet.canAutoConnect)!;
+      if (wallet) {
         await handleConnect(wallet);
         return;
       }

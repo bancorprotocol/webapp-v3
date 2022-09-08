@@ -1,11 +1,8 @@
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { user$ } from 'services/observables/user';
-import {
-  fetchETH,
-  fetchTokenBalanceMulticall,
-} from 'services/web3/token/token';
-import { bntToken, ethToken, genericToken } from 'services/web3/config';
+import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
+import { bntToken, genericToken } from 'services/web3/config';
 import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { get7DaysAgo } from 'utils/pureFunctions';
 import { UTCTimestamp } from 'lightweight-charts';
@@ -227,14 +224,12 @@ export const allTokenBalances$ = combineLatest([
       [
         ...tokensV2.map((t) => t.dlt_id),
         ...tokensV3.map((t) => t.dltId),
-      ].filter((id) => id !== ethToken),
+      ],
       (id) => id
     );
 
     const balances = await fetchTokenBalanceMulticall(tokenIds, user);
 
-    // get balance for ETH
-    balances.set(ethToken, await fetchETH(user));
     return balances;
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),

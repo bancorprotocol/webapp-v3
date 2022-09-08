@@ -19,13 +19,13 @@ import {
   setLoadingLockedBnt,
   user$,
 } from './user';
-import { poolsNew$ } from 'services/observables/pools';
+import { poolsV2$ } from 'services/observables/pools';
 import { isEqual } from 'lodash';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { bntDecimals, bntToken } from 'services/web3/config';
 import { shrinkToken } from 'utils/formulas';
 
-export const protectedPositions$ = combineLatest([poolsNew$, user$]).pipe(
+export const protectedPositions$ = combineLatest([poolsV2$, user$]).pipe(
   switchMapIgnoreThrow(async ([pools, user]) => {
     if (user) {
       const positions = await fetchProtectedPositions(pools, user);

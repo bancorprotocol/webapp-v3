@@ -19,6 +19,8 @@ import {
   BancorPortal__factory,
   IZeroEx,
   IZeroEx__factory,
+  ExternalProtectionVault,
+  ExternalProtectionVault__factory,
 } from 'services/web3/abis/types';
 import { web3, writeWeb3 } from 'services/web3';
 import { providers } from 'ethers';
@@ -31,6 +33,7 @@ import stakingRewardsClaimAddress from 'services/web3/abis/StakingRewardsClaim.j
 import standardRewardsAddress from 'services/web3/abis/v3/StandardRewards_Proxy.json';
 import bancorPortalAddress from 'services/web3/abis/v3/BancorPortal_Proxy.json';
 import { zeroExProxyAddress } from '../config';
+import externalProtectionVaultAddress from 'services/web3/abis/v3/ExternalProtectionVault.json';
 
 export class BancorContract<T> {
   constructor(contractAddress: string, contractFactory: any) {
@@ -110,6 +113,11 @@ export abstract class ContractsApi {
   static BancorPortal = new BancorContract<BancorPortal>(
     bancorPortalAddress.address,
     BancorPortal__factory
+  );
+
+  static ExternalProtectionVault = new BancorContract<ExternalProtectionVault>(
+    externalProtectionVaultAddress.address,
+    ExternalProtectionVault__factory
   );
 
   static Token = (tokenAddress: string) => {

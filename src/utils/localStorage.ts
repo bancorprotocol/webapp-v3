@@ -125,15 +125,6 @@ export const setV2ApiUrlLS = (url?: string) => {
   }
 };
 
-export const getEnableDepositLS = (): boolean => {
-  const deposit = localStorage.getItem(enableDeposit);
-  return deposit && JSON.parse(deposit);
-};
-
-export const setEnableDepositLS = (flag: boolean) => {
-  localStorage.setItem(enableDeposit, JSON.stringify(flag));
-};
-
 export const getForceV3LS = (): boolean => {
   const force = localStorage.getItem(forceV3);
   return force && JSON.parse(force);

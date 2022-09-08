@@ -55,7 +55,7 @@ import {
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
-import { poolsNew$, poolsV3$ } from 'services/observables/pools';
+import { poolsV2$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
 import { stakedAmount$, unstakeTimer$ } from './gov';
@@ -101,7 +101,7 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
-  poolsNew$.subscribe((pools) => {
+  poolsV2$.subscribe((pools) => {
     dispatch(setv2Pools(pools));
   });
 

@@ -4,6 +4,7 @@ import {
   getBlockchainNetwork,
   getFiat,
   getUnlimitedLimited,
+  getV2V3,
   sendGTM,
 } from 'services/api/googleTagManager';
 
@@ -22,6 +23,7 @@ interface CurrentConversion {
   conversion_rate_percentage?: string;
   conversion_experation?: string;
   conversion_settings?: 'Regular' | 'Advanced';
+  conversion_version?: 'V3' | 'V2';
 }
 
 let currentConversion: CurrentConversion;
@@ -38,7 +40,8 @@ export const setCurrentConversion = (
   rate: string,
   ratePercentage?: string,
   expiration?: string,
-  settings?: 'Regular' | 'Advanced'
+  settings?: 'Regular' | 'Advanced',
+  isV3?: boolean
 ) => {
   currentConversion = {
     conversion_type: type,
@@ -55,6 +58,7 @@ export const setCurrentConversion = (
     conversion_rate_percentage: ratePercentage,
     conversion_experation: expiration,
     conversion_settings: settings,
+    conversion_version: isV3 === undefined ? undefined : getV2V3(isV3),
   };
 };
 
