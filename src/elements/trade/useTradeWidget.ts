@@ -1,5 +1,5 @@
 import PQueue from 'p-queue';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useAppSelector } from 'store/index';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getRateAndPriceImapct } from 'services/web3/swap/market';
@@ -9,14 +9,19 @@ import {
   useTokenInputV3Return,
 } from 'elements/trade/useTknFiatInput';
 import { toBigNumber } from 'utils/helperFunctions';
-import { wethToken } from 'services/web3/config';
+import { ethToken, wethToken } from 'services/web3/config';
+import {
+  fetchZeroExTokenBalance,
+  getZeroExRateAndPriceImpact,
+} from 'services/web3/swap/zeroEx';
+import { useInterval } from 'hooks/useInterval';
 
 const queue = new PQueue({ concurrency: 1 });
 
 interface UseTradeWidgetProps {
   from?: string;
   to?: string;
-  tokens: Token[];
+  tokens: TokenMinimal[];
 }
 
 export interface UseTradeWidgetReturn {
@@ -24,8 +29,9 @@ export interface UseTradeWidgetReturn {
   fromInput: useTokenInputV3Return | undefined;
   toInput: useTokenInputV3Return | undefined;
   priceImpact: string;
-  filteredTokens: Token[];
+  filteredTokens: TokenMinimal[];
   isV3: boolean;
+  isExternal: boolean;
 }
 
 export const useTradeWidget = ({
@@ -33,6 +39,7 @@ export const useTradeWidget = ({
   to,
   tokens,
 }: UseTradeWidgetProps): UseTradeWidgetReturn => {
+  const account = useAppSelector((state) => state.user.account);
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
@@ -41,6 +48,13 @@ export const useTradeWidget = ({
 
   const [toInputTkn, setToInputTkn] = useState('');
   const [toInputFiat, setToInputFiat] = useState('');
+
+  const [fromTokenExternal, setFromTokenExternal] = useState<
+    Partial<TokenMinimal>
+  >({});
+  const [toTokenExternal, setToTokenExternal] = useState<Partial<TokenMinimal>>(
+    {}
+  );
 
   const [priceImpact, setPriceImpact] = useState('0.0000');
   const [isV3, setIsV3] = useState<boolean>(false);
@@ -52,8 +66,89 @@ export const useTradeWidget = ({
     [tokens]
   );
 
-  const fromToken = useMemo(() => tokensMap.get(from ?? ''), [from, tokensMap]);
-  const toToken = useMemo(() => tokensMap.get(to ?? ''), [to, tokensMap]);
+  const fromToken = useMemo(() => {
+    const tkn = tokensMap.get(from ?? '');
+    if (tkn && !!tkn.isExternal) {
+      return { ...tkn, ...fromTokenExternal };
+    }
+    return tkn;
+  }, [from, fromTokenExternal, tokensMap]);
+
+  const toToken = useMemo(() => {
+    const tkn = tokensMap.get(to ?? '');
+    if (tkn && !!tkn.isExternal) {
+      return { ...tkn, ...toTokenExternal };
+    }
+    return tkn;
+  }, [to, toTokenExternal, tokensMap]);
+
+  const fetchExternalBalances = useCallback(async () => {
+    if (!account) {
+      return;
+    }
+    const ethUsdPrice = tokensMap.get(ethToken)?.usdPrice ?? '0';
+
+    if (!!fromToken?.isExternal) {
+      setFromTokenExternal(
+        await fetchZeroExTokenBalance(
+          account,
+          fromToken.address,
+          fromToken.decimals,
+          ethUsdPrice
+        )
+      );
+    }
+
+    if (!!toToken?.isExternal) {
+      setToTokenExternal(
+        await fetchZeroExTokenBalance(
+          account,
+          toToken.address,
+          toToken.decimals,
+          ethUsdPrice
+        )
+      );
+    }
+  }, [
+    tokensMap,
+    account,
+    fromToken?.address,
+    fromToken?.isExternal,
+    fromToken?.decimals,
+    toToken?.address,
+    toToken?.isExternal,
+    toToken?.decimals,
+  ]);
+
+  useInterval(fetchExternalBalances, 5000);
+
+  const isExternal = !!fromToken?.isExternal || !!toToken?.isExternal;
+
+  const handleRateAndPriceImpact = useCallback(
+    async (val: string, fromToken: TokenMinimal, toToken: TokenMinimal) => {
+      if (isExternal && val) {
+        return await getZeroExRateAndPriceImpact({
+          from: { ...fromToken },
+          to: { ...toToken },
+          value: val,
+        });
+      }
+      if (fromToken.address === wethToken) {
+        return { rate: val, priceImpact: '0', isV3: true };
+      }
+      if (val) {
+        return await getRateAndPriceImapct(
+          fromToken,
+          toToken,
+          val,
+          forceV3Routing
+        );
+      }
+
+      return { rate: '', priceImpact: '', isV3: true };
+    },
+    [forceV3Routing, isExternal]
+  );
 
   const onFromDebounce = useCallback(
     async (val: string) => {
@@ -63,17 +158,11 @@ export const useTradeWidget = ({
         if (queue.size !== 0) return;
         setIsLoading(!!val);
         try {
-          const { rate, priceImpact, isV3 } =
-            fromToken.address === wethToken
-              ? { rate: val, priceImpact: '0', isV3: true }
-              : val
-              ? await getRateAndPriceImapct(
-                  fromToken,
-                  toToken,
-                  val,
-                  forceV3Routing
-                )
-              : { rate: '', priceImpact: '', isV3: true };
+          const { rate, priceImpact, isV3 } = await handleRateAndPriceImpact(
+            val,
+            fromToken,
+            toToken
+          );
 
           setPriceImpact(priceImpact);
           setIsV3(isV3);
@@ -85,7 +174,7 @@ export const useTradeWidget = ({
             ? calcOppositeValue(
                 false,
                 toValue,
-                toToken.usdPrice,
+                toToken.usdPrice ?? null,
                 toToken.decimals
               )
             : '';
@@ -103,7 +192,7 @@ export const useTradeWidget = ({
         }
       });
     },
-    [forceV3Routing, fromToken, isFiat, toToken]
+    [fromToken, handleRateAndPriceImpact, isFiat, toToken]
   );
 
   const fromInput = useTknFiatInput({
@@ -155,5 +244,13 @@ export const useTradeWidget = ({
     }
   }, [fromToken?.address, onTokenChange, toToken?.address]);
 
-  return { fromInput, toInput, isLoading, priceImpact, filteredTokens, isV3 };
+  return {
+    fromInput,
+    toInput,
+    isLoading,
+    priceImpact,
+    filteredTokens,
+    isV3,
+    isExternal,
+  };
 };

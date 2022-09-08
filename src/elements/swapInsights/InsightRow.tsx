@@ -1,14 +1,14 @@
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Speedometer } from './Speedometer';
 import { IntoTheBlock } from 'services/api/intoTheBlock';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { InsightCard } from 'elements/swapInsights/InsightCard';
 
 export const InsightRow = ({
   token,
   data,
 }: {
-  token: Token;
+  token: TokenMinimal;
   data?: IntoTheBlock;
 }) => {
   const cards = [

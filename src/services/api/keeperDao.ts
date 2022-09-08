@@ -6,7 +6,7 @@ import {
   NotificationType,
 } from 'store/notification/notification';
 import { take } from 'rxjs/operators';
-import { Token, tokensV2$ } from 'services/observables/tokens';
+import { Token, TokenMinimal, tokensV2$ } from 'services/observables/tokens';
 import { writeWeb3 } from 'services/web3';
 import { ethToken, wethToken } from 'services/web3/config';
 import { createOrder, depositWeth } from 'services/web3/swap/limit';
@@ -43,8 +43,8 @@ interface StringRfq {
 }
 
 export const swapLimit = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   from: string,
   to: string,
   user: string,

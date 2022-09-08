@@ -4,14 +4,14 @@ import { ReactComponent as IconIntotheblock } from 'assets/icons/intotheblock.sv
 import { IntoTheBlock } from 'services/api/intoTheBlock';
 import { ReactComponent as IconTimes } from 'assets/icons/times.svg';
 import { useLocalStorage } from 'hooks/useLocalStorage';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { sendInsight } from 'services/api/googleTagManager';
 import { useState } from 'react';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface InsightProps {
-  fromToken: Token;
-  toToken?: Token;
+  fromToken: TokenMinimal;
+  toToken?: TokenMinimal;
   fromTokenIntoBlock?: IntoTheBlock;
   toTokenIntoBlock?: IntoTheBlock;
 }

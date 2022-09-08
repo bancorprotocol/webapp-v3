@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
 import 'components/inputField/InputField.css';
@@ -21,7 +21,7 @@ interface TokenInputFieldProps {
   amountUsd?: string;
   setAmountUsd?: Function;
   onChange?: Function;
-  token?: Token;
+  token?: TokenMinimal;
   setToken?: Function;
   debounce?: Function;
   startEmpty?: boolean;
@@ -80,7 +80,7 @@ export const TokenInputField = ({
       : state.bancor.tokensV2
   );
 
-  const onInputChange = (text: string, token?: Token) => {
+  const onInputChange = (text: string, token?: TokenMinimal) => {
     text = sanitizeNumberInput(text);
     if (toggle) {
       const tokenAmount = sanitizeNumberInput(

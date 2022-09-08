@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useCallback, useRef, useState } from 'react';
 import {
   ApprovalContract,
@@ -17,7 +17,7 @@ import { web3 } from 'services/web3';
 import { Events } from 'services/api/googleTagManager';
 
 interface Tokens {
-  token: Token;
+  token: TokenMinimal;
   amount: string;
 }
 

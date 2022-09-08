@@ -1,5 +1,5 @@
 import { bancorNetwork$ } from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { web3, writeWeb3 } from 'services/web3';
 import {
   bntDecimals,
@@ -21,10 +21,11 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import dayjs from 'utils/dayjs';
 import { apiData$, apiPoolsV3$ } from 'services/observables/apiData';
 import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import { executeZeroExSwap } from './zeroEx';
 
 export const getRateAndPriceImapct = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string,
   forceV3Routing: boolean
 ) => {
@@ -98,8 +99,8 @@ export const getRateAndPriceImapct = async (
 };
 
 export const getRate = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string
 ) => {
   try {
@@ -139,10 +140,11 @@ export const calculateMinimumReturn = (
 
 export const swap = async (
   isV3: boolean,
+  isExternal: boolean,
   user: string,
   slippageTolerance: number,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string,
   onHash: (txHash: string) => void,
@@ -155,6 +157,7 @@ export const swap = async (
 
     const tx = await executeSwapTx(
       isV3,
+      isExternal,
       user,
       slippageTolerance,
       fromToken,
@@ -178,10 +181,11 @@ export const swap = async (
 
 export const executeSwapTx = async (
   isV3: boolean,
+  isExternal: boolean,
   user: string,
   slippageTolerance: number,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string
 ) => {
@@ -189,6 +193,10 @@ export const executeSwapTx = async (
   const fromWei = expandToken(fromAmount, fromToken.decimals);
   const expectedToWei = expandToken(toAmount, toToken.decimals);
   const minReturn = calculateMinimumReturn(expectedToWei, slippageTolerance);
+
+  if (isExternal) {
+    return await executeZeroExSwap(fromToken.address, toToken.address, fromWei);
+  }
 
   if (isV3) {
     return await ContractsApi.BancorNetwork.write.tradeBySourceAmount(
@@ -255,8 +263,8 @@ const findPath = async (from: string, to: string) => {
 };
 
 const calculateSpotPriceAndRate = async (
-  from: Token,
-  to: Token,
+  from: TokenMinimal,
+  to: TokenMinimal,
   rateShape: MCInterface
 ) => {
   const empty = { rate: '0', spotPrice: new BigNumber(0) };
@@ -360,8 +368,8 @@ export const v3PoolTradingEnabled = async (tkn: string) => {
 };
 
 export const getV3Rate = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string
 ) => {
   try {
@@ -397,8 +405,8 @@ export const getV3RateInverse = async (
 };
 
 export const getV3PriceImpact = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   amount: string,
   rate: string
 ) => {
@@ -432,11 +440,9 @@ export const getV3PriceImpact = async (
         ppmToDec(tradingFeePPM)
       );
 
-      const priceImpact = new BigNumber(1)
+      return new BigNumber(1)
         .minus(new BigNumber(rate).div(amount).div(spotPrice))
         .times(100);
-
-      return priceImpact;
     }
 
     const fromLiqudity =
@@ -475,11 +481,9 @@ export const getV3PriceImpact = async (
 
     const spotPrice = spot1.times(spot2);
 
-    const priceImpact = new BigNumber(1)
+    return new BigNumber(1)
       .minus(new BigNumber(rate).div(amount).div(spotPrice))
       .times(100);
-
-    return priceImpact;
   } catch (error) {
     return new BigNumber(0);
   }

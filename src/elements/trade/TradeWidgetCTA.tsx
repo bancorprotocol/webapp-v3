@@ -1,20 +1,13 @@
 import { toBigNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { ethToken, wethToken } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'store/index';
 import { useMemo } from 'react';
+import { UseTradeReturn } from './useTrade';
+import { UseTradeWidgetReturn } from './useTradeWidget';
 
-interface Props {
-  handleCTAClick: () => void;
-  fromInput?: useTokenInputV3Return;
-  toInput?: useTokenInputV3Return;
-  isBusy: boolean;
-  errorInsufficientBalance?: string;
-  priceImpact: string;
-  isLoading: boolean;
-}
+type Props = UseTradeReturn & UseTradeWidgetReturn;
 
 export const TradeWidgetCTA = ({
   handleCTAClick,
