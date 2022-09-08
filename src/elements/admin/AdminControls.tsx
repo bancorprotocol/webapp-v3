@@ -8,7 +8,9 @@ export const AdminControls = () => {
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
   return (
-    <div className="flex items-center justify-center gap-30 mx-10">
+    <div className="flex flex-col items-center justify-center">
+      <h2 className="pb-20 text-primary">Admin Controls</h2>
+
       <div className="flex items-center gap-10">
         Force V3
         <Switch

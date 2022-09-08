@@ -13,8 +13,11 @@ export const AdminUseMainnet = () => {
   };
 
   return (
-    <Button onClick={handleUseMainnet} size={ButtonSize.Small}>
-      Use Mainnet
-    </Button>
+    <>
+      <h2 className="pb-20 text-primary">Mainnet</h2>
+      <Button onClick={handleUseMainnet} size={ButtonSize.Small}>
+        Use Mainnet
+      </Button>
+    </>
   );
 };

@@ -97,7 +97,6 @@ export interface RewardsProgramRaw {
   pool: string;
   poolToken: string;
   rewardsToken: string;
-  isEnabled: boolean;
   startTime: number;
   endTime: number;
   rewardRate: string;
@@ -112,17 +111,17 @@ export const fetchAllStandardRewards = async (): Promise<
 
     const programs = await ContractsApi.StandardRewards.read.programs(ids);
 
+    console.log(programs);
+
     return programs.map((program) => ({
       id: program.id.toString(),
       pool: program.pool,
       poolToken: program.poolToken,
       rewardsToken: program.rewardsToken,
-      isEnabled: program.isEnabled,
       startTime: program.startTime,
       endTime: program.endTime,
       rewardRate: program.rewardRate.toString(),
       isActive:
-        program.isEnabled &&
         program.startTime <= dayjs.utc().unix() &&
         program.endTime >= dayjs.utc().unix(),
     }));
