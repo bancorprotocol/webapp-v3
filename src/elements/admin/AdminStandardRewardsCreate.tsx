@@ -1,27 +1,15 @@
 import { ContractsApi } from 'services/web3/v3/contractsApi';
-import { Button } from 'components/button/Button';
-import { providers, utils } from 'ethers';
+import { Button, ButtonSize } from 'components/button/Button';
+import { providers } from 'ethers';
 import { getTenderlyRpcLS } from 'utils/localStorage';
 import { StandardRewards__factory } from 'services/web3/abis/types';
-import { web3 } from 'services/web3';
+import { useState } from 'react';
 
 export const AdminStandardRewardsCreate = () => {
-  const moveTime = async () => {
-    try {
-      const block1 = await web3.provider.getBlock('latest');
-      console.log(block1);
-      const params = [
-        utils.hexValue(1), // hex encoded number of blocks to increase
-      ];
-
-      const provider = new providers.StaticJsonRpcProvider(getTenderlyRpcLS());
-      await provider.send('evm_increaseTime', params);
-      const block2 = await web3.provider.getBlock('latest');
-      console.log(block2);
-    } catch (e) {
-      console.error('error advancing time', e);
-    }
-  };
+  const [pool, setPool] = useState('');
+  const [totalRewards, setTotalRewards] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
 
   const createProgram = async () => {
     try {
@@ -34,13 +22,14 @@ export const AdminStandardRewardsCreate = () => {
         signer
       );
       const tx = await contract.createProgram(
-        '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-        '1000000000000000000000',
-        '1662645568',
-        '1662985255',
+        pool,
+        totalRewards,
+        startTime,
+        endTime,
         { gasLimit: '9999000000000000000000' }
       );
       await tx.wait();
+      console.log('successfully created program');
       console.log(tx);
     } catch (e) {
       console.error('failed to create program', e);
@@ -49,9 +38,53 @@ export const AdminStandardRewardsCreate = () => {
 
   return (
     <>
-      <h2 className="pb-20 text-primary">Standard Rewards Database</h2>
-      <Button onClick={createProgram}>Create</Button>
-      <Button onClick={moveTime}>Move Time</Button>
+      <h2 className="pb-20 text-primary">Create Standard Rewards Program</h2>
+
+      <div className={'space-y-20 mb-30'}>
+        <div>
+          <div className="font-semibold">Pool</div>
+          <input
+            type="text"
+            className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
+            value={pool}
+            onChange={(e) => setPool(e.target.value.trim())}
+          />
+        </div>
+
+        <div>
+          <div className="font-semibold">Total Rewards</div>
+          <input
+            type="text"
+            className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
+            value={totalRewards}
+            onChange={(e) => setTotalRewards(e.target.value.trim())}
+          />
+        </div>
+
+        <div>
+          <div className="font-semibold">Start Time</div>
+          <input
+            type="text"
+            className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value.trim())}
+          />
+        </div>
+
+        <div>
+          <div className="font-semibold">End Time</div>
+          <input
+            type="text"
+            className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value.trim())}
+          />
+        </div>
+      </div>
+
+      <Button size={ButtonSize.Small} onClick={createProgram}>
+        Create
+      </Button>
     </>
   );
 };

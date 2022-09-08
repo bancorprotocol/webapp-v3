@@ -8,6 +8,7 @@ import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
 import { AdminPoolData } from 'elements/admin/AdminPoolData';
 import { AdminStandardRewardsData } from 'elements/admin/AdminStandardRewardsData';
 import { AdminStandardRewardsCreate } from 'elements/admin/AdminStandardRewardsCreate';
+import { AdminAdvanceTime } from 'elements/admin/AdminAdvanceTime';
 
 export const Admin = () => {
   return (
@@ -44,6 +45,10 @@ export const Admin = () => {
 
         <div className={'content-block rounded p-20'}>
           <AdminPoolData />
+        </div>
+
+        <div className={'content-block rounded p-20'}>
+          <AdminAdvanceTime />
         </div>
 
         <div className={'content-block rounded p-20'}>
