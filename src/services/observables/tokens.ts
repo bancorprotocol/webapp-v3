@@ -221,16 +221,11 @@ export const allTokenBalances$ = combineLatest([
     }
 
     const tokenIds = uniqBy(
-      [
-        ...tokensV2.map((t) => t.dlt_id),
-        ...tokensV3.map((t) => t.dltId),
-      ],
+      [...tokensV2.map((t) => t.dlt_id), ...tokensV3.map((t) => t.dltId)],
       (id) => id
     );
 
-    const balances = await fetchTokenBalanceMulticall(tokenIds, user);
-
-    return balances;
+    return await fetchTokenBalanceMulticall(tokenIds, user);
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),
   shareReplay(1)
