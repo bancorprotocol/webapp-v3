@@ -2,6 +2,14 @@ import { web3 } from 'services/web3/index';
 import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { ethToken } from 'services/web3/config';
+import { BigNumber } from 'ethers';
+
+export const fetchTokenBalance = async (
+  tokenId: string,
+  user: string
+): Promise<BigNumber> => {
+  return await ContractsApi.Token(tokenId).read.balanceOf(user);
+};
 
 export const fetchTokenBalanceMulticall = async (
   tokenIds: string[],
