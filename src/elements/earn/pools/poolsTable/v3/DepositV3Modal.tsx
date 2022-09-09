@@ -220,7 +220,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const vaultBalance = toBigNumber(pool.poolDeficit);
 
   if (!pool.depositingEnabled)
-    return <DepositDisabledModal renderButton={renderButton} />;
+    return <DepositDisabledModal renderButton={renderButton} isV3 />;
 
   return (
     <>
