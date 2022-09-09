@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { Modal } from 'components/modal/Modal';
 import { ModalFullscreen } from 'components/modalFullscreen/ModalFullscreen';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -22,7 +22,7 @@ interface SearchableTokenListProps {
   setIsOpen: Function;
   excludedTokens?: string[];
   includedTokens?: string[];
-  tokens: Token[];
+  tokens: TokenMinimal[];
   limit?: boolean;
 }
 
@@ -125,7 +125,7 @@ export const SearchableTokenList = ({
           (token.name &&
             token.name.toLowerCase().includes(search.toLowerCase())))
     );
-    return orderBy(filtered, 'balanceUsd', 'desc').slice(
+    return orderBy(filtered, ({ balanceUsd }) => balanceUsd ?? 0, 'desc').slice(
       0,
       limit ? 300 : filtered.length
     );
@@ -226,6 +226,7 @@ export const SearchableTokenList = ({
                   <div className="text-right">
                     <div className="text-16">
                       {token.balance && prettifyNumber(token.balance)}
+                      {token.isExternal && 'external'}
                     </div>
                     <div className="text-secondary">
                       {token.balanceUsd &&

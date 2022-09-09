@@ -14,8 +14,6 @@ interface Props {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
   }) => ReactNode;
-  isOpen?: boolean;
-  setIsOpen?: (open: boolean) => void;
   options?: PopoverOptions;
   hover?: boolean;
   showArrow?: boolean;
@@ -40,8 +38,6 @@ const defaultOptions: PopoverOptions = {
 export const PopoverV3 = ({
   children,
   buttonElement,
-  isOpen,
-  setIsOpen,
   options = defaultOptions,
   hover = true,
   showArrow = true,
@@ -68,14 +64,7 @@ export const PopoverV3 = ({
     ],
   });
 
-  const [localOpen, setLocalOpen] = useState(false);
-
-  const useLocalState = !setIsOpen;
-
-  const handleOpen = (open: boolean) => {
-    if (useLocalState) setLocalOpen(open);
-    else setIsOpen(open);
-  };
+  const [open, setOpen] = useState(false);
 
   const handleOnMouseEnter = () => {
     if (!hover) {
@@ -84,7 +73,7 @@ export const PopoverV3 = ({
 
     prevPopFunc();
     clearInterval(timeout);
-    handleOpen(true);
+    setOpen(true);
   };
 
   const handleOnMouseLeave = (delay: number) => {
@@ -92,8 +81,8 @@ export const PopoverV3 = ({
       return;
     }
 
-    prevPopFunc = () => handleOpen(false);
-    timeout = setTimeout(() => handleOpen(false), delay);
+    prevPopFunc = () => setOpen(false);
+    timeout = setTimeout(() => setOpen(false), delay);
   };
 
   return (
@@ -104,8 +93,8 @@ export const PopoverV3 = ({
         onMouseLeave={() => handleOnMouseLeave(300)}
       >
         {buttonElement({
-          isOpen: useLocalState ? localOpen : !!isOpen,
-          setIsOpen: (open: boolean) => handleOpen(open),
+          isOpen: open,
+          setIsOpen: (open: boolean) => setOpen(open),
         })}
       </div>
       <Portal>
@@ -116,7 +105,7 @@ export const PopoverV3 = ({
           className="z-40 popover-panel"
         >
           <Transition
-            show={useLocalState ? localOpen : isOpen}
+            show={open}
             enter="transition ease-out duration-200"
             enterFrom="opacity-0 translate-y-1"
             enterTo="opacity-100 translate-y-0"

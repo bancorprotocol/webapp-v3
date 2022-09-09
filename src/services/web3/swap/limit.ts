@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import {
   getOrderDetails,
   RfqOrderJson,
@@ -63,8 +63,8 @@ export const withdrawWeth = async (
 };
 
 export const createOrder = async (
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   from: string,
   to: string,
   user: string,

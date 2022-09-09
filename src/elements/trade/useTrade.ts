@@ -4,7 +4,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { swap } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { toBigNumber } from 'utils/helperFunctions';
-import { Token, updateUserBalances } from 'services/observables/tokens';
+import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
 import {
@@ -18,16 +18,24 @@ import { ApprovalContract } from 'services/web3/approval';
 import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
 import { addNotification } from 'store/notification/notification';
-import { Events } from 'services/api/googleTagManager';
-import { sendConversionEvent } from 'services/api/googleTagManager/conversion';
+import {
+  Events,
+  getLimitMarket,
+  getRegularAdvanced,
+} from 'services/api/googleTagManager';
+import {
+  sendConversionEvent,
+  setCurrentConversion,
+} from 'services/api/googleTagManager/conversion';
+import BigNumber from 'bignumber.js';
 
 export interface UseTradeReturn {
   ApproveModal: JSX.Element;
   isBusy: boolean;
   handleSelectSwitch: () => void;
   errorInsufficientBalance: string | undefined;
-  handleSelectTo: (token: Token) => void;
-  handleSelectFrom: (token: Token) => void;
+  handleSelectTo: (token: TokenMinimal) => void;
+  handleSelectFrom: (token: TokenMinimal) => void;
   handleCTAClick: () => void;
 }
 
@@ -35,12 +43,14 @@ export const useTrade = ({
   fromInput,
   toInput,
   isV3,
+  isExternal,
 }: UseTradeWidgetReturn): UseTradeReturn => {
   const dispatch = useDispatch();
   const slippageTolerance = useAppSelector(
     (state) => state.user.slippageTolerance
   );
   const account = useAppSelector((state) => state.user.account);
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const [isBusy, setIsBusy] = useState(false);
 
@@ -57,8 +67,34 @@ export const useTrade = ({
       return;
     }
 
+    const fromToken = fromInput.token;
+    const toToken = toInput.token;
+    const fromAmount = fromInput.inputTkn;
+    const fromAmountUsd = fromInput.inputFiat;
+    const toAmount = toInput.inputTkn;
+    const toAmountUsd = toInput.inputFiat;
+    const tokenPair = fromToken.symbol + '/' + toToken.symbol;
+    const rate = new BigNumber(toAmount).div(fromAmount).toFixed(4);
+    setCurrentConversion(
+      getLimitMarket(false),
+      tokenPair,
+      fromToken.symbol,
+      toToken.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      fiatToggle,
+      rate,
+      undefined,
+      undefined,
+      getRegularAdvanced(slippageTolerance),
+      isV3
+    );
+
     await swap(
       isV3,
+      isExternal,
       account,
       slippageTolerance,
       fromInput.token,
@@ -107,12 +143,20 @@ export const useTrade = ({
     onStart();
   };
 
+  const tokensToApprove = fromInput
+    ? [{ token: fromInput.token, amount: fromInput.inputTkn }]
+    : [];
+
+  const contractToApprove = isExternal
+    ? ContractsApi.ZeroEx.contractAddress
+    : isV3
+    ? ContractsApi.BancorNetwork.contractAddress
+    : ApprovalContract.BancorNetwork;
+
   const [onStart, ApproveModal] = useApproveModal(
-    fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
+    tokensToApprove,
     handleTrade,
-    isV3
-      ? ContractsApi.BancorNetwork.contractAddress
-      : ApprovalContract.BancorNetwork,
+    contractToApprove,
     () => sendConversionEvent(Events.approvePop),
     (isUnlimited) => {
       sendConversionEvent(Events.approved, undefined, isUnlimited);
@@ -129,7 +173,7 @@ export const useTrade = ({
   );
 
   const handleSelectFrom = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: token.address,
@@ -142,7 +186,7 @@ export const useTrade = ({
   );
 
   const handleSelectTo = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: fromInput?.token.address,

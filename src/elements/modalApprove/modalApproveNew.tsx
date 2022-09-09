@@ -1,5 +1,5 @@
 import { Modal } from 'components/modal/Modal';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
 
@@ -7,7 +7,7 @@ interface Props {
   isOpen: boolean;
   setIsOpen: Function;
   setApproval: Function;
-  token: Token;
+  token: TokenMinimal;
   amount: string;
   isLoading: boolean;
   onClose?: Function;
