@@ -8,6 +8,7 @@ import { utils } from 'ethers';
 
 import { Statistic } from 'services/observables/statistics';
 import { NotificationType } from 'store/notification/notification';
+import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -18,6 +19,7 @@ interface BancorState {
   allTokens: Token[];
   isLoadingTokens: boolean;
   statistics: Statistic | null;
+  allStandardRewardsV3: RewardsProgramRaw[];
 }
 
 export const initialState: BancorState = {
@@ -29,6 +31,7 @@ export const initialState: BancorState = {
   allTokenListTokens: [],
   isLoadingTokens: true,
   statistics: null,
+  allStandardRewardsV3: [],
 };
 
 const bancorSlice = createSlice({
@@ -57,6 +60,12 @@ const bancorSlice = createSlice({
     setStatisticsV3: (state, action: PayloadAction<Statistic>) => {
       state.statistics = action.payload;
     },
+    setAllStandardRewardsV3: (
+      state,
+      action: PayloadAction<RewardsProgramRaw[]>
+    ) => {
+      state.allStandardRewardsV3 = action.payload;
+    },
   },
 });
 
@@ -68,6 +77,7 @@ export const {
   setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
+  setAllStandardRewardsV3,
 } = bancorSlice.actions;
 
 export const getTokenById = createSelector(
