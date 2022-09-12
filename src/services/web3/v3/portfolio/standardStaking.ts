@@ -101,6 +101,7 @@ export interface RewardsProgramRaw {
   endTime: number;
   rewardRate: string;
   isActive: boolean;
+  stakedBalance: string;
 }
 
 export const fetchAllStandardRewards = async (): Promise<
@@ -111,7 +112,7 @@ export const fetchAllStandardRewards = async (): Promise<
 
     const programs = await ContractsApi.StandardRewards.read.programs(ids);
 
-    console.log(programs);
+    const programsStaked = await fetchProgramStakeMulticall(ids);
 
     return programs.map((program) => ({
       id: program.id.toString(),
@@ -124,11 +125,39 @@ export const fetchAllStandardRewards = async (): Promise<
       isActive:
         program.startTime <= dayjs.utc().unix() &&
         program.endTime >= dayjs.utc().unix(),
+      stakedBalance: programsStaked?.get(program.id.toString()) ?? '0',
     }));
   } catch (e) {
     console.error(e);
     throw e;
   }
+};
+
+const buildProgramStakeCall = (id: BigNumber): MultiCall => {
+  const contract = ContractsApi.StandardRewards.read;
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'programStake',
+    methodParameters: [id],
+  };
+};
+
+export const fetchProgramStakeMulticall = async (ids: BigNumber[]) => {
+  const calls = ids.map((id) => buildProgramStakeCall(id));
+  const res = await multicall(calls);
+  if (!res) {
+    console.error('Multicall Error in fetchProgamStakeMulticall');
+    return undefined;
+  }
+
+  return new Map<string, string | undefined>(
+    res.map((bn, idx) => [
+      ids[idx].toString(),
+      bn && bn.length ? bn[0].toString() : undefined,
+    ])
+  );
 };
 
 const buildLatestProgramIdCall = (poolId: string): MultiCall => {
