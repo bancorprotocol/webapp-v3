@@ -278,25 +278,31 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                           <IconGift className="w-10 h-10 text-secondary" />
                         )}
                       >
-                        <div>
+                        <div className="w-[126px]">
                           <div className="flex justify-between items-center">
                             Fees
-                            <span>????</span>
+                            <span>
+                              {prettifyNumber(pool.apr7d.tradingFees)}%
+                            </span>
                           </div>
                           <div className="flex justify-between items-center">
                             Rewards
-                            <span>????</span>
+                            <span>
+                              {prettifyNumber(pool.apr7d.autoCompounding)}%
+                            </span>
                           </div>
                         </div>
                       </PopoverV3>
                     </div>
-                    <span>????</span>
+                    <span>{prettifyNumber(pool.apr7d.total)}%</span>
                   </div>
-                  {pool.latestProgram?.isActive && (
+                  {true && (
                     <div>
                       <div className="flex justify-between items-center">
                         BNT Rewards
-                        <span>????</span>
+                        <span>
+                          {prettifyNumber(pool.apr7d.standardRewards)}%
+                        </span>
                       </div>
                       <div className="flex justify-between items-center text-secondary mt-10">
                         <div className="flex items-center gap-5">
@@ -322,7 +328,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                           </PopoverV3>
                         </div>
                         <span>
-                          Ends
+                          Ends{' '}
                           {dayjs(
                             (pool.latestProgram?.endTime ?? 0) * 1000
                           ).format('MMM D, YYYY')}
@@ -341,7 +347,22 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                           <IconInfo className="w-10 h-10 text-secondary" />
                         )}
                       >
-                        ????
+                        {vaultBalance.gte(0)
+                          ? 'This pool is currently NOT in deficit. This may change over time. Should this pool be in deficit when you’re ready to withdraw, your deposit will accrue the pool deficit at that time.'
+                          : `This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be ${
+                              amount
+                                ? prettifyNumber(
+                                    toBigNumber(amount).minus(
+                                      vaultBalance
+                                        .div(100)
+                                        .times(-1)
+                                        .times(amount)
+                                    )
+                                  )
+                                : '--'
+                            } ${
+                              pool.name
+                            }. Its value and deficit amount can change over time.`}
                       </PopoverV3>
                     </div>
                     <span
