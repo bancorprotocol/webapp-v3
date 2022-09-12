@@ -38,6 +38,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   const tokenInputField = useTknFiatInput({
     token: {
       ...holding.pool.reserveToken,
+      symbol: `bn${holding.pool.name}`,
       balance: holding.poolTokenBalance,
       balanceUsd: toBigNumber(holding.tokenBalance)
         .times(holding.pool.reserveToken.usdPrice)
@@ -101,9 +102,12 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
         holding.tokenBalance,
         holding.pool.reserveToken.symbol
       );
+      setTxJoinBusy(false);
+      setJoinRewards(false);
+      setAmount('');
+      setInputFiat('');
       await tx.wait();
       await updatePortfolioData(dispatch);
-      setTxJoinBusy(false);
     } catch (e: any) {
       console.error('handleJoinClick', e);
       setTxJoinBusy(false);
