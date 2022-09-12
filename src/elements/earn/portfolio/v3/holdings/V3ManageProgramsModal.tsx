@@ -169,9 +169,9 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
               <div className="flex flex-col items-end">
                 {holding.pool.apr7d.total.toFixed(2)}%
                 <div className="text-secondary">
-                  {dayjs(holding.pool.latestProgram?.endTime).format(
-                    'MMM D, YYYY'
-                  )}
+                  {dayjs(
+                    (holding.pool.latestProgram?.endTime ?? 0) * 1000
+                  ).format('MMM D, YYYY')}
                 </div>
               </div>
             </div>
