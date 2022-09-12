@@ -86,10 +86,7 @@ export const V3HoldingPage = () => {
       : undefined;
 
   const vaultBalance = holding
-    ? toBigNumber(holding.pool.liquidity.usd)
-        .div(holding.pool.stakedBalance.usd)
-        .minus(1)
-        .times(100)
+    ? toBigNumber(holding.pool.poolDeficit)
     : new BigNumber(0);
 
   if (!token && !isLoadingHoldings) {
