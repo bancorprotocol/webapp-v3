@@ -53,11 +53,10 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   });
   const inputErrorMsg = useMemo(
     () =>
-      !!account &&
-      new BigNumber(holding.pool.reserveToken.balance || 0).lt(amount)
+      !!account && new BigNumber(holding.poolTokenBalance || 0).lt(amount)
         ? 'Insufficient balance'
         : '',
-    [account, amount, holding.pool.reserveToken.balance]
+    [account, amount, holding.poolTokenBalance]
   );
 
   const onClose = async () => {
@@ -165,7 +164,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
               errorMsg={inputErrorMsg}
               disableSelection
             />
-            <div className="flex justify-between text-black-medium dark:text-white-medium">
+            <div className="flex justify-between text-black-medium dark:text-white-medium mt-10">
               <div>BNT Rewards</div>
               <div className="flex flex-col items-end">
                 {holding.pool.apr7d.total.toFixed(2)}%
@@ -177,7 +176,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
               </div>
             </div>
             <Button
-              disabled={txJoinBusy}
+              disabled={txJoinBusy || !!inputErrorMsg || !amount}
               onClick={() => handleJoinClick()}
               variant={ButtonVariant.Secondary}
               size={ButtonSize.Full}
