@@ -317,7 +317,7 @@ export const standardsRewardsAPR = (
           const bntUsdRate = tokensMap.get(bntToken)?.usdPrice ?? '0';
           const stakedBalanceInBNT = toBigNumber(tknUsdRate)
             .div(bntUsdRate)
-            .times(stakedBalance);
+            .times(toBigNumber(stakedBalance).isZero() ? 1 : stakedBalance);
           return acc + calcApr(rewardRateTime, stakedBalanceInBNT);
         }, 0)
     );
