@@ -162,16 +162,19 @@ export const V3HoldingPage = () => {
               </div>
               <div className="md:block grid grid-cols-2">
                 Vault balance
-                <div className="text-primary md:mt-8 justify-self-end">
-                  {' '}
-                  <span
-                    className={`${
-                      vaultBalance.gte(0) ? 'text-primary' : 'text-error'
-                    }`}
-                  >
-                    {vaultBalance.gte(0) ? '+' : ''}
-                    {vaultBalance.toFixed(2)}%
-                  </span>
+                <div className="md:mt-8 justify-self-end">
+                  {isBNT ? (
+                    <span className="text-secondary">(never in deficit)</span>
+                  ) : (
+                    <span
+                      className={`${
+                        vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                      }`}
+                    >
+                      {vaultBalance.gte(0) ? '+' : ''}
+                      {vaultBalance.toFixed(2)}%
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
