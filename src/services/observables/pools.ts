@@ -310,7 +310,7 @@ export const standardsRewardsAPR = (
             .times(24)
             .times(seven_days ? 7 : 1);
           const stakedBalance = shrinkToken(
-            data.stakedBalance,
+            data.stakedBalanceInTKN,
             apiPool.decimals
           );
           const tknUsdRate = tokensMap.get(apiPool.poolDltId)?.usdPrice ?? '0';
