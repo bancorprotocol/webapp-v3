@@ -35,7 +35,17 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   const [inputFiat, setInputFiat] = useState('');
   const [txJoinBusy, setTxJoinBusy] = useState(false);
   const tokenInputField = useTknFiatInput({
-    token: holding.pool.reserveToken,
+    token: {
+      ...holding.pool.reserveToken,
+      balance: holding.poolTokenBalance,
+      balanceUsd: toBigNumber(holding.tokenBalance)
+        .times(holding.pool.reserveToken.usdPrice)
+        .toNumber(),
+      usdPrice: toBigNumber(holding.tokenBalance)
+        .times(holding.pool.reserveToken.usdPrice)
+        .div(holding.poolTokenBalance)
+        .toString(),
+    },
     setInputTkn: setAmount,
     setInputFiat: setInputFiat,
     inputTkn: amount,
