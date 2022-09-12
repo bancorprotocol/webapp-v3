@@ -28,6 +28,9 @@ export const PoolsTableCellActions = (id: string) => {
       {button(() => {})}
     </Navigate>
   ) : (
-    <DepositDisabledModal renderButton={(onclick) => button(onclick)} />
+    <DepositDisabledModal
+      renderButton={(onclick) => button(onclick)}
+      isV3={false}
+    />
   );
 };
