@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
 import { ModalV3 } from 'components/modal/ModalV3';
@@ -20,6 +20,7 @@ import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
+import { useApproveModal } from 'hooks/useApproveModal';
 
 interface Props {
   holding: Holding;
@@ -85,10 +86,14 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
       return;
     }
 
+    if (amount === '') {
+      return;
+    }
+
     try {
       const tx = await ContractsApi.StandardRewards.write.join(
         holding.pool.latestProgram.id,
-        expandToken(holding.poolTokenBalance, holding.pool.decimals)
+        expandToken(amount, holding.pool.decimals)
       );
       confirmJoinNotification(
         dispatch,
@@ -107,6 +112,26 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
       }
     }
   };
+
+  const [onStart, ApproveModal] = useApproveModal(
+    [
+      {
+        amount: expandToken(amount, holding.pool.decimals),
+        token: {
+          ...holding.pool.reserveToken,
+          address: holding.pool.poolTokenDltId,
+          symbol: `bn${holding.pool.reserveToken.symbol}`,
+        },
+      },
+    ],
+    handleJoinClick,
+    ContractsApi.StandardRewards.contractAddress
+  );
+
+  const onStartJoin = useCallback(() => {
+    setTxJoinBusy(true);
+    onStart();
+  }, [onStart]);
 
   const handleLeaveClick = async (
     id: string,
@@ -179,12 +204,13 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
             </div>
             <Button
               disabled={txJoinBusy || !!inputErrorMsg || !amount}
-              onClick={() => handleJoinClick()}
+              onClick={() => onStartJoin()}
               variant={ButtonVariant.Secondary}
               size={ButtonSize.Full}
             >
               Add bn{holding.pool.reserveToken.symbol} to rewards program
             </Button>
+            {ApproveModal}
           </div>
         ) : (
           <div className="px-30 pb-30 pt-10">
