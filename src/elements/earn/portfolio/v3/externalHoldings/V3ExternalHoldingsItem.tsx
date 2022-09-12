@@ -13,15 +13,15 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="rounded-20 border border-fog p-20">
+    <div className="p-20 border rounded-20 border-fog">
       <div className="h-30">
         <TokensOverlap tokens={position.tokens} />
       </div>
-      <div className="mt-20 flex justify-between">
+      <div className="flex justify-between mt-20">
         <div>{position.ammName}: </div>
         <div>{prettifyNumber(position.usdValue, true)}</div>
       </div>
-      <div className="mt-6 flex justify-between">
+      <div className="flex justify-between mt-6">
         <div>Rekt Status: </div>
         <div className="text-error">{position.rektStatus}</div>
       </div>

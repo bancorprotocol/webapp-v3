@@ -18,6 +18,7 @@ import { Page } from 'components/Page';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { useDispatch } from 'react-redux';
 import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
+import { Navigate } from 'components/navigate/Navigate';
 
 interface VoteCardProps {
   title: string;
@@ -175,14 +176,12 @@ export const Vote = () => {
             }}
             footer={
               <div className="flex items-end h-[48px]">
-                <a
-                  href="https://support.bancor.network/hc/en-us/articles/4415840089106-What-is-vBNT-and-how-do-I-use-my-vBNT-to-vote-on-chain-on-proposals-"
-                  target="_blank"
+                <Navigate
+                  to="https://support.bancor.network/hc/en-us/articles/5476957904914"
                   className="flex items-center text-primary dark:text-primary-light font-medium"
-                  rel="noreferrer"
                 >
                   How to Vote <IconLink className="w-14 ml-6" />
-                </a>
+                </Navigate>
               </div>
             }
           />

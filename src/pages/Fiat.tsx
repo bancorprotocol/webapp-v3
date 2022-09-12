@@ -4,6 +4,8 @@ import { ReactComponent as banxaLogo } from 'assets/logos/banxa.svg';
 import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
+import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
+import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 const fiats = [
@@ -87,6 +89,39 @@ const fiats = [
       'https://exchange.mercuryo.io/?widget_id=d7702dc1-c8ee-4726-a5be-5f18e31849b6&currency=ETH&type=buy',
     sellUrl:
       'https://exchange.mercuryo.io/?widget_id=d7702dc1-c8ee-4726-a5be-5f18e31849b6&currency=ETH&type=sell',
+  },
+  {
+    name: 'Juno',
+    text: 'Juno is a leading mobile banking platform that allows customers to manage cryptocurrency and traditional payment accounts in one easy-to-use app. Juno has the lowest fees, tightest spreads, and most innovative features, enabling you to buy, sell and spend your crypto.',
+    logo: junoLogo,
+    operations: [Operations.fiatIn],
+    depositMethods: [
+      DepositMethods.creditCard,
+      DepositMethods.debitCard,
+      DepositMethods.venmo,
+      DepositMethods.cashApp,
+    ],
+    buyUrl:
+      'https://juno.finance/partners/bancor?action=buy&currency=eth&partnerKey=live_th2t6ysuok4xu11gykm2p65e&name=bancor',
+  },
+  {
+    name: 'Transak',
+    text: 'Transak is as a global fiat-to-crypto payment gateway which doubles as a developer integration. We solve the important problem of helping mainstream users and businesses access crypto and the blockchain directly by integrating local regulatory compliance, payment methods, and liquidity from around the world. Transak is backed by Consensys, The LAO, Lunex, Koji Ventures, and IOSG.',
+    logo: transakLogo,
+    operations: [Operations.fiatIn],
+    depositMethods: [
+      DepositMethods.sepa,
+      DepositMethods.applePay,
+      DepositMethods.googlePay,
+      DepositMethods.fasterBankTransfer,
+      DepositMethods.upiBankTransfer,
+      DepositMethods.mobikwikPayments,
+      DepositMethods.visa,
+      DepositMethods.mastercard,
+      DepositMethods.americanExpress,
+      DepositMethods.discover,
+    ],
+    buyUrl: 'https://global.transak.com/',
   },
 ];
 

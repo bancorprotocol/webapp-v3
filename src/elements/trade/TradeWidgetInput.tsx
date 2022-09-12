@@ -3,7 +3,7 @@ import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { useMemo, useRef, useState } from 'react';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -13,8 +13,8 @@ interface Props {
   isLoading?: boolean;
   onFocus?: () => void;
   label?: string;
-  tokens: Token[];
-  onTokenSelect: (token: Token) => void;
+  tokens?: TokenMinimal[];
+  onTokenSelect?: (token: TokenMinimal) => void;
   disabled?: boolean;
   errorMsg?: string;
   excludedTokens?: string[];
@@ -58,7 +58,7 @@ export const TradeWidgetInput = ({
   return (
     <>
       <div>
-        <div className="mb-10 text-secondary flex justify-between px-10">
+        <div className="flex justify-between px-10 mb-10 text-secondary">
           {label && <div>{label}</div>}
           {input?.token &&
             input?.token.balance &&
@@ -71,7 +71,7 @@ export const TradeWidgetInput = ({
                     else if (input.token.balance && !isFiat)
                       input.handleChange(input.token.balance.toString());
                 }}
-                className={`${
+                className={`flex items-center ${
                   disabled
                     ? 'cursor-text'
                     : 'hover:text-primary transition-colors duration-300'
@@ -79,6 +79,15 @@ export const TradeWidgetInput = ({
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+                {!disabled && (
+                  <span
+                    className={
+                      'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                    }
+                  >
+                    Max
+                  </span>
+                )}
               </button>
             )}
         </div>
@@ -87,10 +96,10 @@ export const TradeWidgetInput = ({
           className={`border ${
             isFocused ? 'border-primary' : 'border-fog dark:border-grey'
           } ${
-            errorMsg ? 'border-error' : ''
+            errorMsg ? 'border-error dark:border-error' : ''
           } rounded-20 px-20 h-[75px] flex items-center bg-white dark:bg-charcoal space-x-20`}
         >
-          {!tokens.length && (
+          {tokens && !tokens.length && (
             <div className="flex items-center space-x-10">
               <div className="loading-skeleton h-40 w-40 !rounded-full" />
               <div className="loading-skeleton h-20 w-[80px]" />
@@ -121,7 +130,7 @@ export const TradeWidgetInput = ({
               </button>
             )}
 
-            {!!tokens.length && !input && (
+            {tokens && !!tokens.length && !input && (
               <button
                 onClick={() => {
                   setIsOpen(true);
@@ -136,7 +145,7 @@ export const TradeWidgetInput = ({
           {
             <div
               onClick={() => handleFocusChange(true)}
-              className="text-right cursor-text h-full flex-grow flex justify-center flex-col"
+              className="flex flex-col justify-center flex-grow h-full text-right cursor-text"
             >
               {!isLoading && input ? (
                 <>
@@ -150,7 +159,7 @@ export const TradeWidgetInput = ({
                         ? prettifyNumber(value, isFiat)
                         : ''
                     }
-                    className="w-full text-right text-20 outline-none bg-white dark:bg-charcoal"
+                    className="w-full text-right bg-white outline-none text-20 dark:bg-charcoal"
                     onChange={(e) => {
                       !disabled && input.handleChange(e.target.value);
                     }}
@@ -169,10 +178,11 @@ export const TradeWidgetInput = ({
                   )}
                 </>
               ) : (
+                tokens &&
                 (!tokens.length || (isLoading && input)) && (
                   <div className="flex flex-col items-end">
-                    <div className="loading-skeleton h-18 mb-4 w-3/4" />
-                    <div className="loading-skeleton h-12 w-1/2" />
+                    <div className="w-3/4 mb-4 loading-skeleton h-18" />
+                    <div className="w-1/2 h-12 loading-skeleton" />
                   </div>
                 )
               )}
@@ -181,20 +191,21 @@ export const TradeWidgetInput = ({
         </div>
         {errorMsg && (
           <div className="relative flex justify-end mr-10">
-            <div className="absolute text-error mt-5">{errorMsg}</div>
+            <div className="absolute mt-5 text-error">{errorMsg}</div>
           </div>
         )}
       </div>
-
-      <SearchableTokenList
-        onClick={onTokenSelect}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        tokens={tokens}
-        limit
-        excludedTokens={excludedTokens}
-        includedTokens={includedTokens}
-      />
+      {tokens && onTokenSelect && (
+        <SearchableTokenList
+          onClick={onTokenSelect}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          tokens={tokens}
+          limit
+          excludedTokens={excludedTokens}
+          includedTokens={includedTokens}
+        />
+      )}
     </>
   );
 };

@@ -6,6 +6,7 @@ import { shrinkToken } from 'utils/formulas';
 import dayjs from './dayjs';
 import { Pool } from 'services/observables/pools';
 import { APIPool } from 'services/api/bancorApi/bancorApi.types';
+import numbro from 'numbro';
 
 const oneMillion = new BigNumber(1000000);
 
@@ -15,25 +16,61 @@ export const ppmToDec = (ppm: number | string | BigNumber) =>
 export const decToPpm = (dec: number | string | BigNumber): string =>
   new BigNumber(dec).times(oneMillion).toFixed(0);
 
-export const prettifyNumber = (
+const prettifyNumberAbbreviateFormat: numbro.Format = {
+  average: true,
+  mantissa: 1,
+  optionalMantissa: true,
+  lowPrecision: false,
+  spaceSeparated: true,
+  roundingFunction: (num) => Math.floor(num),
+};
+
+export function prettifyNumber(num: number | string | BigNumber): string;
+
+export function prettifyNumber(
   num: number | string | BigNumber,
-  usd = false
-): string => {
+  usd: boolean
+): string;
+
+export function prettifyNumber(
+  num: number | string | BigNumber,
+  options?: { usd?: boolean; abbreviate?: boolean }
+): string;
+
+export function prettifyNumber(
+  num: number | string | BigNumber,
+  optionsOrUsd?: { usd?: boolean; abbreviate?: boolean } | boolean
+): string {
+  let usd, abbreviate;
+  if (optionsOrUsd === undefined) {
+    usd = false;
+    abbreviate = false;
+  } else if (typeof optionsOrUsd === 'boolean') {
+    usd = optionsOrUsd;
+    abbreviate = false;
+  } else {
+    usd = optionsOrUsd.usd;
+    abbreviate = optionsOrUsd.abbreviate;
+  }
+
   const bigNum = new BigNumber(num);
   if (usd) {
     if (bigNum.lte(0)) return '$0.00';
-    else if (bigNum.lt(0.01)) return '< $0.01';
-    else if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
-    else return numeral(bigNum).format('$0,0.00', Math.floor);
-  } else {
-    if (bigNum.lte(0)) return '0';
-    else if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
-    else if (bigNum.gte(2))
-      return numeral(bigNum).format('0,0.[00]', Math.floor);
-    else if (bigNum.lt(0.000001)) return '< 0.000001';
-    else return numeral(bigNum).format('0.[000000]', Math.floor);
+    if (bigNum.lt(0.01)) return '< $0.01';
+    if (bigNum.gt(100)) return numeral(bigNum).format('$0,0', Math.floor);
+    if (abbreviate && bigNum.gt(999999))
+      return `$${numbro(bigNum).format(prettifyNumberAbbreviateFormat)}`;
+    return numeral(bigNum).format('$0,0.00', Math.floor);
   }
-};
+
+  if (bigNum.lte(0)) return '0';
+  if (abbreviate && bigNum.gt(999999))
+    return numbro(bigNum).format(prettifyNumberAbbreviateFormat);
+  if (bigNum.gte(1000)) return numeral(bigNum).format('0,0', Math.floor);
+  if (bigNum.gte(2)) return numeral(bigNum).format('0,0.[00]', Math.floor);
+  if (bigNum.lt(0.000001)) return '< 0.000001';
+  return numeral(bigNum).format('0.[000000]', Math.floor);
+}
 
 export const formatDuration = (duration: plugin.Duration): string => {
   let sentence = '';
@@ -64,7 +101,7 @@ export const formatTime = (ms: number): string => {
 export const isUnsupportedNetwork = (
   network: EthNetworks | undefined
 ): boolean => {
-  return network !== undefined && EthNetworks[network] === undefined;
+  return !!network && !EthNetworks[network];
 };
 
 export const calculateBntNeededToOpenSpace = (

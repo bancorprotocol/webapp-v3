@@ -1,6 +1,6 @@
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTradeWidget } from 'elements/trade/useTradeWidget';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useTrade } from 'elements/trade/useTrade';
 import { TradeWidgetDetails } from 'elements/trade/TradeWidgetDetails';
 import { TradeWidgetCTA } from 'elements/trade/TradeWidgetCTA';
@@ -10,7 +10,7 @@ import { wethToken } from 'services/web3/config';
 interface Props {
   from?: string;
   to?: string;
-  tokens: Token[];
+  tokens: TokenMinimal[];
 }
 
 export const TradeWidget = (props: Props) => {

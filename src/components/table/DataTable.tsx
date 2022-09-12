@@ -11,9 +11,10 @@ import { TableHeader } from 'components/table/TableHeader';
 import { TableBody } from 'components/table/TableBody';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { useEffect } from 'react';
+import { getPageRowsLS } from 'utils/localStorage';
 
 export type TableColumn<D extends object> = Column<D> & {
-  tooltip?: string;
+  tooltip?: string | JSX.Element;
   headerClassName?: string;
 };
 
@@ -58,6 +59,7 @@ export const DataTable = <D extends object>({
       initialState: {
         pageIndex: 0,
         sortBy: defaultSort ? [defaultSort] : [],
+        pageSize: getPageRowsLS(),
       },
       autoResetSortBy: false,
       disableSortRemove: true,
@@ -71,7 +73,7 @@ export const DataTable = <D extends object>({
 
   useEffect(() => {
     gotoPage(0);
-  }, [gotoPage, search]);
+  }, [gotoPage, pageCount, search]);
 
   return (
     <>
@@ -94,11 +96,11 @@ export const DataTable = <D extends object>({
       </div>
 
       {!isLoading && data.length === 0 && (
-        <div className="text-secondary text-center py-50">No record found</div>
+        <div className="text-center text-secondary py-50">No record found</div>
       )}
 
       {isLoading && (
-        <div className="space-y-20 p-20">
+        <div className="p-20 space-y-20">
           {[...Array(3)].map((_, index) => (
             <div
               key={index}

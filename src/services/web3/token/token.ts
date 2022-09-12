@@ -1,7 +1,8 @@
 import { web3 } from 'services/web3/index';
-import { BigNumber } from 'ethers';
 import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { ethToken } from 'services/web3/config';
+import { BigNumber } from 'ethers';
 
 export const fetchTokenBalance = async (
   tokenId: string,
@@ -14,18 +15,24 @@ export const fetchTokenBalanceMulticall = async (
   tokenIds: string[],
   user: string
 ): Promise<Map<string, string>> => {
-  const calls = tokenIds.map((tokenId) => buildTokenBalanceCall(tokenId, user));
-  const res = await multicall(calls);
+  const idsWithoutEth = tokenIds.filter((id) => id !== ethToken);
+  const calls = idsWithoutEth.map((id) => buildTokenBalanceCall(id, user));
+
+  const [res, eth] = await Promise.all([multicall(calls), fetchETH(user)]);
+
   if (!res || !res.length) {
     throw new Error('Multicall Error while fetching token balances');
   }
-  return new Map(
+  const balanceMap = new Map(
     res.map((bn, idx) => {
-      const tokenId = tokenIds[idx];
+      const tokenId = idsWithoutEth[idx];
       const balanceWei = bn && bn.length ? bn[0].toString() : '0';
       return [tokenId, balanceWei];
     })
   );
+  balanceMap.set(ethToken, eth);
+
+  return balanceMap;
 };
 
 export const buildTokenBalanceCall = (

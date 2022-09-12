@@ -1,10 +1,10 @@
 import { utils } from 'ethers';
 import { ethToken, wethToken } from 'services/web3/config';
-import { uniqBy } from 'lodash';
+import { isEqual, uniqBy } from 'lodash';
 import { BehaviorSubject, combineLatest, from } from 'rxjs';
 import { mapIgnoreThrown } from 'utils/pureFunctions';
 import axios from 'axios';
-import { shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { TokenList, TokenMinimal } from 'services/observables/tokens';
 
@@ -91,7 +91,7 @@ export const listOfLists = [
 
 export const userPreferredListIds$ = new BehaviorSubject<string[]>([]);
 
-export const tokenListsNew$ = from(
+export const tokenLists$ = from(
   mapIgnoreThrown(listOfLists, async (list) => {
     const res = await axios.get<TokenList>(list.uri, { timeout: 10000 });
     return {
@@ -102,7 +102,7 @@ export const tokenListsNew$ = from(
 ).pipe(shareReplay(1));
 
 export const tokenListTokens$ = combineLatest([
-  tokenListsNew$,
+  tokenLists$,
   userPreferredListIds$,
 ]).pipe(
   switchMapIgnoreThrow(async ([tokenLists, userPreferredListIds]) => {
@@ -114,5 +114,9 @@ export const tokenListTokens$ = combineLatest([
 
     return { allTokenListTokens, userPreferredTokenListTokens };
   }),
+  distinctUntilChanged<{
+    allTokenListTokens: TokenMinimal[];
+    userPreferredTokenListTokens: TokenMinimal[];
+  }>(isEqual),
   shareReplay(1)
 );

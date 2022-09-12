@@ -17,6 +17,8 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 import { useDispatch } from 'react-redux';
 import { setDisableDepositOpen } from 'store/modals/modals';
+import { SnapshotLink } from '../SnapshotLink';
+import { config } from 'config';
 
 export const PoolsTable = ({
   rewards,
@@ -49,9 +51,10 @@ export const PoolsTable = ({
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
         (lowLiquidity || Number(p.tradingLiquidityTKN.usd) > 50000) &&
-        (lowEarnRate || p.apr7d.total > 0.15)
+        (lowEarnRate || p.apr7d.total > 0.15) &&
+        (!rewards || p.latestProgram?.isActive)
     );
-  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate]);
+  }, [pools, search, lowVolume, lowLiquidity, lowEarnRate, rewards]);
 
   const toolTip = useCallback(
     (row: PoolV3) => (
@@ -78,6 +81,20 @@ export const PoolsTable = ({
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
               : prettifyNumber(row.fees7d.usd, true)}
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-start">
+            LP Fees 7d
+            <SnapshotLink />
+          </div>
+          <div>
+            {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
+              ? 'New'
+              : prettifyNumber(
+                  toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
+                  true
+                )}
           </div>
         </div>
       </div>
@@ -128,7 +145,7 @@ export const PoolsTable = ({
                   <div>
                     Rewards enabled on this token.{' '}
                     <Navigate
-                      to="https://support.bancor.network/hc/en-us/articles/5415540047506-Auto-Compounding-Rewards-Standard-Rewards-programs"
+                      to={config.externalUrls.rewardsProgramsArticle}
                       className="hover:underline text-primary"
                     >
                       Read about the rewards here
@@ -141,7 +158,11 @@ export const PoolsTable = ({
         ),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['apr7d', 'total']),
-        tooltip: 'Estimated APR based on the last 7d trading fees',
+        tooltip: (
+          <span>
+            Estimated APR based on the last 7d LP fees <SnapshotLink />
+          </span>
+        ),
         minWidth: 100,
         sortDescFirst: true,
       },

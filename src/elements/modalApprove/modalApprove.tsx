@@ -8,7 +8,7 @@ import {
   setNetworkContractApproval,
 } from 'services/web3/approval';
 import { useDispatch } from 'react-redux';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { web3 } from 'services/web3';
 import { wait } from 'utils/pureFunctions';
 import { ErrorCode } from 'services/web3/types';
@@ -21,7 +21,7 @@ interface ModalApproveProps {
   setIsOpen: (isOpen: boolean) => void;
   isOpen: boolean;
   amount: string;
-  fromToken?: Token;
+  fromToken?: TokenMinimal;
   handleApproved: Function;
   waitForApproval?: boolean;
   contract: ApprovalContract;

@@ -20,7 +20,7 @@ export const MigrateProtect = () => {
   const migrate = false;
 
   return (
-    <div className="grid md:grid-cols-4 h-screen">
+    <div className="grid h-screen md:grid-cols-4">
       <div className="col-span-3 md:w-[550px] mx-auto my-auto">
         {migrate ? <Migrate /> : <Protect />}
       </div>
@@ -43,7 +43,7 @@ export const MigrateProtect = () => {
               classStar="text-primary"
               percentage={100}
             />
-            <div className="text-graphite mt-2">Trusted by over 1M+ users</div>
+            <div className="mt-2 text-graphite">Trusted by over 1M+ users</div>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ const Migrate = () => {
     <>
       {selectedHolding === -1 ? (
         <>
-          <div className="text-4xl mb-20">
+          <div className="mb-20 text-4xl">
             Migrate your holdings that are at risk of Impermanet loss?
           </div>
           {!seeAllHoldings && (
@@ -74,7 +74,7 @@ const Migrate = () => {
           )}
           {positions.length ? (
             <MigrateHoldingAtRisk
-              className="mt-60 max-h-[400px] overflow-scroll"
+              className="mt-60 max-h-[400px] overflow-auto"
               holdings={seeAllHoldings ? positions : [positions[0]]}
               onSelect={(index: number) => setSelectedHolding(index)}
             />
@@ -94,11 +94,11 @@ const Migrate = () => {
           <div className="text-4xl mt-30">
             Secure this balancer holding from impermanent loss
           </div>
-          <div className="text-16 text-black-low mt-10">
+          <div className="mt-10 text-16 text-black-low">
             You've lost $??,??? in impermanent loss so far, get 100% protected
             on bancor.
           </div>
-          <div className="flex items-center text-black-low mt-40">
+          <div className="flex items-center mt-40 text-black-low">
             Moving to protected earnings
             <IconInfo className="w-[15px] h-[15px] ml-5" />
           </div>
@@ -123,11 +123,11 @@ const Migrate = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center text-black-low mt-40">
+          <div className="flex items-center mt-40 text-black-low">
             Exiting risky positions
             <IconInfo className="w-[15px] h-[15px] ml-5" />
           </div>
-          <hr className="text-silver my-10" />
+          <hr className="my-10 text-silver" />
           {positions[selectedHolding].tokens
             .slice(1, positions[selectedHolding].tokens.length)
             .map((token) => (
@@ -208,10 +208,10 @@ const Protect = () => {
                 {'<-'} Back
               </button>
               <div className="text-4xl mt-30">Earn interest on your tokens</div>
-              <div className="text-16 text-black-low mt-10 mb-100">
+              <div className="mt-10 text-16 text-black-low mb-100">
                 $??,??? balance
               </div>
-              <div className="max-h-[400px] overflow-scroll">
+              <div className="max-h-[400px] overflow-auto">
                 {availabelToStake.map((stake, index) => {
                   return (
                     <button
@@ -236,7 +236,7 @@ const Protect = () => {
           ) : (
             <>
               {topStake ? (
-                <div className="text-4xl mb-20 text-silver">
+                <div className="mb-20 text-4xl text-silver">
                   Would you like to earn{' '}
                   {prettifyNumber(topStake.pool.apr7d.total)}% on your{' '}
                   {prettifyNumber(topStake.token.balance!)}{' '}
@@ -272,7 +272,7 @@ const Protect = () => {
               availabelToStake[selectedPosition].token.symbol
             } do you want to desposit?`}
           </div>
-          <div className="text-16 text-black-low mt-10">$??,??? balance</div>
+          <div className="mt-10 text-16 text-black-low">$??,??? balance</div>
           <TokenInputV3
             token={availabelToStake[selectedPosition].token}
             inputTkn={input}

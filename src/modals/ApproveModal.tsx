@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
 import { Modal } from 'modals';
@@ -15,7 +15,7 @@ export const ApproveModal = ({
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   setApproval: Function;
-  token: Token;
+  token: TokenMinimal;
   amount: string;
   isLoading: boolean;
   onClose?: Function;

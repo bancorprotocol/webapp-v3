@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { Token } from 'services/observables/tokens';
 import { toBigNumber } from 'utils/helperFunctions';
 
 export const calcReserve = (from: string, to: string, fee: BigNumber) => {
@@ -10,10 +9,9 @@ export const calcReserve = (from: string, to: string, fee: BigNumber) => {
 
 export const expandToken = (amount: string | number, precision: number) => {
   const trimmed = new BigNumber(amount).toFixed(precision, 1);
-  const inWei = new BigNumber(trimmed)
+  return new BigNumber(trimmed)
     .times(new BigNumber(10).pow(precision))
     .toFixed(0);
-  return inWei;
 };
 
 export const shrinkToken = (
@@ -30,22 +28,11 @@ export const shrinkToken = (
   return chopZeros ? new BigNumber(res).toString() : res;
 };
 
-export const usdByToken = (
-  token: Token,
-  amount?: string,
-  isToken: boolean = true
-): string => {
-  if (!token || !token.usdPrice || (!amount && !token.balance)) return '';
-
-  const input = Number(amount ? amount : token.balance);
-  const tokenPrice = Number(token.usdPrice);
-  return (isToken ? input * tokenPrice : input / tokenPrice).toString();
-};
-
 export const calculatePercentageChange = (
   numberNow: number,
   numberBefore: number
 ): number => {
+  if (!numberBefore) return 0;
   return Number(((numberNow / numberBefore - 1) * 100).toFixed(2));
 };
 

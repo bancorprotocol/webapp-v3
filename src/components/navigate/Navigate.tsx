@@ -11,7 +11,13 @@ export const Navigate = ({
 }) => {
   const href = to.startsWith('http');
   return href ? (
-    <a className={className} href={to} target="_blank" rel="noreferrer">
+    <a
+      className={className}
+      href={to}
+      target="_blank"
+      rel="noreferrer"
+      onClick={(e) => e.stopPropagation()}
+    >
       {children}
     </a>
   ) : (

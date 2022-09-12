@@ -1,6 +1,5 @@
 import { ReactComponent as IconSync } from 'assets/icons/dottedSync.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancorOutline.svg';
-import { ReactComponent as IconProtect } from 'assets/icons/protectLight.svg';
 import { Button } from 'components/button/Button';
 
 const whatsNewList = [
@@ -15,11 +14,6 @@ const whatsNewList = [
     title: 'BNT omnipool',
     description:
       'Deposit into a single BNT pool to earn instest and rewards across the entire network.',
-  },
-  {
-    icon: <IconProtect />,
-    title: 'Instant 100% Impermanent Loss protection',
-    description: 'Fully protected from day 1 with no vesting period needed.',
   },
 ];
 

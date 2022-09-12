@@ -1,4 +1,4 @@
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import {
   bancorNetwork$,
@@ -98,7 +98,7 @@ const setApproval = async (
 };
 
 export const getNetworkContractApproval = async (
-  token: Token,
+  token: TokenMinimal,
   contract: ApprovalContract | string,
   amount: string
 ): Promise<boolean> => {
@@ -114,7 +114,7 @@ export const getNetworkContractApproval = async (
 };
 
 export const setNetworkContractApproval = async (
-  token: Token,
+  token: TokenMinimal,
   contract: ApprovalContract | string,
   amount?: string,
   resolveImmediately?: boolean

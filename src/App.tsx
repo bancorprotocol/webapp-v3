@@ -10,10 +10,7 @@ import {
   setSlippageTolerance,
   setUsdToggle,
 } from 'store/user/user';
-import {
-  Notification,
-  setNotifications,
-} from 'store/notification/notification';
+import { setNotifications } from 'store/notification/notification';
 import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
@@ -31,6 +28,8 @@ import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { Modals } from 'modals';
+import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
+import { RestrictedWallet } from 'pages/RestrictedWallet';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -38,11 +37,12 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 };
 
 export const App = () => {
+  const user = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
   useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
-  const notifications = useAppSelector<Notification[]>(
+  const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
 
@@ -91,16 +91,22 @@ export const App = () => {
     googleTagManager();
   }, [account, dispatch]);
 
+  const isWalletRestricted = !!user && handleRestrictedWalletCheck(user);
+
   return (
     <BrowserRouter>
       <LayoutHeader />
-      {unsupportedNetwork ? (
+
+      {isWalletRestricted ? (
+        <RestrictedWallet />
+      ) : unsupportedNetwork ? (
         <UnsupportedNetwork />
       ) : (
         <main>
           <BancorRouter />
         </main>
       )}
+
       <MobileBottomNav />
       <NotificationAlerts />
       <Modals />

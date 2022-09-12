@@ -95,12 +95,12 @@ export const AddLiquiditySingleSpaceAvailable = ({
   return (
     <div>
       {showPriceDeviationWarning ? (
-        <div className="p-20 rounded bg-error font-medium my-20 text-white">
+        <div className="p-20 my-20 font-medium text-white rounded bg-error">
           Due to price volatility, protecting your tokens is currently not
           available. Please try again in a few minutes.
         </div>
       ) : (
-        <div className="p-20 rounded bg-fog dark:bg-black-disabled my-20">
+        <div className="p-20 my-20 rounded bg-fog dark:bg-black-disabled">
           <div className="flex justify-between dark:text-white">
             <span className="font-medium">Space Available</span>{' '}
             <div className="text-right">

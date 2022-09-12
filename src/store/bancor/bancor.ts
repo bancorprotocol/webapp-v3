@@ -15,9 +15,10 @@ interface BancorState {
   tokensV3: Token[];
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
+  tokensForTradeWithExternal: TokenMinimal[];
   allTokens: Token[];
   isLoadingTokens: boolean;
-  statistics: Statistic[];
+  statistics: Statistic | null;
 }
 
 export const initialState: BancorState = {
@@ -27,8 +28,9 @@ export const initialState: BancorState = {
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
+  tokensForTradeWithExternal: [],
   isLoadingTokens: true,
-  statistics: [],
+  statistics: null,
 };
 
 const bancorSlice = createSlice({
@@ -54,8 +56,11 @@ const bancorSlice = createSlice({
     setKeeperDaoTokens: (state, action) => {
       state.keeperDaoTokens = action.payload;
     },
-    setStatisticsV3: (state, action: PayloadAction<Statistic[]>) => {
+    setStatisticsV3: (state, action: PayloadAction<Statistic>) => {
       state.statistics = action.payload;
+    },
+    setTradeTokens: (state, action: PayloadAction<TokenMinimal[]>) => {
+      state.tokensForTradeWithExternal = action.payload;
     },
   },
 });
@@ -68,6 +73,7 @@ export const {
   setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
+  setTradeTokens,
 } = bancorSlice.actions;
 
 export const getTokenById = createSelector(
@@ -94,6 +100,19 @@ export const getV2AndV3Tokens = createSelector(
   (state: RootState) => state.bancor.tokensV3,
   (tokensV2, tokensV3): Token[] => {
     return uniqBy([...tokensV3, ...tokensV2], (x) => x.address);
+  }
+);
+
+export const getTradeTokensWithExternal = createSelector(
+  (state: RootState) => state.bancor.tokensV2,
+  (state: RootState) => state.bancor.tokensV3,
+  (state: RootState) => state.bancor.tokensForTradeWithExternal,
+  (tokensV2, tokensV3, tokensForTradeWithExternal): TokenMinimal[] => {
+    const tlTokens: TokenMinimal[] = tokensForTradeWithExternal.map((t) => ({
+      ...t,
+      isExternal: true,
+    }));
+    return uniqBy([...tokensV3, ...tokensV2, ...tlTokens], (x) => x.address);
   }
 );
 

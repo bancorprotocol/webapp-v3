@@ -1,8 +1,7 @@
 import { Token } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { LineChartSimple } from 'components/charts/LineChartSimple';
-import { prettifyNumber } from 'utils/helperFunctions';
-import { ReactComponent as IconProtected } from 'assets/icons/protected.svg';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { useMemo } from 'react';
 import { SortingRule } from 'react-table';
 import { DataTable, TableColumn } from 'components/table/DataTable';
@@ -21,29 +20,29 @@ interface Props {
 
 export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const tokens = useAppSelector(getTokenTableData);
+  const search = searchInput.toLowerCase();
 
   const data = useMemo<Token[]>(() => {
-    return tokens.filter(
-      (t) =>
+    return tokens.filter((t) => {
+      const isSearchMatch =
+        t.symbol.toLowerCase().includes(search) ||
+        t.name.toLowerCase().includes(search);
+
+      return (
+        toBigNumber(t.liquidity).gt(0) &&
         t.address !== wethToken &&
-        (t.symbol.toLowerCase().includes(searchInput.toLowerCase()) ||
-          t.name.toLowerCase().includes(searchInput.toLowerCase()))
-    );
-  }, [tokens, searchInput]);
+        isSearchMatch
+      );
+    });
+  }, [tokens, search]);
 
   const CellName = (token: Token) => {
     return (
       <div className={'flex items-center'}>
-        <div className="w-18">
-          {token.isProtected && (
-            <IconProtected className={`w-18 h-20 text-primary`} />
-          )}
-        </div>
-
         <Image
           src={token.logoURI.replace('thumb', 'small')}
           alt="Token"
-          className="!rounded-full h-30 w-30 mr-10 ml-20"
+          className="!rounded-full h-30 w-30 mr-10"
         />
         <h3 className="text-14">{token.symbol}</h3>
       </div>
@@ -54,11 +53,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
     () => [
       {
         id: 'name',
-        Header: () => (
-          <span className="align-middle inline-flex items-center">
-            <IconProtected className="w-18 mr-20" /> <span>Name</span>
-          </span>
-        ),
+        Header: 'Name',
         accessor: 'symbol',
         Cell: (cellData) => CellName(cellData.row.original),
         minWidth: 180,
@@ -154,7 +149,7 @@ export const TokenTable = ({ searchInput, setSearchInput }: Props) => {
   const defaultSort: SortingRule<Token> = { id: 'liquidity', desc: true };
 
   return (
-    <section className="content-block pt-20 pb-10">
+    <section className="pt-20 pb-10 content-block">
       <div className="flex justify-between items-center mb-20 mx-[20px]">
         <h2>Tokens</h2>
         <SearchInput

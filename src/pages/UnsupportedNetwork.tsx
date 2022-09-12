@@ -1,3 +1,9 @@
+import { DisabledWarning } from 'components/disabledWarning/DisabledWarning';
+
+const title = 'Unsupported network';
+const description =
+  'In order to proceed, please change your wallets network settings to Ethereum Mainnet.';
+
 export const UnsupportedNetwork = () => {
-  return <h1 className="flex justify-center">UnsupportedNetwork</h1>;
+  return <DisabledWarning title={title} description={description} />;
 };
