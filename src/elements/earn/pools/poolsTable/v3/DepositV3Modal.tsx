@@ -409,20 +409,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 </div>
               </>
             )}
-
-            <div
-              className={'flex justify-between mt-20 space-x-20 items-center'}
-            >
-              <Switch
-                variant={SwitchVariant.PRIMARY}
-                selected={accessFullEarnings}
-                onChange={setAccessFullEarnings}
-              />
-              <button onClick={() => setAccessFullEarnings((prev) => !prev)}>
-                ONLY FOR DEVELOPMENT: Deposit AND Join
-              </button>
-            </div>
-
             <Button
               onClick={handleClick}
               disabled={
