@@ -9,14 +9,15 @@ import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import 'swiper/css';
 import { useDispatch } from 'react-redux';
-import { setDisableDepositOpen } from 'store/modals/modals';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
   const dispatch = useDispatch();
 
   return (
     <button
-      onClick={() => dispatch(setDisableDepositOpen(true))}
+      onClick={() => dispatch(pushModal(ModalNames.DepositDisabled))}
       className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
     >
       <TokenBalance

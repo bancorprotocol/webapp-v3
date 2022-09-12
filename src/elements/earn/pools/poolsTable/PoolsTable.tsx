@@ -16,7 +16,8 @@ import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
 import { useDispatch } from 'react-redux';
-import { setDisableDepositOpen } from 'store/modals/modals';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
 import { SnapshotLink } from '../SnapshotLink';
 import { config } from 'config';
 
@@ -172,7 +173,7 @@ export const PoolsTable = ({
         accessor: 'poolDltId',
         Cell: (_) => (
           <Button
-            onClick={() => dispatch(setDisableDepositOpen(true))}
+            onClick={() => dispatch(pushModal(ModalNames.DepositDisabled))}
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.ExtraSmall}
           >

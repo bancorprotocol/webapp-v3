@@ -1,23 +1,42 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { ModalNames } from 'modals';
+import { RootState } from 'store';
 
 export interface ModalsState {
-  disableDepositOpen: boolean;
+  openModals: ModalNames[];
 }
 
 export const initialState: ModalsState = {
-  disableDepositOpen: false,
+  openModals: [],
 };
 
 const modalsSlice = createSlice({
   name: 'modals',
   initialState,
   reducers: {
-    setDisableDepositOpen: (state, action) => {
-      state.disableDepositOpen = action.payload;
+    pushModal: (state, action) => {
+      state.openModals.push(action.payload);
+    },
+    popModal: (state) => {
+      state.openModals.pop();
+    },
+    replaceModal: (state, action) => {
+      state.openModals.pop();
+      state.openModals.push(action.payload);
     },
   },
 });
 
-export const { setDisableDepositOpen } = modalsSlice.actions;
+export const getModalOpen = createSelector(
+  [
+    (state: RootState) => state.modals.openModals,
+    (_: any, modal: ModalNames) => modal,
+  ],
+  (openModals: ModalNames[], modal: ModalNames) => {
+    return openModals.some((x) => x === modal);
+  }
+);
+
+export const { pushModal, popModal, replaceModal } = modalsSlice.actions;
 
 export const modals = modalsSlice.reducer;

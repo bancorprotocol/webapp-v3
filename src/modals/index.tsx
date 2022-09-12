@@ -6,6 +6,10 @@ import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { CreatePoolModal } from './CreatePoolModal';
 import { DepositDisabledModal } from './DepositDisabledModal';
 
+export enum ModalNames {
+  DepositDisabled,
+}
+
 export const Modals = () => {
   return (
     <>

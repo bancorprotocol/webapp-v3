@@ -13,7 +13,8 @@ import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useDispatch } from 'react-redux';
-import { setDisableDepositOpen } from 'store/modals/modals';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -76,7 +77,9 @@ export const V3EarningTable = () => {
           <div className="flex items-center">
             <V3EarningTableMenu
               holding={cell.row.original}
-              handleDepositClick={() => dispatch(setDisableDepositOpen(true))}
+              handleDepositClick={() =>
+                dispatch(pushModal(ModalNames.DepositDisabled))
+              }
               setIsWithdrawModalOpen={setIsWithdrawModalOpen}
               setHoldingToWithdraw={setHoldingToWithdraw}
             />
