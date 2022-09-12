@@ -3,9 +3,9 @@ import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import dayjs from 'dayjs';
 import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
 import { toBigNumber } from 'utils/helperFunctions';
+import { web3 } from 'services/web3/index';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -110,9 +110,11 @@ export const fetchAllStandardRewards = async (): Promise<
   try {
     const ids = await ContractsApi.StandardRewards.read.programIds();
 
-    const programs = await ContractsApi.StandardRewards.read.programs(ids);
-
-    const programsStaked = await fetchProgramStakeMulticall(ids);
+    const [programs, programsStaked, block] = await Promise.all([
+      ContractsApi.StandardRewards.read.programs(ids),
+      fetchProgramStakeMulticall(ids),
+      web3.provider.getBlock('latest'),
+    ]);
 
     return programs.map((program) => ({
       id: program.id.toString(),
@@ -123,8 +125,8 @@ export const fetchAllStandardRewards = async (): Promise<
       endTime: program.endTime,
       rewardRate: program.rewardRate.toString(),
       isActive:
-        program.startTime <= dayjs.utc().unix() &&
-        program.endTime >= dayjs.utc().unix(),
+        program.startTime <= block.timestamp &&
+        program.endTime >= block.timestamp,
       stakedBalance: programsStaked?.get(program.id.toString()) ?? '0',
     }));
   } catch (e) {
