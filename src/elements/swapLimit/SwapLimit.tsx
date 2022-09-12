@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
 import { ModalDuration } from 'elements/modalDuration/modalDuration';
-import { Token, updateUserBalances } from 'services/observables/tokens';
+import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
@@ -44,9 +44,9 @@ enum Field {
 }
 
 interface SwapLimitProps {
-  fromToken: Token;
+  fromToken: TokenMinimal;
   setFromToken: Function;
-  toToken?: Token;
+  toToken?: TokenMinimal;
   setToToken: Function;
   switchTokens: Function;
   refreshLimit: Function;
@@ -217,7 +217,7 @@ export const SwapLimit = ({
   );
 
   //Check if approval is required
-  const checkApproval = async (token: Token) => {
+  const checkApproval = async (token: TokenMinimal) => {
     try {
       const isApprovalReq = await getNetworkContractApproval(
         token,

@@ -16,6 +16,7 @@ interface BancorState {
   tokensV3: Token[];
   keeperDaoTokens: KeeprDaoToken[];
   allTokenListTokens: TokenMinimal[];
+  tokensForTradeWithExternal: TokenMinimal[];
   allTokens: Token[];
   isLoadingTokens: boolean;
   statistics: Statistic | null;
@@ -29,6 +30,7 @@ export const initialState: BancorState = {
   allTokens: [],
   keeperDaoTokens: [],
   allTokenListTokens: [],
+  tokensForTradeWithExternal: [],
   isLoadingTokens: true,
   statistics: null,
   allStandardRewardsV3: [],
@@ -66,6 +68,9 @@ const bancorSlice = createSlice({
     ) => {
       state.allStandardRewardsV3 = action.payload;
     },
+    setTradeTokens: (state, action: PayloadAction<TokenMinimal[]>) => {
+      state.tokensForTradeWithExternal = action.payload;
+    },
   },
 });
 
@@ -78,6 +83,7 @@ export const {
   setAllTokenListTokens,
   setKeeperDaoTokens,
   setAllStandardRewardsV3,
+  setTradeTokens,
 } = bancorSlice.actions;
 
 export const getTokenById = createSelector(
@@ -108,6 +114,19 @@ export const getV2AndV3Tokens = createSelector(
   (state: RootState) => state.bancor.tokensV3,
   (tokensV2, tokensV3): Token[] => {
     return uniqBy([...tokensV3, ...tokensV2], (x) => x.address);
+  }
+);
+
+export const getTradeTokensWithExternal = createSelector(
+  (state: RootState) => state.bancor.tokensV2,
+  (state: RootState) => state.bancor.tokensV3,
+  (state: RootState) => state.bancor.tokensForTradeWithExternal,
+  (tokensV2, tokensV3, tokensForTradeWithExternal): TokenMinimal[] => {
+    const tlTokens: TokenMinimal[] = tokensForTradeWithExternal.map((t) => ({
+      ...t,
+      isExternal: true,
+    }));
+    return uniqBy([...tokensV3, ...tokensV2, ...tlTokens], (x) => x.address);
   }
 );
 

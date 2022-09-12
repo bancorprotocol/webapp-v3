@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SwapHeader } from 'elements/swapHeader/SwapHeader';
 import { SwapLimit } from 'elements/swapLimit/SwapLimit';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { useAppSelector } from 'store';
 import { ethToken } from 'services/web3/config';
 import { Insight } from 'elements/swapInsights/Insight';
@@ -9,7 +9,7 @@ import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNavigation } from 'hooks/useNavigation';
 import { TradeWidget } from 'elements/trade/TradeWidget';
-import { getV2AndV3Tokens } from 'store/bancor/bancor';
+import { getTradeTokensWithExternal } from 'store/bancor/bancor';
 
 interface SwapWidgetProps {
   isLimit: boolean;
@@ -28,7 +28,7 @@ export const SwapWidget = ({
   limit,
   refreshLimit,
 }: SwapWidgetProps) => {
-  const tokens = useAppSelector<Token[]>(getV2AndV3Tokens);
+  const tokens = useAppSelector<TokenMinimal[]>(getTradeTokensWithExternal);
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
@@ -36,7 +36,7 @@ export const SwapWidget = ({
   }, [tokens]);
 
   const [fromToken, setFromToken] = useState(ethOrFirst());
-  const [toToken, setToToken] = useState<Token | undefined>();
+  const [toToken, setToToken] = useState<TokenMinimal | undefined>();
 
   const [fromTokenITB, setFromTokenITB] = useState<IntoTheBlock | undefined>();
   const [toTokenITB, setToTokenITB] = useState<IntoTheBlock | undefined>();
@@ -104,7 +104,7 @@ export const SwapWidget = ({
             {isLimit ? (
               <SwapLimit
                 fromToken={fromToken}
-                setFromToken={(from: Token) =>
+                setFromToken={(from: TokenMinimal) =>
                   goToPage.trade({
                     from: from.address,
                     to: toToken?.address,
@@ -112,7 +112,7 @@ export const SwapWidget = ({
                   })
                 }
                 toToken={toToken}
-                setToToken={(to: Token) =>
+                setToToken={(to: TokenMinimal) =>
                   goToPage.trade({
                     from: fromToken?.address,
                     to: to.address,

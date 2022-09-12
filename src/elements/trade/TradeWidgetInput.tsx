@@ -3,7 +3,7 @@ import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { useMemo, useRef, useState } from 'react';
-import { Token } from 'services/observables/tokens';
+import { TokenMinimal } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -13,8 +13,8 @@ interface Props {
   isLoading?: boolean;
   onFocus?: () => void;
   label?: string;
-  tokens?: Token[];
-  onTokenSelect?: (token: Token) => void;
+  tokens?: TokenMinimal[];
+  onTokenSelect?: (token: TokenMinimal) => void;
   disabled?: boolean;
   errorMsg?: string;
   excludedTokens?: string[];
@@ -79,13 +79,15 @@ export const TradeWidgetInput = ({
               >
                 Balance: {prettifyNumber(input?.token.balance)} (
                 {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
-                <span
-                  className={
-                    'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
-                  }
-                >
-                  Max
-                </span>
+                {!disabled && (
+                  <span
+                    className={
+                      'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                    }
+                  >
+                    Max
+                  </span>
+                )}
               </button>
             )}
         </div>

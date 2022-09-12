@@ -16,7 +16,7 @@ import {
 import { utils } from 'ethers';
 import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay, switchMap } from 'rxjs/operators';
-import { isEqual, uniqueId } from 'lodash';
+import { isEqual, uniqBy, uniqueId } from 'lodash';
 import BigNumber from 'bignumber.js';
 import { settingsContractAddress$ } from 'services/observables/contracts';
 import { LiquidityProtectionSettings__factory } from 'services/web3/abis/types';
@@ -27,8 +27,8 @@ import {
   APIToken,
   APITokenV3,
 } from 'services/api/bancorApi/bancorApi.types';
-import { oneMinute$ } from 'services/observables/timers';
 import { toBigNumber } from 'utils/helperFunctions';
+import { oneMinute$ } from './timers';
 
 export interface TokenMinimal {
   address: string;
@@ -37,6 +37,9 @@ export interface TokenMinimal {
   name?: string;
   symbol: string;
   balance?: string;
+  balanceUsd?: number;
+  usdPrice?: string;
+  isExternal?: boolean;
 }
 
 export interface Token extends TokenMinimal {
@@ -205,43 +208,24 @@ export const updateUserBalances = async () => {
   await userBalancesReceiver$.next(uniqueId());
 };
 
-export const userBalancesInWei$ = combineLatest([
+export const allTokenBalances$ = combineLatest([
+  user$,
   apiTokens$,
-  user$,
-  userBalancesReceiver$,
-  oneMinute$,
-]).pipe(
-  switchMapIgnoreThrow(async ([apiTokens, user]) => {
-    if (!user) {
-      return undefined;
-    }
-
-    // get balances for tokens and return map
-    return await fetchTokenBalanceMulticall(
-      apiTokens.map((t) => t.dlt_id),
-      user
-    );
-  }),
-  distinctUntilChanged<Map<string, string> | undefined>(isEqual),
-  shareReplay(1)
-);
-
-export const userBalancesInWeiV3$ = combineLatest([
   apiTokensV3$,
-  user$,
   userBalancesReceiver$,
   oneMinute$,
 ]).pipe(
-  switchMapIgnoreThrow(async ([apiTokensv3, user]) => {
-    if (!user) {
+  switchMapIgnoreThrow(async ([user, tokensV2, tokensV3]) => {
+    if (!user || !tokensV3.length || !tokensV2.length) {
       return undefined;
     }
 
-    // get balances for tokens and return map
-    return await fetchTokenBalanceMulticall(
-      apiTokensv3.map((t) => t.dltId),
-      user
+    const tokenIds = uniqBy(
+      [...tokensV2.map((t) => t.dlt_id), ...tokensV3.map((t) => t.dltId)],
+      (id) => id
     );
+
+    return await fetchTokenBalanceMulticall(tokenIds, user);
   }),
   distinctUntilChanged<Map<string, string> | undefined>(isEqual),
   shareReplay(1)
@@ -270,7 +254,7 @@ export const tokensV2$ = combineLatest([
   apiTokens$,
   apiPools$,
   tokenListTokens$,
-  userBalancesInWei$,
+  allTokenBalances$,
   minNetworkTokenLiquidityForMinting$,
 ]).pipe(
   switchMapIgnoreThrow(
@@ -312,7 +296,7 @@ export const tokensV3$ = combineLatest([
   apiTokensV3$,
   apiPoolsV3$,
   tokenListTokens$,
-  userBalancesInWeiV3$,
+  allTokenBalances$,
 ]).pipe(
   switchMapIgnoreThrow(
     async ([
@@ -356,11 +340,25 @@ export const tokensV3$ = combineLatest([
   shareReplay(1)
 );
 
+export const tokensForTradeWithExternal$ = combineLatest([
+  tokenListTokens$,
+  allTokenBalances$,
+]).pipe(
+  switchMapIgnoreThrow(async ([tokenListTokens, balances]) => {
+    return tokenListTokens.userPreferredTokenListTokens.map((token) => ({
+      ...token,
+      balance: balances?.get(token.address),
+    }));
+  }),
+  distinctUntilChanged<TokenMinimal[]>(isEqual),
+  shareReplay(1)
+);
+
 export const allTokensNew$ = combineLatest([
   apiTokens$,
   apiPools$,
   tokenListTokens$,
-  userBalancesInWei$,
+  allTokenBalances$,
   minNetworkTokenLiquidityForMinting$,
 ]).pipe(
   switchMapIgnoreThrow(

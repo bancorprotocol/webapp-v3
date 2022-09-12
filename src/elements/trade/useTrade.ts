@@ -4,7 +4,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { swap } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { toBigNumber } from 'utils/helperFunctions';
-import { Token, updateUserBalances } from 'services/observables/tokens';
+import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
 import {
@@ -34,8 +34,8 @@ export interface UseTradeReturn {
   isBusy: boolean;
   handleSelectSwitch: () => void;
   errorInsufficientBalance: string | undefined;
-  handleSelectTo: (token: Token) => void;
-  handleSelectFrom: (token: Token) => void;
+  handleSelectTo: (token: TokenMinimal) => void;
+  handleSelectFrom: (token: TokenMinimal) => void;
   handleCTAClick: () => void;
 }
 
@@ -43,6 +43,7 @@ export const useTrade = ({
   fromInput,
   toInput,
   isV3,
+  isExternal,
 }: UseTradeWidgetReturn): UseTradeReturn => {
   const dispatch = useDispatch();
   const slippageTolerance = useAppSelector(
@@ -93,6 +94,7 @@ export const useTrade = ({
 
     await swap(
       isV3,
+      isExternal,
       account,
       slippageTolerance,
       fromInput.token,
@@ -141,12 +143,20 @@ export const useTrade = ({
     onStart();
   };
 
+  const tokensToApprove = fromInput
+    ? [{ token: fromInput.token, amount: fromInput.inputTkn }]
+    : [];
+
+  const contractToApprove = isExternal
+    ? ContractsApi.ZeroEx.contractAddress
+    : isV3
+    ? ContractsApi.BancorNetwork.contractAddress
+    : ApprovalContract.BancorNetwork;
+
   const [onStart, ApproveModal] = useApproveModal(
-    fromInput ? [{ token: fromInput.token, amount: fromInput.inputTkn }] : [],
+    tokensToApprove,
     handleTrade,
-    isV3
-      ? ContractsApi.BancorNetwork.contractAddress
-      : ApprovalContract.BancorNetwork,
+    contractToApprove,
     () => sendConversionEvent(Events.approvePop),
     (isUnlimited) => {
       sendConversionEvent(Events.approved, undefined, isUnlimited);
@@ -163,7 +173,7 @@ export const useTrade = ({
   );
 
   const handleSelectFrom = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: token.address,
@@ -176,7 +186,7 @@ export const useTrade = ({
   );
 
   const handleSelectTo = useCallback(
-    (token: Token) => {
+    (token: TokenMinimal) => {
       goToPage.trade(
         {
           from: fromInput?.token.address,

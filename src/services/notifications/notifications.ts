@@ -3,7 +3,7 @@ import {
   BaseNotification,
   NotificationType,
 } from 'store/notification/notification';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { prettifyNumber } from 'utils/helperFunctions';
 
 const showNotification = (notification: BaseNotification, dispatch: any) =>
@@ -83,8 +83,8 @@ export const unstakeFailedNotification = (dispatch: any, amount: string) =>
 
 export const swapNotification = (
   dispatch: any,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string,
   txHash: string
@@ -115,8 +115,8 @@ export const swapNotification = (
 
 export const swapFailedNotification = (
   dispatch: any,
-  fromToken: Token,
-  toToken: Token,
+  fromToken: TokenMinimal,
+  toToken: TokenMinimal,
   fromAmount: string,
   toAmount: string
 ) =>

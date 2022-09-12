@@ -21,6 +21,8 @@ export const wethToken: string = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 export const multiCallContract: string =
   '0x5ba1e12693dc8f9c48aad8770482f4739beed696';
 export const genericToken: string = generic_token;
+export const zeroExProxyAddress = '0xdef1c0ded9bec7f1a1670819833240f027b25eff';
+export const zeroExFeeRecipient = '0x5f7a009664B771E889751f4FD721aDc439033ECD';
 export const bancorMasterVault = '0x649765821D9f64198c905eC0B2B037a4a52Bc373';
 export const bntDecimals: number = 18;
 export const vBntDecimals: number = 18;
