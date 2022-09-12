@@ -309,9 +309,16 @@ export const standardsRewardsAPR = (
             .times(60 * 60)
             .times(24)
             .times(seven_days ? 7 : 1);
-          return (
-            acc + calcApr(rewardRateTime, apiPool.standardRewardsStaked.bnt)
+          const stakedBalance = shrinkToken(
+            data.stakedBalance,
+            apiPool.decimals
           );
+          const tknUsdRate = tokensMap.get(apiPool.poolDltId)?.usdPrice ?? '0';
+          const bntUsdRate = tokensMap.get(bntToken)?.usdPrice ?? '0';
+          const stakedBalanceInBNT = toBigNumber(tknUsdRate)
+            .div(bntUsdRate)
+            .times(stakedBalance);
+          return acc + calcApr(rewardRateTime, stakedBalanceInBNT);
         }, 0)
     );
   }
