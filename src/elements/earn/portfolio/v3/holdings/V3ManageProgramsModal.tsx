@@ -227,7 +227,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
             )}
             {programsSorted.length > 0 && (
               <>
-                <div className="text-seconday mb-30">
+                <div className="text-secondary mb-30">
                   bn{holding.pool.reserveToken.symbol} in BNT Rewards
                 </div>
 
