@@ -62,6 +62,8 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   const onClose = async () => {
     setIsOpen(false);
     setJoinRewards(false);
+    setAmount('');
+    setInputFiat('');
   };
 
   const dispatch = useDispatch();
