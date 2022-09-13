@@ -116,7 +116,7 @@ export const useV3WithdrawConfirm = ({
         confirmWithdrawNotification(
           dispatch,
           tx.hash,
-          withdrawRequest.reserveTokenAmount,
+          withdrawAmounts?.baseTokenAmount ?? 'n/a',
           token.symbol
         );
         onModalClose();
@@ -142,7 +142,14 @@ export const useV3WithdrawConfirm = ({
         setTxBusy(false);
       }
     },
-    [account, dispatch, onModalClose, token.symbol, withdrawRequest]
+    [
+      account,
+      dispatch,
+      onModalClose,
+      token.symbol,
+      withdrawAmounts?.baseTokenAmount,
+      withdrawRequest,
+    ]
   );
 
   const approveTokens = useMemo(() => {
