@@ -99,8 +99,8 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
       confirmJoinNotification(
         dispatch,
         tx.hash,
-        holding.tokenBalance,
-        holding.pool.reserveToken.symbol
+        amount,
+        `bn${holding.pool.reserveToken.symbol}`
       );
       setTxJoinBusy(false);
       setJoinRewards(false);
