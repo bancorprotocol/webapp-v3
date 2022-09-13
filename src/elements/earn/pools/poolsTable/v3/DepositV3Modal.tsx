@@ -294,9 +294,16 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                         </div>
                       </PopoverV3>
                     </div>
-                    <span>{prettifyNumber(pool.apr7d.total)}%</span>
+                    <span>
+                      {prettifyNumber(
+                        toBigNumber(pool.apr7d.tradingFees).plus(
+                          pool.apr7d.autoCompounding
+                        )
+                      )}
+                      %
+                    </span>
                   </div>
-                  {true && (
+                  {pool.latestProgram?.isActive && (
                     <div>
                       <div className="flex justify-between items-center">
                         BNT Rewards
@@ -322,7 +329,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                             {pool.reserveToken.symbol} which represents your
                             share of the pool. You can earn more by staking
                             (with additional gas) these tokens into a rewards
-                            program.You will need to remove the bn
+                            program. You will need to remove the bn
                             {pool.reserveToken.symbol} from the rewards program
                             before you can withdraw
                           </PopoverV3>
