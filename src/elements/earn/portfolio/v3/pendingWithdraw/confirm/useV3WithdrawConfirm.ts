@@ -18,7 +18,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
-import { expandToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import {
   sendWithdrawACEvent,
   setCurrentWithdraw,
@@ -116,7 +116,7 @@ export const useV3WithdrawConfirm = ({
         confirmWithdrawNotification(
           dispatch,
           tx.hash,
-          withdrawAmounts?.baseTokenAmount ?? 'n/a',
+          shrinkToken(withdrawAmounts?.baseTokenAmount ?? '0', pool.decimals),
           token.symbol
         );
         onModalClose();
@@ -146,6 +146,7 @@ export const useV3WithdrawConfirm = ({
       account,
       dispatch,
       onModalClose,
+      pool.decimals,
       token.symbol,
       withdrawAmounts?.baseTokenAmount,
       withdrawRequest,

@@ -119,6 +119,7 @@ export const V3HoldingPage = () => {
               <div className="text-secondary mb-10">Total Holdings</div>
               {holding ? (
                 <div className="flex items-center gap-16 text-[36px] text-black dark:text-white">
+                  {holding.pool.name}{' '}
                   {prettifyNumber(holding.combinedTokenBalance)}
                   {deficitAmount && (
                     <PopoverV3
@@ -151,13 +152,11 @@ export const V3HoldingPage = () => {
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
-                Compunding returns
+                Compounding returns
                 <div className="md:block flex flex-col items-end justify-self-end">
                   <div className="text-black dark:text-white md:mt-8">
                     Coming Soon
                   </div>
-
-                  {false && <div className="text-primary mt-8">???%</div>}
                 </div>
               </div>
               <div className="md:block grid grid-cols-2">
