@@ -62,6 +62,7 @@ export const SlippageSettings = () => {
             value={customSlippage}
             onChange={(event) => {
               const sanitized = sanitizeNumberInput(event.target.value);
+              if (sanitized === '') return;
               setCustomSlippage(sanitized);
               dispatch(setSlippageTolerance(Number(sanitized) / 100));
             }}
