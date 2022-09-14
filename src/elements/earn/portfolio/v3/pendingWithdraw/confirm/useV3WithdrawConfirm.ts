@@ -116,7 +116,12 @@ export const useV3WithdrawConfirm = ({
         confirmWithdrawNotification(
           dispatch,
           tx.hash,
-          shrinkToken(withdrawAmounts?.baseTokenAmount ?? '0', pool.decimals),
+          shrinkToken(
+            isBntToken
+              ? withdrawAmounts?.bntAmount ?? 0
+              : withdrawAmounts?.baseTokenAmount ?? '0',
+            pool.decimals
+          ),
           token.symbol
         );
         onModalClose();
@@ -145,10 +150,12 @@ export const useV3WithdrawConfirm = ({
     [
       account,
       dispatch,
+      isBntToken,
       onModalClose,
       pool.decimals,
       token.symbol,
       withdrawAmounts?.baseTokenAmount,
+      withdrawAmounts?.bntAmount,
       withdrawRequest,
     ]
   );
