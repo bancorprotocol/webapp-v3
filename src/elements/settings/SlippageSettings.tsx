@@ -59,7 +59,7 @@ export const SlippageSettings = () => {
                 ? 'bg-white dark:bg-black'
                 : 'bg-white dark:bg-black'
             }`}
-            value={Number(customSlippage) > 0 ? `${customSlippage}%` : ''}
+            value={customSlippage ? `${customSlippage}%` : ''}
             onKeyDown={(e) => {
               if (e.keyCode === 46 || e.keyCode === 8) {
                 setCustomSlippage('');
@@ -68,6 +68,7 @@ export const SlippageSettings = () => {
             }}
             onChange={(event) => {
               const sanitized = sanitizeNumberInput(event.target.value);
+              console.log(sanitized);
               if (sanitized === '') {
                 setCustomSlippage(sanitized);
                 dispatch(setSlippageTolerance(Number(0.5) / 100));
