@@ -59,27 +59,25 @@ export const SlippageSettings = () => {
                 ? 'bg-white dark:bg-black'
                 : 'bg-white dark:bg-black'
             }`}
-            value={customSlippage}
+            value={Number(customSlippage) > 0 ? `${customSlippage}%` : ''}
+            onKeyDown={(e) => {
+              if (e.keyCode === 46 || e.keyCode === 8) {
+                setCustomSlippage('');
+                dispatch(setSlippageTolerance(Number(0.5) / 100));
+              }
+            }}
             onChange={(event) => {
               const sanitized = sanitizeNumberInput(event.target.value);
-              if (sanitized === '') return;
+              if (sanitized === '') {
+                setCustomSlippage(sanitized);
+                dispatch(setSlippageTolerance(Number(0.5) / 100));
+                return;
+              }
               setCustomSlippage(sanitized);
               dispatch(setSlippageTolerance(Number(sanitized) / 100));
             }}
-            onBlur={() => {
-              if (
-                customSlippage.trim() !== '' &&
-                !isNaN(Number(customSlippage))
-              ) {
-                dispatch(setSlippageTolerance(normalizedSlippage));
-                return;
-              }
-
-              slippages.includes(currentSlippage) && setCustomSlippage('');
-            }}
             placeholder="Custom"
           />
-          %
         </span>
       </div>
     </div>
