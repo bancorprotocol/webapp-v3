@@ -18,7 +18,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useDispatch } from 'react-redux';
-import { expandToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import {
   sendWithdrawACEvent,
   setCurrentWithdraw,
@@ -116,7 +116,12 @@ export const useV3WithdrawConfirm = ({
         confirmWithdrawNotification(
           dispatch,
           tx.hash,
-          withdrawRequest.reserveTokenAmount,
+          shrinkToken(
+            isBntToken
+              ? withdrawAmounts?.bntAmount ?? 0
+              : withdrawAmounts?.baseTokenAmount ?? '0',
+            pool.decimals
+          ),
           token.symbol
         );
         onModalClose();
@@ -142,7 +147,17 @@ export const useV3WithdrawConfirm = ({
         setTxBusy(false);
       }
     },
-    [account, dispatch, onModalClose, token.symbol, withdrawRequest]
+    [
+      account,
+      dispatch,
+      isBntToken,
+      onModalClose,
+      pool.decimals,
+      token.symbol,
+      withdrawAmounts?.baseTokenAmount,
+      withdrawAmounts?.bntAmount,
+      withdrawRequest,
+    ]
   );
 
   const approveTokens = useMemo(() => {

@@ -1,30 +1,64 @@
-import { AdminTknData } from 'elements/admin/AdminTknData';
-import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
 import { AdminUseFork } from 'elements/admin/AdminUseFork';
 import { AdminControls } from 'elements/admin/AdminControls';
 import { isForkAvailable } from 'services/web3/config';
+import { AdminFaucet } from 'elements/admin/AdminFaucet';
+import { AdminTransfer } from 'elements/admin/AdminTransfer';
+import { Page } from 'components/Page';
+import { AdminUseMainnet } from 'elements/admin/AdminUseMainnet';
+import { AdminPoolData } from 'elements/admin/AdminPoolData';
+import { AdminStandardRewardsData } from 'elements/admin/AdminStandardRewardsData';
+import { AdminStandardRewardsCreate } from 'elements/admin/AdminStandardRewardsCreate';
+import { AdminAdvanceTime } from 'elements/admin/AdminAdvanceTime';
 
 export const Admin = () => {
   return (
-    <div className="space-y-20 text-center">
-      <h1 className="pt-80">Bancor Network Configurator</h1>
+    <Page
+      title={'Debug'}
+      subtitle={'Admin tools for development and debugging.'}
+    >
+      <div className="space-y-20 text-center">
+        <div className={'grid md:grid-cols-2 gap-20'}>
+          <div className={'space-y-20'}>
+            <div className={'content-block rounded p-20'}>
+              <AdminUseMainnet />
+            </div>
+            <div className={'content-block rounded p-20'}>
+              <AdminUseFork />
+            </div>
+            {isForkAvailable && (
+              <div className={'content-block rounded p-20'}>
+                <AdminControls />
+              </div>
+            )}
+          </div>
+          {isForkAvailable && (
+            <div className={'space-y-20'}>
+              <div className={'content-block rounded p-20'}>
+                <AdminFaucet />
+              </div>
+              <div className={'content-block rounded p-20'}>
+                <AdminTransfer />
+              </div>
+            </div>
+          )}
+        </div>
 
-      <AdminUseMainnet />
+        <div className={'content-block rounded p-20'}>
+          <AdminPoolData />
+        </div>
 
-      <hr />
+        <div className={'content-block rounded p-20'}>
+          <AdminAdvanceTime />
+        </div>
 
-      <AdminUseFork />
+        <div className={'content-block rounded p-20'}>
+          <AdminStandardRewardsCreate />
+        </div>
 
-      {isForkAvailable && (
-        <>
-          <hr />
-          <AdminControls />
-        </>
-      )}
-
-      <hr />
-
-      <AdminTknData />
-    </div>
+        <div className={'content-block rounded p-20'}>
+          <AdminStandardRewardsData />
+        </div>
+      </div>
+    </Page>
   );
 };

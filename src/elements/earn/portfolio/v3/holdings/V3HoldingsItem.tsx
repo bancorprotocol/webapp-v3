@@ -3,28 +3,19 @@ import { useMemo, useState } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
-import { V3HoldingsItemStaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemStaked';
-import { V3HoldingsItemUnstaked } from 'elements/earn/portfolio/v3/holdings/V3HoldingsItemUnstaked';
+import { ReactComponent as IconChevronRight } from 'assets/icons/chevronRight.svg';
 import BigNumber from 'bignumber.js';
-import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import { bntToken } from 'services/web3/config';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
+import { TokenBalance } from 'components/tokenBalance/TokenBalance';
+import { useNavigation } from 'hooks/useNavigation';
 
-export const V3HoldingsItem = ({
-  holding,
-  selectedId,
-  setSelectedId,
-}: {
-  holding: Holding;
-  selectedId: string;
-  setSelectedId: (id: string) => void;
-}) => {
+export const V3HoldingsItem = ({ holding }: { holding: Holding }) => {
   const { pool, programs } = holding;
+  const { goToPage } = useNavigation();
 
   const rewardTokenAmountUsd = useMemo(
     () =>
@@ -43,8 +34,6 @@ export const V3HoldingsItem = ({
         .toNumber(),
     [programs]
   );
-
-  const isOpen = holding.pool.poolDltId === selectedId;
 
   const isBNT = holding.pool.poolDltId === bntToken;
 
@@ -75,60 +64,32 @@ export const V3HoldingsItem = ({
   ]);
 
   return (
-    <div
-      className={`content-block p-20 overflow-hidden ${
-        isOpen ? '' : 'h-[80px]'
-      }`}
-    >
+    <div className="content-block p-20 overflow-hidden">
       <button
-        onClick={() => setSelectedId(isOpen ? '' : holding.pool.poolDltId)}
+        onClick={() => goToPage.portfolioHolding(holding.pool.poolDltId)}
         className="flex items-center justify-between w-full"
       >
-        <div className="flex items-center space-x-10">
-          <Image
-            alt={'Token Logo'}
-            className={'w-40 h-40 !rounded-full'}
-            src={pool.reserveToken.logoURI}
-          />
+        <div>
           <PopoverV3
             buttonElement={() => (
-              <div className="flex items-center space-x-10">
-                <div className="flex items-center space-x-10 text-20">
-                  <div className=" text-secondary">
-                    {holding.pool.reserveToken.symbol}
-                  </div>
-                  <div>{prettifyNumber(holding.combinedTokenBalance)}</div>
-                </div>
-
-                <div className="text-secondary">
-                  {prettifyNumber(
-                    toBigNumber(holding.pool.reserveToken.usdPrice).times(
-                      holding.combinedTokenBalance
-                    ),
-                    true
-                  )}
-                </div>
-              </div>
+              <TokenBalance
+                symbol={pool.reserveToken.symbol}
+                amount={holding.combinedTokenBalance}
+                usdPrice={pool.reserveToken.usdPrice!}
+                imgUrl={pool.reserveToken.logoURI}
+                deficitAmount={
+                  !isBNT && withdrawAmounts
+                    ? shrinkToken(
+                        withdrawAmounts.baseTokenAmount ?? 0,
+                        holding.pool.decimals
+                      )
+                    : undefined
+                }
+              />
             )}
           >
             {holding.combinedTokenBalance} {holding.pool.reserveToken.symbol}
           </PopoverV3>
-          {!isBNT && withdrawAmounts && (
-            <PopoverV3
-              buttonElement={() => <IconWarning className="z-50 text-error" />}
-            >
-              <span className="text-secondary">
-                Due to vault deficit, current value is{' '}
-                {prettifyNumber(
-                  shrinkToken(
-                    withdrawAmounts.baseTokenAmount ?? 0,
-                    holding.pool.decimals
-                  )
-                )}{' '}
-                {holding.pool.reserveToken.symbol}
-              </span>
-            </PopoverV3>
-          )}
         </div>
         <div className="flex items-center space-x-30">
           {toBigNumber(rewardTokenAmountUsd).gt(0) && (
@@ -142,20 +103,9 @@ export const V3HoldingsItem = ({
             </div>
           )}
 
-          <IconChevronDown
-            className={`w-16 transition-transform duration-300 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
-          />
+          <IconChevronRight className="w-16" />
         </div>
       </button>
-
-      <hr className="mt-20 -mx-20 border-1 border-silver dark:border-grey" />
-
-      <div className="flex flex-col justify-between mt-20 md:flex-row md:space-x-30 space-y-30 md:space-y-0">
-        <V3HoldingsItemUnstaked holding={holding} />
-        <V3HoldingsItemStaked holding={holding} />
-      </div>
     </div>
   );
 };

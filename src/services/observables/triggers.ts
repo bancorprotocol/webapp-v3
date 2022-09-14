@@ -6,6 +6,7 @@ import {
   tokensV3$,
 } from 'services/observables/tokens';
 import {
+  setAllStandardRewardsV3,
   setAllTokenListTokens,
   setAllTokensV2,
   setKeeperDaoTokens,
@@ -59,6 +60,7 @@ import { poolsV2$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
 import { stakedAmount$, unstakeTimer$ } from './gov';
+import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
@@ -162,5 +164,8 @@ export const subscribeToObservables = (dispatch: any) => {
   });
   unstakeTimer$.subscribe((unstakeTimer) => {
     dispatch(setUnstakeTimer(unstakeTimer));
+  });
+  standardRewardPrograms$.subscribe((programs) => {
+    dispatch(setAllStandardRewardsV3(programs));
   });
 };

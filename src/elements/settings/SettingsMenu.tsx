@@ -9,10 +9,6 @@ import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
 import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
 import { ReactComponent as IconForum } from 'assets/icons/forum.svg';
-import { useDispatch } from 'react-redux';
-import { setSlippageTolerance } from 'store/user/user';
-import { useAppSelector } from 'store';
-import { useState } from 'react';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
 import { BancorURL } from 'router/bancorURL.service';
@@ -36,70 +32,9 @@ export const SettingsMenu = () => {
 };
 
 export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
-  const currentSlippage = useAppSelector<number>(
-    (state) => state.user.slippageTolerance
-  );
-  const slippages = [0.001, 0.005, 0.01];
-  const [customSlippage, setCustomSlippage] = useState(
-    slippages.includes(currentSlippage)
-      ? ''
-      : (currentSlippage * 100).toString()
-  );
-
-  const dispatch = useDispatch();
-
-  const normalizedSlippage = Number(customSlippage) / 100;
   return (
     <div className="space-y-15 text-black-low dark:text-white-low">
-      <div>Slippage Tolerance</div>
       <div className="flex flex-col gap-[25px]">
-        <div className="flex justify-between space-x-6">
-          {slippages.map((slippage) => (
-            <button
-              key={slippage}
-              onClick={() => {
-                dispatch(setSlippageTolerance(slippage));
-                setCustomSlippage('');
-              }}
-              className={`w-full border border-silver dark:border-grey text-black dark:text-white rounded-[12px] text-12 p-8 ${
-                currentSlippage === slippage ? 'bg-fog dark:bg-grey' : ''
-              }`}
-            >
-              +{slippage * 100}%
-            </button>
-          ))}
-          <span
-            className={`flex items-center border border-silver dark:border-grey rounded-[12px] pr-5 text-12 text-black dark:text-white ${
-              currentSlippage === normalizedSlippage &&
-              !slippages.includes(currentSlippage)
-                ? 'bg-fog dark:bg-grey'
-                : 'bg-white dark:bg-black'
-            }`}
-          >
-            <input
-              type="text"
-              className={`w-[60px] border-none outline-none text-center ${
-                currentSlippage === normalizedSlippage &&
-                !slippages.includes(currentSlippage)
-                  ? 'bg-fog dark:bg-grey'
-                  : 'bg-white dark:bg-black'
-              }`}
-              value={customSlippage}
-              onChange={(event) => setCustomSlippage(event.target.value)}
-              onBlur={() => {
-                if (
-                  customSlippage.trim() !== '' &&
-                  !isNaN(Number(customSlippage))
-                )
-                  dispatch(setSlippageTolerance(normalizedSlippage));
-
-                slippages.includes(currentSlippage) && setCustomSlippage('');
-              }}
-              placeholder="Custom"
-            />
-            %
-          </span>
-        </div>
         {mobile ? (
           <>
             <Navigate to={BancorURL.tokens}>

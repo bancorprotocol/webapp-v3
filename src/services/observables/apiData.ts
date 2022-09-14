@@ -44,10 +44,7 @@ export const apiBntV3$ = combineLatest([oneMinute$]).pipe(
 export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
   switchMapIgnoreThrow(async ([apiBnt]) => {
     const bntPool: APIPoolV3 = {
-      poolDltId: apiBnt.poolDltId,
-      poolTokenDltId: apiBnt.poolTokenDltId,
-      name: apiBnt.name,
-      decimals: apiBnt.decimals,
+      ...apiBnt,
       tradingLiquidityTKN: {
         ...apiBnt.tradingLiquidity,
         tkn: apiBnt.tradingLiquidity.bnt,
@@ -59,7 +56,6 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         eth: '0',
         tkn: '0',
       },
-      liquidity: apiBnt.liquidity,
       volume24h: { ...apiBnt.volume24h, tkn: apiBnt.volume24h.bnt },
       fees24h: { ...apiBnt.fees24h, tkn: apiBnt.fees24h.bnt },
       networkFees24h: {
@@ -75,9 +71,6 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         ...apiBnt.standardRewardsStaked,
         tkn: apiBnt.standardRewardsStaked.bnt,
       },
-      volume7d: apiBnt.volume7d,
-      fees7d: apiBnt.fees7d,
-      networkFees7d: apiBnt.networkFees7d,
       standardRewardsProviderJoined: {
         bnt: '0',
         usd: '0',

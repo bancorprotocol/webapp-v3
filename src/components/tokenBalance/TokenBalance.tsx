@@ -8,7 +8,6 @@ interface Props {
   amount: string;
   usdPrice: string;
   imgUrl: string;
-  inverted?: boolean;
   deficitAmount?: string;
   abbreviate?: boolean;
 }
@@ -48,40 +47,26 @@ export const TokenBalance = ({
   amount,
   usdPrice,
   imgUrl,
-  inverted,
   deficitAmount,
   abbreviate,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
 
   return (
-    <div className={`flex ${inverted ? '' : 'items-center'}`}>
+    <div className="flex">
       <Image
         alt={`${symbol} Logo`}
         src={imgUrl}
         className="w-40 h-40 mr-10 !rounded-full"
       />
-      <div className={`${inverted ? 'text-right' : ''}`}>
+      <div className="flex flex-col items-start">
         <div className="flex items-center gap-5 text-justify text-16">
-          {inverted ? (
-            <>
-              <AmountWithPopover
-                amount={amount}
-                symbol={symbol}
-                options={{ abbreviate }}
-              />
-              {symbol}
-            </>
-          ) : (
-            <>
-              {symbol}{' '}
-              <AmountWithPopover
-                amount={amount}
-                symbol={symbol}
-                options={{ abbreviate }}
-              />
-            </>
-          )}
+          {symbol}{' '}
+          <AmountWithPopover
+            amount={amount}
+            symbol={symbol}
+            options={{ abbreviate }}
+          />
           {deficitAmount && (
             <PopoverV3
               buttonElement={() => <IconWarning className="text-error" />}

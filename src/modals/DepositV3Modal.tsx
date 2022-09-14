@@ -36,7 +36,12 @@ import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { DepositFAQ } from './DepositFAQ';
 import { Switch, SwitchVariant } from 'components/switch/Switch';
+import dayjs from 'dayjs';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Modal } from 'modals';
+import { DepositDisabledModal } from './DepositDisabledModal';
 
 interface Props {
   pool: PoolV3;
@@ -218,6 +223,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const vaultBalance = toBigNumber(pool.poolDeficit);
 
+  if (!pool.depositingEnabled) return <DepositDisabledModal />;
+
   return (
     <>
       {renderButton((pool_click_location) => {
@@ -261,19 +268,139 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
             {!isBNT && (
               <>
-                <div className="flex justify-between w-full px-20 py-10 mt-30 rounded bg-secondary items-center h-[50px]">
-                  <span>
-                    <span>Vault Balance</span>
-                  </span>
-                  <span
-                    className={`${
-                      vaultBalance.gte(0) ? 'text-primary' : 'text-error'
-                    }`}
-                  >
-                    {vaultBalance.gte(0) ? '+' : ''}
-                    {vaultBalance.toFixed(2)}%
-                  </span>
+                <div className="flex flex-col gap-20 mt-40 text-black-medium dark:text-white-medium ">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-5">
+                      Compounding {pool.reserveToken.symbol} Returns
+                      <PopoverV3
+                        buttonElement={() => (
+                          <IconGift className="w-10 h-10 text-secondary" />
+                        )}
+                      >
+                        <div className="w-[126px]">
+                          <div className="flex justify-between items-center">
+                            Fees
+                            <span>
+                              {prettifyNumber(pool.apr7d.tradingFees)}%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            Rewards
+                            <span>
+                              {prettifyNumber(pool.apr7d.autoCompounding)}%
+                            </span>
+                          </div>
+                        </div>
+                      </PopoverV3>
+                    </div>
+                    <span>
+                      {prettifyNumber(
+                        toBigNumber(pool.apr7d.tradingFees).plus(
+                          pool.apr7d.autoCompounding
+                        )
+                      )}
+                      %
+                    </span>
+                  </div>
+                  {pool.latestProgram?.isActive && (
+                    <div>
+                      <div className="flex justify-between items-center">
+                        BNT Rewards
+                        <span>
+                          {prettifyNumber(pool.apr7d.standardRewards)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-secondary mt-10">
+                        <div className="flex items-center gap-5">
+                          <Switch
+                            variant={SwitchVariant.PRIMARY}
+                            selected={accessFullEarnings}
+                            onChange={setAccessFullEarnings}
+                          />
+                          Add bn{pool.reserveToken.symbol}
+                          <PopoverV3
+                            buttonElement={() => (
+                              <IconInfo className="w-10 h-10 text-secondary" />
+                            )}
+                          >
+                            When you deposit tokens into Bancor, you get
+                            corresponding pool tokens bn
+                            {pool.reserveToken.symbol} which represents your
+                            share of the pool. You can earn more by staking
+                            (with additional gas) these tokens into a rewards
+                            program. You will need to remove the bn
+                            {pool.reserveToken.symbol} from the rewards program
+                            before you can withdraw
+                          </PopoverV3>
+                        </div>
+                        <span>
+                          Ends{' '}
+                          {dayjs(
+                            (pool.latestProgram?.endTime ?? 0) * 1000
+                          ).format('MMM D, YYYY')}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {pool.latestProgram?.isActive && (
+                    <hr className="border-silver dark:border-black-low" />
+                  )}
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-5">
+                      Vault Balance
+                      <PopoverV3
+                        buttonElement={() => (
+                          <IconInfo className="w-10 h-10 text-secondary" />
+                        )}
+                      >
+                        {vaultBalance.gte(0)
+                          ? 'This pool is currently NOT in deficit. This may change over time. Should this pool be in deficit when you’re ready to withdraw, your deposit will accrue the pool deficit at that time.'
+                          : `This pool is in deficit. If an immediate withdrawal were initiated, the claimable amount will be ${
+                              amount
+                                ? prettifyNumber(
+                                    toBigNumber(amount).minus(
+                                      vaultBalance
+                                        .div(100)
+                                        .times(-1)
+                                        .times(amount)
+                                    )
+                                  )
+                                : '--'
+                            } ${
+                              pool.name
+                            }. Its value and deficit amount can change over time.`}
+                      </PopoverV3>
+                    </div>
+                    <span
+                      className={`${
+                        vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                      }`}
+                    >
+                      {vaultBalance.gte(0) ? '+' : ''}
+                      {vaultBalance.toFixed(2)}%
+                    </span>
+                  </div>
+                  {Number(pool.extVaultBalance.usd) !== 0 && (
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-5">
+                        External Liquidity Protection
+                        <PopoverV3
+                          buttonElement={() => (
+                            <IconInfo className="w-10 h-10 text-secondary" />
+                          )}
+                        >
+                          The $ amount available to compensate for pool deficits
+                          during a withdrawal, provided by{' '}
+                          {pool.reserveToken.symbol}
+                        </PopoverV3>
+                      </div>
+                      <span>
+                        {prettifyNumber(pool.extVaultBalance.usd, true)}
+                      </span>
+                    </div>
+                  )}
                 </div>
+                <hr className="border-silver dark:border-black-low my-20" />
                 <p className={'text-secondary mt-20'}>
                   {vaultBalance.gte(0)
                     ? 'This pool is currently NOT in deficit. This may change over time. Should this pool be in deficit when you’re ready to withdraw, your deposit will accrue the pool deficit at that time.'
@@ -309,7 +436,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                 </div>
               </>
             )}
-
             <Button
               onClick={handleClick}
               disabled={

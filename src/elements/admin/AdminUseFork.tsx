@@ -35,30 +35,30 @@ export const AdminUseFork = () => {
   };
 
   return (
-    <div>
-      <h2 className="pb-20 text-primary">Use Tenderly Fork</h2>
+    <>
+      <h2 className="pb-20 text-primary">Tenderly Fork</h2>
 
-      <div className="flex flex-col items-center justify-between">
-        <div className="font-semibold">Step 1: RPC URL</div>
+      <div className={'text-left'}>
+        <div className="font-semibold">RPC URL</div>
         <input
           type="text"
-          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
           value={inputRpcUrl}
           onChange={(e) => setInputRpcUrl(e.target.value.trim())}
         />
 
-        <div className="mt-20 font-semibold">Step 2 (optional): V3 API URL</div>
+        <div className="mt-20 font-semibold">V3 API URL (optional)</div>
         <input
           type="text"
-          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
           value={inputV3ApiUrl}
           onChange={(e) => setInputV3ApiUrl(e.target.value.trim())}
         />
 
-        <div className="mt-20 font-semibold">Step 3 (optional): V2 API URL</div>
+        <div className="mt-20 font-semibold">V2 API URL (optional)</div>
         <input
           type="text"
-          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 dark:bg-charcoal"
+          className="w-full max-w-[500px] px-10 py-5 rounded-full mt-5 bg-secondary"
           value={inputV2ApiUrl}
           onChange={(e) => setInputV2ApiUrl(e.target.value.trim())}
         />
@@ -71,6 +71,6 @@ export const AdminUseFork = () => {
       >
         Save
       </Button>
-    </div>
+    </>
   );
 };

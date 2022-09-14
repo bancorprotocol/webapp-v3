@@ -3,9 +3,10 @@ import { multicall, MultiCall } from 'services/web3/multicall/multicall';
 import { BigNumber } from 'ethers';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
-import dayjs from 'dayjs';
 import { APIPoolV3 } from 'services/api/bancorApi/bancorApi.types';
 import { toBigNumber } from 'utils/helperFunctions';
+import { web3 } from 'services/web3/index';
+import { ProgramDataStructOutput } from 'services/web3/abis/types/StandardRewards';
 
 export const buildProviderStakeCall = (
   id: BigNumber,
@@ -97,11 +98,12 @@ export interface RewardsProgramRaw {
   pool: string;
   poolToken: string;
   rewardsToken: string;
-  isEnabled: boolean;
   startTime: number;
   endTime: number;
   rewardRate: string;
   isActive: boolean;
+  stakedBalanceInBNTKN: string;
+  stakedBalanceInTKN: string;
 }
 
 export const fetchAllStandardRewards = async (): Promise<
@@ -110,26 +112,88 @@ export const fetchAllStandardRewards = async (): Promise<
   try {
     const ids = await ContractsApi.StandardRewards.read.programIds();
 
-    const programs = await ContractsApi.StandardRewards.read.programs(ids);
+    const [programs, programsStaked, block] = await Promise.all([
+      ContractsApi.StandardRewards.read.programs(ids),
+      fetchProgramStakeMulticall(ids),
+      web3.provider.getBlock('latest'),
+    ]);
+
+    const programsStakedToUnderlying =
+      await fetchProgramStakeToUnderlyingMulticall(programs, programsStaked);
 
     return programs.map((program) => ({
       id: program.id.toString(),
       pool: program.pool,
       poolToken: program.poolToken,
       rewardsToken: program.rewardsToken,
-      isEnabled: program.isEnabled,
       startTime: program.startTime,
       endTime: program.endTime,
       rewardRate: program.rewardRate.toString(),
       isActive:
-        program.isEnabled &&
-        program.startTime <= dayjs.utc().unix() &&
-        program.endTime >= dayjs.utc().unix(),
+        program.startTime <= block.timestamp &&
+        program.endTime >= block.timestamp,
+      stakedBalanceInBNTKN: programsStaked?.get(program.id.toString()) ?? '0',
+      stakedBalanceInTKN:
+        programsStakedToUnderlying?.get(program.id.toString()) ?? '0',
     }));
   } catch (e) {
     console.error(e);
     throw e;
   }
+};
+
+const buildProgramStakeCall = (id: BigNumber): MultiCall => {
+  const contract = ContractsApi.StandardRewards.read;
+
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'programStake',
+    methodParameters: [id],
+  };
+};
+
+export const fetchProgramStakeMulticall = async (ids: BigNumber[]) => {
+  const calls = ids.map((id) => buildProgramStakeCall(id));
+  const res = await multicall(calls);
+  if (!res) {
+    console.error('Multicall Error in fetchProgamStakeMulticall');
+    return undefined;
+  }
+
+  return new Map<string, string | undefined>(
+    res.map((bn, idx) => [
+      ids[idx].toString(),
+      bn && bn.length ? bn[0].toString() : undefined,
+    ])
+  );
+};
+
+export const fetchProgramStakeToUnderlyingMulticall = async (
+  programs: ProgramDataStructOutput[],
+  balances?: Map<string, string | undefined>
+) => {
+  const contract = ContractsApi.BancorNetworkInfo.read;
+
+  const calls = programs.map((p) => ({
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'poolTokenToUnderlying',
+    methodParameters: [p.pool, balances?.get(p.id.toString()) ?? '0'],
+  }));
+
+  const res = await multicall(calls);
+  if (!res) {
+    console.error('Multicall Error in fetchProgramStakeToUnderlyingMulticall');
+    return undefined;
+  }
+
+  return new Map<string, string | undefined>(
+    res.map((bn, idx) => [
+      programs[idx].id.toString(),
+      bn && bn.length ? bn[0].toString() : undefined,
+    ])
+  );
 };
 
 const buildLatestProgramIdCall = (poolId: string): MultiCall => {
