@@ -163,7 +163,7 @@ export const V3HoldingPage = () => {
                 Vault balance
                 <div className="md:mt-8 justify-self-end">
                   {isBNT ? (
-                    <span className="text-secondary">(never in deficit)</span>
+                    <span className="text-success">(never in deficit)</span>
                   ) : (
                     <span
                       className={`${
