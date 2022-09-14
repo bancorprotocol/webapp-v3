@@ -34,21 +34,21 @@ export const SlippageSettings = () => {
               dispatch(setSlippageTolerance(slippage));
               setCustomSlippage('');
             }}
-            className={`w-full border border-silver dark:border-grey text-black dark:text-white rounded-[6px] text-12 p-8 ${
+            className={`w-full border text-black dark:text-white rounded-[6px] text-12 p-8 ${
               currentSlippage === slippage
                 ? 'border-primary dark:border-primary'
-                : ''
+                : 'border-silver dark:border-grey'
             }`}
           >
             +{slippage * 100}%
           </button>
         ))}
         <span
-          className={`flex items-center border border-silver dark:border-grey rounded-[12px] px-5 text-12 text-black dark:text-white ${
+          className={`flex items-center border rounded-[6px] px-5 text-12 text-black dark:text-white ${
             currentSlippage === normalizedSlippage &&
             !slippages.includes(currentSlippage)
               ? 'border-primary dark:border-primary'
-              : 'bg-white dark:bg-black'
+              : 'border-silver dark:border-grey'
           }`}
         >
           <input
