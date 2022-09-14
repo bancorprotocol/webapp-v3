@@ -130,6 +130,13 @@ export const getIsV3Exist = createSelector(
   }
 );
 
+export const getV3byID = createSelector(
+  [(state: RootState) => getPoolsV3Map(state), (_: any, id: string) => id],
+  (pools: Map<string, PoolV3>, id): PoolV3 | undefined => {
+    return pools.get(id);
+  }
+);
+
 export const getBNTPoolV3 = createSelector(
   (state: RootState) => getPoolsV3Map(state),
   (pools: Map<string, PoolV3>): PoolV3 | undefined => pools.get(bntToken)

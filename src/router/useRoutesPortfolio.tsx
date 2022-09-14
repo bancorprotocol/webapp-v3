@@ -7,6 +7,7 @@ import { RewardsStake } from 'pages/earn/portfolio/rewards/RewardsStake';
 import { RewardsClaim } from 'pages/earn/portfolio/rewards/RewardsClaim';
 import { BancorURL } from 'router/bancorURL.service';
 import { PortfolioWelcome } from 'pages/earn/portfolio/PortfolioWelcome';
+import { V3HoldingPage } from 'elements/earn/portfolio/v3/holdings/V3HoldingPage';
 
 export const useRoutesPortfolio = (): RouteObject[] => {
   const redirectToWelcome = false;
@@ -49,6 +50,10 @@ export const useRoutesPortfolio = (): RouteObject[] => {
     {
       path: BancorURL.portfolioV2RewardsStake(':id'),
       element: <RewardsStake />,
+    },
+    {
+      path: BancorURL.portfolioHolding(':id'),
+      element: <V3HoldingPage />,
     },
     {
       path: BancorURL.portfolioV2RewardsClaim,

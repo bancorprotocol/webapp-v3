@@ -8,6 +8,7 @@ import { utils } from 'ethers';
 
 import { Statistic } from 'services/observables/statistics';
 import { NotificationType } from 'store/notification/notification';
+import { RewardsProgramRaw } from 'services/web3/v3/portfolio/standardStaking';
 
 interface BancorState {
   tokenLists: TokenList[];
@@ -19,6 +20,7 @@ interface BancorState {
   allTokens: Token[];
   isLoadingTokens: boolean;
   statistics: Statistic | null;
+  allStandardRewardsV3: RewardsProgramRaw[];
 }
 
 export const initialState: BancorState = {
@@ -31,6 +33,7 @@ export const initialState: BancorState = {
   tokensForTradeWithExternal: [],
   isLoadingTokens: true,
   statistics: null,
+  allStandardRewardsV3: [],
 };
 
 const bancorSlice = createSlice({
@@ -59,6 +62,12 @@ const bancorSlice = createSlice({
     setStatisticsV3: (state, action: PayloadAction<Statistic>) => {
       state.statistics = action.payload;
     },
+    setAllStandardRewardsV3: (
+      state,
+      action: PayloadAction<RewardsProgramRaw[]>
+    ) => {
+      state.allStandardRewardsV3 = action.payload;
+    },
     setTradeTokens: (state, action: PayloadAction<TokenMinimal[]>) => {
       state.tokensForTradeWithExternal = action.payload;
     },
@@ -73,6 +82,7 @@ export const {
   setStatisticsV3,
   setAllTokenListTokens,
   setKeeperDaoTokens,
+  setAllStandardRewardsV3,
   setTradeTokens,
 } = bancorSlice.actions;
 
@@ -81,7 +91,11 @@ export const getTokenById = createSelector(
   (_: any, id: string) => id,
   (allTokensMap: Map<string, Token>, id: string): Token | undefined => {
     if (!id) return undefined;
-    return allTokensMap.get(utils.getAddress(id));
+    try {
+      return allTokensMap.get(utils.getAddress(id));
+    } catch (error) {
+      return undefined;
+    }
   }
 );
 
