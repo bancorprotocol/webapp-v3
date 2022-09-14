@@ -305,18 +305,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
                             </div>
                           </div>
                         ) : (
-                          <div className="text-error">
-                            <div className="text-secondary text-16">
-                              Inactive
-                            </div>
-                            <div className="flex items-center gap-5">
-                              <IconClock />
-                              Ended{' '}
-                              {dayjs((program.endTime ?? 0) * 1000).format(
-                                'MMM D, YYYY'
-                              )}
-                            </div>
-                          </div>
+                          <div className="text-secondary text-16">Inactive</div>
                         )}
                         <Button
                           variant={ButtonVariant.Tertiary}
