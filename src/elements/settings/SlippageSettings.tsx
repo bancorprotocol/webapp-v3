@@ -4,7 +4,7 @@ import { useAppSelector } from 'store';
 import { useState } from 'react';
 
 export const SlippageSettings = () => {
-  const currentSlippage = useAppSelector<number>(
+  const currentSlippage = useAppSelector(
     (state) => state.user.slippageTolerance
   );
   const slippages = [0.001, 0.005, 0.01];
@@ -33,8 +33,10 @@ export const SlippageSettings = () => {
               dispatch(setSlippageTolerance(slippage));
               setCustomSlippage('');
             }}
-            className={`w-full border border-silver dark:border-grey text-black dark:text-white rounded-[12px] text-12 p-8 ${
-              currentSlippage === slippage ? 'bg-fog dark:bg-grey' : ''
+            className={`w-full border border-silver dark:border-grey text-black dark:text-white rounded-[6px] text-12 p-8 ${
+              currentSlippage === slippage
+                ? 'border-primary dark:border-primary'
+                : ''
             }`}
           >
             +{slippage * 100}%
@@ -44,7 +46,7 @@ export const SlippageSettings = () => {
           className={`flex items-center border border-silver dark:border-grey rounded-[12px] pr-5 text-12 text-black dark:text-white ${
             currentSlippage === normalizedSlippage &&
             !slippages.includes(currentSlippage)
-              ? 'bg-fog dark:bg-grey'
+              ? 'border-primary dark:border-primary'
               : 'bg-white dark:bg-black'
           }`}
         >
@@ -53,7 +55,7 @@ export const SlippageSettings = () => {
             className={`w-[60px] border-none outline-none text-center ${
               currentSlippage === normalizedSlippage &&
               !slippages.includes(currentSlippage)
-                ? 'bg-fog dark:bg-grey'
+                ? 'bg-white dark:bg-black'
                 : 'bg-white dark:bg-black'
             }`}
             value={customSlippage}
