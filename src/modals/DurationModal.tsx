@@ -2,28 +2,40 @@ import { useState } from 'react';
 import dayjs from 'utils/dayjs';
 import { Dropdown } from 'components/dropdown/Dropdown';
 import { Duration } from 'dayjs/plugin/duration';
-import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
-import { formatDuration } from 'utils/helperFunctions';
 import { Button, ButtonSize } from 'components/button/Button';
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
+import { getModalOpen, popModal } from 'store/modals/modals';
 
 interface DurationItem {
   id: string;
   title: number;
 }
 
-export const DurationModal = ({
-  duration,
-  setDuration,
-}: {
+interface DurationProp {
   duration: Duration;
   setDuration: Function;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [days, setDays] = useState(duration.days());
-  const [hours, setHours] = useState(duration.hours());
-  const [minutes, setMinutes] = useState(duration.minutes());
+}
+
+export const DurationModal = () => {
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.DepositETH)
+  );
+
+  const props = useAppSelector<DurationProp | undefined>((state) =>
+    state.modals.openModals.get(ModalNames.Duration)
+  );
+
+  const [days, setDays] = useState(props?.duration.days());
+  const [hours, setHours] = useState(props?.duration.hours());
+  const [minutes, setMinutes] = useState(props?.duration.minutes());
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.Duration));
+  };
 
   const daysItems: DurationItem[] = Array.from(
     { length: 31 },
@@ -51,14 +63,7 @@ export const DurationModal = ({
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center bg-white dark:bg-charcoal rounded-10 px-40 py-8"
-      >
-        {formatDuration(duration)}
-        <IconChevronDown className="w-10 ml-10" />
-      </button>
-      <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={'Duration'}>
+      <Modal isOpen={isOpen} setIsOpen={onClose} title={'Duration'}>
         <div className="flex flex-col items-center w-full px-20 pb-20">
           <IconClock className="w-[52px] h-[52px] text-primary dark:text-primary-dark mb-14" />
           <div className="font-semibold text-20 mb-10">Custom Time</div>
@@ -72,7 +77,7 @@ export const DurationModal = ({
                 <Dropdown
                   selected={days}
                   setSelected={(x: DurationItem) => setDays(x.title)}
-                  title={days?.toString()}
+                  title={days ? days.toString() : ''}
                   items={daysItems}
                 />
               </div>
@@ -83,7 +88,7 @@ export const DurationModal = ({
                 <Dropdown
                   selected={hours}
                   setSelected={(x: DurationItem) => setHours(x.title)}
-                  title={hours?.toString()}
+                  title={hours ? hours.toString() : ''}
                   items={hoursItems}
                 />
               </div>
@@ -94,7 +99,7 @@ export const DurationModal = ({
                 <Dropdown
                   selected={minutes}
                   setSelected={(x: DurationItem) => setMinutes(x.title)}
-                  title={minutes?.toString()}
+                  title={minutes ? minutes.toString() : ''}
                   items={minutesItems}
                   openUp
                 />
@@ -103,8 +108,8 @@ export const DurationModal = ({
           </div>
           <Button
             onClick={() => {
-              setDuration(dayjs.duration({ days, hours, minutes }));
-              setIsOpen(false);
+              props?.setDuration(dayjs.duration({ days, hours, minutes }));
+              onClose();
             }}
             size={ButtonSize.Full}
             className="mt-15"

@@ -3,21 +3,36 @@ import { isMobile } from 'react-device-detect';
 import { Pool } from 'services/observables/pools';
 import { InputField } from '../components/inputField/InputField';
 import { Image } from 'components/image/Image';
-import { Modal, ModalFullscreen } from 'modals';
+import { Modal, ModalFullscreen, ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
+import { getModalOpen, popModal } from 'store/modals/modals';
 
-export const SelectPoolModal = ({
-  pools,
-  isOpen,
-  setIsOpen,
-  onSelect,
-}: {
+interface SelectPoolProps {
   pools: Pool[];
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   onSelect: Function;
-}) => {
+}
+
+export const SelectPoolModal = () => {
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.SelectPool)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.SelectPool));
+  };
+
+  const props = useAppSelector<SelectPoolProps | undefined>((state) =>
+    state.modals.openModals.get(ModalNames.SelectPool)
+  );
+
+  if (!props) return null;
+
+  const { onSelect, pools } = props;
+
   const handleOnSelect = (pool: Pool) => {
-    setIsOpen(false);
+    onClose();
     onSelect(pool);
   };
 
@@ -25,7 +40,7 @@ export const SelectPoolModal = ({
     return (
       <ModalFullscreen
         title="Select a Pool"
-        setIsOpen={setIsOpen}
+        setIsOpen={onClose}
         isOpen={isOpen}
       >
         <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
@@ -34,7 +49,7 @@ export const SelectPoolModal = ({
   }
 
   return (
-    <Modal title="Select a Pool" isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Modal title="Select a Pool" isOpen={isOpen} setIsOpen={onClose}>
       <SelectPoolModalContent pools={pools} onSelect={handleOnSelect} />
     </Modal>
   );

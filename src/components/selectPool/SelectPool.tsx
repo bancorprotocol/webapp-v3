@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { SelectPoolModal } from 'modals/SelectPoolModal';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
+import { ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { pushModal } from 'store/modals/modals';
 
 interface SelectPoolProps {
   pool: Pool;
@@ -17,13 +18,20 @@ export const SelectPool = ({
   label,
   onSelect,
 }: SelectPoolProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
   return (
     <div className="flex justify-between items-center">
       <span className="font-medium">{label}</span>
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() =>
+          dispatch(
+            pushModal({
+              modal: ModalNames.SelectPool,
+              data: { pools, onSelect },
+            })
+          )
+        }
         className="flex items-center border border-charcoal dark:border-graphite rounded-[16px] px-20 py-6"
       >
         <Image
@@ -39,12 +47,6 @@ export const SelectPool = ({
         <span className="ml-10">{pool.name}</span>
         <IconChevronDown className="w-12 ml-10" />
       </button>
-      <SelectPoolModal
-        pools={pools}
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onSelect={onSelect}
-      />
     </div>
   );
 };

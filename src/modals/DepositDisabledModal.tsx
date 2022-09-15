@@ -10,7 +10,7 @@ export const DepositDisabledModal = () => {
   );
 
   const onClose = () => {
-    dispatch(popModal());
+    dispatch(popModal(ModalNames.DepositDisabled));
   };
 
   return (

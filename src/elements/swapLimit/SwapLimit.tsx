@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
 import { ApprovalContract } from 'services/web3/approval';
-import { prettifyNumber } from 'utils/helperFunctions';
+import { formatDuration, prettifyNumber } from 'utils/helperFunctions';
 import { calculatePercentageChange } from 'utils/formulas';
 import {
   Button,
@@ -22,7 +22,6 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { DepositETHModal } from 'modals/DepositETHModal';
 import { useApproveModal } from 'hooks/useApproveModal';
 import {
   depositETHNotification,
@@ -37,6 +36,9 @@ import {
   sendConversionEvent,
 } from 'services/api/googleTagManager/conversion';
 import { Events } from 'services/api/googleTagManager';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
 enum Field {
   from,
@@ -71,7 +73,6 @@ export const SwapLimit = ({
   const [marketRate, setMarketRate] = useState(-1);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
-  const [showEthModal, setShowEthModal] = useState(false);
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
   const [isLoadingRate, setIsLoadingRate] = useState(false);
@@ -525,7 +526,22 @@ export const SwapLimit = ({
 
               <div className="flex justify-between items-center mt-15">
                 <span className="font-semibold">Expires in</span>
-                <DurationModal duration={duration} setDuration={setDuration} />
+                <button
+                  onClick={() =>
+                    dispatch(
+                      pushModal({
+                        modal: ModalNames.Duration,
+                        data: { duration, setDuration },
+                      })
+                    )
+                  }
+                  className="flex items-center bg-white dark:bg-charcoal rounded-10 px-40 py-8"
+                >
+                  {formatDuration(duration)}
+                  <IconChevronDown className="w-10 ml-10" />
+                </button>
+
+                <DurationModal />
               </div>
             </>
           )}
@@ -533,16 +549,16 @@ export const SwapLimit = ({
 
         {ModalApprove}
         {ModalApproveWETH}
-        <DepositETHModal
-          amount={fromAmount}
-          setIsOpen={setShowEthModal}
-          isOpen={showEthModal}
-          onConfirm={() => deposiEthWeth()}
-        />
         <Button
           size={ButtonSize.Full}
           onClick={() => {
-            if (fromToken.address === ethToken) setShowEthModal(true);
+            if (fromToken.address === ethToken)
+              dispatch(
+                pushModal({
+                  modal: ModalNames.DepositETH,
+                  data: { onConfirm: deposiEthWeth(), amount: fromAmount },
+                })
+              );
             else onStart();
           }}
           disabled={isSwapDisabled()}

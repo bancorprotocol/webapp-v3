@@ -1,24 +1,34 @@
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
 import { Button, ButtonSize } from 'components/button/Button';
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
+import { getModalOpen, popModal } from 'store/modals/modals';
 
-export const DepositETHModal = ({
-  amount,
-  isOpen,
-  setIsOpen,
-  onConfirm,
-}: {
+interface DepositETHProp {
   amount: string;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   onConfirm: Function;
-}) => {
+}
+
+export const DepositETHModal = () => {
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.DepositETH)
+  );
+
+  const props = useAppSelector<DepositETHProp | undefined>((state) =>
+    state.modals.openModals.get(ModalNames.DepositETH)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.DepositETH));
+  };
+
   return (
     <Modal
       titleElement={<div className="w-full"></div>}
       isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      onClose={() => setIsOpen(false)}
+      setIsOpen={onClose}
     >
       <div className="flex flex-col items-center text-center px-40 pb-40">
         <IconDeposit className="w-40 h-40" />
@@ -28,7 +38,7 @@ export const DepositETHModal = ({
           <div className="text-grey dark:text-graphite mb-5">
             You Will Receive
           </div>
-          {amount} WETH
+          {props?.amount} WETH
         </div>
         <div className="my-15 text-grey dark:text-graphite">
           WETH is a token that represents ETH 1:1 and conforms to the ERC20
@@ -37,8 +47,8 @@ export const DepositETHModal = ({
         <Button
           size={ButtonSize.Full}
           onClick={() => {
-            setIsOpen(false);
-            onConfirm();
+            onClose();
+            props?.onConfirm();
           }}
         >
           Confirm

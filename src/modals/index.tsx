@@ -5,9 +5,15 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { CreatePoolModal } from './CreatePoolModal';
 import { DepositDisabledModal } from './DepositDisabledModal';
+import { DurationModal } from './DurationModal';
+import { DepositETHModal } from './DepositETHModal';
+import { SelectPoolModal } from './SelectPoolModal';
 
 export enum ModalNames {
   DepositDisabled,
+  DepositETH,
+  Duration,
+  SelectPool,
 }
 
 export const Modals = () => {
@@ -15,6 +21,9 @@ export const Modals = () => {
     <>
       <CreatePoolModal />
       <DepositDisabledModal />
+      <DepositETHModal />
+      <DurationModal />
+      <SelectPoolModal />
     </>
   );
 };
