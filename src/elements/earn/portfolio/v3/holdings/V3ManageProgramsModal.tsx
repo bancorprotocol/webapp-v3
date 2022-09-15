@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { ModalV3 } from 'components/modal/ModalV3';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken, shrinkToken } from 'utils/formulas';
@@ -21,6 +20,7 @@ import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useApproveModal } from 'hooks/useApproveModal';
+import { Modal } from 'modals';
 
 interface Props {
   holding: Holding;
@@ -177,7 +177,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
   return (
     <>
       {renderButton(() => setIsOpen(true))}
-      <ModalV3
+      <Modal
         title={joinRewards ? 'Rewards' : 'Manage Rewards'}
         setIsOpen={onClose}
         isOpen={isOpen}
@@ -329,7 +329,7 @@ export const V3ManageProgramsModal = ({ holding, renderButton }: Props) => {
             )}
           </div>
         )}
-      </ModalV3>
+      </Modal>
     </>
   );
 };

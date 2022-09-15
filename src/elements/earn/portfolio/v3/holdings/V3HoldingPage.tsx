@@ -17,13 +17,13 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import useAsyncEffect from 'use-async-effect';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
 import BigNumber from 'bignumber.js';
 import { getTokenById } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
+import { DepositV3Modal } from 'modals/DepositV3Modal';
+import V3WithdrawModal from 'modals/V3WithdrawModal';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
