@@ -3,7 +3,7 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { Modal, ModalNames } from 'modals';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getModalOpen, popModal } from 'store/modals/modals';
 
 interface DepositETHProp {
   amount: string;
@@ -17,7 +17,7 @@ export const DepositETHModal = () => {
   );
 
   const props = useAppSelector<DepositETHProp | undefined>((state) =>
-    state.modals.openModals.get(ModalNames.DepositETH)
+    getModalData(state, ModalNames.DepositETH)
   );
 
   const onClose = () => {

@@ -7,7 +7,7 @@ import { Button, ButtonSize } from 'components/button/Button';
 import { Modal, ModalNames } from 'modals';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getModalOpen, popModal } from 'store/modals/modals';
 
 interface DurationItem {
   id: string;
@@ -26,7 +26,7 @@ export const DurationModal = () => {
   );
 
   const props = useAppSelector<DurationProp | undefined>((state) =>
-    state.modals.openModals.get(ModalNames.Duration)
+    getModalData(state, ModalNames.Duration)
   );
 
   const [days, setDays] = useState(props?.duration.days());

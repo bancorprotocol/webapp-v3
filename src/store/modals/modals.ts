@@ -3,11 +3,11 @@ import { ModalNames } from 'modals';
 import { RootState } from 'store';
 
 export interface ModalsState {
-  openModals: Map<ModalNames, any>;
+  openModals: { modal: ModalNames; data: any }[];
 }
 
 export const initialState: ModalsState = {
-  openModals: new Map(),
+  openModals: [],
 };
 
 const modalsSlice = createSlice({
@@ -15,10 +15,13 @@ const modalsSlice = createSlice({
   initialState,
   reducers: {
     pushModal: (state, action) => {
-      state.openModals.set(action.payload.modal, action.payload.data);
+      state.openModals.push({
+        modal: action.payload.modal,
+        data: action.payload.data,
+      });
     },
-    popModal: (state, action) => {
-      state.openModals.delete(action.payload);
+    popModal: (state, _) => {
+      state.openModals.pop();
     },
   },
 });
@@ -28,8 +31,18 @@ export const getModalOpen = createSelector(
     (state: RootState) => state.modals.openModals,
     (_: any, modal: ModalNames) => modal,
   ],
-  (openModals: Map<ModalNames, any>, modal: ModalNames) => {
-    return openModals.has(modal);
+  (openModals: { modal: ModalNames; data: any }[], modal: ModalNames) => {
+    return openModals.some((x) => x.modal === modal);
+  }
+);
+
+export const getModalData = createSelector(
+  [
+    (state: RootState) => state.modals.openModals,
+    (_: any, modal: ModalNames) => modal,
+  ],
+  (openModals: { modal: ModalNames; data: any }[], modal: ModalNames) => {
+    return openModals.find((x) => x.modal === modal)?.data;
   }
 );
 

@@ -174,7 +174,9 @@ export const PoolsTable = ({
         accessor: 'poolDltId',
         Cell: (_) => (
           <Button
-            onClick={() => dispatch(pushModal(ModalNames.DepositDisabled))}
+            onClick={() =>
+              dispatch(pushModal({ modal: ModalNames.DepositDisabled }))
+            }
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.ExtraSmall}
           >

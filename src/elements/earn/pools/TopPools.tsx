@@ -22,7 +22,7 @@ export const TopPools = () => {
                   <button
                     key={`pool-table-key-${index}`}
                     onClick={() =>
-                      dispatch(pushModal(ModalNames.DepositDisabled))
+                      dispatch(pushModal({ modal: ModalNames.DepositDisabled }))
                     }
                     className="flex items-center justify-center min-w-[170px] h-[75px] rounded-[6px] bg-white dark:bg-charcoal border border-silver dark:border-grey transition-all duration-300"
                   >

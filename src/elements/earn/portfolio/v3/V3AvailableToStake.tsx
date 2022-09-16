@@ -17,7 +17,7 @@ const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
 
   return (
     <button
-      onClick={() => dispatch(pushModal(ModalNames.DepositDisabled))}
+      onClick={() => dispatch(pushModal({ modal: ModalNames.DepositDisabled }))}
       className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
     >
       <TokenBalance
