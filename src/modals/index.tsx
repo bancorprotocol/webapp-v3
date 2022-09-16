@@ -12,6 +12,8 @@ import { UpgradeBntModal } from './UpgradeBntModal';
 import { UpgradeTknModal } from './UpgradeTknModal';
 import { V3BonusesModal } from './V3BonusesModal';
 import { V3ExternalHoldingsModal } from './V3ExternalHoldingsModal';
+import { V3UnstakeModal } from './V3UnstakeModal';
+import { V3WithdrawCancelModal } from './V3WithdrawCancelModal';
 
 export enum ModalNames {
   DepositDisabled,
@@ -22,7 +24,8 @@ export enum ModalNames {
   UpgradeTkn,
   V3Bonuses,
   V3ExternalHoldings,
-  V3UnstakeModal,
+  V3Unstake,
+  V3WithdrawCancel,
 }
 
 export const Modals = () => {
@@ -37,6 +40,8 @@ export const Modals = () => {
       <UpgradeTknModal />
       <V3BonusesModal />
       <V3ExternalHoldingsModal />
+      <V3UnstakeModal />
+      <V3WithdrawCancelModal />
     </>
   );
 };

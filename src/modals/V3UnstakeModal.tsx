@@ -26,15 +26,15 @@ export const V3UnstakeModal = () => {
   const [txBusy, setTxBusy] = useState(false);
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.V3UnstakeModal)
+    getModalOpen(state, ModalNames.V3Unstake)
   );
 
   const props = useAppSelector<V3UnstakeProps | undefined>((state) =>
-    getModalData(state, ModalNames.UpgradeBnt)
+    getModalData(state, ModalNames.V3Unstake)
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.UpgradeBnt));
+    dispatch(popModal(ModalNames.V3Unstake));
   };
 
   if (!props) return null;

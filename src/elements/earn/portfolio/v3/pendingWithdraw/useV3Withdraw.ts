@@ -20,6 +20,8 @@ import {
   WithdrawACEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
+import { popModal, pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
 
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
@@ -30,14 +32,8 @@ export const useV3Withdraw = () => {
   const account = useAppSelector((state) => state.user.account);
 
   const [selected, setSelected] = useState<WithdrawalRequest | null>(null);
-  const [isModalCancelOpen, setIsModalCancelOpen] = useState(false);
-  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
 
-  const openCancelModal = useCallback(async (req: WithdrawalRequest) => {
-    sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
-    setSelected(req);
-    setIsModalCancelOpen(true);
-  }, []);
+  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
 
   const cancelWithdrawal = useCallback(async () => {
     if (!selected || !account) {
@@ -56,7 +52,7 @@ export const useV3Withdraw = () => {
         selected.reserveTokenAmount,
         selected.pool.reserveToken.symbol
       );
-      setIsModalCancelOpen(false);
+      dispatch(popModal(ModalNames.V3WithdrawCancel));
       await tx.wait();
       sendWithdrawEvent(
         WithdrawEvent.WithdrawCancelSuccess,
@@ -72,7 +68,7 @@ export const useV3Withdraw = () => {
         undefined,
         e.message
       );
-      setIsModalCancelOpen(false);
+      dispatch(popModal(ModalNames.V3WithdrawCancel));
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
@@ -81,6 +77,20 @@ export const useV3Withdraw = () => {
       }
     }
   }, [account, dispatch, selected]);
+
+  const openCancelModal = useCallback(
+    async (req: WithdrawalRequest) => {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
+      setSelected(req);
+      dispatch(
+        pushModal({
+          modal: ModalNames.V3WithdrawCancel,
+          data: { cancelWithdrawal, withdrawRequest: selected },
+        })
+      );
+    },
+    [cancelWithdrawal, dispatch, selected]
+  );
 
   const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
     sendWithdrawACEvent(WithdrawACEvent.CTAClick);
@@ -93,8 +103,6 @@ export const useV3Withdraw = () => {
     cancelWithdrawal,
     openCancelModal,
     isLoadingWithdrawalRequests,
-    isModalCancelOpen,
-    setIsModalCancelOpen,
     selected,
     isModalConfirmOpen,
     setIsModalConfirmOpen,
