@@ -9,7 +9,6 @@ export interface V3PortfolioState {
   withdrawalRequestsRaw: WithdrawalRequestRaw[];
   withdrawalSettings: WithdrawalSettings;
   isLoadingWithdrawalRequests: boolean;
-  bonusesModal: boolean;
   standardRewards: RewardsProgramStake[];
   isLoadingStandardRewards: boolean;
 }

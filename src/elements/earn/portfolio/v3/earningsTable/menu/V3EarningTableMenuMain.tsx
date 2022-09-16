@@ -6,6 +6,9 @@ import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { shrinkToken } from 'utils/formulas';
+import { ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { pushModal } from 'store/modals/modals';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -23,8 +26,9 @@ export const V3EarningTableMenuMain = memo(
     setIsWithdrawModalOpen,
     handleDepositClick,
   }: Props) => {
-    const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
+    const { bonusUsdTotal } = useV3Bonuses();
     const { latestProgram } = holding;
+    const dispatch = useDispatch();
 
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
@@ -32,14 +36,14 @@ export const V3EarningTableMenuMain = memo(
     }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
     const handleBonusClick = useCallback(() => {
-      setBonusModalOpen(true);
+      dispatch(pushModal({ modal: ModalNames.V3Bonuses }));
       // TODO - add logic for what action to perform
       // if (true) {
       //
       // } else {
       //   setCurrentMenu('bonus');
       // }
-    }, [setBonusModalOpen]);
+    }, []);
 
     return (
       <div className="flex flex-col justify-between h-full">

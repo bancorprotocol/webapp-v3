@@ -1,17 +1,18 @@
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
-import { V3ExternalHoldingsModal } from 'modals/V3ExternalHoldingsModal';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
+import { ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { pushModal } from 'store/modals/modals';
 
 interface Props {
   position: ExternalHolding;
 }
 
 const V3ExternalHoldingsItem = ({ position }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
   return (
     <div className="p-20 border rounded-20 border-fog">
       <div className="h-30">
@@ -29,16 +30,17 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
         variant={ButtonVariant.Secondary}
         size={ButtonSize.Full}
         className="mt-20"
-        onClick={() => setIsOpen(true)}
+        onClick={() =>
+          dispatch(
+            pushModal({
+              modal: ModalNames.V3ExternalHoldings,
+              data: { position },
+            })
+          )
+        }
       >
         Protect and earn
       </Button>
-
-      <V3ExternalHoldingsModal
-        position={position}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
     </div>
   );
 };

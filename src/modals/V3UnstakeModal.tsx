@@ -14,23 +14,32 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
+import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
 
-export const V3UnstakeModal = ({
-  holding,
-  renderButton,
-}: {
+interface V3UnstakeProps {
   holding: Holding;
-  renderButton: (onClick: () => void) => React.ReactNode;
-}) => {
+}
+
+export const V3UnstakeModal = () => {
   const account = useAppSelector((state) => state.user.account);
-  const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
-  const onClose = async () => {
-    setIsOpen(false);
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.V3UnstakeModal)
+  );
+
+  const props = useAppSelector<V3UnstakeProps | undefined>((state) =>
+    getModalData(state, ModalNames.UpgradeBnt)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.UpgradeBnt));
   };
 
-  const dispatch = useDispatch();
+  if (!props) return null;
+
+  const { holding } = props;
 
   const programs = holding.programs.filter((p) =>
     toBigNumber(p.tokenAmountWei).gt(0)
@@ -83,7 +92,6 @@ export const V3UnstakeModal = ({
 
   return (
     <>
-      {renderButton(() => setIsOpen(true))}
       <Modal
         title={'Rewards'}
         setIsOpen={onClose}

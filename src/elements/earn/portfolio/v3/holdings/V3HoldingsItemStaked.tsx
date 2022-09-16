@@ -2,10 +2,13 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { V3UnstakeModal } from 'modals/V3UnstakeModal';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
+import { pushModal } from 'store/modals/modals';
 
 export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
+  const dispatch = useDispatch();
   const { pool } = holding;
   const isDisabled = toBigNumber(holding.stakedTokenBalance).isZero();
 
@@ -47,20 +50,22 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         </div>
       </div>
 
-      <V3UnstakeModal
-        holding={holding}
-        renderButton={(onClick) => (
-          <Button
-            variant={ButtonVariant.Tertiary}
-            size={ButtonSize.Full}
-            disabled={isDisabled}
-            onClick={onClick}
-            className="h-[39px]"
-          >
-            Manage Rewards
-          </Button>
-        )}
-      />
+      <Button
+        variant={ButtonVariant.Tertiary}
+        size={ButtonSize.Full}
+        disabled={isDisabled}
+        onClick={() =>
+          dispatch(
+            pushModal({
+              modal: ModalNames.V3UnstakeModal,
+              data: { holding },
+            })
+          )
+        }
+        className="h-[39px]"
+      >
+        Manage Rewards
+      </Button>
     </div>
   );
 };

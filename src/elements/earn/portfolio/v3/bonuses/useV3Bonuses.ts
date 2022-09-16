@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import {
   getIsLoadingStandardRewards,
   getStandardRewards,
-  openBonusesModal,
 } from 'store/portfolio/v3Portfolio';
 import { useCallback, useMemo } from 'react';
 import BigNumber from 'bignumber.js';
@@ -20,22 +19,18 @@ import {
   sendWithdrawBonusEvent,
   WithdrawBonusEvent,
 } from 'services/api/googleTagManager/withdraw';
+import { ModalNames } from 'modals';
+import { popModal } from 'store/modals/modals';
 
 export const useV3Bonuses = () => {
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
-  const isBonusModalOpen = useAppSelector<boolean>(
-    (state) => state.v3Portfolio.bonusesModal
-  );
   const bonuses = useAppSelector(getStandardRewards);
   const isLoading = useAppSelector(getIsLoadingStandardRewards);
 
-  const setBonusModalOpen = useCallback(
-    (state: boolean) => {
-      dispatch(openBonusesModal(state));
-    },
-    [dispatch]
-  );
+  const closetBonusesModal = useCallback(() => {
+    dispatch(popModal(ModalNames.V3Bonuses));
+  }, [dispatch]);
 
   const bonusUsdTotal = useMemo(
     () =>
@@ -61,7 +56,7 @@ export const useV3Bonuses = () => {
         const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
         sendWithdrawBonusEvent(WithdrawBonusEvent.WalletConfirm);
         confirmClaimNotification(dispatch, tx.hash);
-        setBonusModalOpen(false);
+        closetBonusesModal();
         await tx.wait();
         sendWithdrawBonusEvent(
           WithdrawBonusEvent.Success,
@@ -78,10 +73,10 @@ export const useV3Bonuses = () => {
         } else {
           genericFailedNotification(dispatch, 'Claim rewards failed');
         }
-        setBonusModalOpen(false);
+        closetBonusesModal();
       }
     },
-    [account, dispatch, setBonusModalOpen]
+    [account, dispatch, closetBonusesModal]
   );
 
   const handleClaimAndEarn = useCallback(
@@ -93,7 +88,7 @@ export const useV3Bonuses = () => {
       try {
         const tx = await ContractsApi.StandardRewards.write.stakeRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
-        setBonusModalOpen(false);
+        closetBonusesModal();
         await tx.wait();
         await updatePortfolioData(dispatch);
       } catch (e: any) {
@@ -103,16 +98,14 @@ export const useV3Bonuses = () => {
         } else {
           genericFailedNotification(dispatch, 'Restake rewards failed');
         }
-        setBonusModalOpen(false);
+        closetBonusesModal();
       }
     },
-    [account, dispatch, setBonusModalOpen]
+    [account, dispatch, closetBonusesModal]
   );
 
   return {
     bonuses,
-    isBonusModalOpen,
-    setBonusModalOpen,
     handleClaim,
     handleClaimAndEarn,
     bonusUsdTotal,

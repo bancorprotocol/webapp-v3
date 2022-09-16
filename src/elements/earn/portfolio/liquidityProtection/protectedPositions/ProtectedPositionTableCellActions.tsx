@@ -8,7 +8,6 @@ import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { Button } from 'components/button/Button';
 import { WithdrawLiquidityModal } from '../../../../../modals/WithdrawLiquidityModal';
-import { UpgradeBntModal } from '../../../../../modals/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
 import {
   getAllBntPositionsAndAmount,
@@ -17,7 +16,6 @@ import {
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { UpgradeTknModal } from '../../../../../modals/UpgradeTknModal';
 import { useDispatch } from 'react-redux';
 import {
   migrateNotification,
@@ -26,6 +24,8 @@ import {
 } from 'services/notifications/notifications';
 import { Pool } from 'services/observables/pools';
 import { migrateV2Positions } from 'services/web3/protection/migration';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -33,14 +33,9 @@ export const ProtectedPositionTableCellActions = (
   >
 ) => {
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
-  const [isOpenBnt, setIsOpenBnt] = useState(false);
-  const [isOpenTkn, setIsOpenTkn] = useState(false);
   const dispatch = useDispatch();
   const { row } = cellData;
   const position = row.original;
-  const [SelectedPositions, setSelectedPositions] = useState<
-    ProtectedPosition[]
-  >([]);
   const isPoolExistV3 = useAppSelector<boolean>((state) =>
     getIsV3Exist(state, position.reserveToken.address)
   );
@@ -91,10 +86,20 @@ export const ProtectedPositionTableCellActions = (
             () => rejectNotification(dispatch),
             () => migrateFailedNotification(dispatch)
           );
-        else setIsOpenBnt(true);
+        else
+          dispatch(
+            pushModal({
+              modal: ModalNames.UpgradeBnt,
+              data: { position },
+            })
+          );
       } else {
-        setSelectedPositions(positions);
-        setIsOpenTkn(true);
+        dispatch(
+          pushModal({
+            modal: ModalNames.UpgradeTkn,
+            data: { positions },
+          })
+        );
       }
     },
     [
@@ -104,6 +109,7 @@ export const ProtectedPositionTableCellActions = (
       account,
       dispatch,
       pools,
+      position,
     ]
   );
 
@@ -165,16 +171,6 @@ export const ProtectedPositionTableCellActions = (
       <WithdrawLiquidityModal
         isModalOpen={isOpenWithdraw}
         setIsModalOpen={setIsOpenWithdraw}
-      />
-      <UpgradeTknModal
-        isOpen={isOpenTkn}
-        setIsOpen={setIsOpenTkn}
-        positions={SelectedPositions}
-      />
-      <UpgradeBntModal
-        isOpen={isOpenBnt}
-        setIsOpen={setIsOpenBnt}
-        position={position}
       />
     </div>
   );

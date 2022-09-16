@@ -1,4 +1,4 @@
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
@@ -24,17 +24,24 @@ import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
+import { getModalData, getModalOpen, popModal } from 'store/modals/modals';
 
-export const UpgradeBntModal = ({
-  position,
-  isOpen,
-  setIsOpen,
-}: {
+interface UpgradeBntProps {
   position: ProtectedPositionGrouped;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-}) => {
+}
+export const UpgradeBntModal = () => {
   const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.UpgradeBnt)
+  );
+
+  const props = useAppSelector<UpgradeBntProps | undefined>((state) =>
+    getModalData(state, ModalNames.UpgradeBnt)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.UpgradeBnt));
+  };
   const { goToPage } = useNavigation();
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
@@ -72,11 +79,15 @@ export const UpgradeBntModal = ({
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
     );
-    setIsOpen(false);
+    onClose();
   };
 
+  if (!props) return null;
+
+  const { position } = props;
+
   return (
-    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
+    <Modal large isOpen={isOpen} setIsOpen={onClose} titleElement={<div />}>
       <div className="flex flex-col items-center gap-20 p-20 text-center">
         <Image
           alt="Token"

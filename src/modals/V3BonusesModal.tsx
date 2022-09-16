@@ -4,7 +4,7 @@ import { Button, ButtonVariant } from 'components/button/Button';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { GroupedStandardReward } from 'store/portfolio/v3Portfolio';
 import { shrinkToken } from 'utils/formulas';
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import { useCallback, useMemo, useState } from 'react';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ReactComponent as IconCheck } from 'assets/icons/check.svg';
@@ -12,6 +12,9 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import BigNumber from 'bignumber.js';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { Image } from 'components/image/Image';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from 'store';
+import { getModalOpen, popModal } from 'store/modals/modals';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -183,15 +186,18 @@ const BonusGroup = ({
 };
 
 export const V3BonusesModal = () => {
-  const { bonuses, isBonusModalOpen, setBonusModalOpen } = useV3Bonuses();
+  const { bonuses } = useV3Bonuses();
+  const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.V3Bonuses)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.V3Bonuses));
+  };
 
   return (
-    <Modal
-      title="Claim Rewards"
-      isOpen={isBonusModalOpen}
-      setIsOpen={setBonusModalOpen}
-      large
-    >
+    <Modal title="Claim Rewards" isOpen={isOpen} setIsOpen={onClose} large>
       <div>
         {bonuses.map((group) => (
           <div key={group.groupId} className="p-30">

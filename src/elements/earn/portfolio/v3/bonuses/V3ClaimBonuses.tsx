@@ -1,5 +1,4 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { V3BonusesModal } from 'modals/V3BonusesModal';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
@@ -13,9 +12,13 @@ import {
   getCurrency,
 } from 'services/api/googleTagManager';
 import { pool } from 'store/bancor/pool';
+import { pushModal } from 'store/modals/modals';
+import { ModalNames } from 'modals';
+import { useDispatch } from 'react-redux';
 
 export const V3ClaimBonuses = () => {
-  const { setBonusModalOpen, bonusUsdTotal, isLoading } = useV3Bonuses();
+  const { bonusUsdTotal, isLoading } = useV3Bonuses();
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -42,7 +45,7 @@ export const V3ClaimBonuses = () => {
                   withdraw_display_currency: getCurrency(),
                 });
                 sendWithdrawBonusEvent(WithdrawBonusEvent.CTAClick);
-                setBonusModalOpen(true);
+                dispatch(pushModal({ modal: ModalNames.V3Bonuses }));
               }}
               disabled={bonusUsdTotal === 0}
             >
@@ -55,7 +58,6 @@ export const V3ClaimBonuses = () => {
           </div>
         )}
       </section>
-      <V3BonusesModal />
     </>
   );
 };

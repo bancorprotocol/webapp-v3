@@ -1,4 +1,4 @@
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import { useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -11,19 +11,26 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
+import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
 
-export const V3ExternalHoldingsModal = ({
-  position,
-  isOpen,
-  setIsOpen,
-}: {
+interface V3ExternalHoldingsProps {
   position: ExternalHolding;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-}) => {
+}
+export const V3ExternalHoldingsModal = () => {
   const [txBusy, setTxBusy] = useState(false);
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.V3ExternalHoldings)
+  );
+
+  const props = useAppSelector<V3ExternalHoldingsProps | undefined>((state) =>
+    getModalData(state, ModalNames.V3ExternalHoldings)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.V3ExternalHoldings));
+  };
 
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
@@ -44,13 +51,13 @@ export const V3ExternalHoldingsModal = ({
       {
         token: {
           ...mockToken,
-          address: position.poolTokenAddress,
+          address: props?.position.poolTokenAddress ?? '',
           symbol: 'lpTKN',
         },
-        amount: shrinkToken(position.poolTokenBalanceWei, 18),
+        amount: shrinkToken(props?.position.poolTokenBalanceWei ?? '0', 18),
       },
     ],
-    [position.poolTokenAddress, position.poolTokenBalanceWei]
+    [props?.position.poolTokenAddress, props?.position.poolTokenBalanceWei]
   );
 
   const migrate = async () => {
@@ -72,7 +79,7 @@ export const V3ExternalHoldingsModal = ({
         position.poolTokenBalanceWei
       );
       await res.wait();
-      setIsOpen(false);
+      onClose();
       await updatePortfolioData(dispatch);
     } catch (e) {
       console.error(e);
@@ -87,13 +94,16 @@ export const V3ExternalHoldingsModal = ({
     ContractsApi.BancorPortal.contractAddress
   );
 
+  if (!props) return null;
+  const { position } = props;
+
   const handleButtonClick = async () => {
     setTxBusy(true);
     onStart();
   };
 
   return (
-    <Modal title={'Migrate'} setIsOpen={setIsOpen} isOpen={isOpen} large>
+    <Modal title={'Migrate'} setIsOpen={onClose} isOpen={isOpen} large>
       <div className="p-30 pt-0">
         <h2 className="text-[24px] leading-9">
           Protect this {position.ammName} holding from impermanent loss

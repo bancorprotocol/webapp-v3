@@ -1,4 +1,4 @@
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
@@ -20,21 +20,30 @@ import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
+import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
 
-export const UpgradeTknModal = ({
-  positions,
-  isOpen,
-  setIsOpen,
-}: {
+interface UpgradeTknProps {
   positions: ProtectedPosition[];
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-}) => {
+}
+export const UpgradeTknModal = () => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
+  const isOpen = useAppSelector((state) =>
+    getModalOpen(state, ModalNames.UpgradeTkn)
+  );
+
+  const props = useAppSelector<UpgradeTknProps | undefined>((state) =>
+    getModalData(state, ModalNames.UpgradeTkn)
+  );
+
+  const onClose = () => {
+    dispatch(popModal(ModalNames.UpgradeTkn));
+  };
+
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
-  const position = positions.length !== 0 ? positions[0] : undefined;
+  const position =
+    props?.positions?.length !== 0 ? props?.positions[0] : undefined;
   const token = position?.reserveToken;
 
   const { withdrawalFee, lockDuration } = useAppSelector(
@@ -51,9 +60,11 @@ export const UpgradeTknModal = ({
     [withdrawalFee]
   );
 
+  if (!props) return null;
+
   const migrate = () => {
     migrateV2Positions(
-      positions,
+      props.positions,
       (txHash: string) => migrateNotification(dispatch, txHash),
       async () => {
         const positions = await fetchProtectedPositions(pools, account!);
@@ -63,13 +74,13 @@ export const UpgradeTknModal = ({
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
     );
-    setIsOpen(false);
+    onClose();
   };
 
   if (!position || !token) return null;
 
   return (
-    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
+    <Modal large isOpen={isOpen} setIsOpen={onClose} titleElement={<div />}>
       <div className="flex flex-col items-center gap-20 p-20 text-center">
         <Image
           alt="Token"

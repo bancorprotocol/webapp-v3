@@ -8,12 +8,21 @@ import { DepositDisabledModal } from './DepositDisabledModal';
 import { DurationModal } from './DurationModal';
 import { DepositETHModal } from './DepositETHModal';
 import { SelectPoolModal } from './SelectPoolModal';
+import { UpgradeBntModal } from './UpgradeBntModal';
+import { UpgradeTknModal } from './UpgradeTknModal';
+import { V3BonusesModal } from './V3BonusesModal';
+import { V3ExternalHoldingsModal } from './V3ExternalHoldingsModal';
 
 export enum ModalNames {
   DepositDisabled,
   DepositETH,
   Duration,
   SelectPool,
+  UpgradeBnt,
+  UpgradeTkn,
+  V3Bonuses,
+  V3ExternalHoldings,
+  V3UnstakeModal,
 }
 
 export const Modals = () => {
@@ -24,6 +33,10 @@ export const Modals = () => {
       <DepositETHModal />
       <DurationModal />
       <SelectPoolModal />
+      <UpgradeBntModal />
+      <UpgradeTknModal />
+      <V3BonusesModal />
+      <V3ExternalHoldingsModal />
     </>
   );
 };
