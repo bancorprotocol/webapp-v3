@@ -1,5 +1,5 @@
 import {
-  allTokensNew$,
+  allTokensV2$,
   keeperDaoTokens$,
   tokensForTradeWithExternal$,
   tokensV2$,
@@ -67,7 +67,7 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setv3Pools(pools));
   });
 
-  allTokensNew$.subscribe((tokens) => {
+  allTokensV2$.subscribe((tokens) => {
     dispatch(setAllTokensV2(tokens));
   });
 

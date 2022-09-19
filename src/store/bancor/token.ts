@@ -5,10 +5,10 @@ import { orderBy, uniqBy } from 'lodash';
 import { PoolV3 } from 'services/observables/pools';
 import BigNumber from 'bignumber.js';
 
-export const getAllTokensMap = createSelector(
-  [(state: RootState) => state.bancor.allTokens],
-  (allTokens: Token[]): Map<string, Token> => {
-    return new Map(allTokens.map((token) => [token.address, token]));
+export const getAllTokensV2Map = createSelector(
+  [(state: RootState) => state.bancor.allTokensV2],
+  (allTokensV2: Token[]): Map<string, Token> => {
+    return new Map(allTokensV2.map((token) => [token.address, token]));
   }
 );
 
@@ -24,10 +24,10 @@ export const getAvailableToStakeTokens = createSelector(
     (state: RootState) => state.pool.v3Pools,
     (state: RootState) => getTokensV3Map(state),
   ],
-  (pools: PoolV3[], allTokensMap: Map<string, Token>) => {
+  (pools: PoolV3[], tokensV3Map: Map<string, Token>) => {
     const poolsWithApr = pools
       .map((pool) => {
-        const token = allTokensMap.get(pool.poolDltId);
+        const token = tokensV3Map.get(pool.poolDltId);
 
         return {
           token: token!,
@@ -57,7 +57,7 @@ export const getV3Tokens = createSelector(
 
 export const getTokenTableData = createSelector(
   [
-    (state: RootState) => state.bancor.allTokens,
+    (state: RootState) => state.bancor.allTokensV2,
     (state: RootState) => getV3Tokens(state),
   ],
   (tokens: Token[], v3Tokens: Token[]) => {

@@ -2,7 +2,7 @@ import { Token } from 'services/observables/tokens';
 import { Widget } from 'components/widgets/Widget';
 import { AddLiquidityDualStakeAmount } from 'elements/earn/pools/addLiquidity/dual/AddLiquidityDualStakeAmount';
 import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { useState } from 'react';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
@@ -19,10 +19,10 @@ interface Props {
 export const AddLiquidityDual = ({ pool, reserveBalances }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
   const tkn = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, tknReserve.address)
+    getTokenV2ById(state, tknReserve.address)
   );
   const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, bntReserve.address)
+    getTokenV2ById(state, bntReserve.address)
   );
 
   const { goToPage } = useNavigation();

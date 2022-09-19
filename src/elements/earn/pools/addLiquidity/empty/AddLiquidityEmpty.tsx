@@ -4,7 +4,7 @@ import { AddLiquidityEmptyStep1 } from 'elements/earn/pools/addLiquidity/empty/A
 import { useEffect, useState } from 'react';
 import { AddLiquidityEmptyStep2 } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyStep2';
 import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import BigNumber from 'bignumber.js';
 
 import { AddLiquidityEmptyCTA } from 'elements/earn/pools/addLiquidity/empty/AddLiquidityEmptyCTA';
@@ -18,10 +18,10 @@ interface Props {
 export const AddLiquidityEmpty = ({ pool }: Props) => {
   const [tknReserve, bntReserve] = pool.reserves;
   const tkn = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, tknReserve.address)
+    getTokenV2ById(state, tknReserve.address)
   );
   const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, bntReserve.address)
+    getTokenV2ById(state, bntReserve.address)
   );
   const [tknAmount, setTknAmount] = useState('');
   const [bntAmount, setBntAmount] = useState('');

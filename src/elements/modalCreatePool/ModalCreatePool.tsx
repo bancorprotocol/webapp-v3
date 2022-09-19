@@ -25,7 +25,9 @@ export const ModalCreatePool = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
-  const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
+  const allV2Tokens = useAppSelector<Token[]>(
+    (state) => state.bancor.allTokensV2
+  );
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
   const [fee, setFee] = useState<string>('0.2');
@@ -95,7 +97,7 @@ export const ModalCreatePool = () => {
               <SelectToken
                 label="Second Token"
                 token={token}
-                tokens={allTokens}
+                tokens={allV2Tokens}
                 setToken={setToken}
                 selectable
                 startEmpty

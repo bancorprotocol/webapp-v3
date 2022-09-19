@@ -1,7 +1,7 @@
 import { prettifyNumber } from 'utils/helperFunctions';
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { bntToken } from 'services/web3/config';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info-solid.svg';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const RewardsClaimAmount = ({ amount }: Props) => {
-  const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const bnt = useAppSelector((state) => getTokenV2ById(state, bntToken));
   const usdPrice = () => new BigNumber(amount ?? 0).times(bnt?.usdPrice ?? 0);
 
   return (

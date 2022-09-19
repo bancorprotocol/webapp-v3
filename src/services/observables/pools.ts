@@ -1,4 +1,4 @@
-import { allTokensNew$, Token, tokensV3$ } from 'services/observables/tokens';
+import { allTokensV2$, Token, tokensV3$ } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
@@ -326,13 +326,13 @@ export const standardsRewardsAPR = (
   return 0;
 };
 
-export const poolsV2$ = combineLatest([apiPools$, allTokensNew$]).pipe(
-  switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
-    const bnt = allTokens.find((t) => t.address === bntToken);
+export const poolsV2$ = combineLatest([apiPools$, allTokensV2$]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, allTokensV2]) => {
+    const bnt = allTokensV2.find((t) => t.address === bntToken);
     if (!bnt) {
       return [];
     }
-    return allTokens
+    return allTokensV2
       .map((tkn) => {
         if (tkn.address === bntToken) {
           return undefined;
@@ -359,8 +359,8 @@ export const poolsV3$ = combineLatest([
   standardRewardPrograms$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
-      const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    async ([apiPoolsV3, tokensV3, standardRewardPrograms]) => {
+      const tokensMap = new Map(tokensV3.map((t) => [t.address, t]));
       const poolIds = apiPoolsV3.map((pool) => pool.poolDltId);
 
       const [
