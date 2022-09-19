@@ -14,7 +14,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredPaths: [
           'bancor.allTokenListTokens',
-          'bancor.allTokens',
+          'bancor.allTokensV2',
           'bancor.tokenLists',
         ],
       },

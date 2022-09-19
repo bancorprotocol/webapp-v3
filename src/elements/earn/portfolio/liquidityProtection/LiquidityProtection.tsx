@@ -4,14 +4,14 @@ import { ProtectedPositionsTable } from './protectedPositions/ProtectedPositions
 import { ClaimAvailable } from './claim/ClaimAvailable';
 import { ClaimLocked } from './claim/ClaimLocked';
 import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
 import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 
 export const LiquidityProtection = () => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, bntToken)
+    getTokenV2ById(state, bntToken)
   );
   const lockedAvailableBNT = useAppSelector<LockedAvailableBnt>(
     (state) => state.liquidity.lockedAvailableBNT

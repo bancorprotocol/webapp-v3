@@ -5,7 +5,7 @@ import { useInterval } from 'hooks/useInterval';
 import BigNumber from 'bignumber.js';
 import { ReactComponent as IconBell } from 'assets/icons/bell.svg';
 import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import {
   checkPriceDeviationTooHigh,
   fetchBntNeededToOpenSpace,
@@ -38,7 +38,7 @@ export const AddLiquiditySingleSpaceAvailable = ({
   setSpaceAvailableTkn,
 }: Props) => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, pool.reserves[1].address)
+    getTokenV2ById(state, pool.reserves[1].address)
   );
   const [showPriceDeviationWarning, setShowPriceDeviationWarning] =
     useState(false);
