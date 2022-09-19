@@ -3,7 +3,11 @@ import { KeeprDaoToken } from 'services/api/keeperDao';
 import { Token, TokenList, TokenMinimal } from 'services/observables/tokens';
 import { RootState } from 'store';
 import { orderBy, uniqBy } from 'lodash';
-import { getAllTokensV2Map } from 'store/bancor/token';
+import {
+  getAllTokensV2Map,
+  getTokensV2V3Map,
+  getTokensV3Map,
+} from 'store/bancor/token';
 import { utils } from 'ethers';
 
 import { Statistic } from 'services/observables/statistics';
@@ -99,6 +103,32 @@ export const getTokenV2ById = createSelector(
   }
 );
 
+export const getTokenV3ById = createSelector(
+  (state: RootState) => getTokensV3Map(state),
+  (_: any, id: string) => id,
+  (allTokensV3Map: Map<string, Token>, id: string): Token | undefined => {
+    if (!id) return undefined;
+    try {
+      return allTokensV3Map.get(utils.getAddress(id));
+    } catch (error) {
+      return undefined;
+    }
+  }
+);
+
+export const getTokensByIdV2V3 = createSelector(
+  (state: RootState) => getTokensV2V3Map(state),
+  (_: any, id: string) => id,
+  (allTokensMap: Map<string, Token>, id: string): Token | undefined => {
+    if (!id) return undefined;
+    try {
+      return allTokensMap.get(utils.getAddress(id));
+    } catch (error) {
+      return undefined;
+    }
+  }
+);
+
 export const getTopMovers = createSelector(
   (state: RootState) => state.bancor.tokensV2,
   (tokensV2: Token[]) => {
@@ -106,6 +136,14 @@ export const getTopMovers = createSelector(
       (t) => t.isProtected && Number(t.liquidity ?? 0) > 100000
     );
     return orderBy(filtered, 'price_change_24', 'desc').slice(0, 20);
+  }
+);
+
+export const getAllV2AndV3Tokens = createSelector(
+  (state: RootState) => state.bancor.allTokensV2,
+  (state: RootState) => state.bancor.tokensV3,
+  (tokensV2, tokensV3): Token[] => {
+    return uniqBy([...tokensV3, ...tokensV2], (x) => x.address);
   }
 );
 

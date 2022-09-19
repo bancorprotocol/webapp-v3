@@ -20,7 +20,7 @@ import { expandToken, shrinkToken } from 'utils/formulas';
 import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
 import BigNumber from 'bignumber.js';
-import { getTokenV2ById } from 'store/bancor/bancor';
+import { getTokensByIdV2V3 } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
@@ -34,7 +34,7 @@ export const V3HoldingPage = () => {
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
   const holding = holdings.find((x) => x.pool.poolDltId === id);
-  const token = useAppSelector((state) => getTokenV2ById(state, id || ''));
+  const token = useAppSelector((state) => getTokensByIdV2V3(state, id || ''));
   const pool = useAppSelector((state) => getV3byID(state, id || ''));
 
   const isBNT = holding?.pool.poolDltId === bntToken;
