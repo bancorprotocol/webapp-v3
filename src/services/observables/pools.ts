@@ -266,6 +266,7 @@ const buildPoolV3Object = (
 
   return {
     ...apiPool,
+    autoCompoundingRewardsActive: false,
     liquidity,
     extVaultBalance,
     poolDeficit,
