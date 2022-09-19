@@ -10,7 +10,7 @@ import { tokenListTokens$ } from 'services/observables/tokenLists';
 import {
   apiPools$,
   apiPoolsV3$,
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
 } from 'services/observables/apiData';
 import { utils } from 'ethers';
@@ -63,7 +63,7 @@ export interface TokenList {
 }
 
 export const buildTokenObject = (
-  apiToken: APIToken,
+  apiToken: APIToken | APITokenV3,
   apiPools: APIPool[],
   minMintingBalance: string,
   balances?: Map<string, string>,
@@ -210,7 +210,7 @@ export const updateUserBalances = async () => {
 
 export const allTokenBalances$ = combineLatest([
   user$,
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
   userBalancesReceiver$,
   oneMinute$,
@@ -251,7 +251,7 @@ const minNetworkTokenLiquidityForMinting$ = combineLatest([
 );
 
 export const tokensV2$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiPools$,
   tokenListTokens$,
   allTokenBalances$,
@@ -292,7 +292,7 @@ export const tokensV2$ = combineLatest([
 );
 
 export const tokensV3$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
   apiPoolsV3$,
   tokenListTokens$,
@@ -355,7 +355,7 @@ export const tokensForTradeWithExternal$ = combineLatest([
 );
 
 export const allTokensV2$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiPools$,
   tokenListTokens$,
   allTokenBalances$,
@@ -374,6 +374,40 @@ export const allTokensV2$ = combineLatest([
       );
       return apiTokens.map((apiToken) => {
         const tokenListToken = allTokenListTokensMap.get(apiToken.dlt_id);
+        return buildTokenObject(
+          apiToken,
+          apiPools,
+          minMintingBalance,
+          balances,
+          tokenListToken
+        );
+      });
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
+  shareReplay(1)
+);
+
+export const allTokensV3$ = combineLatest([
+  apiTokensV3$,
+  apiPools$,
+  tokenListTokens$,
+  allTokenBalances$,
+  minNetworkTokenLiquidityForMinting$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([
+      apiTokens,
+      apiPools,
+      tokenListTokens,
+      balances,
+      minMintingBalance,
+    ]) => {
+      const allTokenListTokensMap = new Map(
+        tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
+      );
+      return apiTokens.map((apiToken) => {
+        const tokenListToken = allTokenListTokensMap.get(apiToken.dltId);
         return buildTokenObject(
           apiToken,
           apiPools,

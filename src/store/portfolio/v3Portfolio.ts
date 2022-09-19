@@ -12,7 +12,7 @@ import { utils } from 'ethers';
 import { RewardsProgramStake } from 'services/web3/v3/portfolio/standardStaking';
 import BigNumber from 'bignumber.js';
 import { orderBy, uniqBy } from 'lodash';
-import { getPoolsV3Map } from 'store/bancor/pool';
+import { getAllPoolsV3Map, getPoolsV3Map } from 'store/bancor/pool';
 import { PoolV3 } from 'services/observables/pools';
 import { shrinkToken } from 'utils/formulas';
 import { toBigNumber } from 'utils/helperFunctions';
@@ -89,7 +89,7 @@ export const getIsLoadingHoldings = createSelector(
 export const getPortfolioHoldings = createSelector(
   (state: RootState) => state.v3Portfolio.holdingsRaw,
   (state: RootState) => state.v3Portfolio.standardRewards,
-  (state: RootState) => getPoolsV3Map(state),
+  (state: RootState) => getAllPoolsV3Map(state),
   (
     holdingsRaw: HoldingRaw[],
     standardRewards: RewardsProgramStake[],
