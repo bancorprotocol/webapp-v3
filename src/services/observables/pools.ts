@@ -207,23 +207,21 @@ const buildPoolV3Object = (
   );
 
   // Auto Comp APR
-  const autoCompoundingApr24H = 0;
-  const autoCompoundingApr7d = 0;
-  // const autoCompoundingApr24H = calcApr(
-  //   apiPool.autoCompoundingRewards24h.tkn ??
-  //     apiPool.autoCompoundingRewards24h.bnt,
-  //   apiPool.autoCompoundingRewards24h.tkn
-  //     ? stakedBalance.tkn
-  //     : stakedBalance.bnt
-  // );
-  // const autoCompoundingApr7d = calcApr(
-  //   apiPool.autoCompoundingRewards7d.tkn ??
-  //     apiPool.autoCompoundingRewards7d.bnt,
-  //   apiPool.autoCompoundingRewards7d.tkn
-  //     ? stakedBalance.tkn
-  //     : stakedBalance.bnt,
-  //   true
-  // );
+  const autoCompoundingApr24H = calcApr(
+    apiPool.autoCompoundingRewards24h.tkn ??
+      apiPool.autoCompoundingRewards24h.bnt,
+    apiPool.autoCompoundingRewards24h.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt
+  );
+  const autoCompoundingApr7d = calcApr(
+    apiPool.autoCompoundingRewards7d.tkn ??
+      apiPool.autoCompoundingRewards7d.bnt,
+    apiPool.autoCompoundingRewards7d.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt,
+    true
+  );
 
   // Total APR
   const totalApr24H = toBigNumber(tradingFeesApr24h)
@@ -268,21 +266,6 @@ const buildPoolV3Object = (
 
   return {
     ...apiPool,
-    autoCompoundingRewardsActive: false,
-    autoCompoundingRewards24h: {
-      bnt: '0',
-      usd: '0',
-      eur: '0',
-      eth: '0',
-      tkn: '0',
-    },
-    autoCompoundingRewards7d: {
-      bnt: '0',
-      usd: '0',
-      eur: '0',
-      eth: '0',
-      tkn: '0',
-    },
     liquidity,
     extVaultBalance,
     poolDeficit,
