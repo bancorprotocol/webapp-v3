@@ -6,6 +6,7 @@ import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
 import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
 import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
+import { ReactComponent as binanceLogo } from 'assets/logos/binance.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 const fiats = [
@@ -122,6 +123,19 @@ const fiats = [
       DepositMethods.discover,
     ],
     buyUrl: 'https://global.transak.com/',
+  },
+  {
+    name: 'Binance Connect',
+    text: 'Binance Connect is Binance’s official fiat-to-crypto payments provider. It has been powering fiat-to-crypto on- and off-ramps, processing millions of transactions globally for Binance.com users. Binance Connect supports over 50 cryptocurrencies and major payment methods such as VISA, Mastercard, and more.',
+    logo: binanceLogo,
+    operations: [Operations.fiatIn, Operations.fiatOut],
+    depositMethods: [
+      DepositMethods.creditCard,
+      DepositMethods.debitCard,
+      DepositMethods.applePay,
+    ],
+    buyUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
+    sellUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
   },
 ];
 
