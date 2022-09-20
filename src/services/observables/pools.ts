@@ -1,4 +1,4 @@
-import { allTokensNew$, Token, tokensV3$ } from 'services/observables/tokens';
+import { allTokensV2$, Token, tokensV3$ } from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
@@ -207,23 +207,21 @@ const buildPoolV3Object = (
   );
 
   // Auto Comp APR
-  const autoCompoundingApr24H = 0;
-  const autoCompoundingApr7d = 0;
-  // const autoCompoundingApr24H = calcApr(
-  //   apiPool.autoCompoundingRewards24h.tkn ??
-  //     apiPool.autoCompoundingRewards24h.bnt,
-  //   apiPool.autoCompoundingRewards24h.tkn
-  //     ? stakedBalance.tkn
-  //     : stakedBalance.bnt
-  // );
-  // const autoCompoundingApr7d = calcApr(
-  //   apiPool.autoCompoundingRewards7d.tkn ??
-  //     apiPool.autoCompoundingRewards7d.bnt,
-  //   apiPool.autoCompoundingRewards7d.tkn
-  //     ? stakedBalance.tkn
-  //     : stakedBalance.bnt,
-  //   true
-  // );
+  const autoCompoundingApr24H = calcApr(
+    apiPool.autoCompoundingRewards24h.tkn ??
+      apiPool.autoCompoundingRewards24h.bnt,
+    apiPool.autoCompoundingRewards24h.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt
+  );
+  const autoCompoundingApr7d = calcApr(
+    apiPool.autoCompoundingRewards7d.tkn ??
+      apiPool.autoCompoundingRewards7d.bnt,
+    apiPool.autoCompoundingRewards7d.tkn
+      ? stakedBalance.tkn
+      : stakedBalance.bnt,
+    true
+  );
 
   // Total APR
   const totalApr24H = toBigNumber(tradingFeesApr24h)
@@ -268,21 +266,6 @@ const buildPoolV3Object = (
 
   return {
     ...apiPool,
-    autoCompoundingRewardsActive: false,
-    autoCompoundingRewards24h: {
-      bnt: '0',
-      usd: '0',
-      eur: '0',
-      eth: '0',
-      tkn: '0',
-    },
-    autoCompoundingRewards7d: {
-      bnt: '0',
-      usd: '0',
-      eur: '0',
-      eth: '0',
-      tkn: '0',
-    },
     liquidity,
     extVaultBalance,
     poolDeficit,
@@ -343,13 +326,13 @@ export const standardsRewardsAPR = (
   return 0;
 };
 
-export const poolsV2$ = combineLatest([apiPools$, allTokensNew$]).pipe(
-  switchMapIgnoreThrow(async ([apiPools, allTokens]) => {
-    const bnt = allTokens.find((t) => t.address === bntToken);
+export const poolsV2$ = combineLatest([apiPools$, allTokensV2$]).pipe(
+  switchMapIgnoreThrow(async ([apiPools, allTokensV2]) => {
+    const bnt = allTokensV2.find((t) => t.address === bntToken);
     if (!bnt) {
       return [];
     }
-    return allTokens
+    return allTokensV2
       .map((tkn) => {
         if (tkn.address === bntToken) {
           return undefined;
@@ -376,8 +359,8 @@ export const poolsV3$ = combineLatest([
   standardRewardPrograms$,
 ]).pipe(
   switchMapIgnoreThrow(
-    async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
-      const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+    async ([apiPoolsV3, tokensV3, standardRewardPrograms]) => {
+      const tokensMap = new Map(tokensV3.map((t) => [t.address, t]));
       const poolIds = apiPoolsV3.map((pool) => pool.poolDltId);
 
       const [

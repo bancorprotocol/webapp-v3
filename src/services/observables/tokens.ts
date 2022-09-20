@@ -354,7 +354,7 @@ export const tokensForTradeWithExternal$ = combineLatest([
   shareReplay(1)
 );
 
-export const allTokensNew$ = combineLatest([
+export const allTokensV2$ = combineLatest([
   apiTokens$,
   apiPools$,
   tokenListTokens$,

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { fetchPendingRewards } from 'services/web3/protection/rewards';
 import { useInterval } from 'hooks/useInterval';
 import { useAppSelector } from 'store';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { getProtectedPools } from 'store/bancor/pool';
 
 import BigNumber from 'bignumber.js';
@@ -27,7 +27,7 @@ export const useRewardsClaim = ({ pool }: Props) => {
   const posGroupId = query.get('posGroupId');
 
   const bnt = useAppSelector((state) =>
-    getTokenById(state, pool ? pool.reserves[1].address : '')
+    getTokenV2ById(state, pool ? pool.reserves[1].address : '')
   );
 
   const position = useAppSelector<ProtectedPositionGrouped | undefined>(
