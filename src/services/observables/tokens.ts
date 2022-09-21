@@ -63,7 +63,7 @@ export interface TokenList {
 }
 
 export const buildTokenObject = (
-  apiToken: APIToken | APITokenV3,
+  apiToken: APIToken,
   apiPools: APIPool[],
   minMintingBalance: string,
   balances?: Map<string, string>,
@@ -389,39 +389,51 @@ export const allTokensV2$ = combineLatest([
 );
 
 export const allTokensV3$ = combineLatest([
+  apiTokensV2$,
   apiTokensV3$,
-  apiPools$,
+  apiPoolsV3$,
   tokenListTokens$,
   allTokenBalances$,
-  minNetworkTokenLiquidityForMinting$,
 ]).pipe(
   switchMapIgnoreThrow(
     async ([
-      apiTokens,
-      apiPools,
+      apiTokensV2,
+      apiTokensV3,
+      apiPoolsV3,
       tokenListTokens,
       balances,
-      minMintingBalance,
     ]) => {
-      const allTokenListTokensMap = new Map(
-        tokenListTokens.allTokenListTokens.map((t) => [t.address, t])
+      const userPreferredTokenListTokensMap = new Map(
+        tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
       );
-      return apiTokens.map((apiToken) => {
-        const tokenListToken = allTokenListTokensMap.get(apiToken.dltId);
-        return buildTokenObject(
-          apiToken,
-          apiPools,
-          minMintingBalance,
-          balances,
-          tokenListToken
-        );
-      });
+      const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
+      const apiTokensV2Map = new Map(apiTokensV2.map((t) => [t.dlt_id, t]));
+
+      return apiTokensV3
+        .map((apiToken) => {
+          const tokenListToken = userPreferredTokenListTokensMap.get(
+            apiToken.dltId
+          );
+
+          const apiPool = apiPoolsMap.get(apiToken.dltId);
+          if (!apiPool) {
+            return undefined;
+          }
+          const v2Token = apiTokensV2Map.get(apiToken.dltId);
+          return buildTokenObjectV3(
+            apiToken,
+            apiPool,
+            balances,
+            tokenListToken,
+            v2Token
+          );
+        })
+        .filter((token) => !!token) as Token[];
     }
   ),
   distinctUntilChanged<Token[]>(isEqual),
   shareReplay(1)
 );
-
 export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
   shareReplay(1)
 );
