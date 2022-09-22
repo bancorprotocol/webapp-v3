@@ -19,6 +19,11 @@ export enum DarkMode {
   System,
 }
 
+export enum TokenCurrency {
+  Token,
+  Currency,
+}
+
 export interface UserState {
   account: string | null | undefined;
   darkMode: DarkMode;
@@ -28,7 +33,7 @@ export interface UserState {
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
-  tokenCurrency: number;
+  tokenCurrency: TokenCurrency;
   baseCurrency: number;
 }
 

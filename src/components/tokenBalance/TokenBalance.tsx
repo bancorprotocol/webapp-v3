@@ -3,6 +3,8 @@ import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
+import { useAppSelector } from 'store';
+import { TokenCurrency } from 'store/user/user';
 interface Props {
   symbol: string;
   amount: string;
@@ -51,6 +53,8 @@ export const TokenBalance = ({
   abbreviate,
 }: Props) => {
   const usdAmount = new BigNumber(amount).times(usdPrice).toString();
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isToken = tokenCurrency === TokenCurrency.Token;
 
   return (
     <div className="flex">
@@ -61,11 +65,11 @@ export const TokenBalance = ({
       />
       <div className="flex flex-col items-start">
         <div className="flex items-center gap-5 text-justify text-16">
-          {symbol}{' '}
+          {isToken && symbol}{' '}
           <AmountWithPopover
-            amount={amount}
+            amount={isToken ? amount : usdAmount}
             symbol={symbol}
-            options={{ abbreviate }}
+            options={{ abbreviate, usd: !isToken }}
           />
           {deficitAmount && (
             <PopoverV3
@@ -79,7 +83,8 @@ export const TokenBalance = ({
           )}
         </div>
         <span className="text-secondary">
-          {prettifyNumber(usdAmount, true)}
+          {prettifyNumber(isToken ? usdAmount : amount, isToken)}{' '}
+          {!isToken && symbol}
         </span>
       </div>
     </div>
