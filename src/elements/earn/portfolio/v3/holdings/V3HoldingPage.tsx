@@ -21,8 +21,6 @@ import BigNumber from 'bignumber.js';
 import { getTokensByIdV2V3 } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
-import { V3ManageProgramsModal } from '../../../../../modals/V3ManageProgramsModal';
-import { DepositV3Modal } from 'modals/DepositV3Modal';
 import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 
@@ -211,18 +209,18 @@ export const V3HoldingPage = () => {
                         {prettifyNumber(token.balance ?? 0)}
                       </div>
                     </div>
-                    <DepositV3Modal
-                      pool={pool}
-                      renderButton={(onClick) => (
-                        <Button
-                          onClick={() => onClick()}
-                          size={ButtonSize.ExtraSmall}
-                          variant={ButtonVariant.Secondary}
-                        >
-                          Deposit
-                        </Button>
-                      )}
-                    />
+                    <Button
+                      onClick={() =>
+                        pushModal({
+                          modalName: ModalNames.DepositV3,
+                          data: pool,
+                        })
+                      }
+                      size={ButtonSize.ExtraSmall}
+                      variant={ButtonVariant.Secondary}
+                    >
+                      Deposit
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -244,18 +242,18 @@ export const V3HoldingPage = () => {
                         {prettifyNumber(totalPTAllPrograms)}
                       </div>
                     </div>
-                    <V3ManageProgramsModal
-                      holding={holding}
-                      renderButton={(onClick) => (
-                        <Button
-                          size={ButtonSize.ExtraSmall}
-                          variant={ButtonVariant.Secondary}
-                          onClick={() => onClick()}
-                        >
-                          Manage
-                        </Button>
-                      )}
-                    />
+                    <Button
+                      size={ButtonSize.ExtraSmall}
+                      variant={ButtonVariant.Secondary}
+                      onClick={() =>
+                        pushModal({
+                          modalName: ModalNames.V3ManagePrograms,
+                          data: holding,
+                        })
+                      }
+                    >
+                      Manage
+                    </Button>
                   </div>
                   <hr className="hidden md:block my-30 border-silver dark:border-grey" />
                 </>

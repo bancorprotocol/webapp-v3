@@ -1,6 +1,6 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PoolV3 } from 'services/observables/pools';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -34,24 +34,36 @@ import {
 } from 'services/api/googleTagManager';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
-import { DepositFAQ } from './DepositFAQ';
+import { DepositFAQ } from '../elements/earn/portfolio/v3/DepositFAQ';
 import { Switch, SwitchVariant } from 'components/switch/Switch';
 import dayjs from 'dayjs';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import { DepositDisabledModal } from './DepositDisabledModal';
+import { useModal } from 'hooks/useModal';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
 
-interface Props {
+interface DepositV3Props {
   pool: PoolV3;
-  renderButton: (onClick: (pool_click_location?: string) => void) => ReactNode;
 }
 
-export const DepositV3Modal = ({ pool, renderButton }: Props) => {
-  const isBNT = bntToken === pool.poolDltId;
+export const DepositV3Modal = () => {
+  const dispatch = useDispatch();
+  const { goToPage } = useNavigation();
+  const { popModal } = useModal();
+  const isOpen = useAppSelector((state) =>
+    getIsModalOpen(state, ModalNames.DepositV3)
+  );
+
+  const props = useAppSelector<DepositV3Props | undefined>((state) =>
+    getModalData(state, ModalNames.DepositV3)
+  );
+  const pool = props?.pool;
+
+  const isBNT = bntToken === props?.pool.poolDltId;
   const account = useAppSelector((state) => state.user.account);
-  const [isOpen, setIsOpen] = useState(false);
   const [txBusy, setTxBusy] = useState(false);
   const [tosAgreed, setTosAgreed] = useState(false);
   const [amount, setAmount] = useState('');
@@ -61,7 +73,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const { handleWalletButtonClick } = useWalletConnect();
 
   const tokenInputField = useTknFiatInput({
-    token: pool.reserveToken,
+    token: pool?.reserveToken,
     setInputTkn: setAmount,
     setInputFiat: setInputFiat,
     inputTkn: amount,
@@ -69,7 +81,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   });
 
   const onClose = async () => {
-    setIsOpen(false);
+    popModal();
     await wait(500);
     setAmount('');
     setInputFiat('');
@@ -78,17 +90,14 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   const inputErrorMsg = useMemo(
     () =>
-      !!account && new BigNumber(pool.reserveToken.balance || 0).lt(amount)
+      !!account && new BigNumber(pool?.reserveToken.balance || 0).lt(amount)
         ? 'Insufficient balance'
         : '',
-    [account, amount, pool.reserveToken.balance]
+    [account, amount, pool?.reserveToken.balance]
   );
 
-  const dispatch = useDispatch();
-  const { goToPage } = useNavigation();
-
   const deposit = async (approvalHash?: string) => {
-    if (!pool.reserveToken.balance || !account) {
+    if (!pool?.reserveToken.balance || !account) {
       return;
     }
 
@@ -155,9 +164,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   };
 
   const [onStart, ApproveModal] = useApproveModal(
-    [{ amount: amount || '0', token: pool.reserveToken }],
+    pool ? [{ amount: amount || '0', token: pool.reserveToken }] : [],
     (approvalHash?: string) => deposit(approvalHash),
-    accessFullEarnings && pool.latestProgram?.isActive
+    accessFullEarnings && pool?.latestProgram?.isActive
       ? ContractsApi.StandardRewards.contractAddress
       : ContractsApi.BancorNetwork.contractAddress,
     () => sendDepositEvent(DepositEvent.DepositUnlimitedPopupRequest),
@@ -176,7 +185,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   );
 
   const handleClick = useCallback(() => {
-    if (canDeposit) {
+    if (canDeposit && pool) {
       const portion =
         pool.reserveToken.balance &&
         new BigNumber(amount)
@@ -217,9 +226,9 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     amount,
     inputFiat,
     isFiat,
-    pool.name,
-    pool.reserveToken.balance,
+    pool,
   ]);
+  if (!pool) return null;
 
   const vaultBalance = toBigNumber(pool.poolDeficit);
 
@@ -227,7 +236,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
 
   return (
     <>
-      {renderButton((pool_click_location) => {
+      {/* {renderButton((pool_click_location) => {
         setCurrentDeposit({
           deposit_pool: pool.name,
           deposit_blockchain: getBlockchain(),
@@ -249,7 +258,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         );
         sendDepositEvent(DepositEvent.DepositAmountView);
         setIsOpen(true);
-      })}
+      })} */}
       <Modal
         title={'Deposit'}
         setIsOpen={onClose}

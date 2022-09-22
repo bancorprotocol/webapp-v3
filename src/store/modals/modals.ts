@@ -18,7 +18,7 @@ const modalsSlice = createSlice({
   reducers: {
     pushModal: (state, action) => {
       state.openModals.push({
-        modalName: action.payload.modal,
+        modalName: action.payload.modalName,
         data: action.payload.data,
       });
     },

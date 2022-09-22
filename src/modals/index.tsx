@@ -17,21 +17,27 @@ import { V3WithdrawCancelModal } from './V3WithdrawCancelModal';
 import { V3WithdrawConfirmModal } from './V3WithdrawConfirmModal';
 import V3WithdrawModal from './V3WithdrawModal';
 import { VbntModal } from './VbntModal';
+import { V3ManageProgramsModal } from './V3ManageProgramsModal';
+import { DepositV3Modal } from './DepositV3Modal';
 
 export enum ModalNames {
+  CreatePool,
   DepositDisabled,
   DepositETH,
+  DepositV3,
   Duration,
   SelectPool,
   UpgradeBnt,
   UpgradeTkn,
   V3Bonuses,
   V3ExternalHoldings,
+  V3ManagePrograms,
   V3Unstake,
   V3WithdrawCancel,
   V3WithdrawConfirm,
   V3Withdraw,
   VBnt,
+  WithdrawLiquidity,
 }
 
 export const Modals = () => {
@@ -40,12 +46,14 @@ export const Modals = () => {
       <CreatePoolModal />
       <DepositDisabledModal />
       <DepositETHModal />
+      <DepositV3Modal />
       <DurationModal />
       <SelectPoolModal />
       <UpgradeBntModal />
       <UpgradeTknModal />
       <V3BonusesModal />
       <V3ExternalHoldingsModal />
+      <V3ManageProgramsModal />
       <V3UnstakeModal />
       <V3WithdrawCancelModal />
       <V3WithdrawConfirmModal />
