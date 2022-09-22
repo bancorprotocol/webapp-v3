@@ -24,6 +24,11 @@ export enum TokenCurrency {
   Currency,
 }
 
+export enum BaseCurrency {
+  USD,
+  ETH,
+}
+
 export interface UserState {
   account: string | null | undefined;
   darkMode: DarkMode;
@@ -34,7 +39,7 @@ export interface UserState {
   loadingBalances: boolean;
   forceV3Routing: boolean;
   tokenCurrency: TokenCurrency;
-  baseCurrency: number;
+  baseCurrency: BaseCurrency;
 }
 
 export const initialState: UserState = {

@@ -5,6 +5,7 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconWarning } from 'assets/icons/warning.svg';
 import { useAppSelector } from 'store';
 import { TokenCurrency } from 'store/user/user';
+import { CurrencyPrettifier } from 'components/currencyPrettifier/CurrencyPrettifier';
 interface Props {
   symbol: string;
   amount: string;
@@ -83,7 +84,10 @@ export const TokenBalance = ({
           )}
         </div>
         <span className="text-secondary">
-          {prettifyNumber(isToken ? usdAmount : amount, isToken)}{' '}
+          <CurrencyPrettifier
+            amount={isToken ? usdAmount : amount}
+            isCurrency={isToken}
+          />{' '}
           {!isToken && symbol}
         </span>
       </div>
