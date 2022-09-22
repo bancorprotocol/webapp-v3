@@ -20,13 +20,15 @@ import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
-import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface UpgradeTknProps {
   positions: ProtectedPosition[];
 }
 export const UpgradeTknModal = () => {
   const dispatch = useDispatch();
+  const { popModal } = useModal();
   const { goToPage } = useNavigation();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.UpgradeTkn)
@@ -37,7 +39,7 @@ export const UpgradeTknModal = () => {
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.UpgradeTkn));
+    popModal();
   };
 
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);

@@ -15,7 +15,8 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { Modal, ModalNames } from 'modals';
-import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface V3UnstakeProps {
   holding: Holding;
@@ -23,6 +24,7 @@ interface V3UnstakeProps {
 
 export const V3UnstakeModal = () => {
   const account = useAppSelector((state) => state.user.account);
+  const { popModal } = useModal();
   const [txBusy, setTxBusy] = useState(false);
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
@@ -34,7 +36,7 @@ export const V3UnstakeModal = () => {
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.V3Unstake));
+    popModal();
   };
 
   if (!props) return null;

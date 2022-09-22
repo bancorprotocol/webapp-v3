@@ -4,9 +4,9 @@ import { Pool } from 'services/observables/pools';
 import { InputField } from '../components/inputField/InputField';
 import { Image } from 'components/image/Image';
 import { Modal, ModalFullscreen, ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalData, getIsModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getIsModalOpen } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface SelectPoolProps {
   pools: Pool[];
@@ -14,13 +14,13 @@ interface SelectPoolProps {
 }
 
 export const SelectPoolModal = () => {
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.SelectPool)
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.SelectPool));
+    popModal();
   };
 
   const props = useAppSelector<SelectPoolProps | undefined>((state) =>

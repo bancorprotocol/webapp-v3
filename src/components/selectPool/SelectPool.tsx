@@ -2,8 +2,7 @@ import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg'
 import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
 import { ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface SelectPoolProps {
   pool: Pool;
@@ -18,19 +17,17 @@ export const SelectPool = ({
   label,
   onSelect,
 }: SelectPoolProps) => {
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
 
   return (
     <div className="flex justify-between items-center">
       <span className="font-medium">{label}</span>
       <button
         onClick={() =>
-          dispatch(
-            pushModal({
-              modalName: ModalNames.SelectPool,
-              data: { pools, onSelect },
-            })
-          )
+          pushModal({
+            modalName: ModalNames.SelectPool,
+            data: { pools, onSelect },
+          })
         }
         className="flex items-center border border-charcoal dark:border-graphite rounded-[16px] px-20 py-6"
       >

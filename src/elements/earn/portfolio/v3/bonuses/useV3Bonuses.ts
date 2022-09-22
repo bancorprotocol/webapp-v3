@@ -19,18 +19,18 @@ import {
   sendWithdrawBonusEvent,
   WithdrawBonusEvent,
 } from 'services/api/googleTagManager/withdraw';
-import { ModalNames } from 'modals';
-import { popModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 export const useV3Bonuses = () => {
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
+  const { popModal } = useModal();
   const bonuses = useAppSelector(getStandardRewards);
   const isLoading = useAppSelector(getIsLoadingStandardRewards);
 
   const closeBonusesModal = useCallback(() => {
-    dispatch(popModal(ModalNames.V3Bonuses));
-  }, [dispatch]);
+    popModal();
+  }, [popModal]);
 
   const bonusUsdTotal = useMemo(
     () =>

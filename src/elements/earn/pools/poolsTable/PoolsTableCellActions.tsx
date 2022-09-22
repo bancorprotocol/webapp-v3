@@ -1,12 +1,11 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 import { useNavigation } from 'hooks/useNavigation';
 
 export const PoolsTableCellActions = (id: string) => {
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const { goToPage } = useNavigation();
   const enableDeposit = false;
 
@@ -17,7 +16,7 @@ export const PoolsTableCellActions = (id: string) => {
           onClick={() =>
             enableDeposit
               ? goToPage.addLiquidityV2(id)
-              : dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
+              : pushModal({ modalName: ModalNames.DepositDisabled })
           }
           variant={ButtonVariant.Tertiary}
           size={ButtonSize.ExtraSmall}

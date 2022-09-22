@@ -2,7 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { ModalNames } from 'modals';
 import { RootState } from 'store';
 
-type ModalObj = { modalName: ModalNames; data: any };
+export type ModalObj = { modalName: ModalNames; data?: any };
 
 export interface ModalsState {
   openModals: ModalObj[];
@@ -22,7 +22,7 @@ const modalsSlice = createSlice({
         data: action.payload.data,
       });
     },
-    popModal: (state, _) => {
+    popModal: (state) => {
       state.openModals.pop();
     },
   },

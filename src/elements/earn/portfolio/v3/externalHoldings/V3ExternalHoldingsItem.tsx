@@ -4,15 +4,15 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ExternalHolding } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings.types';
 import { TokensOverlap } from 'components/tokensOverlap/TokensOverlap';
 import { ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface Props {
   position: ExternalHolding;
 }
 
 const V3ExternalHoldingsItem = ({ position }: Props) => {
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
+
   return (
     <div className="p-20 border rounded-20 border-fog">
       <div className="h-30">
@@ -31,12 +31,10 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
         size={ButtonSize.Full}
         className="mt-20"
         onClick={() =>
-          dispatch(
-            pushModal({
-              modalName: ModalNames.V3ExternalHoldings,
-              data: { position },
-            })
-          )
+          pushModal({
+            modalName: ModalNames.V3ExternalHoldings,
+            data: { position },
+          })
         }
       >
         Protect and earn

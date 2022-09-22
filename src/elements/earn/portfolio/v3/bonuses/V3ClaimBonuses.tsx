@@ -12,13 +12,12 @@ import {
   getCurrency,
 } from 'services/api/googleTagManager';
 import { pool } from 'store/bancor/pool';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
 
 export const V3ClaimBonuses = () => {
   const { bonusUsdTotal, isLoading } = useV3Bonuses();
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
 
   return (
     <>
@@ -45,7 +44,7 @@ export const V3ClaimBonuses = () => {
                   withdraw_display_currency: getCurrency(),
                 });
                 sendWithdrawBonusEvent(WithdrawBonusEvent.CTAClick);
-                dispatch(pushModal({ modalName: ModalNames.V3Bonuses }));
+                pushModal({ modalName: ModalNames.V3Bonuses });
               }}
               disabled={bonusUsdTotal === 0}
             >

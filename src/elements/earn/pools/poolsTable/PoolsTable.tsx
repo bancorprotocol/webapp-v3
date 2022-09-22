@@ -15,8 +15,7 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 import { SnapshotLink } from '../SnapshotLink';
 import { config } from 'config';
@@ -41,7 +40,7 @@ export const PoolsTable = ({
   setLowEarnRate: Function;
 }) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
 
   const [search, setSearch] = useState('');
 
@@ -174,9 +173,7 @@ export const PoolsTable = ({
         accessor: 'poolDltId',
         Cell: (_) => (
           <Button
-            onClick={() =>
-              dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
-            }
+            onClick={() => pushModal({ modalName: ModalNames.DepositDisabled })}
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.ExtraSmall}
           >
@@ -188,7 +185,7 @@ export const PoolsTable = ({
         disableSortBy: true,
       },
     ],
-    [toolTip, dispatch]
+    [toolTip, pushModal]
   );
 
   const defaultSort: SortingRule<Token> = {

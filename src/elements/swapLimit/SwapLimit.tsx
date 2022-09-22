@@ -36,7 +36,7 @@ import {
   sendConversionEvent,
 } from 'services/api/googleTagManager/conversion';
 import { Events } from 'services/api/googleTagManager';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 
@@ -64,6 +64,7 @@ export const SwapLimit = ({
   refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -528,12 +529,10 @@ export const SwapLimit = ({
                 <span className="font-semibold">Expires in</span>
                 <button
                   onClick={() =>
-                    dispatch(
-                      pushModal({
-                        modalName: ModalNames.Duration,
-                        data: { duration, setDuration },
-                      })
-                    )
+                    pushModal({
+                      modalName: ModalNames.Duration,
+                      data: { duration, setDuration },
+                    })
                   }
                   className="flex items-center bg-white dark:bg-charcoal rounded-10 px-40 py-8"
                 >
@@ -553,12 +552,10 @@ export const SwapLimit = ({
           size={ButtonSize.Full}
           onClick={() => {
             if (fromToken.address === ethToken)
-              dispatch(
-                pushModal({
-                  modalName: ModalNames.DepositETH,
-                  data: { onConfirm: deposiEthWeth(), amount: fromAmount },
-                })
-              );
+              pushModal({
+                modalName: ModalNames.DepositETH,
+                data: { onConfirm: deposiEthWeth(), amount: fromAmount },
+              });
             else onStart();
           }}
           disabled={isSwapDisabled()}

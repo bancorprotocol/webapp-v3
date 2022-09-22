@@ -12,14 +12,13 @@ import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 
 export const V3EarningTable = () => {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding>();
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
@@ -78,7 +77,7 @@ export const V3EarningTable = () => {
             <V3EarningTableMenu
               holding={cell.row.original}
               handleDepositClick={() =>
-                dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
+                pushModal({ modalName: ModalNames.DepositDisabled })
               }
               setIsWithdrawModalOpen={setIsWithdrawModalOpen}
               setHoldingToWithdraw={setHoldingToWithdraw}
@@ -90,7 +89,7 @@ export const V3EarningTable = () => {
         disableSortBy: true,
       },
     ],
-    [dispatch]
+    []
   );
 
   const defaultSort: SortingRule<Holding> = {

@@ -15,9 +15,9 @@ import {
   getBlockchainNetwork,
   getCurrency,
 } from 'services/api/googleTagManager';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface V3WithdrawCancelProps {
   withdrawRequest: WithdrawalRequest;
@@ -25,7 +25,7 @@ interface V3WithdrawCancelProps {
 }
 
 export const V3WithdrawCancelModal = memo(() => {
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.V3WithdrawCancel)
   );
@@ -35,8 +35,8 @@ export const V3WithdrawCancelModal = memo(() => {
   );
 
   const onClose = useCallback(() => {
-    dispatch(popModal(ModalNames.V3WithdrawCancel));
-  }, [dispatch]);
+    popModal();
+  }, [popModal]);
 
   const [txBusy, setTxBusy] = useState(false);
   const cancelWithdrawal = props?.cancelWithdrawal;

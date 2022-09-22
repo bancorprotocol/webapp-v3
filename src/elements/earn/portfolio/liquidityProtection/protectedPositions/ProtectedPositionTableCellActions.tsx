@@ -24,7 +24,7 @@ import {
 } from 'services/notifications/notifications';
 import { Pool } from 'services/observables/pools';
 import { migrateV2Positions } from 'services/web3/protection/migration';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 
 export const ProtectedPositionTableCellActions = (
@@ -34,6 +34,7 @@ export const ProtectedPositionTableCellActions = (
 ) => {
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
   const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const { row } = cellData;
   const position = row.original;
   const isPoolExistV3 = useAppSelector<boolean>((state) =>
@@ -87,19 +88,15 @@ export const ProtectedPositionTableCellActions = (
             () => migrateFailedNotification(dispatch)
           );
         else
-          dispatch(
-            pushModal({
-              modalName: ModalNames.UpgradeBnt,
-              data: { position },
-            })
-          );
-      } else {
-        dispatch(
           pushModal({
-            modalName: ModalNames.UpgradeTkn,
-            data: { positions },
-          })
-        );
+            modalName: ModalNames.UpgradeBnt,
+            data: { position },
+          });
+      } else {
+        pushModal({
+          modalName: ModalNames.UpgradeTkn,
+          data: { positions },
+        });
       }
     },
     [
@@ -108,6 +105,7 @@ export const ProtectedPositionTableCellActions = (
       protocolBnBNTAmount,
       account,
       dispatch,
+      pushModal,
       pools,
       position,
     ]

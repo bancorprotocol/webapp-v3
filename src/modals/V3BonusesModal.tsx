@@ -12,9 +12,9 @@ import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import BigNumber from 'bignumber.js';
 import { ExpandableSection } from 'components/expandableSection/ExpandableSection';
 import { Image } from 'components/image/Image';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getIsModalOpen, popModal } from 'store/modals/modals';
+import { getIsModalOpen } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -187,13 +187,13 @@ const BonusGroup = ({
 
 export const V3BonusesModal = () => {
   const { bonuses } = useV3Bonuses();
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.V3Bonuses)
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.V3Bonuses));
+    popModal();
   };
 
   return (

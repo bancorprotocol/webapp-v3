@@ -1,16 +1,16 @@
+import { useModal } from 'hooks/useModal';
 import { Modal, ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getIsModalOpen, popModal } from 'store/modals/modals';
+import { getIsModalOpen } from 'store/modals/modals';
 
 export const DepositDisabledModal = () => {
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.DepositDisabled)
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.DepositDisabled));
+    popModal();
   };
 
   return (

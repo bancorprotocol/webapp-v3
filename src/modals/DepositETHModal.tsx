@@ -1,9 +1,9 @@
 import { ReactComponent as IconDeposit } from 'assets/icons/deposit.svg';
 import { Button, ButtonSize } from 'components/button/Button';
+import { useModal } from 'hooks/useModal';
 import { Modal, ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalData, getIsModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getIsModalOpen } from 'store/modals/modals';
 
 interface DepositETHProp {
   amount: string;
@@ -11,7 +11,7 @@ interface DepositETHProp {
 }
 
 export const DepositETHModal = () => {
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.DepositETH)
   );
@@ -21,7 +21,7 @@ export const DepositETHModal = () => {
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.DepositETH));
+    popModal();
   };
 
   return (

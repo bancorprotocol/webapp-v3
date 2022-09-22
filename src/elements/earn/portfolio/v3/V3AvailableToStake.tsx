@@ -8,18 +8,15 @@ import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import 'swiper/css';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
 
   return (
     <button
-      onClick={() =>
-        dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
-      }
+      onClick={() => pushModal({ modalName: ModalNames.DepositDisabled })}
       className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
     >
       <TokenBalance

@@ -7,8 +7,7 @@ import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { shrinkToken } from 'utils/formulas';
 import { ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
@@ -28,7 +27,7 @@ export const V3EarningTableMenuMain = memo(
   }: Props) => {
     const { bonusUsdTotal } = useV3Bonuses();
     const { latestProgram } = holding;
-    const dispatch = useDispatch();
+    const { pushModal } = useModal();
 
     const handleWithdrawClick = useCallback(() => {
       setHoldingToWithdraw(holding);
@@ -36,7 +35,7 @@ export const V3EarningTableMenuMain = memo(
     }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
     const handleBonusClick = useCallback(() => {
-      dispatch(pushModal({ modalName: ModalNames.V3Bonuses }));
+      pushModal({ modalName: ModalNames.V3Bonuses });
       // TODO - add logic for what action to perform
       // if (true) {
       //

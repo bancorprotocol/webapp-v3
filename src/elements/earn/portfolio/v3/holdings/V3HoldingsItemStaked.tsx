@@ -4,11 +4,10 @@ import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
-import { pushModal } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
-  const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const { pool } = holding;
   const isDisabled = toBigNumber(holding.stakedTokenBalance).isZero();
 
@@ -55,12 +54,10 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         size={ButtonSize.Full}
         disabled={isDisabled}
         onClick={() =>
-          dispatch(
-            pushModal({
-              modalName: ModalNames.V3Unstake,
-              data: { holding },
-            })
-          )
+          pushModal({
+            modalName: ModalNames.V3Unstake,
+            data: { holding },
+          })
         }
         className="h-[39px]"
       >

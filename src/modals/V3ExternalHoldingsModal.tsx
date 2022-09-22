@@ -11,7 +11,8 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
-import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface V3ExternalHoldingsProps {
   position: ExternalHolding;
@@ -20,6 +21,7 @@ export const V3ExternalHoldingsModal = () => {
   const [txBusy, setTxBusy] = useState(false);
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.V3ExternalHoldings)
   );
@@ -29,7 +31,7 @@ export const V3ExternalHoldingsModal = () => {
   );
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.V3ExternalHoldings));
+    popModal();
   };
 
   const { withdrawalFee, lockDuration } = useAppSelector(

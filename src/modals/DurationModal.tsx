@@ -5,9 +5,9 @@ import { Duration } from 'dayjs/plugin/duration';
 import { ReactComponent as IconClock } from 'assets/icons/clock-solid.svg';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Modal, ModalNames } from 'modals';
-import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalData, getIsModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getIsModalOpen } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
 interface DurationItem {
   id: string;
@@ -20,7 +20,7 @@ interface DurationProp {
 }
 
 export const DurationModal = () => {
-  const dispatch = useDispatch();
+  const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.DepositETH)
   );
@@ -34,7 +34,7 @@ export const DurationModal = () => {
   const [minutes, setMinutes] = useState(props?.duration.minutes());
 
   const onClose = () => {
-    dispatch(popModal(ModalNames.Duration));
+    popModal();
   };
 
   const daysItems: DurationItem[] = Array.from(

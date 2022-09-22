@@ -20,8 +20,8 @@ import {
   WithdrawACEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
-import { popModal, pushModal } from 'store/modals/modals';
 import { ModalNames } from 'modals';
+import { useModal } from 'hooks/useModal';
 
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
@@ -29,6 +29,7 @@ export const useV3Withdraw = () => {
     getIsLoadingWithdrawalRequests
   );
   const dispatch = useDispatch();
+  const { pushModal, popModal } = useModal();
   const account = useAppSelector((state) => state.user.account);
 
   const [selected, setSelected] = useState<WithdrawalRequest | null>(null);
@@ -52,7 +53,7 @@ export const useV3Withdraw = () => {
         selected.reserveTokenAmount,
         selected.pool.reserveToken.symbol
       );
-      dispatch(popModal(ModalNames.V3WithdrawCancel));
+      popModal();
       await tx.wait();
       sendWithdrawEvent(
         WithdrawEvent.WithdrawCancelSuccess,
@@ -68,7 +69,7 @@ export const useV3Withdraw = () => {
         undefined,
         e.message
       );
-      dispatch(popModal(ModalNames.V3WithdrawCancel));
+      popModal();
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
@@ -76,7 +77,7 @@ export const useV3Withdraw = () => {
         genericFailedNotification(dispatch, 'Cancel withdrawal failed');
       }
     }
-  }, [account, dispatch, selected]);
+  }, [account, dispatch, selected, popModal]);
 
   const openCancelModal = useCallback(
     async (req: WithdrawalRequest) => {
@@ -89,7 +90,7 @@ export const useV3Withdraw = () => {
         })
       );
     },
-    [cancelWithdrawal, dispatch, selected]
+    [cancelWithdrawal, dispatch, selected, pushModal]
   );
 
   const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
