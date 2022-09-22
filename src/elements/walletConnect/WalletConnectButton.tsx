@@ -6,6 +6,9 @@ import { ReactNode } from 'react';
 import { Image } from 'components/image/Image';
 import { shortenString } from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
+import { useWeb3React } from '@web3-react/core';
+import { isUnsupportedNetwork } from 'utils/helperFunctions';
+import { ReactComponent as WarningIcon } from 'assets/icons/warning.svg';
 
 const LoginButton = ({
   loggedIn,
@@ -35,6 +38,8 @@ export const WalletConnectButton = ({
   selectedWallet,
 }: UseWalletConnect) => {
   const loggedIn = !!selectedWallet && !!account;
+  const { chainId } = useWeb3React();
+  const unsupportedNetwork = isUnsupportedNetwork(chainId);
 
   return loggedIn ? (
     <PopoverV3
@@ -43,8 +48,18 @@ export const WalletConnectButton = ({
       showArrow={false}
       buttonElement={() => (
         <LoginButton loggedIn>
-          <Image src={selectedWallet.icon} alt="Wallet Logo" className="w-20" />
-          <span className="mx-10">{shortenString(account)}</span>
+          {unsupportedNetwork ? (
+            <WarningIcon className="w-15 h-15 text-error" />
+          ) : (
+            <Image
+              src={selectedWallet.icon}
+              alt="Wallet Logo"
+              className="w-20"
+            />
+          )}
+          <span className="mx-10">
+            {unsupportedNetwork ? 'Wrong Network' : shortenString(account)}
+          </span>
         </LoginButton>
       )}
       options={{

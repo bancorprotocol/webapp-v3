@@ -29,6 +29,7 @@ import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
+import { WrongNetworkModal } from 'elements/wrongNetwork/WrongNetworkModal';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -108,6 +109,7 @@ export const App = () => {
 
       <MobileBottomNav />
       <NotificationAlerts />
+      <WrongNetworkModal unsupportedNetwork={unsupportedNetwork} />
     </BrowserRouter>
   );
 };
