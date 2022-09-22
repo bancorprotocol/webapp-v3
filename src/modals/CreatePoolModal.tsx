@@ -25,7 +25,9 @@ export const CreatePoolModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
-  const allTokens = useAppSelector<Token[]>((state) => state.bancor.allTokens);
+  const allV2Tokens = useAppSelector<Token[]>(
+    (state) => state.bancor.allTokensV2
+  );
   const [bnt, setBNT] = useState<Token | undefined>();
   const [token, setToken] = useState<Token | null>(null);
   const [fee, setFee] = useState<string>('0.2');
@@ -82,16 +84,21 @@ export const CreatePoolModal = () => {
           <div className="widget-block-icon">
             <IconPlus className="w-[25px] text-primary dark:text-primary-light" />
           </div>
-          <div className="my-30">
-            <SelectToken
-              label="Second Token"
-              token={token}
-              tokens={allTokens}
-              setToken={setToken}
-              selectable
-              startEmpty
-              excludedTokens={tokens ? tokens.map((x) => x.address) : []}
-            />
+          <div className="widget-block">
+            <div className="widget-block-icon">
+              <IconPlus className="w-[25px] text-primary dark:text-primary-light" />
+            </div>
+            <div className="my-30">
+              <SelectToken
+                label="Second Token"
+                token={token}
+                tokens={allV2Tokens}
+                setToken={setToken}
+                selectable
+                startEmpty
+                excludedTokens={tokens ? tokens.map((x) => x.address) : []}
+              />
+            </div>
           </div>
         </div>
 

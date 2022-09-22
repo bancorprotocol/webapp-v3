@@ -11,7 +11,7 @@ import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/A
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { addLiquidityV2Single } from 'services/web3/liquidity/liquidity';
 import {
   addLiquiditySingleFailedNotification,
@@ -39,10 +39,10 @@ interface Props {
 export const AddLiquiditySingle = ({ pool }: Props) => {
   const dispatch = useDispatch();
   const tkn = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, pool.reserves[0].address)
+    getTokenV2ById(state, pool.reserves[0].address)
   );
   const bnt = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, pool.reserves[1].address)
+    getTokenV2ById(state, pool.reserves[1].address)
   );
   const { goToPage } = useNavigation();
 

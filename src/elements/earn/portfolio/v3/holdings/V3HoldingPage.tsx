@@ -18,7 +18,7 @@ import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfoli
 import useAsyncEffect from 'use-async-effect';
 import { expandToken, shrinkToken } from 'utils/formulas';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokensByIdV2V3 } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
@@ -34,7 +34,7 @@ export const V3HoldingPage = () => {
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
   const holding = holdings.find((x) => x.pool.poolDltId === id);
-  const token = useAppSelector((state) => getTokenById(state, id || ''));
+  const token = useAppSelector((state) => getTokensByIdV2V3(state, id || ''));
   const pool = useAppSelector((state) => getV3byID(state, id || ''));
 
   const isBNT = holding?.pool.poolDltId === bntToken;

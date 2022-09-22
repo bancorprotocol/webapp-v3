@@ -1,6 +1,6 @@
 import { useAppSelector } from 'store';
 import BigNumber from 'bignumber.js';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { bntDecimals, bntToken } from 'services/web3/config';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { shrinkToken } from 'utils/formulas';
@@ -24,7 +24,7 @@ import { prettifyNumber } from 'utils/helperFunctions';
 import { useNavigation } from 'hooks/useNavigation';
 
 export const useMyRewards = () => {
-  const bnt = useAppSelector((state) => getTokenById(state, bntToken));
+  const bnt = useAppSelector((state) => getTokenV2ById(state, bntToken));
   const snapshots = useAppSelector((state) => state.liquidity.snapshots);
   const userRewards = useAppSelector(getUserRewardsFromSnapshot);
   const account = useAppSelector((state) => state.user.account);

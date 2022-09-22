@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { Token } from 'services/observables/tokens';
-import { getTokenById } from 'store/bancor/bancor';
+import { getTokenV2ById } from 'store/bancor/bancor';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
 import BigNumber from 'bignumber.js';
 import useAsyncEffect from 'use-async-effect';
@@ -56,7 +56,7 @@ export const useV3WithdrawConfirm = ({
   const { pool, poolTokenAmount } = withdrawRequest;
   const token = pool.reserveToken;
   const govToken = useAppSelector<Token | undefined>((state: any) =>
-    getTokenById(state, getNetworkVariables().govToken)
+    getTokenV2ById(state, getNetworkVariables().govToken)
   );
   const isBntToken = useMemo(() => token.address === bntToken, [token]);
 
