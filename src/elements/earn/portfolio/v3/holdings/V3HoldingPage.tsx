@@ -21,7 +21,7 @@ import BigNumber from 'bignumber.js';
 import { getTokensByIdV2V3 } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
-import { V3ManageProgramsModal } from './V3ManageProgramsModal';
+import { V3ManageProgramsModal } from '../../../../../modals/V3ManageProgramsModal';
 import { DepositV3Modal } from 'modals/DepositV3Modal';
 import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';

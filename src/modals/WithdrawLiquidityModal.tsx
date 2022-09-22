@@ -1,16 +1,17 @@
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { Modal } from 'modals';
+import { useModal } from 'hooks/useModal';
+import { Modal, ModalNames } from 'modals';
 import { useMemo } from 'react';
 import { useAppSelector } from 'store';
+import { getIsModalOpen } from 'store/modals/modals';
 
-export const WithdrawLiquidityModal = ({
-  isModalOpen,
-  setIsModalOpen,
-}: {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-}) => {
+export const WithdrawLiquidityModal = () => {
+  const { popModal } = useModal();
+  const isOpen = useAppSelector((state) =>
+    getIsModalOpen(state, ModalNames.WithdrawLiquidity)
+  );
+
   const { lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
@@ -21,7 +22,7 @@ export const WithdrawLiquidityModal = ({
   );
 
   return (
-    <Modal setIsOpen={() => setIsModalOpen(false)} isOpen={isModalOpen} large>
+    <Modal setIsOpen={popModal} isOpen={isOpen} large>
       <div className="flex flex-col items-center gap-20 p-20 pb-40 text-center">
         <div className="text-20 mb-30">
           <div className="font-bold">Migrate to Bancor V3 to withdraw.</div>

@@ -4,10 +4,9 @@ import {
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
 import { CellProps } from 'react-table';
-import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import { PropsWithChildren, useCallback, useMemo } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { Button } from 'components/button/Button';
-import { WithdrawLiquidityModal } from '../../../../../modals/WithdrawLiquidityModal';
 import { bntToken } from 'services/web3/config';
 import {
   getAllBntPositionsAndAmount,
@@ -32,7 +31,6 @@ export const ProtectedPositionTableCellActions = (
     CellProps<ProtectedPositionGrouped, ProtectedPosition[]>
   >
 ) => {
-  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
   const dispatch = useDispatch();
   const { pushModal } = useModal();
   const { row } = cellData;
@@ -164,12 +162,8 @@ export const ProtectedPositionTableCellActions = (
         cellData,
         singleContent,
         groupContent,
-        subMenu: () => setIsOpenWithdraw(true),
+        subMenu: () => pushModal({ modalName: ModalNames.WithdrawLiquidity }),
       })}
-      <WithdrawLiquidityModal
-        isModalOpen={isOpenWithdraw}
-        setIsModalOpen={setIsOpenWithdraw}
-      />
     </div>
   );
 };
