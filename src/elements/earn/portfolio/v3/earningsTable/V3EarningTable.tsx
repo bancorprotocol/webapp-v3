@@ -78,7 +78,7 @@ export const V3EarningTable = () => {
             <V3EarningTableMenu
               holding={cell.row.original}
               handleDepositClick={() =>
-                dispatch(pushModal({ modal: ModalNames.DepositDisabled }))
+                dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
               }
               setIsWithdrawModalOpen={setIsWithdrawModalOpen}
               setHoldingToWithdraw={setHoldingToWithdraw}

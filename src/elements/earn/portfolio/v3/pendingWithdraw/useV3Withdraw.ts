@@ -84,7 +84,7 @@ export const useV3Withdraw = () => {
       setSelected(req);
       dispatch(
         pushModal({
-          modal: ModalNames.V3WithdrawCancel,
+          modalName: ModalNames.V3WithdrawCancel,
           data: { cancelWithdrawal, withdrawRequest: selected },
         })
       );

@@ -28,7 +28,7 @@ export const useV3Bonuses = () => {
   const bonuses = useAppSelector(getStandardRewards);
   const isLoading = useAppSelector(getIsLoadingStandardRewards);
 
-  const closetBonusesModal = useCallback(() => {
+  const closeBonusesModal = useCallback(() => {
     dispatch(popModal(ModalNames.V3Bonuses));
   }, [dispatch]);
 
@@ -56,7 +56,7 @@ export const useV3Bonuses = () => {
         const tx = await ContractsApi.StandardRewards.write.claimRewards(ids);
         sendWithdrawBonusEvent(WithdrawBonusEvent.WalletConfirm);
         confirmClaimNotification(dispatch, tx.hash);
-        closetBonusesModal();
+        closeBonusesModal();
         await tx.wait();
         sendWithdrawBonusEvent(
           WithdrawBonusEvent.Success,
@@ -73,10 +73,10 @@ export const useV3Bonuses = () => {
         } else {
           genericFailedNotification(dispatch, 'Claim rewards failed');
         }
-        closetBonusesModal();
+        closeBonusesModal();
       }
     },
-    [account, dispatch, closetBonusesModal]
+    [account, dispatch, closeBonusesModal]
   );
 
   const handleClaimAndEarn = useCallback(
@@ -88,7 +88,7 @@ export const useV3Bonuses = () => {
       try {
         const tx = await ContractsApi.StandardRewards.write.stakeRewards(ids);
         confirmClaimNotification(dispatch, tx.hash);
-        closetBonusesModal();
+        closeBonusesModal();
         await tx.wait();
         await updatePortfolioData(dispatch);
       } catch (e: any) {
@@ -98,10 +98,10 @@ export const useV3Bonuses = () => {
         } else {
           genericFailedNotification(dispatch, 'Restake rewards failed');
         }
-        closetBonusesModal();
+        closeBonusesModal();
       }
     },
-    [account, dispatch, closetBonusesModal]
+    [account, dispatch, closeBonusesModal]
   );
 
   return {

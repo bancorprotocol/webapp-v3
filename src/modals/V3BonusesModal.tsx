@@ -14,7 +14,7 @@ import { ExpandableSection } from 'components/expandableSection/ExpandableSectio
 import { Image } from 'components/image/Image';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalOpen, popModal } from 'store/modals/modals';
+import { getIsModalOpen, popModal } from 'store/modals/modals';
 
 const BonusGroupItems = ({
   rewardsGroup,
@@ -189,7 +189,7 @@ export const V3BonusesModal = () => {
   const { bonuses } = useV3Bonuses();
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.V3Bonuses)
+    getIsModalOpen(state, ModalNames.V3Bonuses)
   );
 
   const onClose = () => {

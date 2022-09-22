@@ -6,7 +6,7 @@ import { Image } from 'components/image/Image';
 import { Modal, ModalFullscreen, ModalNames } from 'modals';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalData, getModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getIsModalOpen, popModal } from 'store/modals/modals';
 
 interface SelectPoolProps {
   pools: Pool[];
@@ -16,7 +16,7 @@ interface SelectPoolProps {
 export const SelectPoolModal = () => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.SelectPool)
+    getIsModalOpen(state, ModalNames.SelectPool)
   );
 
   const onClose = () => {

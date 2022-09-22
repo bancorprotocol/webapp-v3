@@ -17,7 +17,7 @@ export const PoolsTableCellActions = (id: string) => {
           onClick={() =>
             enableDeposit
               ? goToPage.addLiquidityV2(id)
-              : dispatch(pushModal({ modal: ModalNames.DepositDisabled }))
+              : dispatch(pushModal({ modalName: ModalNames.DepositDisabled }))
           }
           variant={ButtonVariant.Tertiary}
           size={ButtonSize.ExtraSmall}

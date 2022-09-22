@@ -45,7 +45,7 @@ export const V3ClaimBonuses = () => {
                   withdraw_display_currency: getCurrency(),
                 });
                 sendWithdrawBonusEvent(WithdrawBonusEvent.CTAClick);
-                dispatch(pushModal({ modal: ModalNames.V3Bonuses }));
+                dispatch(pushModal({ modalName: ModalNames.V3Bonuses }));
               }}
               disabled={bonusUsdTotal === 0}
             >

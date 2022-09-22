@@ -2,8 +2,10 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { ModalNames } from 'modals';
 import { RootState } from 'store';
 
+type ModalObj = { modalName: ModalNames; data: any };
+
 export interface ModalsState {
-  openModals: { modal: ModalNames; data: any }[];
+  openModals: ModalObj[];
 }
 
 export const initialState: ModalsState = {
@@ -16,7 +18,7 @@ const modalsSlice = createSlice({
   reducers: {
     pushModal: (state, action) => {
       state.openModals.push({
-        modal: action.payload.modal,
+        modalName: action.payload.modal,
         data: action.payload.data,
       });
     },
@@ -26,13 +28,13 @@ const modalsSlice = createSlice({
   },
 });
 
-export const getModalOpen = createSelector(
+export const getIsModalOpen = createSelector(
   [
     (state: RootState) => state.modals.openModals,
     (_: any, modal: ModalNames) => modal,
   ],
-  (openModals: { modal: ModalNames; data: any }[], modal: ModalNames) => {
-    return openModals.some((x) => x.modal === modal);
+  (openModals: ModalObj[], modalName: ModalNames) => {
+    return openModals.some((x) => x.modalName === modalName);
   }
 );
 
@@ -41,8 +43,8 @@ export const getModalData = createSelector(
     (state: RootState) => state.modals.openModals,
     (_: any, modal: ModalNames) => modal,
   ],
-  (openModals: { modal: ModalNames; data: any }[], modal: ModalNames) => {
-    return openModals.find((x) => x.modal === modal)?.data;
+  (openModals: ModalObj[], modalName: ModalNames) => {
+    return openModals.find((x) => x.modalName === modalName)?.data;
   }
 );
 

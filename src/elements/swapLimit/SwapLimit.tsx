@@ -530,7 +530,7 @@ export const SwapLimit = ({
                   onClick={() =>
                     dispatch(
                       pushModal({
-                        modal: ModalNames.Duration,
+                        modalName: ModalNames.Duration,
                         data: { duration, setDuration },
                       })
                     )
@@ -555,7 +555,7 @@ export const SwapLimit = ({
             if (fromToken.address === ethToken)
               dispatch(
                 pushModal({
-                  modal: ModalNames.DepositETH,
+                  modalName: ModalNames.DepositETH,
                   data: { onConfirm: deposiEthWeth(), amount: fromAmount },
                 })
               );

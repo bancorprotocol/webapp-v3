@@ -36,7 +36,7 @@ export const V3EarningTableMenuMain = memo(
     }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
 
     const handleBonusClick = useCallback(() => {
-      dispatch(pushModal({ modal: ModalNames.V3Bonuses }));
+      dispatch(pushModal({ modalName: ModalNames.V3Bonuses }));
       // TODO - add logic for what action to perform
       // if (true) {
       //

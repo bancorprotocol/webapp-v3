@@ -27,7 +27,7 @@ export const SelectPool = ({
         onClick={() =>
           dispatch(
             pushModal({
-              modal: ModalNames.SelectPool,
+              modalName: ModalNames.SelectPool,
               data: { pools, onSelect },
             })
           )

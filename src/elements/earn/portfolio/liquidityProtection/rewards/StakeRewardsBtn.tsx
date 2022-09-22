@@ -29,7 +29,7 @@ export const StakeRewardsBtn = ({ buttonLabel, posGroupId }: Props) => {
         onClick={() =>
           dispatch(
             pushModal({
-              modal: ModalNames.SelectPool,
+              modalName: ModalNames.SelectPool,
               data: { pools, onSelect },
             })
           )

@@ -33,7 +33,7 @@ const V3ExternalHoldingsItem = ({ position }: Props) => {
         onClick={() =>
           dispatch(
             pushModal({
-              modal: ModalNames.V3ExternalHoldings,
+              modalName: ModalNames.V3ExternalHoldings,
               data: { position },
             })
           )

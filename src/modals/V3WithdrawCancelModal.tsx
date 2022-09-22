@@ -17,7 +17,7 @@ import {
 } from 'services/api/googleTagManager';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
 
 interface V3WithdrawCancelProps {
   withdrawRequest: WithdrawalRequest;
@@ -27,7 +27,7 @@ interface V3WithdrawCancelProps {
 export const V3WithdrawCancelModal = memo(() => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.V3WithdrawCancel)
+    getIsModalOpen(state, ModalNames.V3WithdrawCancel)
   );
 
   const props = useAppSelector<V3WithdrawCancelProps | undefined>((state) =>

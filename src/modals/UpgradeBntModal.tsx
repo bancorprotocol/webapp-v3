@@ -24,7 +24,7 @@ import { Image } from 'components/image/Image';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
-import { getModalData, getModalOpen, popModal } from 'store/modals/modals';
+import { getModalData, getIsModalOpen, popModal } from 'store/modals/modals';
 
 interface UpgradeBntProps {
   position: ProtectedPositionGrouped;
@@ -32,7 +32,7 @@ interface UpgradeBntProps {
 export const UpgradeBntModal = () => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.UpgradeBnt)
+    getIsModalOpen(state, ModalNames.UpgradeBnt)
   );
 
   const props = useAppSelector<UpgradeBntProps | undefined>((state) =>

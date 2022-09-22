@@ -1,12 +1,12 @@
 import { Modal, ModalNames } from 'modals';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from 'store';
-import { getModalOpen, popModal } from 'store/modals/modals';
+import { getIsModalOpen, popModal } from 'store/modals/modals';
 
 export const DepositDisabledModal = () => {
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.DepositDisabled)
+    getIsModalOpen(state, ModalNames.DepositDisabled)
   );
 
   const onClose = () => {

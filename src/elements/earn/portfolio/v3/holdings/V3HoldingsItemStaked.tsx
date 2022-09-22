@@ -57,7 +57,7 @@ export const V3HoldingsItemStaked = ({ holding }: { holding: Holding }) => {
         onClick={() =>
           dispatch(
             pushModal({
-              modal: ModalNames.V3Unstake,
+              modalName: ModalNames.V3Unstake,
               data: { holding },
             })
           )

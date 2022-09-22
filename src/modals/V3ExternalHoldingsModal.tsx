@@ -11,7 +11,7 @@ import { useApproveModal } from 'hooks/useApproveModal';
 import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
-import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
 
 interface V3ExternalHoldingsProps {
   position: ExternalHolding;
@@ -21,7 +21,7 @@ export const V3ExternalHoldingsModal = () => {
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.V3ExternalHoldings)
+    getIsModalOpen(state, ModalNames.V3ExternalHoldings)
   );
 
   const props = useAppSelector<V3ExternalHoldingsProps | undefined>((state) =>

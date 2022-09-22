@@ -89,14 +89,14 @@ export const ProtectedPositionTableCellActions = (
         else
           dispatch(
             pushModal({
-              modal: ModalNames.UpgradeBnt,
+              modalName: ModalNames.UpgradeBnt,
               data: { position },
             })
           );
       } else {
         dispatch(
           pushModal({
-            modal: ModalNames.UpgradeTkn,
+            modalName: ModalNames.UpgradeTkn,
             data: { positions },
           })
         );

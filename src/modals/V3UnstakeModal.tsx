@@ -15,7 +15,7 @@ import {
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { Modal, ModalNames } from 'modals';
-import { getModalOpen, getModalData, popModal } from 'store/modals/modals';
+import { getIsModalOpen, getModalData, popModal } from 'store/modals/modals';
 
 interface V3UnstakeProps {
   holding: Holding;
@@ -26,7 +26,7 @@ export const V3UnstakeModal = () => {
   const [txBusy, setTxBusy] = useState(false);
   const dispatch = useDispatch();
   const isOpen = useAppSelector((state) =>
-    getModalOpen(state, ModalNames.V3Unstake)
+    getIsModalOpen(state, ModalNames.V3Unstake)
   );
 
   const props = useAppSelector<V3UnstakeProps | undefined>((state) =>
