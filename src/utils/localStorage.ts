@@ -14,6 +14,8 @@ const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
+const tokenCurrency = 'tokenCurrency';
+const baseCurrency = 'baseCurrency';
 
 const deprecated_cleanup = ['userTokenLists'];
 
@@ -149,4 +151,26 @@ export const getPageRowsLS = (): number => {
 
 export const setpageRowsLS = (rows: number) => {
   localStorage.setItem(pageRows, JSON.stringify(rows));
+};
+
+export const getTokenCurrencyLS = (): number => {
+  const currency = localStorage.getItem(tokenCurrency);
+  if (currency) return JSON.parse(currency);
+
+  return 0;
+};
+
+export const setTokenCurrencyLS = (currency: number) => {
+  localStorage.setItem(tokenCurrency, JSON.stringify(currency));
+};
+
+export const getBaseCurrencyLS = (): number => {
+  const currency = localStorage.getItem(baseCurrency);
+  if (currency) return JSON.parse(currency);
+
+  return 0;
+};
+
+export const setBaseCurrencyLS = (currency: number) => {
+  localStorage.setItem(baseCurrency, JSON.stringify(currency));
 };

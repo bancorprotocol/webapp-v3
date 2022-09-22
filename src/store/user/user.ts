@@ -1,10 +1,14 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import {
+  getBaseCurrencyLS,
   getForceV3LS,
+  getTokenCurrencyLS,
+  setBaseCurrencyLS,
   setDarkModeLS,
   setForceV3LS,
   setSlippageToleranceLS,
+  setTokenCurrencyLS,
   setUsdToggleLS,
 } from 'utils/localStorage';
 import { LocaleType } from '../../i18n';
@@ -24,6 +28,8 @@ export interface UserState {
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
+  tokenCurrency: number;
+  baseCurrency: number;
 }
 
 export const initialState: UserState = {
@@ -35,6 +41,8 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
+  tokenCurrency: getTokenCurrencyLS(),
+  baseCurrency: getBaseCurrencyLS(),
 };
 
 const userSlice = createSlice({
@@ -70,6 +78,14 @@ const userSlice = createSlice({
       state.forceV3Routing = action.payload;
       setForceV3LS(action.payload);
     },
+    setTokenCurrency: (state, action) => {
+      state.tokenCurrency = action.payload;
+      setTokenCurrencyLS(action.payload);
+    },
+    setBaseCurrency: (state, action) => {
+      state.baseCurrency = action.payload;
+      setBaseCurrencyLS(action.payload);
+    },
   },
 });
 
@@ -104,6 +120,8 @@ export const {
   setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
+  setTokenCurrency,
+  setBaseCurrency,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;
