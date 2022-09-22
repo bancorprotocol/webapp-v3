@@ -34,8 +34,6 @@ export const useV3Withdraw = () => {
 
   const [selected, setSelected] = useState<WithdrawalRequest | null>(null);
 
-  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
-
   const cancelWithdrawal = useCallback(async () => {
     if (!selected || !account) {
       return;
@@ -93,11 +91,17 @@ export const useV3Withdraw = () => {
     [cancelWithdrawal, dispatch, selected, pushModal]
   );
 
-  const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
-    sendWithdrawACEvent(WithdrawACEvent.CTAClick);
-    setSelected(req);
-    setIsModalConfirmOpen(true);
-  }, []);
+  const openConfirmModal = useCallback(
+    async (req: WithdrawalRequest) => {
+      sendWithdrawACEvent(WithdrawACEvent.CTAClick);
+      setSelected(req);
+      pushModal({
+        modalName: ModalNames.V3WithdrawConfirm,
+        data: { openCancelModal, withdrawRequest: selected },
+      });
+    },
+    [openCancelModal, selected, pushModal]
+  );
 
   return {
     withdrawalRequests,
@@ -105,8 +109,6 @@ export const useV3Withdraw = () => {
     openCancelModal,
     isLoadingWithdrawalRequests,
     selected,
-    isModalConfirmOpen,
-    setIsModalConfirmOpen,
     openConfirmModal,
   };
 };

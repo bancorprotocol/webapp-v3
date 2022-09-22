@@ -20,21 +20,13 @@ import { ErrorCode } from 'services/web3/types';
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
 interface Props {
-  setIsWithdrawModalOpen: (isOpen: boolean) => void;
   holding: Holding;
-  setHoldingToWithdraw: (holding: Holding) => void;
   handleDepositClick: () => void;
   placement?: Placement;
 }
 
 export const V3EarningTableMenu = memo(
-  ({
-    holding,
-    setHoldingToWithdraw,
-    setIsWithdrawModalOpen,
-    handleDepositClick,
-    placement = 'left-start',
-  }: Props) => {
+  ({ holding, handleDepositClick, placement = 'left-start' }: Props) => {
     const popperElRef = useRef(null);
     const [targetElement, setTargetElement] = useState(null);
     const [popperElement, setPopperElement] = useState(null);
@@ -141,8 +133,6 @@ export const V3EarningTableMenu = memo(
                       <div className="overflow-hidden rounded bg-white dark:bg-black p-20 border border-silver dark:border-grey h-[280px]">
                         <V3EarningsTableMenuContent
                           holding={holding}
-                          setHoldingToWithdraw={setHoldingToWithdraw}
-                          setIsWithdrawModalOpen={setIsWithdrawModalOpen}
                           handleDepositClick={handleDepositClick}
                           onStartJoin={onStartJoin}
                           txJoinBusy={txJoinBusy}

@@ -14,17 +14,18 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const { pool } = holding;
   const isDisabled = toBigNumber(holding.tokenBalance).isZero();
+  const { pushModal } = useModal();
 
   const account = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
   const [txJoinBusy, setTxJoinBusy] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
   const handleJoinClick = async () => {
     if (!pool.latestProgram?.isActive || !account) {
@@ -108,7 +109,12 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.Small}
             disabled={isDisabled}
-            onClick={() => setIsOpen(true)}
+            onClick={() =>
+              pushModal({
+                modalName: ModalNames.V3Withdraw,
+                data: holding,
+              })
+            }
           >
             Withdraw
           </Button>
@@ -126,11 +132,6 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
         </div>
       </div>
       {ApproveModal}
-      <V3WithdrawModal
-        holding={holding}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
     </>
   );
 };

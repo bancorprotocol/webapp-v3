@@ -1,7 +1,6 @@
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'store';
 import {
@@ -16,8 +15,6 @@ import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 
 export const V3EarningTable = () => {
-  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding>();
   const { pushModal } = useModal();
 
   const holdings = useAppSelector(getPortfolioHoldings);
@@ -79,8 +76,6 @@ export const V3EarningTable = () => {
               handleDepositClick={() =>
                 pushModal({ modalName: ModalNames.DepositDisabled })
               }
-              setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-              setHoldingToWithdraw={setHoldingToWithdraw}
             />
           </div>
         ),
@@ -110,14 +105,6 @@ export const V3EarningTable = () => {
           defaultSort={defaultSort}
         />
       </div>
-
-      {holdingToWithdraw && (
-        <V3WithdrawModal
-          isOpen={isWithdrawModalOpen}
-          setIsOpen={setIsWithdrawModalOpen}
-          holding={holdingToWithdraw}
-        />
-      )}
     </section>
   );
 };

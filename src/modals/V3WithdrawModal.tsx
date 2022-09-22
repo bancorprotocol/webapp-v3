@@ -6,7 +6,7 @@ import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3Wit
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { ModalFullscreen } from 'modals';
+import { ModalFullscreen, ModalNames } from 'modals';
 import {
   getBlockchain,
   getBlockchainNetwork,
@@ -18,16 +18,24 @@ import {
   sendWithdrawEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
+import { useModal } from 'hooks/useModal';
+import { useAppSelector } from 'store';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
 
-const V3WithdrawModal = ({
-  isOpen,
-  setIsOpen,
-  holding,
-}: {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+interface V3WithdrawProps {
   holding: Holding;
-}) => {
+}
+const V3WithdrawModal = () => {
+  const { popModal } = useModal();
+  const isOpen = useAppSelector((state) =>
+    getIsModalOpen(state, ModalNames.V3Withdraw)
+  );
+
+  const props = useAppSelector<V3WithdrawProps | undefined>((state) =>
+    getModalData(state, ModalNames.V3Withdraw)
+  );
+  const holding = props?.holding;
+
   const {
     step,
     onClose,
@@ -43,10 +51,10 @@ const V3WithdrawModal = ({
     lockDurationInDays,
     requestId,
     setRequestId,
-  } = useV3WithdrawModal({ setIsOpen });
+  } = useV3WithdrawModal({ setIsOpen: popModal });
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && holding) {
       setCurrentWithdraw({
         withdraw_pool: holding.pool.name,
         withdraw_blockchain: getBlockchain(),
@@ -58,7 +66,9 @@ const V3WithdrawModal = ({
       sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
       sendWithdrawEvent(WithdrawEvent.WithdrawAmountView);
     }
-  }, [isOpen, isFiat, holding.pool.name]);
+  }, [isOpen, isFiat, holding]);
+
+  if (!holding) return null;
 
   return (
     <ModalFullscreen

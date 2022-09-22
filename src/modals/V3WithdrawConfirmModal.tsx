@@ -9,36 +9,43 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { shrinkToken } from 'utils/formulas';
 import { bntToken } from 'services/web3/config';
 import { Switch } from 'components/switch/Switch';
-import { ModalFullscreen } from 'modals';
+import { ModalFullscreen, ModalNames } from 'modals';
+import { useAppSelector } from 'store';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { useModal } from 'hooks/useModal';
 
-export const V3WithdrawConfirmModal = memo(
-  ({
-    isModalOpen,
-    setIsModalOpen,
-    withdrawRequest,
-    openCancelModal,
-  }: {
-    isModalOpen: boolean;
-    setIsModalOpen: (isOpen: boolean) => void;
-    withdrawRequest: WithdrawalRequest;
-    openCancelModal: (req: WithdrawalRequest) => void;
-  }) => {
-    return (
-      <ModalFullscreen
-        title="Complete Withdraw"
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-      >
-        <V3WithdrawConfirmContent
-          withdrawRequest={withdrawRequest}
-          openCancelModal={openCancelModal}
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
-        />
-      </ModalFullscreen>
-    );
-  }
-);
+interface V3WithdrawConfirmProps {
+  withdrawRequest: WithdrawalRequest;
+  openCancelModal: (req: WithdrawalRequest) => void;
+}
+
+export const V3WithdrawConfirmModal = memo(() => {
+  const { popModal } = useModal();
+  const isOpen = useAppSelector((state) =>
+    getIsModalOpen(state, ModalNames.V3WithdrawConfirm)
+  );
+
+  const props = useAppSelector<V3WithdrawConfirmProps | undefined>((state) =>
+    getModalData(state, ModalNames.V3WithdrawConfirm)
+  );
+
+  if (!props) return null;
+
+  return (
+    <ModalFullscreen
+      title="Complete Withdraw"
+      isOpen={isOpen}
+      setIsOpen={popModal}
+    >
+      <V3WithdrawConfirmContent
+        withdrawRequest={props.withdrawRequest}
+        openCancelModal={props.openCancelModal}
+        isModalOpen={isOpen}
+        setIsModalOpen={popModal}
+      />
+    </ModalFullscreen>
+  );
+});
 
 export const V3WithdrawConfirmContent = ({
   isModalOpen,

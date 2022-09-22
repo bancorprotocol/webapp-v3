@@ -1,22 +1,17 @@
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { useState } from 'react';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
-import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const V3HoldingsItemWithdraw = ({ holding }: { holding: Holding }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const { pool } = holding;
+  const { pushModal } = useModal();
 
   const isDisabled = toBigNumber(holding.tokenBalance).isZero();
 
   return (
     <>
-      <V3WithdrawModal
-        holding={holding}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
       <div>
         <div className="text-secondary">Withdrawal</div>
         <div className={`mt-6 mb-10 ${isDisabled ? 'text-secondary' : ''}`}>
@@ -27,7 +22,12 @@ export const V3HoldingsItemWithdraw = ({ holding }: { holding: Holding }) => {
             variant={ButtonVariant.Secondary}
             size={ButtonSize.ExtraSmall}
             disabled={isDisabled}
-            onClick={() => setIsOpen(true)}
+            onClick={() =>
+              pushModal({
+                modalName: ModalNames.V3Withdraw,
+                data: holding,
+              })
+            }
           >
             Withdraw
           </Button>

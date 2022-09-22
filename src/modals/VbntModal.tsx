@@ -1,4 +1,4 @@
-import { Modal } from 'modals';
+import { Modal, ModalNames } from 'modals';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
@@ -27,22 +27,26 @@ import {
   sendGovEvent,
 } from 'services/api/googleTagManager/gov';
 import { getFiat } from 'services/api/googleTagManager';
+import { useModal } from 'hooks/useModal';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
 
-export const VbntModal = ({
-  setIsOpen,
-  isOpen,
-  token,
-  stake,
-  stakeBalance,
-  onCompleted,
-}: {
-  setIsOpen: (isOpen: boolean) => void;
-  isOpen: boolean;
+interface VbntModalProps {
   token: Token;
   stake: boolean;
   stakeBalance?: string;
   onCompleted?: Function;
-}) => {
+}
+
+export const VbntModal = () => {
+  const { popModal } = useModal();
+  const isOpen = useAppSelector((state) =>
+    getIsModalOpen(state, ModalNames.VBnt)
+  );
+
+  const props = useAppSelector<VbntModalProps | undefined>((state) =>
+    getModalData(state, ModalNames.VBnt)
+  );
+
   const account = useAppSelector((state) => state.user.account);
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [amount, setAmount] = useState('');
@@ -52,11 +56,11 @@ export const VbntModal = ({
 
   const stakeDisabled = !account || !amount || Number(amount) === 0;
 
-  const fieldBlance = stake
-    ? token.balance
-      ? token.balance
+  const fieldBlance = props?.stake
+    ? props?.token.balance
+      ? props?.token.balance
       : undefined
-    : stakeBalance;
+    : props?.stakeBalance;
 
   const govProperties: GovProperties = {
     stake_input_type: getFiat(isFiat),
@@ -72,10 +76,11 @@ export const VbntModal = ({
         percentages.findIndex((x) => percentage.toFixed(10) === x.toFixed(10))
       );
     }
-  }, [amount, token, percentages, fieldBlance]);
+  }, [amount, props?.token, percentages, fieldBlance]);
 
   const handleStakeUnstake = async () => {
-    if (stakeDisabled || !account) return;
+    if (stakeDisabled || !account || !props) return;
+    const { stake, token } = props;
 
     sendGovEvent(GovEvent.Click, govProperties, stake);
     sendGovEvent(GovEvent.WalletRequest, govProperties, stake);
@@ -124,18 +129,22 @@ export const VbntModal = ({
   };
 
   const [checkApprove, ModalApprove] = useApproveModal(
-    [{ amount: amount, token: token }],
+    props ? [{ amount: amount, token: props.token }] : [],
     handleStakeUnstake,
     ApprovalContract.Governance,
-    () => sendGovEvent(GovEvent.UnlimitedPopup, govProperties, stake),
+    () => sendGovEvent(GovEvent.UnlimitedPopup, govProperties, props?.stake),
     (isUnlimited: boolean) =>
       sendGovEvent(
         GovEvent.UnlimitedPopupSelect,
         govProperties,
-        stake,
+        props?.stake,
         isUnlimited
       )
   );
+
+  if (!props) return null;
+
+  const { stake, token, onCompleted } = props;
 
   const refreshBalances = async () => {
     await wait(8000);
@@ -148,7 +157,7 @@ export const VbntModal = ({
       <Modal
         title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
         titleElement={<SwapSwitch />}
-        setIsOpen={setIsOpen}
+        setIsOpen={popModal}
         isOpen={isOpen}
         separator
         large
@@ -166,7 +175,7 @@ export const VbntModal = ({
             <Button
               onClick={() => {
                 setAmount('');
-                setIsOpen(false);
+                popModal();
                 if (stake) checkApprove();
                 else handleStakeUnstake();
               }}

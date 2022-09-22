@@ -11,28 +11,19 @@ import { useModal } from 'hooks/useModal';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
-  setIsWithdrawModalOpen: (isOpen: boolean) => void;
-  setHoldingToWithdraw: (holding: Holding) => void;
   handleDepositClick: () => void;
   holding: Holding;
 }
 
 export const V3EarningTableMenuMain = memo(
-  ({
-    holding,
-    setHoldingToWithdraw,
-    setCurrentMenu,
-    setIsWithdrawModalOpen,
-    handleDepositClick,
-  }: Props) => {
+  ({ holding, setCurrentMenu, handleDepositClick }: Props) => {
     const { bonusUsdTotal } = useV3Bonuses();
     const { latestProgram } = holding;
     const { pushModal } = useModal();
 
     const handleWithdrawClick = useCallback(() => {
-      setHoldingToWithdraw(holding);
-      setIsWithdrawModalOpen(true);
-    }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
+      pushModal({ modalName: ModalNames.V3Withdraw, data: holding });
+    }, [holding, pushModal]);
 
     const handleBonusClick = useCallback(() => {
       pushModal({ modalName: ModalNames.V3Bonuses });

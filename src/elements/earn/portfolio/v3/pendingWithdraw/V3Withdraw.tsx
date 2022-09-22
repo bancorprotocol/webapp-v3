@@ -1,15 +1,11 @@
 import { useV3Withdraw } from 'elements/earn/portfolio/v3/pendingWithdraw/useV3Withdraw';
 import { WithdrawItem } from 'elements/earn/portfolio/v3/pendingWithdraw/V3WithdrawItem';
-import { V3WithdrawConfirmModal } from 'modals/V3WithdrawConfirmModal';
 
 export const V3Withdraw = () => {
   const {
     withdrawalRequests,
     openCancelModal,
     isLoadingWithdrawalRequests,
-    isModalConfirmOpen,
-    setIsModalConfirmOpen,
-    selected,
     openConfirmModal,
   } = useV3Withdraw();
 
@@ -35,16 +31,6 @@ export const V3Withdraw = () => {
               ))}
           </div>
         </section>
-      )}
-      {selected && (
-        <>
-          <V3WithdrawConfirmModal
-            isModalOpen={isModalConfirmOpen}
-            setIsModalOpen={setIsModalConfirmOpen}
-            withdrawRequest={selected!}
-            openCancelModal={openCancelModal}
-          />
-        </>
       )}
     </>
   );

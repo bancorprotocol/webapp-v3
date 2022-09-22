@@ -20,10 +20,6 @@ export const Menu: ComponentStory<typeof V3EarningsTableMenuContent> = (
   );
 };
 
-Menu.args = {
-  setIsWithdrawModalOpen: () => {},
-};
-
 Menu.parameters = {
   design: {
     type: 'figma',

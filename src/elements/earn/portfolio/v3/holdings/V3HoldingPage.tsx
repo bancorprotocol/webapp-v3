@@ -23,12 +23,13 @@ import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 import { DepositV3Modal } from 'modals/DepositV3Modal';
-import V3WithdrawModal from 'modals/V3WithdrawModal';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
   const { goToPage } = useNavigation();
-  const [isOpen, setIsOpen] = useState(false);
+  const { pushModal } = useModal();
 
   const account = useAppSelector((state) => state.user.account);
   const holdings = useAppSelector(getPortfolioHoldings);
@@ -267,15 +268,15 @@ export const V3HoldingPage = () => {
                   </div>
                 </div>
                 <>
-                  <V3WithdrawModal
-                    holding={holding}
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                  />
                   <Button
                     size={ButtonSize.ExtraSmall}
                     variant={ButtonVariant.Secondary}
-                    onClick={() => setIsOpen(true)}
+                    onClick={() =>
+                      pushModal({
+                        modalName: ModalNames.V3Withdraw,
+                        data: holding,
+                      })
+                    }
                     disabled={isDisabled}
                   >
                     Withdraw
