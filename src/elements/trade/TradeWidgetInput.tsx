@@ -63,7 +63,7 @@ export const TradeWidgetInput = ({
         excludedTokens,
         includedTokens,
         tokens: tokens ? tokens : [],
-        onselect: (token: Token) => {
+        onSelected: (token: Token) => {
           if (onTokenSelect) onTokenSelect(token);
         },
       },

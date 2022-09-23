@@ -76,8 +76,8 @@ export const SearchableTokenListModal = () => {
 interface SearchableTokenListProps {
   limit: boolean;
   tokens: TokenMinimal[];
-  excludedTokens: string[];
-  includedTokens: string[];
+  excludedTokens?: string[];
+  includedTokens?: string[];
   onSelected: (token: Token | TokenMinimal) => void;
 }
 
@@ -130,9 +130,9 @@ const SearchableTokenListContent = ({
 
     const filtered = tokens.filter(
       (token) =>
-        (includedTokens.length === 0 ||
-          includedTokens.includes(token.address)) &&
-        !excludedTokens.includes(token.address) &&
+        (includedTokens?.length === 0 ||
+          includedTokens?.includes(token.address)) &&
+        !excludedTokens?.includes(token.address) &&
         (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
           (token.name &&
             token.name.toLowerCase().includes(search.toLowerCase())))

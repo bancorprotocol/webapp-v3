@@ -39,7 +39,7 @@ export const SelectToken = ({
         excludedTokens,
         includedTokens,
         tokens: tokens ? tokens : [],
-        onselect: (token: Token) => {
+        onSelected: (token: Token) => {
           if (setToken) setToken(token);
           setSelectToken(false);
         },
