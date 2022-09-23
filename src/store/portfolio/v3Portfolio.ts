@@ -260,7 +260,7 @@ export const getIsLoadingStandardRewards = createSelector(
 
 export const getStandardRewards = createSelector(
   (state: RootState) => state.v3Portfolio.standardRewards,
-  (state: RootState) => getPoolsV3Map(state),
+  (state: RootState) => getAllPoolsV3Map(state),
   (
     standardRewards: RewardsProgramStake[],
     allPoolsMap: Map<string, PoolV3>
