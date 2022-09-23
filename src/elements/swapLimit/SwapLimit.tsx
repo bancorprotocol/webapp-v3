@@ -3,7 +3,6 @@ import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { DurationModal } from 'modals/DurationModal';
 import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
@@ -539,8 +538,6 @@ export const SwapLimit = ({
                   {formatDuration(duration)}
                   <IconChevronDown className="w-10 ml-10" />
                 </button>
-
-                <DurationModal />
               </div>
             </>
           )}

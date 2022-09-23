@@ -45,7 +45,7 @@ import { DepositDisabledModal } from './DepositDisabledModal';
 import { useModal } from 'hooks/useModal';
 import { getIsModalOpen, getModalData } from 'store/modals/modals';
 
-interface DepositV3Props {
+export interface DepositV3Props {
   pool: PoolV3;
 }
 

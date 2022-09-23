@@ -74,7 +74,10 @@ export const V3EarningTable = () => {
             <V3EarningTableMenu
               holding={cell.row.original}
               handleDepositClick={() =>
-                pushModal({ modalName: ModalNames.DepositDisabled })
+                pushModal({
+                  modalName: ModalNames.DepositV3,
+                  data: { pool: cell.row.original.pool },
+                })
               }
             />
           </div>

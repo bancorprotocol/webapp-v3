@@ -22,7 +22,7 @@ interface DurationProp {
 export const DurationModal = () => {
   const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
-    getIsModalOpen(state, ModalNames.DepositETH)
+    getIsModalOpen(state, ModalNames.Duration)
   );
 
   const props = useAppSelector<DurationProp | undefined>((state) =>

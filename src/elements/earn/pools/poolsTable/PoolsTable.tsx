@@ -171,9 +171,14 @@ export const PoolsTable = ({
         id: 'actions',
         Header: '',
         accessor: 'poolDltId',
-        Cell: (_) => (
+        Cell: (cellData) => (
           <Button
-            onClick={() => pushModal({ modalName: ModalNames.DepositDisabled })}
+            onClick={() =>
+              pushModal({
+                modalName: ModalNames.DepositV3,
+                data: { pool: cellData.row.original },
+              })
+            }
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.ExtraSmall}
           >

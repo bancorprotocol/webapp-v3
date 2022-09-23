@@ -1,12 +1,20 @@
 import { useModal } from 'hooks/useModal';
 import { Modal, ModalNames } from 'modals';
 import { useAppSelector } from 'store';
-import { getIsModalOpen } from 'store/modals/modals';
+import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { DepositV3Props } from './DepositV3Modal';
 
 export const DepositDisabledModal = () => {
   const { popModal } = useModal();
-  const isOpen = useAppSelector((state) =>
-    getIsModalOpen(state, ModalNames.DepositDisabled)
+  const props = useAppSelector<DepositV3Props | undefined>((state) =>
+    getModalData(state, ModalNames.DepositV3)
+  );
+
+  const isOpen = useAppSelector(
+    (state) =>
+      (getIsModalOpen(state, ModalNames.DepositV3) &&
+        !props?.pool.depositingEnabled) ||
+      getIsModalOpen(state, ModalNames.DepositDisabled)
   );
 
   const onClose = () => {
