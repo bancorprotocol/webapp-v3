@@ -19,6 +19,7 @@ import V3WithdrawModal from './V3WithdrawModal';
 import { VbntModal } from './VbntModal';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 import { DepositV3Modal } from './DepositV3Modal';
+import { SearchableTokenListModal } from './SearchableTokenListModal';
 
 export enum ModalNames {
   CreatePool,
@@ -26,6 +27,7 @@ export enum ModalNames {
   DepositETH,
   DepositV3,
   Duration,
+  SearchableTokenList,
   SelectPool,
   UpgradeBnt,
   UpgradeTkn,
@@ -48,6 +50,7 @@ export const Modals = () => {
       <DepositETHModal />
       <DepositV3Modal />
       <DurationModal />
+      <SearchableTokenListModal />
       <SelectPoolModal />
       <UpgradeBntModal />
       <UpgradeTknModal />

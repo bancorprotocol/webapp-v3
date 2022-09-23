@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { classNameGenerator } from 'utils/pureFunctions';
-import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { Token } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { Image } from 'components/image/Image';
 import { Button } from 'components/button/Button';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 interface SelectTokenProps {
   label?: string;
@@ -27,8 +28,24 @@ export const SelectToken = ({
   excludedTokens = [],
   includedTokens = [],
 }: SelectTokenProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [showSelectToken, setSelectToken] = useState(!!startEmpty);
+  const { pushModal } = useModal();
+
+  const pushSearchableTokenList = () => {
+    pushModal({
+      modalName: ModalNames.SearchableTokenList,
+      data: {
+        limit: true,
+        excludedTokens,
+        includedTokens,
+        tokens: tokens ? tokens : [],
+        onselect: (token: Token) => {
+          if (setToken) setToken(token);
+          setSelectToken(false);
+        },
+      },
+    });
+  };
 
   return (
     <>
@@ -39,7 +56,7 @@ export const SelectToken = ({
             className={`flex items-center ${classNameGenerator({
               'cursor-pointer': selectable,
             })}`}
-            onClick={() => (selectable ? setIsOpen(true) : {})}
+            onClick={() => (selectable ? pushSearchableTokenList() : {})}
           >
             {token ? (
               <>
@@ -65,7 +82,7 @@ export const SelectToken = ({
           </div>
         ) : (
           <Button
-            onClick={() => (selectable ? setIsOpen(true) : {})}
+            onClick={() => (selectable ? pushSearchableTokenList() : {})}
             className="flex items-center"
           >
             Select a token
@@ -73,19 +90,6 @@ export const SelectToken = ({
           </Button>
         )}
       </div>
-
-      <SearchableTokenList
-        onClick={(token: Token) => {
-          if (setToken) setToken(token);
-          setSelectToken(false);
-        }}
-        isOpen={isOpen}
-        limit
-        setIsOpen={setIsOpen}
-        tokens={tokens ? tokens : []}
-        excludedTokens={excludedTokens}
-        includedTokens={includedTokens}
-      />
     </>
   );
 };

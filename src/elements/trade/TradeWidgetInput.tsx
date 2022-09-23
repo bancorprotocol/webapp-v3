@@ -3,10 +3,11 @@ import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { useMemo, useRef, useState } from 'react';
-import { TokenMinimal } from 'services/observables/tokens';
-import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { ModalNames } from 'modals';
+import { useModal } from 'hooks/useModal';
 
 interface Props {
   input?: useTokenInputV3Return;
@@ -35,9 +36,9 @@ export const TradeWidgetInput = ({
   includedTokens,
   disableSelection,
 }: Props) => {
+  const { pushModal } = useModal();
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const value = useMemo(() => {
@@ -53,6 +54,20 @@ export const TradeWidgetInput = ({
       inputRef.current?.blur();
     }
     setIsFocused(state);
+  };
+
+  const pushSearchableTokenList = () => {
+    pushModal({
+      modalName: ModalNames.SearchableTokenList,
+      data: {
+        excludedTokens,
+        includedTokens,
+        tokens: tokens ? tokens : [],
+        onselect: (token: Token) => {
+          if (onTokenSelect) onTokenSelect(token);
+        },
+      },
+    });
   };
 
   return (
@@ -116,7 +131,7 @@ export const TradeWidgetInput = ({
                 onClick={(e) => {
                   if (!disableSelection) {
                     e.preventDefault();
-                    setIsOpen(true);
+                    pushSearchableTokenList();
                   }
                 }}
               >
@@ -133,7 +148,7 @@ export const TradeWidgetInput = ({
             {tokens && !!tokens.length && !input && (
               <button
                 onClick={() => {
-                  setIsOpen(true);
+                  pushSearchableTokenList();
                 }}
                 className="h-[75px] text-primary text-20 flex uppercase font-medium items-center space-x-10"
               >
@@ -195,17 +210,6 @@ export const TradeWidgetInput = ({
           </div>
         )}
       </div>
-      {tokens && onTokenSelect && (
-        <SearchableTokenList
-          onClick={onTokenSelect}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          tokens={tokens}
-          limit
-          excludedTokens={excludedTokens}
-          includedTokens={includedTokens}
-        />
-      )}
     </>
   );
 };

@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { classNameGenerator, sanitizeNumberInput } from 'utils/pureFunctions';
-import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { Token, TokenMinimal } from 'services/observables/tokens';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import 'components/tokenInputField/TokenInputField.css';
@@ -10,6 +8,8 @@ import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'store';
 import { Image } from 'components/image/Image';
 import { getV2AndV3Tokens } from 'store/bancor/bancor';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 interface TokenInputFieldProps {
   label?: string;
@@ -60,7 +60,7 @@ export const TokenInputField = ({
   v3AndV2,
   balanceLabel = 'Balance',
 }: TokenInputFieldProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { pushModal } = useModal();
 
   const balance = fieldBalance ? fieldBalance : token ? token.balance : null;
   const balanceUsd =
@@ -139,6 +139,21 @@ export const TokenInputField = ({
     '!border-error': errorMsg,
   })}`;
 
+  const pushSearchableTokenList = () => {
+    pushModal({
+      modalName: ModalNames.SearchableTokenList,
+      data: {
+        excludedTokens,
+        includedTokens,
+        tokens: tokens ? tokens : [],
+        onselect: (token: Token) => {
+          if (setToken) setToken(token);
+          onInputChange(inputValue(), token);
+        },
+      },
+    });
+  };
+
   return (
     <div>
       <div className="flex justify-between pr-10 mb-4">
@@ -166,7 +181,7 @@ export const TokenInputField = ({
       </div>
       {startEmpty && !token ? (
         <button
-          onClick={() => (selectable ? setIsOpen(true) : {})}
+          onClick={() => (selectable ? pushSearchableTokenList() : {})}
           className="flex items-center py-5 mt-10 font-medium text-primary text-20 mb-30"
         >
           Select a token
@@ -180,7 +195,7 @@ export const TokenInputField = ({
                 'cursor-pointer': selectable,
               }
             )}`}
-            onClick={() => (selectable ? setIsOpen(true) : {})}
+            onClick={() => (selectable ? pushSearchableTokenList() : {})}
           >
             {token ? (
               <>
@@ -240,18 +255,6 @@ export const TokenInputField = ({
           </div>
         </div>
       )}
-
-      <SearchableTokenList
-        onClick={(token: Token) => {
-          if (setToken) setToken(token);
-          onInputChange(inputValue(), token);
-        }}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        tokens={tokens}
-        excludedTokens={excludedTokens}
-        includedTokens={includedTokens}
-      />
     </div>
   );
 };
