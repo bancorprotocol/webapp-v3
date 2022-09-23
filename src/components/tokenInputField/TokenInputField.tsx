@@ -145,7 +145,7 @@ export const TokenInputField = ({
       data: {
         excludedTokens,
         includedTokens,
-        tokens: tokens ? tokens : [],
+        tokens,
         onSelected: (token: Token) => {
           if (setToken) setToken(token);
           onInputChange(inputValue(), token);

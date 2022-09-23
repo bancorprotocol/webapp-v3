@@ -127,12 +127,13 @@ const SearchableTokenListContent = ({
   const sortedTokens = useMemo(() => {
     if (!props) return [];
     const { tokens, includedTokens, excludedTokens, limit } = props;
+    const includedTkns = includedTokens ? includedTokens : [];
+    const excludedTkns = excludedTokens ? excludedTokens : [];
 
     const filtered = tokens.filter(
       (token) =>
-        (includedTokens?.length === 0 ||
-          includedTokens?.includes(token.address)) &&
-        !excludedTokens?.includes(token.address) &&
+        (includedTkns.length === 0 || includedTkns.includes(token.address)) &&
+        !excludedTkns.includes(token.address) &&
         (token.symbol.toLowerCase().includes(search.toLowerCase()) ||
           (token.name &&
             token.name.toLowerCase().includes(search.toLowerCase())))
