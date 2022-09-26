@@ -51,7 +51,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
   const fiatOut = fiat.operations.includes(Operations.fiatOut);
 
   return (
-    <div className="flex flex-col items-between bg-white dark:bg-charcoal [h-360px] p-30 shadow hover:shadow-lg rounded-20 text-grey dark:text-white">
+    <div className="content-block flex flex-col items-between [h-360px] p-30 transition duration-300 hover:shadow-lg rounded-20">
       <fiat.logo className="h-40 w-140 self-start text-black dark:text-white" />
       <div className="flex items-center my-20 font-medium">
         Available Operations
@@ -66,7 +66,7 @@ export const FiatBox = ({ fiat }: { fiat: Fiat }) => {
           </div>
         )}
       </div>
-      {fiat.text}
+      <p className={'text-secondary'}>{fiat.text}</p>
       <div className="flex justify-between items-center my-20 max-w-[280px]">
         {fiatIn && (
           <Button
