@@ -273,26 +273,28 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-5">
                       Compounding {pool.reserveToken.symbol} Returns
-                      <PopoverV3
-                        buttonElement={() => (
-                          <IconGift className="w-10 h-10 text-secondary" />
-                        )}
-                      >
-                        <div className="w-[126px]">
-                          <div className="flex justify-between items-center">
-                            Fees
-                            <span>
-                              {prettifyNumber(pool.apr7d.tradingFees)}%
-                            </span>
+                      {!toBigNumber(pool.apr7d.autoCompounding).isZero() && (
+                        <PopoverV3
+                          buttonElement={() => (
+                            <IconGift className="w-10 h-10 text-secondary" />
+                          )}
+                        >
+                          <div className="w-[126px]">
+                            <div className="flex justify-between items-center">
+                              Fees
+                              <span>
+                                {prettifyNumber(pool.apr7d.tradingFees)}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              Rewards
+                              <span>
+                                {prettifyNumber(pool.apr7d.autoCompounding)}%
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex justify-between items-center">
-                            Rewards
-                            <span>
-                              {prettifyNumber(pool.apr7d.autoCompounding)}%
-                            </span>
-                          </div>
-                        </div>
-                      </PopoverV3>
+                        </PopoverV3>
+                      )}
                     </div>
                     <span>
                       {prettifyNumber(
