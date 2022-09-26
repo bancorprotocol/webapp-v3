@@ -3,10 +3,8 @@ import {
   fetchProtectedPositions,
   ProtectedPosition,
 } from 'services/web3/protection/positions';
-import { Button, ButtonSize } from 'components/button/Button';
-import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
-import { useMemo } from 'react';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
 import {
   migrateNotification,
@@ -15,11 +13,13 @@ import {
 } from 'services/notifications/notifications';
 import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
-import { Pool } from 'services/observables/pools';
 import { Image } from 'components/image/Image';
-import { PopoverV3 } from 'components/popover/PopoverV3';
-import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
+import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
+import { Switch, SwitchVariant } from 'components/switch/Switch';
+import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
+import { getV3byID } from 'store/bancor/pool';
+import { useState } from 'react';
 
 export const UpgradeTknModal = ({
   positions,
@@ -32,26 +32,24 @@ export const UpgradeTknModal = ({
 }) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
-  const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
+
+  const [txBusy, setTxBusy] = useState(false);
+  const [tosAgreed, setTosAgreed] = useState(false);
+
+  const poolV3 = useAppSelector((state) =>
+    getV3byID(state, position?.reserveToken.address ?? '')
+  );
+
+  const pools = useAppSelector((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
   const position = positions.length !== 0 ? positions[0] : undefined;
   const token = position?.reserveToken;
 
-  const { withdrawalFee, lockDuration } = useAppSelector(
-    (state) => state.v3Portfolio.withdrawalSettings
-  );
-
-  const lockDurationInDays = useMemo(
-    () => lockDuration / 60 / 60 / 24,
-    [lockDuration]
-  );
-
-  const withdrawalFeeInPercent = useMemo(
-    () => (withdrawalFee * 100).toFixed(2),
-    [withdrawalFee]
-  );
+  const extVaultBalanceUsd = poolV3?.extVaultBalance.tkn ?? '0';
+  const hasExtVaultBalance = !toBigNumber(extVaultBalanceUsd).isZero();
 
   const migrate = () => {
+    setTxBusy(true);
     migrateV2Positions(
       positions,
       (txHash: string) => migrateNotification(dispatch, txHash),
@@ -63,58 +61,90 @@ export const UpgradeTknModal = ({
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
     );
+    setTxBusy(false);
     setIsOpen(false);
   };
 
   if (!position || !token) return null;
 
   return (
-    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
-      <div className="flex flex-col items-center gap-20 p-20 text-center">
-        <Image
-          alt="Token"
-          src={token?.logoURI}
-          className="!rounded-full h-50 w-50"
-        />
-        <div className="text-20">Upgrade {token.symbol}</div>
-        <div className="text-black-low dark:text-white-low">
-          Move all {token.symbol} to Bancor V3
-        </div>
-        <div className="flex flex-col items-center justify-center font-bold text-center text-error">
-          <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
-          <div>Please note that BNT distribution is temporarily paused.</div>
-          <PopoverV3
-            children={<EmergencyInfo />}
-            hover
-            buttonElement={() => (
-              <span className="underline cursor-pointer">More info</span>
-            )}
-          />
-        </div>
-        <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
-          <div className="flex items-center justify-between text-18 mb-15">
-            <div>Upgrade all {token.symbol}</div>
+    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} title={'Migrate to v3'}>
+      <>
+        <div className="p-30 pb-14">
+          <div
+            className={
+              'bg-secondary rounded-10 p-16 space-x-16 text-20 flex items-center mb-20'
+            }
+          >
+            <Image
+              alt={'Token Logo'}
+              src={poolV3?.reserveToken.logoURI}
+              className={'w-40 h-40'}
+            />
+            <span>All {poolV3?.name}</span>
           </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Single Side
+
+          {hasExtVaultBalance ? (
+            <>
+              <div className={'flex justify-between items-center'}>
+                <div>External Liquidity Protection:</div>
+                <div>{prettifyNumber(extVaultBalanceUsd, true)}</div>
+              </div>
+
+              <hr className={'my-20'} />
+
+              <div className={'text-secondary space-y-20'}>
+                <p>
+                  BNT distribution was disabled. Should this pool be in deficit
+                  when you’re ready to withdraw from v3, you will be compensated
+                  from the external liquidity protection vault.
+                </p>
+                <p>
+                  If the protection vault is empty, your deposit will accrue the
+                  pool deficit during withdrawal from v3.
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className={'text-secondary'}>
+              After migrating to v3, if you withdraw from the v3 pool while it
+              is in deficit, you'll accrue the deficit in the pool. The value
+              changes over time.
+            </p>
+          )}
+          <div
+            className={
+              'flex justify-between mt-20 space-x-20 items-center text-error'
+            }
+          >
+            <Switch
+              variant={SwitchVariant.ERROR}
+              selected={tosAgreed}
+              onChange={setTosAgreed}
+            />
+            <button
+              className={'text-left'}
+              onClick={() => setTosAgreed((prev) => !prev)}
+            >
+              I understand and accept the risks from migrating while BNT
+              distribution is disabled.
+            </button>
           </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Auto-compounding
-          </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Fully upgrade partially protected holdings
-          </div>
+
+          <Button
+            onClick={() => migrate()}
+            size={ButtonSize.Full}
+            className="mt-30 mb-14"
+            variant={ButtonVariant.Secondary}
+            disabled={!tosAgreed || txBusy}
+          >
+            {txBusy
+              ? '... waiting for confirmation'
+              : `Migrate all ${poolV3?.name} to v3`}
+          </Button>
         </div>
-        <Button onClick={() => migrate()} size={ButtonSize.Full}>
-          Upgrade All
-        </Button>
-        <div className="text-secondary text-[13px]">
-          {`${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
-        </div>
-      </div>
+        <DepositFAQ />
+      </>
     </Modal>
   );
 };
