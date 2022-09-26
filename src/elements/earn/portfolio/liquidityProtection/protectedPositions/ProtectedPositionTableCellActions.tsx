@@ -26,6 +26,7 @@ import {
 import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
 import { Pool } from 'services/observables/pools';
+import { MigrateToV3Modal } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/MigrateToV3Modal';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
@@ -110,13 +111,18 @@ export const ProtectedPositionTableCellActions = (
   const singleContent = useMemo(() => {
     const disabled = isMigrateDisabled([position]);
     const button = (
-      <Button
-        onClick={() => migrate([position])}
-        className="text-12 w-[165px] h-[32px] mr-10"
-        disabled={disabled}
-      >
-        Upgrade To V3
-      </Button>
+      <MigrateToV3Modal
+        id={position.reserveToken.address}
+        renderButton={(onClick) => (
+          <Button
+            onClick={onClick}
+            className="text-12 w-[145px] h-[32px] mr-10"
+            disabled={disabled}
+          >
+            Upgrade All To V3
+          </Button>
+        )}
+      />
     );
     return isPoolExistV3 ? (
       disabled ? (
@@ -129,18 +135,23 @@ export const ProtectedPositionTableCellActions = (
     ) : (
       <></>
     );
-  }, [position, migrate, isPoolExistV3, isMigrateDisabled]);
+  }, [position, isPoolExistV3, isMigrateDisabled]);
 
   const groupContent = useMemo(() => {
     const disabled = isMigrateDisabled(position.subRows);
     const button = (
-      <Button
-        onClick={() => migrate(position.subRows)}
-        className="text-12 w-[145px] h-[32px] mr-10"
-        disabled={disabled}
-      >
-        Upgrade All To V3
-      </Button>
+      <MigrateToV3Modal
+        id={position.reserveToken.address}
+        renderButton={(onClick) => (
+          <Button
+            onClick={onClick}
+            className="text-12 w-[145px] h-[32px] mr-10"
+            disabled={disabled}
+          >
+            Upgrade All To V3
+          </Button>
+        )}
+      />
     );
     return isPoolExistV3 ? (
       disabled ? (
@@ -153,7 +164,7 @@ export const ProtectedPositionTableCellActions = (
     ) : (
       <></>
     );
-  }, [position, migrate, isPoolExistV3, isMigrateDisabled]);
+  }, [position, isPoolExistV3, isMigrateDisabled]);
   return (
     <div>
       {TableCellExpander({
