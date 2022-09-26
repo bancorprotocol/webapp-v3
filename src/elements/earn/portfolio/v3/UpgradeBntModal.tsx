@@ -23,6 +23,7 @@ import { Image } from 'components/image/Image';
 import { getV3byID } from 'store/bancor/pool';
 import { bntToken } from 'services/web3/config';
 import { useState } from 'react';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 export const UpgradeBntModal = ({
   position,
@@ -56,6 +57,7 @@ export const UpgradeBntModal = ({
         const positions = await fetchProtectedPositions(pools, account!);
         if (positions.length === 0) goToPage.portfolio();
         dispatch(setProtectedPositions(positions));
+        await updatePortfolioData(dispatch);
       },
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
@@ -88,7 +90,7 @@ export const UpgradeBntModal = ({
         <Button
           onClick={() => migrate(totalBNT.bntPositions)}
           size={ButtonSize.Full}
-          className="mt-30 mb-14"
+          className="mt-30 mb-30"
           variant={ButtonVariant.Secondary}
           disabled={txBusy}
         >

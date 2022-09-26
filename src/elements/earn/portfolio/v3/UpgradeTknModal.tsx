@@ -20,6 +20,7 @@ import { Switch, SwitchVariant } from 'components/switch/Switch';
 import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
 import { getV3byID } from 'store/bancor/pool';
 import { useState } from 'react';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 export const UpgradeTknModal = ({
   positions,
@@ -36,14 +37,13 @@ export const UpgradeTknModal = ({
   const [txBusy, setTxBusy] = useState(false);
   const [tosAgreed, setTosAgreed] = useState(false);
 
-  const poolV3 = useAppSelector((state) =>
-    getV3byID(state, position?.reserveToken.address ?? '')
-  );
-
   const pools = useAppSelector((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
   const position = positions.length !== 0 ? positions[0] : undefined;
   const token = position?.reserveToken;
+  const poolV3 = useAppSelector((state) =>
+    getV3byID(state, position?.reserveToken.address ?? '')
+  );
 
   const extVaultBalanceUsd = poolV3?.extVaultBalance.tkn ?? '0';
   const hasExtVaultBalance = !toBigNumber(extVaultBalanceUsd).isZero();
@@ -57,6 +57,7 @@ export const UpgradeTknModal = ({
         const positions = await fetchProtectedPositions(pools, account!);
         if (positions.length === 0) goToPage.portfolio();
         dispatch(setProtectedPositions(positions));
+        await updatePortfolioData(dispatch);
       },
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
