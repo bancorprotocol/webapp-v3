@@ -93,7 +93,7 @@ export const ProtectedPositionTableCellActions = (
     const disabled = isMigrateDisabled(position.subRows);
     const button = (
       <Button
-        onClick={() => migrate([position])}
+        onClick={() => migrate(position.subRows)}
         className="text-12 w-[145px] h-[32px] mr-10"
         disabled={disabled}
       >
