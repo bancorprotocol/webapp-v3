@@ -8,6 +8,7 @@ import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
 import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
 import { ReactComponent as binanceLogo } from 'assets/logos/binance.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
+import { Page } from 'components/Page';
 
 const fiats = [
   {
@@ -141,32 +142,31 @@ const fiats = [
 
 export const Fiat = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-40 text-charcoal dark:text-white text-14 max-w-[1140px] pt-80 mb-20 mx-10 md:mx-auto">
-      <div className="mt-20 mx-16 md:ml-5">
-        <div className="font-medium text-2xl md:font-semibold md:text-3xl mb-20">
-          Fiat Gateway Providers
+    <Page title={'Fiat Gateway Providers'}>
+      <div className="grid md:grid-cols-2 gap-40">
+        <div className="mt-20 text-secondary">
+          <p>Below is a list of popular fiat gateways.</p>
+          <p>
+            It can be used to buy or sell crypto with a credit card, bank
+            transfer & more.
+          </p>
         </div>
-        <div>
-          <div>Below is a list of popular fiat gateways.</div>
-          It can be used to buy or sell crypto with a credit card, bank transfer
-          & more.
+        <div className="bg-white shadow dark:shadow-none hover:shadow-lg dark:bg-charcoal px-20 py-16 rounded-20 text-12">
+          <div className="flex items-center mb-8 text-16">
+            <IconInfo className="w-15 h-15 mr-10" />
+            Fiat Services
+          </div>
+          <div className="text-secondary">
+            Fiat services on Bancor are provided by third-parties. Bancor is not
+            associated with, responsible or liable for the performance of these
+            third-party services. Any claims & questions should be addressed
+            with the selected provider directly.
+          </div>
         </div>
+        {fiats.map((fiat) => (
+          <FiatBox key={fiat.name} fiat={fiat} />
+        ))}
       </div>
-      <div className="bg-white shadow dark:shadow-none hover:shadow-lg dark:bg-charcoal px-20 py-16 rounded-20 text-12">
-        <div className="flex items-center mb-8 text-16">
-          <IconInfo className="w-15 h-15 mr-10" />
-          Fiat Services
-        </div>
-        <div className="dark:text-graphite">
-          Fiat services on Bancor are provided by third-parties. Bancor is not
-          associated with, responsible or liable for the performance of these
-          third-party services. Any claims & questions should be addressed with
-          the selected provider directly.
-        </div>
-      </div>
-      {fiats.map((fiat) => (
-        <FiatBox key={fiat.name} fiat={fiat} />
-      ))}
-    </div>
+    </Page>
   );
 };

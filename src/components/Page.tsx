@@ -17,7 +17,7 @@ export const Page = ({
     <div className="page">
       {title && (
         <div className="flex gap-10">
-          <h1>{title}</h1>
+          <h1 className={'leading-10'}>{title}</h1>
           {trailingTitle}
         </div>
       )}

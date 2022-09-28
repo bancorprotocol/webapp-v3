@@ -3,8 +3,8 @@
 @layer base {
   body,
   #root {
-    @apply bg-white md:bg-fog text-charcoal text-14 font-normal font-euclid;
-    @apply dark:bg-charcoal dark:md:bg-black dark:text-fog;
+    @apply bg-fog dark:bg-black text-charcoal text-14 font-normal font-euclid;
+    @apply dark:bg-black dark:text-fog;
   }
 
   h1 {
