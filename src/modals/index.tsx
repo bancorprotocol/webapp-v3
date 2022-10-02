@@ -20,8 +20,10 @@ import { VbntModal } from './VbntModal';
 import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 import { DepositV3Modal } from './DepositV3Modal';
 import { SearchableTokenListModal } from './SearchableTokenListModal';
+import { WithdrawLiquidityModal } from './WithdrawLiquidityModal';
 
 export enum ModalNames {
+  ApproveModal,
   CreatePool,
   DepositDisabled,
   DepositETH,
@@ -62,6 +64,7 @@ export const Modals = () => {
       <V3WithdrawConfirmModal />
       <V3WithdrawModal />
       <VbntModal />
+      <WithdrawLiquidityModal />
     </>
   );
 };
