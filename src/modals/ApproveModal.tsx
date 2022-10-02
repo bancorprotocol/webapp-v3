@@ -6,6 +6,7 @@ import { useState, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { web3 } from 'services/web3';
 import {
+  ApprovalContract,
   getNetworkContractApproval,
   setNetworkContractApproval,
 } from 'services/web3/approval';
@@ -14,29 +15,37 @@ import {
   addNotification,
   NotificationType,
 } from 'store/notification/notification';
-import { Events } from 'storybook-addon-designs/esm/addon';
 import { wait } from 'utils/pureFunctions';
 import { useModal } from 'hooks/useModal';
 import { useAppSelector } from 'store';
 import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { Events } from 'services/api/googleTagManager';
 
 interface TokenAmount {
   token: TokenMinimal;
   amount: string;
 }
+
 interface ApproveModalProps {
   token_amounts: TokenAmount[];
+  contract: ApprovalContract | string;
+  onComplete: (txHash?: string) => void;
+  gtmPopupEvent?: (event: Events) => void;
+  gtmSelectEvent?: (isUnlimited: boolean) => void;
 }
 
 export const ApproveModal = () => {
   const dispatch = useDispatch();
+  const ref = useRef<string[]>([]);
   const [tokenIndex, setTokenIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.ApproveModal)
   );
-  const ref = useRef<string[]>([]);
+  const props = useAppSelector<ApproveModalProps | undefined>((state) =>
+    getModalData(state, ModalNames.V3WithdrawConfirm)
+  );
 
   const awaitConfirmation = useCallback(async () => {
     const receipts = [];
@@ -52,33 +61,22 @@ export const ApproveModal = () => {
 
     const successCount = receipts.filter((r) => r && r.status).length;
     if (successCount === ref.current.length) {
-      onComplete(ref.current.length > 0 ? ref.current[0] : undefined);
+      props?.onComplete(ref.current.length > 0 ? ref.current[0] : undefined);
       ref.current = [];
     } else {
       await wait(3000);
       await awaitConfirmation();
     }
-  }, [onComplete]);
+  }, [props?.onComplete]);
 
-  const props = useAppSelector<ApproveModalProps | undefined>((state) =>
-    getModalData(state, ModalNames.V3WithdrawConfirm)
-  );
+  if (!props) return null;
 
-  const { token_amounts } = props;
-
-  const onStart = async () => {
-    if (tokens.length === 0) {
-      onComplete();
-      return;
-    }
-    await checkApprovalRequired();
-  };
-
-  if (tokens.length === 0) return [onStart, <></>] as [Function, JSX.Element];
+  const { token_amounts, contract, gtmPopupEvent, gtmSelectEvent } = props;
+  if (token_amounts.length === 0) return null;
 
   const checkNextToken = async (index = tokenIndex): Promise<any> => {
     const nextIndex = index + 1;
-    const count = tokens.length;
+    const count = token_amounts.length;
     if (count === nextIndex) {
       return awaitConfirmation();
     }
@@ -88,7 +86,7 @@ export const ApproveModal = () => {
   };
 
   const checkApprovalRequired = async (tokenIndex: number = 0) => {
-    const { token, amount } = tokens[tokenIndex];
+    const { token, amount } = token_amounts[tokenIndex];
     const isApprovalRequired = await getNetworkContractApproval(
       token,
       contract,
@@ -100,8 +98,6 @@ export const ApproveModal = () => {
     }
 
     gtmPopupEvent && gtmPopupEvent(Events.approvePop);
-
-    setIsOpen(true);
   };
 
   const setApproval = async (amount?: string) => {
@@ -109,7 +105,7 @@ export const ApproveModal = () => {
       const isUnlimited = amount === undefined;
       gtmSelectEvent(isUnlimited);
     }
-    const { token } = tokens[tokenIndex];
+    const { token } = token_amounts[tokenIndex];
     try {
       setIsLoading(true);
       const txHash = await setNetworkContractApproval(
@@ -124,19 +120,19 @@ export const ApproveModal = () => {
         addNotification({
           type: NotificationType.pending,
           title: 'Pending Confirmation',
-          msg: `Approve ${tokens[tokenIndex].token.symbol} is pending confirmation`,
+          msg: `Approve ${token_amounts[tokenIndex].token.symbol} is pending confirmation`,
           updatedInfo: {
             successTitle: 'Transaction Confirmed',
             successMsg: `${amount || 'Unlimited'} approval set for ${
-              tokens[tokenIndex].token.symbol
+              token_amounts[tokenIndex].token.symbol
             }`,
             errorTitle: 'Transaction Failed',
-            errorMsg: `${tokens[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
+            errorMsg: `${token_amounts[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
           },
           txHash,
         })
       );
-      setIsOpen(false);
+      popModal();
       setIsLoading(false);
 
       await checkNextToken();
@@ -154,25 +150,21 @@ export const ApproveModal = () => {
           addNotification({
             type: NotificationType.error,
             title: 'Transaction Failed',
-            msg: `${tokens[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
+            msg: `${token_amounts[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
           })
         );
       }
 
-      setIsOpen(false);
+      popModal();
       setIsLoading(false);
     }
   };
 
+  const token = token_amounts[tokenIndex].token;
+  const amount = token_amounts[tokenIndex].amount;
+
   return (
-    <Modal
-      onClose={() => {
-        if (onClose) onClose();
-        setIsOpen(false);
-      }}
-      setIsOpen={setIsOpen}
-      isOpen={isOpen}
-    >
+    <Modal setIsOpen={popModal} isOpen={isOpen}>
       <div className="px-30 py-10">
         <div className="flex flex-col items-center text-12 mb-20">
           <div className="flex justify-center items-center mb-14">
