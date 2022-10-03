@@ -5,7 +5,7 @@ import { swap } from 'services/web3/swap/market';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { toBigNumber } from 'utils/helperFunctions';
 import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { UseTradeWidgetReturn } from 'elements/trade/useTradeWidget';
 import {
   rejectNotification,
@@ -30,7 +30,6 @@ import {
 import BigNumber from 'bignumber.js';
 
 export interface UseTradeReturn {
-  ApproveModal: JSX.Element;
   isBusy: boolean;
   handleSelectSwitch: () => void;
   errorInsufficientBalance: string | undefined;
@@ -140,7 +139,7 @@ export const useTrade = ({
       return;
     }
     setIsBusy(true);
-    onStart();
+    startApprove();
   };
 
   const tokensToApprove = fromInput
@@ -153,22 +152,13 @@ export const useTrade = ({
     ? ContractsApi.BancorNetwork.contractAddress
     : ApprovalContract.BancorNetwork;
 
-  const [onStart, ApproveModal] = useApproveModal(
+  const startApprove = useApproval(
     tokensToApprove,
     handleTrade,
     contractToApprove,
     () => sendConversionEvent(Events.approvePop),
     (isUnlimited) => {
       sendConversionEvent(Events.approved, undefined, isUnlimited);
-    },
-    () => {
-      setIsBusy(false);
-      if (fromInput && toInput) {
-        fromInput.setInputTkn('');
-        fromInput.setInputFiat('');
-        toInput.setInputTkn('');
-        toInput.setInputFiat('');
-      }
     }
   );
 
@@ -222,7 +212,6 @@ export const useTrade = ({
 
   return {
     handleCTAClick,
-    ApproveModal,
     isBusy,
     handleSelectFrom,
     handleSelectTo,

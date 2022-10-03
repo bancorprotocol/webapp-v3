@@ -7,7 +7,7 @@ import { useAppSelector } from 'store';
 import { useDispatch } from 'react-redux';
 import { Button, ButtonSize } from 'components/button/Button';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { mockToken } from 'utils/mocked';
 import { getMigrateFnByAmmProvider } from 'elements/earn/portfolio/v3/externalHoldings/externalHoldings';
 import { shrinkToken } from 'utils/formulas';
@@ -90,7 +90,7 @@ export const V3ExternalHoldingsModal = () => {
     }
   };
 
-  const [onStart, ApproveModal] = useApproveModal(
+  const startApprove = useApproval(
     tokensToApprove,
     migrate,
     ContractsApi.BancorPortal.contractAddress
@@ -101,7 +101,7 @@ export const V3ExternalHoldingsModal = () => {
 
   const handleButtonClick = async () => {
     setTxBusy(true);
-    onStart();
+    startApprove();
   };
 
   return (
@@ -146,8 +146,6 @@ export const V3ExternalHoldingsModal = () => {
           {lockDurationInDays} day cooldown • {withdrawalFeeInPercent}%
           withdrawal fee
         </p>
-
-        {ApproveModal}
       </div>
     </Modal>
   );

@@ -19,7 +19,7 @@ import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { Modal, ModalNames } from 'modals';
 import { useModal } from 'hooks/useModal';
 import { getIsModalOpen, getModalData } from 'store/modals/modals';
@@ -128,7 +128,7 @@ export const V3ManageProgramsModal = () => {
     }
   };
 
-  const [onStart, ApproveModal] = useApproveModal(
+  const startApprove = useApproval(
     holding
       ? [
           {
@@ -147,8 +147,8 @@ export const V3ManageProgramsModal = () => {
 
   const onStartJoin = useCallback(() => {
     setTxJoinBusy(true);
-    onStart();
-  }, [onStart]);
+    startApprove();
+  }, [startApprove]);
 
   if (!holding) return null;
 
@@ -227,7 +227,6 @@ export const V3ManageProgramsModal = () => {
           >
             Add bn{holding.pool.reserveToken.symbol} to rewards program
           </Button>
-          {ApproveModal}
         </div>
       ) : (
         <div className="px-30 pb-30 pt-10">

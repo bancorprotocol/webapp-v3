@@ -111,7 +111,7 @@ const V3WithdrawStep1 = ({
 
   const [isConfirmed, setIsConfirmed] = useState(false);
 
-  const { handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3({
+  const { handleButtonClick, txBusy } = useV3WithdrawStep3({
     holding,
     amount,
     setStep,
@@ -158,7 +158,6 @@ const V3WithdrawStep1 = ({
 
   return (
     <div className="w-full max-w-[460px]">
-      {ModalApprove}
       <h1 className="text-[36px] font-normal mb-30 leading-10">
         How much {token.symbol} do you want to withdraw?
       </h1>

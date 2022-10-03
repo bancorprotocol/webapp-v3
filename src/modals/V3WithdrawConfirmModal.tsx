@@ -59,7 +59,6 @@ export const V3WithdrawConfirmContent = ({
   openCancelModal: (req: WithdrawalRequest) => void;
 }) => {
   const {
-    ModalApprove,
     token,
     loadingAmounts,
     withdrawAmounts,
@@ -92,8 +91,6 @@ export const V3WithdrawConfirmContent = ({
 
   return (
     <div className="w-full max-w-[520px] p-20 space-y-20 md:p-30">
-      {ModalApprove}
-
       <TokenBalanceLarge
         symbol={token.symbol}
         amount={

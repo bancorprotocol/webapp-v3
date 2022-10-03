@@ -21,6 +21,7 @@ import { V3ManageProgramsModal } from './V3ManageProgramsModal';
 import { DepositV3Modal } from './DepositV3Modal';
 import { SearchableTokenListModal } from './SearchableTokenListModal';
 import { WithdrawLiquidityModal } from './WithdrawLiquidityModal';
+import { ApproveModal } from './ApproveModal';
 
 export enum ModalNames {
   ApproveModal,
@@ -47,6 +48,7 @@ export enum ModalNames {
 export const Modals = () => {
   return (
     <>
+      <ApproveModal />
       <CreatePoolModal />
       <DepositDisabledModal />
       <DepositETHModal />

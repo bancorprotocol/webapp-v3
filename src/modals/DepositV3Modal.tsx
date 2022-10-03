@@ -5,7 +5,7 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { bntToken, ethToken } from 'services/web3/config';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -163,7 +163,7 @@ export const DepositV3Modal = () => {
     }
   };
 
-  const [onStart, ApproveModal] = useApproveModal(
+  const startApprove = useApproval(
     pool ? [{ amount: amount || '0', token: pool.reserveToken }] : [],
     (approvalHash?: string) => deposit(approvalHash),
     accessFullEarnings && pool?.latestProgram?.isActive
@@ -213,13 +213,13 @@ export const DepositV3Modal = () => {
         deposit_display_currency: getCurrency(),
       });
       sendDepositEvent(DepositEvent.DepositAmountContinue);
-      onStart();
+      startApprove();
     } else if (shouldConnect) {
       handleWalletButtonClick();
     }
   }, [
     canDeposit,
-    onStart,
+    startApprove,
     shouldConnect,
     handleWalletButtonClick,
     accessFullEarnings,
@@ -468,7 +468,6 @@ export const DepositV3Modal = () => {
                 ? 'Enter amount'
                 : `Deposit ${pool.name}`}
             </Button>
-            {ApproveModal}
           </div>
           {!isBNT && <DepositFAQ />}
         </>

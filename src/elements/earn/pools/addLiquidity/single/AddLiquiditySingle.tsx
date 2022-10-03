@@ -6,7 +6,6 @@ import { AddLiquiditySingleSpaceAvailable } from 'elements/earn/pools/addLiquidi
 import { useAppSelector } from 'store';
 import { AddLiquiditySingleAmount } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleAmount';
 import { useCallback, useState } from 'react';
-import { useApproveModal } from 'hooks/useApproveModal';
 import { AddLiquiditySingleCTA } from 'elements/earn/pools/addLiquidity/single/AddLiquiditySingleCTA';
 import { useDispatch } from 'react-redux';
 import { prettifyNumber } from 'utils/helperFunctions';
@@ -31,6 +30,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { fetchProtectedPositions } from 'services/web3/protection/positions';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
 import { Events } from 'services/api/googleTagManager';
+import { useApproval } from 'hooks/useApproval';
 
 interface Props {
   pool: Pool;
@@ -113,7 +113,7 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
     );
   };
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     [{ amount, token: selectedToken }],
     addV2Protection,
     ApprovalContract.LiquidityProtection,
@@ -165,8 +165,15 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       fiatToggle
     );
     sendLiquidityEvent(Events.click);
-    onStart();
-  }, [amount, amountUsd, fiatToggle, onStart, pool.name, selectedToken.symbol]);
+    startApprove();
+  }, [
+    amount,
+    amountUsd,
+    fiatToggle,
+    startApprove,
+    pool.name,
+    selectedToken.symbol,
+  ]);
 
   if (!tkn) {
     goToPage.notFound();
@@ -212,7 +219,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
         errorMsg={handleError()}
         isBNTSelected={isBNTSelected}
       />
-      {ModalApprove}
     </Widget>
   );
 };

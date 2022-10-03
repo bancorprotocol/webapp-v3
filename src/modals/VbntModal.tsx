@@ -16,7 +16,7 @@ import {
   unstakeFailedNotification,
   unstakeNotification,
 } from 'services/notifications/notifications';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
 import { ApprovalContract } from 'services/web3/approval';
 import { useAppSelector } from 'store';
@@ -128,7 +128,7 @@ export const VbntModal = () => {
       );
   };
 
-  const [checkApprove, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     props ? [{ amount: amount, token: props.token }] : [],
     handleStakeUnstake,
     ApprovalContract.Governance,
@@ -176,7 +176,7 @@ export const VbntModal = () => {
               onClick={() => {
                 setAmount('');
                 popModal();
-                if (stake) checkApprove();
+                if (stake) startApprove();
                 else handleStakeUnstake();
               }}
               disabled={stakeDisabled}
@@ -188,7 +188,6 @@ export const VbntModal = () => {
           </div>
         </div>
       </Modal>
-      {ModalApprove}
     </>
   );
 };

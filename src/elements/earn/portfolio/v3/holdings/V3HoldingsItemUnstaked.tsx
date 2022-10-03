@@ -12,11 +12,11 @@ import {
 } from 'services/notifications/notifications';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { ErrorCode } from 'services/web3/types';
-import { useApproveModal } from 'hooks/useApproveModal';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
+import { useApproval } from 'hooks/useApproval';
 
 export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
   const { pool } = holding;
@@ -58,7 +58,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
     }
   };
 
-  const [onStart, ApproveModal] = useApproveModal(
+  const startApprove = useApproval(
     [
       {
         amount: holding.poolTokenBalance,
@@ -75,8 +75,8 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
 
   const onStartJoin = useCallback(() => {
     setTxJoinBusy(true);
-    onStart();
-  }, [onStart]);
+    startApprove();
+  }, [startApprove]);
 
   return (
     <>
@@ -131,7 +131,6 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
           )}
         </div>
       </div>
-      {ApproveModal}
     </>
   );
 };

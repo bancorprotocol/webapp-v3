@@ -47,7 +47,6 @@ export const TradeWidget = (props: Props) => {
 
         <TradeWidgetCTA {...trade} {...tradeWidget} />
       </div>
-      {trade.ApproveModal}
     </div>
   );
 };

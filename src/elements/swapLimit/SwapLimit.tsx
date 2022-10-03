@@ -21,7 +21,7 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import {
   depositETHNotification,
   rejectNotification,
@@ -288,7 +288,7 @@ export const SwapLimit = ({
     try {
       const txHash = await depositWeth(fromAmount);
       depositETHNotification(dispatch, fromAmount, txHash);
-      approveWETH();
+      startWETHApprove();
     } catch (e: any) {
       if (e.code === ErrorCode.DeniedTx)
         sendConversionEvent(
@@ -359,13 +359,13 @@ export const SwapLimit = ({
     return 'Trade';
   };
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     [{ amount: fromAmount, token: fromToken }],
     handleSwap,
     ApprovalContract.ExchangeProxy
   );
 
-  const [approveWETH, ModalApproveWETH] = useApproveModal(
+  const startWETHApprove = useApproval(
     [
       {
         amount: fromAmount,
@@ -543,8 +543,6 @@ export const SwapLimit = ({
           )}
         </div>
 
-        {ModalApprove}
-        {ModalApproveWETH}
         <Button
           size={ButtonSize.Full}
           onClick={() => {
@@ -553,7 +551,7 @@ export const SwapLimit = ({
                 modalName: ModalNames.DepositETH,
                 data: { onConfirm: deposiEthWeth(), amount: fromAmount },
               });
-            else onStart();
+            else startApprove();
           }}
           disabled={isSwapDisabled()}
           className="disabled:bg-silver dark:disabled:bg-charcoal"

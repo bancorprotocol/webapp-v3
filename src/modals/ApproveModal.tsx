@@ -2,166 +2,29 @@ import { TokenMinimal } from 'services/observables/tokens';
 import { Button, ButtonSize } from 'components/button/Button';
 import { Image } from 'components/image/Image';
 import { Modal, ModalNames } from 'modals';
-import { useState, useRef, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { web3 } from 'services/web3';
-import {
-  ApprovalContract,
-  getNetworkContractApproval,
-  setNetworkContractApproval,
-} from 'services/web3/approval';
-import { ErrorCode } from 'services/web3/types';
-import {
-  addNotification,
-  NotificationType,
-} from 'store/notification/notification';
-import { wait } from 'utils/pureFunctions';
 import { useModal } from 'hooks/useModal';
 import { useAppSelector } from 'store';
 import { getIsModalOpen, getModalData } from 'store/modals/modals';
-import { Events } from 'services/api/googleTagManager';
-
-interface TokenAmount {
-  token: TokenMinimal;
-  amount: string;
-}
 
 interface ApproveModalProps {
-  token_amounts: TokenAmount[];
-  contract: ApprovalContract | string;
-  onComplete: (txHash?: string) => void;
-  gtmPopupEvent?: (event: Events) => void;
-  gtmSelectEvent?: (isUnlimited: boolean) => void;
+  token: TokenMinimal;
+  amount: string;
+  isLoading: boolean;
+  approve: (amount?: string) => void;
 }
 
 export const ApproveModal = () => {
-  const dispatch = useDispatch();
-  const ref = useRef<string[]>([]);
-  const [tokenIndex, setTokenIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const { popModal } = useModal();
   const isOpen = useAppSelector((state) =>
     getIsModalOpen(state, ModalNames.ApproveModal)
   );
   const props = useAppSelector<ApproveModalProps | undefined>((state) =>
-    getModalData(state, ModalNames.V3WithdrawConfirm)
+    getModalData(state, ModalNames.ApproveModal)
   );
-
-  const awaitConfirmation = useCallback(async () => {
-    const receipts = [];
-    for (const txHash of ref.current) {
-      try {
-        const receipt = await web3.provider.getTransactionReceipt(txHash);
-        receipts.push(receipt);
-      } catch (e: any) {
-        console.error('failed to getTransactionReceipt for approve token tx');
-        return;
-      }
-    }
-
-    const successCount = receipts.filter((r) => r && r.status).length;
-    if (successCount === ref.current.length) {
-      props?.onComplete(ref.current.length > 0 ? ref.current[0] : undefined);
-      ref.current = [];
-    } else {
-      await wait(3000);
-      await awaitConfirmation();
-    }
-  }, [props?.onComplete]);
 
   if (!props) return null;
 
-  const { token_amounts, contract, gtmPopupEvent, gtmSelectEvent } = props;
-  if (token_amounts.length === 0) return null;
-
-  const checkNextToken = async (index = tokenIndex): Promise<any> => {
-    const nextIndex = index + 1;
-    const count = token_amounts.length;
-    if (count === nextIndex) {
-      return awaitConfirmation();
-    }
-    await wait(500);
-    setTokenIndex(nextIndex);
-    return checkApprovalRequired(nextIndex);
-  };
-
-  const checkApprovalRequired = async (tokenIndex: number = 0) => {
-    const { token, amount } = token_amounts[tokenIndex];
-    const isApprovalRequired = await getNetworkContractApproval(
-      token,
-      contract,
-      amount
-    );
-
-    if (!isApprovalRequired) {
-      return checkNextToken(tokenIndex);
-    }
-
-    gtmPopupEvent && gtmPopupEvent(Events.approvePop);
-  };
-
-  const setApproval = async (amount?: string) => {
-    if (gtmSelectEvent) {
-      const isUnlimited = amount === undefined;
-      gtmSelectEvent(isUnlimited);
-    }
-    const { token } = token_amounts[tokenIndex];
-    try {
-      setIsLoading(true);
-      const txHash = await setNetworkContractApproval(
-        token,
-        contract,
-        amount,
-        true
-      );
-
-      ref.current = [...ref.current, txHash];
-      dispatch(
-        addNotification({
-          type: NotificationType.pending,
-          title: 'Pending Confirmation',
-          msg: `Approve ${token_amounts[tokenIndex].token.symbol} is pending confirmation`,
-          updatedInfo: {
-            successTitle: 'Transaction Confirmed',
-            successMsg: `${amount || 'Unlimited'} approval set for ${
-              token_amounts[tokenIndex].token.symbol
-            }`,
-            errorTitle: 'Transaction Failed',
-            errorMsg: `${token_amounts[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
-          },
-          txHash,
-        })
-      );
-      popModal();
-      setIsLoading(false);
-
-      await checkNextToken();
-    } catch (e: any) {
-      if (e.code === ErrorCode.DeniedTx) {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Rejected',
-            msg: 'You rejected the transaction. If this was by mistake, please try again.',
-          })
-        );
-      } else {
-        dispatch(
-          addNotification({
-            type: NotificationType.error,
-            title: 'Transaction Failed',
-            msg: `${token_amounts[tokenIndex].token.symbol} approval had failed. Please try again or contact support.`,
-          })
-        );
-      }
-
-      popModal();
-      setIsLoading(false);
-    }
-  };
-
-  const token = token_amounts[tokenIndex].token;
-  const amount = token_amounts[tokenIndex].amount;
+  const { token, amount, isLoading, approve } = props;
 
   return (
     <Modal setIsOpen={popModal} isOpen={isOpen}>
@@ -179,7 +42,7 @@ export const ApproveModal = () => {
             Before you can proceed, you need to approve {token.symbol} spending.
           </p>
           <Button
-            onClick={() => setApproval()}
+            onClick={() => approve()}
             size={ButtonSize.Full}
             className="my-15"
             disabled={isLoading}
@@ -190,7 +53,7 @@ export const ApproveModal = () => {
             Want to approve before each transaction?
           </p>
           <button
-            onClick={() => setApproval(amount)}
+            onClick={() => approve(amount)}
             className="underline"
             disabled={isLoading}
           >
