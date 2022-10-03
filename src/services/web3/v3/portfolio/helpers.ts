@@ -11,11 +11,11 @@ import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardS
 import { take } from 'rxjs/operators';
 import { apiPoolsV3$ } from 'services/observables/apiData';
 import { user$ } from 'services/observables/user';
-import { poolsV3$ } from 'services/observables/pools';
+import { allpoolsV3$ } from 'services/observables/pools';
 
 export const updatePortfolioData = async (dispatch: (data: any) => void) => {
   const account = await user$.pipe(take(1)).toPromise();
-  const poolsV3 = await poolsV3$.pipe(take(1)).toPromise();
+  const poolsV3 = await allpoolsV3$.pipe(take(1)).toPromise();
 
   if (!account) {
     return;

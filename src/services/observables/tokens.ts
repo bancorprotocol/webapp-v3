@@ -10,7 +10,7 @@ import { tokenListTokens$ } from 'services/observables/tokenLists';
 import {
   apiPools$,
   apiPoolsV3$,
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
 } from 'services/observables/apiData';
 import { utils } from 'ethers';
@@ -210,7 +210,7 @@ export const updateUserBalances = async () => {
 
 export const allTokenBalances$ = combineLatest([
   user$,
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
   userBalancesReceiver$,
   oneMinute$,
@@ -251,7 +251,7 @@ const minNetworkTokenLiquidityForMinting$ = combineLatest([
 );
 
 export const tokensV2$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiPools$,
   tokenListTokens$,
   allTokenBalances$,
@@ -292,7 +292,7 @@ export const tokensV2$ = combineLatest([
 );
 
 export const tokensV3$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiTokensV3$,
   apiPoolsV3$,
   tokenListTokens$,
@@ -355,7 +355,7 @@ export const tokensForTradeWithExternal$ = combineLatest([
 );
 
 export const allTokensV2$ = combineLatest([
-  apiTokens$,
+  apiTokensV2$,
   apiPools$,
   tokenListTokens$,
   allTokenBalances$,
@@ -388,6 +388,52 @@ export const allTokensV2$ = combineLatest([
   shareReplay(1)
 );
 
+export const allTokensV3$ = combineLatest([
+  apiTokensV2$,
+  apiTokensV3$,
+  apiPoolsV3$,
+  tokenListTokens$,
+  allTokenBalances$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([
+      apiTokensV2,
+      apiTokensV3,
+      apiPoolsV3,
+      tokenListTokens,
+      balances,
+    ]) => {
+      const userPreferredTokenListTokensMap = new Map(
+        tokenListTokens.userPreferredTokenListTokens.map((t) => [t.address, t])
+      );
+      const apiPoolsMap = new Map(apiPoolsV3.map((p) => [p.poolDltId, p]));
+      const apiTokensV2Map = new Map(apiTokensV2.map((t) => [t.dlt_id, t]));
+
+      return apiTokensV3
+        .map((apiToken) => {
+          const tokenListToken = userPreferredTokenListTokensMap.get(
+            apiToken.dltId
+          );
+
+          const apiPool = apiPoolsMap.get(apiToken.dltId);
+          if (!apiPool) {
+            return undefined;
+          }
+          const v2Token = apiTokensV2Map.get(apiToken.dltId);
+          return buildTokenObjectV3(
+            apiToken,
+            apiPool,
+            balances,
+            tokenListToken,
+            v2Token
+          );
+        })
+        .filter((token) => !!token) as Token[];
+    }
+  ),
+  distinctUntilChanged<Token[]>(isEqual),
+  shareReplay(1)
+);
 export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
   shareReplay(1)
 );
