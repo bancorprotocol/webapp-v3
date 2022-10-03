@@ -268,7 +268,6 @@ const buildPoolV3Object = (
     .minus(1)
     .times(100)
     .toString();
-
   return {
     ...apiPool,
     liquidity,
@@ -410,8 +409,22 @@ export const allpoolsV3$ = combineLatest([
   switchMapIgnoreThrow(
     async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
       const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+      const poolIds = apiPoolsV3.map((pool) => pool.poolDltId);
 
-      const latestProgramIds = await fetchLatestProgramIdsMulticall(apiPoolsV3);
+      const [
+        latestProgramIds,
+        masterVaultBalances,
+        extVaultBalances,
+        extVaultIsPaused,
+      ] = await Promise.all([
+        fetchLatestProgramIdsMulticall(apiPoolsV3),
+        fetchTokenBalanceMulticall(poolIds, bancorMasterVault),
+        fetchTokenBalanceMulticall(
+          poolIds,
+          ContractsApi.ExternalProtectionVault.contractAddress
+        ),
+        ContractsApi.ExternalProtectionVault.read.isPaused(),
+      ]);
 
       const pools = await Promise.all(
         apiPoolsV3.map(
@@ -421,7 +434,9 @@ export const allpoolsV3$ = combineLatest([
               pool,
               tokensMap.get(pool.poolDltId),
               latestProgramIds,
-              standardRewardPrograms
+              standardRewardPrograms,
+              masterVaultBalances,
+              !extVaultIsPaused ? extVaultBalances : undefined
             )
         )
       );
