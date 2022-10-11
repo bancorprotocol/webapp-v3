@@ -7,7 +7,10 @@ import { Image } from 'components/image/Image';
 import { shortenString } from 'utils/pureFunctions';
 import { ReactComponent as IconWallet } from 'assets/icons/wallet.svg';
 import { useWeb3React } from '@web3-react/core';
-import { isUnsupportedNetwork } from 'utils/helperFunctions';
+import {
+  isUnsupportedNetwork,
+  requestSwitchChain,
+} from 'utils/helperFunctions';
 import { ReactComponent as WarningIcon } from 'assets/icons/warning.svg';
 
 const LoginButton = ({
@@ -75,7 +78,13 @@ export const WalletConnectButton = ({
       }}
     >
       <div>
-        Ethereum Network
+        {unsupportedNetwork ? (
+          <button className="text-error" onClick={() => requestSwitchChain()}>
+            Switch network →
+          </button>
+        ) : (
+          'Ethereum Network'
+        )}
         <hr className="border-silver dark:border-grey my-15" />
         <button
           onClick={() => handleWalletButtonClick()}
