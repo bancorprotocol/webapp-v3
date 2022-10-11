@@ -7,7 +7,6 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { bntToken, ethToken } from 'services/web3/config';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken } from 'utils/formulas';
@@ -42,6 +41,7 @@ import dayjs from 'dayjs';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
+import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
 
 interface Props {
   pool: PoolV3;
@@ -255,7 +255,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         title={'Deposit'}
         setIsOpen={onClose}
         isOpen={isOpen}
-        titleElement={<SwapSwitch />}
+        titleElement={<CurrencySelection />}
         large
       >
         <>

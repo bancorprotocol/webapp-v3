@@ -4,7 +4,6 @@ import V3WithdrawStep1 from 'elements/earn/portfolio/v3/initWithdraw/step1/V3Wit
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3WithdrawStep3';
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3WithdrawStep4';
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import {
@@ -18,6 +17,7 @@ import {
   getCurrency,
   getFiat,
 } from 'services/api/googleTagManager';
+import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
 
 interface Props {
   isOpen: boolean;
@@ -63,7 +63,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
       title={step === 4 ? 'Complete Withdraw' : 'Begin instant cooldown'}
       isOpen={isOpen}
       setIsOpen={onClose}
-      titleElement={step !== 4 && <SwapSwitch />}
+      titleElement={step !== 4 && <CurrencySelection />}
     >
       {step === 1 && (
         <V3WithdrawStep1

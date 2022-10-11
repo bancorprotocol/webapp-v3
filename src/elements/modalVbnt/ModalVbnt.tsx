@@ -1,5 +1,4 @@
 import { Modal } from 'components/modal/Modal';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
@@ -27,6 +26,7 @@ import {
   sendGovEvent,
 } from 'services/api/googleTagManager/gov';
 import { getFiat } from 'services/api/googleTagManager';
+import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -149,7 +149,7 @@ export const ModalVbnt = ({
     <>
       <Modal
         title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
-        titleElement={<SwapSwitch />}
+        titleElement={<CurrencySelection />}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         separator
