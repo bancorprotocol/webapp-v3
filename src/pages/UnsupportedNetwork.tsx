@@ -3,10 +3,11 @@ import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { ReactComponent as WarningIcon } from 'assets/icons/warning.svg';
 import { ReactComponent as IconSearch } from 'assets/icons/search.svg';
 import { requestSwitchChain } from 'utils/helperFunctions';
+import { isMobile } from 'react-device-detect';
 
 export const UnsupportedNetwork = () => {
   return (
-    <div className="flex flex-col items-center justify-center gap-15 h-screen text-center">
+    <div className="flex flex-col items-center justify-center gap-15 p-15 h-screen text-center">
       <WarningIcon className="w-40 h-40 text-error" />
       <div className="text-[22px]">Wrong network</div>
       <div className="text-secondary mb-36">
@@ -14,7 +15,10 @@ export const UnsupportedNetwork = () => {
         wallet
       </div>
       <div className="flex items-center gap-15">
-        <Button variant={ButtonVariant.Secondary} size={ButtonSize.Meduim}>
+        <Button
+          variant={ButtonVariant.Secondary}
+          size={isMobile ? ButtonSize.Small : ButtonSize.Meduim}
+        >
           <Navigate
             to="https://support.bancor.network/hc/en-us/articles/5463892405010-MetaMask-Setup-Guide"
             className="flex items-center justify-center gap-12"
@@ -25,7 +29,7 @@ export const UnsupportedNetwork = () => {
         </Button>
         <Button
           variant={ButtonVariant.Primary}
-          size={ButtonSize.Meduim}
+          size={isMobile ? ButtonSize.Small : ButtonSize.Meduim}
           onClick={() => requestSwitchChain()}
         >
           Switch Network
