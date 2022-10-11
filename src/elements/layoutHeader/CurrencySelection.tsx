@@ -7,6 +7,8 @@ import { ReactComponent as IconETH } from 'assets/icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { setBaseCurrency, setTokenCurrency } from 'store/user/user';
 import { useAppSelector } from 'store';
+import { Popover } from '@headlessui/react';
+import { DropdownTransition } from 'components/transitions/DropdownTransition';
 
 const displayPref = [
   { id: '1', title: <div>Native Token</div>, tooltip: '????' },
@@ -35,19 +37,16 @@ const baseCurrencies = [
 
 export const CurrencySelection = () => {
   return (
-    <PopoverV3
-      hover={false}
-      buttonElement={({ isOpen, setIsOpen }) => (
-        <button
-          className="flex items-center gap-10"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          Currency <IconChevronDown className="w-10" />
-        </button>
-      )}
-    >
-      <CurrencySelectionContent />
-    </PopoverV3>
+    <Popover className="relative hidden md:block">
+      <Popover.Button className="flex items-center gap-10">
+        Currency <IconChevronDown className="w-10" />
+      </Popover.Button>
+      <DropdownTransition>
+        <Popover.Panel className="dropdown-menu w-[300px]">
+          <CurrencySelectionContent />
+        </Popover.Panel>
+      </DropdownTransition>
+    </Popover>
   );
 };
 
