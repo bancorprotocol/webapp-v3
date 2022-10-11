@@ -7,6 +7,7 @@ import { TokenMinimal } from 'services/observables/tokens';
 import { SearchableTokenList } from 'components/searchableTokenList/SearchableTokenList';
 import { ReactComponent as IconChevron } from 'assets/icons/chevronDown.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
+import { TokenCurrency } from 'store/user/user';
 
 interface Props {
   input?: useTokenInputV3Return;
@@ -35,15 +36,16 @@ export const TradeWidgetInput = ({
   includedTokens,
   disableSelection,
 }: Props) => {
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   const value = useMemo(() => {
     if (!input) return '';
-    return isFiat ? input.inputFiat : input.inputTkn;
-  }, [input, isFiat]);
+    return isCurrency ? input.inputFiat : input.inputTkn;
+  }, [input, isCurrency]);
 
   const handleFocusChange = (state: boolean) => {
     if (state) {
@@ -66,9 +68,9 @@ export const TradeWidgetInput = ({
               <button
                 onClick={() => {
                   if (!disabled && input)
-                    if (input.token.balanceUsd && isFiat)
+                    if (input.token.balanceUsd && isCurrency)
                       input.handleChange(input.token.balanceUsd.toString());
-                    else if (input.token.balance && !isFiat)
+                    else if (input.token.balance && !isCurrency)
                       input.handleChange(input.token.balance.toString());
                 }}
                 className={`flex items-center ${
@@ -156,7 +158,7 @@ export const TradeWidgetInput = ({
                       isFocused
                         ? value
                         : value
-                        ? prettifyNumber(value, isFiat)
+                        ? prettifyNumber(value, isCurrency)
                         : ''
                     }
                     className="w-full text-right bg-white outline-none text-20 dark:bg-charcoal"
@@ -170,8 +172,8 @@ export const TradeWidgetInput = ({
                   {toBigNumber(input.inputTkn).plus(input.inputFiat).gt(0) && (
                     <div className="text-secondary text-12">
                       {prettifyNumber(
-                        !isFiat ? input.inputFiat : input.inputTkn,
-                        !isFiat
+                        !isCurrency ? input.inputFiat : input.inputTkn,
+                        !isCurrency
                       )}{' '}
                       {input.oppositeUnit}
                     </div>

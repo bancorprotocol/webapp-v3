@@ -10,6 +10,7 @@ import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'store';
 import { Image } from 'components/image/Image';
 import { getV2AndV3Tokens } from 'store/bancor/bancor';
+import { TokenCurrency } from 'store/user/user';
 
 interface TokenInputFieldProps {
   label?: string;
@@ -68,7 +69,8 @@ export const TokenInputField = ({
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
       : null;
 
-  const toggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const loadingBalances = useAppSelector<boolean>(
     (state) => state.user.loadingBalances
   );
@@ -82,7 +84,7 @@ export const TokenInputField = ({
 
   const onInputChange = (text: string, token?: TokenMinimal) => {
     text = sanitizeNumberInput(text);
-    if (toggle) {
+    if (isCurrency) {
       const tokenAmount = sanitizeNumberInput(
         new BigNumber(text).div(token?.usdPrice!).toString(),
         token?.decimals
@@ -107,8 +109,8 @@ export const TokenInputField = ({
   };
 
   const inputValue = () => {
-    if (!toggle && !disabled) return input;
-    if (!toggle && disabled) return `${sanitizeNumberInput(input, 6)}`;
+    if (!isCurrency && !disabled) return input;
+    if (!isCurrency && disabled) return `${sanitizeNumberInput(input, 6)}`;
     if (!amountUsd) return '';
     return `$${sanitizeNumberInput(amountUsd, 6)}`;
   };
@@ -116,10 +118,10 @@ export const TokenInputField = ({
   const convertedAmount = () => {
     const tokenAmount = prettifyNumber(input);
     const usdAmount = prettifyNumber(amountUsd ?? 0, true);
-    const amount = toggle ? tokenAmount : usdAmount;
+    const amount = isCurrency ? tokenAmount : usdAmount;
 
     if ((input || amountUsd) && token) return amount;
-    else return `${toggle ? '' : '$'}0`;
+    else return `${isCurrency ? '' : '$'}0`;
   };
 
   const setMaxAmount = () => {
@@ -129,8 +131,8 @@ export const TokenInputField = ({
         const reducedUsdBalance = new BigNumber(reducedBalance)
           .times(token.usdPrice!)
           .toString();
-        onInputChange(toggle ? reducedUsdBalance : reducedBalance, token);
-      } else onInputChange(toggle ? balanceUsd : balance, token);
+        onInputChange(isCurrency ? reducedUsdBalance : reducedBalance, token);
+      } else onInputChange(isCurrency ? balanceUsd : balance, token);
     }
   };
 
@@ -214,7 +216,7 @@ export const TokenInputField = ({
                   </div>
                 ) : (
                   <div className="text-right mr-[22px] mb-10">
-                    {convertedAmount()} {toggle && token?.symbol}
+                    {convertedAmount()} {isCurrency && token?.symbol}
                     {!usdSlippage ||
                       (usdSlippage !== 0 && (
                         <span className="ml-4 text-graphite">
@@ -229,7 +231,7 @@ export const TokenInputField = ({
                 inputMode="decimal"
                 value={inputValue()}
                 disabled={disabled}
-                placeholder={toggle ? '$0.00' : '0.00'}
+                placeholder={isCurrency ? '$0.00' : '0.00'}
                 className={inputFieldStyles}
                 onChange={(event) => onInputChange(event.target.value, token)}
               />

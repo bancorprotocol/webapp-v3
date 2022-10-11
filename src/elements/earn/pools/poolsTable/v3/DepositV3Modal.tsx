@@ -42,6 +42,7 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
+import { TokenCurrency } from 'store/user/user';
 
 interface Props {
   pool: PoolV3;
@@ -56,7 +57,8 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [tosAgreed, setTosAgreed] = useState(false);
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const { handleWalletButtonClick } = useWalletConnect();
 
@@ -195,7 +197,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         deposit_pool: pool.name,
         deposit_blockchain: getBlockchain(),
         deposit_blockchain_network: getBlockchainNetwork(),
-        deposit_input_type: getFiat(isFiat),
+        deposit_input_type: getFiat(isCurrency),
         deposit_token: pool.name,
         deposit_token_amount: amount,
         deposit_token_amount_usd: inputFiat,
@@ -216,7 +218,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
     accessFullEarnings,
     amount,
     inputFiat,
-    isFiat,
+    isCurrency,
     pool.name,
     pool.reserveToken.balance,
   ]);
@@ -233,7 +235,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
           deposit_pool: pool.name,
           deposit_blockchain: getBlockchain(),
           deposit_blockchain_network: getBlockchainNetwork(),
-          deposit_input_type: getFiat(isFiat),
+          deposit_input_type: getFiat(isCurrency),
           deposit_token: pool.name,
           deposit_token_amount: undefined,
           deposit_token_amount_usd: undefined,

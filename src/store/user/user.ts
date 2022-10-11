@@ -9,7 +9,6 @@ import {
   setForceV3LS,
   setSlippageToleranceLS,
   setTokenCurrencyLS,
-  setUsdToggleLS,
 } from 'utils/localStorage';
 import { LocaleType } from '../../i18n';
 
@@ -34,7 +33,6 @@ export interface UserState {
   darkMode: DarkMode;
   walletModal: boolean;
   slippageTolerance: number;
-  usdToggle: boolean;
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
@@ -47,7 +45,6 @@ export const initialState: UserState = {
   darkMode: DarkMode.System,
   walletModal: false,
   slippageTolerance: 0.005,
-  usdToggle: false,
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
@@ -76,10 +73,6 @@ const userSlice = createSlice({
     },
     openWalletModal: (state, action) => {
       state.walletModal = action.payload;
-    },
-    setUsdToggle: (state, action: PayloadAction<boolean>) => {
-      setUsdToggleLS(action.payload);
-      state.usdToggle = action.payload;
     },
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
@@ -127,7 +120,6 @@ export const {
   setSlippageTolerance,
   setLocale,
   openWalletModal,
-  setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
   setTokenCurrency,
