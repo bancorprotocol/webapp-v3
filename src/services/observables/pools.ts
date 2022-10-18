@@ -1,4 +1,9 @@
-import { allTokensV2$, Token, tokensV3$ } from 'services/observables/tokens';
+import {
+  allTokensV2$,
+  allTokensV3$,
+  Token,
+  tokensV3$,
+} from 'services/observables/tokens';
 import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
@@ -263,7 +268,6 @@ const buildPoolV3Object = (
     .minus(1)
     .times(100)
     .toString();
-
   return {
     ...apiPool,
     liquidity,
@@ -390,6 +394,52 @@ export const poolsV3$ = combineLatest([
         )
       );
 
+      return pools.filter((pool) => !!pool) as PoolV3[];
+    }
+  ),
+  distinctUntilChanged<PoolV3[]>(isEqual),
+  shareReplay(1)
+);
+
+export const allpoolsV3$ = combineLatest([
+  apiPoolsV3$,
+  allTokensV3$,
+  standardRewardPrograms$,
+]).pipe(
+  switchMapIgnoreThrow(
+    async ([apiPoolsV3, allTokens, standardRewardPrograms]) => {
+      const tokensMap = new Map(allTokens.map((t) => [t.address, t]));
+      const poolIds = apiPoolsV3.map((pool) => pool.poolDltId);
+
+      const [
+        latestProgramIds,
+        masterVaultBalances,
+        extVaultBalances,
+        extVaultIsPaused,
+      ] = await Promise.all([
+        fetchLatestProgramIdsMulticall(apiPoolsV3),
+        fetchTokenBalanceMulticall(poolIds, bancorMasterVault),
+        fetchTokenBalanceMulticall(
+          poolIds,
+          ContractsApi.ExternalProtectionVault.contractAddress
+        ),
+        ContractsApi.ExternalProtectionVault.read.isPaused(),
+      ]);
+
+      const pools = await Promise.all(
+        apiPoolsV3.map(
+          async (pool) =>
+            await buildPoolV3Object(
+              tokensMap,
+              pool,
+              tokensMap.get(pool.poolDltId),
+              latestProgramIds,
+              standardRewardPrograms,
+              masterVaultBalances,
+              !extVaultIsPaused ? extVaultBalances : undefined
+            )
+        )
+      );
       return pools.filter((pool) => !!pool) as PoolV3[];
     }
   ),
