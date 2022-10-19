@@ -25,7 +25,7 @@ export const V3HoldingsItemWithdraw = ({ holding }: { holding: Holding }) => {
             onClick={() =>
               pushModal({
                 modalName: ModalNames.V3Withdraw,
-                data: holding,
+                data: { holding },
               })
             }
           >

@@ -213,7 +213,7 @@ export const V3HoldingPage = () => {
                       onClick={() =>
                         pushModal({
                           modalName: ModalNames.DepositV3,
-                          data: pool,
+                          data: { pool },
                         })
                       }
                       size={ButtonSize.ExtraSmall}
@@ -248,7 +248,7 @@ export const V3HoldingPage = () => {
                       onClick={() =>
                         pushModal({
                           modalName: ModalNames.V3ManagePrograms,
-                          data: holding,
+                          data: { holding },
                         })
                       }
                     >
@@ -272,7 +272,7 @@ export const V3HoldingPage = () => {
                     onClick={() =>
                       pushModal({
                         modalName: ModalNames.V3Withdraw,
-                        data: holding,
+                        data: { holding },
                       })
                     }
                     disabled={isDisabled}

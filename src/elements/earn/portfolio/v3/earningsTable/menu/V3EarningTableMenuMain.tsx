@@ -22,7 +22,7 @@ export const V3EarningTableMenuMain = memo(
     const { pushModal } = useModal();
 
     const handleWithdrawClick = useCallback(() => {
-      pushModal({ modalName: ModalNames.V3Withdraw, data: holding });
+      pushModal({ modalName: ModalNames.V3Withdraw, data: { holding } });
     }, [holding, pushModal]);
 
     const handleBonusClick = useCallback(() => {

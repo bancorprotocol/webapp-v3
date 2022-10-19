@@ -112,7 +112,7 @@ export const V3HoldingsItemUnstaked = ({ holding }: { holding: Holding }) => {
             onClick={() =>
               pushModal({
                 modalName: ModalNames.V3Withdraw,
-                data: holding,
+                data: { holding },
               })
             }
           >
