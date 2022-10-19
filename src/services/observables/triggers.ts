@@ -19,7 +19,7 @@ import {
 import { getTokenListLS, setTokenListLS } from 'utils/localStorage';
 import { loadingLockedBnt$, loadingPositions$, loadingRewards$ } from './user';
 import { statisticsV3$ } from 'services/observables/statistics';
-import { setv2Pools, setv3Pools } from 'store/bancor/pool';
+import { setAllV3Pools, setv2Pools, setv3Pools } from 'store/bancor/pool';
 import {
   setLoadingLockedBnt,
   setLoadingPositions,
@@ -56,7 +56,7 @@ import {
   tokenListTokens$,
   userPreferredListIds$,
 } from 'services/observables/tokenLists';
-import { poolsV2$, poolsV3$ } from 'services/observables/pools';
+import { allpoolsV3$, poolsV2$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
 import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
 import { stakedAmount$, unstakeTimer$ } from './gov';
@@ -65,6 +65,10 @@ import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 export const subscribeToObservables = (dispatch: any) => {
   poolsV3$.subscribe((pools) => {
     dispatch(setv3Pools(pools));
+  });
+
+  allpoolsV3$.subscribe((pools) => {
+    dispatch(setAllV3Pools(pools));
   });
 
   allTokensV2$.subscribe((tokens) => {

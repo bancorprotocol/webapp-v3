@@ -17,7 +17,7 @@ export const apiData$ = combineLatest([oneMinute$]).pipe(
   shareReplay(1)
 );
 
-export const apiTokens$ = apiData$.pipe(
+export const apiTokensV2$ = apiData$.pipe(
   pluck('tokens'),
   distinctUntilChanged<WelcomeData['tokens']>(isEqual),
   shareReplay(1)

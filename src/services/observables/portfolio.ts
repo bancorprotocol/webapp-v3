@@ -11,7 +11,7 @@ import { WithdrawalSettings } from 'store/portfolio/v3Portfolio.types';
 import { fetchStandardRewardsByUser } from 'services/web3/v3/portfolio/standardStaking';
 import { oneMinute$ } from 'services/observables/timers';
 import { apiPoolsV3$ } from 'services/observables/apiData';
-import { poolsV3$ } from 'services/observables/pools';
+import { allpoolsV3$ } from 'services/observables/pools';
 
 export const portfolioHoldings$ = combineLatest([
   apiPoolsV3$,
@@ -28,7 +28,7 @@ export const portfolioHoldings$ = combineLatest([
 
 export const portfolioStandardRewards$ = combineLatest([
   user$,
-  poolsV3$,
+  allpoolsV3$,
   oneMinute$,
 ]).pipe(
   switchMapIgnoreThrow(async ([user, poolsV3]) => {

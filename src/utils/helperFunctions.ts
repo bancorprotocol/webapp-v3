@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { BigNumber as BigNumberEther } from 'ethers';
+import { BigNumber as BigNumberEther, utils } from 'ethers';
 import numeral from 'numeral';
 import { EthNetworks } from 'services/web3/types';
 import { shrinkToken } from 'utils/formulas';
@@ -102,6 +102,15 @@ export const isUnsupportedNetwork = (
   network: EthNetworks | undefined
 ): boolean => {
   return !!network && !EthNetworks[network];
+};
+
+export const requestSwitchChain = async (
+  network: EthNetworks = EthNetworks.Mainnet
+) => {
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: utils.hexValue(network) }],
+  });
 };
 
 export const calculateBntNeededToOpenSpace = (
