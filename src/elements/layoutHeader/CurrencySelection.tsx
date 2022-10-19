@@ -11,8 +11,17 @@ import { Popover } from '@headlessui/react';
 import { DropdownTransition } from 'components/transitions/DropdownTransition';
 
 const displayPref = [
-  { id: '1', title: <div>Native Token</div>, tooltip: '????' },
-  { id: '2', title: <div>Base Currency</div>, tooltip: '????' },
+  {
+    id: '1',
+    title: <div>Native Token</div>,
+    tooltip:
+      "Show the Token I'm interacting with in it's native currency as much as possible",
+  },
+  {
+    id: '2',
+    title: <div>Base Currency</div>,
+    tooltip: 'Show all the numbers in the currency of my choice',
+  },
 ];
 
 const baseCurrencies = [
