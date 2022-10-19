@@ -32,6 +32,8 @@ const AmountWithPopover = ({
   };
 }) => {
   const baseCurrency = useAppSelector((state) => state.user.baseCurrency);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isToken = tokenCurrency === TokenCurrency.Token;
   const isUSD = baseCurrency === BaseCurrency.USD;
   const prettifiedAmount = prettifyNumber(amount, { ...options, usd: isUSD });
 
@@ -39,7 +41,7 @@ const AmountWithPopover = ({
     return (
       <>
         {prettifiedAmount}
-        {!isUSD && ' ETH'}
+        {!isUSD && !isToken && ' ETH'}
       </>
     );
   }
@@ -51,7 +53,7 @@ const AmountWithPopover = ({
       )}
     >
       {prettifyNumber(amount, { ...options, abbreviate: false, usd: isUSD })}{' '}
-      {!isUSD && 'ETH'}
+      {!isUSD && !isToken && ' ETH'}
       {symbol && symbol}
     </PopoverV3>
   );

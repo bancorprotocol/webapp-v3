@@ -68,7 +68,7 @@ export const PoolsTable = ({
               : prettifyNumber(
                   isUSD ? row.stakedBalance.usd : row.stakedBalance.eth,
                   isUSD
-                ) + (isUSD ? '' : ' ETH')}
+                ).slice(0, 6) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -79,7 +79,7 @@ export const PoolsTable = ({
               : prettifyNumber(
                   isUSD ? row.volume7d.usd : row.volume7d.eth,
                   isUSD
-                ) + (isUSD ? '' : ' ETH')}
+                ).slice(0, 6) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -87,8 +87,10 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(isUSD ? row.fees7d.usd : row.fees7d.eth, isUSD) +
-                (isUSD ? '' : ' ETH')}
+              : prettifyNumber(
+                  isUSD ? row.fees7d.usd : row.fees7d.eth,
+                  isUSD
+                ).slice(0, 4) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -104,7 +106,7 @@ export const PoolsTable = ({
                     ? toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd)
                     : toBigNumber(row.fees7d.eth).minus(row.networkFees7d.eth),
                   isUSD
-                ) + (isUSD ? '' : ' ETH')}
+                ).slice(0, 4) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
       </div>
