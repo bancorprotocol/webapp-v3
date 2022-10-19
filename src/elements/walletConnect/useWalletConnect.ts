@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { openNewTab, wait } from 'utils/pureFunctions';
 import { setUser } from 'services/observables/user';
 import { isForkAvailable } from 'services/web3/config';
+import { requestSwitchChain } from 'utils/helperFunctions';
 
 export interface UseWalletConnect {
   isOpen: boolean;
@@ -94,6 +95,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           );
           await wait(500);
           setIsPending(false);
+          requestSwitchChain();
         } catch (e: any) {
           console.error('failed to connect wallet. ', e.message);
           setIsError(true);
