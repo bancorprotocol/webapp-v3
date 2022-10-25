@@ -13,7 +13,7 @@ import {
   swapNotification,
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
-import { openWalletModal } from 'store/user/user';
+import { openWalletModal, TokenCurrency } from 'store/user/user';
 import { ApprovalContract } from 'services/web3/approval';
 import { ethToken, wethToken } from 'services/web3/config';
 import { withdrawWeth } from 'services/web3/swap/limit';
@@ -50,7 +50,8 @@ export const useTrade = ({
     (state) => state.user.slippageTolerance
   );
   const account = useAppSelector((state) => state.user.account);
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
 
   const [isBusy, setIsBusy] = useState(false);
 
@@ -84,7 +85,7 @@ export const useTrade = ({
       fromAmountUsd,
       toAmount,
       toAmountUsd,
-      fiatToggle,
+      isCurrency,
       rate,
       undefined,
       undefined,

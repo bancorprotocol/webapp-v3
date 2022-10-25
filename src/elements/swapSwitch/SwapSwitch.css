@@ -1,7 +1,0 @@
-.swap-switch {
-  @apply relative inline-flex flex-shrink-0 h-24 w-[45px] md:h-16 md:w-30 items-center border-[3px] border-primary rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-opacity-75;
-}
-
-.swap-switch-toggle {
-  @apply pointer-events-none inline-block h-18 w-18 md:h-12 md:w-12 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200;
-}

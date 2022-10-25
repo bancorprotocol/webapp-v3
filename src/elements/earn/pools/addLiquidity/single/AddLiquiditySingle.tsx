@@ -31,6 +31,7 @@ import { useNavigation } from 'hooks/useNavigation';
 import { fetchProtectedPositions } from 'services/web3/protection/positions';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
 import { Events } from 'services/api/googleTagManager';
+import { TokenCurrency } from 'store/user/user';
 
 interface Props {
   pool: Pool;
@@ -52,7 +53,8 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
 
@@ -162,11 +164,11 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       amountUsd,
       undefined,
       undefined,
-      fiatToggle
+      isCurrency
     );
     sendLiquidityEvent(Events.click);
     onStart();
-  }, [amount, amountUsd, fiatToggle, onStart, pool.name, selectedToken.symbol]);
+  }, [amount, amountUsd, isCurrency, onStart, pool.name, selectedToken.symbol]);
 
   if (!tkn) {
     goToPage.notFound();

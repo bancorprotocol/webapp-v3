@@ -2,6 +2,7 @@ import { useAppSelector } from 'store';
 import { useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { wait } from 'utils/pureFunctions';
+import { TokenCurrency } from 'store/user/user';
 
 export interface AmountTknFiat {
   tkn: string;
@@ -16,7 +17,8 @@ export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const [step, setStep] = useState(1);
   const [requestId, setRequestId] = useState('');
   const [inputTkn, setInputTkn] = useState('');
@@ -55,7 +57,7 @@ export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
 
   return {
     amount,
-    isFiat,
+    isCurrency,
     inputTkn,
     setInputTkn,
     inputFiat,
