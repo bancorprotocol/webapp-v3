@@ -8,6 +8,7 @@ import {
   setDarkMode,
   setDarkModeCss,
   setSlippageTolerance,
+  setUsdToggle,
 } from 'store/user/user';
 import { setNotifications } from 'store/notification/notification';
 import { store, useAppSelector } from 'store';
@@ -16,6 +17,7 @@ import {
   getDarkModeLS,
   getNotificationsLS,
   getSlippageToleranceLS,
+  getUsdToggleLS,
   setNotificationsLS,
 } from 'utils/localStorage';
 import { subscribeToObservables } from 'services/observables/triggers';
@@ -64,6 +66,9 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
+    const usd = getUsdToggleLS();
+    if (usd) dispatch(setUsdToggle(usd));
+
     const notify = getNotificationsLS();
     if (notify) dispatch(setNotifications(notify));
 

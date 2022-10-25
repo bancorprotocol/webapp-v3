@@ -1,4 +1,5 @@
 import { Modal } from 'components/modal/Modal';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
@@ -26,8 +27,6 @@ import {
   sendGovEvent,
 } from 'services/api/googleTagManager/gov';
 import { getFiat } from 'services/api/googleTagManager';
-import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
-import { TokenCurrency } from 'store/user/user';
 
 interface ModalVbntProps {
   setIsOpen: Function;
@@ -47,8 +46,7 @@ export const ModalVbnt = ({
   onCompleted,
 }: ModalVbntProps) => {
   const account = useAppSelector((state) => state.user.account);
-  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
-  const isCurrency = tokenCurrency === TokenCurrency.Currency;
+  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
@@ -63,7 +61,7 @@ export const ModalVbnt = ({
     : stakeBalance;
 
   const govProperties: GovProperties = {
-    stake_input_type: getFiat(isCurrency),
+    stake_input_type: getFiat(isFiat),
     stake_token_amount_usd: amount,
     stake_token_portion_percent:
       selPercentage !== -1 ? percentages[selPercentage].toFixed(0) : 'N/A',
@@ -151,7 +149,7 @@ export const ModalVbnt = ({
     <>
       <Modal
         title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
-        titleElement={<CurrencySelection />}
+        titleElement={<SwapSwitch />}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         separator

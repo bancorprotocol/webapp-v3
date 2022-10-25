@@ -4,7 +4,6 @@ import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
-import { TokenCurrency } from 'store/user/user';
 
 interface useTokenInputV3Props {
   token?: TokenMinimal;
@@ -35,15 +34,14 @@ export const useTknFiatInput = ({
   setInputFiat,
   onDebounce = () => {},
 }: useTokenInputV3Props): useTokenInputV3Return | undefined => {
-  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
-  const isCurrency = tokenCurrency === TokenCurrency.Currency;
+  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const symbol = token?.symbol ?? 'N/A';
   const decimals = token?.decimals ?? 18;
   const usdPrice = token?.usdPrice ?? '0';
 
-  const inputUnit = isCurrency ? 'USD' : symbol;
+  const inputUnit = isFiat ? 'USD' : symbol;
 
-  const oppositeUnit = isCurrency ? symbol : 'USD';
+  const oppositeUnit = isFiat ? symbol : 'USD';
   const [isTyping, setIsTyping] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -61,7 +59,7 @@ export const useTknFiatInput = ({
       setIsTyping(true);
       const value = sanitizeNumberInput(val);
 
-      if (isCurrency) {
+      if (isFiat) {
         const oppositeValue = value
           ? calcOppositeValue(true, value, usdPrice, decimals)
           : '';
@@ -81,7 +79,7 @@ export const useTknFiatInput = ({
     },
     [
       debouncedSetIsTyping,
-      isCurrency,
+      isFiat,
       usdPrice,
       decimals,
       setInputTkn,

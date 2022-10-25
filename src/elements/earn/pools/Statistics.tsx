@@ -5,11 +5,6 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Statistic } from 'services/observables/statistics';
 import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
-import { TokenMinimal } from 'services/observables/tokens';
-import { ethToken } from 'services/web3/config';
-import { getTradeTokensWithExternal } from 'store/bancor/bancor';
-import { BaseCurrency } from 'store/user/user';
-import { BigNumber } from 'bignumber.js';
 
 const averageFormat = {
   average: true,
@@ -21,18 +16,6 @@ const averageFormat = {
 
 export const Statistics = () => {
   const stats = useAppSelector((state) => state.bancor.statistics);
-  const tokens = useAppSelector<TokenMinimal[]>(getTradeTokensWithExternal);
-  const eth = tokens.find((x) => x.address === ethToken);
-  const baseCurrency = useAppSelector((state) => state.user.baseCurrency);
-  const isETH = baseCurrency === BaseCurrency.ETH;
-
-  const convertToETH = (usd: string) => {
-    return eth && isETH
-      ? new BigNumber(usd)
-          .times(new BigNumber(1).div(eth.usdPrice ?? ''))
-          .toString()
-      : usd;
-  };
 
   return (
     <section className="p-20 content-block">
@@ -49,9 +32,7 @@ export const Statistics = () => {
             <div>
               <div className="text-secondary mb-15">Total Liquidity</div>
               <div className="text-[30px] text-black-medium dark:text-white-medium uppercase">
-                {`${isETH ? 'ETH' : '$'} ${numbro(
-                  convertToETH(stats.totalLiquidity)
-                ).format(averageFormat)}`}
+                {`$${numbro(stats.totalLiquidity).format(averageFormat)}`}
               </div>
             </div>
           </div>
@@ -62,9 +43,7 @@ export const Statistics = () => {
                 <div>
                   <div className="text-secondary">Volume</div>
                   <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`${isETH ? 'ETH' : '$'} ${numbro(
-                      convertToETH(stats.totalVolume)
-                    ).format(averageFormat)}`}
+                    {`$${numbro(stats.totalVolume).format(averageFormat)}`}
                   </div>
                 </div>
               </div>
@@ -77,9 +56,7 @@ export const Statistics = () => {
                     {toolTip(stats)}
                   </div>
                   <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`${isETH ? 'ETH' : '$'} ${numbro(
-                      convertToETH(stats.totalFees)
-                    ).format(averageFormat)}`}
+                    {`$${numbro(stats.totalFees).format(averageFormat)}`}
                   </div>
                 </div>
               </div>

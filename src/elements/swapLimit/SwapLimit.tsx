@@ -36,7 +36,6 @@ import {
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { Events, getLimitMarket } from 'services/api/googleTagManager';
-import { TokenCurrency } from 'store/user/user';
 
 enum Field {
   from,
@@ -86,8 +85,7 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
-  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
-  const isCurrency = tokenCurrency === TokenCurrency.Currency;
+  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
   const percentages = useMemo(() => [1, 3, 5], []);
 
   const calculatePercentageByRate = useCallback(
@@ -350,7 +348,7 @@ export const SwapLimit = ({
       fromAmountUsd,
       toAmount,
       toAmountUsd,
-      isCurrency,
+      fiatToggle,
       rate,
       percentage,
       duration.asSeconds().toString()
