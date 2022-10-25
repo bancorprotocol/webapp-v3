@@ -26,7 +26,7 @@ const displayPref = [
 
 const baseCurrencies = [
   {
-    id: '1',
+    id: '3',
     title: (
       <div className="flex items-center gap-10">
         <IconUSD /> USD
@@ -34,7 +34,7 @@ const baseCurrencies = [
     ),
   },
   {
-    id: '2',
+    id: '4',
     title: (
       <div className="flex items-center gap-10">
         <IconETH />
@@ -46,7 +46,7 @@ const baseCurrencies = [
 
 export const CurrencySelection = () => {
   return (
-    <Popover className="relative hidden md:block">
+    <Popover className="relative hidden md:block text-14">
       <Popover.Button className="flex items-center gap-10">
         Currency <IconChevronDown className="w-10" />
       </Popover.Button>
