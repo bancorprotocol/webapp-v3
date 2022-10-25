@@ -17,19 +17,18 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import useAsyncEffect from 'use-async-effect';
 import { expandToken, shrinkToken } from 'utils/formulas';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
-import V3WithdrawModal from '../initWithdraw/V3WithdrawModal';
 import BigNumber from 'bignumber.js';
 import { getTokensByIdV2V3 } from 'store/bancor/bancor';
 import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
-import { V3ManageProgramsModal } from './V3ManageProgramsModal';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 import { TokenCurrency } from 'store/user/user';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
   const { goToPage } = useNavigation();
-  const [isOpen, setIsOpen] = useState(false);
+  const { pushModal } = useModal();
 
   const account = useAppSelector((state) => state.user.account);
   const holdings = useAppSelector(getPortfolioHoldings);
@@ -222,18 +221,18 @@ export const V3HoldingPage = () => {
                         {prettifyNumber(token.balance ?? 0)}
                       </div>
                     </div>
-                    <DepositV3Modal
-                      pool={pool}
-                      renderButton={(onClick) => (
-                        <Button
-                          onClick={() => onClick()}
-                          size={ButtonSize.ExtraSmall}
-                          variant={ButtonVariant.Secondary}
-                        >
-                          Deposit
-                        </Button>
-                      )}
-                    />
+                    <Button
+                      onClick={() =>
+                        pushModal({
+                          modalName: ModalNames.DepositV3,
+                          data: { pool },
+                        })
+                      }
+                      size={ButtonSize.ExtraSmall}
+                      variant={ButtonVariant.Secondary}
+                    >
+                      Deposit
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -255,18 +254,18 @@ export const V3HoldingPage = () => {
                         {prettifyNumber(totalPTAllPrograms)}
                       </div>
                     </div>
-                    <V3ManageProgramsModal
-                      holding={holding}
-                      renderButton={(onClick) => (
-                        <Button
-                          size={ButtonSize.ExtraSmall}
-                          variant={ButtonVariant.Secondary}
-                          onClick={() => onClick()}
-                        >
-                          Manage
-                        </Button>
-                      )}
-                    />
+                    <Button
+                      size={ButtonSize.ExtraSmall}
+                      variant={ButtonVariant.Secondary}
+                      onClick={() =>
+                        pushModal({
+                          modalName: ModalNames.V3ManagePrograms,
+                          data: { holding },
+                        })
+                      }
+                    >
+                      Manage
+                    </Button>
                   </div>
                   <hr className="hidden md:block my-30 border-silver dark:border-grey" />
                 </>
@@ -279,15 +278,15 @@ export const V3HoldingPage = () => {
                   </div>
                 </div>
                 <>
-                  <V3WithdrawModal
-                    holding={holding}
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                  />
                   <Button
                     size={ButtonSize.ExtraSmall}
                     variant={ButtonVariant.Secondary}
-                    onClick={() => setIsOpen(true)}
+                    onClick={() =>
+                      pushModal({
+                        modalName: ModalNames.V3Withdraw,
+                        data: { holding },
+                      })
+                    }
                     disabled={isDisabled}
                   >
                     Withdraw

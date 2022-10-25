@@ -8,37 +8,33 @@ import { getAvailableToStakeTokens } from 'store/bancor/token';
 import { Token } from 'services/observables/tokens';
 import { PoolV3 } from 'services/observables/pools';
 import 'swiper/css';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 const AvailableItem = ({ token, pool }: { token: Token; pool: PoolV3 }) => {
+  const { pushModal } = useModal();
+
   return (
-    <DepositV3Modal
-      pool={pool}
-      renderButton={(onClick) => (
-        <button
-          onClick={() => onClick()}
-          className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
-        >
-          <TokenBalance
-            symbol={token.symbol}
-            amount={token.balance!}
-            usdPrice={token.usdPrice!}
-            imgUrl={token.logoURI}
-          />
-          <div>
-            <div className="mb-5 text-secondary">Earn</div>
-            <div className="flex">
-              <span className="text-[22px]">
-                {pool.apr7d.total === 0 && !pool.depositingEnabled
-                  ? 'New'
-                  : `${pool.apr7d.total.toFixed(2)}%`}
-              </span>
-              <IconArrow className="w-10 rotate-[90deg] ml-10" />
-            </div>
-          </div>
-        </button>
-      )}
-    />
+    <button
+      onClick={() =>
+        pushModal({ modalName: ModalNames.DepositV3, data: { pool } })
+      }
+      className="flex flex-col items-start w-full space-y-20 text-left content-block p-14"
+    >
+      <TokenBalance
+        symbol={token.symbol}
+        amount={token.balance!}
+        usdPrice={token.usdPrice!}
+        imgUrl={token.logoURI}
+      />
+      <div>
+        <div className="mb-5 text-secondary">Earn</div>
+        <div className="flex">
+          <span className="text-[22px]">{pool.apr7d.total.toFixed(2)}%</span>
+          <IconArrow className="w-10 rotate-[90deg] ml-10" />
+        </div>
+      </div>
+    </button>
   );
 };
 

@@ -1,5 +1,4 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { V3BonusesModal } from 'elements/earn/portfolio/v3/bonuses/V3BonusesModal';
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { prettifyNumber } from 'utils/helperFunctions';
 import {
@@ -13,9 +12,12 @@ import {
   getCurrency,
 } from 'services/api/googleTagManager';
 import { pool } from 'store/bancor/pool';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const V3ClaimBonuses = () => {
-  const { setBonusModalOpen, bonusUsdTotal, isLoading } = useV3Bonuses();
+  const { bonusUsdTotal, isLoading } = useV3Bonuses();
+  const { pushModal } = useModal();
 
   return (
     <>
@@ -42,7 +44,7 @@ export const V3ClaimBonuses = () => {
                   withdraw_display_currency: getCurrency(),
                 });
                 sendWithdrawBonusEvent(WithdrawBonusEvent.CTAClick);
-                setBonusModalOpen(true);
+                pushModal({ modalName: ModalNames.V3Bonuses });
               }}
               disabled={bonusUsdTotal === 0}
             >
@@ -55,7 +57,6 @@ export const V3ClaimBonuses = () => {
           </div>
         )}
       </section>
-      <V3BonusesModal />
     </>
   );
 };

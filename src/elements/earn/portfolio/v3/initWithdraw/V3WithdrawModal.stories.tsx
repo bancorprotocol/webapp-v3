@@ -1,7 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { withDesign } from 'storybook-addon-designs';
-import { useState } from 'react';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
+import V3WithdrawModal from 'modals/V3WithdrawModal';
 import { store } from 'store';
 import { Provider } from 'react-redux';
 
@@ -12,11 +11,9 @@ export default {
 } as ComponentMeta<typeof V3WithdrawModal>;
 
 export const WithdrawModal: ComponentStory<typeof V3WithdrawModal> = (args) => {
-  const [isOpen, setIsOpen] = useState(true);
-
   return (
     <Provider store={store}>
-      <V3WithdrawModal {...args} isOpen={isOpen} setIsOpen={setIsOpen} />
+      <V3WithdrawModal />
     </Provider>
   );
 };

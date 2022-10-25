@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import BigNumber from 'bignumber.js';
@@ -157,7 +157,7 @@ export const useV3WithdrawStep3 = ({
     if (initiatedWithdraw.current) setStep(4);
   }, [withdrawalRequests, setStep]);
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     approveTokens,
     (approvalHash?: string) => initWithdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
@@ -181,13 +181,12 @@ export const useV3WithdrawStep3 = ({
       return;
     }
     hasStarted.current = true;
-    onStart();
-  }, [onStart, poolTokenAmountWei]);
+    startApprove();
+  }, [startApprove, poolTokenAmountWei]);
 
   return {
     token: reserveToken,
     handleButtonClick,
-    ModalApprove,
     txBusy,
   };
 };

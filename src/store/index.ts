@@ -7,6 +7,7 @@ import { notification } from 'store/notification/notification';
 import { liquidity } from './liquidity/liquidity';
 import { v3Portfolio } from 'store/portfolio/v3Portfolio';
 import { gov } from './gov/gov';
+import { modals } from './modals/modals';
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -27,6 +28,7 @@ export const store = configureStore({
     liquidity,
     v3Portfolio,
     gov,
+    modals,
   },
 });
 

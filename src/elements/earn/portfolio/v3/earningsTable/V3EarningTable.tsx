@@ -1,7 +1,6 @@
 import { DataTable, TableColumn } from 'components/table/DataTable';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { TokenBalance } from 'components/tokenBalance/TokenBalance';
-import V3WithdrawModal from 'elements/earn/portfolio/v3/initWithdraw/V3WithdrawModal';
 import { V3EarningTableMenu } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenu';
 import { useAppSelector } from 'store';
 import {
@@ -9,15 +8,14 @@ import {
   getPortfolioHoldings,
 } from 'store/portfolio/v3Portfolio';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-// import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
 import { SortingRule } from 'react-table';
 import { shrinkToken } from 'utils/formulas';
 import { prettifyNumber } from 'utils/helperFunctions';
-import { DepositV3Modal } from 'elements/earn/pools/poolsTable/v3/DepositV3Modal';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const V3EarningTable = () => {
-  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [holdingToWithdraw, setHoldingToWithdraw] = useState<Holding>();
+  const { pushModal } = useModal();
 
   const holdings = useAppSelector(getPortfolioHoldings);
   const isLoadingHoldings = useAppSelector(getIsLoadingHoldings);
@@ -73,16 +71,14 @@ export const V3EarningTable = () => {
         accessor: 'poolTokenBalance',
         Cell: ({ cell }) => (
           <div className="flex items-center">
-            <DepositV3Modal
-              pool={cell.row.original.pool}
-              renderButton={(onClick) => (
-                <V3EarningTableMenu
-                  holding={cell.row.original}
-                  handleDepositClick={onClick}
-                  setIsWithdrawModalOpen={setIsWithdrawModalOpen}
-                  setHoldingToWithdraw={setHoldingToWithdraw}
-                />
-              )}
+            <V3EarningTableMenu
+              holding={cell.row.original}
+              handleDepositClick={() =>
+                pushModal({
+                  modalName: ModalNames.DepositV3,
+                  data: { pool: cell.row.original.pool },
+                })
+              }
             />
           </div>
         ),
@@ -112,14 +108,6 @@ export const V3EarningTable = () => {
           defaultSort={defaultSort}
         />
       </div>
-
-      {holdingToWithdraw && (
-        <V3WithdrawModal
-          isOpen={isWithdrawModalOpen}
-          setIsOpen={setIsWithdrawModalOpen}
-          holding={holdingToWithdraw}
-        />
-      )}
     </section>
   );
 };

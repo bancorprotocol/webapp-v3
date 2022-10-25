@@ -5,7 +5,6 @@ import { usePopper } from 'react-popper';
 import { V3EarningsTableMenuContent } from 'elements/earn/portfolio/v3/earningsTable/menu/V3EarningTableMenuContent';
 import { Placement } from '@popperjs/core';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
-import { useApproveModal } from 'hooks/useApproveModal';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { expandToken } from 'utils/formulas';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
@@ -16,25 +15,18 @@ import {
   rejectNotification,
 } from 'services/notifications/notifications';
 import { ErrorCode } from 'services/web3/types';
+import { useApproval } from 'hooks/useApproval';
 
 export type EarningTableMenuState = 'main' | 'bonus' | 'rate';
 
 interface Props {
-  setIsWithdrawModalOpen: (isOpen: boolean) => void;
   holding: Holding;
-  setHoldingToWithdraw: (holding: Holding) => void;
   handleDepositClick: () => void;
   placement?: Placement;
 }
 
 export const V3EarningTableMenu = memo(
-  ({
-    holding,
-    setHoldingToWithdraw,
-    setIsWithdrawModalOpen,
-    handleDepositClick,
-    placement = 'left-start',
-  }: Props) => {
+  ({ holding, handleDepositClick, placement = 'left-start' }: Props) => {
     const popperElRef = useRef(null);
     const [targetElement, setTargetElement] = useState(null);
     const [popperElement, setPopperElement] = useState(null);
@@ -82,7 +74,7 @@ export const V3EarningTableMenu = memo(
       }
     };
 
-    const [onStart, ApproveModal] = useApproveModal(
+    const startApprove = useApproval(
       [
         {
           amount: holding.poolTokenBalance,
@@ -100,12 +92,11 @@ export const V3EarningTableMenu = memo(
 
     const onStartJoin = useCallback(() => {
       setTxJoinBusy(true);
-      onStart();
-    }, [onStart]);
+      startApprove();
+    }, [startApprove]);
 
     return (
       <>
-        {ApproveModal}
         <Popover className="relative">
           {({ open }) => (
             <>
@@ -141,8 +132,6 @@ export const V3EarningTableMenu = memo(
                       <div className="overflow-hidden rounded bg-white dark:bg-black p-20 border border-silver dark:border-grey h-[280px]">
                         <V3EarningsTableMenuContent
                           holding={holding}
-                          setHoldingToWithdraw={setHoldingToWithdraw}
-                          setIsWithdrawModalOpen={setIsWithdrawModalOpen}
                           handleDepositClick={handleDepositClick}
                           onStartJoin={onStartJoin}
                           txJoinBusy={txJoinBusy}

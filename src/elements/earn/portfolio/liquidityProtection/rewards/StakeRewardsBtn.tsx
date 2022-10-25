@@ -1,10 +1,10 @@
-import { useState } from 'react';
 import { useAppSelector } from 'store';
 import { getProtectedPools } from 'store/bancor/pool';
-import { SelectPoolModal } from 'components/selectPoolModal/SelectPoolModal';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { Button } from 'components/button/Button';
+import { ModalNames } from 'modals';
+import { useModal } from 'hooks/useModal';
 
 interface Props {
   buttonLabel: string;
@@ -13,8 +13,8 @@ interface Props {
 
 export const StakeRewardsBtn = ({ buttonLabel, posGroupId }: Props) => {
   const { goToPage } = useNavigation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const pools = useAppSelector<Pool[]>(getProtectedPools);
+  const { pushModal } = useModal();
 
   const onSelect = (pool: Pool) => {
     if (posGroupId)
@@ -24,13 +24,16 @@ export const StakeRewardsBtn = ({ buttonLabel, posGroupId }: Props) => {
 
   return (
     <>
-      <SelectPoolModal
-        pools={pools}
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onSelect={onSelect}
-      />
-      <Button onClick={() => setIsModalOpen(true)}>{buttonLabel}</Button>
+      <Button
+        onClick={() =>
+          pushModal({
+            modalName: ModalNames.SelectPool,
+            data: { pools, onSelect },
+          })
+        }
+      >
+        {buttonLabel}
+      </Button>
     </>
   );
 };

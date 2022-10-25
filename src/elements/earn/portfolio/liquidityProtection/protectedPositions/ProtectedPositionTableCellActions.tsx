@@ -4,11 +4,9 @@ import {
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
 import { CellProps } from 'react-table';
-import { PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import { PropsWithChildren, useCallback, useMemo } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
 import { Button } from 'components/button/Button';
-import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
-import { UpgradeBntModal } from '../../v3/UpgradeBntModal';
 import { bntToken } from 'services/web3/config';
 import {
   getAllBntPositionsAndAmount,
@@ -17,30 +15,26 @@ import {
 import { useAppSelector } from 'store';
 import { getIsV3Exist } from 'store/bancor/pool';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { UpgradeTknModal } from '../../v3/UpgradeTknModal';
+import { useDispatch } from 'react-redux';
 import {
   migrateNotification,
   rejectNotification,
   migrateFailedNotification,
 } from 'services/notifications/notifications';
-import { migrateV2Positions } from 'services/web3/protection/migration';
-import { useDispatch } from 'react-redux';
 import { Pool } from 'services/observables/pools';
+import { migrateV2Positions } from 'services/web3/protection/migration';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 export const ProtectedPositionTableCellActions = (
   cellData: PropsWithChildren<
     CellProps<ProtectedPositionGrouped, ProtectedPosition[]>
   >
 ) => {
-  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
-  const [isOpenBnt, setIsOpenBnt] = useState(false);
-  const [isOpenTkn, setIsOpenTkn] = useState(false);
   const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const { row } = cellData;
   const position = row.original;
-  const [SelectedPositions, setSelectedPositions] = useState<
-    ProtectedPosition[]
-  >([]);
   const isPoolExistV3 = useAppSelector<boolean>((state) =>
     getIsV3Exist(state, position.reserveToken.address)
   );
@@ -91,10 +85,16 @@ export const ProtectedPositionTableCellActions = (
             () => rejectNotification(dispatch),
             () => migrateFailedNotification(dispatch)
           );
-        else setIsOpenBnt(true);
+        else
+          pushModal({
+            modalName: ModalNames.UpgradeBnt,
+            data: { position },
+          });
       } else {
-        setSelectedPositions(positions);
-        setIsOpenTkn(true);
+        pushModal({
+          modalName: ModalNames.UpgradeTkn,
+          data: { positions },
+        });
       }
     },
     [
@@ -103,7 +103,9 @@ export const ProtectedPositionTableCellActions = (
       protocolBnBNTAmount,
       account,
       dispatch,
+      pushModal,
       pools,
+      position,
     ]
   );
 
@@ -160,22 +162,8 @@ export const ProtectedPositionTableCellActions = (
         cellData,
         singleContent,
         groupContent,
-        subMenu: () => setIsOpenWithdraw(true),
+        subMenu: () => pushModal({ modalName: ModalNames.WithdrawLiquidity }),
       })}
-      <WithdrawLiquidityWidget
-        isModalOpen={isOpenWithdraw}
-        setIsModalOpen={setIsOpenWithdraw}
-      />
-      <UpgradeTknModal
-        isOpen={isOpenTkn}
-        setIsOpen={setIsOpenTkn}
-        positions={SelectedPositions}
-      />
-      <UpgradeBntModal
-        isOpen={isOpenBnt}
-        setIsOpen={setIsOpenBnt}
-        position={position}
-      />
     </div>
   );
 };

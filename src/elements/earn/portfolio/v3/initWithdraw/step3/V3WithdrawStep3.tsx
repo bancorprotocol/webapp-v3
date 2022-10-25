@@ -22,14 +22,12 @@ const V3WithdrawStep3 = ({
   isFiat,
   setRequestId,
 }: Props) => {
-  const { token, handleButtonClick, ModalApprove, txBusy } = useV3WithdrawStep3(
-    {
-      holding,
-      amount,
-      setStep,
-      setRequestId,
-    }
-  );
+  const { token, handleButtonClick, txBusy } = useV3WithdrawStep3({
+    holding,
+    amount,
+    setStep,
+    setRequestId,
+  });
 
   return (
     <>
@@ -58,7 +56,6 @@ const V3WithdrawStep3 = ({
           </Button>
         </div>
       </div>
-      {ModalApprove}
     </>
   );
 };

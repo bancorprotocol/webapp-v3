@@ -6,40 +6,34 @@ import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/
 import { useV3Bonuses } from 'elements/earn/portfolio/v3/bonuses/useV3Bonuses';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import { shrinkToken } from 'utils/formulas';
+import { ModalNames } from 'modals';
+import { useModal } from 'hooks/useModal';
 
 interface Props {
   setCurrentMenu: (menu: EarningTableMenuState) => void;
-  setIsWithdrawModalOpen: (isOpen: boolean) => void;
-  setHoldingToWithdraw: (holding: Holding) => void;
   handleDepositClick: () => void;
   holding: Holding;
 }
 
 export const V3EarningTableMenuMain = memo(
-  ({
-    holding,
-    setHoldingToWithdraw,
-    setCurrentMenu,
-    setIsWithdrawModalOpen,
-    handleDepositClick,
-  }: Props) => {
-    const { setBonusModalOpen, bonusUsdTotal } = useV3Bonuses();
+  ({ holding, setCurrentMenu, handleDepositClick }: Props) => {
+    const { bonusUsdTotal } = useV3Bonuses();
     const { latestProgram } = holding;
+    const { pushModal } = useModal();
 
     const handleWithdrawClick = useCallback(() => {
-      setHoldingToWithdraw(holding);
-      setIsWithdrawModalOpen(true);
-    }, [holding, setHoldingToWithdraw, setIsWithdrawModalOpen]);
+      pushModal({ modalName: ModalNames.V3Withdraw, data: { holding } });
+    }, [holding, pushModal]);
 
     const handleBonusClick = useCallback(() => {
-      setBonusModalOpen(true);
+      pushModal({ modalName: ModalNames.V3Bonuses });
       // TODO - add logic for what action to perform
       // if (true) {
       //
       // } else {
       //   setCurrentMenu('bonus');
       // }
-    }, [setBonusModalOpen]);
+    }, []);
 
     return (
       <div className="flex flex-col justify-between h-full">

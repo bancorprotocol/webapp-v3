@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import useAsyncEffect from 'use-async-effect';
 import { fetchWithdrawalRequestOutputBreakdown } from 'services/web3/v3/portfolio/withdraw';
 import { wait } from 'utils/pureFunctions';
-import { useApproveModal } from 'hooks/useApproveModal';
+import { useApproval } from 'hooks/useApproval';
 import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { WithdrawalRequest } from 'store/portfolio/v3Portfolio.types';
 import {
@@ -176,7 +176,7 @@ export const useV3WithdrawConfirm = ({
     return tokensToApprove;
   }, [govToken?.address, govToken?.symbol, poolTokenAmount, token]);
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     approveTokens,
     (approvalHash?: string) => withdraw(approvalHash),
     ContractsApi.BancorNetwork.contractAddress,
@@ -204,9 +204,9 @@ export const useV3WithdrawConfirm = ({
     });
     sendWithdrawACEvent(WithdrawACEvent.ApproveClick);
     setTxBusy(true);
-    onStart();
+    startApprove();
   }, [
-    onStart,
+    startApprove,
     pool.name,
     withdrawRequest.pool.reserveToken.usdPrice,
     withdrawRequest.reserveTokenAmount,
@@ -220,7 +220,6 @@ export const useV3WithdrawConfirm = ({
 
   return {
     onModalClose,
-    ModalApprove,
     token,
     withdrawAmounts,
     missingGovTokenBalance,

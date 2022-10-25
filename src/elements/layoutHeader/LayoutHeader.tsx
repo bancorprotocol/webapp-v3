@@ -2,17 +2,17 @@ import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
-import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
+import { WalletConnectModal } from '../../modals/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
 import { useEffect, useState } from 'react';
 import { NetworkIndicator } from './NetworkIndicator';
 import { isForkAvailable } from 'services/web3/config';
-import 'elements/layoutHeader/LayoutHeader.css';
 import { useAppSelector } from 'store/index';
 import { getIsAppBusy } from 'store/bancor/bancor';
 import { BancorURL } from 'router/bancorURL.service';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import 'elements/layoutHeader/LayoutHeader.css';
 import { CurrencySelection } from './CurrencySelection';
 
 export const LayoutHeader = () => {

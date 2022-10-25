@@ -20,6 +20,8 @@ import {
   WithdrawACEvent,
   WithdrawEvent,
 } from 'services/api/googleTagManager/withdraw';
+import { ModalNames } from 'modals';
+import { useModal } from 'hooks/useModal';
 
 export const useV3Withdraw = () => {
   const withdrawalRequests = useAppSelector(getPortfolioWithdrawalRequests);
@@ -27,17 +29,10 @@ export const useV3Withdraw = () => {
     getIsLoadingWithdrawalRequests
   );
   const dispatch = useDispatch();
+  const { pushModal, popModal } = useModal();
   const account = useAppSelector((state) => state.user.account);
 
   const [selected, setSelected] = useState<WithdrawalRequest | null>(null);
-  const [isModalCancelOpen, setIsModalCancelOpen] = useState(false);
-  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
-
-  const openCancelModal = useCallback(async (req: WithdrawalRequest) => {
-    sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
-    setSelected(req);
-    setIsModalCancelOpen(true);
-  }, []);
 
   const cancelWithdrawal = useCallback(async () => {
     if (!selected || !account) {
@@ -56,7 +51,7 @@ export const useV3Withdraw = () => {
         selected.reserveTokenAmount,
         selected.pool.reserveToken.symbol
       );
-      setIsModalCancelOpen(false);
+      popModal();
       await tx.wait();
       sendWithdrawEvent(
         WithdrawEvent.WithdrawCancelSuccess,
@@ -72,7 +67,7 @@ export const useV3Withdraw = () => {
         undefined,
         e.message
       );
-      setIsModalCancelOpen(false);
+      popModal();
       console.error('cancelWithdrawal failed: ', e);
       if (e.code === ErrorCode.DeniedTx) {
         rejectNotification(dispatch);
@@ -80,24 +75,40 @@ export const useV3Withdraw = () => {
         genericFailedNotification(dispatch, 'Cancel withdrawal failed');
       }
     }
-  }, [account, dispatch, selected]);
+  }, [account, dispatch, selected, popModal]);
 
-  const openConfirmModal = useCallback(async (req: WithdrawalRequest) => {
-    sendWithdrawACEvent(WithdrawACEvent.CTAClick);
-    setSelected(req);
-    setIsModalConfirmOpen(true);
-  }, []);
+  const openCancelModal = useCallback(
+    async (req: WithdrawalRequest) => {
+      sendWithdrawEvent(WithdrawEvent.WithdrawCancelClick);
+      setSelected(req);
+      dispatch(
+        pushModal({
+          modalName: ModalNames.V3WithdrawCancel,
+          data: { cancelWithdrawal, withdrawRequest: selected },
+        })
+      );
+    },
+    [cancelWithdrawal, dispatch, selected, pushModal]
+  );
+
+  const openConfirmModal = useCallback(
+    async (req: WithdrawalRequest) => {
+      sendWithdrawACEvent(WithdrawACEvent.CTAClick);
+      setSelected(req);
+      pushModal({
+        modalName: ModalNames.V3WithdrawConfirm,
+        data: { openCancelModal, withdrawRequest: selected },
+      });
+    },
+    [openCancelModal, selected, pushModal]
+  );
 
   return {
     withdrawalRequests,
     cancelWithdrawal,
     openCancelModal,
     isLoadingWithdrawalRequests,
-    isModalCancelOpen,
-    setIsModalCancelOpen,
     selected,
-    isModalConfirmOpen,
-    setIsModalConfirmOpen,
     openConfirmModal,
   };
 };

@@ -6,8 +6,6 @@ import { EarningTableMenuState } from 'elements/earn/portfolio/v3/earningsTable/
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 
 interface Props {
-  setIsWithdrawModalOpen: (isOpen: boolean) => void;
-  setHoldingToWithdraw: (holding: Holding) => void;
   handleDepositClick: () => void;
   holding: Holding;
   onStartJoin: Function;
@@ -15,14 +13,7 @@ interface Props {
 }
 
 export const V3EarningsTableMenuContent = memo(
-  ({
-    holding,
-    setIsWithdrawModalOpen,
-    setHoldingToWithdraw,
-    handleDepositClick,
-    onStartJoin,
-    txJoinBusy,
-  }: Props) => {
+  ({ holding, handleDepositClick, onStartJoin, txJoinBusy }: Props) => {
     const [currentMenu, setCurrentMenu] =
       useState<EarningTableMenuState>('main');
 
@@ -31,9 +22,7 @@ export const V3EarningsTableMenuContent = memo(
         {currentMenu === 'main' && (
           <V3EarningTableMenuMain
             holding={holding}
-            setHoldingToWithdraw={setHoldingToWithdraw}
             setCurrentMenu={setCurrentMenu}
-            setIsWithdrawModalOpen={setIsWithdrawModalOpen}
             handleDepositClick={handleDepositClick}
           />
         )}

@@ -1,5 +1,4 @@
 import { useDispatch } from 'react-redux';
-import { useApproveModal } from 'hooks/useApproveModal';
 import { Token } from 'services/observables/tokens';
 import { addLiquidity } from 'services/web3/liquidity/liquidity';
 import {
@@ -14,6 +13,7 @@ import { useAppSelector } from 'store';
 import { Pool } from 'services/observables/pools';
 import { useNavigation } from 'hooks/useNavigation';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
+import { useApproval } from 'hooks/useApproval';
 
 interface Props {
   pool: Pool;
@@ -83,7 +83,7 @@ export const AddLiquidityEmptyCTA = ({
     goToPage,
   ]);
 
-  const [onStart, ModalApprove] = useApproveModal(
+  const startApprove = useApproval(
     [
       { amount: amountBnt, token: bnt },
       { amount: amountTkn, token: tkn },
@@ -121,7 +121,7 @@ export const AddLiquidityEmptyCTA = ({
     if (!account) {
       handleWalletButtonClick();
     } else {
-      onStart();
+      startApprove();
     }
   };
 
@@ -136,7 +136,6 @@ export const AddLiquidityEmptyCTA = ({
       >
         {btn.label}
       </Button>
-      {ModalApprove}
     </>
   );
 };

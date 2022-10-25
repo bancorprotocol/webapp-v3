@@ -1,17 +1,23 @@
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
-import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositDisabledModal';
-import { Navigate } from 'components/navigate/Navigate';
-import { BancorURL } from 'router/bancorURL.service';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
+import { useNavigation } from 'hooks/useNavigation';
 
 export const PoolsTableCellActions = (id: string) => {
+  const { pushModal } = useModal();
+  const { goToPage } = useNavigation();
   const enableDeposit = false;
 
-  const button = (onClick: () => void) => (
+  return (
     <PopoverV3
       buttonElement={() => (
         <Button
-          onClick={onClick}
+          onClick={() =>
+            enableDeposit
+              ? goToPage.addLiquidityV2(id)
+              : pushModal({ modalName: ModalNames.DepositDisabled })
+          }
           variant={ButtonVariant.Tertiary}
           size={ButtonSize.ExtraSmall}
         >
@@ -21,16 +27,5 @@ export const PoolsTableCellActions = (id: string) => {
     >
       Deposit & Earn
     </PopoverV3>
-  );
-
-  return enableDeposit ? (
-    <Navigate className="w-full" to={BancorURL.addLiquidityV2(id)}>
-      {button(() => {})}
-    </Navigate>
-  ) : (
-    <DepositDisabledModal
-      renderButton={(onclick) => button(onclick)}
-      isV3={false}
-    />
   );
 };

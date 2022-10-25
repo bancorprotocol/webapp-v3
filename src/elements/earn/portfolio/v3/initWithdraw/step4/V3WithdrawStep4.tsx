@@ -7,7 +7,7 @@ import {
 } from 'datebook';
 import { openNewTab } from 'utils/pureFunctions';
 import dayjs from 'dayjs';
-import { V3WithdrawConfirmContent } from '../../pendingWithdraw/confirm/V3WithdrawConfirmModal';
+import { V3WithdrawConfirmContent } from '../../../../../../modals/V3WithdrawConfirmModal';
 import { useAppSelector } from 'store';
 import { getPortfolioWithdrawalRequests } from 'store/portfolio/v3Portfolio';
 

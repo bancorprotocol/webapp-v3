@@ -15,8 +15,9 @@ import { sortNumbersByKey } from 'utils/pureFunctions';
 import { Navigate } from 'components/navigate/Navigate';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Image } from 'components/image/Image';
-import { DepositV3Modal } from './v3/DepositV3Modal';
-import { SnapshotLink } from 'elements/earn/pools/SnapshotLink';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
+import { SnapshotLink } from '../SnapshotLink';
 import { config } from 'config';
 import { BaseCurrency } from 'store/user/user';
 
@@ -40,6 +41,7 @@ export const PoolsTable = ({
   setLowEarnRate: Function;
 }) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
+  const { pushModal } = useModal();
   const baseCurrency = useAppSelector((state) => state.user.baseCurrency);
   const isUSD = baseCurrency === BaseCurrency.USD;
 
@@ -184,25 +186,25 @@ export const PoolsTable = ({
         Header: '',
         accessor: 'poolDltId',
         Cell: (cellData) => (
-          <DepositV3Modal
-            pool={cellData.row.original}
-            renderButton={(onClick) => (
-              <Button
-                onClick={() => onClick('Main Table')}
-                variant={ButtonVariant.Tertiary}
-                size={ButtonSize.ExtraSmall}
-              >
-                Deposit
-              </Button>
-            )}
-          />
+          <Button
+            onClick={() =>
+              pushModal({
+                modalName: ModalNames.DepositV3,
+                data: { pool: cellData.row.original },
+              })
+            }
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.ExtraSmall}
+          >
+            Deposit
+          </Button>
         ),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
       },
     ],
-    [toolTip]
+    [toolTip, pushModal]
   );
 
   const defaultSort: SortingRule<Token> = {

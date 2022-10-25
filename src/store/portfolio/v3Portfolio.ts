@@ -24,7 +24,6 @@ export const initialState: V3PortfolioState = {
   withdrawalRequestsRaw: [],
   withdrawalSettings: { lockDuration: 0, withdrawalFee: 0 },
   isLoadingWithdrawalRequests: true,
-  bonusesModal: false,
   standardRewards: [],
   isLoadingStandardRewards: true,
 };
@@ -53,9 +52,6 @@ const v3PortfolioSlice = createSlice({
     ) => {
       state.withdrawalSettings = action.payload;
     },
-    openBonusesModal: (state, action: PayloadAction<boolean>) => {
-      state.bonusesModal = action.payload;
-    },
     setStandardRewards: (
       state,
       action: PayloadAction<RewardsProgramStake[]>
@@ -68,7 +64,6 @@ const v3PortfolioSlice = createSlice({
 
 export const {
   setHoldingsRaw,
-  openBonusesModal,
   setWithdrawalRequestsRaw,
   setWithdrawalSettings,
   setStandardRewards,

@@ -1,7 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { CountdownTimer } from 'components/countdownTimer/CountdownTimer';
-import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
 import { useAppSelector } from 'store';
@@ -19,6 +18,8 @@ import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
 import { useDispatch } from 'react-redux';
 import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
 import { Navigate } from 'components/navigate/Navigate';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
 
 interface VoteCardProps {
   title: string;
@@ -67,6 +68,7 @@ const VoteCard = ({
 export const Vote = () => {
   const { chainId } = useWeb3React();
   const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const account = useAppSelector((state) => state.user.account);
   const tokens = useAppSelector<Token[]>((state) => state.bancor.tokensV2);
   const stakeAmount = useAppSelector<string | undefined>(
@@ -77,8 +79,6 @@ export const Vote = () => {
   );
   const [govToken, setGovToken] = useState<Token | undefined>();
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
-  const [stakeModal, setStakeModal] = useState<boolean>(false);
-  const [isStake, setIsStake] = useState<boolean>(false);
   const { handleWalletButtonClick } = useWalletConnect();
 
   useEffect(() => {
@@ -129,8 +129,16 @@ export const Vote = () => {
                 return;
               }
 
-              setIsStake(true);
-              setStakeModal(true);
+              if (govToken)
+                pushModal({
+                  modalName: ModalNames.VBnt,
+                  data: {
+                    token: govToken,
+                    stake: true,
+                    stakeBalance: stakeAmount,
+                    onCompleted: refresh,
+                  },
+                });
             }}
             footer={
               <div className="grid grid-cols-2 text-grey dark:text-white">
@@ -215,8 +223,16 @@ export const Vote = () => {
                     !isUnlocked
                   }
                   onClick={() => {
-                    setIsStake(false);
-                    setStakeModal(true);
+                    if (govToken)
+                      pushModal({
+                        modalName: ModalNames.VBnt,
+                        data: {
+                          token: govToken,
+                          stake: false,
+                          stakeBalance: stakeAmount,
+                          onCompleted: refresh,
+                        },
+                      });
                   }}
                 >
                   Unstake Tokens
@@ -253,16 +269,6 @@ export const Vote = () => {
             </div>
           </div>
         </div>
-        {govToken && (
-          <ModalVbnt
-            isOpen={stakeModal}
-            setIsOpen={setStakeModal}
-            token={govToken}
-            stake={isStake}
-            stakeBalance={stakeAmount}
-            onCompleted={refresh}
-          />
-        )}
       </>
     </Page>
   );

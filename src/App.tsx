@@ -25,6 +25,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
+import { Modals } from 'modals';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
 
@@ -103,6 +104,7 @@ export const App = () => {
 
       <MobileBottomNav />
       <NotificationAlerts />
+      <Modals />
     </BrowserRouter>
   );
 };

@@ -3,31 +3,17 @@ import dayjs from 'utils/dayjs';
 import BigNumber from 'bignumber.js';
 import { InputField } from 'components/inputField/InputField';
 import { TokenInputField } from 'components/tokenInputField/TokenInputField';
-import { ModalDuration } from 'elements/modalDuration/modalDuration';
 import { TokenMinimal, updateUserBalances } from 'services/observables/tokens';
 import { ReactComponent as IconSync } from 'assets/icons/sync.svg';
 import { classNameGenerator } from 'utils/pureFunctions';
 import { getRate } from 'services/web3/swap/market';
 import { KeeprDaoToken, swapLimit } from 'services/api/keeperDao';
-import {
-  addNotification,
-  NotificationType,
-} from 'store/notification/notification';
 import { useDispatch } from 'react-redux';
 import { ethToken, wethToken } from 'services/web3/config';
 import { useAppSelector } from 'store';
-import { ModalApprove } from 'elements/modalApprove/modalApprove';
-import {
-  ApprovalContract,
-  getNetworkContractApproval,
-} from 'services/web3/approval';
-import { prettifyNumber } from 'utils/helperFunctions';
-import {
-  sendConversionEvent,
-  setCurrentConversion,
-} from 'services/api/googleTagManager/conversion';
+import { ApprovalContract } from 'services/web3/approval';
+import { formatDuration, prettifyNumber } from 'utils/helperFunctions';
 import { calculatePercentageChange } from 'utils/formulas';
-import { ModalDepositETH } from 'elements/modalDepositETH/modalDepositETH';
 import {
   Button,
   ButtonPercentages,
@@ -35,8 +21,24 @@ import {
 } from 'components/button/Button';
 import useAsyncEffect from 'use-async-effect';
 import { useWalletConnect } from 'elements/walletConnect/useWalletConnect';
-import { Events, getLimitMarket } from 'services/api/googleTagManager';
+import { useApproval } from 'hooks/useApproval';
+import {
+  depositETHNotification,
+  rejectNotification,
+  swapLimitFailedNotification,
+  swapLimitNotification,
+} from 'services/notifications/notifications';
+import { depositWeth } from 'services/web3/swap/limit';
+import { ErrorCode } from 'services/web3/types';
+import {
+  setCurrentConversion,
+  sendConversionEvent,
+} from 'services/api/googleTagManager/conversion';
+import { useModal } from 'hooks/useModal';
+import { ModalNames } from 'modals';
+import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
 import { TokenCurrency } from 'store/user/user';
+import { Events } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -62,6 +64,7 @@ export const SwapLimit = ({
   refreshLimit,
 }: SwapLimitProps) => {
   const dispatch = useDispatch();
+  const { pushModal } = useModal();
   const account = useAppSelector((state) => state.user.account);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
@@ -71,8 +74,6 @@ export const SwapLimit = ({
   const [marketRate, setMarketRate] = useState(-1);
   const [percentage, setPercentage] = useState('');
   const [selPercentage, setSelPercentage] = useState(1);
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [showEthModal, setShowEthModal] = useState(false);
   const [fromError, setFromError] = useState('');
   const [rateWarning, setRateWarning] = useState({ type: '', msg: '' });
   const [isLoadingRate, setIsLoadingRate] = useState(false);
@@ -218,29 +219,6 @@ export const SwapLimit = ({
     [toToken?.address, fromToken?.address]
   );
 
-  //Check if approval is required
-  const checkApproval = async (token: TokenMinimal) => {
-    try {
-      const isApprovalReq = await getNetworkContractApproval(
-        token,
-        ApprovalContract.ExchangeProxy,
-        fromAmount
-      );
-      if (isApprovalReq) {
-        sendConversionEvent(Events.approvePop);
-        setShowApproveModal(true);
-      } else await handleSwap(true, token.address === wethToken);
-    } catch (e: any) {
-      dispatch(
-        addNotification({
-          type: NotificationType.error,
-          title: 'Transaction Failed',
-          msg: `${token.symbol} approval had failed. Please try again or contact support.`,
-        })
-      );
-    }
-  };
-
   const updateETHandWETH = async () => {
     if (!(toToken && account)) return;
 
@@ -250,11 +228,7 @@ export const SwapLimit = ({
     await updateUserBalances();
   };
 
-  const handleSwap = async (
-    approved: boolean = false,
-    weth: boolean = false,
-    showETHtoWETHModal: boolean = false
-  ) => {
+  const handleSwap = async () => {
     if (!account) {
       handleWalletButtonClick();
       return;
@@ -262,23 +236,71 @@ export const SwapLimit = ({
 
     if (!(fromToken && toToken && fromAmount && toAmount)) return;
 
-    if (showETHtoWETHModal) return setShowEthModal(true);
+    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
+    setCurrentConversion(
+      'Limit',
+      tokenPair,
+      fromToken.symbol,
+      toToken?.symbol,
+      fromAmount,
+      fromAmountUsd,
+      toAmount,
+      toAmountUsd,
+      isCurrency,
+      rate,
+      percentage,
+      duration.asSeconds().toString()
+    );
+    sendConversionEvent(Events.click);
 
-    if (!approved) return checkApproval(fromToken);
-
-    const notification = await swapLimit(
-      weth ? { ...fromToken, address: wethToken } : fromToken,
+    await swapLimit(
+      fromToken.address === ethToken
+        ? { ...fromToken, address: wethToken }
+        : fromToken,
       toToken,
       fromAmount,
       toAmount,
       account,
       duration,
-      checkApproval
+      () => sendConversionEvent(Events.wallet_req),
+      () => {
+        swapLimitNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        );
+        if (fromToken.address === ethToken) updateETHandWETH();
+        refreshLimit();
+      },
+      () => rejectNotification(dispatch),
+      () =>
+        swapLimitFailedNotification(
+          dispatch,
+          fromToken,
+          toToken,
+          fromAmount,
+          toAmount
+        )
     );
+  };
 
-    if (notification) dispatch(addNotification(notification));
-    if (fromToken.address === ethToken) updateETHandWETH();
-    refreshLimit();
+  const deposiEthWeth = async () => {
+    try {
+      const txHash = await depositWeth(fromAmount);
+      depositETHNotification(dispatch, fromAmount, txHash);
+      startWETHApprove();
+    } catch (e: any) {
+      if (e.code === ErrorCode.DeniedTx)
+        sendConversionEvent(
+          Events.fail,
+          undefined,
+          undefined,
+          'User rejected transaction'
+        );
+      else sendConversionEvent(Events.fail, undefined, undefined, e.message);
+    }
   };
 
   const isSwapDisabled = () => {
@@ -339,25 +361,22 @@ export const SwapLimit = ({
     return 'Trade';
   };
 
-  const handleSwapClick = () => {
-    const tokenPair = fromToken.symbol + '/' + toToken?.symbol;
-    setCurrentConversion(
-      getLimitMarket(true),
-      tokenPair,
-      fromToken.symbol,
-      toToken?.symbol,
-      fromAmount,
-      fromAmountUsd,
-      toAmount,
-      toAmountUsd,
-      isCurrency,
-      rate,
-      percentage,
-      duration.asSeconds().toString()
-    );
-    sendConversionEvent(Events.click);
-    handleSwap(false, false, fromToken.address === ethToken);
-  };
+  const startApprove = useApproval(
+    [{ amount: fromAmount, token: fromToken }],
+    handleSwap,
+    ApprovalContract.ExchangeProxy
+  );
+
+  const startWETHApprove = useApproval(
+    [
+      {
+        amount: fromAmount,
+        token: { ...fromToken, symbol: 'WETH', address: wethToken },
+      },
+    ],
+    handleSwap,
+    ApprovalContract.ExchangeProxy
+  );
 
   return (
     <div>
@@ -509,35 +528,33 @@ export const SwapLimit = ({
 
               <div className="flex justify-between items-center mt-15">
                 <span className="font-semibold">Expires in</span>
-                <ModalDuration duration={duration} setDuration={setDuration} />
+                <button
+                  onClick={() =>
+                    pushModal({
+                      modalName: ModalNames.Duration,
+                      data: { duration, setDuration },
+                    })
+                  }
+                  className="flex items-center bg-white dark:bg-charcoal rounded-10 px-40 py-8"
+                >
+                  {formatDuration(duration)}
+                  <IconChevronDown className="w-10 ml-10" />
+                </button>
               </div>
             </>
           )}
         </div>
 
-        <ModalApprove
-          isOpen={showApproveModal}
-          setIsOpen={setShowApproveModal}
-          amount={fromAmount}
-          fromToken={
-            fromToken?.address === ethToken
-              ? { ...fromToken, symbol: 'WETH', address: wethToken }
-              : fromToken
-          }
-          handleApproved={() =>
-            handleSwap(true, fromToken.address === ethToken)
-          }
-          contract={ApprovalContract.ExchangeProxy}
-        />
-        <ModalDepositETH
-          amount={fromAmount}
-          setIsOpen={setShowEthModal}
-          isOpen={showEthModal}
-          onConfirm={() => handleSwap(true)}
-        />
         <Button
           size={ButtonSize.Full}
-          onClick={() => handleSwapClick()}
+          onClick={() => {
+            if (fromToken.address === ethToken)
+              pushModal({
+                modalName: ModalNames.DepositETH,
+                data: { onConfirm: deposiEthWeth(), amount: fromAmount },
+              });
+            else startApprove();
+          }}
           disabled={isSwapDisabled()}
           className="disabled:bg-silver dark:disabled:bg-charcoal"
         >
