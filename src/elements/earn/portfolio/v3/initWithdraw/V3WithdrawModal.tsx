@@ -4,6 +4,7 @@ import V3WithdrawStep1 from 'elements/earn/portfolio/v3/initWithdraw/step1/V3Wit
 import V3WithdrawStep3 from 'elements/earn/portfolio/v3/initWithdraw/step3/V3WithdrawStep3';
 import V3WithdrawStep4 from 'elements/earn/portfolio/v3/initWithdraw/step4/V3WithdrawStep4';
 import V3WithdrawStep2 from 'elements/earn/portfolio/v3/initWithdraw/step2/V3WithdrawStep2';
+import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useV3WithdrawModal } from 'elements/earn/portfolio/v3/initWithdraw/useV3WithdrawModal';
 import { Holding } from 'store/portfolio/v3Portfolio.types';
 import {
@@ -17,7 +18,6 @@ import {
   getCurrency,
   getFiat,
 } from 'services/api/googleTagManager';
-import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
 
 interface Props {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
     setInputTkn,
     inputFiat,
     setInputFiat,
-    isCurrency,
+    isFiat,
     amount,
     withdrawalFeeInTkn,
     withdrawalFeeInPercent,
@@ -49,21 +49,21 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
         withdraw_pool: holding.pool.name,
         withdraw_blockchain: getBlockchain(),
         withdraw_blockchain_network: getBlockchainNetwork(),
-        withdraw_input_type: getFiat(isCurrency),
+        withdraw_input_type: getFiat(isFiat),
         withdraw_token: holding.pool.name,
         withdraw_display_currency: getCurrency(),
       });
       sendWithdrawEvent(WithdrawEvent.WithdrawPoolClick);
       sendWithdrawEvent(WithdrawEvent.WithdrawAmountView);
     }
-  }, [isOpen, isCurrency, holding.pool.name]);
+  }, [isOpen, isFiat, holding.pool.name]);
 
   return (
     <ModalFullscreenV3
       title={step === 4 ? 'Complete Withdraw' : 'Begin instant cooldown'}
       isOpen={isOpen}
       setIsOpen={onClose}
-      titleElement={step !== 4 && <CurrencySelection />}
+      titleElement={step !== 4 && <SwapSwitch />}
     >
       {step === 1 && (
         <V3WithdrawStep1
@@ -72,7 +72,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           setInputTkn={setInputTkn}
           inputFiat={inputFiat}
           setInputFiat={setInputFiat}
-          isFiat={isCurrency}
+          isFiat={isFiat}
           holding={holding}
           withdrawalFeeInPercent={withdrawalFeeInPercent}
           withdrawalFeeInTkn={withdrawalFeeInTkn}
@@ -86,7 +86,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           setStep={setStep}
           amount={amount}
           holding={holding}
-          isFiat={isCurrency}
+          isFiat={isFiat}
         />
       )}
       {step === 3 && (
@@ -96,7 +96,7 @@ const V3WithdrawModal = ({ isOpen, setIsOpen, holding }: Props) => {
           holding={holding}
           setStep={setStep}
           setRequestId={setRequestId}
-          isFiat={isCurrency}
+          isFiat={isFiat}
         />
       )}
       {step === 4 && (

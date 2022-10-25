@@ -1,14 +1,11 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import {
-  getBaseCurrencyLS,
   getForceV3LS,
-  getTokenCurrencyLS,
-  setBaseCurrencyLS,
   setDarkModeLS,
   setForceV3LS,
   setSlippageToleranceLS,
-  setTokenCurrencyLS,
+  setUsdToggleLS,
 } from 'utils/localStorage';
 import { LocaleType } from '../../i18n';
 
@@ -18,26 +15,15 @@ export enum DarkMode {
   System,
 }
 
-export enum TokenCurrency {
-  Token,
-  Currency,
-}
-
-export enum BaseCurrency {
-  USD,
-  ETH,
-}
-
 export interface UserState {
   account: string | null | undefined;
   darkMode: DarkMode;
   walletModal: boolean;
   slippageTolerance: number;
+  usdToggle: boolean;
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
-  tokenCurrency: TokenCurrency;
-  baseCurrency: BaseCurrency;
 }
 
 export const initialState: UserState = {
@@ -45,11 +31,10 @@ export const initialState: UserState = {
   darkMode: DarkMode.System,
   walletModal: false,
   slippageTolerance: 0.005,
+  usdToggle: false,
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
-  tokenCurrency: getTokenCurrencyLS(),
-  baseCurrency: getBaseCurrencyLS(),
 };
 
 const userSlice = createSlice({
@@ -74,20 +59,16 @@ const userSlice = createSlice({
     openWalletModal: (state, action) => {
       state.walletModal = action.payload;
     },
+    setUsdToggle: (state, action: PayloadAction<boolean>) => {
+      setUsdToggleLS(action.payload);
+      state.usdToggle = action.payload;
+    },
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
     },
     setForceV3Routing: (state, action) => {
       state.forceV3Routing = action.payload;
       setForceV3LS(action.payload);
-    },
-    setTokenCurrency: (state, action) => {
-      state.tokenCurrency = action.payload;
-      setTokenCurrencyLS(action.payload);
-    },
-    setBaseCurrency: (state, action) => {
-      state.baseCurrency = action.payload;
-      setBaseCurrencyLS(action.payload);
     },
   },
 });
@@ -120,10 +101,9 @@ export const {
   setSlippageTolerance,
   setLocale,
   openWalletModal,
+  setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
-  setTokenCurrency,
-  setBaseCurrency,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;
