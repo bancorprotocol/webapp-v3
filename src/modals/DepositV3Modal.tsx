@@ -5,8 +5,6 @@ import { ContractsApi } from 'services/web3/v3/contractsApi';
 import { useDispatch } from 'react-redux';
 import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
-import { useApproval } from 'hooks/useApproval';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { bntToken, ethToken } from 'services/web3/config';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken } from 'utils/formulas';
@@ -44,6 +42,9 @@ import { Modal, ModalNames } from 'modals';
 import { DepositDisabledModal } from './DepositDisabledModal';
 import { useModal } from 'hooks/useModal';
 import { getIsModalOpen, getModalData } from 'store/modals/modals';
+import { CurrencySelection } from 'elements/layoutHeader/CurrencySelection';
+import { TokenCurrency } from 'store/user/user';
+import { useApproval } from 'hooks/useApproval';
 
 export interface DepositV3Props {
   pool: PoolV3;
@@ -68,7 +69,8 @@ export const DepositV3Modal = () => {
   const [tosAgreed, setTosAgreed] = useState(false);
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const { handleWalletButtonClick } = useWalletConnect();
 
@@ -204,7 +206,7 @@ export const DepositV3Modal = () => {
         deposit_pool: pool.name,
         deposit_blockchain: getBlockchain(),
         deposit_blockchain_network: getBlockchainNetwork(),
-        deposit_input_type: getFiat(isFiat),
+        deposit_input_type: getFiat(isCurrency),
         deposit_token: pool.name,
         deposit_token_amount: amount,
         deposit_token_amount_usd: inputFiat,
@@ -225,7 +227,7 @@ export const DepositV3Modal = () => {
     accessFullEarnings,
     amount,
     inputFiat,
-    isFiat,
+    isCurrency,
     pool,
   ]);
   if (!pool) return null;
@@ -241,7 +243,7 @@ export const DepositV3Modal = () => {
           deposit_pool: pool.name,
           deposit_blockchain: getBlockchain(),
           deposit_blockchain_network: getBlockchainNetwork(),
-          deposit_input_type: getFiat(isFiat),
+          deposit_input_type: getFiat(isCurrency),
           deposit_token: pool.name,
           deposit_token_amount: undefined,
           deposit_token_amount_usd: undefined,
@@ -263,7 +265,7 @@ export const DepositV3Modal = () => {
         title={'Deposit'}
         setIsOpen={onClose}
         isOpen={isOpen}
-        titleElement={<SwapSwitch />}
+        titleElement={<CurrencySelection />}
         large
       >
         <>

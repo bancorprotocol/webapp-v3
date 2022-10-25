@@ -34,10 +34,11 @@ import {
   setCurrentConversion,
   sendConversionEvent,
 } from 'services/api/googleTagManager/conversion';
-import { Events } from 'services/api/googleTagManager';
 import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 import { ReactComponent as IconChevronDown } from 'assets/icons/chevronDown.svg';
+import { TokenCurrency } from 'store/user/user';
+import { Events } from 'services/api/googleTagManager';
 
 enum Field {
   from,
@@ -86,7 +87,8 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const percentages = useMemo(() => [1, 3, 5], []);
 
   const calculatePercentageByRate = useCallback(
@@ -244,7 +246,7 @@ export const SwapLimit = ({
       fromAmountUsd,
       toAmount,
       toAmountUsd,
-      fiatToggle,
+      isCurrency,
       rate,
       percentage,
       duration.asSeconds().toString()

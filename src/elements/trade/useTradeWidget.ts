@@ -15,6 +15,7 @@ import {
   getZeroExRateAndPriceImpact,
 } from 'services/web3/swap/zeroEx';
 import { useInterval } from 'hooks/useInterval';
+import { TokenCurrency } from 'store/user/user';
 
 const queue = new PQueue({ concurrency: 1 });
 
@@ -40,7 +41,8 @@ export const useTradeWidget = ({
   tokens,
 }: UseTradeWidgetProps): UseTradeWidgetReturn => {
   const account = useAppSelector((state) => state.user.account);
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const tokenCurrency = useAppSelector((state) => state.user.tokenCurrency);
+  const isCurrency = tokenCurrency === TokenCurrency.Currency;
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
 
   const [fromInputTkn, setFromInputTkn] = useState('');
@@ -178,7 +180,7 @@ export const useTradeWidget = ({
                 toToken.decimals
               )
             : '';
-          if (isFiat) {
+          if (isCurrency) {
             setToInputTkn(toValue);
             setToInputFiat(toValueFiat);
           } else {
@@ -192,7 +194,7 @@ export const useTradeWidget = ({
         }
       });
     },
-    [fromToken, handleRateAndPriceImpact, isFiat, toToken]
+    [fromToken, handleRateAndPriceImpact, isCurrency, toToken]
   );
 
   const fromInput = useTknFiatInput({

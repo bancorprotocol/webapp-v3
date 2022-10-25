@@ -23,6 +23,7 @@ import { getV3byID } from 'store/bancor/pool';
 import { WalletConnectRequest } from 'elements/walletConnect/WalletConnectRequest';
 import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
+import { TokenCurrency } from 'store/user/user';
 
 export const V3HoldingPage = () => {
   const { id } = useParams();
@@ -35,6 +36,8 @@ export const V3HoldingPage = () => {
   const holding = holdings.find((x) => x.pool.poolDltId === id);
   const token = useAppSelector((state) => getTokensByIdV2V3(state, id || ''));
   const pool = useAppSelector((state) => getV3byID(state, id || ''));
+  const currencyToken = useAppSelector((state) => state.user.tokenCurrency);
+  const isToken = currencyToken === TokenCurrency.Token;
 
   const isBNT = holding?.pool.poolDltId === bntToken;
   const isDisabled = toBigNumber(holding ? holding.tokenBalance : 0).isZero();
@@ -93,6 +96,12 @@ export const V3HoldingPage = () => {
     return null;
   }
 
+  const usdAmount = holding
+    ? new BigNumber(holding.combinedTokenBalance).times(
+        holding.pool.reserveToken.usdPrice
+      )
+    : '0';
+
   return (
     <div className="py-100 w-full mx-auto max-w-[1140px] p-20">
       <button
@@ -118,8 +127,11 @@ export const V3HoldingPage = () => {
               <div className="text-secondary mb-10">Total Holdings</div>
               {holding ? (
                 <div className="flex items-center gap-16 text-[36px] text-black dark:text-white">
-                  {holding.pool.name}{' '}
-                  {prettifyNumber(holding.combinedTokenBalance)}
+                  {isToken && holding.pool.name}{' '}
+                  {prettifyNumber(
+                    isToken ? holding.combinedTokenBalance : usdAmount,
+                    !isToken
+                  )}
                   {deficitAmount && (
                     <PopoverV3
                       buttonElement={() => (

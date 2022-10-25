@@ -19,6 +19,7 @@ import { useModal } from 'hooks/useModal';
 import { ModalNames } from 'modals';
 import { SnapshotLink } from '../SnapshotLink';
 import { config } from 'config';
+import { BaseCurrency } from 'store/user/user';
 
 export const PoolsTable = ({
   rewards,
@@ -41,6 +42,8 @@ export const PoolsTable = ({
 }) => {
   const pools = useAppSelector((state) => state.pool.v3Pools);
   const { pushModal } = useModal();
+  const baseCurrency = useAppSelector((state) => state.user.baseCurrency);
+  const isUSD = baseCurrency === BaseCurrency.USD;
 
   const [search, setSearch] = useState('');
 
@@ -64,7 +67,10 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.stakedBalance.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.stakedBalance.usd, true)}
+              : prettifyNumber(
+                  isUSD ? row.stakedBalance.usd : row.stakedBalance.eth,
+                  isUSD
+                ).slice(0, 6) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -72,7 +78,10 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.volume7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.volume7d.usd, true)}
+              : prettifyNumber(
+                  isUSD ? row.volume7d.usd : row.volume7d.eth,
+                  isUSD
+                ).slice(0, 6) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -80,7 +89,10 @@ export const PoolsTable = ({
           <div>
             {toBigNumber(row.fees7d.usd).isZero()
               ? 'New'
-              : prettifyNumber(row.fees7d.usd, true)}
+              : prettifyNumber(
+                  isUSD ? row.fees7d.usd : row.fees7d.eth,
+                  isUSD
+                ).slice(0, 4) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -92,14 +104,16 @@ export const PoolsTable = ({
             {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
               ? 'New'
               : prettifyNumber(
-                  toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
-                  true
-                )}
+                  isUSD
+                    ? toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd)
+                    : toBigNumber(row.fees7d.eth).minus(row.networkFees7d.eth),
+                  isUSD
+                ).slice(0, 4) + (isUSD ? '' : ' ETH')}
           </div>
         </div>
       </div>
     ),
-    []
+    [isUSD]
   );
 
   const columns = useMemo<TableColumn<PoolV3>[]>(
