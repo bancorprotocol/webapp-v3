@@ -15,6 +15,7 @@ import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
   getDarkModeLS,
+  getMigrationDisabledLS,
   getNotificationsLS,
   getSlippageToleranceLS,
   getUsdToggleLS,
@@ -39,10 +40,11 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 
 export const App = () => {
   const [migrationDisabled, setMigrationDisabled] = useState(false);
-  const loadingPositions = useAppSelector<boolean>(
-    (state) => state.liquidity.loadingPositions
-  );
   const { data } = useProtectedPositions();
+  const migrationDisabledLS = getMigrationDisabledLS();
+  const [accountSawModal, setAccountSawModal] = useState<
+    string | null | undefined
+  >('');
 
   const user = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
@@ -54,8 +56,11 @@ export const App = () => {
   );
 
   useEffect(() => {
-    if (data.length !== 0 && !loadingPositions) setMigrationDisabled(true);
-  }, [loadingPositions, data]);
+    if (data.length !== 0 && user && user !== accountSawModal) {
+      setMigrationDisabled(true);
+      setAccountSawModal(user);
+    }
+  }, [data, accountSawModal, user]);
 
   // handle dark mode system change
   useEffect(() => {
@@ -123,7 +128,7 @@ export const App = () => {
         description="On Nov 16 11:59 AM EST, migrations to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
         hrefText="More info"
         href="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
-        isOpen={migrationDisabled}
+        isOpen={migrationDisabled && !migrationDisabledLS}
         setIsOpen={setMigrationDisabled}
       />
 
