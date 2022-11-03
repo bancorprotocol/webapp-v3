@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
@@ -29,6 +29,8 @@ import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
+import { WarningModal } from 'components/WarningModal';
+import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -36,6 +38,12 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 };
 
 export const App = () => {
+  const [migrationDisabled, setMigrationDisabled] = useState(false);
+  const loadingPositions = useAppSelector<boolean>(
+    (state) => state.liquidity.loadingPositions
+  );
+  const { data } = useProtectedPositions();
+
   const user = useAppSelector((state) => state.user.account);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
@@ -44,6 +52,10 @@ export const App = () => {
   const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
+
+  useEffect(() => {
+    if (data.length !== 0 && !loadingPositions) setMigrationDisabled(true);
+  }, [loadingPositions, data]);
 
   // handle dark mode system change
   useEffect(() => {
@@ -105,6 +117,15 @@ export const App = () => {
           <BancorRouter />
         </main>
       )}
+
+      <WarningModal
+        title="Migrations Disabled"
+        description="On the TBD, migrations to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
+        hrefText="More info"
+        href="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
+        isOpen={migrationDisabled}
+        setIsOpen={setMigrationDisabled}
+      />
 
       <MobileBottomNav />
       <NotificationAlerts />
