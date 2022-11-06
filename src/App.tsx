@@ -41,12 +41,12 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 export const App = () => {
   const [migrationDisabled, setMigrationDisabled] = useState(false);
   const { data } = useProtectedPositions();
-  const migrationDisabledLS = getMigrationDisabledLS();
   const [accountSawModal, setAccountSawModal] = useState<
     string | null | undefined
   >('');
 
   const user = useAppSelector((state) => state.user.account);
+  const migrationDisabledLS = getMigrationDisabledLS(user);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
   useAutoConnect();

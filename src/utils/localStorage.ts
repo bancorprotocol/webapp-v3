@@ -1,6 +1,7 @@
 import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
 import { isProduction } from 'utils/constants';
+import { uniq } from 'lodash';
 
 const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
@@ -126,13 +127,22 @@ export const setV2ApiUrlLS = (url?: string) => {
   }
 };
 
-export const getMigrationDisabledLS = (): boolean => {
+export const getMigrationDisabledLS = (user?: string | null): boolean => {
   const migration = localStorage.getItem(migrationDisabled);
-  return migration && JSON.parse(migration);
+  const list = migration ? JSON.parse(migration) : [];
+  return list.includes(user);
 };
 
-export const setMigrationDisabledLS = (flag: boolean) => {
-  localStorage.setItem(migrationDisabled, JSON.stringify(flag));
+export const setMigrationDisabledLS = (user?: string | null) => {
+  if (!user) return;
+
+  const migration = localStorage.getItem(migrationDisabled);
+  const list = migration ? JSON.parse(migration) : [];
+
+  localStorage.setItem(
+    migrationDisabled,
+    JSON.stringify(uniq([...list, user]))
+  );
 };
 
 export const resetTenderly = () => {

@@ -1,6 +1,7 @@
 import { ReactComponent as WarningIcon } from 'assets/icons/warning.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Navigate } from 'components/navigate/Navigate';
+import { useAppSelector } from 'store';
 import { setMigrationDisabledLS } from 'utils/localStorage';
 import { Modal } from './modal/Modal';
 
@@ -23,6 +24,8 @@ export const WarningModal = ({
   hrefText,
   buttonText = 'Confirm',
 }: Props) => {
+  const account = useAppSelector((state) => state.user.account);
+
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
       <div className="flex justify-center items-center">
@@ -38,7 +41,7 @@ export const WarningModal = ({
           <Button
             onClick={() => {
               setIsOpen(false);
-              setMigrationDisabledLS(true);
+              setMigrationDisabledLS(account);
             }}
             variant={ButtonVariant.Tertiary}
             size={ButtonSize.Full}
