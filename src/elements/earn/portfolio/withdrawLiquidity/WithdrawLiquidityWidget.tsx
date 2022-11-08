@@ -2,10 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { getTokenV2ById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
-import { TokenInputPercentage } from 'components/tokenInputPercentage/TokenInputPercentage';
-import { WithdrawLiquidityInfo } from './WithdrawLiquidityInfo';
 import { LinePercentage } from 'components/linePercentage/LinePercentage';
-import { Modal } from 'components/modal/Modal';
 import {
   fetchProtectedPositions,
   getWithdrawBreakdown,
@@ -36,8 +33,15 @@ import {
   setCurrentLiquidity,
 } from 'services/api/googleTagManager/liquidity';
 import { Pool } from 'services/observables/pools';
-import { Button, ButtonSize } from 'components/button/Button';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Events } from 'services/api/googleTagManager';
+import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
+import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
+import { ModalV3 } from 'components/modal/ModalV3';
+import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
+import { PopoverV3 } from 'components/popover/PopoverV3';
+import { Switch, SwitchVariant } from 'components/switch/Switch';
+import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -52,10 +56,38 @@ export const WithdrawLiquidityWidget = ({
 }: Props) => {
   const dispatch = useDispatch();
   const account = useAppSelector((state) => state.user.account);
-  const { positionId, reserveToken, currentCoveragePercent, pool } =
-    protectedPosition;
+  const { positionId, reserveToken, pool } = protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
+
   const [amount, setAmount] = useState('');
+  const [inputFiat, setInputFiat] = useState('');
+  const tokenInputField = useTknFiatInput({
+    token: {
+      address: reserveToken.address,
+      decimals: reserveToken.decimals,
+      logoURI: reserveToken.logoURI,
+      symbol: reserveToken.symbol,
+      balance: tknAmount,
+      balanceUsd: Number(tknAmount) * Number(reserveToken.usdPrice),
+      usdPrice: reserveToken.usdPrice?.toString(),
+    },
+    setInputTkn: setAmount,
+    setInputFiat: setInputFiat,
+    inputTkn: amount,
+    inputFiat: inputFiat,
+  });
+
+  const inputErrorMsg = useMemo(
+    () =>
+      !!account && new BigNumber(reserveToken.balance || 0).lt(amount)
+        ? 'Insufficient balance'
+        : '',
+    [account, amount, reserveToken.balance]
+  );
+
+  const isBNT = bntToken === reserveToken.address;
+  const vaultBalance = new BigNumber(50);
+
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
   const token = useAppSelector<Token | undefined>((state: any) =>
@@ -71,10 +103,9 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const withdrawingBNT = reserveToken.address === bntToken;
-  const protectionNotReached = currentCoveragePercent !== 1;
-  const multiplierWillReset = true;
   const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
   const tokenInsufficent = Number(amount) > Number(tknAmount);
+  const [agreed, setAgreed] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
   const showVBNTWarning = useMemo(() => {
@@ -217,35 +248,21 @@ export const WithdrawLiquidityWidget = ({
   ]);
 
   return (
-    <>
-      <Modal
-        setIsOpen={setIsModalOpen}
-        isOpen={isModalOpen}
-        title="Withdraw"
-        large
-        titleElement={<SwapSwitch />}
-      >
-        <div className="px-20 pb-20">
-          <WithdrawLiquidityInfo
-            protectionNotReached={protectionNotReached}
-            multiplierWillReset={multiplierWillReset}
+    <ModalV3
+      title="Withdraw"
+      setIsOpen={() => setIsModalOpen()}
+      isOpen={isModalOpen}
+      titleElement={<SwapSwitch />}
+      large
+    >
+      <>
+        <div className="px-30 pb-20">
+          <TradeWidgetInput
+            label={'Amount'}
+            input={tokenInputField}
+            errorMsg={inputErrorMsg}
+            disableSelection
           />
-          <div className="my-20">
-            <TokenInputPercentage
-              label="Pool"
-              token={token}
-              debounce={setAmountebounce}
-              balance={tknAmount}
-              amount={amount}
-              errorMsg={
-                tokenInsufficent
-                  ? 'Token balance is currently insufficient'
-                  : undefined
-              }
-              setAmount={setAmount}
-              balanceLabel="Claimable amount"
-            />
-          </div>
           {breakdown && (
             <div className="flex justify-between items-center mt-20">
               <div>Output breakdown</div>
@@ -284,17 +301,70 @@ export const WithdrawLiquidityWidget = ({
               Insufficient vBNT balance.
             </div>
           )}
+          {!isBNT && (
+            <>
+              <div className="flex flex-col gap-20 mt-40 text-black-medium dark:text-white-medium ">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-5">
+                    Vault Balance
+                    <PopoverV3
+                      buttonElement={() => (
+                        <IconInfo className="w-10 h-10 text-secondary" />
+                      )}
+                    >
+                      This pool is in deficit. The claimable amount will be
+                      ???????? {reserveToken.symbol}.
+                    </PopoverV3>
+                  </div>
+                  <span
+                    className={`${
+                      vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                    }`}
+                  >
+                    {vaultBalance.gte(0) ? '+' : ''}
+                    {vaultBalance.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+              <hr className="border-silver dark:border-black-low my-20" />
+              <p className={'text-secondary mt-20'}>
+                This pool is in deficit. The claimable amount will be ????????{' '}
+                {reserveToken.symbol}.
+              </p>
+              <div
+                className={
+                  'flex justify-between mt-20 space-x-20 items-center text-error'
+                }
+              >
+                <Switch
+                  variant={SwitchVariant.ERROR}
+                  selected={agreed}
+                  onChange={setAgreed}
+                />
+                <button
+                  className={'text-left'}
+                  onClick={() => setAgreed(!agreed)}
+                >
+                  BNT distribution is currently disabled. I understand I may be
+                  withdrawing at a loss if the {reserveToken.symbol} vault is in
+                  deficit.
+                </button>
+              </div>
+            </>
+          )}
           <Button
             onClick={handleWithdraw}
             disabled={withdrawDisabled}
             size={ButtonSize.Full}
+            variant={ButtonVariant.Secondary}
             className="mt-20"
           >
             {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
           </Button>
+          {ModalApprove}
         </div>
-      </Modal>
-      {ModalApprove}
-    </>
+        {!isBNT && <DepositFAQ />}
+      </>
+    </ModalV3>
   );
 };

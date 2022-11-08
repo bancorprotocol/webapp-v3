@@ -55,11 +55,13 @@ export const ProtectedPositionTableCellActions = (
         singleContent,
         groupContent,
       })}
-      <WithdrawLiquidityWidget
-        protectedPosition={selectedPositions[0]}
-        isModalOpen={isOpenWithdraw}
-        setIsModalOpen={setIsOpenWithdraw}
-      />
+      {selectedPositions.length > 0 && (
+        <WithdrawLiquidityWidget
+          protectedPosition={selectedPositions[0]}
+          isModalOpen={isOpenWithdraw}
+          setIsModalOpen={setIsOpenWithdraw}
+        />
+      )}
     </div>
   );
 };
