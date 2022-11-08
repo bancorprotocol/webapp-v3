@@ -24,7 +24,7 @@ export const useProtectedPositions = () => {
     () => [
       {
         id: 'liquidity',
-        Header: 'Liquidity',
+        Header: 'Name',
         accessor: 'pool',
         Cell: (cellData) =>
           ProtectedPositionTableCellLiquidity(cellData.row.original),
@@ -37,7 +37,7 @@ export const useProtectedPositions = () => {
       {
         id: 'initialStake',
         accessor: 'initialStake',
-        Header: 'Initial Stake',
+        Header: 'Position',
         Cell: (cellData) =>
           ProtectedPositionTableCellAmount({
             tknAmount: cellData.value.tknAmount,
@@ -50,8 +50,18 @@ export const useProtectedPositions = () => {
             'usdAmount',
           ]),
         minWidth: 130,
+        maxWidth: 130,
         sortDescFirst: true,
         tooltip: 'Amount of tokens you originally staked in the pool',
+      },
+      {
+        id: 'reserveToken',
+        accessor: 'reserveToken',
+        Header: 'Vault Balance',
+        Cell: (_) => <div className="text-error">{'????'}%</div>,
+        minWidth: 130,
+        sortDescFirst: true,
+        tooltip: 'The % of tokens currently available',
       },
       {
         id: 'expander',
