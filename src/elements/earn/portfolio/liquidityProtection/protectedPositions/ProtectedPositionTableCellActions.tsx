@@ -14,7 +14,7 @@ export const ProtectedPositionTableCellActions = (
   >
 ) => {
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
-  const [SelectedPositions, setSelectedPositions] = useState<
+  const [selectedPositions, setSelectedPositions] = useState<
     ProtectedPosition[]
   >([]);
 
@@ -56,6 +56,7 @@ export const ProtectedPositionTableCellActions = (
         groupContent,
       })}
       <WithdrawLiquidityWidget
+        protectedPosition={selectedPositions[0]}
         isModalOpen={isOpenWithdraw}
         setIsModalOpen={setIsOpenWithdraw}
       />
