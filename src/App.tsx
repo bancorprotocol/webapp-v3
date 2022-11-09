@@ -124,10 +124,9 @@ export const App = () => {
       )}
 
       <WarningModal
-        title="Migrations Disabled"
+        title="Important! Please read."
         description="On Nov 16 11:59 AM EST, migrations to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
-        hrefText="More info"
-        href="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
+        learnMore="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
         isOpen={migrationDisabled && !migrationDisabledLS}
         setIsOpen={setMigrationDisabled}
       />

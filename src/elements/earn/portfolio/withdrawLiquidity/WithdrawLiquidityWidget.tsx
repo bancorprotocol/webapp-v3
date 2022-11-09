@@ -269,6 +269,12 @@ export const WithdrawLiquidityWidget = ({
                 </div>
               </div>
               <hr className="border-silver dark:border-black-low my-20" />
+              <div className="text-secondary">
+                Depending on the state of the liquidity pool being withdrawn
+                from, positional impermanent loss in addition to a pro rata loss
+                may be experienced upon withdrawal. Migration of user funds from
+                v2.1 to v3 will remain permanently disabled.
+              </div>
               {deficitAmount && (
                 <p className={'text-secondary mt-20'}>
                   This pool is in deficit. The claimable amount will be{' '}

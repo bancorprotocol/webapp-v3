@@ -29,7 +29,7 @@ export const TableCellExpander = ({
   subMenu,
 }: Props) => {
   const {
-    row: { canExpand, isExpanded, toggleRowExpanded, original },
+    row: { canExpand, isExpanded, toggleRowExpanded },
     toggleAllRowsExpanded,
   } = cellData;
 

@@ -1,8 +1,7 @@
-import { ReactComponent as WarningIcon } from 'assets/icons/warning.svg';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
-import { Navigate } from 'components/navigate/Navigate';
 import { useAppSelector } from 'store';
 import { setMigrationDisabledLS } from 'utils/localStorage';
+import { openNewTab } from 'utils/pureFunctions';
 import { Modal } from './modal/Modal';
 
 type Props = {
@@ -10,8 +9,7 @@ type Props = {
   setIsOpen: (isOpen: boolean) => void;
   title: string;
   description: string;
-  hrefText?: string;
-  href?: string;
+  learnMore?: string;
   buttonText?: string;
 };
 
@@ -20,33 +18,34 @@ export const WarningModal = ({
   setIsOpen,
   title,
   description,
-  href,
-  hrefText,
-  buttonText = 'Confirm',
+  learnMore,
+  buttonText = 'I understand',
 }: Props) => {
   const account = useAppSelector((state) => state.user.account);
 
   return (
-    <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={title}>
       <div className="flex justify-center items-center">
-        <div className="content-block rounded-40 p-20 flex flex-col items-center text-center">
-          <WarningIcon className="w-40 h-40 text-error" />
-          <h1 className="mt-20 mb-10">{title}</h1>
-          <p className="text-secondary mb-20">{description}</p>
-          {href && (
-            <Navigate className="underline mb-20" to={href}>
-              {hrefText}
-            </Navigate>
-          )}
+        <div className="content-block rounded-40 p-20 flex flex-col items-center text-center gap-20">
+          <p className="text-secondary">{description}</p>
           <Button
             onClick={() => {
               setIsOpen(false);
               setMigrationDisabledLS(account);
             }}
-            variant={ButtonVariant.Tertiary}
+            variant={ButtonVariant.Secondary}
             size={ButtonSize.Full}
           >
             {buttonText}
+          </Button>
+          <Button
+            onClick={() => {
+              openNewTab(learnMore);
+            }}
+            variant={ButtonVariant.Tertiary}
+            size={ButtonSize.Full}
+          >
+            Learn more
           </Button>
         </div>
       </div>
