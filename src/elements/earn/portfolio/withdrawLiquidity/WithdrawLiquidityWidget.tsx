@@ -2,18 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { getTokenV2ById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
-import { LinePercentage } from 'components/linePercentage/LinePercentage';
 import {
   fetchProtectedPositions,
-  getWithdrawBreakdown,
   ProtectedPosition,
   withdrawProtection,
 } from 'services/web3/protection/positions';
-import { checkPriceDeviationTooHigh } from 'services/web3/liquidity/liquidity';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { bntToken, getNetworkVariables } from 'services/web3/config';
-import useAsyncEffect from 'use-async-effect';
-import { useDebounce } from 'hooks/useDebounce';
 import BigNumber from 'bignumber.js';
 import {
   rejectNotification,
@@ -86,15 +81,10 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const isBNT = bntToken === reserveToken.address;
-  const [amountDebounce, setAmountebounce] = useDebounce('');
-  const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
   const token = useAppSelector<Token | undefined>((state: any) =>
     getTokenV2ById(state, reserveToken.address)
   );
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
-  const [breakdown, setBreakdown] = useState<
-    { tkn: number; bnt: number } | undefined
-  >();
   const gov = getNetworkVariables().govToken;
   const govToken = useAppSelector<Token | undefined>((state: any) =>
     getTokenV2ById(state, gov)
@@ -128,35 +118,6 @@ export const WithdrawLiquidityWidget = ({
   ]);
 
   const withdrawDisabled = emtpyAmount || tokenInsufficent || showVBNTWarning;
-
-  useAsyncEffect(
-    async (isMounted) => {
-      const isPriceDeviationToHigh = await checkPriceDeviationTooHigh(
-        pool,
-        token!
-      );
-      setIsPriceDeviationToHigh(isPriceDeviationToHigh);
-
-      if (isMounted()) {
-        if (withdrawDisabled || withdrawingBNT) return;
-        const res = await getWithdrawBreakdown(
-          positionId,
-          amountDebounce,
-          tknAmount
-        );
-
-        if (res.bntAmount === '0') setBreakdown(undefined);
-        else {
-          const percentage = new BigNumber(res.actualAmount)
-            .div(res.expectedAmount)
-            .toNumber();
-
-          setBreakdown({ tkn: percentage, bnt: 1 - percentage });
-        }
-      }
-    },
-    [amountDebounce]
-  );
 
   const withdraw = useCallback(async () => {
     if (token) {
@@ -267,37 +228,10 @@ export const WithdrawLiquidityWidget = ({
             errorMsg={inputErrorMsg}
             disableSelection
           />
-          {breakdown && (
-            <div className="flex justify-between items-center mt-20">
-              <div>Output breakdown</div>
-              <div className="relative w-[180px]">
-                <LinePercentage
-                  percentages={[
-                    {
-                      color: 'charcoal',
-                      decPercent: breakdown.tkn,
-                      label: token?.symbol,
-                    },
-                    {
-                      color: 'primary',
-                      decPercent: breakdown.bnt,
-                      label: 'BNT',
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-          )}
           {withdrawingBNT && (
             <div className="mt-20">
               BNT withdrawals are subject to a 24h lock period before they can
               be claimed.
-            </div>
-          )}
-          {isPriceDeviationToHigh && (
-            <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-              Due to price volatility, withdrawing from your protected position
-              is currently not available. Please try again in a few minutes.
             </div>
           )}
           {showVBNTWarning && (
