@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { UnsupportedNetwork } from 'pages/UnsupportedNetwork';
 import { LayoutHeader } from 'elements/layoutHeader/LayoutHeader';
@@ -15,6 +15,7 @@ import { store, useAppSelector } from 'store';
 import { googleTagManager } from 'services/api/googleTagManager';
 import {
   getDarkModeLS,
+  getMigrationDisabledLS,
   getNotificationsLS,
   getSlippageToleranceLS,
   getUsdToggleLS,
@@ -29,6 +30,8 @@ import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
+import { WarningModal } from 'components/WarningModal';
+import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -36,7 +39,14 @@ const handleModeChange = (_: MediaQueryListEvent) => {
 };
 
 export const App = () => {
+  const [migrationDisabled, setMigrationDisabled] = useState(false);
+  const { data } = useProtectedPositions();
+  const [accountSawModal, setAccountSawModal] = useState<
+    string | null | undefined
+  >('');
+
   const user = useAppSelector((state) => state.user.account);
+  const migrationDisabledLS = getMigrationDisabledLS(user);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
   useAutoConnect();
@@ -44,6 +54,13 @@ export const App = () => {
   const notifications = useAppSelector(
     (state) => state.notification.notifications
   );
+
+  useEffect(() => {
+    if (data.length !== 0 && user && user !== accountSawModal) {
+      setMigrationDisabled(true);
+      setAccountSawModal(user);
+    }
+  }, [data, accountSawModal, user]);
 
   // handle dark mode system change
   useEffect(() => {
@@ -105,6 +122,14 @@ export const App = () => {
           <BancorRouter />
         </main>
       )}
+
+      <WarningModal
+        title="Important! Please read."
+        description="On Nov 16 11:59 AM EST, migration of user funds from v2.1 to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
+        learnMore="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
+        isOpen={migrationDisabled && !migrationDisabledLS}
+        setIsOpen={setMigrationDisabled}
+      />
 
       <MobileBottomNav />
       <NotificationAlerts />

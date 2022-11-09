@@ -1,6 +1,7 @@
 import { DarkMode, initialState as UserState } from 'store/user/user';
 import { Notification } from 'store/notification/notification';
 import { isProduction } from 'utils/constants';
+import { uniq } from 'lodash';
 
 const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
@@ -14,6 +15,7 @@ const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
+const migrationDisabled = 'migrationDisabled';
 
 const deprecated_cleanup = ['userTokenLists'];
 
@@ -125,13 +127,22 @@ export const setV2ApiUrlLS = (url?: string) => {
   }
 };
 
-export const getForceV3LS = (): boolean => {
-  const force = localStorage.getItem(forceV3);
-  return force && JSON.parse(force);
+export const getMigrationDisabledLS = (user?: string | null): boolean => {
+  const migration = localStorage.getItem(migrationDisabled);
+  const list = migration ? JSON.parse(migration) : [];
+  return list.includes(user);
 };
 
-export const setForceV3LS = (flag: boolean) => {
-  localStorage.setItem(forceV3, JSON.stringify(flag));
+export const setMigrationDisabledLS = (user?: string | null) => {
+  if (!user) return;
+
+  const migration = localStorage.getItem(migrationDisabled);
+  const list = migration ? JSON.parse(migration) : [];
+
+  localStorage.setItem(
+    migrationDisabled,
+    JSON.stringify(uniq([...list, user]))
+  );
 };
 
 export const resetTenderly = () => {
@@ -149,4 +160,13 @@ export const getPageRowsLS = (): number => {
 
 export const setpageRowsLS = (rows: number) => {
   localStorage.setItem(pageRows, JSON.stringify(rows));
+};
+
+export const getForceV3LS = (): boolean => {
+  const force = localStorage.getItem(forceV3);
+  return force && JSON.parse(force);
+};
+
+export const setForceV3LS = (flag: boolean) => {
+  localStorage.setItem(forceV3, JSON.stringify(flag));
 };
