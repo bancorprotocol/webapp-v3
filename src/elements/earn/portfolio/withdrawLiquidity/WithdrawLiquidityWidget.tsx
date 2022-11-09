@@ -86,8 +86,6 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const isBNT = bntToken === reserveToken.address;
-  const vaultBalance = new BigNumber(50);
-
   const [amountDebounce, setAmountebounce] = useDebounce('');
   const [isPriceDeviationToHigh, setIsPriceDeviationToHigh] = useState(false);
   const token = useAppSelector<Token | undefined>((state: any) =>
@@ -207,6 +205,12 @@ export const WithdrawLiquidityWidget = ({
     sendLiquidityApprovedEvent
   );
 
+  const deficitAmount =
+    protectedPosition.vaultBalance < 0
+      ? (1 - protectedPosition.vaultBalance / 100) *
+        Number(protectedPosition.claimableAmount.tknAmount)
+      : undefined;
+
   const handleWithdraw = useCallback(async () => {
     const amountUsd = new BigNumber(amount)
       .times(token ? token.usdPrice ?? 0 : 0)
@@ -307,30 +311,36 @@ export const WithdrawLiquidityWidget = ({
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-5">
                     Vault Balance
-                    <PopoverV3
-                      buttonElement={() => (
-                        <IconInfo className="w-10 h-10 text-secondary" />
-                      )}
-                    >
-                      This pool is in deficit. The claimable amount will be
-                      ???????? {reserveToken.symbol}.
-                    </PopoverV3>
+                    {deficitAmount && (
+                      <PopoverV3
+                        buttonElement={() => (
+                          <IconInfo className="w-10 h-10 text-secondary" />
+                        )}
+                      >
+                        This pool is in deficit. The claimable amount will be
+                        {deficitAmount} {reserveToken.symbol}.
+                      </PopoverV3>
+                    )}
                   </div>
                   <span
                     className={`${
-                      vaultBalance.gte(0) ? 'text-primary' : 'text-error'
+                      protectedPosition.vaultBalance > 0
+                        ? 'text-primary'
+                        : 'text-error'
                     }`}
                   >
-                    {vaultBalance.gte(0) ? '+' : ''}
-                    {vaultBalance.toFixed(2)}%
+                    {protectedPosition.vaultBalance > 0 ? '+' : ''}
+                    {protectedPosition.vaultBalance.toFixed(2)}%
                   </span>
                 </div>
               </div>
               <hr className="border-silver dark:border-black-low my-20" />
-              <p className={'text-secondary mt-20'}>
-                This pool is in deficit. The claimable amount will be ????????{' '}
-                {reserveToken.symbol}.
-              </p>
+              {deficitAmount && (
+                <p className={'text-secondary mt-20'}>
+                  This pool is in deficit. The claimable amount will be{' '}
+                  {deficitAmount} {reserveToken.symbol}.
+                </p>
+              )}
               <div
                 className={
                   'flex justify-between mt-20 space-x-20 items-center text-error'

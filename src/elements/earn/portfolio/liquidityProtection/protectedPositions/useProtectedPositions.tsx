@@ -55,10 +55,16 @@ export const useProtectedPositions = () => {
         tooltip: 'Amount of tokens you originally staked in the pool',
       },
       {
-        id: 'reserveToken',
-        accessor: 'reserveToken',
+        id: 'vaultBalance',
+        accessor: 'vaultBalance',
         Header: 'Vault Balance',
-        Cell: (_) => <div className="text-error">{'????'}%</div>,
+        Cell: (cellData) => (
+          <div
+            className={`${cellData.value > 0 ? 'text-primary' : 'text-error'}`}
+          >
+            {cellData.value}%
+          </div>
+        ),
         minWidth: 130,
         sortDescFirst: true,
         tooltip: 'The % of tokens currently available',
