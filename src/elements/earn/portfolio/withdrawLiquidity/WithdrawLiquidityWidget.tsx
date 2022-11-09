@@ -46,7 +46,7 @@ import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 interface Props {
   protectedPosition: ProtectedPosition;
   isModalOpen: boolean;
-  setIsModalOpen: Function;
+  setIsModalOpen: (open: boolean) => void;
 }
 
 export const WithdrawLiquidityWidget = ({
@@ -254,7 +254,7 @@ export const WithdrawLiquidityWidget = ({
   return (
     <ModalV3
       title="Withdraw"
-      setIsOpen={() => setIsModalOpen()}
+      setIsOpen={setIsModalOpen}
       isOpen={isModalOpen}
       titleElement={<SwapSwitch />}
       large
