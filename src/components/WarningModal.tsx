@@ -24,10 +24,12 @@ export const WarningModal = ({
   const account = useAppSelector((state) => state.user.account);
 
   return (
-    <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={title}>
+    <Modal isOpen={isOpen} setIsOpen={setIsOpen} title={title} large>
       <div className="flex justify-center items-center">
-        <div className="content-block rounded-40 p-20 flex flex-col items-center text-center gap-20">
-          <p className="text-secondary">{description}</p>
+        <div className="content-block rounded-40 p-30 pt-0 flex flex-col items-center gap-20">
+          <p className="text-black-medium dark:text-white-medium">
+            {description}
+          </p>
           <Button
             onClick={() => {
               setIsOpen(false);
