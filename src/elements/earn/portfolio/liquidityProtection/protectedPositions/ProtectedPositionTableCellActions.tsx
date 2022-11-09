@@ -5,7 +5,7 @@ import {
 import { CellProps } from 'react-table';
 import { PropsWithChildren, useMemo, useState } from 'react';
 import { TableCellExpander } from 'components/table/TableCellExpander';
-import { Button } from 'components/button/Button';
+import { Button, ButtonVariant } from 'components/button/Button';
 import { WithdrawLiquidityWidget } from '../../withdrawLiquidity/WithdrawLiquidityWidget';
 
 export const ProtectedPositionTableCellActions = (
@@ -14,9 +14,7 @@ export const ProtectedPositionTableCellActions = (
   >
 ) => {
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
-  const [selectedPositions, setSelectedPositions] = useState<
-    ProtectedPosition[]
-  >([]);
+  const [selectedPosition, setSelectedPosition] = useState<ProtectedPosition>();
 
   const { row } = cellData;
   const position = row.original;
@@ -25,39 +23,26 @@ export const ProtectedPositionTableCellActions = (
     return (
       <Button
         onClick={() => {
-          setSelectedPositions([position]);
+          setSelectedPosition(position);
           setIsOpenWithdraw(true);
         }}
         className="text-12 w-[120px] h-[32px] mr-10"
+        variant={ButtonVariant.Secondary}
       >
         Withdraw
       </Button>
     );
   }, [position]);
 
-  const groupContent = useMemo(() => {
-    return (
-      <Button
-        onClick={() => {
-          setSelectedPositions(position.subRows);
-          setIsOpenWithdraw(true);
-        }}
-        className="text-12 w-[120px] h-[32px] mr-10"
-      >
-        Withdraw All
-      </Button>
-    );
-  }, [position]);
   return (
     <div>
       {TableCellExpander({
         cellData,
         singleContent,
-        groupContent,
       })}
-      {selectedPositions.length > 0 && (
+      {selectedPosition && (
         <WithdrawLiquidityWidget
-          protectedPosition={selectedPositions[0]}
+          protectedPosition={selectedPosition}
           isModalOpen={isOpenWithdraw}
           setIsModalOpen={setIsOpenWithdraw}
         />
