@@ -75,5 +75,5 @@ export const sorAlphaByKey = <T>(a: T, b: T, key: string[]) => {
     .localeCompare((_get(b, key) as unknown as string).toUpperCase());
 };
 
-export const openNewTab = (url: string) =>
+export const openNewTab = (url?: string) =>
   window.open(url, '_blank', 'noopener');
