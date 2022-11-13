@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useAppSelector } from 'store';
 import { getTokenV2ById } from 'store/bancor/bancor';
-import { Token } from 'services/observables/tokens';
+import { Token, TokenMinimal } from 'services/observables/tokens';
 import {
   fetchProtectedPositions,
   ProtectedPosition,
@@ -56,16 +56,18 @@ export const WithdrawLiquidityWidget = ({
 
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
+  const tokenMinimal = {
+    address: reserveToken.address,
+    decimals: reserveToken.decimals,
+    logoURI: reserveToken.logoURI,
+    symbol: reserveToken.symbol,
+    balance: tknAmount,
+    balanceUsd: Number(tknAmount) * Number(reserveToken.usdPrice),
+    usdPrice: reserveToken.usdPrice?.toString(),
+  } as TokenMinimal;
+
   const tokenInputField = useTknFiatInput({
-    token: {
-      address: reserveToken.address,
-      decimals: reserveToken.decimals,
-      logoURI: reserveToken.logoURI,
-      symbol: reserveToken.symbol,
-      balance: tknAmount,
-      balanceUsd: Number(tknAmount) * Number(reserveToken.usdPrice),
-      usdPrice: reserveToken.usdPrice?.toString(),
-    },
+    token: tokenMinimal,
     setInputTkn: setAmount,
     setInputFiat: setInputFiat,
     inputTkn: amount,

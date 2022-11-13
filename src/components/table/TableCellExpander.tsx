@@ -45,7 +45,7 @@ export const TableCellExpander = ({
       <div>
         {canExpand && (
           <button
-            className="w-[35px] h-[35px] border border-primary rounded-[12px]"
+            className="w-[35px] h-[35px] border rounded-[12px]"
             onClick={() => handleClick()}
           >
             {Expander(isExpanded)}

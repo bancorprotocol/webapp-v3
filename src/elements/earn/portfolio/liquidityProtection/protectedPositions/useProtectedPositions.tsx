@@ -43,6 +43,8 @@ export const useProtectedPositions = () => {
             tknAmount: cellData.value.tknAmount,
             usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
+            deficitAmountTKN: cellData.row.original.deficit.tkn,
+            deficitAmountUSD: cellData.row.original.deficit.usd,
           }),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, [
