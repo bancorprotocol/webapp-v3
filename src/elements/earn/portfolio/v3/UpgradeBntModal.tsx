@@ -4,10 +4,8 @@ import {
   ProtectedPosition,
   ProtectedPositionGrouped,
 } from 'services/web3/protection/positions';
-import { Button, ButtonSize } from 'components/button/Button';
-import { ReactComponent as IconCheck } from 'assets/icons/circlecheck.svg';
+import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { useAppSelector } from 'store';
-import { useMemo } from 'react';
 import {
   getAllBntPositionsAndAmount,
   setProtectedPositions,
@@ -20,10 +18,12 @@ import {
 import { migrateV2Positions } from 'services/web3/protection/migration';
 import { useDispatch } from 'react-redux';
 import { Pool } from 'services/observables/pools';
-import { Image } from 'components/image/Image';
-import { PopoverV3 } from 'components/popover/PopoverV3';
-import { EmergencyInfo } from 'components/EmergencyInfo';
 import { useNavigation } from 'hooks/useNavigation';
+import { Image } from 'components/image/Image';
+import { getV3byID } from 'store/bancor/pool';
+import { bntToken } from 'services/web3/config';
+import { useState } from 'react';
+import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 
 export const UpgradeBntModal = ({
   position,
@@ -36,7 +36,9 @@ export const UpgradeBntModal = ({
 }) => {
   const dispatch = useDispatch();
   const { goToPage } = useNavigation();
+  const [txBusy, setTxBusy] = useState(false);
 
+  const poolV3 = useAppSelector((state) => getV3byID(state, bntToken));
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
 
@@ -46,21 +48,8 @@ export const UpgradeBntModal = ({
     bntPositions: ProtectedPosition[];
   }>(getAllBntPositionsAndAmount);
 
-  const { withdrawalFee, lockDuration } = useAppSelector(
-    (state) => state.v3Portfolio.withdrawalSettings
-  );
-
-  const lockDurationInDays = useMemo(
-    () => lockDuration / 60 / 60 / 24,
-    [lockDuration]
-  );
-
-  const withdrawalFeeInPercent = useMemo(
-    () => (withdrawalFee * 100).toFixed(2),
-    [withdrawalFee]
-  );
-
   const migrate = (positions: ProtectedPosition[]) => {
+    setTxBusy(true);
     migrateV2Positions(
       positions,
       (txHash: string) => migrateNotification(dispatch, txHash),
@@ -68,71 +57,59 @@ export const UpgradeBntModal = ({
         const positions = await fetchProtectedPositions(pools, account!);
         if (positions.length === 0) goToPage.portfolio();
         dispatch(setProtectedPositions(positions));
+        await updatePortfolioData(dispatch);
       },
       () => rejectNotification(dispatch),
       () => migrateFailedNotification(dispatch)
     );
+    setTxBusy(false);
     setIsOpen(false);
   };
 
   return (
-    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} titleElement={<div />}>
-      <div className="flex flex-col items-center gap-20 p-20 text-center">
-        <Image
-          alt="Token"
-          src={position.reserveToken.logoURI}
-          className="!rounded-full h-50 w-50"
-        />
-        <div>Upgrade BNT</div>
-        <div>
-          Move all BNT to a single pool and earn from all trades in the network
-        </div>
-        <div className="flex flex-col items-center justify-center font-bold text-center text-error">
-          <div>You are migrating from Bancor V2.1 to Bancor V3.</div>
-          <div>Please note that BNT distribution is temporarily paused.</div>
-          <PopoverV3
-            children={<EmergencyInfo />}
-            hover
-            buttonElement={() => (
-              <span className="underline cursor-pointer">More info</span>
-            )}
+    <Modal large isOpen={isOpen} setIsOpen={setIsOpen} title={'Migrate to v3'}>
+      <div className="px-30 pb-30">
+        <p className={'text-secondary text-16 mb-30'}>
+          Move all your BNT to a single pool that earns fees from all trades in
+          the network
+        </p>
+
+        <div
+          className={
+            'bg-secondary rounded-10 p-16 space-x-16 text-20 flex items-center'
+          }
+        >
+          <Image
+            alt={'Token Logo'}
+            src={poolV3?.reserveToken.logoURI}
+            className={'w-40 h-40'}
           />
+          <span>All {poolV3?.name}</span>
         </div>
-        <div className="w-full p-20 bg-fog dark:bg-black rounded-20">
-          <div className="flex items-center justify-between text-18 mb-15">
-            <div>Upgrade all BNT</div>
-          </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Single BNT pool
-          </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Auto-compounding
-          </div>
-          <div className="flex items-center gap-5">
-            <IconCheck className="w-10 text-primary" />
-            Fully upgrade partially protected holdings
-          </div>
-        </div>
+
         <Button
           onClick={() => migrate(totalBNT.bntPositions)}
           size={ButtonSize.Full}
+          className="mt-30 mb-30"
+          variant={ButtonVariant.Secondary}
+          disabled={txBusy}
         >
-          Upgrade All
+          {txBusy
+            ? '... waiting for confirmation'
+            : `Migrate all ${poolV3?.name} to v3`}
         </Button>
-        <button
-          onClick={() =>
-            migrate(
-              position.subRows.length === 0 ? [position] : position.subRows
-            )
-          }
-          className="text-primary"
-        >
-          No Thanks, just BNT from the {position.pool.name}
-        </button>
-        <div className="text-secondary text-[13px]">
-          {`${lockDurationInDays} day cooldown • ${withdrawalFeeInPercent}% withdrawal fee`}
+
+        <div className={'flex justify-center'}>
+          <button
+            onClick={() =>
+              migrate(
+                position.subRows.length === 0 ? [position] : position.subRows
+              )
+            }
+            className="hover:text-primary text-16"
+          >
+            Migrate only BNT from {position.pool.name}
+          </button>
         </div>
       </div>
     </Modal>
