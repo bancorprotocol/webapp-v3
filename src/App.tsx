@@ -125,7 +125,7 @@ export const App = () => {
 
       <WarningModal
         title="Important! Please read."
-        description="On Nov 16 11:59 AM EST, migration of user funds from v2.1 to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
+        description="Direct withdrawals from v2.1 are now open. Depending on the state of the liquidity pool being withdrawn from, positional impermanent loss in addition to a pro rata loss may be experienced upon withdrawal. Migration of user funds from v2.1 to v3 will remain permanently disabled."
         learnMore="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
         isOpen={migrationDisabled && !migrationDisabledLS}
         setIsOpen={setMigrationDisabled}

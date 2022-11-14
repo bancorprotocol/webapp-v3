@@ -34,9 +34,7 @@ import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
-import { PopoverV3 } from 'components/popover/PopoverV3';
 import { Switch, SwitchVariant } from 'components/switch/Switch';
-import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -243,40 +241,6 @@ export const WithdrawLiquidityWidget = ({
           )}
           {!isBNT && (
             <>
-              <div className="flex flex-col gap-20 mt-40 text-black-medium dark:text-white-medium ">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-5">
-                    Vault Balance
-                    {deficitAmount && (
-                      <PopoverV3
-                        buttonElement={() => (
-                          <IconInfo className="w-10 h-10 text-secondary" />
-                        )}
-                      >
-                        This pool is in deficit. The claimable amount will be
-                        {deficitAmount} {reserveToken.symbol}.
-                      </PopoverV3>
-                    )}
-                  </div>
-                  <span
-                    className={`${
-                      protectedPosition.vaultBalance > 0
-                        ? 'text-primary'
-                        : 'text-error'
-                    }`}
-                  >
-                    {protectedPosition.vaultBalance > 0 ? '+' : ''}
-                    {protectedPosition.vaultBalance.toFixed(2)}%
-                  </span>
-                </div>
-              </div>
-              <hr className="border-silver dark:border-black-low my-20" />
-              <div className="text-secondary">
-                Depending on the state of the liquidity pool being withdrawn
-                from, positional impermanent loss in addition to a pro rata loss
-                may be experienced upon withdrawal. Migration of user funds from
-                v2.1 to v3 will remain permanently disabled.
-              </div>
               {deficitAmount && (
                 <p className={'text-secondary mt-20'}>
                   This pool is in deficit. The claimable amount will be{' '}
