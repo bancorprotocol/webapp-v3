@@ -9,7 +9,7 @@ export const ProtectedPositionsTable = ({ loading }: { loading: boolean }) => {
   return (
     <section className="content-section pt-20 pb-10">
       <div className="flex justify-between items-center mb-20 mx-[20px] md:mx-[44px]">
-        <h2>My Protected Positions</h2>
+        <h2>My Positions</h2>
         <SearchInput
           value={search}
           setValue={setSearch}
