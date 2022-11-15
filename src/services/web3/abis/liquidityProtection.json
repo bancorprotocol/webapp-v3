@@ -2,11 +2,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract IBancorNetworkV3",
-        "name": "networkV3",
-        "type": "address"
-      },
-      {
         "internalType": "address payable",
         "name": "vaultV3",
         "type": "address"
@@ -44,11 +39,6 @@
       {
         "internalType": "contract ITokenGovernance",
         "name": "govTokenGovernance",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ICheckpointStore",
-        "name": "lastRemoveCheckpointStore",
         "type": "address"
       }
     ],
@@ -179,29 +169,25 @@
   {
     "inputs": [
       {
-        "components": [
-          {
-            "internalType": "contract IDSToken",
-            "name": "poolToken",
-            "type": "address"
-          },
-          {
-            "internalType": "contract IReserveToken",
-            "name": "reserveToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "positionIds",
-            "type": "uint256[]"
-          }
-        ],
-        "internalType": "struct LiquidityProtection.PositionList[]",
-        "name": "positionLists",
-        "type": "tuple[]"
+        "internalType": "bool",
+        "name": "state",
+        "type": "bool"
       }
     ],
-    "name": "migratePositions",
+    "name": "enableDepositing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "state",
+        "type": "bool"
+      }
+    ],
+    "name": "enableRemoving",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -272,55 +258,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract IDSToken",
-        "name": "poolToken",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IReserveToken",
-        "name": "reserveToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "reserveAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "poolRateN",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "poolRateD",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "reserveRateN",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "reserveRateD",
-        "type": "uint256"
-      }
-    ],
-    "name": "poolROI",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "id",
         "type": "uint256"
@@ -376,6 +313,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "contract IConverterAnchor",
+        "name": "poolAnchor",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTotalUserValue",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "settings",
     "outputs": [
@@ -409,6 +364,25 @@
         "internalType": "contract ILiquidityProtectionStore",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IConverterAnchor",
+        "name": "poolAnchor",
+        "type": "address"
+      }
+    ],
+    "name": "totalUserValue",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
