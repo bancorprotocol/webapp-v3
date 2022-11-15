@@ -117,7 +117,8 @@ export const WithdrawLiquidityWidget = ({
     token,
   ]);
 
-  const withdrawDisabled = emtpyAmount || tokenInsufficent || showVBNTWarning;
+  const withdrawDisabled =
+    emtpyAmount || tokenInsufficent || showVBNTWarning || !agreed;
 
   const withdraw = useCallback(async () => {
     if (token) {
