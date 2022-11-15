@@ -56,7 +56,6 @@ export interface ProtectedPosition {
   };
   currentCoveragePercent: number;
   vaultBalance: number;
-  deficit: { tkn: string; usd: string };
 }
 
 export interface ProtectedPositionGrouped extends ProtectedPosition {
@@ -281,10 +280,6 @@ export const fetchProtectedPositions = async (
     );
 
     const vaultBalance = 70;
-    const deficit = {
-      tkn: '70',
-      usd: '70',
-    };
 
     return {
       positionId: position.id,
@@ -306,7 +301,6 @@ export const fetchProtectedPositions = async (
       timestamps,
       currentCoveragePercent,
       vaultBalance,
-      deficit,
     };
   });
 };

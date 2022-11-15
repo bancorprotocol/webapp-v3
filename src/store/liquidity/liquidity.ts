@@ -144,7 +144,6 @@ export const getGroupedPositions = createSelector(
             rewardsMultiplier: val.rewardsMultiplier,
             rewardsAmount: val.rewardsAmount,
             vaultBalance: val.vaultBalance,
-            deficit: val.deficit,
             subRows: [],
           };
 
