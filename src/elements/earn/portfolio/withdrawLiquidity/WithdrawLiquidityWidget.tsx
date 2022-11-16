@@ -189,7 +189,7 @@ export const WithdrawLiquidityWidget = ({
     );
     sendLiquidityEvent(Events.click);
     if (withdrawingBNT) {
-      onClose();
+      setIsModalOpen(false);
       await wait(1000);
       onStart();
     } else withdraw();
@@ -198,7 +198,7 @@ export const WithdrawLiquidityWidget = ({
     fiatToggle,
     onStart,
     pool.name,
-    onClose,
+    setIsModalOpen,
     tknAmount,
     token,
     withdraw,
@@ -206,68 +206,70 @@ export const WithdrawLiquidityWidget = ({
   ]);
 
   return (
-    <ModalV3
-      title="Withdraw"
-      setIsOpen={onClose}
-      isOpen={isModalOpen}
-      titleElement={<SwapSwitch />}
-      large
-    >
-      <>
-        <div className="px-30 pb-20">
-          <TradeWidgetInput
-            label={'Amount'}
-            input={tokenInputField}
-            errorMsg={inputErrorMsg}
-            disableSelection
-          />
-          {withdrawingBNT && (
-            <div className="mt-20">
-              BNT withdrawals are subject to a 24h lock period before they can
-              be claimed.
-            </div>
-          )}
-          {showVBNTWarning && (
-            <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-              Insufficient vBNT balance.
-            </div>
-          )}
-          {!isBNT && (
-            <>
-              <div
-                className={
-                  'flex justify-between mt-20 space-x-20 items-center text-error'
-                }
-              >
-                <Switch
-                  variant={SwitchVariant.ERROR}
-                  selected={agreed}
-                  onChange={setAgreed}
-                />
-                <button
-                  className={'text-left'}
-                  onClick={() => setAgreed(!agreed)}
-                >
-                  BNT distribution is currently disabled. I understand I may be
-                  withdrawing at a loss if the {reserveToken.symbol} vault is in
-                  deficit.
-                </button>
+    <>
+      <ModalV3
+        title="Withdraw"
+        setIsOpen={onClose}
+        isOpen={isModalOpen}
+        titleElement={<SwapSwitch />}
+        large
+      >
+        <>
+          <div className="px-30 pb-20">
+            <TradeWidgetInput
+              label={'Amount'}
+              input={tokenInputField}
+              errorMsg={inputErrorMsg}
+              disableSelection
+            />
+            {withdrawingBNT && (
+              <div className="mt-20">
+                BNT withdrawals are subject to a 24h lock period before they can
+                be claimed.
               </div>
-            </>
-          )}
-          <Button
-            onClick={handleWithdraw}
-            disabled={withdrawDisabled}
-            size={ButtonSize.Full}
-            variant={ButtonVariant.Secondary}
-            className="mt-20"
-          >
-            {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
-          </Button>
-          {ModalApprove}
-        </div>
-        {!isBNT && <DepositFAQ />}
-      </>
-    </ModalV3>
+            )}
+            {showVBNTWarning && (
+              <div className="p-20 rounded bg-error font-medium mt-20 text-white">
+                Insufficient vBNT balance.
+              </div>
+            )}
+            {!isBNT && (
+              <>
+                <div
+                  className={
+                    'flex justify-between mt-20 space-x-20 items-center text-error'
+                  }
+                >
+                  <Switch
+                    variant={SwitchVariant.ERROR}
+                    selected={agreed}
+                    onChange={setAgreed}
+                  />
+                  <button
+                    className={'text-left'}
+                    onClick={() => setAgreed(!agreed)}
+                  >
+                    BNT distribution is currently disabled. I understand I may
+                    be withdrawing at a loss if the {reserveToken.symbol} vault
+                    is in deficit.
+                  </button>
+                </div>
+              </>
+            )}
+            <Button
+              onClick={handleWithdraw}
+              disabled={withdrawDisabled}
+              size={ButtonSize.Full}
+              variant={ButtonVariant.Secondary}
+              className="mt-20"
+            >
+              {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
+            </Button>
+          </div>
+          {!isBNT && <DepositFAQ />}
+        </>
+      </ModalV3>
+      {ModalApprove}
+    </>
   );
 };
