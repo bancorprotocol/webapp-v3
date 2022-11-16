@@ -118,7 +118,7 @@ export const WithdrawLiquidityWidget = ({
   ]);
 
   const withdrawDisabled =
-    emtpyAmount || tokenInsufficent || showVBNTWarning || !agreed;
+    emtpyAmount || tokenInsufficent || showVBNTWarning || (!agreed && !isBNT);
 
   const withdraw = useCallback(async () => {
     if (token) {
@@ -236,10 +236,6 @@ export const WithdrawLiquidityWidget = ({
           )}
           {!isBNT && (
             <>
-              <p className={'text-secondary mt-20'}>
-                This pool is in deficit. The claimable amount will be{' '}
-                {tknAmount} {reserveToken.symbol}.
-              </p>
               <div
                 className={
                   'flex justify-between mt-20 space-x-20 items-center text-error'
