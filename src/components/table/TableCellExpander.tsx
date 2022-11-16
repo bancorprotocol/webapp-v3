@@ -7,7 +7,7 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 
 interface Props {
   singleContent: JSX.Element;
-  groupContent: JSX.Element;
+  groupContent?: JSX.Element;
   cellData: PropsWithChildren<CellProps<any>>;
   canExpandMultiple?: boolean;
   subMenu?: Function;
@@ -29,7 +29,7 @@ export const TableCellExpander = ({
   subMenu,
 }: Props) => {
   const {
-    row: { canExpand, isExpanded, toggleRowExpanded, original },
+    row: { canExpand, isExpanded, toggleRowExpanded },
     toggleAllRowsExpanded,
   } = cellData;
 
@@ -41,11 +41,11 @@ export const TableCellExpander = ({
 
   return (
     <div className="flex items-center justify-end w-full">
-      {canExpand ? groupContent : original.groupId && singleContent}
+      {canExpand ? groupContent : singleContent}
       <div>
         {canExpand && (
           <button
-            className="w-[35px] h-[35px] border border-primary rounded-[12px]"
+            className="w-[35px] h-[35px] border rounded-[12px]"
             onClick={() => handleClick()}
           >
             {Expander(isExpanded)}
