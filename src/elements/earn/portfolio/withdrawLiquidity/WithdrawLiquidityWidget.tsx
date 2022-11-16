@@ -120,12 +120,12 @@ export const WithdrawLiquidityWidget = ({
   const withdrawDisabled =
     emtpyAmount || tokenInsufficent || showVBNTWarning || (!agreed && !isBNT);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
     setIsModalOpen(false);
     setAmount('');
     setAgreed(false);
     setInputFiat('');
-  };
+  }, [setIsModalOpen, setAmount, setAgreed, setInputFiat]);
 
   const withdraw = useCallback(async () => {
     if (token) {
@@ -137,7 +137,7 @@ export const WithdrawLiquidityWidget = ({
         (txHash: string) => {
           transactionId = txHash;
           withdrawProtectedPosition(dispatch, token, amount, txHash);
-          setIsModalOpen(false);
+          onClose();
         },
         async () => {
           sendLiquiditySuccessEvent(transactionId);
@@ -154,17 +154,8 @@ export const WithdrawLiquidityWidget = ({
         }
       );
     }
-    setIsModalOpen(false);
-  }, [
-    account,
-    amount,
-    dispatch,
-    pools,
-    positionId,
-    setIsModalOpen,
-    tknAmount,
-    token,
-  ]);
+    onClose();
+  }, [account, amount, dispatch, pools, positionId, onClose, tknAmount, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
     govToken ? [{ amount: amount, token: govToken }] : [],
@@ -198,7 +189,7 @@ export const WithdrawLiquidityWidget = ({
     );
     sendLiquidityEvent(Events.click);
     if (withdrawingBNT) {
-      setIsModalOpen(false);
+      onClose();
       await wait(1000);
       onStart();
     } else withdraw();
@@ -207,7 +198,7 @@ export const WithdrawLiquidityWidget = ({
     fiatToggle,
     onStart,
     pool.name,
-    setIsModalOpen,
+    onClose,
     tknAmount,
     token,
     withdraw,

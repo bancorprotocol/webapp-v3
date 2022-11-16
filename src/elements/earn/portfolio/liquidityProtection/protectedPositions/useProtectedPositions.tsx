@@ -68,7 +68,7 @@ export const useProtectedPositions = () => {
             symbol: cellData.row.original.reserveToken.symbol,
           }),
         sortType: (a, b) =>
-          sorAlphaByKey(a.original, b.original, [
+          sortNumbersByKey(a.original, b.original, [
             'claimableAmount',
             'usdAmount',
           ]),
