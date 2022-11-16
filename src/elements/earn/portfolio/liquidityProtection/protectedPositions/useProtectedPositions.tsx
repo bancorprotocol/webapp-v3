@@ -72,8 +72,8 @@ export const useProtectedPositions = () => {
             'claimableAmount',
             'usdAmount',
           ]),
-        minWidth: 130,
-        width: 130,
+        minWidth: 200,
+        width: 200,
         sortDescFirst: true,
       },
       {
