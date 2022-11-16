@@ -25,7 +25,7 @@ import {
   buildProtectionDelayCall,
   buildRemoveLiquidityReturnCall,
 } from 'services/web3/liquidity/liquidity';
-import { shrinkToken } from 'utils/formulas';
+import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 import { ErrorCode } from '../types';
 import { Result } from '@ethersproject/abi';
@@ -55,7 +55,7 @@ export interface ProtectedPosition {
     fullCoverage: string;
   };
   currentCoveragePercent: number;
-  vaultBalance: number;
+  change: number;
 }
 
 export interface ProtectedPositionGrouped extends ProtectedPosition {
@@ -276,16 +276,13 @@ export const fetchProtectedPositions = async (
 
   const rewardsAmount = await fetchedPendingRewards(currentUser, rawPositions);
 
-  const poolsDeficit = await fetchedPoolsDeficit(rawPositions);
-
   const positions = values(
     merge(
       keyBy(rawPositions, 'id'),
       keyBy(positionsRoi, 'id'),
       //keyBy(positionsAPR, 'id'),
       keyBy(rewardsMultiplier, 'id'),
-      keyBy(rewardsAmount, 'id'),
-      keyBy(poolsDeficit, 'id')
+      keyBy(rewardsAmount, 'id')
     )
   );
 
@@ -313,7 +310,9 @@ export const fetchProtectedPositions = async (
       Number(timestamps.fullCoverage)
     );
 
-    const vaultBalance = Number(shrinkToken(position.poolDeficit, decimals));
+    const inital = initialStake.tknAmount;
+    const claimable = position.claimableAmount.tknAmount;
+    const change = calculatePercentageChange(Number(claimable), Number(inital));
 
     return {
       positionId: position.id,
@@ -334,7 +333,7 @@ export const fetchProtectedPositions = async (
       rewardsAmount: position.rewardsAmount,
       timestamps,
       currentCoveragePercent,
-      vaultBalance,
+      change,
     };
   });
 };

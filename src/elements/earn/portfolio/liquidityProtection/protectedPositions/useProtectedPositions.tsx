@@ -77,19 +77,26 @@ export const useProtectedPositions = () => {
         sortDescFirst: true,
       },
       {
-        id: 'vaultBalance',
-        accessor: 'vaultBalance',
-        Header: 'Vault Balance',
-        Cell: (cellData) => (
-          <div
-            className={`${cellData.value > 0 ? 'text-primary' : 'text-error'}`}
-          >
-            {cellData.value}%
-          </div>
-        ),
+        id: 'change',
+        accessor: 'change',
+        Header: 'Change',
+        Cell: (cellData) => {
+          return (
+            <div
+              className={`${
+                cellData.value > 0 ? 'text-primary' : 'text-error'
+              }`}
+            >
+              {cellData.value}%
+            </div>
+          );
+        },
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['change']),
         minWidth: 130,
         sortDescFirst: true,
-        tooltip: 'The % of tokens currently available',
+        tooltip:
+          'The % change between staked and claimable amounts, fees, pool status, and IL are taken into account',
       },
       {
         id: 'expander',

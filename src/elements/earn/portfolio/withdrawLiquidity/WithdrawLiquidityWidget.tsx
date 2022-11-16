@@ -167,12 +167,6 @@ export const WithdrawLiquidityWidget = ({
     sendLiquidityApprovedEvent
   );
 
-  const deficitAmount =
-    protectedPosition.vaultBalance < 0
-      ? (1 - protectedPosition.vaultBalance / 100) *
-        Number(protectedPosition.claimableAmount.tknAmount)
-      : undefined;
-
   const handleWithdraw = useCallback(async () => {
     const amountUsd = new BigNumber(amount)
       .times(token ? token.usdPrice ?? 0 : 0)
@@ -242,12 +236,10 @@ export const WithdrawLiquidityWidget = ({
           )}
           {!isBNT && (
             <>
-              {deficitAmount && (
-                <p className={'text-secondary mt-20'}>
-                  This pool is in deficit. The claimable amount will be{' '}
-                  {deficitAmount} {reserveToken.symbol}.
-                </p>
-              )}
+              <p className={'text-secondary mt-20'}>
+                This pool is in deficit. The claimable amount will be{' '}
+                {tknAmount} {reserveToken.symbol}.
+              </p>
               <div
                 className={
                   'flex justify-between mt-20 space-x-20 items-center text-error'

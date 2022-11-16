@@ -143,7 +143,7 @@ export const getGroupedPositions = createSelector(
             currentCoveragePercent: val.currentCoveragePercent,
             rewardsMultiplier: val.rewardsMultiplier,
             rewardsAmount: val.rewardsAmount,
-            vaultBalance: val.vaultBalance,
+            change: val.change,
             subRows: [],
           };
 
