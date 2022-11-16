@@ -1,3 +1,4 @@
+import { Pool, Reserve } from 'services/observables/pools';
 import { Token } from 'services/observables/tokens';
 import { genericToken, zeroAddress } from 'services/web3/config';
 
@@ -16,3 +17,34 @@ export const mockToken: Token = {
   usd_volume_24: '5627813.477706',
   isProtected: true,
 };
+
+export const fallbackPool = (
+  pool_dlt_id: string,
+  reserveTokenAddress: string,
+  bntReserve: Reserve
+): Pool => ({
+  name: 'N/A',
+  pool_dlt_id,
+  converter_dlt_id: '',
+  reserves: [fallbackReserve(reserveTokenAddress), bntReserve],
+  liquidity: 0,
+  volume_24h: 0,
+  fees_24h: 0,
+  fee: 0,
+  version: 0,
+  supply: 0,
+  decimals: 18,
+  apr_24h: 0,
+  apr_7d: 0,
+  isProtected: false,
+});
+
+export const fallbackReserve = (address: string): Reserve => ({
+  address,
+  weight: '',
+  balance: '',
+  symbol: 'N/A',
+  logoURI: '',
+  decimals: 18,
+  usdPrice: 0,
+});

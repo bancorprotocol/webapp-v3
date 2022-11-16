@@ -33,6 +33,7 @@ import { changeGas } from '../config';
 import { sendLiquidityEvent } from 'services/api/googleTagManager/liquidity';
 import { Pool, Reserve } from 'services/observables/pools';
 import { Events } from 'services/api/googleTagManager';
+import { fallbackPool, fallbackReserve } from 'utils/mocked';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -93,7 +94,7 @@ const fetchPositions = async (
       const poolToken = position[1].toString();
       const reserveTokenAddress = position[2].toString();
       const pool = pools.find((x) => x.pool_dlt_id === poolToken);
-      const reserveToken = pool!.reserves.find(
+      const reserveToken = pool?.reserves.find(
         (reserve) => reserve.address === reserveTokenAddress
       );
 
@@ -101,13 +102,17 @@ const fetchPositions = async (
         id: positionIds[index].toString(),
         owner: position[0].toString(),
         poolToken,
-        reserveToken: reserveToken!,
+        reserveToken: reserveToken
+          ? reserveToken
+          : fallbackReserve(reserveTokenAddress),
         poolAmount: position[3].toString(),
         reserveAmount: position[4].toString(),
         reserveRateN: position[5].toString(),
         reserveRateD: position[6].toString(),
         timestamp: position[7].toString(),
-        pool: pool!,
+        pool: pool
+          ? pool
+          : fallbackPool(poolToken, reserveTokenAddress, pools[0].reserves[1]),
       };
     });
 
@@ -316,7 +321,13 @@ export const fetchProtectedPositions = async (
 
     return {
       positionId: position.id,
-      pool: pool!,
+      pool: pool
+        ? pool
+        : fallbackPool(
+            position.poolToken,
+            position.reserveToken.address,
+            pools[0].reserves[1]
+          ),
       fees: position.fees,
       initialStake,
       protectedAmount: position.protectedAmount,
