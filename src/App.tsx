@@ -125,8 +125,8 @@ export const App = () => {
 
       <WarningModal
         title="Important! Please read."
-        description="On Nov 16 11:59 AM EST, migration of user funds from v2.1 to v3 will no longer be supported. Withdrawals directly from v2.1 will reopen shortly thereafter."
-        learnMore="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
+        description="An extension of the Phase 1: v2.1 Cooldown Period is being made while the data around v2.1 surpluses and protocol owned liquidity is being finalized. Once it is ready, the data will be made available in governance and 24 hours after, the cooldown period will conclude."
+        learnMore="https://gov.bancor.network/t/migrate-pol-from-v2-1-to-v3/4081"
         isOpen={migrationDisabled && !migrationDisabledLS}
         setIsOpen={setMigrationDisabled}
       />
