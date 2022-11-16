@@ -120,6 +120,13 @@ export const WithdrawLiquidityWidget = ({
   const withdrawDisabled =
     emtpyAmount || tokenInsufficent || showVBNTWarning || (!agreed && !isBNT);
 
+  const onClose = () => {
+    setIsModalOpen(false);
+    setAmount('');
+    setAgreed(false);
+    setInputFiat('');
+  };
+
   const withdraw = useCallback(async () => {
     if (token) {
       let transactionId: string;
@@ -210,7 +217,7 @@ export const WithdrawLiquidityWidget = ({
   return (
     <ModalV3
       title="Withdraw"
-      setIsOpen={setIsModalOpen}
+      setIsOpen={onClose}
       isOpen={isModalOpen}
       titleElement={<SwapSwitch />}
       large
