@@ -7,6 +7,7 @@ import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquid
 import { getGroupedPositions } from 'store/liquidity/liquidity';
 import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
 import { sorAlphaByKey, sortNumbersByKey } from 'utils/pureFunctions';
+import { ProtectedPositionTableCellClaimable } from './ProtectedPositionTableCellClaimable';
 
 export const useProtectedPositions = () => {
   const groupedPositions =
@@ -55,6 +56,25 @@ export const useProtectedPositions = () => {
         maxWidth: 130,
         sortDescFirst: true,
         tooltip: 'Amount of tokens you originally staked in the pool',
+      },
+      {
+        id: 'claimableAmount',
+        Header: 'Claimable Amount',
+        accessor: 'claimableAmount',
+        Cell: (cellData) =>
+          ProtectedPositionTableCellClaimable({
+            tknAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.usdAmount,
+            symbol: cellData.row.original.reserveToken.symbol,
+          }),
+        sortType: (a, b) =>
+          sorAlphaByKey(a.original, b.original, [
+            'claimableAmount',
+            'usdAmount',
+          ]),
+        minWidth: 130,
+        width: 130,
+        sortDescFirst: true,
       },
       {
         id: 'vaultBalance',

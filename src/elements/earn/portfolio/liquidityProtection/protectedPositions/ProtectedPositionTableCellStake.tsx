@@ -15,20 +15,21 @@ export const ProtectedPositionTableCellAmount = ({
   deficitAmountTKN,
   deficitAmountUSD,
 }: Props) => {
+  const bnt = 'BNT' === symbol;
   return (
     <div>
       <div className="flex items-center h-24 font-medium gap-5">
         {tknAmount === '0' ? 'N/A' : `${prettifyNumber(tknAmount)} ${symbol}`}
-        {deficitAmountTKN && deficitAmountUSD && (
+        {false && deficitAmountTKN && deficitAmountUSD && !bnt && (
           <PopoverV3
             buttonElement={() => <IconWarning className="text-error" />}
           >
             <div>
               <div className="text-error">Available with Vault Deficit</div>
               <div className="flex items-center gap-10">
-                {prettifyNumber(deficitAmountTKN)}
+                {prettifyNumber(deficitAmountTKN ?? '')}
                 <div className="text-secondary">
-                  {prettifyNumber(deficitAmountUSD, true)}
+                  {prettifyNumber(deficitAmountUSD ?? '', true)}
                 </div>
               </div>
             </div>
