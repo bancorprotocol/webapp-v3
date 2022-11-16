@@ -14,6 +14,7 @@ import { Dictionary } from 'services/web3/types';
 import MerkleTree from 'merkletreejs';
 import { getAddress, keccak256 } from 'ethers/lib/utils';
 import { generateLeaf } from 'services/web3/protection/rewards';
+import { calculatePercentageChange } from 'utils/formulas';
 
 interface LiquidityState {
   poolTokens: PoolToken[];
@@ -109,9 +110,16 @@ export const getGroupedPositions = createSelector(
           const sumInitalStakeTkn = calcSum('initialStake.tknAmount');
           const sumInitalStakeUSD = calcSum('initialStake.usdAmount');
 
+          const claimableAmountTKN = calcSum('claimableAmount.tknAmount');
+
           const sumRoi = new BigNumber(sumFees)
             .div(sumInitalStakeTkn)
             .toString();
+
+          const change = calculatePercentageChange(
+            Number(claimableAmountTKN),
+            Number(sumInitalStakeTkn)
+          );
 
           item = {
             groupId: groupId,
@@ -128,7 +136,7 @@ export const getGroupedPositions = createSelector(
             },
             claimableAmount: {
               usdAmount: calcSum('claimableAmount.usdAmount'),
-              tknAmount: calcSum('claimableAmount.tknAmount'),
+              tknAmount: claimableAmountTKN,
             },
             reserveToken: val.reserveToken,
             roi: {
@@ -143,7 +151,7 @@ export const getGroupedPositions = createSelector(
             currentCoveragePercent: val.currentCoveragePercent,
             rewardsMultiplier: val.rewardsMultiplier,
             rewardsAmount: val.rewardsAmount,
-            change: val.change,
+            change,
             subRows: [],
           };
 

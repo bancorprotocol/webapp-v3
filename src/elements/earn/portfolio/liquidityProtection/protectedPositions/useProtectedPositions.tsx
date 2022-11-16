@@ -87,7 +87,7 @@ export const useProtectedPositions = () => {
                 cellData.value > 0 ? 'text-primary' : 'text-error'
               }`}
             >
-              {cellData.value}%
+              {cellData.value.toFixed(2)}%
             </div>
           );
         },
