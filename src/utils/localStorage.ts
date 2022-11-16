@@ -15,9 +15,9 @@ const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
-const migrationDisabled = 'migrationDisabled';
+const migrationDisabled = 'migrationDisabledV2';
 
-const deprecated_cleanup = ['userTokenLists'];
+const deprecated_cleanup = ['userTokenLists', 'migrationDisabled'];
 
 deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
 
