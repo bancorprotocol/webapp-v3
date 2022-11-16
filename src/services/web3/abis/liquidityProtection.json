@@ -258,6 +258,44 @@
   {
     "inputs": [
       {
+        "internalType": "contract IDSToken",
+        "name": "poolToken",
+        "type": "address"
+      }
+    ],
+    "name": "poolDeficitPPM",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "positionValue",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "id",
         "type": "uint256"
@@ -325,7 +363,25 @@
         "type": "uint256"
       }
     ],
-    "name": "setTotalUserValue",
+    "name": "setTotalPositionsValue",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IConverterAnchor[]",
+        "name": "poolAnchors",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setTotalPositionsValueMultiple",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -377,7 +433,7 @@
         "type": "address"
       }
     ],
-    "name": "totalUserValue",
+    "name": "totalPositionsValue",
     "outputs": [
       {
         "internalType": "uint256",

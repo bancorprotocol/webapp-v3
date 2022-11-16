@@ -12,7 +12,7 @@ import {
   settingsContractAddress$,
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
-import { multicall } from 'services/web3/multicall/multicall';
+import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 import { keyBy, merge, values } from 'lodash';
 import dayjs from 'dayjs';
 import {
@@ -181,6 +181,37 @@ const fetchROI = async (
   return [];
 };
 
+const buildPoolDeficitCall = (
+  contract: LiquidityProtection,
+  position: ProtectedLiquidity
+): MultiCall => {
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'poolDeficitPPM',
+    methodParameters: [position.poolToken],
+  };
+};
+
+export const fetchedPoolsDeficit = async (positions: ProtectedLiquidity[]) => {
+  const contractAddress = await liquidityProtection$.pipe(take(1)).toPromise();
+  const contract = LiquidityProtection__factory.connect(
+    contractAddress,
+    web3.provider
+  );
+  const calls = positions.map((position) =>
+    buildPoolDeficitCall(contract, position)
+  );
+  const res = await multicall(calls);
+  if (res)
+    return res.map((x, i) => ({
+      id: positions[i].id,
+      poolDeficit: shrinkToken(x.toString(), 6),
+    }));
+
+  return [];
+};
+
 export const fetchProtectedPositions = async (
   pools: Pool[],
   currentUser: string
@@ -245,13 +276,16 @@ export const fetchProtectedPositions = async (
 
   const rewardsAmount = await fetchedPendingRewards(currentUser, rawPositions);
 
+  const poolsDeficit = await fetchedPoolsDeficit(rawPositions);
+
   const positions = values(
     merge(
       keyBy(rawPositions, 'id'),
       keyBy(positionsRoi, 'id'),
       //keyBy(positionsAPR, 'id'),
       keyBy(rewardsMultiplier, 'id'),
-      keyBy(rewardsAmount, 'id')
+      keyBy(rewardsAmount, 'id'),
+      keyBy(poolsDeficit, 'id')
     )
   );
 
@@ -279,7 +313,7 @@ export const fetchProtectedPositions = async (
       Number(timestamps.fullCoverage)
     );
 
-    const vaultBalance = 70;
+    const vaultBalance = Number(shrinkToken(position.poolDeficit, decimals));
 
     return {
       positionId: position.id,
