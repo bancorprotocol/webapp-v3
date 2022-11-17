@@ -74,10 +74,10 @@ export const WithdrawLiquidityWidget = ({
 
   const inputErrorMsg = useMemo(
     () =>
-      !!account && new BigNumber(reserveToken.balance || 0).lt(amount)
+      account && new BigNumber(tknAmount || 0).lt(amount)
         ? 'Insufficient balance'
         : '',
-    [account, amount, reserveToken.balance]
+    [account, amount, tknAmount]
   );
 
   const isBNT = bntToken === reserveToken.address;
@@ -96,19 +96,20 @@ export const WithdrawLiquidityWidget = ({
   const [agreed, setAgreed] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
-  const showVBNTWarning = useMemo(() => {
+  const bntToVBNTRatio = useMemo(() => {
     if (token && token.address !== bntToken) {
-      return false;
+      return 0;
     }
     if (!amount) {
-      return false;
+      return 0;
     }
     const govTokenBalance = govToken ? govToken.balance ?? 0 : 0;
     const initalStake = protectedPosition.initialStake.tknAmount;
     return new BigNumber(amount)
       .div(tknAmount)
       .times(initalStake)
-      .gt(govTokenBalance);
+      .minus(govTokenBalance)
+      .toNumber();
   }, [
     amount,
     govToken,
@@ -116,6 +117,7 @@ export const WithdrawLiquidityWidget = ({
     tknAmount,
     token,
   ]);
+  const showVBNTWarning = bntToVBNTRatio > 0;
 
   const withdrawDisabled =
     emtpyAmount || tokenInsufficent || showVBNTWarning || (!agreed && !isBNT);
@@ -230,7 +232,8 @@ export const WithdrawLiquidityWidget = ({
             )}
             {showVBNTWarning && (
               <div className="p-20 rounded bg-error font-medium mt-20 text-white">
-                Insufficient vBNT balance.
+                Insufficient vBNT balance. You need an additional{' '}
+                {bntToVBNTRatio.toFixed(4)} vBNT in order to withdraw
               </div>
             )}
             {!isBNT && (
