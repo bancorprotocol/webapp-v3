@@ -351,7 +351,6 @@ export const fetchProtectedPositions = async (
 
 export const withdrawProtection = async (
   positionId: string,
-  amount: string,
   tknAmount: string,
   onHash: (txHash: string) => void,
   onCompleted: Function,
@@ -368,19 +367,18 @@ export const withdrawProtection = async (
       writeWeb3.signer
     );
 
-    const percentage = new BigNumber(amount).div(tknAmount);
     sendLiquidityEvent(Events.wallet_req);
 
     const estimate =
       await liquidityProtectionContract.estimateGas.removeLiquidity(
         positionId,
-        decToPpm(percentage)
+        decToPpm(1) //100% withdraw
       );
     const gasLimit = changeGas(estimate.toString());
 
     const tx = await liquidityProtectionContract.removeLiquidity(
       positionId,
-      decToPpm(percentage),
+      decToPpm(1), //100% withdraw
       { gasLimit }
     );
     sendLiquidityEvent(Events.wallet_confirm);

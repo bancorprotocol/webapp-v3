@@ -17,7 +17,6 @@ import {
 } from 'services/notifications/notifications';
 import { useDispatch } from 'react-redux';
 import { setProtectedPositions } from 'store/liquidity/liquidity';
-import { SwapSwitch } from '../../../swapSwitch/SwapSwitch';
 import { wait } from 'utils/pureFunctions';
 import { ApprovalContract } from 'services/web3/approval';
 import {
@@ -30,11 +29,11 @@ import {
 import { Pool } from 'services/observables/pools';
 import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Events } from 'services/api/googleTagManager';
-import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
-import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 import { ModalV3 } from 'components/modal/ModalV3';
 import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
 import { Switch, SwitchVariant } from 'components/switch/Switch';
+import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
+import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -51,34 +50,24 @@ export const WithdrawLiquidityWidget = ({
   const account = useAppSelector((state) => state.user.account);
   const { positionId, reserveToken, pool } = protectedPosition;
   const { tknAmount } = protectedPosition.claimableAmount;
-
-  const [amount, setAmount] = useState('');
-  const [inputFiat, setInputFiat] = useState('');
+  const usdAmount = Number(tknAmount) * Number(reserveToken.usdPrice);
   const tokenMinimal = {
     address: reserveToken.address,
     decimals: reserveToken.decimals,
     logoURI: reserveToken.logoURI,
     symbol: reserveToken.symbol,
     balance: tknAmount,
-    balanceUsd: Number(tknAmount) * Number(reserveToken.usdPrice),
+    balanceUsd: usdAmount,
     usdPrice: reserveToken.usdPrice?.toString(),
   } as TokenMinimal;
 
   const tokenInputField = useTknFiatInput({
     token: tokenMinimal,
-    setInputTkn: setAmount,
-    setInputFiat: setInputFiat,
-    inputTkn: amount,
-    inputFiat: inputFiat,
+    setInputTkn: () => {},
+    setInputFiat: () => {},
+    inputTkn: tknAmount,
+    inputFiat: usdAmount.toString(),
   });
-
-  const inputErrorMsg = useMemo(
-    () =>
-      account && new BigNumber(tknAmount || 0).lt(amount)
-        ? 'Insufficient balance'
-        : '',
-    [account, amount, tknAmount]
-  );
 
   const isBNT = bntToken === reserveToken.address;
   const token = useAppSelector<Token | undefined>((state: any) =>
@@ -91,8 +80,6 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const withdrawingBNT = reserveToken.address === bntToken;
-  const emtpyAmount = amount.trim() === '' || Number(amount) === 0;
-  const tokenInsufficent = Number(amount) > Number(tknAmount);
   const [agreed, setAgreed] = useState(false);
   const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
 
@@ -100,45 +87,29 @@ export const WithdrawLiquidityWidget = ({
     if (token && token.address !== bntToken) {
       return 0;
     }
-    if (!amount) {
-      return 0;
-    }
+
     const govTokenBalance = govToken ? govToken.balance ?? 0 : 0;
     const initalStake = protectedPosition.initialStake.tknAmount;
-    return new BigNumber(amount)
-      .div(tknAmount)
-      .times(initalStake)
-      .minus(govTokenBalance)
-      .toNumber();
-  }, [
-    amount,
-    govToken,
-    protectedPosition.initialStake.tknAmount,
-    tknAmount,
-    token,
-  ]);
+    return new BigNumber(initalStake).minus(govTokenBalance).toNumber();
+  }, [govToken, protectedPosition.initialStake.tknAmount, token]);
   const showVBNTWarning = bntToVBNTRatio > 0;
 
-  const withdrawDisabled =
-    emtpyAmount || tokenInsufficent || showVBNTWarning || (!agreed && !isBNT);
+  const withdrawDisabled = showVBNTWarning || (!agreed && !isBNT);
 
   const onClose = useCallback(() => {
     setIsModalOpen(false);
-    setAmount('');
     setAgreed(false);
-    setInputFiat('');
-  }, [setIsModalOpen, setAmount, setAgreed, setInputFiat]);
+  }, [setIsModalOpen, setAgreed]);
 
   const withdraw = useCallback(async () => {
     if (token) {
       let transactionId: string;
       await withdrawProtection(
         positionId,
-        amount,
         tknAmount,
         (txHash: string) => {
           transactionId = txHash;
-          withdrawProtectedPosition(dispatch, token, amount, txHash);
+          withdrawProtectedPosition(dispatch, token, tknAmount, txHash);
           onClose();
         },
         async () => {
@@ -152,15 +123,15 @@ export const WithdrawLiquidityWidget = ({
         },
         (errorMsg) => {
           sendLiquidityFailEvent(errorMsg);
-          withdrawProtectedPositionFailed(dispatch, token, amount);
+          withdrawProtectedPositionFailed(dispatch, token, tknAmount);
         }
       );
     }
     onClose();
-  }, [account, amount, dispatch, pools, positionId, onClose, tknAmount, token]);
+  }, [account, dispatch, pools, positionId, onClose, tknAmount, token]);
 
   const [onStart, ModalApprove] = useApproveModal(
-    govToken ? [{ amount: amount, token: govToken }] : [],
+    govToken ? [{ amount: tknAmount, token: govToken }] : [],
     withdraw,
     ApprovalContract.LiquidityProtection,
     sendLiquidityEvent,
@@ -168,26 +139,20 @@ export const WithdrawLiquidityWidget = ({
   );
 
   const handleWithdraw = useCallback(async () => {
-    const amountUsd = new BigNumber(amount)
+    const amountUsd = new BigNumber(tknAmount)
       .times(token ? token.usdPrice ?? 0 : 0)
       .toString();
 
-    const percentage = new BigNumber(amount).div(tknAmount).toFixed(0);
-    const userSelectedPercentage =
-      percentage === '25' ||
-      percentage === '50' ||
-      percentage === '75' ||
-      percentage === '100';
     setCurrentLiquidity(
       'Withdraw Single',
       pool.name,
       token!.symbol,
-      amount,
+      tknAmount,
       amountUsd,
       undefined,
       undefined,
       fiatToggle,
-      userSelectedPercentage ? percentage : undefined
+      undefined
     );
     sendLiquidityEvent(Events.click);
     if (withdrawingBNT) {
@@ -196,7 +161,6 @@ export const WithdrawLiquidityWidget = ({
       onStart();
     } else withdraw();
   }, [
-    amount,
     fiatToggle,
     onStart,
     pool.name,
@@ -209,21 +173,16 @@ export const WithdrawLiquidityWidget = ({
 
   return (
     <>
-      <ModalV3
-        title="Withdraw"
-        setIsOpen={onClose}
-        isOpen={isModalOpen}
-        titleElement={<SwapSwitch />}
-        large
-      >
+      <ModalV3 title="Withdraw" setIsOpen={onClose} isOpen={isModalOpen} large>
         <>
           <div className="px-30 pb-20">
             <TradeWidgetInput
-              label={'Amount'}
+              label={'Full Amount'}
               input={tokenInputField}
-              errorMsg={inputErrorMsg}
               disableSelection
+              readOnly
             />
+
             {withdrawingBNT && (
               <div className="mt-20">
                 BNT withdrawals are subject to a 24h lock period before they can
@@ -233,7 +192,7 @@ export const WithdrawLiquidityWidget = ({
             {showVBNTWarning && (
               <div className="p-20 rounded bg-error font-medium mt-20 text-white">
                 Insufficient vBNT balance. You need an additional{' '}
-                {bntToVBNTRatio.toFixed(4)} vBNT in order to withdraw
+                {bntToVBNTRatio} vBNT in order to withdraw
               </div>
             )}
             {!isBNT && (
@@ -266,7 +225,7 @@ export const WithdrawLiquidityWidget = ({
               variant={ButtonVariant.Secondary}
               className="mt-20"
             >
-              {emtpyAmount ? 'Enter Amount' : 'Withdraw'}
+              Withdraw
             </Button>
           </div>
           {!isBNT && <DepositFAQ />}

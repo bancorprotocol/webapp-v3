@@ -20,6 +20,7 @@ interface Props {
   excludedTokens?: string[];
   includedTokens?: string[];
   disableSelection?: boolean;
+  readOnly?: boolean;
 }
 
 export const TradeWidgetInput = ({
@@ -34,6 +35,7 @@ export const TradeWidgetInput = ({
   excludedTokens,
   includedTokens,
   disableSelection,
+  readOnly,
 }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -151,6 +153,7 @@ export const TradeWidgetInput = ({
                 <>
                   <input
                     ref={inputRef}
+                    readOnly={readOnly}
                     type="text"
                     value={
                       isFocused
