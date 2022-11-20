@@ -81,12 +81,10 @@ export const useProtectedPositions = () => {
         accessor: 'change',
         Header: 'Change',
         Cell: (cellData) => {
+          const pos = cellData.value > 0;
           return (
-            <div
-              className={`${
-                cellData.value > 0 ? 'text-primary' : 'text-error'
-              }`}
-            >
+            <div className={`${pos ? 'text-primary' : 'text-error'}`}>
+              {pos && '+'}
               {cellData.value.toFixed(2)}%
             </div>
           );

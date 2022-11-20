@@ -34,6 +34,7 @@ import { DepositFAQ } from 'elements/earn/pools/poolsTable/v3/DepositFAQ';
 import { Switch, SwitchVariant } from 'components/switch/Switch';
 import { TradeWidgetInput } from 'elements/trade/TradeWidgetInput';
 import { useTknFiatInput } from 'elements/trade/useTknFiatInput';
+import { prettifyNumber } from 'utils/helperFunctions';
 
 interface Props {
   protectedPosition: ProtectedPosition;
@@ -192,7 +193,7 @@ export const WithdrawLiquidityWidget = ({
             {showVBNTWarning && (
               <div className="p-20 rounded bg-error font-medium mt-20 text-white">
                 Insufficient vBNT balance. You need an additional{' '}
-                {bntToVBNTRatio} vBNT in order to withdraw
+                {prettifyNumber(bntToVBNTRatio)} vBNT in order to withdraw
               </div>
             )}
             {!isBNT && (
