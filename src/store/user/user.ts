@@ -2,8 +2,10 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import {
   getForceV3LS,
-  setDarkModeLS,
   setForceV3LS,
+  getForceV2LS,
+  setForceV2LS,
+  setDarkModeLS,
   setSlippageToleranceLS,
   setUsdToggleLS,
 } from 'utils/localStorage';
@@ -24,6 +26,7 @@ export interface UserState {
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
+  forceV2Routing: boolean;
 }
 
 export const initialState: UserState = {
@@ -35,6 +38,7 @@ export const initialState: UserState = {
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
+  forceV2Routing: getForceV2LS(),
 };
 
 const userSlice = createSlice({
@@ -70,6 +74,10 @@ const userSlice = createSlice({
       state.forceV3Routing = action.payload;
       setForceV3LS(action.payload);
     },
+    setForceV2Routing: (state, action) => {
+      state.forceV2Routing = action.payload;
+      setForceV2LS(action.payload);
+    },
   },
 });
 
@@ -104,6 +112,7 @@ export const {
   setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
+  setForceV2Routing,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;
