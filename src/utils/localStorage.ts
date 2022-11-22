@@ -13,11 +13,16 @@ const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
+const forceV2 = 'forceV2';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
 const migrationIntermediate = 'migrationIntermediate';
 
-const deprecated_cleanup = ['userTokenLists', 'migrationDisabled'];
+const deprecated_cleanup = [
+  'userTokenLists',
+  'migrationDisabled',
+  'migrationDisabledV2',
+];
 
 deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
 
@@ -148,6 +153,7 @@ export const setMigrationDisabledLS = (user?: string | null) => {
 export const resetTenderly = () => {
   localStorage.removeItem(tenderlyRpcUrl);
   localStorage.removeItem(forceV3);
+  localStorage.removeItem(forceV2);
   localStorage.removeItem(enableDeposit);
 };
 
@@ -169,4 +175,13 @@ export const getForceV3LS = (): boolean => {
 
 export const setForceV3LS = (flag: boolean) => {
   localStorage.setItem(forceV3, JSON.stringify(flag));
+};
+
+export const getForceV2LS = (): boolean => {
+  const force = localStorage.getItem(forceV2);
+  return force && JSON.parse(force);
+};
+
+export const setForceV2LS = (flag: boolean) => {
+  localStorage.setItem(forceV2, JSON.stringify(flag));
 };
