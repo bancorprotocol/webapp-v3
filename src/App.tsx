@@ -125,8 +125,8 @@ export const App = () => {
 
       <WarningModal
         title="Important! Please read."
-        description="An extension of the Phase 1: v2.1 Cooldown Period is being made while the data around v2.1 surpluses and protocol owned liquidity is being finalized. Once it is ready, the data will be made available in governance and 24 hours after, the cooldown period will conclude."
-        learnMore="https://gov.bancor.network/t/migrate-pol-from-v2-1-to-v3/4081"
+        description="Phase 3: Move v2.1 POL Surplus of Proposal: Migrate V2.1 Surplus and Open Withdrawals has begun. Immediately following the migration of protocol owned liquidity from v2.1 to v3, Phase 4: Reopen v2.1 withdrawals will begin."
+        learnMore="https://vote.bancor.network/#/proposal/0x9f80570a9133c733e81cb6578980a571be242904c9dc2dc61c2a12f8546fdd2d"
         isOpen={migrationDisabled && !migrationDisabledLS}
         setIsOpen={setMigrationDisabled}
       />
