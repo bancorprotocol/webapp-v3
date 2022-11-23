@@ -42,6 +42,7 @@ export const useTradeWidget = ({
   const account = useAppSelector((state) => state.user.account);
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
+  const forceV2Routing = useAppSelector((state) => state.user.forceV2Routing);
 
   const [fromInputTkn, setFromInputTkn] = useState('');
   const [fromInputFiat, setFromInputFiat] = useState('');
@@ -141,13 +142,14 @@ export const useTradeWidget = ({
           fromToken,
           toToken,
           val,
-          forceV3Routing
+          forceV3Routing,
+          forceV2Routing
         );
       }
 
       return { rate: '', priceImpact: '', isV3: true };
     },
-    [forceV3Routing, isExternal]
+    [forceV3Routing, forceV2Routing, isExternal]
   );
 
   const onFromDebounce = useCallback(

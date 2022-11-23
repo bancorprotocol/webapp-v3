@@ -27,7 +27,8 @@ export const getRateAndPriceImapct = async (
   fromToken: TokenMinimal,
   toToken: TokenMinimal,
   amount: string,
-  forceV3Routing: boolean
+  forceV3Routing: boolean,
+  forceV2Routing: boolean
 ) => {
   try {
     const networkContractAddress = await bancorNetwork$
@@ -82,7 +83,8 @@ export const getRateAndPriceImapct = async (
       : new BigNumber(0);
     const v3PriceImpact = isNaN(v3PI.toNumber()) ? '0.0000' : v3PI.toFixed(4);
 
-    const isV3 = forceV3Routing || Number(v3Rate) >= Number(v2Rate);
+    const isV3 =
+      (forceV3Routing || Number(v3Rate) >= Number(v2Rate)) && !forceV2Routing;
 
     console.log('V2 Rate', v2Rate);
     console.log('V3 Rate', v3Rate);
