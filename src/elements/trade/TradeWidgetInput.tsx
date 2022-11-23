@@ -20,6 +20,7 @@ interface Props {
   excludedTokens?: string[];
   includedTokens?: string[];
   disableSelection?: boolean;
+  readOnly?: boolean;
 }
 
 export const TradeWidgetInput = ({
@@ -34,6 +35,7 @@ export const TradeWidgetInput = ({
   excludedTokens,
   includedTokens,
   disableSelection,
+  readOnly,
 }: Props) => {
   const isFiat = useAppSelector((state) => state.user.usdToggle);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -58,39 +60,41 @@ export const TradeWidgetInput = ({
   return (
     <>
       <div>
-        <div className="flex justify-between px-10 mb-10 text-secondary">
-          {label && <div>{label}</div>}
-          {input?.token &&
-            input?.token.balance &&
-            Number(input?.token.balance) > 0 && (
-              <button
-                onClick={() => {
-                  if (!disabled && input)
-                    if (input.token.balanceUsd && isFiat)
-                      input.handleChange(input.token.balanceUsd.toString());
-                    else if (input.token.balance && !isFiat)
-                      input.handleChange(input.token.balance.toString());
-                }}
-                className={`flex items-center ${
-                  disabled
-                    ? 'cursor-text'
-                    : 'hover:text-primary transition-colors duration-300'
-                }`}
-              >
-                Balance: {prettifyNumber(input?.token.balance)} (
-                {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
-                {!disabled && (
-                  <span
-                    className={
-                      'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
-                    }
-                  >
-                    Max
-                  </span>
-                )}
-              </button>
-            )}
-        </div>
+        {!readOnly && (
+          <div className="flex justify-between px-10 mb-10 text-secondary">
+            {label && <div>{label}</div>}
+            {input?.token &&
+              input?.token.balance &&
+              Number(input?.token.balance) > 0 && (
+                <button
+                  onClick={() => {
+                    if (!disabled && input)
+                      if (input.token.balanceUsd && isFiat)
+                        input.handleChange(input.token.balanceUsd.toString());
+                      else if (input.token.balance && !isFiat)
+                        input.handleChange(input.token.balance.toString());
+                  }}
+                  className={`flex items-center ${
+                    disabled
+                      ? 'cursor-text'
+                      : 'hover:text-primary transition-colors duration-300'
+                  }`}
+                >
+                  Balance: {prettifyNumber(input?.token.balance)} (
+                  {prettifyNumber(input?.token.balanceUsd ?? 0, true)})
+                  {!disabled && (
+                    <span
+                      className={
+                        'bg-primary/20 text-primary ml-5 px-6 py-2 rounded-10 text-10'
+                      }
+                    >
+                      Max
+                    </span>
+                  )}
+                </button>
+              )}
+          </div>
+        )}
 
         <div
           className={`border ${
@@ -144,13 +148,16 @@ export const TradeWidgetInput = ({
           </div>
           {
             <div
-              onClick={() => handleFocusChange(true)}
+              onClick={() => {
+                if (!readOnly) handleFocusChange(true);
+              }}
               className="flex flex-col justify-center flex-grow h-full text-right cursor-text"
             >
               {!isLoading && input ? (
                 <>
                   <input
                     ref={inputRef}
+                    readOnly={readOnly}
                     type="text"
                     value={
                       isFocused
@@ -161,10 +168,14 @@ export const TradeWidgetInput = ({
                     }
                     className="w-full text-right bg-white outline-none text-20 dark:bg-charcoal"
                     onChange={(e) => {
-                      !disabled && input.handleChange(e.target.value);
+                      !disabled &&
+                        !readOnly &&
+                        input.handleChange(e.target.value);
                     }}
                     placeholder={'0.00'}
-                    onFocus={() => handleFocusChange(true)}
+                    onFocus={() => {
+                      if (!readOnly) handleFocusChange(true);
+                    }}
                     onBlur={() => handleFocusChange(false)}
                   />
                   {toBigNumber(input.inputTkn).plus(input.inputFiat).gt(0) && (

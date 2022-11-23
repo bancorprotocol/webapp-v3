@@ -12,7 +12,7 @@ import {
   settingsContractAddress$,
 } from 'services/observables/contracts';
 import { take } from 'rxjs/operators';
-import { multicall } from 'services/web3/multicall/multicall';
+import { MultiCall, multicall } from 'services/web3/multicall/multicall';
 import { keyBy, merge, values } from 'lodash';
 import dayjs from 'dayjs';
 import {
@@ -25,7 +25,7 @@ import {
   buildProtectionDelayCall,
   buildRemoveLiquidityReturnCall,
 } from 'services/web3/liquidity/liquidity';
-import { shrinkToken } from 'utils/formulas';
+import { calculatePercentageChange, shrinkToken } from 'utils/formulas';
 import { fetchedPendingRewards, fetchedRewardsMultiplier } from './rewards';
 import { ErrorCode } from '../types';
 import { Result } from '@ethersproject/abi';
@@ -33,6 +33,7 @@ import { changeGas } from '../config';
 import { sendLiquidityEvent } from 'services/api/googleTagManager/liquidity';
 import { Pool, Reserve } from 'services/observables/pools';
 import { Events } from 'services/api/googleTagManager';
+import { fallbackPool, fallbackReserve } from 'utils/mocked';
 
 export interface ProtectedPosition {
   positionId: string;
@@ -55,6 +56,7 @@ export interface ProtectedPosition {
     fullCoverage: string;
   };
   currentCoveragePercent: number;
+  change: number;
 }
 
 export interface ProtectedPositionGrouped extends ProtectedPosition {
@@ -92,7 +94,7 @@ const fetchPositions = async (
       const poolToken = position[1].toString();
       const reserveTokenAddress = position[2].toString();
       const pool = pools.find((x) => x.pool_dlt_id === poolToken);
-      const reserveToken = pool!.reserves.find(
+      const reserveToken = pool?.reserves.find(
         (reserve) => reserve.address === reserveTokenAddress
       );
 
@@ -100,13 +102,17 @@ const fetchPositions = async (
         id: positionIds[index].toString(),
         owner: position[0].toString(),
         poolToken,
-        reserveToken: reserveToken!,
+        reserveToken: reserveToken
+          ? reserveToken
+          : fallbackReserve(reserveTokenAddress),
         poolAmount: position[3].toString(),
         reserveAmount: position[4].toString(),
         reserveRateN: position[5].toString(),
         reserveRateD: position[6].toString(),
         timestamp: position[7].toString(),
-        pool: pool!,
+        pool: pool
+          ? pool
+          : fallbackPool(poolToken, reserveTokenAddress, pools[0].reserves[1]),
       };
     });
 
@@ -176,6 +182,37 @@ const fetchROI = async (
       };
     });
   }
+
+  return [];
+};
+
+const buildPoolDeficitCall = (
+  contract: LiquidityProtection,
+  position: ProtectedLiquidity
+): MultiCall => {
+  return {
+    contractAddress: contract.address,
+    interface: contract.interface,
+    methodName: 'poolDeficitPPM',
+    methodParameters: [position.poolToken],
+  };
+};
+
+export const fetchedPoolsDeficit = async (positions: ProtectedLiquidity[]) => {
+  const contractAddress = await liquidityProtection$.pipe(take(1)).toPromise();
+  const contract = LiquidityProtection__factory.connect(
+    contractAddress,
+    web3.provider
+  );
+  const calls = positions.map((position) =>
+    buildPoolDeficitCall(contract, position)
+  );
+  const res = await multicall(calls);
+  if (res)
+    return res.map((x, i) => ({
+      id: positions[i].id,
+      poolDeficit: shrinkToken(x.toString(), 6),
+    }));
 
   return [];
 };
@@ -278,9 +315,19 @@ export const fetchProtectedPositions = async (
       Number(timestamps.fullCoverage)
     );
 
+    const inital = initialStake.tknAmount;
+    const claimable = position.claimableAmount.tknAmount;
+    const change = calculatePercentageChange(Number(claimable), Number(inital));
+
     return {
       positionId: position.id,
-      pool: pool!,
+      pool: pool
+        ? pool
+        : fallbackPool(
+            position.poolToken,
+            position.reserveToken.address,
+            pools[0].reserves[1]
+          ),
       fees: position.fees,
       initialStake,
       protectedAmount: position.protectedAmount,
@@ -297,13 +344,13 @@ export const fetchProtectedPositions = async (
       rewardsAmount: position.rewardsAmount,
       timestamps,
       currentCoveragePercent,
+      change,
     };
   });
 };
 
 export const withdrawProtection = async (
   positionId: string,
-  amount: string,
   tknAmount: string,
   onHash: (txHash: string) => void,
   onCompleted: Function,
@@ -320,19 +367,18 @@ export const withdrawProtection = async (
       writeWeb3.signer
     );
 
-    const percentage = new BigNumber(amount).div(tknAmount);
     sendLiquidityEvent(Events.wallet_req);
 
     const estimate =
       await liquidityProtectionContract.estimateGas.removeLiquidity(
         positionId,
-        decToPpm(percentage)
+        decToPpm(1) //100% withdraw
       );
     const gasLimit = changeGas(estimate.toString());
 
     const tx = await liquidityProtectionContract.removeLiquidity(
       positionId,
-      decToPpm(percentage),
+      decToPpm(1), //100% withdraw
       { gasLimit }
     );
     sendLiquidityEvent(Events.wallet_confirm);

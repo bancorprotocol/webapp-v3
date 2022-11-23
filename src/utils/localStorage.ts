@@ -16,12 +16,13 @@ const forceV3 = 'forceV3';
 const forceV2 = 'forceV2';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
-const migrationIntermediate = 'migrationIntermediate';
+const migrationDisabledActive = 'migrationDisabledActive';
 
 const deprecated_cleanup = [
   'userTokenLists',
   'migrationDisabled',
   'migrationDisabledV2',
+  'migrationIntermediate',
 ];
 
 deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
@@ -133,7 +134,7 @@ export const setV2ApiUrlLS = (url?: string) => {
 };
 
 export const getMigrationDisabledLS = (user?: string | null): boolean => {
-  const migration = localStorage.getItem(migrationIntermediate);
+  const migration = localStorage.getItem(migrationDisabledActive);
   const list = migration ? JSON.parse(migration) : [];
   return list.includes(user);
 };
@@ -141,11 +142,11 @@ export const getMigrationDisabledLS = (user?: string | null): boolean => {
 export const setMigrationDisabledLS = (user?: string | null) => {
   if (!user) return;
 
-  const migration = localStorage.getItem(migrationIntermediate);
+  const migration = localStorage.getItem(migrationDisabledActive);
   const list = migration ? JSON.parse(migration) : [];
 
   localStorage.setItem(
-    migrationIntermediate,
+    migrationDisabledActive,
     JSON.stringify(uniq([...list, user]))
   );
 };

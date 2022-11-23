@@ -14,18 +14,6 @@ export const MyStake = ({ loading }: { loading: boolean }) => {
           <div className="loading-skeleton h-20 w-[100px] md:w-[120px]"></div>
         ) : (
           <div>
-            <div className="mb-5">Protected Value</div>
-            <div className="font-semibold text-16 text-primary dark:text-primary-light">
-              {summary
-                ? `${prettifyNumber(summary.protectedValue, true)}`
-                : '--'}
-            </div>
-          </div>
-        )}
-        {loading ? (
-          <div className="loading-skeleton h-20 w-[100px] md:w-[120px]"></div>
-        ) : (
-          <div>
             <div className="mb-5">Claimable Value</div>
             <div className="font-semibold text-16 text-primary dark:text-primary-light">
               {summary
