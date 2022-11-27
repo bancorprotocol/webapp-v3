@@ -31,6 +31,7 @@ import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
 import { WarningModal } from 'components/WarningModal';
 import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
+import { useAutoConnect } from 'services/web3/wallet/hooks';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
@@ -48,7 +49,7 @@ export const App = () => {
   const migrationDisabledLS = getMigrationDisabledLS(user);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
-  // useAutoConnect();
+  useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector(
     (state) => state.notification.notifications

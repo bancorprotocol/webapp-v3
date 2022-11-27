@@ -65,6 +65,7 @@ export const useWalletConnect = (): UseWalletConnect => {
 
   const handleConnect = useCallback(
     async (wallet: WalletInfo) => {
+      if (account) return;
       const { connector, url, name } = wallet;
       if (url) {
         setIsOpen(false);
@@ -103,7 +104,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           setIsError(true);
         }
     },
-    [activate, setIsOpen]
+    [account, activate, setIsOpen]
   );
 
   const handleDisconnect = useCallback(() => {
