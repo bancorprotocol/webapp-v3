@@ -25,7 +25,6 @@ import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
-import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
@@ -49,7 +48,7 @@ export const App = () => {
   const migrationDisabledLS = getMigrationDisabledLS(user);
   const dispatch = useDispatch();
   const { chainId, account } = useWeb3React();
-  useAutoConnect();
+  // useAutoConnect();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
   const notifications = useAppSelector(
     (state) => state.notification.notifications
