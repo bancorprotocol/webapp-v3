@@ -65,7 +65,7 @@ export const useWalletConnect = (): UseWalletConnect => {
 
   const handleConnect = useCallback(
     async (wallet: WalletInfo) => {
-      const { connector, url } = wallet;
+      const { connector, url, name } = wallet;
       if (url) {
         setIsOpen(false);
         return openNewTab(url);
@@ -81,7 +81,9 @@ export const useWalletConnect = (): UseWalletConnect => {
         try {
           await activate(connector, undefined, true);
           setIsOpen(false);
-          setAutoLoginLS(true);
+          if (name !== 'Coinbase Wallet') {
+            setAutoLoginLS(true);
+          }
           const account = await connector.getAccount();
           setSigner(
             new Web3Provider(await connector.getProvider()).getSigner(),

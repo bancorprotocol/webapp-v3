@@ -74,7 +74,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'MetaMask',
     icon: metamaskLogo,
     mobile: true,
-    canAutoConnect: isMetaMaskMobile || isCoinbaseMobile,
+    canAutoConnect: isMetaMaskMobile,
   },
   ...(isForkAvailable
     ? [
@@ -97,7 +97,7 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
     mobile: true,
-    // canAutoConnect: isCoinbaseMobile,
+    canAutoConnect: isCoinbaseMobile,
   },
   {
     name: 'Ledger',
