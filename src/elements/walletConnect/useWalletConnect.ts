@@ -65,7 +65,6 @@ export const useWalletConnect = (): UseWalletConnect => {
 
   const handleConnect = useCallback(
     async (wallet: WalletInfo) => {
-      if (account) return;
       const { connector, url, name } = wallet;
       if (url) {
         setIsOpen(false);
@@ -82,9 +81,7 @@ export const useWalletConnect = (): UseWalletConnect => {
         try {
           await activate(connector, undefined, true);
           setIsOpen(false);
-          if (name !== 'Coinbase Wallet') {
-            setAutoLoginLS(true);
-          }
+          setAutoLoginLS(true);
           const account = await connector.getAccount();
           setSigner(
             new Web3Provider(await connector.getProvider()).getSigner(),
@@ -98,13 +95,15 @@ export const useWalletConnect = (): UseWalletConnect => {
           );
           await wait(500);
           setIsPending(false);
-          requestSwitchChain();
+          if (name !== 'Coinbase Wallet') {
+            requestSwitchChain();
+          }
         } catch (e: any) {
           console.error('failed to connect wallet. ', e.message);
           setIsError(true);
         }
     },
-    [account, activate, setIsOpen]
+    [activate, setIsOpen]
   );
 
   const handleDisconnect = useCallback(() => {

@@ -25,13 +25,13 @@ import { subscribeToObservables } from 'services/observables/triggers';
 import { isUnsupportedNetwork } from 'utils/helperFunctions';
 import { MobileBottomNav } from 'elements/layoutHeader/MobileBottomNav';
 import { useWeb3React } from '@web3-react/core';
+import { useAutoConnect } from 'services/web3/wallet/hooks';
 import { setUser } from 'services/observables/user';
 import { BancorRouter } from 'router/BancorRouter';
 import { handleRestrictedWalletCheck } from 'services/restrictedWallets';
 import { RestrictedWallet } from 'pages/RestrictedWallet';
 import { WarningModal } from 'components/WarningModal';
 import { useProtectedPositions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/useProtectedPositions';
-import { useAutoConnect } from 'services/web3/wallet/hooks';
 
 const handleModeChange = (_: MediaQueryListEvent) => {
   const darkMode = store.getState().user.darkMode;
