@@ -95,7 +95,7 @@ export const useWalletConnect = (): UseWalletConnect => {
           );
           await wait(500);
           setIsPending(false);
-          if (name !== 'Coinbase Wallet') {
+          if (name === 'MetaMask') {
             requestSwitchChain();
           }
         } catch (e: any) {
