@@ -19,71 +19,46 @@ export const Statistics = () => {
 
   return (
     <section className="p-20 content-block">
-      {!stats ? (
-        [...Array(4)].map((_, i) => (
-          <div key={`stats-loading-key-${i}`}>
-            <div className="w-1/2 h-20 mx-auto mb-10 loading-skeleton"></div>
-            <div className="w-2/3 mx-auto loading-skeleton h-14"></div>
-          </div>
-        ))
-      ) : (
-        <div>
-          <div className="flex items-end">
+      <div className="grid grid-cols-2 gap-20">
+        {!stats ? (
+          [...Array(4)].map((_, i) => (
+            <div key={`stats-loading-key-${i}`} className={'space-y-6 mb-4'}>
+              <div className="w-2/3 loading-skeleton h-14"></div>
+              <div className="w-1/2 h-20 mb-10 loading-skeleton"></div>
+            </div>
+          ))
+        ) : (
+          <>
             <div>
-              <div className="text-secondary mb-15">Total Liquidity</div>
-              <div className="text-[30px] text-black-medium dark:text-white-medium uppercase">
+              <div className="text-secondary">Total Liquidity</div>
+              <div className="uppercase text-20 text-black-medium dark:text-white-medium">
                 {`$${numbro(stats.totalLiquidity).format(averageFormat)}`}
               </div>
             </div>
-          </div>
-          <hr className="my-20 border-fog dark:border-grey" />
-          <div className="grid grid-cols-2 gap-20">
             <div>
-              <div className="flex items-end">
-                <div>
-                  <div className="text-secondary">Volume</div>
-                  <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`$${numbro(stats.totalVolume).format(averageFormat)}`}
-                  </div>
-                </div>
+              <div className="text-secondary">Volume</div>
+              <div className="uppercase text-20 text-black-medium dark:text-white-medium">
+                {`$${numbro(stats.totalVolume).format(averageFormat)}`}
               </div>
             </div>
             <div>
-              <div className="flex items-end">
-                <div>
-                  <div className="flex items-center text-secondary">
-                    Fees (24h)
-                    {toolTip(stats)}
-                  </div>
-                  <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`$${numbro(stats.totalFees).format(averageFormat)}`}
-                  </div>
-                </div>
+              <div className="flex items-center text-secondary">
+                Fees (24h)
+                {toolTip(stats)}
+              </div>
+              <div className="uppercase text-20 text-black-medium dark:text-white-medium">
+                {`$${numbro(stats.totalFees).format(averageFormat)}`}
               </div>
             </div>
             <div>
-              <div className="flex items-end">
-                <div>
-                  <div className="text-secondary">BNT Price</div>
-                  <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`$${numbro(stats.bntRate).format({ mantissa: 2 })}`}
-                  </div>
-                </div>
+              <div className="text-secondary">BNT Price</div>
+              <div className="uppercase text-20 text-black-medium dark:text-white-medium">
+                {`$${numbro(stats.bntRate).format({ mantissa: 2 })}`}
               </div>
             </div>
-            <div>
-              <div className="flex items-end">
-                <div>
-                  <div className="text-secondary">BNT Staked</div>
-                  <div className="uppercase text-20 text-black-medium dark:text-white-medium">
-                    {`${numbro(stats.totalBNTStaked).format({ mantissa: 2 })}%`}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </section>
   );
 };
