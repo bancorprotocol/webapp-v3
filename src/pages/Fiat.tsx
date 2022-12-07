@@ -74,7 +74,7 @@ const fiats = [
     ],
     smallGap: true,
     buyUrl:
-      'https://buy.ramp.network/?hostApiKey=qg4s4spwnm7nahqdxfsjyzsjvtxbbzg8dxnxxrum&userAddress=0x5f7a009664b771e889751f4fd721adc439033ecd',
+      'https://buy.ramp.network/',
   },
   {
     name: 'Mercuryo',
