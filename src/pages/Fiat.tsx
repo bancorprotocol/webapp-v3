@@ -74,7 +74,7 @@ const fiats = [
     ],
     smallGap: true,
     buyUrl:
-      'https://buy.ramp.network/',
+      'https://ramp.network/buy/',
   },
   {
     name: 'Mercuryo',
