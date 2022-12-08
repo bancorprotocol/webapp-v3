@@ -73,8 +73,7 @@ const fiats = [
       DepositMethods.applePay,
     ],
     smallGap: true,
-    buyUrl:
-      'https://buy.ramp.network/?hostApiKey=qg4s4spwnm7nahqdxfsjyzsjvtxbbzg8dxnxxrum&userAddress=0x5f7a009664b771e889751f4fd721adc439033ecd',
+    buyUrl: 'https://ramp.network/buy/',
   },
   {
     name: 'Mercuryo',
