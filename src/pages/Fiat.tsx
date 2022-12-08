@@ -73,8 +73,7 @@ const fiats = [
       DepositMethods.applePay,
     ],
     smallGap: true,
-    buyUrl:
-      'https://ramp.network/buy/',
+    buyUrl: 'https://ramp.network/buy/',
   },
   {
     name: 'Mercuryo',

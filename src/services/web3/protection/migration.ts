@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { PoolToken } from 'services/observables/pools';
 import { ErrorCode } from 'services/web3/types';
 import { ProtectedPosition } from 'services/web3/protection/positions';
