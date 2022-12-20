@@ -11,7 +11,7 @@ export const config = {
     documentation: 'https://docs.bancor.network',
     bancorTwitter: 'https://twitter.com/Bancor',
     bancorTelegram: 'https://t.me/bancor',
-    bancorDiscord: 'https://discord.com/invite/aMVTbrmgD7',
+    bancorDiscord: 'https://discord.gg/bancor',
     bancorReddit: 'https://www.reddit.com/r/Bancor',
   },
 };
