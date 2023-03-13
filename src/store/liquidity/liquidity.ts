@@ -101,8 +101,8 @@ export const getGroupedPositions = createSelector(
         if (!item) {
           const calcSum = (key: string): string => {
             return filtered
-              .map((pos) => Number(get(pos, key)))
-              .reduce((sum, current) => sum + current, 0)
+              .map((pos) => new BigNumber(get(pos, key)))
+              .reduce((sum, current) => sum.plus(current), new BigNumber(0))
               .toString();
           };
 
