@@ -35,6 +35,7 @@ import { ErrorCode, EthNetworks, PoolType } from '../types';
 import { sendLiquidityEvent } from 'services/api/googleTagManager/liquidity';
 import { Pool, PoolToken } from 'services/observables/pools';
 import { Events } from 'services/api/googleTagManager';
+import { utils } from 'ethers';
 
 export const createPool = async (
   token: Token,
@@ -173,17 +174,18 @@ export const removeLiquidity = async (
     );
 
     const liquidateFn = async () => {
+      const amount = utils.parseUnits(poolToken.amount, poolToken.poolDecimals);
+      console.log('jan poolToken amount', poolToken.amount);
+      console.log('jan poolToken.poolDecimals', poolToken.poolDecimals);
+      console.log('jan poolToken.version', poolToken.version);
+      console.log('jan amount', amount.toString());
       if (poolToken.version < 28) {
-        return await contract.liquidate(
-          expandToken(poolToken.amount, poolToken.poolDecimals),
-          { gasLimit: 999999999999999999999 }
-        );
+        return await contract.liquidate(amount, {});
       } else {
         return await contract.removeLiquidity(
-          expandToken(poolToken.amount, poolToken.poolDecimals),
+          amount,
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
-          [minBntReturn, minTknReturn],
-          { gasLimit: 999999999999999999999 }
+          [minBntReturn, minTknReturn]
         );
       }
     };
