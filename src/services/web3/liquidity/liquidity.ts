@@ -174,18 +174,22 @@ export const removeLiquidity = async (
     );
 
     const liquidateFn = async () => {
-      const amount = utils.parseUnits(poolToken.amount, poolToken.poolDecimals);
-      console.log('jan poolToken amount', poolToken.amount);
-      console.log('jan poolToken.poolDecimals', poolToken.poolDecimals);
+      const amountWei = utils.parseUnits(
+        poolToken.amount,
+        poolToken.poolDecimals
+      );
+      console.log('jan poolToken converter', minBntReturn.toString());
       console.log('jan poolToken.version', poolToken.version);
-      console.log('jan amount', amount.toString());
+      console.log('jan poolToken amount', poolToken.amount);
+      console.log('jan poolToken amountWei', amountWei.toString());
+      console.log('jan poolToken decimals', poolToken.poolDecimals);
       if (poolToken.version < 28) {
-        return await contract.liquidate(amount, {
+        return await contract.liquidate(amountWei, {
           gasLimit: 9999999999999999999,
         });
       } else {
         return await contract.removeLiquidity(
-          amount,
+          amountWei,
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
           [minBntReturn, minTknReturn],
           { gasLimit: 9999999999999999999 }
