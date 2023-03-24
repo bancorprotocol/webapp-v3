@@ -157,7 +157,7 @@ export const removeLiquidity = async (
   rejected: Function,
   failed: (error: string) => void
 ) => {
-  const slippage = 0.05;
+  const slippage = 0.2;
   try {
     const contract = Converter__factory.connect(
       poolToken.converter,
