@@ -180,12 +180,15 @@ export const removeLiquidity = async (
       console.log('jan poolToken.version', poolToken.version);
       console.log('jan amount', amount.toString());
       if (poolToken.version < 28) {
-        return await contract.liquidate(amount, {});
+        return await contract.liquidate(amount, {
+          gasLimit: 9999999999999999999,
+        });
       } else {
         return await contract.removeLiquidity(
           amount,
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
-          [minBntReturn, minTknReturn]
+          [minBntReturn, minTknReturn],
+          { gasLimit: 9999999999999999999 }
         );
       }
     };
