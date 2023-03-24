@@ -175,13 +175,15 @@ export const removeLiquidity = async (
     const liquidateFn = async () => {
       if (poolToken.version < 28) {
         return await contract.liquidate(
-          expandToken(poolToken.amount, poolToken.poolDecimals)
+          expandToken(poolToken.amount, poolToken.poolDecimals),
+          { gasLimit: 999999999999999999999 }
         );
       } else {
         return await contract.removeLiquidity(
           expandToken(poolToken.amount, poolToken.poolDecimals),
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
-          [minBntReturn, minTknReturn]
+          [minBntReturn, minTknReturn],
+          { gasLimit: 999999999999999999999 }
         );
       }
     };
