@@ -1022,7 +1022,7 @@ export const TermsOfUse = () => {
     <Page title={'Terms of Use'}>
       <>
         <span>Last updated: 8 May, 2023</span>
-        <p>
+        <p className="mt-20">
           PLEASE READ THESE TERMS OF USE CAREFULLY. YOUR ACCEPTANCE MAY LIMIT OR
           WAIVE CERTAIN OF YOUR RIGHTS. IF YOU HAVE NOT REVIEWED THE TERMS OF
           USE SINCE THE “LAST UPDATED” DATE ABOVE, IT IS YOUR RESPONSIBILITY TO

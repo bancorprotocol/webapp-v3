@@ -576,7 +576,7 @@ export const PrivacyPolicy = () => {
     <Page title={'Privacy Policy'}>
       <>
         <span>Last updated: 8 May, 2023</span>
-        <p>
+        <p className="mt-20">
           if you have not reviewed THIS PRIVACY POLICY since the “last updated”
           date above, It is your responsibility to re-review IT.
         </p>
