@@ -76,7 +76,7 @@ const content = [
         <p>
           iv. Access the Bancor Governance Forum (
           <a
-            className="text-green underline"
+            className="text-primary underline"
             href="https://gov.bancor.network"
             target="_blank"
             rel="noreferrer"
@@ -85,7 +85,7 @@ const content = [
           </a>
           ), which has its own Terms of Use available at{' '}
           <a
-            className="text-green underline"
+            className="text-primary underline"
             href="https://gov.bancor.network/tos"
             target="_blank"
             rel="noreferrer"
@@ -110,7 +110,7 @@ const content = [
           Detailed descriptions of the Content and functionality available
           through the Site is available at the Bancor Help Center{' '}
           <a
-            className="text-green underline"
+            className="text-primary underline"
             href="https://support.bancor.network/hc/en-us"
             target="_blank"
             rel="noreferrer"
@@ -143,7 +143,7 @@ const content = [
           organization referred to as “BancorDAO”. For more information on
           BancorDAO, please visit{' '}
           <a
-            className="text-green underline"
+            className="text-primary underline"
             href="https://support.bancor.network/hc/en-us/sections/4415839473682-Bancor-DAO."
             target="_blank"
             rel="noreferrer"
@@ -182,7 +182,7 @@ const content = [
           subject to determination by BancorDAO. For more information on the
           current fee structure, please visit{' '}
           <a
-            className="text-green underline"
+            className="text-primary underline"
             href="https://docs.bancor.network/developer-guides/read-functions/trades/tradingfeepmm."
             target="_blank"
             rel="noreferrer"
@@ -1043,7 +1043,7 @@ export const TermsOfUse = () => {
             href="HTTPS://APP.BANCOR.NETWORK/PRIVACY-POLICY"
             target="_blank"
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             HTTPS://APP.BANCOR.NETWORK/PRIVACY-POLICY
           </a>{' '}
@@ -1055,7 +1055,7 @@ export const TermsOfUse = () => {
             href="https://bancor.network"
             target="_blank"
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             {' '}
             https://bancor.network
@@ -1065,7 +1065,7 @@ export const TermsOfUse = () => {
             href="https://app.bancor.network"
             target="_blank"
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             {' '}
             https://app.bancor.network
@@ -1088,7 +1088,7 @@ export const TermsOfUse = () => {
             href="https://app.bancor.network/privacy-policy"
             target="_blank"
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             https://app.bancor.network/privacy-policy
           </a>

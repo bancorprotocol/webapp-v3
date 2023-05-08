@@ -520,9 +520,11 @@ const content = [
         your information by clicking the “Do Not Sell or Share My Personal
         Information” link on our Site or by clicking this link{' '}
         <button
-          onClick={() => window?.OneTrust?.ToggleInfoDisplay()}
+          onClick={() => {
+            window?.OneTrust?.ToggleInfoDisplay();
+          }}
           id="ot-sdk-btn"
-          className="text-green"
+          className="text-primary"
         >
           <u>Cookie Settings</u>
         </button>
@@ -585,7 +587,7 @@ export const PrivacyPolicy = () => {
             href="https://app.bancor.network/terms-of-use"
             target={'_blank'}
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             https://app.bancor.network/terms-of-use
           </a>{' '}
@@ -603,7 +605,7 @@ export const PrivacyPolicy = () => {
             href="https://bancor.network"
             target={'_blank'}
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             https://bancor.network
           </a>{' '}
@@ -612,7 +614,7 @@ export const PrivacyPolicy = () => {
             href="https://app.bancor.network"
             target={'_blank'}
             rel="noreferrer"
-            className="text-green underline"
+            className="text-primary underline"
           >
             https://app.bancor.network
           </a>{' '}
