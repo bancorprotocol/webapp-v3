@@ -5,7 +5,7 @@ export const TermsOfUse = () => {
   return (
     <Page title={'Terms of Use'}>
       <div className={'legal'}>
-        <span>Last updated: 8 May, 2023</span>
+        <span>Last updated: 11 May, 2023</span>
         <p className="uppercase">
           PLEASE READ THEse TErms of use Carefully. Your ACCEPTANCE MAY LIMIT OR
           WAIVE CERTAIN OF YOUR RIGHTS. if you have not reviewed the terms of
