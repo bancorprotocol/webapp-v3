@@ -542,8 +542,15 @@ export const PrivacyPolicy = () => {
           we may share information with third parties for the purpose of
           targeted advertising. You have the right to opt out of the sale or
           sharing of your information by clicking the “Do Not Sell or Share My
-          Personal Information” link on our Site or by clicking this link Cookie
-          Settings, or by emailing us at{' '}
+          Personal Information” link on our Site or by clicking this link{' '}
+          <button
+            onClick={() => window?.OneTrust?.ToggleInfoDisplay()}
+            id="ot-sdk-btn"
+            className="text-primary underline"
+          >
+            <u>Cookie Settings</u>
+          </button>
+          , or by emailing us at{' '}
           <a href={'mailto:privacy@bancor.network'}>privacy@bancor.network</a>.
         </p>
 
