@@ -32,8 +32,25 @@
     scrollbar-width: none; /* Firefox */
   }
 
+  .legal p {
+    @apply my-20;
+  }
+
+  .legal a {
+    @apply text-primary underline;
+  }
+
   .legal ul {
-    @apply list-disc list-outside ml-20;
+    @apply list-disc list-outside ml-20 pl-20;
+  }
+
+  .legal ol {
+    list-style-type: lower-roman;
+    @apply list-outside ml-20 pl-20;
+  }
+
+  .legal ol li {
+    @apply py-10;
   }
 
   .legal ul li {
