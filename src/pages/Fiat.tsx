@@ -1,6 +1,5 @@
 import { DepositMethods, FiatBox, Operations } from 'elements/fiat/FiatBox';
 import { ReactComponent as moonPayLogo } from 'assets/logos/moonpay.svg';
-import { ReactComponent as banxaLogo } from 'assets/logos/banxa.svg';
 import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
@@ -28,21 +27,6 @@ const fiats = [
       'https://buy.moonpay.com/?apiKey=pk_live_qiJRayRj9iKRUWCfaWX5Vo6Sn0rnNsj&defaultCurrencyCode=ETH',
     sellUrl:
       'https://sell.moonpay.com/?apiKey=pk_live_qiJRayRj9iKRUWCfaWX5Vo6Sn0rnNsj&defaultCurrencyCode=ETH',
-  },
-  {
-    name: 'Banxa',
-    text: 'Banxa is a globally operating fiat-to-crypto on-ramp providing the easiest way for anyone looking to enter the digital asset ecosystem. Banxa users can choose from a variety of the most popular and convenient payment methods.',
-    logo: banxaLogo,
-    operations: [Operations.fiatIn],
-    depositMethods: [
-      DepositMethods.creditCard,
-      DepositMethods.debitCard,
-      DepositMethods.applePay,
-      DepositMethods.ideal,
-      DepositMethods.interac,
-      DepositMethods.sepa,
-    ],
-    buyUrl: 'https://pay.banxa.com',
   },
   {
     name: 'Simplex',
