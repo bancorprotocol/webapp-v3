@@ -6,6 +6,7 @@ declare global {
     dataLayer: any;
     ethereum: any;
     Buffer: Buffer;
+    OneTrust: any;
   }
 }
 
