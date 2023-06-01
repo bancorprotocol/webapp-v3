@@ -1,6 +1,5 @@
 import { DepositMethods, FiatBox, Operations } from 'elements/fiat/FiatBox';
 import { ReactComponent as moonPayLogo } from 'assets/logos/moonpay.svg';
-import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
 import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
@@ -27,21 +26,6 @@ const fiats = [
       'https://buy.moonpay.com/?apiKey=pk_live_qiJRayRj9iKRUWCfaWX5Vo6Sn0rnNsj&defaultCurrencyCode=ETH',
     sellUrl:
       'https://sell.moonpay.com/?apiKey=pk_live_qiJRayRj9iKRUWCfaWX5Vo6Sn0rnNsj&defaultCurrencyCode=ETH',
-  },
-  {
-    name: 'Simplex',
-    text: 'Simplex is the industry leader, providing global on/off ramps to the entire fiat to crypto ecosystem. Working with a vast network of partners, Simplex ensures that crypto is safe and accessible to all.',
-    logo: simplexLogo,
-    operations: [Operations.fiatIn, Operations.fiatOut],
-    depositMethods: [
-      DepositMethods.wire,
-      DepositMethods.creditCard,
-      DepositMethods.debitCard,
-      DepositMethods.applePay,
-    ],
-    buyUrl: 'https://b.buy-crypto-with-simplex.com/?crypto=ETH',
-    sellUrl:
-      'https://www.simplex.com/account/sell?ref=b1990d7be52dfae9fa894a0d56317f28',
   },
   {
     name: 'Ramp',
