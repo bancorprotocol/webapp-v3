@@ -45,6 +45,8 @@ export const PoolsTable = ({
   const data = useMemo<PoolV3[]>(() => {
     return pools.filter(
       (p) =>
+        p.tradingEnabled &&
+        p.depositingEnabled &&
         p.name &&
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
