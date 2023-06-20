@@ -5,6 +5,7 @@ import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
 import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
 import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
 import { ReactComponent as binanceLogo } from 'assets/logos/binance.svg';
+import { ReactComponent as everestLogo } from 'assets/logos/everest.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Page } from 'components/Page';
 
@@ -105,6 +106,22 @@ const fiats = [
     buyUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
     sellUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
   },
+  {
+    name: 'Everest',
+    text: 'Everest is as a global fiat-to-crypto payment gateway and crypt-to-fiat service provider. We help new and returning visitors to easily access crypto. Use your Debit Card or Bank Account (SEPA) from nearly anywhere in the world.',
+    logo: everestLogo,
+    operations: [Operations.fiatIn, Operations.fiatOut],
+    depositMethods: [
+      DepositMethods.debitCard,
+      DepositMethods.sepa,
+      DepositMethods.sepaInstant,
+    ],
+    buyUrl:
+      'https://kyc.everest.org/?appKey=zDhr57jc2XzCCMq',    
+    sellUrl:
+      'https://kyc.everest.org/sell?appKey=zDhr57jc2XzCCMq',  
+  },
+
 ];
 
 export const Fiat = () => {
