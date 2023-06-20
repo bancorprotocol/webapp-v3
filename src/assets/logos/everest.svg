@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1300"
+   height="228"
+   viewBox="0 0 1300 228"
+   fill="none"
+   version="1.1"
+   id="svg46"
+   sodipodi:docname="EVEREST LOGO FULL copy.svg"
+   inkscape:version="1.0.2 (e86c8708, 2021-01-15)">
+  <metadata
+     id="metadata50">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1249"
+     inkscape:window-height="680"
+     id="namedview48"
+     showgrid="false"
+     inkscape:zoom="0.84384615"
+     inkscape:cx="606.41159"
+     inkscape:cy="114"
+     inkscape:window-x="0"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg46" />
+  <path
+     d="M253.505 187.061H69.9221L105.932 123.888L161.699 124.163V84.8912H128.156L153.114 41.1081H161.699V0H141.721C135.973 0 130.609 3.02202 127.728 7.9093L82.3343 84.8912H24.2777L0 123.353L59.4752 123.657L14.2149 200.393C11.3335 205.266 11.3335 211.324 14.2149 216.197C17.0963 221.07 22.4454 224.092 28.1935 224.092H275.477L253.505 187.061Z"
+     fill="url(#paint0_linear)"
+     id="path10" />
+  <path
+     d="M228.769 104.238L174.067 8.11173C171.229 3.10877 165.821 0 159.97 0H139.948V41.1081H147.498L173.682 84.8912H24.2777L0 123.353L216.564 124.438C216.593 124.438 216.608 124.438 216.637 124.438C221.528 124.438 226.109 121.878 228.592 117.757C231.089 113.622 231.163 108.446 228.769 104.238Z"
+     fill="url(#paint1_linear)"
+     id="path12" />
+  <defs
+     id="defs44">
+    <linearGradient
+       id="paint0_linear"
+       x1="-86.3089"
+       y1="252.989"
+       x2="195.851"
+       y2="112.314"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#35E0F4"
+         id="stop16" />
+      <stop
+         offset="0.0772"
+         stop-color="#33D7F0"
+         id="stop18" />
+      <stop
+         offset="0.2056"
+         stop-color="#2EBDE4"
+         id="stop20" />
+      <stop
+         offset="0.3693"
+         stop-color="#2594D0"
+         id="stop22" />
+      <stop
+         offset="0.5601"
+         stop-color="#195BB6"
+         id="stop24" />
+      <stop
+         offset="0.6836"
+         stop-color="#1132A3"
+         id="stop26" />
+    </linearGradient>
+    <linearGradient
+       id="paint1_linear"
+       x1="0"
+       y1="62.2187"
+       x2="230.519"
+       y2="62.2187"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         stop-color="#35E0F4"
+         id="stop29" />
+      <stop
+         offset="0.0696"
+         stop-color="#33D7F0"
+         id="stop31" />
+      <stop
+         offset="0.1854"
+         stop-color="#2EBDE4"
+         id="stop33" />
+      <stop
+         offset="0.333"
+         stop-color="#2594D0"
+         id="stop35" />
+      <stop
+         offset="0.505"
+         stop-color="#195BB6"
+         id="stop37" />
+      <stop
+         offset="0.6164"
+         stop-color="#1132A3"
+         id="stop39" />
+      <stop
+         offset="1"
+         stop-color="#1132A3"
+         id="stop41" />
+    </linearGradient>
+  </defs>
+</svg>
