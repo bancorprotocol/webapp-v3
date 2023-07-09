@@ -31,13 +31,7 @@ interface SearchableTokenListProps {
   limit?: boolean;
 }
 
-const suggestedTokens = [
-  { symbol: 'BNT', address: bntToken.toLowerCase() },
-  { symbol: 'ETH', address: ethToken.toLowerCase() },
-  { symbol: 'WBTC', address: wbtcToken.toLowerCase() },
-  { symbol: 'USDC', address: usdcToken.toLowerCase() },
-  { symbol: 'USDT', address: usdtToken.toLowerCase() },
-];
+const suggestedTokens = [bntToken, ethToken, wbtcToken, usdcToken, usdtToken];
 
 export const SearchableTokenList = ({
   onClick,
