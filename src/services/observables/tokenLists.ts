@@ -15,7 +15,7 @@ const buildTokenListTokens = (
   const tokens: TokenMinimal[] = [
     {
       symbol: 'ETH',
-      address: ethToken,
+      address: ethToken.toLowerCase(),
       logoURI:
         'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.svg',
       decimals: 18,
@@ -23,7 +23,7 @@ const buildTokenListTokens = (
     },
     {
       symbol: 'WETH',
-      address: wethToken,
+      address: wethToken.toLowerCase(),
       logoURI:
         'https://d1wmp5nysbq9xl.cloudfront.net/ethereum/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.svg',
       decimals: 18,
