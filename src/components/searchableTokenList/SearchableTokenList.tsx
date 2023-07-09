@@ -13,6 +13,13 @@ import { userPreferredListIds$ } from 'services/observables/tokenLists';
 import { orderBy } from 'lodash';
 import { SearchInput } from 'components/searchInput/SearchInput';
 import { Image } from 'components/image/Image';
+import {
+  bntToken,
+  ethToken,
+  usdcToken,
+  usdtToken,
+  wbtcToken,
+} from 'services/web3/config';
 
 interface SearchableTokenListProps {
   onClick: Function;
@@ -24,7 +31,13 @@ interface SearchableTokenListProps {
   limit?: boolean;
 }
 
-const suggestedTokens = ['BNT', 'ETH', 'WBTC', 'USDC', 'USDT'];
+const suggestedTokens = [
+  { symbol: 'BNT', address: bntToken.toLowerCase() },
+  { symbol: 'ETH', address: ethToken.toLowerCase() },
+  { symbol: 'WBTC', address: wbtcToken.toLowerCase() },
+  { symbol: 'USDC', address: usdcToken.toLowerCase() },
+  { symbol: 'USDT', address: usdtToken.toLowerCase() },
+];
 
 export const SearchableTokenList = ({
   onClick,

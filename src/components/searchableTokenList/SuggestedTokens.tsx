@@ -5,7 +5,10 @@ import { Image } from 'components/image/Image';
 
 interface SuggestedTokensProps {
   allTokens: (Token | TokenMinimal)[];
-  suggestedTokens: string[];
+  suggestedTokens: {
+    symbol: string;
+    address: string;
+  }[];
   onClick: (token: Token | TokenMinimal) => void;
 }
 
@@ -17,7 +20,13 @@ export const SuggestedTokens = ({
   const suggestedTokenList = useMemo(
     () =>
       suggestedTokens
-        .map((token) => allTokens.find((t) => t.symbol === token))
+        .map((token) =>
+          allTokens.find(
+            (t) =>
+              t.symbol === token.symbol &&
+              t.address.toLowerCase() === token.address
+          )
+        )
         .filter((token) => !!token),
     [allTokens, suggestedTokens]
   );
