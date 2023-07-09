@@ -17,7 +17,7 @@ export const SuggestedTokens = ({
   const suggestedTokenList = useMemo(
     () =>
       suggestedTokens
-        .map((token) => allTokens.find((t) => t.symbol === token))
+        .map((address) => allTokens.find((t) => t.address === address))
         .filter((token) => !!token),
     [allTokens, suggestedTokens]
   );
