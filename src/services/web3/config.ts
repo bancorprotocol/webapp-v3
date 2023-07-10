@@ -14,6 +14,9 @@ export interface EthNetworkVariables {
 }
 
 export const bntToken: string = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+export const wbtcToken: string = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599';
+export const usdcToken: string = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+export const usdtToken: string = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 export const systemStore: string = '0xc4C5634De585d43DaEC8fA2a6Fb6286cd9B87131';
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
