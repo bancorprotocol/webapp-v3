@@ -68,9 +68,6 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
         <hr className="border-fog dark:border-grey" />
         <Navigate to={config.externalUrls.support}>Help Center / FAQ</Navigate>
         <Navigate to={config.externalUrls.duneAnalytics}>Analytics</Navigate>
-        <Navigate to={config.externalUrls.bancorAnalytics}>
-          Analytics V3
-        </Navigate>
         <Navigate to={config.externalUrls.documentation}>Developers</Navigate>
         <Navigate to={BancorURL.termsOfUse}>Terms Of Use</Navigate>
         <Navigate to={BancorURL.privacyPolicy}>Privacy Policy</Navigate>
