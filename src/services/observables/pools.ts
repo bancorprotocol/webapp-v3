@@ -4,7 +4,6 @@ import {
   Token,
   tokensV3$,
 } from 'services/observables/tokens';
-import BigNumber from 'bignumber.js';
 import { combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { distinctUntilChanged, shareReplay } from 'rxjs/operators';
@@ -201,15 +200,15 @@ const buildPoolV3Object = (
     programs
   );
 
-  const tradingFeesApr24h = calcApr(
-    new BigNumber(apiPool.fees24h.usd).minus(apiPool.networkFees24h.usd),
-    stakedBalance.usd
-  );
-  const tradingFeesApr7d = calcApr(
-    new BigNumber(apiPool.fees7d.usd).minus(apiPool.networkFees7d.usd),
-    stakedBalance.usd,
-    true
-  );
+  const tradingFeesApr24h = 0; // calcApr(
+  // new BigNumber(apiPool.fees24h.usd).minus(apiPool.networkFees24h.usd),
+  // stakedBalance.usd
+  // );
+  const tradingFeesApr7d = 0; // calcApr(
+  // new BigNumber(apiPool.fees7d.usd).minus(apiPool.networkFees7d.usd),
+  // stakedBalance.usd,
+  // true
+  // );
 
   // Auto Comp APR
   const autoCompoundingApr24H = calcApr(
