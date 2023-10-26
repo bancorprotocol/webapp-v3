@@ -65,7 +65,7 @@ export const statisticsV3$ = combineLatest([apiData$, oneMinute$]).pipe(
       bntRate: stats.bntRate,
       totalBNTStaked: totalBNTStaked.toString(),
       totalNetworkFees: totalNetworkFees.toString(),
-      totalLpFees: totalFees.minus(totalNetworkFees).toString(),
+      totalLpFees: '0',
     };
     return statistics;
   }),

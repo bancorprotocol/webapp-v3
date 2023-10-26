@@ -74,19 +74,11 @@ const toolTip = (stats: Statistic) => {
         <div className="w-[220px] text-black-medium dark:text-white-medium">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
-              <span>Fees</span>
-              <span className="ml-4 text-secondary">24h</span>
-            </div>
-            <div>{`$${numbro(stats.totalFees).format(averageFormat)}`}</div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center justify-start">
+              {/* we show the text as Network Fees instead of fees - see this commit to better understand */}
               <span>Network Fees</span>
               <span className="ml-4 text-secondary">24h</span>
             </div>
-            <div>
-              {`$${numbro(stats.totalNetworkFees).format(averageFormat)}`}
-            </div>
+            <div>{`$${numbro(stats.totalFees).format(averageFormat)}`}</div>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
