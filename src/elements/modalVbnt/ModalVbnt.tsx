@@ -128,7 +128,9 @@ export const ModalVbnt = ({
   const [checkApprove, ModalApprove] = useApproveModal(
     [{ amount: amount, token: token }],
     handleStakeUnstake,
-    ApprovalContract.Governance,
+    token.symbol === 'BNT'
+      ? ApprovalContract.GovernanceBnt
+      : ApprovalContract.GovernanceVbnt,
     () => sendGovEvent(GovEvent.UnlimitedPopup, govProperties, stake),
     (isUnlimited: boolean) =>
       sendGovEvent(
@@ -148,7 +150,7 @@ export const ModalVbnt = ({
   return (
     <>
       <Modal
-        title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
+        title={`${stake ? 'Stake' : 'Unstake'} ${token.symbol}`}
         titleElement={<SwapSwitch />}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
@@ -176,7 +178,7 @@ export const ModalVbnt = ({
               className="mt-30 mb-20"
               size={ButtonSize.Full}
             >
-              {`${stake ? 'Stake' : 'Unstake'} vBNT`}
+              {`${stake ? 'Stake' : 'Unstake'} ${token.symbol}`}
             </Button>
           </div>
         </div>
