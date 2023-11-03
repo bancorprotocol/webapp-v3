@@ -4,11 +4,7 @@ import { web3, writeWeb3 } from 'services/web3';
 import { ErrorCode } from '../types';
 import { Governance__factory } from '../abis/types';
 import dayjs from 'utils/dayjs';
-import {
-  bntDecimals,
-  getNetworkVariables,
-  vBntDecimals,
-} from 'services/web3/config';
+import { getNetworkVariables, vBntDecimals } from 'services/web3/config';
 
 export const stakeAmount = async (
   amount: string,
@@ -19,15 +15,14 @@ export const stakeAmount = async (
   failed: (error: string) => void
 ) => {
   try {
-    const networkVars = getNetworkVariables();
-    const address =
-      govToken.symbol === 'BNT'
-        ? networkVars.governanceBntContractAddress
-        : networkVars.governanceVbntContractAddress;
-
-    const govContract = Governance__factory.connect(address, writeWeb3.signer);
-
     const expandedAmount = expandToken(amount, govToken.decimals);
+
+    const networkVars = getNetworkVariables();
+    const govContract = Governance__factory.connect(
+      networkVars.governanceContractAddress,
+      writeWeb3.signer
+    );
+
     const tx = await govContract.stake(expandedAmount);
     onHash(tx.hash);
     await tx.wait();
@@ -47,15 +42,14 @@ export const unstakeAmount = async (
   failed: (error: string) => void
 ) => {
   try {
-    const networkVars = getNetworkVariables();
-    const address =
-      govToken.symbol === 'BNT'
-        ? networkVars.governanceBntContractAddress
-        : networkVars.governanceVbntContractAddress;
-
-    const govContract = Governance__factory.connect(address, writeWeb3.signer);
-
     const expandedAmount = expandToken(amount, govToken.decimals);
+
+    const networkVars = getNetworkVariables();
+    const govContract = Governance__factory.connect(
+      networkVars.governanceContractAddress,
+      writeWeb3.signer
+    );
+
     const tx = await govContract.unstake(expandedAmount);
     onHash(tx.hash);
     await tx.wait();
@@ -66,28 +60,23 @@ export const unstakeAmount = async (
   }
 };
 
-export const getStakedAmount = async (
-  user: string,
-  isBnt: boolean
-): Promise<string> => {
+export const getStakedAmount = async (user: string): Promise<string> => {
   const networkVars = getNetworkVariables();
-  const address = isBnt
-    ? networkVars.governanceBntContractAddress
-    : networkVars.governanceVbntContractAddress;
-  const decimals = isBnt ? bntDecimals : vBntDecimals;
-
-  const govContract = Governance__factory.connect(address, web3.provider);
+  const govContract = Governance__factory.connect(
+    networkVars.governanceContractAddress,
+    web3.provider
+  );
   const amount = await govContract.votesOf(user);
-  return shrinkToken(amount.toString(), decimals);
+  return shrinkToken(amount.toString(), vBntDecimals);
 };
 
-export const getUnstakeTimer = async (user: string, isBnt: boolean) => {
+export const getUnstakeTimer = async (user: string) => {
   const now = dayjs().unix() * 1000;
   const networkVars = getNetworkVariables();
-  const address = isBnt
-    ? networkVars.governanceBntContractAddress
-    : networkVars.governanceVbntContractAddress;
-  const govContract = Governance__factory.connect(address, web3.provider);
+  const govContract = Governance__factory.connect(
+    networkVars.governanceContractAddress,
+    web3.provider
+  );
   const locks = await govContract.voteLocks(user);
   const time = Number(locks) * 1000;
   if (time - now > 0) return time;

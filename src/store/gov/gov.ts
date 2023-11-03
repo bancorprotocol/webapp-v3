@@ -1,43 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface GovState {
-  stakedVbntAmount?: string;
-  unstakeVbntTimer?: number;
-  stakedBntAmount?: string;
-  unstakeBntTimer?: number;
+  stakedAmount?: string;
+  unstakeTimer?: number;
 }
 
 export const initialState: GovState = {
-  stakedVbntAmount: undefined,
-  unstakeVbntTimer: undefined,
-  stakedBntAmount: undefined,
-  unstakeBntTimer: undefined,
+  stakedAmount: undefined,
+  unstakeTimer: undefined,
 };
 
 const govSlice = createSlice({
   name: 'gov',
   initialState,
   reducers: {
-    setStakedVbntAmount: (state, action) => {
-      state.stakedVbntAmount = action.payload;
+    setStakedAmount: (state, action) => {
+      state.stakedAmount = action.payload;
     },
-    setUnstakeVbntTimer: (state, action) => {
-      state.unstakeVbntTimer = action.payload;
-    },
-    setStakedBntAmount: (state, action) => {
-      state.stakedBntAmount = action.payload;
-    },
-    setUnstakeBntTimer: (state, action) => {
-      state.unstakeBntTimer = action.payload;
+    setUnstakeTimer: (state, action) => {
+      state.unstakeTimer = action.payload;
     },
   },
 });
 
-export const {
-  setStakedVbntAmount,
-  setUnstakeVbntTimer,
-  setStakedBntAmount,
-  setUnstakeBntTimer,
-} = govSlice.actions;
+export const { setStakedAmount, setUnstakeTimer } = govSlice.actions;
 
 export const gov = govSlice.reducer;

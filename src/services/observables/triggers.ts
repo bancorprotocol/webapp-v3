@@ -58,18 +58,8 @@ import {
 } from 'services/observables/tokenLists';
 import { allpoolsV3$, poolsV2$, poolsV3$ } from 'services/observables/pools';
 import { poolTokens$ } from 'services/observables/poolTokensV1';
-import {
-  setStakedVbntAmount,
-  setUnstakeVbntTimer,
-  setStakedBntAmount,
-  setUnstakeBntTimer,
-} from 'store/gov/gov';
-import {
-  stakedVbntAmount$,
-  unstakeVbntTimer$,
-  stakedBntAmount$,
-  unstakeBntTimer$,
-} from './gov';
+import { setStakedAmount, setUnstakeTimer } from 'store/gov/gov';
+import { stakedAmount$, unstakeTimer$ } from './gov';
 import { standardRewardPrograms$ } from 'services/observables/standardRewards';
 
 export const subscribeToObservables = (dispatch: any) => {
@@ -173,17 +163,11 @@ export const subscribeToObservables = (dispatch: any) => {
     dispatch(setProtocolBnBNTAmount(protocolBnBNTAmount));
   });
 
-  stakedVbntAmount$.subscribe((stakedAmount) => {
-    dispatch(setStakedVbntAmount(stakedAmount));
+  stakedAmount$.subscribe((stakedAmount) => {
+    dispatch(setStakedAmount(stakedAmount));
   });
-  unstakeVbntTimer$.subscribe((unstakeTimer) => {
-    dispatch(setUnstakeVbntTimer(unstakeTimer));
-  });
-  stakedBntAmount$.subscribe((stakedAmount) => {
-    dispatch(setStakedBntAmount(stakedAmount));
-  });
-  unstakeBntTimer$.subscribe((unstakeTimer) => {
-    dispatch(setUnstakeBntTimer(unstakeTimer));
+  unstakeTimer$.subscribe((unstakeTimer) => {
+    dispatch(setUnstakeTimer(unstakeTimer));
   });
   standardRewardPrograms$.subscribe((programs) => {
     dispatch(setAllStandardRewardsV3(programs));

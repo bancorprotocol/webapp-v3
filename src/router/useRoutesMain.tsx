@@ -1,7 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import { Tokens } from 'pages/Tokens';
 import { Fiat } from 'pages/Fiat';
-import { Vote } from 'pages/vote/Vote';
+import { Vote } from 'pages/Vote';
 import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
