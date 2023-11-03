@@ -8,8 +8,7 @@ export interface EthNetworkVariables {
   contractRegistry: string;
   bntToken: string;
   converterContractForMaths: string;
-  governanceVbntContractAddress: string;
-  governanceBntContractAddress: string;
+  governanceContractAddress: string;
   etherscanUrl: string;
   govToken: string;
 }
@@ -42,8 +41,7 @@ export const getNetworkVariables = (): EthNetworkVariables => {
     bntToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
     govToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
     converterContractForMaths: '0xe870d00176b2c71afd4c43cea550228e22be4abd',
-    governanceVbntContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
-    governanceBntContractAddress: '0xebFaFc802533F3D2835Af7464Fcd4492e8F82eB2',
+    governanceContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
     etherscanUrl: 'https://etherscan.io',
   };
 };
