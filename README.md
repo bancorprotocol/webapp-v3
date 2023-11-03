@@ -7,7 +7,6 @@ Open Source Token Swap and Pool Liquidity Portal
 |                 | City                                                                |
 | --------------- | ------------------------------------------------------------------- |
 | Jan Langheimer  | [Freiburg](https://www.timeanddate.com/worldclock/germany/freiburg) |
-| Ran Cohen       | [Tel Aviv](https://www.timeanddate.com/worldclock/israel/tel-aviv)  |
 | Doron Z         | [Tel Aviv](https://www.timeanddate.com/worldclock/israel/tel-aviv)  |
 
 ## How to contribute
