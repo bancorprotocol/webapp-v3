@@ -24,7 +24,9 @@ export const StakeCard: React.FC<StakeCardProps> = ({
 }) => {
   const { handleWalletButtonClick } = useWalletConnect();
   return (
-    <div className={`flex flex-row ${className}`}>
+    <div
+      className={`flex flex-col md:flex-row lt-md:min-h-[360px] lt-md:justify-between ${className}`}
+    >
       <div className="flex flex-col max-w-[500px]">
         <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
           Stake {symbol}
@@ -34,11 +36,11 @@ export const StakeCard: React.FC<StakeCardProps> = ({
           In order to participate in Bancor governance activities, you should
           stake {symbol} tokens.
         </div>
-        <div className="flex w-full">
+        <div className="flex w-full justify-center md:justify-start">
           <Button
             variant={ButtonVariant.Primary}
-            size={ButtonSize.Meduim}
-            className="mt-20"
+            size={ButtonSize.Medium}
+            className="mt-20 lt-md:w-full"
             onClick={() => {
               if (!account) {
                 handleWalletButtonClick();

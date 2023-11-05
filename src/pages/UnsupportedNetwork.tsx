@@ -17,7 +17,7 @@ export const UnsupportedNetwork = () => {
       <div className="flex items-center gap-15">
         <Button
           variant={ButtonVariant.Secondary}
-          size={isMobile ? ButtonSize.Small : ButtonSize.Meduim}
+          size={isMobile ? ButtonSize.Small : ButtonSize.Medium}
         >
           <Navigate
             to="https://support.bancor.network/hc/en-us/articles/5463892405010-MetaMask-Setup-Guide"
@@ -29,7 +29,7 @@ export const UnsupportedNetwork = () => {
         </Button>
         <Button
           variant={ButtonVariant.Primary}
-          size={isMobile ? ButtonSize.Small : ButtonSize.Meduim}
+          size={isMobile ? ButtonSize.Small : ButtonSize.Medium}
           onClick={() => requestSwitchChain()}
         >
           Switch Network

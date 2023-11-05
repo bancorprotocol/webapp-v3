@@ -1,5 +1,4 @@
 import { useWeb3React } from '@web3-react/core';
-import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 import { ModalVbnt } from 'elements/modalVbnt/ModalVbnt';
 import { useCallback, useState } from 'react';
 import { useEffect } from 'react';
@@ -10,8 +9,6 @@ import {
   getStakedAmount,
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
-import { openNewTab } from 'utils/pureFunctions';
-import { Button, ButtonSize, ButtonVariant } from 'components/button/Button';
 import { Page } from 'components/Page';
 import { useDispatch } from 'react-redux';
 import {
@@ -20,10 +17,11 @@ import {
   setStakedBntAmount,
   setUnstakeBntTimer,
 } from 'store/gov/gov';
-import { Navigate } from 'components/navigate/Navigate';
 import { VoteCardDivided } from 'pages/vote/VoteCardDivided';
 import { UnstakeCard } from 'pages/vote/UnstakedCard';
 import { StakeCard } from 'pages/vote/StakedCard';
+import { VoteCard } from 'pages/vote/VoteCard';
+import { LegacyVoteCard } from './LegacyVoteCard';
 
 export const Vote = () => {
   const { chainId } = useWeb3React();
@@ -87,9 +85,6 @@ export const Vote = () => {
     refresh();
   }, [refresh]);
 
-  const stakedAny =
-    Number(stakeVbntAmount) !== 0 || Number(stakeBntAmount) !== 0;
-
   return (
     <Page
       title={'Vote'}
@@ -138,57 +133,17 @@ export const Vote = () => {
             />
           </VoteCardDivided>
           <VoteCardDivided>
-            <div className="flex flex-col justify-between">
-              <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
-                Voting on Bancor DAO
-              </div>
-
-              <div className="text-secondary text-12 mb-auto">
-                Voting on Bancor DAO is free as it is using the Snapshot
-                off-chain infrastructure. Every user can vote on every available
-                proposal and help shape the future of the Bancor Protocol.
-              </div>
-              <div className="flex items-baseline">
-                <Button
-                  variant={
-                    stakedAny ? ButtonVariant.Primary : ButtonVariant.Secondary
-                  }
-                  size={ButtonSize.Meduim}
-                  className="mt-20"
-                  onClick={() => openNewTab('https://vote.bancor.network/')}
-                >
-                  {'Vote on Snapshot'}
-                </Button>
-                <Navigate
-                  to="https://support.bancor.network/hc/en-us/articles/5476957904914"
-                  className="flex items-center text-primary dark:text-primary-light font-medium ml-40"
-                >
-                  How to Vote <IconLink className="w-14 ml-6" />
-                </Navigate>
-              </div>
-            </div>
-            <div className="flex flex-col justify-between">
-              <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
-                Legacy onchain contract
-              </div>
-
-              <div className="text-secondary text-12 mb-auto">
-                View previous votes and decisions made onchain.
-              </div>
-
-              <a
-                href="https://etherscan.io/address/0x892f481bd6e9d7d26ae365211d9b45175d5d00e4"
-                target="_blank"
-                className="flex items-center text-primary dark:text-primary-light font-medium h-[47px]"
-                rel="noreferrer"
-              >
-                View Legacy Gov <IconLink className="w-14 ml-6" />
-              </a>
-            </div>
+            <VoteCard
+              stakedAny={
+                Number(stakeVbntAmount) !== 0 || Number(stakeBntAmount) !== 0
+              }
+            />
+            <LegacyVoteCard />
           </VoteCardDivided>
         </div>
         {vbntToken && (
           <ModalVbnt
+            key="vbntModal"
             isOpen={stakeVbntModal}
             setIsOpen={setStakeVbntModal}
             token={vbntToken}
@@ -199,6 +154,7 @@ export const Vote = () => {
         )}
         {bntToken && (
           <ModalVbnt
+            key="bntModal"
             isOpen={stakeBntModal}
             setIsOpen={setStakeBntModal}
             token={bntToken}

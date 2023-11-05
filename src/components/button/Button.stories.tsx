@@ -71,7 +71,7 @@ export const Playground: ComponentStory<typeof Button> = (args) => (
 Playground.args = {
   children: 'Primary Button',
   variant: ButtonVariant.Primary,
-  size: ButtonSize.Meduim,
+  size: ButtonSize.Medium,
   disabled: false,
   className: '',
 };

@@ -32,7 +32,7 @@ export const UnstakeCard: React.FC<UnstakeCardProps> = ({
         In order to remove {symbol} from governance you would need to unstake
         them first.
       </div>
-      <div className="flex items-center w-full">
+      <div className="flex items-center w-full justify-center">
         <Button
           variant={
             (!!unstakeTime || !stakeAmount || Number(stakeAmount) === 0) &&
@@ -40,8 +40,8 @@ export const UnstakeCard: React.FC<UnstakeCardProps> = ({
               ? ButtonVariant.Secondary
               : ButtonVariant.Primary
           }
-          size={ButtonSize.Meduim}
-          className="mt-20 md:mt-0"
+          size={ButtonSize.Medium}
+          className="mt-20 md:mt-0 lt-md:w-full"
           disabled={
             (!!unstakeTime || !stakeAmount || Number(stakeAmount) === 0) &&
             !isUnlocked

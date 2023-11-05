@@ -12,7 +12,7 @@ export enum ButtonSize {
   Full,
   ExtraLarge,
   Large,
-  Meduim,
+  Medium,
   Small,
   ExtraSmall,
 }
@@ -45,7 +45,7 @@ const getSizeStyle = (size: ButtonSize) => {
       return 'w-[428px] h-[53px]';
     case ButtonSize.Large:
       return 'w-[335px] h-[53px]';
-    case ButtonSize.Meduim:
+    case ButtonSize.Medium:
       return 'w-[266px] h-[47px]';
     case ButtonSize.Small:
       return 'w-[142px] h-[39px]';

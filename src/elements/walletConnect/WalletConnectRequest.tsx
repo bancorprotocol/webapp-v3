@@ -13,7 +13,7 @@ export const WalletConnectRequest = () => {
       </div>
       <Button
         variant={ButtonVariant.Secondary}
-        size={ButtonSize.Meduim}
+        size={ButtonSize.Medium}
         onClick={() => handleWalletButtonClick()}
       >
         Connect Wallet
