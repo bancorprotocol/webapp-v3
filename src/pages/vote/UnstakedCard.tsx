@@ -41,7 +41,7 @@ export const UnstakeCard: React.FC<UnstakeCardProps> = ({
               : ButtonVariant.Primary
           }
           size={ButtonSize.Medium}
-          className="mt-20 md:mt-0 lt-md:w-full"
+          className="mt-20 lg:mt-0 lt-lg:w-full"
           disabled={
             (!!unstakeTime || !stakeAmount || Number(stakeAmount) === 0) &&
             !isUnlocked

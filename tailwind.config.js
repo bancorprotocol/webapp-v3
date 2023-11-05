@@ -9,8 +9,8 @@ module.exports = {
     screens: {
       sm: '640px',
       md: '768px',
-      'lt-md': { max: '767px' }, // lt-md for "less than md"
       lg: '1024px',
+      'lt-lg': { max: '1023px' },
       xl: '1280px',
       '2xl': '1536px',
     },

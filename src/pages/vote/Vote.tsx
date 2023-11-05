@@ -93,7 +93,7 @@ export const Vote = () => {
       or BNT (or both) to receive voting powers.`}
     >
       <>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-30 gap-x-50">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-30 gap-x-50">
           <VoteCardDivided>
             <StakeCard
               account={account}

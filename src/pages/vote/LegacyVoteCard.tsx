@@ -9,7 +9,7 @@ export const LegacyVoteCard: React.FC<LegacyVoteCardProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col justify-between lt-md:min-h-[180px] ${className}`}
+      className={`flex flex-col justify-between lt-lg:min-h-[180px] ${className}`}
     >
       <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
         Legacy onchain contract
@@ -22,7 +22,7 @@ export const LegacyVoteCard: React.FC<LegacyVoteCardProps> = ({
       <a
         href="https://etherscan.io/address/0x892f481bd6e9d7d26ae365211d9b45175d5d00e4"
         target="_blank"
-        className="flex items-center lt-md:justify-center text-primary dark:text-primary-light font-medium h-[47px]"
+        className="flex items-center lt-lg:justify-center text-primary dark:text-primary-light font-medium h-[47px]"
         rel="noreferrer"
       >
         View Legacy Gov <IconLink className="w-14 ml-6" />

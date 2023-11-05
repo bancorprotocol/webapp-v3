@@ -13,7 +13,7 @@ export const VoteBalances: React.FC<VoteBalancesProps> = ({
   stakeAmount,
 }) => {
   return (
-    <div className="flex flex-col md:w-[220px] lt-md:h-[145px] md:ml-20 border border-silver dark:border-grey rounded-10 pl-20 pr-20">
+    <div className="flex flex-col lg:w-[220px] lt-lg:h-[145px] lg:ml-20 border border-silver dark:border-grey rounded-10 pl-20 pr-20">
       <div className="flex flex-col justify-evenly items-center flex-1">
         <div className="text-secondary">Available Balance</div>
         {!account || (govToken && govToken.balance) ? (
