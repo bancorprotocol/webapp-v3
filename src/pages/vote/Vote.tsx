@@ -133,11 +133,7 @@ export const Vote = () => {
             />
           </VoteCardDivided>
           <VoteCardDivided>
-            <VoteCard
-              stakedAny={
-                Number(stakeVbntAmount) !== 0 || Number(stakeBntAmount) !== 0
-              }
-            />
+            <VoteCard />
             <LegacyVoteCard />
           </VoteCardDivided>
         </div>

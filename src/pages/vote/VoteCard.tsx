@@ -4,11 +4,10 @@ import { openNewTab } from 'utils/pureFunctions';
 import { ReactComponent as IconLink } from 'assets/icons/link.svg';
 
 export interface VoteCardProps {
-  stakedAny: boolean;
   className?: string;
 }
 
-export const VoteCard: React.FC<VoteCardProps> = ({ stakedAny, className }) => {
+export const VoteCard: React.FC<VoteCardProps> = ({ className }) => {
   return (
     <div className={`flex flex-col justify-between ${className}`}>
       <div className="text-16 text-charcoal dark:text-white mb-18 font-medium">
@@ -22,7 +21,7 @@ export const VoteCard: React.FC<VoteCardProps> = ({ stakedAny, className }) => {
       </div>
       <div className="flex flex-col lg:flex-row lg:items-baseline items-center w-full">
         <Button
-          variant={stakedAny ? ButtonVariant.Primary : ButtonVariant.Secondary}
+          variant={ButtonVariant.Primary}
           size={ButtonSize.Medium}
           className="mt-20 lt-lg:w-full"
           onClick={() => openNewTab('https://vote.bancor.network/')}
