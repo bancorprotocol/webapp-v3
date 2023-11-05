@@ -86,7 +86,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => {
-          stakeNotification(dispatch, amount, txHash);
+          stakeNotification(dispatch, amount, txHash, token.symbol);
           sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
         },
         () => {
@@ -98,7 +98,7 @@ export const ModalVbnt = ({
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         },
         (error: string) => {
-          stakeFailedNotification(dispatch, amount);
+          stakeFailedNotification(dispatch, amount, token.symbol);
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         }
       );
@@ -107,7 +107,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => {
-          unstakeNotification(dispatch, amount, txHash);
+          unstakeNotification(dispatch, amount, txHash, token.symbol);
           sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
         },
         () => {
@@ -119,7 +119,7 @@ export const ModalVbnt = ({
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         },
         (error: string) => {
-          unstakeFailedNotification(dispatch, amount);
+          unstakeFailedNotification(dispatch, amount, token.symbol);
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         }
       );
