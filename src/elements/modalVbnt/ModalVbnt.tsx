@@ -77,8 +77,8 @@ export const ModalVbnt = ({
   }, [amount, token, percentages, fieldBlance]);
 
   const handleStakeUnstake = async () => {
+    setAmount('');
     if (stakeDisabled || !account) return;
-
     sendGovEvent(GovEvent.Click, govProperties, stake);
     sendGovEvent(GovEvent.WalletRequest, govProperties, stake);
     if (stake)
@@ -169,7 +169,6 @@ export const ModalVbnt = ({
             />
             <Button
               onClick={() => {
-                setAmount('');
                 setIsOpen(false);
                 if (stake) checkApprove();
                 else handleStakeUnstake();
