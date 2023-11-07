@@ -33,8 +33,7 @@ export const StakeCard: React.FC<StakeCardProps> = ({
         </div>
 
         <div className="text-secondary text-12 mb-auto">
-          In order to participate in Bancor governance activities, you should
-          stake {symbol} tokens.
+          Participate in Bancor Governance activities by staking {symbol}.
         </div>
         <div className="flex w-full justify-center lg:justify-start">
           <Button

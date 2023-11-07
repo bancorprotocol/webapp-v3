@@ -88,9 +88,8 @@ export const Vote = () => {
   return (
     <Page
       title={'Vote'}
-      subtitle={`Bancor is a DAO managed by vBNT and/or BNT stakers who determine the future of 
-      the protocol with their proposals. In order to actively participate in the DAO, stake vBNT 
-      or BNT (or both) to receive voting powers.`}
+      subtitle={`Bancor operates as a Decentralized Autonomous Organization (DAO), enabling community-driven protocol management through proposal submissions.
+      Participate in Bancor's DAO by staking vBNT and/or BNT, granting you voting power and an active role in the decision-making process.`}
     >
       <>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-30 gap-x-50">
