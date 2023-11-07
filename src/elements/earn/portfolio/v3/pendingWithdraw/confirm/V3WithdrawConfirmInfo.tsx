@@ -22,7 +22,7 @@ export const V3WithdrawConfirmInfo = ({ handleCancelClick }: Props) => {
       <Button
         className="mt-50"
         onClick={handleCancelClick}
-        size={ButtonSize.Meduim}
+        size={ButtonSize.Medium}
         variant={ButtonVariant.Secondary}
       >
         Cancel withdrawal
