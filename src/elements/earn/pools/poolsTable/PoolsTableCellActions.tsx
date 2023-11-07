@@ -4,7 +4,7 @@ import { DepositDisabledModal } from 'elements/earn/pools/poolsTable/v3/DepositD
 import { Navigate } from 'components/navigate/Navigate';
 import { BancorURL } from 'router/bancorURL.service';
 
-export const PoolsTableCellActions = (id: string) => {
+export const PoolsTableCellActions = (id: string, symbol: string) => {
   const enableDeposit = false;
 
   const button = (onClick: () => void) => (
@@ -31,6 +31,7 @@ export const PoolsTableCellActions = (id: string) => {
     <DepositDisabledModal
       renderButton={(onclick) => button(onclick)}
       isV3={false}
+      symbol={symbol}
     />
   );
 };
