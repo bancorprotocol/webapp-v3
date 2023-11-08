@@ -105,7 +105,8 @@ export const EarnTableV2 = ({
         id: 'actions',
         Header: '',
         accessor: 'pool_dlt_id',
-        Cell: (cellData) => PoolsTableCellActions(cellData.value),
+        Cell: (cellData) =>
+          PoolsTableCellActions(cellData.value, cellData.row.original.name),
         width: 50,
         minWidth: 50,
         disableSortBy: true,
