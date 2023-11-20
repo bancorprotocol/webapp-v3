@@ -43,13 +43,8 @@ export const LayoutHeader = () => {
             <Navigate to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />
             </Navigate>
-            <TopMenuDropdown
-              items={[
-                { title: 'Trade', link: BancorURL.trade() },
-                { title: 'Tokens', link: BancorURL.tokens },
-              ]}
-              className="w-[75px]"
-            />
+
+            <Navigate to={BancorURL.trade()}>Trade</Navigate>
 
             <Navigate to={BancorURL.earn}>Pools</Navigate>
             <TopMenuDropdown
