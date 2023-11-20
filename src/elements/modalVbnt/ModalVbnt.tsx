@@ -1,5 +1,4 @@
 import { Modal } from 'components/modal/Modal';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
@@ -46,7 +45,7 @@ export const ModalVbnt = ({
   onCompleted,
 }: ModalVbntProps) => {
   const account = useAppSelector((state) => state.user.account);
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
@@ -151,7 +150,6 @@ export const ModalVbnt = ({
     <>
       <Modal
         title={`${stake ? 'Stake' : 'Unstake'} ${token.symbol}`}
-        titleElement={<SwapSwitch />}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         separator
