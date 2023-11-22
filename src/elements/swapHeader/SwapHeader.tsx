@@ -1,5 +1,4 @@
 import 'elements/swapHeader/SwapHeader.css';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconSettings } from 'assets/icons/settings.svg';
 import { SlippageSettings } from 'elements/settings/SlippageSettings';
@@ -20,7 +19,6 @@ export const SwapHeader = () => {
           >
             <SlippageSettings />
           </PopoverV3>
-          <SwapSwitch />
         </div>
       </div>
     </div>

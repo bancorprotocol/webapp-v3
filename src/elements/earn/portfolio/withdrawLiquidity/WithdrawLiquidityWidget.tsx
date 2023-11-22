@@ -82,7 +82,7 @@ export const WithdrawLiquidityWidget = ({
 
   const withdrawingBNT = reserveToken.address === bntToken;
   const [agreed, setAgreed] = useState(false);
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const fiatToggle = false;
 
   const bntToVBNTRatio = useMemo(() => {
     if (token && token.address !== bntToken) {
