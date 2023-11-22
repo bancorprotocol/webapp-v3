@@ -7,7 +7,7 @@ import { Insight } from 'elements/swapInsights/Insight';
 import { IntoTheBlock, intoTheBlockByToken } from 'services/api/intoTheBlock';
 import { useAsyncEffect } from 'use-async-effect';
 import { TradeWidget } from 'elements/trade/TradeWidget';
-import { getTradeTokensWithExternal } from 'store/bancor/bancor';
+import { getV2AndV3Tokens } from 'store/bancor/bancor';
 
 interface SwapWidgetProps {
   from: string | null;
@@ -16,7 +16,7 @@ interface SwapWidgetProps {
 }
 
 export const SwapWidget = ({ from, to, limit }: SwapWidgetProps) => {
-  const tokens = useAppSelector<TokenMinimal[]>(getTradeTokensWithExternal);
+  const tokens = useAppSelector<TokenMinimal[]>(getV2AndV3Tokens);
 
   const ethOrFirst = useCallback(() => {
     const eth = tokens.find((x) => x.address === ethToken);
