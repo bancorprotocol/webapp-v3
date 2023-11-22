@@ -1,6 +1,5 @@
 import { TokenMinimal } from 'services/observables/tokens';
 import { useCallback, useState } from 'react';
-import { useAppSelector } from 'store/index';
 import { debounce } from 'lodash';
 import { sanitizeNumberInput } from 'utils/pureFunctions';
 import { calcOppositeValue } from 'components/tokenInput/useTokenInputV3';
@@ -34,7 +33,7 @@ export const useTknFiatInput = ({
   setInputFiat,
   onDebounce = () => {},
 }: useTokenInputV3Props): useTokenInputV3Return | undefined => {
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const symbol = token?.symbol ?? 'N/A';
   const decimals = token?.decimals ?? 18;
   const usdPrice = token?.usdPrice ?? '0';

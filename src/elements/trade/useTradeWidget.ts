@@ -40,7 +40,7 @@ export const useTradeWidget = ({
   tokens,
 }: UseTradeWidgetProps): UseTradeWidgetReturn => {
   const account = useAppSelector((state) => state.user.account);
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const forceV3Routing = useAppSelector((state) => state.user.forceV3Routing);
   const forceV2Routing = useAppSelector((state) => state.user.forceV2Routing);
 

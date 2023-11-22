@@ -1,4 +1,3 @@
-import { useAppSelector } from 'store/index';
 import { useTokenInputV3Return } from 'elements/trade/useTknFiatInput';
 import { Image } from 'components/image/Image';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
@@ -37,7 +36,7 @@ export const TradeWidgetInput = ({
   disableSelection,
   readOnly,
 }: Props) => {
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const inputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
