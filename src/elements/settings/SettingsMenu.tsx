@@ -7,7 +7,6 @@ import { ReactComponent as IconReddit } from 'assets/icons/reddit.svg';
 import { ReactComponent as IconTelegram } from 'assets/icons/telegram.svg';
 import { ReactComponent as IconDiscord } from 'assets/icons/discord.svg';
 import { ReactComponent as IconVote } from 'assets/icons/vote.svg';
-import { ReactComponent as IconCoins } from 'assets/icons/coins.svg';
 import { ReactComponent as IconForum } from 'assets/icons/forum.svg';
 import { DarkMode } from './DarkMode';
 import { Navigate } from 'components/navigate/Navigate';
@@ -37,12 +36,6 @@ export const SettingsMenuContent = ({ mobile }: { mobile?: boolean }) => {
       <div className="flex flex-col gap-[25px]">
         {mobile ? (
           <>
-            <Navigate to={BancorURL.tokens}>
-              <div className="flex items-center gap-10 text-black dark:text-white">
-                <IconCoins className="w-20 text-black dark:text-white" />
-                Tokens
-              </div>
-            </Navigate>
             <Navigate to={BancorURL.vote}>
               <div className="flex items-center gap-10 text-black dark:text-white">
                 <IconVote className="w-20 text-black dark:text-white" />
