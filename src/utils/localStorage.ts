@@ -102,11 +102,7 @@ export const setTenderlyRpcLS = (url?: string) => {
 };
 
 export const getV3ApiUrlLS = (): string => {
-  // if production ENV remove tenderly locale storage
-  if (isProduction) {
-    setV3ApiUrlLS();
-  }
-  return localStorage.getItem(v3ApiUrl) || 'https://api-v3.bancor.network';
+  return 'https://temp-v3-ptdczarhfq-nw.a.run.app';
 };
 
 export const setV3ApiUrlLS = (url?: string) => {
@@ -118,11 +114,7 @@ export const setV3ApiUrlLS = (url?: string) => {
 };
 
 export const getV2ApiUrlLS = (): string => {
-  // if production ENV remove tenderly locale storage
-  if (isProduction) {
-    setV2ApiUrlLS();
-  }
-  return localStorage.getItem(v2ApiUrl) || 'https://api-v2.bancor.network';
+  return 'https://temp-v2-ptdczarhfq-nw.a.run.app';
 };
 
 export const setV2ApiUrlLS = (url?: string) => {
