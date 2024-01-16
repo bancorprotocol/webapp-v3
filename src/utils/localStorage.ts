@@ -7,7 +7,6 @@ const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
 const darkMode = 'userDarkMode';
 const slippageTolerance = 'slippageTolerance';
-const usdToggle = 'usdToggle';
 const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
@@ -65,15 +64,6 @@ export const getSlippageToleranceLS = (): number => {
 
 export const setSlippageToleranceLS = (flag: number) => {
   localStorage.setItem(slippageTolerance, JSON.stringify(flag));
-};
-
-export const getUsdToggleLS = (): boolean => {
-  const usd = localStorage.getItem(usdToggle);
-  return usd && JSON.parse(usd);
-};
-
-export const setUsdToggleLS = (flag: boolean) => {
-  localStorage.setItem(usdToggle, JSON.stringify(flag));
 };
 
 export const getNotificationsLS = (): Notification[] => {

@@ -50,7 +50,7 @@ export const useTrade = ({
     (state) => state.user.slippageTolerance
   );
   const account = useAppSelector((state) => state.user.account);
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const fiatToggle = false;
 
   const [isBusy, setIsBusy] = useState(false);
 
