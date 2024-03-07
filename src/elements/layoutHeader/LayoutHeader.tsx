@@ -47,10 +47,14 @@ export const LayoutHeader = () => {
             <img src="/carbon.png" alt="Carbon Logo" className="w-24" />
           </div>
           <div className="text-center hidden md:block">
-            <b>Carbon is Live!</b> - Automate your trading strategies on-chain
+            <b>Carbon DeFi is Live!</b> - Automate your crypto trading
+            strategies onchain
           </div>
           <div className="text-center md:hidden">
-            <b>Carbon</b> <div>Automate your trading strategies on-chain</div>
+            <div>
+              <b>Carbon DeFi</b>
+            </div>
+            <div>Automate your trading strategies onchain</div>
           </div>
           <a
             href="https://carbondefi.xyz"
