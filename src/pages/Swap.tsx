@@ -5,7 +5,7 @@ export const Swap = () => {
   const query = useQuery();
 
   return (
-    <div className="pt-[120px] px-10">
+    <div className="pt-[210px] px-10">
       <SwapWidget
         from={query.get('from')}
         to={query.get('to')}

@@ -1,6 +1,7 @@
 import { NotificationsMenu } from 'elements/notifications/NotificationsMenu';
 import { SettingsMenu } from 'elements/settings/SettingsMenu';
 import { ReactComponent as IconBancor } from 'assets/icons/bancor.svg';
+import { ReactComponent as IconChevron } from 'assets/icons/chevronRight.svg';
 import { useWalletConnect } from '../walletConnect/useWalletConnect';
 import { WalletConnectModal } from '../walletConnect/WalletConnectModal';
 import { WalletConnectButton } from '../walletConnect/WalletConnectButton';
@@ -32,13 +33,40 @@ export const LayoutHeader = () => {
   return (
     <>
       <header
-        className={`fixed flex items-center justify-center w-full h-60 z-30 transition-colors ease-in-out duration-300 ${
+        className={`fixed flex items-center flex-col justify-center w-full h-[150px] z-30 transition-colors ease-in-out duration-300 ${
           isTop
             ? ''
             : 'bg-white dark:bg-black dark:border-b dark:border-charcoal'
         }`}
       >
-        <div className="flex items-center justify-between w-full mx-20">
+        <div className="h-[90px] bg-black w-full text-white flex items-center justify-center space-x-20 px-10">
+          <div className="h-50 w-50 shrink-0 border border-white/20 rounded-10 flex items-center justify-center relative">
+            <div className="absolute text-[9px] text-[#00B578] bg-[#002D1E] px-10 py-3 rounded-full -top-10 -right-20">
+              NEW
+            </div>
+            <img src="/carbon.png" alt="Carbon Logo" className="w-24" />
+          </div>
+          <div className="text-center hidden md:block">
+            <b>Carbon DeFi is Live!</b> - Automate your crypto trading
+            strategies onchain
+          </div>
+          <div className="text-center md:hidden">
+            <div>
+              <b>Carbon DeFi</b>
+            </div>
+            <div>Automate your trading strategies onchain</div>
+          </div>
+          <a
+            href="https://carbondefi.xyz"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#00B578] bg-[#002D1E] px-10 md:px-20 py-5 rounded-full flex items-center"
+          >
+            Try <span className="hidden md:block">App</span>{' '}
+            <IconChevron className="w-16 h-16 ml-6" />
+          </a>
+        </div>
+        <div className="flex items-center justify-between flex-row h-60 w-full px-20">
           <div className="items-center hidden md:flex gap-30">
             <Navigate to={BancorURL.earn}>
               <IconBancor className="w-[18px]" />

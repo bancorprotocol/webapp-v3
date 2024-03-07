@@ -9,13 +9,10 @@ import { sendPoolEvent, PoolEvent } from 'services/api/googleTagManager/pool';
 
 export const Pools = () => {
   const title = 'Pools';
-  const subtitle =
-    'The only DeFi staking protocol with Single-Sided Liquidity.';
 
   return (
     <Page
       title={title}
-      subtitle={subtitle}
       trailingTitle={
         <div className="flex items-center space-x-10 text-16">
           <PageNavLink
