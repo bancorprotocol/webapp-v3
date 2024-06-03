@@ -6,6 +6,7 @@ import { WalletLinkConnector } from '@web3-react/walletlink-connector';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { TorusConnector } from '@web3-react/torus-connector';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
+import { UAuthConnector } from '@uauth/web3-react';
 
 export const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${
   process.env.REACT_APP_ALCHEMY_MAINNET as string
@@ -43,4 +44,12 @@ export const portis = new PortisConnector({
 
 export const torus = new TorusConnector({
   chainId: 1,
+});
+
+export const uauth = new UAuthConnector({
+  clientID: process.env.REACT_APP_UNSTOPPABLE_CLIENT_ID!,
+  redirectUri: process.env.REACT_APP_REDIRECT_URI!,
+  // postLogoutRedirectUri: process.env.REACT_APP_POST_LOGOUT_REDIRECT_URI!,
+  scope: 'openid wallet',
+  connectors: { injected, walletconnect },
 });
