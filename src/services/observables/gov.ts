@@ -5,16 +5,30 @@ import {
   getUnstakeTimer,
 } from 'services/web3/governance/governance';
 
-export const stakedAmount$ = user$.pipe(
+export const stakedVbntAmount$ = user$.pipe(
   switchMap(async (user) => {
-    if (user) return await getStakedAmount(user);
+    if (user) return await getStakedAmount(user, false);
   }),
   shareReplay(1)
 );
 
-export const unstakeTimer$ = user$.pipe(
+export const unstakeVbntTimer$ = user$.pipe(
   switchMap(async (user) => {
-    if (user) return await getUnstakeTimer(user);
+    if (user) return await getUnstakeTimer(user, false);
+  }),
+  shareReplay(1)
+);
+
+export const stakedBntAmount$ = user$.pipe(
+  switchMap(async (user) => {
+    if (user) return await getStakedAmount(user, true);
+  }),
+  shareReplay(1)
+);
+
+export const unstakeBntTimer$ = user$.pipe(
+  switchMap(async (user) => {
+    if (user) return await getUnstakeTimer(user, true);
   }),
   shareReplay(1)
 );

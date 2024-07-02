@@ -52,7 +52,6 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [spaceAvailableBnt, setSpaceAvailableBnt] = useState('');
   const [spaceAvailableTkn, setSpaceAvailableTkn] = useState('');
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
   const pools = useAppSelector<Pool[]>((state) => state.pool.v2Pools);
   const account = useAppSelector((state) => state.user.account);
 
@@ -161,12 +160,11 @@ export const AddLiquiditySingle = ({ pool }: Props) => {
       amount,
       amountUsd,
       undefined,
-      undefined,
-      fiatToggle
+      undefined
     );
     sendLiquidityEvent(Events.click);
     onStart();
-  }, [amount, amountUsd, fiatToggle, onStart, pool.name, selectedToken.symbol]);
+  }, [amount, amountUsd, onStart, pool.name, selectedToken.symbol]);
 
   if (!tkn) {
     goToPage.notFound();

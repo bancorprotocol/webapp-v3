@@ -7,7 +7,7 @@ import {
   settingsContractAddress$,
 } from 'services/observables/contracts';
 import { Token } from 'services/observables/tokens';
-import { expandToken, reduceBySlippage, shrinkToken } from 'utils/formulas';
+import { expandToken, shrinkToken } from 'utils/formulas';
 import {
   calculateBntNeededToOpenSpace,
   calculatePriceDeviationTooHigh,
@@ -156,20 +156,10 @@ export const removeLiquidity = async (
   rejected: Function,
   failed: (error: string) => void
 ) => {
-  const slippage = 0.05;
   try {
     const contract = Converter__factory.connect(
       poolToken.converter,
       writeWeb3.signer
-    );
-
-    const minBntReturn = expandToken(
-      reduceBySlippage(poolToken.bnt.amount, slippage),
-      poolToken.poolDecimals
-    );
-    const minTknReturn = expandToken(
-      reduceBySlippage(poolToken.tkn.amount, slippage),
-      poolToken.poolDecimals
     );
 
     const liquidateFn = async () => {
@@ -181,7 +171,7 @@ export const removeLiquidity = async (
         return await contract.removeLiquidity(
           expandToken(poolToken.amount, poolToken.poolDecimals),
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
-          [minBntReturn, minTknReturn]
+          ['1', '1']
         );
       }
     };

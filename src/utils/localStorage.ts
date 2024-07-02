@@ -7,17 +7,22 @@ const selected_lists = 'userSelectedTokenLists';
 const autoLogin = 'loginAuto';
 const darkMode = 'userDarkMode';
 const slippageTolerance = 'slippageTolerance';
-const usdToggle = 'usdToggle';
 const notifications = 'notifications';
 const tenderlyRpcUrl = 'tenderlyRpcUrl';
 const v3ApiUrl = 'v3ApiUrl';
 const v2ApiUrl = 'v2ApiUrl';
 const forceV3 = 'forceV3';
+const forceV2 = 'forceV2';
 const enableDeposit = 'enableDeposit';
 const pageRows = 'pageRows';
-const migrationDisabled = 'migrationDisabled';
+const migrationDisabledActive = 'migrationDisabledActive';
 
-const deprecated_cleanup = ['userTokenLists'];
+const deprecated_cleanup = [
+  'userTokenLists',
+  'migrationDisabled',
+  'migrationDisabledV2',
+  'migrationIntermediate',
+];
 
 deprecated_cleanup.forEach((k) => localStorage.removeItem(k));
 
@@ -59,15 +64,6 @@ export const getSlippageToleranceLS = (): number => {
 
 export const setSlippageToleranceLS = (flag: number) => {
   localStorage.setItem(slippageTolerance, JSON.stringify(flag));
-};
-
-export const getUsdToggleLS = (): boolean => {
-  const usd = localStorage.getItem(usdToggle);
-  return usd && JSON.parse(usd);
-};
-
-export const setUsdToggleLS = (flag: boolean) => {
-  localStorage.setItem(usdToggle, JSON.stringify(flag));
 };
 
 export const getNotificationsLS = (): Notification[] => {
@@ -128,7 +124,7 @@ export const setV2ApiUrlLS = (url?: string) => {
 };
 
 export const getMigrationDisabledLS = (user?: string | null): boolean => {
-  const migration = localStorage.getItem(migrationDisabled);
+  const migration = localStorage.getItem(migrationDisabledActive);
   const list = migration ? JSON.parse(migration) : [];
   return list.includes(user);
 };
@@ -136,11 +132,11 @@ export const getMigrationDisabledLS = (user?: string | null): boolean => {
 export const setMigrationDisabledLS = (user?: string | null) => {
   if (!user) return;
 
-  const migration = localStorage.getItem(migrationDisabled);
+  const migration = localStorage.getItem(migrationDisabledActive);
   const list = migration ? JSON.parse(migration) : [];
 
   localStorage.setItem(
-    migrationDisabled,
+    migrationDisabledActive,
     JSON.stringify(uniq([...list, user]))
   );
 };
@@ -148,6 +144,7 @@ export const setMigrationDisabledLS = (user?: string | null) => {
 export const resetTenderly = () => {
   localStorage.removeItem(tenderlyRpcUrl);
   localStorage.removeItem(forceV3);
+  localStorage.removeItem(forceV2);
   localStorage.removeItem(enableDeposit);
 };
 
@@ -169,4 +166,13 @@ export const getForceV3LS = (): boolean => {
 
 export const setForceV3LS = (flag: boolean) => {
   localStorage.setItem(forceV3, JSON.stringify(flag));
+};
+
+export const getForceV2LS = (): boolean => {
+  const force = localStorage.getItem(forceV2);
+  return force && JSON.parse(force);
+};
+
+export const setForceV2LS = (flag: boolean) => {
+  localStorage.setItem(forceV2, JSON.stringify(flag));
 };

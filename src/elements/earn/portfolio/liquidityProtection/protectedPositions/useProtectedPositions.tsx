@@ -7,6 +7,7 @@ import { ProtectedPositionTableCellAmount } from 'elements/earn/portfolio/liquid
 import { getGroupedPositions } from 'store/liquidity/liquidity';
 import { ProtectedPositionTableCellActions } from 'elements/earn/portfolio/liquidityProtection/protectedPositions/ProtectedPositionTableCellActions';
 import { sorAlphaByKey, sortNumbersByKey } from 'utils/pureFunctions';
+import { ProtectedPositionTableCellClaimable } from './ProtectedPositionTableCellClaimable';
 
 export const useProtectedPositions = () => {
   const groupedPositions =
@@ -24,7 +25,7 @@ export const useProtectedPositions = () => {
     () => [
       {
         id: 'liquidity',
-        Header: 'Liquidity',
+        Header: 'Name',
         accessor: 'pool',
         Cell: (cellData) =>
           ProtectedPositionTableCellLiquidity(cellData.row.original),
@@ -37,12 +38,14 @@ export const useProtectedPositions = () => {
       {
         id: 'initialStake',
         accessor: 'initialStake',
-        Header: 'Initial Stake',
+        Header: 'Position',
         Cell: (cellData) =>
           ProtectedPositionTableCellAmount({
             tknAmount: cellData.value.tknAmount,
             usdAmount: cellData.value.usdAmount,
             symbol: cellData.row.original.reserveToken.symbol,
+            deficitAmountTKN: cellData.row.original.claimableAmount.tknAmount,
+            deficitAmountUSD: cellData.row.original.claimableAmount.usdAmount,
           }),
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, [
@@ -50,8 +53,48 @@ export const useProtectedPositions = () => {
             'usdAmount',
           ]),
         minWidth: 130,
+        maxWidth: 130,
         sortDescFirst: true,
         tooltip: 'Amount of tokens you originally staked in the pool',
+      },
+      {
+        id: 'claimableAmount',
+        Header: 'Claimable Amount',
+        accessor: 'claimableAmount',
+        Cell: (cellData) =>
+          ProtectedPositionTableCellClaimable({
+            tknAmount: cellData.value.tknAmount,
+            usdAmount: cellData.value.usdAmount,
+            symbol: cellData.row.original.reserveToken.symbol,
+          }),
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, [
+            'claimableAmount',
+            'usdAmount',
+          ]),
+        minWidth: 200,
+        width: 200,
+        sortDescFirst: true,
+      },
+      {
+        id: 'change',
+        accessor: 'change',
+        Header: 'Change',
+        Cell: (cellData) => {
+          const pos = cellData.value > 0;
+          return (
+            <div className={`${pos ? 'text-primary' : 'text-error'}`}>
+              {pos && '+'}
+              {cellData.value.toFixed(2)}%
+            </div>
+          );
+        },
+        sortType: (a, b) =>
+          sortNumbersByKey(a.original, b.original, ['change']),
+        minWidth: 130,
+        sortDescFirst: true,
+        tooltip:
+          'The % change between staked and claimable amounts, fees, pool status, and IL are taken into account',
       },
       {
         id: 'expander',

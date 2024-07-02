@@ -65,7 +65,7 @@ export const useWalletConnect = (): UseWalletConnect => {
 
   const handleConnect = useCallback(
     async (wallet: WalletInfo) => {
-      const { connector, url } = wallet;
+      const { connector, url, name } = wallet;
       if (url) {
         setIsOpen(false);
         return openNewTab(url);
@@ -95,7 +95,9 @@ export const useWalletConnect = (): UseWalletConnect => {
           );
           await wait(500);
           setIsPending(false);
-          requestSwitchChain();
+          if (name === 'MetaMask') {
+            requestSwitchChain();
+          }
         } catch (e: any) {
           console.error('failed to connect wallet. ', e.message);
           setIsError(true);

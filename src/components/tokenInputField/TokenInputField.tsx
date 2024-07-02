@@ -68,7 +68,7 @@ export const TokenInputField = ({
       ? new BigNumber(balance).times(token.usdPrice ?? 0).toString()
       : null;
 
-  const toggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const toggle = false;
   const loadingBalances = useAppSelector<boolean>(
     (state) => state.user.loadingBalances
   );

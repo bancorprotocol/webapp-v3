@@ -155,19 +155,6 @@ export const getV2AndV3Tokens = createSelector(
   }
 );
 
-export const getTradeTokensWithExternal = createSelector(
-  (state: RootState) => state.bancor.tokensV2,
-  (state: RootState) => state.bancor.tokensV3,
-  (state: RootState) => state.bancor.tokensForTradeWithExternal,
-  (tokensV2, tokensV3, tokensForTradeWithExternal): TokenMinimal[] => {
-    const tlTokens: TokenMinimal[] = tokensForTradeWithExternal.map((t) => ({
-      ...t,
-      isExternal: true,
-    }));
-    return uniqBy([...tokensV3, ...tokensV2, ...tlTokens], (x) => x.address);
-  }
-);
-
 export const bancor = bancorSlice.reducer;
 
 export const getIsAppBusy = createSelector(

@@ -16,7 +16,7 @@ export const useV3WithdrawModal = ({ setIsOpen }: Props) => {
   const { withdrawalFee, lockDuration } = useAppSelector(
     (state) => state.v3Portfolio.withdrawalSettings
   );
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const [step, setStep] = useState(1);
   const [requestId, setRequestId] = useState('');
   const [inputTkn, setInputTkn] = useState('');

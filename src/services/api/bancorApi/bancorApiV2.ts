@@ -19,7 +19,7 @@ export abstract class BancorV2Api {
       dlt_id: wethToken,
       symbol: 'WETH',
     };
-    data.tokens.push(wethTkn);
+    if (weth) data.tokens.push(wethTkn);
     return {
       ...data,
       pools: data.pools.map((pool) => ({

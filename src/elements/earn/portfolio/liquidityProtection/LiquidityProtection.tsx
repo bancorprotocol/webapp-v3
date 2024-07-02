@@ -1,13 +1,13 @@
 import { MyStake } from './protectedPositions/MyStake';
 import { MyRewards } from './rewards/MyRewards';
 import { ProtectedPositionsTable } from './protectedPositions/ProtectedPositionsTable';
-import { ClaimAvailable } from './claim/ClaimAvailable';
-import { ClaimLocked } from './claim/ClaimLocked';
 import { useAppSelector } from 'store';
-import { getTokenV2ById } from 'store/bancor/bancor';
 import { Token } from 'services/observables/tokens';
 import { bntToken } from 'services/web3/config';
 import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
+import { getTokenV2ById } from 'store/bancor/bancor';
+import { ClaimAvailable } from './claim/ClaimAvailable';
+import { ClaimLocked } from './claim/ClaimLocked';
 
 export const LiquidityProtection = () => {
   const bnt = useAppSelector<Token | undefined>((state: any) =>
@@ -26,11 +26,6 @@ export const LiquidityProtection = () => {
 
   return (
     <div className="space-y-30">
-      <p className="pl-10 md:pl-0">
-        Manage your protected positions in Bancor pools and track and analyze
-        your returns.
-      </p>
-
       <div className="grid xl:grid-cols-2 gap-40">
         <MyStake loading={loadingPositions} />
         <MyRewards />

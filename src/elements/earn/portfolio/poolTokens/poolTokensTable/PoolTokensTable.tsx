@@ -5,7 +5,6 @@ import { useAppSelector } from 'store';
 import { prettifyNumber } from 'utils/helperFunctions';
 import { PoolTokensCellActions } from './PoolTokensCellActions';
 import { PoolTokensCellName } from './PoolTokensCellName';
-import { PoolTokensCellReserve } from './PoolTokensCellReserve';
 import { PoolToken } from 'services/observables/pools';
 import { sorAlphaByKey, sortNumbersByKey } from 'utils/pureFunctions';
 
@@ -39,22 +38,6 @@ export const PoolTokensTable = () => {
         Cell: (cellData) => <>{prettifyNumber(cellData.value)}</>,
         sortType: (a, b) =>
           sortNumbersByKey(a.original, b.original, ['amount']),
-        minWidth: 130,
-      },
-      {
-        id: 'value',
-        Header: 'Value',
-        accessor: 'value',
-        Cell: (cellData) => <>{prettifyNumber(cellData.value, true)}</>,
-        sortType: (a, b) => sortNumbersByKey(a.original, b.original, ['value']),
-        minWidth: 130,
-      },
-      {
-        id: 'breakdown',
-        Header: 'Reserve Breakdown',
-        accessor: 'tkn',
-        Cell: (cellData) => PoolTokensCellReserve(cellData.row.original),
-        disableSortBy: true,
         minWidth: 130,
       },
       {

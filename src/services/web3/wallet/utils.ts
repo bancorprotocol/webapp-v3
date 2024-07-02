@@ -2,7 +2,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import {
   injected,
-  walletconnect,
   walletlink,
   frame,
   fortmatic,
@@ -14,7 +13,6 @@ import {
 import metamaskLogo from 'assets/logos/metamask.png';
 import fortmaticLogo from 'assets/logos/fortmatic.svg';
 import portisLogo from 'assets/logos/portis.png';
-import walletConnectLogo from 'assets/logos/walletConnect.svg';
 import coinbaseWalletLogo from 'assets/logos/coinbaseWallet.svg';
 import ledgerLogo from 'assets/logos/ledger.svg';
 import trezorLogo from 'assets/logos/trezor.svg';
@@ -86,18 +84,18 @@ export const SUPPORTED_WALLETS: WalletInfo[] = [
         },
       ]
     : []),
-  {
-    connector: walletconnect,
-    name: 'WalletConnect',
-    icon: walletConnectLogo,
-    mobile: true,
-  },
+  // {
+  //   connector: walletconnect,
+  //   name: 'WalletConnect',
+  //   icon: walletConnectLogo,
+  //   mobile: true,
+  // },
   {
     connector: walletlink,
     name: 'Coinbase Wallet',
     icon: coinbaseWalletLogo,
     mobile: true,
-    canAutoConnect: isCoinbaseMobile,
+    // canAutoConnect: isCoinbaseMobile,
   },
   {
     name: 'Ledger',

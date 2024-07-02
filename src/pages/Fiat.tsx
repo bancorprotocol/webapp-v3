@@ -1,12 +1,11 @@
 import { DepositMethods, FiatBox, Operations } from 'elements/fiat/FiatBox';
 import { ReactComponent as moonPayLogo } from 'assets/logos/moonpay.svg';
-import { ReactComponent as banxaLogo } from 'assets/logos/banxa.svg';
-import { ReactComponent as simplexLogo } from 'assets/logos/simplex.svg';
 import { ReactComponent as rampLogo } from 'assets/logos/ramp.svg';
 import { ReactComponent as mercuryoLogo } from 'assets/logos/mercuryo.svg';
 import { ReactComponent as junoLogo } from 'assets/logos/juno.svg';
 import { ReactComponent as transakLogo } from 'assets/logos/transak.svg';
 import { ReactComponent as binanceLogo } from 'assets/logos/binance.svg';
+import { ReactComponent as everestLogo } from 'assets/logos/everest.svg';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { Page } from 'components/Page';
 
@@ -30,36 +29,6 @@ const fiats = [
       'https://sell.moonpay.com/?apiKey=pk_live_qiJRayRj9iKRUWCfaWX5Vo6Sn0rnNsj&defaultCurrencyCode=ETH',
   },
   {
-    name: 'Banxa',
-    text: 'Banxa is a globally operating fiat-to-crypto on-ramp providing the easiest way for anyone looking to enter the digital asset ecosystem. Banxa users can choose from a variety of the most popular and convenient payment methods.',
-    logo: banxaLogo,
-    operations: [Operations.fiatIn],
-    depositMethods: [
-      DepositMethods.creditCard,
-      DepositMethods.debitCard,
-      DepositMethods.applePay,
-      DepositMethods.ideal,
-      DepositMethods.interac,
-      DepositMethods.sepa,
-    ],
-    buyUrl: 'https://pay.banxa.com',
-  },
-  {
-    name: 'Simplex',
-    text: 'Simplex is the industry leader, providing global on/off ramps to the entire fiat to crypto ecosystem. Working with a vast network of partners, Simplex ensures that crypto is safe and accessible to all.',
-    logo: simplexLogo,
-    operations: [Operations.fiatIn, Operations.fiatOut],
-    depositMethods: [
-      DepositMethods.wire,
-      DepositMethods.creditCard,
-      DepositMethods.debitCard,
-      DepositMethods.applePay,
-    ],
-    buyUrl: 'https://b.buy-crypto-with-simplex.com/?crypto=ETH',
-    sellUrl:
-      'https://www.simplex.com/account/sell?ref=b1990d7be52dfae9fa894a0d56317f28',
-  },
-  {
     name: 'Ramp',
     text: 'Ramp Network provides the ultimate crypto on-boarding flow. This globally accessible product focuses on excellent UX, supports multiple payment options and ensures lowest slippage and transactional fees.',
     logo: rampLogo,
@@ -73,8 +42,7 @@ const fiats = [
       DepositMethods.applePay,
     ],
     smallGap: true,
-    buyUrl:
-      'https://buy.ramp.network/?hostApiKey=qg4s4spwnm7nahqdxfsjyzsjvtxbbzg8dxnxxrum&userAddress=0x5f7a009664b771e889751f4fd721adc439033ecd',
+    buyUrl: 'https://ramp.network/buy/',
   },
   {
     name: 'Mercuryo',
@@ -137,6 +105,19 @@ const fiats = [
     ],
     buyUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
     sellUrl: 'https://www.binancecnt.com/en/buy-sell-crypto/',
+  },
+  {
+    name: 'Everest',
+    text: 'Everest is as a global fiat-to-crypto payment gateway and crypt-to-fiat service provider. We help new and returning visitors to easily access crypto. Use your Debit Card or Bank Account (SEPA) from nearly anywhere in the world.',
+    logo: everestLogo,
+    operations: [Operations.fiatIn, Operations.fiatOut],
+    depositMethods: [
+      DepositMethods.debitCard,
+      DepositMethods.sepa,
+      DepositMethods.sepaInstant,
+    ],
+    buyUrl: 'https://kyc.everest.org/?appKey=zDhr57jc2XzCCMq',
+    sellUrl: 'https://kyc.everest.org/sell?appKey=zDhr57jc2XzCCMq',
   },
 ];
 

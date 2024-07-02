@@ -1,7 +1,6 @@
 import { Navigate, RouteObject } from 'react-router-dom';
-import { Tokens } from 'pages/Tokens';
 import { Fiat } from 'pages/Fiat';
-import { Vote } from 'pages/Vote';
+import { Vote } from 'pages/vote/Vote';
 import { TermsOfUse } from 'pages/TermsOfUse';
 import { PrivacyPolicy } from 'pages/PrivacyPolicy';
 import { NotFound } from 'pages/NotFound';
@@ -23,10 +22,6 @@ export const useRoutesMain = (): RouteObject[] => {
     {
       path: BancorURL.index,
       element: <Navigate to={BancorURL.earn} replace />,
-    },
-    {
-      path: BancorURL.tokens,
-      element: <Tokens />,
     },
     {
       path: BancorURL.fiat,

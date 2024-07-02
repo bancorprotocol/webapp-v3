@@ -22,19 +22,20 @@ export const rejectNotification = (dispatch: any) =>
 export const stakeNotification = (
   dispatch: any,
   amount: string,
-  txHash: string
+  txHash: string,
+  symbol: string
 ) =>
   showNotification(
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: 'Staking vBNT is pending confirmation',
+      msg: `Staking ${symbol} is pending confirmation`,
       txHash,
       updatedInfo: {
         successTitle: 'Success!',
-        successMsg: `Your stake of ${amount} vBNT has been confirmed`,
+        successMsg: `Your stake of ${amount} ${symbol} has been confirmed`,
         errorTitle: 'Transaction Failed',
-        errorMsg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
+        errorMsg: `Staking ${amount} ${symbol} had failed. Please try again or contact support.`,
       },
     },
     dispatch
@@ -43,40 +44,49 @@ export const stakeNotification = (
 export const unstakeNotification = (
   dispatch: any,
   amount: string,
-  txHash: string
+  txHash: string,
+  symbol: string
 ) =>
   showNotification(
     {
       type: NotificationType.pending,
       title: 'Pending Confirmation',
-      msg: 'Unstaking vBNT is pending confirmation',
+      msg: `Unstaking ${symbol} is pending confirmation`,
       txHash,
       updatedInfo: {
         successTitle: 'Success!',
-        successMsg: `Unstaking ${amount} vBNT has been confirmed`,
+        successMsg: `Unstaking ${amount} ${symbol} has been confirmed`,
         errorTitle: 'Transaction Failed',
-        errorMsg: `Unstaking ${amount} vBNT had failed. Please try again or contact support.`,
+        errorMsg: `Unstaking ${amount} ${symbol} had failed. Please try again or contact support.`,
       },
     },
     dispatch
   );
 
-export const stakeFailedNotification = (dispatch: any, amount: string) =>
+export const stakeFailedNotification = (
+  dispatch: any,
+  amount: string,
+  symbol: string
+) =>
   showNotification(
     {
       type: NotificationType.error,
       title: 'Transaction Failed',
-      msg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
+      msg: `Staking ${amount} ${symbol} had failed. Please try again or contact support.`,
     },
     dispatch
   );
 
-export const unstakeFailedNotification = (dispatch: any, amount: string) =>
+export const unstakeFailedNotification = (
+  dispatch: any,
+  amount: string,
+  symbol: string
+) =>
   showNotification(
     {
       type: NotificationType.error,
       title: 'Transaction Failed',
-      msg: `Staking ${amount} vBNT had failed. Please try again or contact support.`,
+      msg: `Staking ${amount} ${symbol} had failed. Please try again or contact support.`,
     },
     dispatch
   );

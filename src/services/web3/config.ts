@@ -8,12 +8,16 @@ export interface EthNetworkVariables {
   contractRegistry: string;
   bntToken: string;
   converterContractForMaths: string;
-  governanceContractAddress: string;
+  governanceVbntContractAddress: string;
+  governanceBntContractAddress: string;
   etherscanUrl: string;
   govToken: string;
 }
 
 export const bntToken: string = '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C';
+export const wbtcToken: string = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599';
+export const usdcToken: string = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+export const usdtToken: string = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 export const systemStore: string = '0xc4C5634De585d43DaEC8fA2a6Fb6286cd9B87131';
 export const ethToken: string = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const zeroAddress: string = '0x0000000000000000000000000000000000000000';
@@ -38,7 +42,8 @@ export const getNetworkVariables = (): EthNetworkVariables => {
     bntToken: '0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C',
     govToken: '0x48Fb253446873234F2fEBbF9BdeAA72d9d387f94',
     converterContractForMaths: '0xe870d00176b2c71afd4c43cea550228e22be4abd',
-    governanceContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
+    governanceVbntContractAddress: '0x892f481bd6e9d7d26ae365211d9b45175d5d00e4',
+    governanceBntContractAddress: '0xebFaFc802533F3D2835Af7464Fcd4492e8F82eB2',
     etherscanUrl: 'https://etherscan.io',
   };
 };

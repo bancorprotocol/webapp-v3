@@ -1,5 +1,4 @@
 import { Modal } from 'components/modal/Modal';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { useMemo, useState } from 'react';
 import { Token, updateUserBalances } from 'services/observables/tokens';
 import { wait } from 'utils/pureFunctions';
@@ -46,7 +45,7 @@ export const ModalVbnt = ({
   onCompleted,
 }: ModalVbntProps) => {
   const account = useAppSelector((state) => state.user.account);
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
+  const isFiat = false;
   const [amount, setAmount] = useState('');
   const percentages = useMemo(() => [25, 50, 75, 100], []);
   const [selPercentage, setSelPercentage] = useState<number>(-1);
@@ -77,8 +76,8 @@ export const ModalVbnt = ({
   }, [amount, token, percentages, fieldBlance]);
 
   const handleStakeUnstake = async () => {
+    setAmount('');
     if (stakeDisabled || !account) return;
-
     sendGovEvent(GovEvent.Click, govProperties, stake);
     sendGovEvent(GovEvent.WalletRequest, govProperties, stake);
     if (stake)
@@ -86,7 +85,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => {
-          stakeNotification(dispatch, amount, txHash);
+          stakeNotification(dispatch, amount, txHash, token.symbol);
           sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
         },
         () => {
@@ -98,7 +97,7 @@ export const ModalVbnt = ({
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         },
         (error: string) => {
-          stakeFailedNotification(dispatch, amount);
+          stakeFailedNotification(dispatch, amount, token.symbol);
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         }
       );
@@ -107,7 +106,7 @@ export const ModalVbnt = ({
         amount,
         token,
         (txHash: string) => {
-          unstakeNotification(dispatch, amount, txHash);
+          unstakeNotification(dispatch, amount, txHash, token.symbol);
           sendGovEvent(GovEvent.WalletConfirm, govProperties, stake);
         },
         () => {
@@ -119,7 +118,7 @@ export const ModalVbnt = ({
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         },
         (error: string) => {
-          unstakeFailedNotification(dispatch, amount);
+          unstakeFailedNotification(dispatch, amount, token.symbol);
           sendGovEvent(GovEvent.Failed, govProperties, stake, undefined, error);
         }
       );
@@ -128,7 +127,9 @@ export const ModalVbnt = ({
   const [checkApprove, ModalApprove] = useApproveModal(
     [{ amount: amount, token: token }],
     handleStakeUnstake,
-    ApprovalContract.Governance,
+    token.symbol === 'BNT'
+      ? ApprovalContract.GovernanceBnt
+      : ApprovalContract.GovernanceVbnt,
     () => sendGovEvent(GovEvent.UnlimitedPopup, govProperties, stake),
     (isUnlimited: boolean) =>
       sendGovEvent(
@@ -148,8 +149,7 @@ export const ModalVbnt = ({
   return (
     <>
       <Modal
-        title={`${stake ? 'Stake' : 'Unstake'} vBNT`}
-        titleElement={<SwapSwitch />}
+        title={`${stake ? 'Stake' : 'Unstake'} ${token.symbol}`}
         setIsOpen={setIsOpen}
         isOpen={isOpen}
         separator
@@ -167,7 +167,6 @@ export const ModalVbnt = ({
             />
             <Button
               onClick={() => {
-                setAmount('');
                 setIsOpen(false);
                 if (stake) checkApprove();
                 else handleStakeUnstake();
@@ -176,7 +175,7 @@ export const ModalVbnt = ({
               className="mt-30 mb-20"
               size={ButtonSize.Full}
             >
-              {`${stake ? 'Stake' : 'Unstake'} vBNT`}
+              {`${stake ? 'Stake' : 'Unstake'} ${token.symbol}`}
             </Button>
           </div>
         </div>

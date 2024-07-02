@@ -85,7 +85,7 @@ export const SwapLimit = ({
   const keeperDaoTokens = useAppSelector<KeeprDaoToken[]>(
     (state) => state.bancor.keeperDaoTokens
   );
-  const fiatToggle = useAppSelector<boolean>((state) => state.user.usdToggle);
+  const fiatToggle = false;
   const percentages = useMemo(() => [1, 3, 5], []);
 
   const calculatePercentageByRate = useCallback(

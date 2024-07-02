@@ -25,7 +25,8 @@ export enum ApprovalContract {
   BancorNetworkV3,
   ExchangeProxy,
   LiquidityProtection,
-  Governance,
+  GovernanceVbnt,
+  GovernanceBnt,
 }
 
 const getApproval = async (
@@ -144,8 +145,10 @@ const getApprovalAddress = async (
       return await exchangeProxy$.pipe(take(1)).toPromise();
     case ApprovalContract.LiquidityProtection:
       return await liquidityProtection$.pipe(take(1)).toPromise();
-    case ApprovalContract.Governance:
-      return getNetworkVariables().governanceContractAddress;
+    case ApprovalContract.GovernanceVbnt:
+      return getNetworkVariables().governanceVbntContractAddress;
+    case ApprovalContract.GovernanceBnt:
+      return getNetworkVariables().governanceBntContractAddress;
   }
 };
 

@@ -2,10 +2,11 @@ import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'store';
 import {
   getForceV3LS,
-  setDarkModeLS,
   setForceV3LS,
+  getForceV2LS,
+  setForceV2LS,
+  setDarkModeLS,
   setSlippageToleranceLS,
-  setUsdToggleLS,
 } from 'utils/localStorage';
 import { LocaleType } from '../../i18n';
 
@@ -20,10 +21,10 @@ export interface UserState {
   darkMode: DarkMode;
   walletModal: boolean;
   slippageTolerance: number;
-  usdToggle: boolean;
   locale: LocaleType;
   loadingBalances: boolean;
   forceV3Routing: boolean;
+  forceV2Routing: boolean;
 }
 
 export const initialState: UserState = {
@@ -31,10 +32,10 @@ export const initialState: UserState = {
   darkMode: DarkMode.System,
   walletModal: false,
   slippageTolerance: 0.005,
-  usdToggle: false,
   locale: 'en',
   loadingBalances: false,
   forceV3Routing: getForceV3LS(),
+  forceV2Routing: getForceV2LS(),
 };
 
 const userSlice = createSlice({
@@ -59,16 +60,16 @@ const userSlice = createSlice({
     openWalletModal: (state, action) => {
       state.walletModal = action.payload;
     },
-    setUsdToggle: (state, action: PayloadAction<boolean>) => {
-      setUsdToggleLS(action.payload);
-      state.usdToggle = action.payload;
-    },
     setLoadingBalances: (state, action) => {
       state.loadingBalances = action.payload;
     },
     setForceV3Routing: (state, action) => {
       state.forceV3Routing = action.payload;
       setForceV3LS(action.payload);
+    },
+    setForceV2Routing: (state, action) => {
+      state.forceV2Routing = action.payload;
+      setForceV2LS(action.payload);
     },
   },
 });
@@ -101,9 +102,9 @@ export const {
   setSlippageTolerance,
   setLocale,
   openWalletModal,
-  setUsdToggle,
   setLoadingBalances,
   setForceV3Routing,
+  setForceV2Routing,
 } = userSlice.actions;
 
 export const user = userSlice.reducer;

@@ -38,7 +38,7 @@ export const TradeWidgetCTA = ({
     const isInputZero =
       fromInput.inputTkn === '' || new BigNumber(fromInput.inputTkn).eq(0);
     if (isInputZero) return 'Enter Amount';
-    if (!toInput?.inputTkn) return 'Insufficient liquidity';
+    if (!toInput?.inputTkn) return 'Pair not supported';
     if (!account) return 'Connect your wallet';
     const isHighSlippage = new BigNumber(priceImpact).gte(5);
     if (isHighSlippage) return 'Trade with high price impact';

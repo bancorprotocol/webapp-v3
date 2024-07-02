@@ -7,7 +7,6 @@ import { updatePortfolioData } from 'services/web3/v3/portfolio/helpers';
 import { useAppSelector } from 'store';
 import { useApproveModal } from 'hooks/useApproveModal';
 import { ModalV3 } from 'components/modal/ModalV3';
-import { SwapSwitch } from 'elements/swapSwitch/SwapSwitch';
 import { bntToken, ethToken } from 'services/web3/config';
 import { prettifyNumber, toBigNumber } from 'utils/helperFunctions';
 import { expandToken } from 'utils/formulas';
@@ -43,6 +42,8 @@ import { PopoverV3 } from 'components/popover/PopoverV3';
 import { ReactComponent as IconInfo } from 'assets/icons/info.svg';
 import { ReactComponent as IconGift } from 'assets/icons/gift.svg';
 
+const isFiat = false;
+
 interface Props {
   pool: PoolV3;
   renderButton: (onClick: (pool_click_location?: string) => void) => ReactNode;
@@ -56,7 +57,6 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const [tosAgreed, setTosAgreed] = useState(false);
   const [amount, setAmount] = useState('');
   const [inputFiat, setInputFiat] = useState('');
-  const isFiat = useAppSelector((state) => state.user.usdToggle);
   const [accessFullEarnings, setAccessFullEarnings] = useState(true);
   const { handleWalletButtonClick } = useWalletConnect();
 
@@ -224,7 +224,13 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
   const vaultBalance = toBigNumber(pool.poolDeficit);
 
   if (!pool.depositingEnabled)
-    return <DepositDisabledModal renderButton={renderButton} isV3 />;
+    return (
+      <DepositDisabledModal
+        renderButton={renderButton}
+        isV3
+        symbol={pool.reserveToken.symbol}
+      />
+    );
 
   return (
     <>
@@ -251,13 +257,7 @@ export const DepositV3Modal = ({ pool, renderButton }: Props) => {
         sendDepositEvent(DepositEvent.DepositAmountView);
         setIsOpen(true);
       })}
-      <ModalV3
-        title={'Deposit'}
-        setIsOpen={onClose}
-        isOpen={isOpen}
-        titleElement={<SwapSwitch />}
-        large
-      >
+      <ModalV3 title={'Deposit'} setIsOpen={onClose} isOpen={isOpen} large>
         <>
           <div className="p-30 pb-14">
             <TradeWidgetInput

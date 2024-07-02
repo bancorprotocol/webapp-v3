@@ -86,7 +86,7 @@ export const apiPoolsV3$ = combineLatest([apiBntV3$]).pipe(
         tkn: '0',
       },
       tradingEnabled: true,
-      depositingEnabled: true,
+      depositingEnabled: false,
     };
     return [...(await BancorApi.v3.getPools()), bntPool];
   }),

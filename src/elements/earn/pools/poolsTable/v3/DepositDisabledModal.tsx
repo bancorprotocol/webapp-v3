@@ -1,33 +1,25 @@
 import { useState } from 'react';
 import { ModalV3 } from 'components/modal/ModalV3';
-import { Navigate } from 'components/navigate/Navigate';
 
 interface Props {
   renderButton: (onClick: () => void) => React.ReactNode;
   isV3: boolean;
+  symbol: string;
 }
 
-const V3Content = (
+const V3Content = ({ symbol }: { symbol: string }) => (
   <div className="leading-7 text-20 mb-30">
-    Deposits are currently disabled in the bancor.network UI. To deposit via
-    Etherscan at your own risk,{' '}
-    <Navigate
-      to="https://docs.bancor.network/guides/bancor-etherscan-guide/deposit"
-      className="text-primary dark:text-primary"
-    >
-      follow this guide
-    </Navigate>
-    .
+    Deposits to the {symbol} pool are currently disabled and are not available.
   </div>
 );
 
-const V2Content = (
+const V2Content = () => (
   <div className="leading-7 text-20 mb-30">
     Deposits are currently disabled on all v2 pools.
   </div>
 );
 
-export const DepositDisabledModal = ({ renderButton, isV3 }: Props) => {
+export const DepositDisabledModal = ({ renderButton, isV3, symbol }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClose = async () => {
@@ -39,7 +31,7 @@ export const DepositDisabledModal = ({ renderButton, isV3 }: Props) => {
       {renderButton(() => setIsOpen(true))}
       <ModalV3 setIsOpen={onClose} isOpen={isOpen} large>
         <div className="flex flex-col items-center gap-20 p-20 pb-40 text-center">
-          {isV3 ? V3Content : V2Content}
+          {isV3 ? <V3Content symbol={symbol} /> : <V2Content />}
         </div>
       </ModalV3>
     </>

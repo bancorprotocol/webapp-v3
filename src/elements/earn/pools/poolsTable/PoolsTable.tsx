@@ -45,6 +45,8 @@ export const PoolsTable = ({
   const data = useMemo<PoolV3[]>(() => {
     return pools.filter(
       (p) =>
+        p.tradingEnabled &&
+        p.depositingEnabled &&
         p.name &&
         p.name.toLowerCase().includes(search.toLowerCase()) &&
         (lowVolume || Number(p.volume24h.usd) > 5000) &&
@@ -59,41 +61,22 @@ export const PoolsTable = ({
       <div className="w-[150px] text-black-medium dark:text-white-medium">
         <div className="flex items-center justify-between">
           Liquidity
-          <div>
-            {toBigNumber(row.stakedBalance.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.stakedBalance.usd, true)}
-          </div>
+          <div>{prettifyNumber(row.stakedBalance.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Volume 7d
-          <div>
-            {toBigNumber(row.volume7d.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.volume7d.usd, true)}
-          </div>
+          <div>{prettifyNumber(row.volume7d.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           Fees 7d
-          <div>
-            {toBigNumber(row.fees7d.usd).isZero()
-              ? 'New'
-              : prettifyNumber(row.fees7d.usd, true)}
-          </div>
+          <div>{prettifyNumber(row.fees7d.usd, true)}</div>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-start">
             LP Fees 7d
             <SnapshotLink />
           </div>
-          <div>
-            {toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd).isZero()
-              ? 'New'
-              : prettifyNumber(
-                  toBigNumber(row.fees7d.usd).minus(row.networkFees7d.usd),
-                  true
-                )}
-          </div>
+          <div>0</div>
         </div>
       </div>
     ),
