@@ -13,9 +13,7 @@ export const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${
 
 const appName = 'bancor';
 
-export const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42],
-});
+export const injected = new InjectedConnector({});
 
 export const gnosisSafe = new SafeAppConnector();
 
