@@ -31,7 +31,7 @@ export const WalletConnectModalError = ({
               selectedWallet ? selectedWallet.name : 'Wallet'
             }`}
           </p>
-          <p className="text-12">Please try again or contact support</p>
+          <p className="text-12">If you have multiple wallets on the browser, please disable them, keep MetaMask active and try again</p>
         </div>
       )}
     </div>
