@@ -1,6 +1,5 @@
 import {
   allTokensV2$,
-  keeperDaoTokens$,
   tokensForTradeWithExternal$,
   tokensV2$,
   tokensV3$,
@@ -9,7 +8,6 @@ import {
   setAllStandardRewardsV3,
   setAllTokenListTokens,
   setAllTokensV2,
-  setKeeperDaoTokens,
   setStatisticsV3,
   setTokenLists,
   setTokensV2,
@@ -111,10 +109,6 @@ export const subscribeToObservables = (dispatch: any) => {
 
   tokenListTokens$.subscribe(({ allTokenListTokens }) => {
     dispatch(setAllTokenListTokens(allTokenListTokens));
-  });
-
-  keeperDaoTokens$.subscribe((keeperDaoTokens) => {
-    dispatch(setKeeperDaoTokens(keeperDaoTokens));
   });
 
   poolsV2$.subscribe((pools) => {

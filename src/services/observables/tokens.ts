@@ -1,4 +1,4 @@
-import { BehaviorSubject, combineLatest, from } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { switchMapIgnoreThrow } from 'services/observables/customOperators';
 import { user$ } from 'services/observables/user';
 import { fetchTokenBalanceMulticall } from 'services/web3/token/token';
@@ -14,7 +14,6 @@ import {
   apiTokensV3$,
 } from 'services/observables/apiData';
 import { utils } from 'ethers';
-import { fetchKeeperDaoTokens } from 'services/api/keeperDao';
 import { distinctUntilChanged, shareReplay, switchMap } from 'rxjs/operators';
 import { isEqual, uniqBy, uniqueId } from 'lodash';
 import BigNumber from 'bignumber.js';
@@ -432,8 +431,5 @@ export const allTokensV3$ = combineLatest([
     }
   ),
   distinctUntilChanged<Token[]>(isEqual),
-  shareReplay(1)
-);
-export const keeperDaoTokens$ = from(fetchKeeperDaoTokens()).pipe(
   shareReplay(1)
 );
