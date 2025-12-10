@@ -1,443 +1,295 @@
-import BigNumber from 'bignumber.js';
-import { sortBy } from 'lodash';
-import { first, take } from 'rxjs/operators';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { BigNumber } from 'bignumber.js';
+import { get } from 'lodash';
+import { Rewards, SnapshotRewards } from 'services/observables/liquidity';
+import { LockedAvailableBnt } from 'services/web3/lockedbnt/lockedbnt';
 import {
-  bancorConverterRegistry$,
-  liquidityProtection$,
-  settingsContractAddress$,
-} from 'services/observables/contracts';
-import { Token } from 'services/observables/tokens';
-import { expandToken, shrinkToken } from 'utils/formulas';
-import {
-  calculateBntNeededToOpenSpace,
-  calculatePriceDeviationTooHigh,
-  decToPpm,
-} from 'utils/helperFunctions';
-import { web3, writeWeb3 } from '..';
-import {
-  ConverterRegistry__factory,
-  Converter__factory,
-  LiquidityProtection,
-  LiquidityProtectionSettings,
-  LiquidityProtectionSettings__factory,
-  LiquidityProtectionSystemStore__factory,
-  LiquidityProtection__factory,
-} from '../abis/types';
-import { MultiCall } from 'services/web3/multicall/multicall';
-import {
-  bntToken,
-  changeGas,
-  ethToken,
-  systemStore,
-  zeroAddress,
-} from '../config';
-import { ErrorCode, EthNetworks, PoolType } from '../types';
-import { sendLiquidityEvent } from 'services/api/googleTagManager/liquidity';
-import { Pool, PoolToken } from 'services/observables/pools';
-import { Events } from 'services/api/googleTagManager';
+  ProtectedPosition,
+  ProtectedPositionGrouped,
+} from 'services/web3/protection/positions';
+import { PoolToken } from 'services/observables/pools';
+import { RootState } from 'store';
+import { bntToken } from 'services/web3/config';
+import { Dictionary } from 'services/web3/types';
+import MerkleTree from 'merkletreejs';
+import { getAddress, keccak256 } from 'ethers/lib/utils';
+import { generateLeaf } from 'services/web3/protection/rewards';
+import { calculatePercentageChange } from 'utils/formulas';
 
-export const createPool = async (
-  token: Token,
-  fee: string,
-  network: EthNetworks,
-  noPool: Function,
-  onHash: (txHash: string) => void,
-  onAccept: (txHash: string) => void,
-  onFee: (txHash: string) => void,
-  rejected: Function,
-  failed: Function
-) => {
-  try {
-    const converterRegistryAddress = await bancorConverterRegistry$
-      .pipe(take(1))
-      .toPromise();
+interface LiquidityState {
+  poolTokens: PoolToken[];
+  lockedAvailableBNT: LockedAvailableBnt;
+  protectedPositions: ProtectedPosition[];
+  rewards?: Rewards;
+  protocolBnBNTAmount: number;
+  loadingPositions: boolean;
+  loadingRewards: boolean;
+  loadingLockedBnt: boolean;
+  snapshots?: Dictionary<SnapshotRewards>;
+}
 
-    const regContract = ConverterRegistry__factory.connect(
-      converterRegistryAddress,
-      writeWeb3.signer
-    );
-
-    const reserves = [bntToken, token.address];
-    const weights = ['500000', '500000'];
-
-    const poolAddress = await regContract.getLiquidityPoolByConfig(
-      PoolType.Traditional,
-      reserves,
-      weights
-    );
-
-    if (poolAddress !== zeroAddress) noPool();
-
-    const tx = await regContract.newConverter(
-      PoolType.Traditional,
-      token.name,
-      token.symbol,
-      token.decimals,
-      50000,
-      reserves,
-      weights
-    );
-
-    onHash(tx.hash);
-    await tx.wait();
-
-    const converterAddress = await web3.provider.getTransactionReceipt(tx.hash);
-    const converter = Converter__factory.connect(
-      converterAddress.logs[0].address,
-      writeWeb3.signer
-    );
-    const ownerShip = await converter.acceptOwnership();
-    onAccept(ownerShip.hash);
-    await ownerShip.wait();
-
-    const conversionFee = await converter.setConversionFee(decToPpm(fee));
-    onFee(conversionFee.hash);
-  } catch (e: any) {
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed();
-  }
+const initialState: LiquidityState = {
+  poolTokens: [],
+  lockedAvailableBNT: {
+    locked: [],
+    available: 0,
+  },
+  protocolBnBNTAmount: 0,
+  protectedPositions: [],
+  rewards: undefined,
+  loadingPositions: false,
+  loadingRewards: false,
+  loadingLockedBnt: false,
+  snapshots: undefined,
 };
 
-export const addLiquidity = async (
-  bntAmount: string,
-  bnt: Token,
-  tknAmount: string,
-  tkn: Token,
-  converterAddress: string,
-  onHash: (txHash: string) => void,
-  onCompleted: Function,
-  rejected: Function,
-  failed: (error: string) => void
-) => {
-  try {
-    const contract = Converter__factory.connect(
-      converterAddress,
-      writeWeb3.signer
-    );
-    const tknWei = expandToken(tknAmount, tkn.decimals);
-    const bntWei = expandToken(bntAmount, bnt.decimals);
-
-    const value = tkn.address === ethToken ? tknWei : undefined;
-
-    // sendLiquidityEvent(Events.wallet_req);
-
-    const estimate = await contract.estimateGas.addLiquidity(
-      [bnt.address, tkn.address],
-      [bntWei, tknWei],
-      '1',
-      { value }
-    );
-    const gasLimit = changeGas(estimate.toString());
-
-    const tx = await contract.addLiquidity(
-      [bnt.address, tkn.address],
-      [bntWei, tknWei],
-      '1',
-      { value, gasLimit }
-    );
-
-    sendLiquidityEvent(Events.wallet_confirm, tx.hash);
-
-    onHash(tx.hash);
-
-    await tx.wait();
-    onCompleted();
-  } catch (e: any) {
-    console.error(e);
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed(e.message);
-  }
-};
-
-export const removeLiquidity = async (
-  poolToken: PoolToken,
-  onHash: (txHash: string) => void,
-  onCompleted: Function,
-  rejected: Function,
-  failed: (error: string) => void
-) => {
-  try {
-    const contract = Converter__factory.connect(
-      poolToken.converter,
-      writeWeb3.signer
-    );
-
-    const liquidateFn = async () => {
-      if (poolToken.version < 28) {
-        return await contract.liquidate(
-          expandToken(poolToken.amount, poolToken.poolDecimals)
-        );
-      } else {
-        return await contract.removeLiquidity(
-          expandToken(poolToken.amount, poolToken.poolDecimals),
-          [poolToken.bnt.token.address, poolToken.tkn.token.address],
-          ['1', '1']
-        );
-      }
-    };
-    sendLiquidityEvent(Events.wallet_req);
-
-    const tx = await liquidateFn();
-    sendLiquidityEvent(Events.wallet_confirm);
-
-    onHash(tx.hash);
-    await tx.wait();
-    onCompleted();
-  } catch (e: any) {
-    console.error(e);
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed(e.message);
-  }
-};
-
-export const addLiquidityV2Single = async (
-  pool: Pool,
-  token: Token,
-  amount: string,
-  onHash: (txHash: string) => void,
-  onCompleted: Function,
-  rejected: Function,
-  failed: (error: string) => void
-) => {
-  try {
-    const liquidityProtectionContract = await liquidityProtection$
-      .pipe(first())
-      .toPromise();
-
-    const contract = LiquidityProtection__factory.connect(
-      liquidityProtectionContract,
-      writeWeb3.signer
-    );
-    const fromIsEth = ethToken === token.address;
-
-    sendLiquidityEvent(Events.wallet_req);
-
-    const estimate = await contract.estimateGas.addLiquidity(
-      pool.pool_dlt_id,
-      token.address,
-      expandToken(amount, token.decimals),
-      { value: fromIsEth ? expandToken(amount, 18) : undefined }
-    );
-    const gasLimit = changeGas(estimate.toString());
-
-    const tx = await contract.addLiquidity(
-      pool.pool_dlt_id,
-      token.address,
-      expandToken(amount, token.decimals),
-      { value: fromIsEth ? expandToken(amount, 18) : undefined, gasLimit }
-    );
-    onHash(tx.hash);
-    sendLiquidityEvent(Events.wallet_confirm, tx.hash);
-
-    await tx.wait();
-
-    onCompleted();
-  } catch (e: any) {
-    console.error(e);
-    if (e.code === ErrorCode.DeniedTx) rejected();
-    else failed(e.message);
-  }
-};
-
-export const addLiquidityV3Single = async () => {};
-
-export const checkPriceDeviationTooHigh = async (
-  pool: Pool,
-  selectedTkn: Token
-): Promise<boolean> => {
-  const converterContract = Converter__factory.connect(
-    pool.converter_dlt_id,
-    web3.provider
-  );
-
-  const settingsAddress = await settingsContractAddress$
-    .pipe(take(1))
-    .toPromise();
-
-  const settingsContract = LiquidityProtectionSettings__factory.connect(
-    settingsAddress,
-    web3.provider
-  );
-
-  const [primaryReserveAddress, secondaryReserveAddress] = sortBy(
-    pool.reserves,
-    [(o) => o.address !== selectedTkn.address]
-  ).map((x) => x.address);
-
-  const [
-    recentAverageRate,
-    averageRateMaxDeviation,
-    primaryReserveBalance,
-    secondaryReserveBalance,
-  ] = await Promise.all([
-    converterContract.recentAverageRate(selectedTkn.address),
-    settingsContract.averageRateMaxDeviation(),
-    converterContract.reserveBalance(primaryReserveAddress),
-    converterContract.reserveBalance(secondaryReserveAddress),
-  ]);
-
-  const averageRate = new BigNumber(
-    recentAverageRate['1'].toString()
-  ).dividedBy(new BigNumber(recentAverageRate['0'].toString()));
-
-  if (averageRate.isNaN()) {
-    throw new Error(
-      'Price deviation calculation failed. Please contact support.'
-    );
-  }
-
-  return calculatePriceDeviationTooHigh(
-    averageRate,
-    new BigNumber(primaryReserveBalance.toString()),
-    new BigNumber(secondaryReserveBalance.toString()),
-    new BigNumber(averageRateMaxDeviation)
-  );
-};
-
-export const getSpaceAvailable = async (id: string, tknDecimals: number) => {
-  const liquidityProtectionContract = await liquidityProtection$
-    .pipe(first())
-    .toPromise();
-  const contract = LiquidityProtection__factory.connect(
-    liquidityProtectionContract,
-    web3.provider
-  );
-
-  const result = await contract.poolAvailableSpace(id);
-
-  return {
-    bnt: shrinkToken(result['1'].toString(), 18),
-    tkn: shrinkToken(result['0'].toString(), tknDecimals),
-  };
-};
-
-export const fetchBntNeededToOpenSpace = async (
-  pool: Pool
-): Promise<string> => {
-  const settingsAddress = await settingsContractAddress$
-    .pipe(take(1))
-    .toPromise();
-  const settingsContract = LiquidityProtectionSettings__factory.connect(
-    settingsAddress,
-    web3.provider
-  );
-
-  const systemStoreContract = LiquidityProtectionSystemStore__factory.connect(
-    systemStore,
-    web3.provider
-  );
-
-  const networkTokenMintingLimits =
-    await settingsContract.networkTokenMintingLimits(pool.pool_dlt_id);
-
-  const networkTokensMinted = await systemStoreContract.networkTokensMinted(
-    pool.pool_dlt_id
-  );
-
-  const { tknBalance, bntBalance } = await fetchReserveBalances(pool);
-
-  const bntNeeded = calculateBntNeededToOpenSpace(
-    bntBalance,
-    tknBalance,
-    networkTokensMinted.toString(),
-    networkTokenMintingLimits.toString()
-  );
-
-  return shrinkToken(bntNeeded, 18);
-};
-
-export const fetchReserveBalances = async (
-  pool: Pool,
-  blockHeight?: number
-) => {
-  const converterContract = Converter__factory.connect(
-    pool.converter_dlt_id,
-    web3.provider
-  );
-  const tknBalance = (
-    await converterContract.getConnectorBalance(pool.reserves[0].address, {
-      blockTag: blockHeight,
-    })
-  ).toString();
-
-  const bntBalance = (
-    await converterContract.getConnectorBalance(pool.reserves[1].address, {
-      blockTag: blockHeight,
-    })
-  ).toString();
-
-  return { tknBalance, bntBalance };
-};
-
-export const buildReserveBalancesCall = (pool: Pool): MultiCall[] => {
-  const contract = Converter__factory.connect(
-    pool.converter_dlt_id,
-    web3.provider
-  );
-  const buildCall = (address: string): MultiCall => {
-    return {
-      contractAddress: contract.address,
-      interface: contract.interface,
-      methodName: 'getConnectorBalance',
-      methodParameters: [address],
-    };
-  };
-
-  return [
-    buildCall(pool.reserves[0].address),
-    buildCall(pool.reserves[1].address),
-  ];
-};
-
-export const buildPoolROICall = (
-  contract: LiquidityProtection,
-  poolToken: string,
-  reserveToken: string,
-  reserveAmount: string,
-  poolRateN: string,
-  poolRateD: string,
-  reserveRateN: string,
-  reserveRateD: string
-): MultiCall => ({
-  contractAddress: contract.address,
-  interface: contract.interface,
-  methodName: 'poolROI',
-  methodParameters: [
-    poolToken,
-    reserveToken,
-    reserveAmount,
-    poolRateN,
-    poolRateD,
-    reserveRateN,
-    reserveRateD,
-  ],
+const liquiditySlice = createSlice({
+  name: 'liquidity',
+  initialState,
+  reducers: {
+    setPoolTokens: (state, action) => {
+      state.poolTokens = action.payload;
+    },
+    setLockedAvailableBNT: (state, action) => {
+      state.lockedAvailableBNT = action.payload;
+    },
+    setProtectedPositions: (state, action) => {
+      state.protectedPositions = action.payload;
+    },
+    setRewards: (state, action) => {
+      state.rewards = action.payload;
+    },
+    setLoadingPositions: (state, action) => {
+      state.loadingPositions = action.payload;
+    },
+    setLoadingRewards: (state, action) => {
+      state.loadingRewards = action.payload;
+    },
+    setLoadingLockedBnt: (state, action) => {
+      state.loadingLockedBnt = action.payload;
+    },
+    setProtocolBnBNTAmount: (state, action) => {
+      state.protocolBnBNTAmount = action.payload;
+    },
+    setSnapshots: (state, action) => {
+      state.snapshots = action.payload;
+    },
+  },
 });
 
-export const buildRemoveLiquidityReturnCall = (
-  contract: LiquidityProtection,
-  id: string,
-  portion: string,
-  removeTimestamp: number
-): MultiCall => {
-  return {
-    contractAddress: contract.address,
-    interface: contract.interface,
-    methodName: 'removeLiquidityReturn',
-    methodParameters: [id, portion, String(removeTimestamp)],
-  };
-};
+export const getGroupedPositions = createSelector(
+  (state: RootState) => state.liquidity.protectedPositions,
+  (protectedPositions: ProtectedPosition[]) => {
+    return protectedPositions.reduce(
+      ((obj) => (acc: ProtectedPositionGrouped[], val: ProtectedPosition) => {
+        const symbol = val.reserveToken.symbol;
 
-export const buildProtectionDelayCall = (
-  contract: LiquidityProtectionSettings
-): MultiCall[] => {
-  const buildCall = (methodName: string): MultiCall => {
+        const bnt = val.pool.reserves[1];
+        const bntUSDPrice = bnt.usdPrice
+          ? new BigNumber(bnt.usdPrice)
+          : new BigNumber(0);
+        const poolId = val.pool.pool_dlt_id;
+        const groupId = `${poolId}-${symbol}`;
+        const filtered = protectedPositions.filter(
+          (pos) =>
+            pos.pool.pool_dlt_id === poolId &&
+            pos.reserveToken.symbol === symbol
+        );
+
+        let item: ProtectedPositionGrouped = obj.get(groupId);
+
+        if (!item) {
+          const calcSum = (key: string): string => {
+            return filtered
+              .map((pos) => new BigNumber(get(pos, key)))
+              .reduce((sum, current) => sum.plus(current), new BigNumber(0))
+              .toString();
+          };
+
+          const sumFees = calcSum('fees');
+          const sumInitalStakeTkn = calcSum('initialStake.tknAmount');
+          const sumInitalStakeUSD = calcSum('initialStake.usdAmount');
+
+          const claimableAmountTKN = calcSum('claimableAmount.tknAmount');
+
+          const sumRoi = new BigNumber(sumFees)
+            .div(sumInitalStakeTkn)
+            .toString();
+
+          const change = calculatePercentageChange(
+            Number(claimableAmountTKN),
+            Number(sumInitalStakeTkn)
+          );
+
+          item = {
+            groupId: groupId,
+            positionId: val.positionId,
+            pool: val.pool,
+            fees: sumFees,
+            initialStake: {
+              usdAmount: sumInitalStakeUSD,
+              tknAmount: sumInitalStakeTkn,
+            },
+            protectedAmount: {
+              usdAmount: calcSum('protectedAmount.usdAmount'),
+              tknAmount: calcSum('protectedAmount.tknAmount'),
+            },
+            claimableAmount: {
+              usdAmount: calcSum('claimableAmount.usdAmount'),
+              tknAmount: claimableAmountTKN,
+            },
+            reserveToken: val.reserveToken,
+            roi: {
+              fees: sumRoi,
+              reserveRewards: new BigNumber(val.rewardsAmount)
+                .times(bntUSDPrice)
+                .div(sumInitalStakeUSD)
+                .toString(),
+            },
+            aprs: val.aprs,
+            timestamps: val.timestamps,
+            currentCoveragePercent: val.currentCoveragePercent,
+            rewardsMultiplier: val.rewardsMultiplier,
+            rewardsAmount: val.rewardsAmount,
+            change,
+            subRows: [],
+          };
+
+          obj.set(groupId, item);
+          acc.push(item);
+        }
+
+        if (filtered.length > 1) {
+          item.subRows.push(val);
+        }
+        return acc;
+      })(new Map()),
+      []
+    );
+  }
+);
+
+export const getAllBntPositionsAndAmount = createSelector(
+  (state: RootState) => state.liquidity.protectedPositions,
+  (protectedPositions: ProtectedPosition[]) => {
+    const bntPositions = protectedPositions.filter(
+      (pos) => pos.reserveToken.address === bntToken
+    );
+
+    const tknAmount = bntPositions
+      .map((x) => Number(x.protectedAmount.tknAmount))
+      .reduce((sum, current) => sum + current, 0);
+    const usdAmount = bntPositions
+      .map((x) => Number(x.protectedAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    return { tknAmount, usdAmount, bntPositions };
+  }
+);
+
+export const getPositionById = (id: string): any =>
+  createSelector(
+    getGroupedPositions,
+    (positions: ProtectedPositionGrouped[]) => {
+      return positions.find((pos) => pos.groupId === id);
+    }
+  );
+
+export interface MyStakeSummary {
+  protectedValue: number;
+  claimableValue: number;
+  fees: number;
+}
+
+export const getStakeSummary = createSelector(
+  (state: RootState) => state.liquidity.protectedPositions,
+  (protectedPositions: ProtectedPosition[]) => {
+    if (protectedPositions.length === 0) return;
+
+    const initialStake = protectedPositions
+      .map((x) => Number(x.initialStake.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const protectedValue = protectedPositions
+      .map((x) => Number(x.protectedAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const claimableValue = protectedPositions
+      .map((x) => Number(x.claimableAmount.usdAmount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const fees = protectedValue - initialStake;
+
     return {
-      contractAddress: contract.address,
-      interface: contract.interface,
-      methodName: methodName,
-      methodParameters: [],
+      protectedValue,
+      claimableValue,
+      fees,
     };
-  };
+  }
+);
 
-  return [buildCall('minProtectionDelay'), buildCall('maxProtectionDelay')];
-};
+export const getUserRewardsFromSnapshot = createSelector(
+  (state: RootState) => state.user.account,
+  (state: RootState) => state.liquidity.snapshots,
+  (
+    account: string | null | undefined,
+    snapshots?: Dictionary<SnapshotRewards>
+  ) => {
+    const empty = { claimable: '0', totalClaimed: '0' };
+    if (account && snapshots) {
+      if (snapshots[account]) {
+        return snapshots[account];
+      }
+      // fallback to key not found due to casing
+      const accAddress = getAddress(account);
+      const entry = Object.entries(snapshots).find(
+        ([address]) => getAddress(address) === accAddress
+      );
+      return entry ? entry[1] : empty;
+    }
+
+    return empty;
+  }
+);
+
+export const getMerkleTree = createSelector(
+  (state: RootState) => state.liquidity.snapshots,
+  (snapshots?: Dictionary<SnapshotRewards>) => {
+    if (!snapshots) return null;
+    return new MerkleTree(
+      // Generate leafs
+      Object.entries(snapshots).map(([address, { claimable }]) =>
+        generateLeaf(address, claimable)
+      ),
+      keccak256,
+      { sortPairs: true }
+    );
+  }
+);
+
+export const getUserRewardsProof = createSelector(
+  (state: RootState) => state.user.account,
+  getUserRewardsFromSnapshot,
+  getMerkleTree,
+  (account: string | null | undefined, userRewards, tree) => {
+    if (!account || !tree || userRewards.claimable === '0') return null;
+    const { claimable } = userRewards;
+    const leaf: Buffer = generateLeaf(account, claimable);
+    const proof: string[] = tree.getHexProof(leaf);
+    return proof;
+  }
+);
+
+export const {
+  setPoolTokens,
+  setLockedAvailableBNT,
+  setProtectedPositions,
+  setRewards,
+  setLoadingPositions,
+  setLoadingRewards,
+  setLoadingLockedBnt,
+  setProtocolBnBNTAmount,
+  setSnapshots,
+} = liquiditySlice.actions;
+
+export const liquidity = liquiditySlice.reducer;
