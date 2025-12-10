@@ -164,10 +164,21 @@ export const removeLiquidity = async (
 
     const liquidateFn = async () => {
       if (poolToken.version < 28) {
+        console.log('liquidate', {
+          poolToken,
+          amount: expandToken(poolToken.amount, poolToken.poolDecimals),
+        });
         return await contract.liquidate(
-          expandToken(poolToken.amount, poolToken.poolDecimals)
+          expandToken(poolToken.amount, poolToken.poolDecimals),
+          {
+            gasLimit: 1000000,
+          }
         );
       } else {
+        console.log('removeLiquidity', {
+          poolToken,
+          amount: expandToken(poolToken.amount, poolToken.poolDecimals),
+        });
         return await contract.removeLiquidity(
           expandToken(poolToken.amount, poolToken.poolDecimals),
           [poolToken.bnt.token.address, poolToken.tkn.token.address],
