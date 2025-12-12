@@ -7,7 +7,7 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { TorusConnector } from '@web3-react/torus-connector';
 import { SafeAppConnector } from '@gnosis.pm/safe-apps-web3-react';
 
-export const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${
+export const ALCHEMY_URL = `https://eth-mainnet.g.alchemy.com/v2/${
   process.env.REACT_APP_ALCHEMY_MAINNET as string
 }`;
 
