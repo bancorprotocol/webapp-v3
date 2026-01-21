@@ -3,6 +3,9 @@ import { useWeb3React } from '@web3-react/core';
 import { gnosisSafe, injected } from 'services/web3/wallet/connectors';
 import { getAutoLoginLS, setAutoLoginLS } from 'utils/localStorage';
 import { IS_IN_IFRAME } from 'utils/helperFunctions';
+import { find } from 'lodash';
+import { uauth } from './connectors';
+import { SUPPORTED_WALLETS } from './utils';
 
 export const useAutoConnect = () => {
   const { activate, active } = useWeb3React();
@@ -40,4 +43,31 @@ export const useAutoConnect = () => {
   }, [triedAutoLogin, active]);
 
   return triedAutoLogin;
+};
+
+export const useUDName = (): string => {
+  const { connector } = useWeb3React();
+  const [udUserName, setUdUserName] = useState<string>('');
+  const connectorName = find(SUPPORTED_WALLETS, ['connector', connector])?.name;
+
+  useEffect(() => {
+    const checkUDName = async () => {
+      if (connectorName === 'Unstoppable Domains') {
+        try {
+          const udUser = await uauth.uauth.user();
+          setUdUserName(udUser.sub);
+        } catch (e) {
+          console.error(e);
+          setUdUserName('');
+        }
+      }
+    };
+    void checkUDName();
+
+    return () => {
+      setUdUserName('');
+    };
+  }, [connectorName]);
+
+  return udUserName;
 };

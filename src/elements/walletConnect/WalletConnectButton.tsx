@@ -2,6 +2,8 @@ import { UseWalletConnect } from './useWalletConnect';
 import { ReactComponent as IconDisconnect } from 'assets/icons/disconnect.svg';
 import { Button, ButtonVariant } from 'components/button/Button';
 import { PopoverV3 } from 'components/popover/PopoverV3';
+import { useState } from 'react';
+import { useUDName } from 'services/web3/wallet/hooks';
 import { ReactNode } from 'react';
 import { Image } from 'components/image/Image';
 import { shortenString } from 'utils/pureFunctions';
@@ -40,6 +42,10 @@ export const WalletConnectButton = ({
   account,
   selectedWallet,
 }: UseWalletConnect) => {
+
+  const udName = useUDName();
+  const buttonText = account ? udName || shortenString(account) : 'Connect';
+  const [isOpen, setIsOpen] = useState(false);
   const loggedIn = !!selectedWallet && !!account;
   const { chainId } = useWeb3React();
   const unsupportedNetwork = isUnsupportedNetwork(chainId);
